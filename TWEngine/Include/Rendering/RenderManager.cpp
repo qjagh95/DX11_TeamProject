@@ -6,6 +6,7 @@
 #include "RenderTarget.h"
 #include "../GameObject.h"
 #include "../Component/Light.h"
+#include "../Device.h"
 
 PUN_USING
 
@@ -13,7 +14,7 @@ DEFINITION_SINGLE(CRenderManager)
 
 CRenderManager::CRenderManager() :
 	m_pCreateState(nullptr),
-	m_bDeferred(false)
+	m_bDeferred(true)
 {
 	m_eGameMode = GM_3D;
 }
@@ -50,6 +51,11 @@ GAME_MODE CRenderManager::GetGameMode() const
 	return m_eGameMode;
 }
 
+bool CRenderManager::GetRenderingMode() const
+{
+	return m_bDeferred;
+}
+
 void CRenderManager::SetGameMode(GAME_MODE eMode)
 {
 	m_eGameMode = eMode;
@@ -69,12 +75,46 @@ bool CRenderManager::Init()
 	CreateBlendState(ALPHA_BLEND);
 	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
 
+	Vector3 vPos;
+	vPos.x = CDevice::GetInst()->GetResolution().iWidth - 100.f;
 
 	// 포스트 이펙트용 렌더링타겟 생성
-	if (!CreateRenderTarget("PostEffect", DXGI_FORMAT_R8G8B8A8_UNORM, Vector3::Zero,
-		Vector3(100.f, 100.f, 1.f), true))
+	if (!CreateRenderTarget("PostEffect", DXGI_FORMAT_R8G8B8A8_UNORM, 
+		vPos, Vector3(100.f, 100.f, 1.f), true))
 		return false;
 
+	////////Albedo Target 생성///////////////////////
+	if (!CreateRenderTarget("Albedo", DXGI_FORMAT_R32G32B32A32_FLOAT,
+		Vector3::Zero , Vector3(100.f, 100.f, 1.f), true))
+		return false;
+
+	////////Normal Target 생성///////////////////////
+	vPos.x = 0.f;
+	vPos.y = 100.f;
+	if (!CreateRenderTarget("Normal", DXGI_FORMAT_R32G32B32A32_FLOAT,
+		vPos, Vector3(100.f, 100.f, 1.f), true))
+		return false;
+
+	////////Depth Target 생성///////////////////////
+	vPos.x = 0.f;
+	vPos.y = 200.f;
+	if (!CreateRenderTarget("Depth", DXGI_FORMAT_R32G32B32A32_FLOAT,
+		vPos, Vector3(100.f, 100.f, 1.f), true))
+		return false;
+
+	////////Material(Specular) Target 생성///////////////////////
+	vPos.x = 0.f;
+	vPos.y = 300.f;
+	if (!CreateRenderTarget("Material", DXGI_FORMAT_R32G32B32A32_FLOAT,
+		vPos, Vector3(100.f, 100.f, 1.f), true))
+		return false;
+
+	AddMRT("GBuffer", "Albedo");
+	AddMRT("GBuffer", "Normal");
+	AddMRT("GBuffer", "Depth");
+	AddMRT("GBuffer", "Material");
+
+	m_bDeferred = true;
 	return true;
 }
 
@@ -179,6 +219,104 @@ CRenderTarget * CRenderManager::FindRenderTarget(const string & strName)
 	unordered_map<string, CRenderTarget*>::iterator	iter = m_mapRenderTarget.find(strName);
 
 	if (iter == m_mapRenderTarget.end())
+		return nullptr;
+
+	return iter->second;
+}
+
+bool CRenderManager::AddMRT(const string & strMRTKey, const string & strTargetKey)
+{
+	PMRT pMRT = FindMRT(strMRTKey);
+
+	if (!pMRT)
+	{
+		pMRT = new MRT;
+		pMRT->pDepth = nullptr;
+		m_mapMRT.insert(std::make_pair(strMRTKey, pMRT));
+	}
+
+	CRenderTarget* pTarget = FindRenderTarget(strTargetKey);
+
+	if (pTarget == nullptr)
+	{
+		return false;
+	}
+
+	pMRT->vecTarget.push_back(pTarget->GetRenderTargetView());
+
+	return true;
+}
+
+bool CRenderManager::AddMRTDepth(const string & strMRTKey, const string & strTargetKey)
+{
+
+	PMRT pMRT = FindMRT(strMRTKey);
+
+	if (!pMRT)
+	{
+		pMRT = new MRT;
+		pMRT->pDepth = nullptr;
+	}
+
+	CRenderTarget* pTarget = FindRenderTarget(strTargetKey);
+
+	if (pTarget == nullptr)
+	{
+		pMRT->pDepth = nullptr;
+	}
+	else
+	{
+		pMRT->pDepth = pTarget->GetDepthView();
+	}
+
+	return true;
+}
+
+void CRenderManager::SetMRT(const string & strMRTKey)
+{
+	PMRT pMRT = FindMRT(strMRTKey);
+	
+	if (pMRT == nullptr)
+	{
+		return;
+	}
+
+	if (pMRT->vecOldTarget.empty())
+		pMRT->vecOldTarget.resize(pMRT->vecTarget.size());
+
+	ID3D11DepthStencilView* pDepth = pMRT->pDepth;
+	
+	if (pDepth == nullptr)
+	{
+		pDepth = pMRT->pOldDepth;
+	}
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets(pMRT->vecTarget.size(), &pMRT->vecTarget[0], pDepth);
+}
+
+void CRenderManager::ResetMRT(const string & strMRTKey)
+{
+	PMRT	pMRT = FindMRT(strMRTKey);
+
+	if (!pMRT)
+		return;
+
+	CONTEXT->OMSetRenderTargets(pMRT->vecOldTarget.size(), &pMRT->vecOldTarget[0],
+		pMRT->pOldDepth);
+
+	for (size_t i = 0; i < pMRT->vecOldTarget.size(); ++i)
+	{
+		SAFE_RELEASE(pMRT->vecOldTarget[i]);
+	}
+
+	SAFE_RELEASE(pMRT->pOldDepth);
+}
+
+PMRT CRenderManager::FindMRT(const string & strMRTKey)
+{
+	unordered_map<string, PMRT>::iterator	iter = m_mapMRT.find(strMRTKey);
+
+	if (iter == m_mapMRT.end())
 		return nullptr;
 
 	return iter->second;
@@ -348,6 +486,22 @@ void CRenderManager::Render3D(float fTime)
 	{
 		RenderDeferred(fTime);
 	}
+
+	CRenderState*	pAlphaBlend = FindRenderState(ALPHA_BLEND);
+
+	pAlphaBlend->SetState();
+
+	unordered_map<string, CRenderTarget*>::iterator	iter;
+	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
+
+	for (iter = m_mapRenderTarget.begin(); iter != iterEnd; ++iter)
+	{
+		iter->second->Render(fTime);
+	}
+
+	pAlphaBlend->ResetState();
+
+	SAFE_RELEASE(pAlphaBlend);
 }
 
 void CRenderManager::RenderForward(float fTime)
@@ -418,5 +572,28 @@ void CRenderManager::RenderForward(float fTime)
 
 void CRenderManager::RenderDeferred(float fTime)
 {
+	// GBuffer를 만들어준다.
+	RenderGBuffer(fTime);
+
+
+	for (int i = RG_LANDSCAPE; i < RG_END; ++i)
+	{
+		m_tRenderObj[i].iSize = 0;
+	}
 }
 
+void CRenderManager::RenderGBuffer(float fTime)
+{
+	// GBuffer MRT로 타겟을 교체한다.
+	SetMRT("GBuffer");
+
+	for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
+	{
+		for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
+		{
+			m_tRenderObj[i].pList[j]->Render(fTime);
+		}
+	}
+
+	ResetMRT("GBuffer");
+}

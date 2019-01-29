@@ -49,6 +49,16 @@ CRenderTarget::~CRenderTarget()
 	SAFE_RELEASE(m_pDepthTex);
 }
 
+ID3D11RenderTargetView * CRenderTarget::GetRenderTargetView() const
+{
+	return m_pTargetView;
+}
+
+ID3D11DepthStencilView * CRenderTarget::GetDepthView() const
+{
+	return m_pDepthView;
+}
+
 bool CRenderTarget::CreateRenderTarget(DXGI_FORMAT eTargetFmt, const Vector3 & vPos,
 	const Vector3 & vScale, DXGI_FORMAT eDepthFmt)
 {

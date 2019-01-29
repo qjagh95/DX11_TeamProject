@@ -138,9 +138,10 @@ typedef struct PUN_DLL _tagMaterial
 
 typedef struct PUN_DLL _tagComponentCBuffer
 {
-	int	iTextureAnimation2D;
-	int	iAnimationType;
-	Vector2	vEmpty;
+	int		iTextureAnimation2D;
+	int		iAnimationType;
+	int		iDeferred;
+	float	fEmpty;
 }ComponentCBuffer, *PComponentCBuffer;
 
 typedef struct PUN_DLL _tagClip2DFrame

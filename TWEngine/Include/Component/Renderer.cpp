@@ -245,6 +245,7 @@ bool CRenderer::Init()
 
 int CRenderer::Update(float fTime)
 {
+	m_tComponentCBuffer.iDeferred = CRenderManager::GetInst()->GetRenderingMode() == true ? 1 : 0;
 
 	return 0;
 }

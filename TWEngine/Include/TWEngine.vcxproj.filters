@@ -127,11 +127,11 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="12. Light">
-      <UniqueIdentifier>{e8b9c130-a6b4-4d28-bca4-8a88fd3aa910}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Core\11. BineryFileIO">
       <UniqueIdentifier>{a71992b5-b86b-4121-af51-b7beb802b6b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Component\12. Light">
+      <UniqueIdentifier>{e8b9c130-a6b4-4d28-bca4-8a88fd3aa910}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -358,7 +358,7 @@
       <Filter>06. Component\08. UI\02. RightTab</Filter>
     </ClCompile>
     <ClCompile Include="Component\Light.cpp">
-      <Filter>12. Light</Filter>
+      <Filter>06. Component\12. Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -624,7 +624,7 @@
       <Filter>06. Component\08. UI\02. RightTab</Filter>
     </ClInclude>
     <ClInclude Include="Component\Light.h">
-      <Filter>12. Light</Filter>
+      <Filter>06. Component\12. Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

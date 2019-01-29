@@ -34,6 +34,10 @@ private:
 	bool						m_bDrawDebug;
 
 public:
+	ID3D11RenderTargetView* GetRenderTargetView()	const;
+	ID3D11DepthStencilView* GetDepthView()	const;
+
+public:
 	bool CreateRenderTarget(DXGI_FORMAT eTargetFmt,
 		const Vector3& vPos, const Vector3& vScale,
 		DXGI_FORMAT eDepthFmt = DXGI_FORMAT_UNKNOWN);

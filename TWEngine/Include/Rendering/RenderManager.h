@@ -23,11 +23,20 @@ typedef struct _tagRenderGroup
 	}
 }RenderGroup, *PRenderGroup;
 
+typedef struct PUN_DLL _tagMRT
+{
+	vector<ID3D11RenderTargetView*>	vecTarget;
+	vector<ID3D11RenderTargetView*>	vecOldTarget;
+	ID3D11DepthStencilView*	pDepth;
+	ID3D11DepthStencilView*	pOldDepth;
+}MRT, *PMRT;
+
 class PUN_DLL CRenderManager
 {
 private:
 	unordered_map<string, class CRenderState*>	m_mapRenderState;
 	unordered_map<string, class CRenderTarget*>	m_mapRenderTarget;
+	std::unordered_map<std::string, PMRT> m_mapMRT;
 	RenderGroup			m_tRenderObj[RG_END];
 	RenderGroup			m_tLightGroup;
 	class CBlendState*	m_pCreateState;
@@ -36,7 +45,7 @@ private:
 
 public:
 	GAME_MODE GetGameMode()	const;
-
+	bool GetRenderingMode()	const;
 public:
 	void SetGameMode(GAME_MODE eMode);
 	void EnableDeferredRendering();
@@ -68,6 +77,12 @@ public:
 
 	class CRenderTarget* FindRenderTarget(const string& strName);
 	
+	bool AddMRT(const string& strMRTKey, const string& strTargetKey);
+	bool AddMRTDepth(const string& strMRTKey, const string& strTargetKey);
+	void SetMRT(const string& strMRTKey);
+	void ResetMRT(const string& strMRTKey);
+	PMRT FindMRT(const string& strMRTKey);
+
 public:
 	void AddRenderObj(class CGameObject* pObj);
 	void Render(float fTime);
@@ -77,6 +92,7 @@ private:
 	void Render3D(float fTime);
 	void RenderForward(float fTime);
 	void RenderDeferred(float fTime);
+	void RenderGBuffer(float fTime);
 
 	DECLARE_SINGLE(CRenderManager)
 };
