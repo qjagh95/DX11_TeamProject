@@ -115,16 +115,16 @@ bool CResourcesManager::Init()
 	PlaneNormal[0].Normalize(); // 정규화해서 면의 방향을 구한다.
 
 	// pyramid의 뒤면의 방향벡터를 구한다.
-	Edge1 = PyramidPos[1] - PlaneNormal[0];
-	Edge2 = PyramidPos[2] - PlaneNormal[0];
+	Edge1 = PyramidPos[1] - PyramidPos[0];
+	Edge2 = PyramidPos[2] - PyramidPos[0];
 	Edge1.Normalize();
 	Edge2.Normalize();
 	PlaneNormal[1] = Edge1.Cross(Edge2);
 	PlaneNormal[1].Normalize();
 
 	// pyramid의 오른쪽면의 방향벡터를 구한다.
-	Edge1 = PlaneNormal[2] - PyramidPos[0];
-	Edge2 = PlaneNormal[3] - PyramidPos[0];
+	Edge1 = PyramidPos[2] - PyramidPos[0];
+	Edge2 = PyramidPos[3] - PyramidPos[0];
 	Edge1.Normalize();
 	Edge2.Normalize();
 	PlaneNormal[2] = Edge1.Cross(Edge2);

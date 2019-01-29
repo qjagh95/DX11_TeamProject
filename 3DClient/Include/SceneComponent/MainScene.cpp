@@ -36,9 +36,9 @@ bool CMainScene::Init()
 
 	CTransform*	pTransform = pObject->GetTransform();
 
-	pTransform->SetWorldScale(3.f, 1.f, 3.f);
-	pTransform->SetWorldPos(0.f, 2.f, 0.f);
-
+	pTransform->SetWorldScale(3.f, 3.f, 3.f);
+	pTransform->SetWorldPos(0.f, 0.f, 0.f);
+	pTransform->SetWorldRotY(-90.f);
 	SAFE_RELEASE(pTransform);
 
 	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");

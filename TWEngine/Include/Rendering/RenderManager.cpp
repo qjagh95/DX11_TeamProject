@@ -232,7 +232,7 @@ bool CRenderManager::AddMRT(const string & strMRTKey, const string & strTargetKe
 	{
 		pMRT = new MRT;
 		pMRT->pDepth = nullptr;
-		m_mapMRT.insert(std::make_pair(strMRTKey, pMRT));
+		//m_mapMRT.insert(std::make_pair(strMRTKey, pMRT));
 	}
 
 	CRenderTarget* pTarget = FindRenderTarget(strTargetKey);
