@@ -1,0 +1,560 @@
+#include "stdafx.h"
+#include "Scene.h"
+#include "Layer.h"
+#include "SceneComponent.h"
+#include "../GameObject.h"
+#include "../Component/Camera.h"
+#include "../Component/Transform.h"
+#include "../Device.h"
+#include "../CollisionManager.h"
+#include "../Input.h"
+#include "../SoundManager.h"
+#include "../Component/Light.h"
+
+PUN_USING
+
+CScene::CScene()
+{
+}
+
+CScene::~CScene()
+{
+	GET_SINGLE(CSoundManager)->DeleteSound(this);
+	CGameObject::DestroyPrototype(this);
+	Safe_Release_VecList(m_LayerList);
+	Safe_Release_VecList(m_SceneComponentList);
+
+	Safe_Release_Map(m_mapCamera);
+	SAFE_RELEASE(m_pMainCameraObj);
+	SAFE_RELEASE(m_pMainCameraTr);
+	SAFE_RELEASE(m_pMainCamera);
+	SAFE_RELEASE(m_pUICameraObj);
+	SAFE_RELEASE(m_pUICameraTr);
+	SAFE_RELEASE(m_pUICamera);
+}
+
+CGameObject * CScene::GetMainCameraObj() const
+{
+	m_pMainCameraObj->AddRef();
+	return m_pMainCameraObj;
+}
+
+CCamera * CScene::GetMainCamera() const
+{
+	m_pMainCamera->AddRef();
+	return m_pMainCamera;
+}
+
+CTransform * CScene::GetMainCameraTransform() const
+{
+	m_pMainCameraTr->AddRef();
+	return m_pMainCameraTr;
+}
+
+CGameObject * CScene::GetUICameraObj() const
+{
+	m_pUICameraObj->AddRef();
+	return m_pUICameraObj;
+}
+
+CCamera * CScene::GetUICamera() const
+{
+	m_pUICamera->AddRef();
+	return m_pUICamera;
+}
+
+CTransform * CScene::GetUICameraTransform() const
+{
+	m_pUICameraTr->AddRef();
+	return m_pUICameraTr;
+}
+
+void CScene::Start()
+{
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
+	{
+		(*iter)->Start();
+	}
+
+	list<CSceneComponent*>::iterator	iter1;
+	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
+
+	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End; ++iter1)
+	{
+		(*iter1)->Start();
+	}
+}
+
+bool CScene::Init()
+{
+	AddLayer("Stage", INT_MIN + 1);
+	AddLayer("Default", 0);
+	AddLayer("UI", INT_MAX - 1);
+
+	m_pMainCameraObj = CreateCamera("MainCamera",
+		Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE,
+		_RESOLUTION.iWidth, _RESOLUTION.iHeight,
+		60.f, 0.03f, 1000.f);
+
+	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
+	m_pMainCamera = m_pMainCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
+
+	m_pUICameraObj = CreateCamera("UICamera",
+		Vector3(0.f, 0.f, 0.f), CT_ORTHO,
+		_RESOLUTION.iWidth, _RESOLUTION.iHeight,
+		60.f, 0.f, 1000.f);
+
+	m_pUICameraTr = m_pUICameraObj->GetTransform();
+	m_pUICamera = m_pUICameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
+
+	CLayer*	pLayer = FindLayer("Default");
+
+	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight",
+		pLayer);
+
+	CTransform*	pTransform = pLightObj->GetTransform();
+
+	pTransform->SetWorldRot(-90.f, 0.f, 0.f);
+	pTransform->SetWorldPos(0.f, 0.f, 0.f);
+
+	SAFE_RELEASE(pTransform);
+
+	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight");
+
+	/*pLight->SetLightColor(Vector4::Gold, Vector4::Gold,
+		Vector4::Gold);*/
+
+	pLight->SetLightType(LT_SPOT);
+	pLight->SetLightRange(10.f);
+	pLight->SetAngle(60.f, 90.f);
+
+	SAFE_RELEASE(pLight);
+
+	SAFE_RELEASE(pLightObj);
+
+	SAFE_RELEASE(pLayer);
+
+	return true;
+}
+
+int CScene::Input(float fTime)
+{
+	list<CSceneComponent*>::iterator	iter1;
+	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
+
+	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
+	{
+		if (!(*iter1)->GetActive())
+		{
+			SAFE_RELEASE((*iter1));
+			iter1 = m_SceneComponentList.erase(iter1);
+			continue;
+		}
+
+		else if (!(*iter1)->GetEnable())
+		{
+			++iter1;
+			continue;
+		}
+
+		(*iter1)->Input(fTime);
+		++iter1;
+	}
+
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd;)
+	{
+		if (!(*iter)->GetActive())
+		{
+			SAFE_RELEASE((*iter));
+			iter = m_LayerList.erase(iter);
+			continue;
+		}
+
+		else if (!(*iter)->GetEnable())
+		{
+			++iter;
+			continue;
+		}
+
+		(*iter)->Input(fTime);
+		++iter;
+	}
+
+	m_pMainCameraObj->Input(fTime);
+
+	return 0;
+}
+
+int CScene::Update(float fTime)
+{
+	list<CSceneComponent*>::iterator	iter1;
+	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
+
+	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
+	{
+		if (!(*iter1)->GetActive())
+		{
+			SAFE_RELEASE((*iter1));
+			iter1 = m_SceneComponentList.erase(iter1);
+			continue;
+		}
+
+		else if (!(*iter1)->GetEnable())
+		{
+			++iter1;
+			continue;
+		}
+
+		(*iter1)->Update(fTime);
+		++iter1;
+	}
+
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd;)
+	{
+		if (!(*iter)->GetActive())
+		{
+			SAFE_RELEASE((*iter));
+			iter = m_LayerList.erase(iter);
+			continue;
+		}
+
+		else if (!(*iter)->GetEnable())
+		{
+			++iter;
+			continue;
+		}
+
+		(*iter)->Update(fTime);
+		++iter;
+	}
+
+	m_pMainCameraObj->Update(fTime);
+
+	return 0;
+}
+
+int CScene::LateUpdate(float fTime)
+{
+	list<CSceneComponent*>::iterator	iter1;
+	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
+
+	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
+	{
+		if (!(*iter1)->GetActive())
+		{
+			SAFE_RELEASE((*iter1));
+			iter1 = m_SceneComponentList.erase(iter1);
+			continue;
+		}
+
+		else if (!(*iter1)->GetEnable())
+		{
+			++iter1;
+			continue;
+		}
+
+		(*iter1)->LateUpdate(fTime);
+		++iter1;
+	}
+
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd;)
+	{
+		if (!(*iter)->GetActive())
+		{
+			SAFE_RELEASE((*iter));
+			iter = m_LayerList.erase(iter);
+			continue;
+		}
+
+		else if (!(*iter)->GetEnable())
+		{
+			++iter;
+			continue;
+		}
+
+		(*iter)->LateUpdate(fTime);
+		++iter;
+	}
+
+	m_pMainCameraObj->LateUpdate(fTime);
+
+	return 0;
+}
+
+void CScene::Collision(float fTime)
+{
+	list<CSceneComponent*>::iterator	iter1;
+	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
+
+	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
+	{
+		if (!(*iter1)->GetActive())
+		{
+			SAFE_RELEASE((*iter1));
+			iter1 = m_SceneComponentList.erase(iter1);
+			continue;
+		}
+
+		else if (!(*iter1)->GetEnable())
+		{
+			++iter1;
+			continue;
+		}
+
+		(*iter1)->Collision(fTime);
+		++iter1;
+	}
+
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd;)
+	{
+		if (!(*iter)->GetActive())
+		{
+			SAFE_RELEASE((*iter));
+			iter = m_LayerList.erase(iter);
+			continue;
+		}
+
+		else if (!(*iter)->GetEnable())
+		{
+			++iter;
+			continue;
+		}
+
+		(*iter)->Collision(fTime);
+		++iter;
+	}
+
+	// 마지막으로 마우스 충돌체를 넣어준다.
+	GET_SINGLE(CInput)->AddMouseCollision();
+
+	GET_SINGLE(CCollisionManager)->Collision(fTime);
+}
+
+void CScene::Render(float fTime)
+{
+	list<CSceneComponent*>::iterator	iter1;
+	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
+
+	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
+	{
+		if (!(*iter1)->GetActive())
+		{
+			SAFE_RELEASE((*iter1));
+			iter1 = m_SceneComponentList.erase(iter1);
+			continue;
+		}
+
+		else if (!(*iter1)->GetEnable())
+		{
+			++iter1;
+			continue;
+		}
+
+		(*iter1)->Render(fTime);
+		++iter1;
+	}
+
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd;)
+	{
+		if (!(*iter)->GetActive())
+		{
+			SAFE_RELEASE((*iter));
+			iter = m_LayerList.erase(iter);
+			continue;
+		}
+
+		else if (!(*iter)->GetEnable())
+		{
+			++iter;
+			continue;
+		}
+
+		(*iter)->Render(fTime);
+		++iter;
+	}
+}
+
+void CScene::AddLayer(const string & strTag, int iZOrder)
+{
+	CLayer*	pLayer = new CLayer;
+
+	pLayer->m_pScene = this;
+
+	pLayer->SetTag(strTag);
+
+	if (!pLayer->Init())
+	{
+		SAFE_RELEASE(pLayer);
+		return;
+	}
+
+	m_LayerList.push_back(pLayer);
+
+	pLayer->SetZOrder(iZOrder);
+}
+
+void CScene::ChangeLayerZOrder(const string & strTag, int iZOrder)
+{
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetTag() == strTag)
+		{
+			(*iter)->SetZOrder(iZOrder);
+			return;
+		}
+	}
+}
+
+CLayer * CScene::FindLayer(const string & strTag)
+{
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetTag() == strTag)
+		{
+			(*iter)->AddRef();
+			return *iter;
+		}
+	}
+
+	return nullptr;
+}
+
+void CScene::SortLayer()
+{
+	m_LayerList.sort(CScene::SortLayerZOrder);
+}
+
+void CScene::EnableLayer(const string & strTag, bool bEnable)
+{
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetTag() == strTag)
+		{
+			(*iter)->SetEnable(bEnable);
+			return;
+		}
+	}
+}
+
+CGameObject * CScene::FindObject(const string & strTag)
+{
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
+	{
+		CGameObject*	pObj = (*iter)->FindObject(strTag);
+
+		if (pObj)
+			return pObj;
+	}
+
+	return nullptr;
+}
+
+CGameObject * CScene::CreateCamera(const string & strTag,
+	const Vector3& vPos,
+	CAMERA_TYPE eType, float fWidth, float fHeight, float fViewAngle,
+	float fNear, float fFar)
+{
+	CGameObject*	pCameraObj = FindCamera(strTag);
+
+	if (pCameraObj)
+		return pCameraObj;
+
+	pCameraObj = CGameObject::CreateObject(strTag);
+
+	CTransform*	pTr = pCameraObj->GetTransform();
+
+	pTr->SetWorldPos(vPos);
+
+	SAFE_RELEASE(pTr);
+
+	CCamera*	pCamera = pCameraObj->AddComponent<CCamera>("Camera");
+
+	pCamera->SetCameraInfo(eType, fWidth, fHeight, fViewAngle, fNear, fFar);
+
+	SAFE_RELEASE(pCamera);
+
+	pCameraObj->AddRef();
+
+	m_mapCamera.insert(make_pair(strTag, pCameraObj));
+
+	return pCameraObj;
+}
+
+void CScene::ChangeCamera(const string & strTag)
+{
+	CGameObject*	pCameraObj = FindCamera(strTag);
+
+	if (!pCameraObj)
+		return;
+
+	SAFE_RELEASE(m_pMainCameraObj);
+	SAFE_RELEASE(m_pMainCamera);
+	SAFE_RELEASE(m_pMainCameraTr);
+
+	m_pMainCameraObj = pCameraObj;
+	m_pMainCameraTr = pCameraObj->GetTransform();
+	m_pMainCamera = pCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
+}
+
+CGameObject * CScene::FindCamera(const string & strTag)
+{
+	unordered_map<string, CGameObject*>::iterator	iter = m_mapCamera.find(strTag);
+
+	if (iter == m_mapCamera.end())
+		return nullptr;
+
+	iter->second->AddRef();
+
+	return iter->second;
+}
+
+bool CScene::SortLayerZOrder(const CLayer* pSrc, const CLayer* pDest)
+{
+	return pSrc->GetZOrder() < pDest->GetZOrder();
+}
+
+void CScene::EnableSceneComponent(const string & strTag, bool bEnable)
+{
+	list<CSceneComponent*>::iterator	iter1;
+	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
+
+	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End; ++iter1)
+	{
+		if ((*iter1)->GetTag() == strTag)
+		{
+			(*iter1)->SetEnable(bEnable);
+			return;
+		}
+	}
+}
+
