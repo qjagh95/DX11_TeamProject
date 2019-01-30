@@ -45,6 +45,16 @@ private:
 	class CRenderState* m_pDepthDisable;
 	class CSampler*     m_pGBufferSampler;
 	class CShader*		m_pLightAccDirShader;
+	class CShader*		m_pLightAccPointShader;
+	class CShader*		m_pLightAccSpotShader;
+	class CShader*      m_pLightBlendShader;
+	class CShader*		m_pFullScreenShader;
+	class CMesh*		m_pPointLightVolume;                                            
+	class CRenderTarget* m_pAlbedoTarget;
+	class CRenderTarget* m_pLightBlendTarget;
+	class CRenderTarget* m_pLightAccDifTarget;
+	class CRenderTarget* m_pLightAccSpcTarget;
+
 public:
 	GAME_MODE GetGameMode()	const;
 	bool GetRenderingMode()	const;
@@ -102,6 +112,8 @@ private:
 	void RenderLightDir(float fTime, class CLight* pLight);
 	void RenderLightPoint(float fTime, class CLight* pLight);
 	void RenderLightSpot(float fTime, class CLight* pLight);
+	void RenderLightBlend(float _fTime);
+	void RenderLightFullScreen(float _fTime);
 
 	DECLARE_SINGLE(CRenderManager)
 };

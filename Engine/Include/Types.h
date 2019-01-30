@@ -109,6 +109,7 @@ typedef struct PUN_DLL _tagTransformCBuffer
 	Matrix	matProj;
 	Matrix	matWV;
 	Matrix	matWVP;
+	Matrix  matInvProj;
 	Vector3	vPivot;
 	float	fEmpty;
 	Vector3	vLength;
@@ -241,5 +242,11 @@ typedef struct PUN_DLL _tagLightInfo
 	Vector2	vEmpty;
 }LightInfo, *PLightInfo;
 
+typedef struct PUN_DLL _tagVertexNormalTex
+{
+	Vector3		vPos;
+	Vector3		vNormal;
+	Vector2		vUV;
+}VertexNormalTex, *PVertexNormalTex;
 
 PUN_END

@@ -265,6 +265,7 @@
     <ClInclude Include="Ref.h" />
     <ClInclude Include="Rendering\BlendState.h" />
     <ClInclude Include="Rendering\DepthState.h" />
+    <ClInclude Include="Rendering\MultiRenderTarget.h" />
     <ClInclude Include="Rendering\RenderManager.h" />
     <ClInclude Include="Rendering\RenderState.h" />
     <ClInclude Include="Rendering\RenderTarget.h" />
@@ -549,6 +550,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Rendering\MultiRenderTarget.cpp" />
     <ClCompile Include="Rendering\RenderManager.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

@@ -350,6 +350,9 @@
     <ClCompile Include="SoundManagerT.cpp">
       <Filter>01. Core\11. SoundManager</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\MultiRenderTarget.cpp">
+      <Filter>03. Rendering\03. RenderTarget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -609,6 +612,9 @@
     </ClInclude>
     <ClInclude Include="SoundManagerT.h">
       <Filter>01. Core\11. SoundManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\MultiRenderTarget.h">
+      <Filter>03. Rendering\03. RenderTarget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -66,9 +66,14 @@ void GUIManager::Debug()
 
 	CScene* getScene = CSceneManager::GetInst()->GetScene();
 	CGameObject* getObject = getScene->FindObject("Pyramid");
+	CGameObject* GetLightObj = getScene->FindObject("GlobalLight1");
 
 	if (getObject == NULLPTR)
+	{
+		SAFE_RELEASE(getObject);
+		SAFE_RELEASE(getScene);
 		return;
+	}
 
 	ImGui::Text("Pyramid");
 
@@ -86,6 +91,29 @@ void GUIManager::Debug()
 	ImGui::BeginTabBar("Pyramid");
 	ImGui::EndTabBar();
 
+
+	static float LightRotX;
+	static float LightRotY;
+	static float LightRotZ;
+
+
+	ImGui::Text("GlobalLight1");
+
+	ImGui::SliderFloat("LightRotX", &LightRotX, 0.0f, 10.0f);
+	ImGui::SliderFloat("LightRotY", &LightRotY, 0.0f, 10.0f);
+	ImGui::SliderFloat("LightRotZ", &LightRotZ, 0.0f, 10.0f);
+
+	static Vector3 LightPos = Vector3(0.0f, 1.0f, 1.0f);
+	ImGui::SliderFloat3("GlobalLight1Pos", (float*)&LightPos, 0.0f, 10.0f);
+
+	GetLightObj->GetTransformNoneCount()->RotationX(LightRotX);
+	GetLightObj->GetTransformNoneCount()->RotationY(LightRotY);
+	GetLightObj->GetTransformNoneCount()->RotationZ(LightRotZ);
+	GetLightObj->GetTransformNoneCount()->SetWorldPos(LightPos);
+	ImGui::BeginTabBar("GlobalLight1");
+	ImGui::EndTabBar();
+
+	SAFE_RELEASE(GetLightObj);
 	SAFE_RELEASE(getObject);
 	SAFE_RELEASE(getScene);
 }

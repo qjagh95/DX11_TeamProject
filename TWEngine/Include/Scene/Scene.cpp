@@ -148,15 +148,12 @@ bool CScene::Init()
 	CTransform*	pTransform = pLightObj->GetTransform();
 
 	pTransform->SetWorldRot(-90.f, 0.f, 0.f);
-	pTransform->SetWorldPos(0.f, 0.f, 0.f);
+	pTransform->SetWorldPos(0.f, -1.f, 0.f);
 
 	SAFE_RELEASE(pTransform);
 
 	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-
-	/*pLight->SetLightColor(Vector4::Gold, Vector4::Gold,
-		Vector4::Gold);*/
-
+	pLight->SetLightColor(Vector4::Gold, Vector4::Gold,	Vector4::Gold);
 	pLight->SetLightType(LT_SPOT);
 	pLight->SetLightRange(10.f);
 	pLight->SetAngle(60.f, 90.f);

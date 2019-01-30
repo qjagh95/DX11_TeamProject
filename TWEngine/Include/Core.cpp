@@ -15,7 +15,7 @@ bool CCore::m_bLoop = true;
 CCore::CCore()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(1495);
+	//_CrtSetBreakAlloc(1042);
 
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 }

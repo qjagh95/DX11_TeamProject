@@ -37,6 +37,15 @@ public:
 	class CSampler* FindSampler(const string& strName);
 	class CSampler * FindSamplerNonCount(const string & strName);
 
+public:
+	void CreateSphere(vector<VertexNormalTex>& vecVertex, vector<int>& vecIndex,
+		float fRadius,
+		unsigned int iSubDivision);
+
+private:
+	void Subdivide(vector<VertexNormalTex>& vecVertices, vector<int>& vecIndices);
+	float AngleFromXY(float x, float y);
+
 	DECLARE_SINGLE(CResourcesManager)
 };
 

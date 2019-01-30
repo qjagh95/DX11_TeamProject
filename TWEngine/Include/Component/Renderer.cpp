@@ -324,6 +324,8 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matProj = pMainCamera->GetProjMatrix();
 	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
 	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
+	tCBuffer.matInvProj = tCBuffer.matProj;
+	tCBuffer.matInvProj.Inverse();
 	tCBuffer.vPivot = m_pTransform->GetPivot();
 	tCBuffer.vLength = m_pMesh->GetLength();
 
@@ -332,6 +334,7 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matProj.Transpose();
 	tCBuffer.matWV.Transpose();
 	tCBuffer.matWVP.Transpose();
+	tCBuffer.matInvProj.Transpose();
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform",
 		&tCBuffer);

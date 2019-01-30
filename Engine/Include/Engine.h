@@ -18,6 +18,9 @@
 #define	BAR_SHADER		"BarShader"
 #define	FULLSCREEN_SHADER	"FullScreenShader"
 #define LIGHT_DIR_ACC_SHADER "LightDirAccShader"
+#define LIGHT_POINT_ACC_SHADER "LightPointAccShader"
+#define LIGHT_SPOT_ACC_SHADER "LightSpotAccShader"
+#define	LIGHT_BLEND_SHADER  "LightBlendShader"
 #define SHADOW_SHADER	"ShadowShader"
 #define	STANDARD_NORMAL_COLOR_SHADER	"StandardNormalColorShader"
 

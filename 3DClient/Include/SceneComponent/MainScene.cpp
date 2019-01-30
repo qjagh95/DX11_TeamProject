@@ -36,9 +36,8 @@ bool CMainScene::Init()
 
 	CTransform*	pTransform = pObject->GetTransform();
 
-	pTransform->SetWorldScale(3.f, 3.f, 3.f);
+	pTransform->SetWorldScale(3.f, 1.f, 3.f);
 	pTransform->SetWorldPos(0.f, 0.f, 0.f);
-	pTransform->SetWorldRotY(-90.f);
 	SAFE_RELEASE(pTransform);
 
 	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
@@ -56,6 +55,30 @@ bool CMainScene::Init()
 	SAFE_RELEASE(pObject);
 
 	CreatePrototype();
+
+	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight1",
+		pDefaultLayer);
+
+	pTransform = pLightObj->GetTransform();
+
+	pTransform->SetWorldRot(90.f, 0.f, 0.f);
+	pTransform->SetWorldPos(0.f, 4.f, 0.f);
+
+	SAFE_RELEASE(pTransform);
+
+	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight1");
+
+	pLight->SetLightColor(Vector4::Blue, Vector4::Blue,
+		Vector4::Blue);
+
+	pLight->SetLightType(LT_SPOT);
+	pLight->SetLightRange(10.f);
+	pLight->SetAngle(60.f, 90.f);
+
+	SAFE_RELEASE(pLight);
+
+	SAFE_RELEASE(pLightObj);
+
 
 	SAFE_RELEASE(pDefaultLayer);
 	SAFE_RELEASE(pUILayer);
