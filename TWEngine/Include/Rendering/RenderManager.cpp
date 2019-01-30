@@ -1,15 +1,20 @@
 
 #include "EngineHeader.h"
 #include "RenderManager.h"
+#include "Shader.h"
 #include "BlendState.h"
 #include "DepthState.h"
 #include "RenderTarget.h"
-#include "../GameObject.h"
-#include "../Component/Light.h"
+#include "RasterizerState.h"
 #include "../Device.h"
-#include "../Resource/ResourcesManager.h"
+#include "../GameObject.h"
 #include "../Resource/Sampler.h"
-#include "Shader.h"
+#include "../Resource/ResourcesManager.h"
+#include "../Component/Light.h"
+#include "../Component/Camera.h"
+#include "../Component/Transform.h"
+#include "../Scene/Scene.h"
+#include "../Scene/SceneManager.h"
 
 PUN_USING
 
@@ -29,6 +34,7 @@ CRenderManager::CRenderManager() :
 
 CRenderManager::~CRenderManager()
 {
+	SAFE_RELEASE(m_pCullNone);
 	SAFE_RELEASE(m_pPointLightVolume);
 	SAFE_RELEASE(m_pFullScreenShader);
 	SAFE_RELEASE(m_pLightBlendShader);
@@ -104,6 +110,10 @@ bool CRenderManager::Init()
 	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
 	m_pDepthDisable = FindRenderState(DEPTH_DISABLE);
 	//////////////////////////////////////////////////////
+
+	CreateRasterizerState(CULL_NONE, D3D11_FILL_SOLID, D3D11_CULL_NONE);
+	m_pCullNone = FindRenderState(CULL_NONE);
+
 	// 포스트 이펙트용 렌더링타겟 생성
 	Vector3	vPos;
 	vPos.x = _RESOLUTION.iWidth - 100.f;
@@ -182,6 +192,7 @@ bool CRenderManager::Init()
 	m_pLightAccSpcTarget = FindRenderTarget("LightAccSpc");
 
 	m_pPointLightVolume = CResourcesManager::GetInst()->FindMesh("LightSphereVolume");
+	m_pPointLightLayout = GET_SINGLE(CShaderManager)->FindInputLayout(POS_LAYOUT);
 
 	return true;
 }
@@ -241,6 +252,31 @@ bool CRenderManager::CreateDepthStencilState(const string & strKey,
 	}
 
 	m_mapRenderState.insert(make_pair(strKey, pDepth));
+
+	return true;
+}
+
+bool CRenderManager::CreateRasterizerState(const string & strKey, D3D11_FILL_MODE eFill, 
+	D3D11_CULL_MODE eCull, BOOL bFrontCounterClockwise, int iDepthBias, float fDepthBiasClamp, 
+	float fSlopeScaledDepthBias, BOOL bDepthClipEnable, BOOL bScissorEnable, 
+	BOOL bMultisampleEnable, BOOL bAntialiasedLineEnable)
+{
+	CRasterizerState*	pState = (CRasterizerState*)FindRenderState(strKey);
+
+	if (pState)
+		return false;
+
+	pState = new CRasterizerState;
+
+	if (!pState->CreateState(eFill, eCull,
+		bFrontCounterClockwise, iDepthBias, fDepthBiasClamp, fSlopeScaledDepthBias,
+		bDepthClipEnable, bScissorEnable, bMultisampleEnable, bAntialiasedLineEnable))
+	{
+		SAFE_RELEASE(pState);
+		return false;
+	}
+
+	m_mapRenderState.insert(make_pair(strKey, pState));
 
 	return true;
 }
@@ -723,7 +759,7 @@ void CRenderManager::RenderLightAcc(float fTime)
 	ClearMRT("LightAcc", fClearColor);
 	SetMRT("LightAcc");
 
-	m_pLightAccDirShader->SetShader();
+	//m_pLightAccDirShader->SetShader();
 
 	CRenderState*	pAccBlend = FindRenderState(ACC_BLEND);
 
@@ -793,6 +829,52 @@ void CRenderManager::RenderLightDir(float fTime, CLight * pLight)
 void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 {
 	m_pLightAccPointShader->SetShader();
+
+	m_pCullNone->SetState();
+
+	TransformCBuffer	tCBuffer = {};
+
+	CCamera*	pMainCamera = nullptr;
+
+	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
+
+	pMainCamera = pScene->GetMainCamera();
+
+	SAFE_RELEASE(pScene);
+
+	Matrix	matScale, matPos;
+	matScale.Scaling(pLight->GetLightInfo().fRange,
+		pLight->GetLightInfo().fRange, pLight->GetLightInfo().fRange);
+	matPos.Translation(pLight->GetLightInfo().vPos);
+
+	tCBuffer.matWorld = matScale * matPos;
+	tCBuffer.matView = pMainCamera->GetViewMatrix();
+	tCBuffer.matProj = pMainCamera->GetProjMatrix();
+	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
+	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
+	tCBuffer.matInvProj = tCBuffer.matProj;
+	tCBuffer.matInvProj.Inverse();
+
+	tCBuffer.matWorld.Transpose();
+	tCBuffer.matView.Transpose();
+	tCBuffer.matProj.Transpose();
+	tCBuffer.matWV.Transpose();
+	tCBuffer.matWVP.Transpose();
+	tCBuffer.matInvProj.Transpose();
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform",
+		&tCBuffer);
+
+	SAFE_RELEASE(pMainCamera);
+
+	// 조명 정보를 상수버퍼에 넘겨준다.
+	pLight->SetShader();
+
+	CONTEXT->IASetInputLayout(m_pPointLightLayout);
+
+	m_pPointLightVolume->Render();
+
+	m_pCullNone->ResetState();
 }
 
 void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)

@@ -16,6 +16,9 @@
     <Filter Include="01. SceneComponent">
       <UniqueIdentifier>{b2093e84-ebb5-4c34-ad31-17f005aac64d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent">
+      <UniqueIdentifier>{ccf439c4-579f-4acc-805e-afabf4a3dcac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -33,6 +36,9 @@
     <ClInclude Include="SceneComponent\StartScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Player.h">
+      <Filter>02. UserComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -46,6 +52,9 @@
     </ClCompile>
     <ClCompile Include="SceneComponent\StartScene.cpp">
       <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Player.cpp">
+      <Filter>02. UserComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

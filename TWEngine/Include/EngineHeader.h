@@ -24,7 +24,6 @@
 #include <d3dcompiler.h> // shader를 컴파일하는 기능을 제공한다
 #include <DirectXCollision.h>
 
-#pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
 #pragma comment(lib, "ImGui")

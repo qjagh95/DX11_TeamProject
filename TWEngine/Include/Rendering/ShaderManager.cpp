@@ -79,6 +79,11 @@ bool CShaderManager::Init()
 	if (!LoadShader(LIGHT_POINT_ACC_SHADER, TEXT("Light.fx"), pEntry))
 		return false;
 
+	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+
+	if (!CreateInputLayout(POS_LAYOUT, LIGHT_POINT_ACC_SHADER))
+		return false;
+
 	pEntry[ST_VERTEX] = (char*)"LightDirVS";
 	pEntry[ST_PIXEL] = (char*)"LightAccPS";
 	if (!LoadShader(LIGHT_SPOT_ACC_SHADER, TEXT("Light.fx"), pEntry))
@@ -114,10 +119,6 @@ bool CShaderManager::Init()
 	if (!LoadShader(COLLIDER_SHADER, TEXT("Collider.fx"), pEntry))
 		return false;
 
-	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
-
-	if (!CreateInputLayout(POS_LAYOUT, COLLIDER_SHADER))
-		return false;
 //#endif	// _DEBUG
 
 	// 상수버퍼 만들기

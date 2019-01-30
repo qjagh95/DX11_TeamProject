@@ -28,6 +28,11 @@ LIGHT_TYPE CLight::GetLightType() const
 	return (LIGHT_TYPE)m_tInfo.iLightType;
 }
 
+LightInfo CLight::GetLightInfo() const
+{
+	return m_tInfo;
+}
+
 void CLight::SetLightType(LIGHT_TYPE eType)
 {
 	m_tInfo.iLightType = eType;

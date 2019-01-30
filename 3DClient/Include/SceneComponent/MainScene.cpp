@@ -14,7 +14,8 @@
 #include "Component/Sound.h"
 #include "SoundManager.h"
 #include "Component/Light.h"
-
+#include "Input.h"
+#include "../UserComponent/Player.h"
 CMainScene::CMainScene()
 {
 }
@@ -34,10 +35,16 @@ bool CMainScene::Init()
 
 	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);	
 
+	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
+
+	SAFE_RELEASE(pPlayer);
+
 	CTransform*	pTransform = pObject->GetTransform();
 
 	pTransform->SetWorldScale(3.f, 1.f, 3.f);
 	pTransform->SetWorldPos(0.f, 0.f, 0.f);
+	m_pTr = pTransform;
+
 	SAFE_RELEASE(pTransform);
 
 	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
@@ -64,16 +71,36 @@ bool CMainScene::Init()
 	pTransform->SetWorldRot(90.f, 0.f, 0.f);
 	pTransform->SetWorldPos(0.f, 4.f, 0.f);
 
+
 	SAFE_RELEASE(pTransform);
 
 	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight1");
 
-	pLight->SetLightColor(Vector4::Blue, Vector4::Blue,
-		Vector4::Blue);
-
+	pLight->SetLightColor(Vector4::HotPink, Vector4::HotPink,
+		Vector4::HotPink);
 	pLight->SetLightType(LT_SPOT);
 	pLight->SetLightRange(10.f);
 	pLight->SetAngle(60.f, 90.f);
+
+	SAFE_RELEASE(pLight);
+
+	SAFE_RELEASE(pLightObj);
+
+	pLightObj = CGameObject::CreateObject("GlobalLight2",
+		pDefaultLayer);
+
+	pTransform = pLightObj->GetTransform();
+
+	pTransform->SetWorldPos(-2.f, 0.f, 0.f);
+
+	SAFE_RELEASE(pTransform);
+
+	pLight = pLightObj->AddComponent<CLight>("GlobalLight2");
+
+	pLight->SetLightColor(Vector4::Blue, Vector4::Blue,
+		Vector4::Blue);
+	pLight->SetLightType(LT_POINT);
+	pLight->SetLightRange(10.f);
 
 	SAFE_RELEASE(pLight);
 
@@ -86,12 +113,24 @@ bool CMainScene::Init()
 
 	SAFE_RELEASE(pCamera);
 
+	GET_SINGLE(CInput)->BindAxis("Move", this, &CMainScene::Move);
+	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_W, 1.f);
+	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_S, -1.f);
+
 	return true;
 }
 
 int CMainScene::Update(float fTime)
 {
 	return 0;
+}
+
+void CMainScene::Move(float fScale, float fTime)
+{
+	if (fScale == 0.f)
+		return;
+
+	m_pTr->Move(AXIS_Y, 2.f * fScale, fTime);
 }
 
 void CMainScene::CreatePrototype()

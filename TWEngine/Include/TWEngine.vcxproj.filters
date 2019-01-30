@@ -353,6 +353,9 @@
     <ClCompile Include="Rendering\MultiRenderTarget.cpp">
       <Filter>03. Rendering\03. RenderTarget</Filter>
     </ClCompile>
+    <ClCompile Include="Rendering\RasterizerState.cpp">
+      <Filter>03. Rendering\02. RenderState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -615,6 +618,9 @@
     </ClInclude>
     <ClInclude Include="Rendering\MultiRenderTarget.h">
       <Filter>03. Rendering\03. RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\RasterizerState.h">
+      <Filter>03. Rendering\02. RenderState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

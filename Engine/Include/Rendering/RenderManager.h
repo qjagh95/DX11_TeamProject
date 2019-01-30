@@ -34,26 +34,28 @@ typedef struct PUN_DLL _tagMRT
 class PUN_DLL CRenderManager
 {
 private:
+	unordered_map<string, PMRT>					m_mapMRT;
 	unordered_map<string, class CRenderState*>	m_mapRenderState;
 	unordered_map<string, class CRenderTarget*>	m_mapRenderTarget;
-	std::unordered_map<std::string, PMRT> m_mapMRT;
-	RenderGroup			m_tRenderObj[RG_END];
-	RenderGroup			m_tLightGroup;
-	class CBlendState*	m_pCreateState;
-	GAME_MODE			m_eGameMode;
-	bool				m_bDeferred;
-	class CRenderState* m_pDepthDisable;
-	class CSampler*     m_pGBufferSampler;
-	class CShader*		m_pLightAccDirShader;
-	class CShader*		m_pLightAccPointShader;
-	class CShader*		m_pLightAccSpotShader;
-	class CShader*      m_pLightBlendShader;
-	class CShader*		m_pFullScreenShader;
-	class CMesh*		m_pPointLightVolume;                                            
-	class CRenderTarget* m_pAlbedoTarget;
-	class CRenderTarget* m_pLightBlendTarget;
-	class CRenderTarget* m_pLightAccDifTarget;
-	class CRenderTarget* m_pLightAccSpcTarget;
+	RenderGroup									m_tRenderObj[RG_END];
+	RenderGroup									m_tLightGroup;
+	GAME_MODE									m_eGameMode;
+	bool										m_bDeferred;
+	ID3D11InputLayout*							m_pPointLightLayout;
+	class CBlendState*							m_pCreateState;
+	class CRenderState*							m_pDepthDisable;
+	class CRenderState*							m_pCullNone;
+	class CSampler*								m_pGBufferSampler;
+	class CShader*								m_pLightAccDirShader;
+	class CShader*								m_pLightAccPointShader;
+	class CShader*								m_pLightAccSpotShader;
+	class CShader*								m_pLightBlendShader;
+	class CShader*								m_pFullScreenShader;
+	class CMesh*								m_pPointLightVolume;                                            
+	class CRenderTarget*						m_pAlbedoTarget;
+	class CRenderTarget*						m_pLightBlendTarget;
+	class CRenderTarget*						m_pLightAccDifTarget;
+	class CRenderTarget*						m_pLightAccSpcTarget;
 
 public:
 	GAME_MODE GetGameMode()	const;
@@ -79,6 +81,11 @@ public:
 		D3D11_DEPTH_STENCILOP_DESC tFrontFace = {},
 		D3D11_DEPTH_STENCILOP_DESC tBackFace = {});
 
+	bool CreateRasterizerState(const string& strKey, D3D11_FILL_MODE eFill = D3D11_FILL_SOLID, D3D11_CULL_MODE eCull = D3D11_CULL_BACK,
+		BOOL bFrontCounterClockwise = FALSE, int iDepthBias = 0,
+		float fDepthBiasClamp = 0.f, float fSlopeScaledDepthBias = 0.f,
+		BOOL bDepthClipEnable = TRUE, BOOL bScissorEnable = FALSE,
+		BOOL bMultisampleEnable = FALSE, BOOL bAntialiasedLineEnable = FALSE);
 
 	class CRenderState* FindRenderState(const string& strName);
 

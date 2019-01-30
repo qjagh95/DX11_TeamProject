@@ -116,6 +116,7 @@
       <PrecompiledHeaderFile>EngineHeader.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../DirectXTK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <IncludeInUnityFile>true</IncludeInUnityFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -128,7 +129,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>PUN_EXPORT;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);MATH_IMPORT;</PreprocessorDefinitions>
@@ -137,6 +138,7 @@
       <PrecompiledHeaderFile>EngineHeader.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../DirectXTK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <IncludeInUnityFile>true</IncludeInUnityFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,6 +164,7 @@
       <PrecompiledHeaderFile>EngineHeader.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../DirectXTK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <IncludeInUnityFile>true</IncludeInUnityFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -187,6 +190,7 @@
       <PrecompiledHeaderFile>EngineHeader.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../DirectXTK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <IncludeInUnityFile>true</IncludeInUnityFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -266,6 +270,7 @@
     <ClInclude Include="Rendering\BlendState.h" />
     <ClInclude Include="Rendering\DepthState.h" />
     <ClInclude Include="Rendering\MultiRenderTarget.h" />
+    <ClInclude Include="Rendering\RasterizerState.h" />
     <ClInclude Include="Rendering\RenderManager.h" />
     <ClInclude Include="Rendering\RenderState.h" />
     <ClInclude Include="Rendering\RenderTarget.h" />
@@ -551,6 +556,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Rendering\MultiRenderTarget.cpp" />
+    <ClCompile Include="Rendering\RasterizerState.cpp" />
     <ClCompile Include="Rendering\RenderManager.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

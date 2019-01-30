@@ -15,7 +15,8 @@ PUN_USING
 DEFINITION_SINGLE(CInput)
 
 CInput::CInput() :
-	m_pCreateKey(nullptr),
+	m_pInput(nullptr),
+	m_pKeyboard(nullptr),
 	m_pMouseTr(nullptr),
 	m_pMouse(nullptr),
 	m_bShowCursor(false)
@@ -27,7 +28,16 @@ CInput::~CInput()
 	SAFE_RELEASE(m_pWorldPoint);
 	SAFE_RELEASE(m_pMouseTr);
 	SAFE_RELEASE(m_pMouse);
-	Safe_Delete_Map(m_mapKey);
+	Safe_Delete_Map(m_mapAxis);
+	Safe_Delete_Map(m_mapAction);
+
+	if (m_pKeyboard)
+	{
+		m_pKeyboard->Unacquire();
+		SAFE_RELEASE(m_pKeyboard);
+	}
+
+	SAFE_RELEASE(m_pInput);
 }
 
 CGameObject * CInput::GetMouseObj() const
@@ -73,23 +83,21 @@ void CInput::SetWorldMousePos(Vector3 _vPos)
 
 bool CInput::Init()
 {
-	AddKey("MoveUp", 'W');
-	AddKey("MoveDown", 'S');
-	AddKey("MoveLeft", 'A');
-	AddKey("MoveRight", 'D');
-	AddKey(VK_F1, "Pause");
-	AddKey(VK_F7, "HP_Potion");
-	AddKey(VK_F8, "MP_Potion");
-	AddKey(VK_LBUTTON, "LButton");
-	AddKey(VK_RBUTTON, "RButton");
-	AddKey(VK_MBUTTON, "MButton");
-	AddKey("SoulScream", '1');
-	AddKey("SpaceCutting", '2');
-	AddKey("HellGate", '3');
-	AddKey("SpinHammer", '4');
-	AddKey("FullHammer", '5');
-	AddKey("IronMaden", '6');
-	AddKey("MeteorSoul", '7');
+	if (FAILED(DirectInput8Create(WINDOWINSTANCE, DIRECTINPUT_VERSION, IID_IDirectInput8,
+		(void**)&m_pInput, nullptr)))
+		return false;
+
+	if (FAILED(m_pInput->CreateDevice(GUID_SysKeyboard, &m_pKeyboard, nullptr)))
+		return false;
+
+	if (FAILED(m_pKeyboard->SetDataFormat(&c_dfDIKeyboard)))
+		return false;
+
+	if (FAILED(m_pKeyboard->SetCooperativeLevel(WINDOWHANDLE, DISCL_EXCLUSIVE | DISCL_FOREGROUND)))
+		return false;
+	
+	if (FAILED(m_pKeyboard->Acquire()))
+		return false;
 
 	m_pMouse = CGameObject::CreateObject("MouseObj");
 
@@ -124,47 +132,172 @@ bool CInput::Init()
 
 	ShowCursor(FALSE);
 
+	memset(m_bPress, 0, sizeof(bool) * 256);
+	memset(m_bPush, 0, sizeof(bool) * 256);
+	memset(m_bRelease, 0, sizeof(bool) * 256);
+	memset(m_cKey, 0, sizeof(unsigned char) * 256);
+
 	return true;
 }
 
 void CInput::Update(float fTime)
 {
-	unordered_map<string, PKeyInfo>::iterator	iter;
-	unordered_map<string, PKeyInfo>::iterator	iterEnd = m_mapKey.end();
+	ReadKeyBoard(); // 256개의 Keyboard 상태를 얻어온다.
 
-	for (iter = m_mapKey.begin(); iter != iterEnd; ++iter)
+	//256개의 KeyList를 순회한다.
+	for (size_t i = 0; i < m_KeyList.size(); ++i)
 	{
-		size_t	iCount = 0;
-		for (size_t i = 0; i < iter->second->vecKey.size(); ++i)
+		if (m_cKey[m_KeyList[i]] & 0x80) // 현재 Key가 눌려있는 상태라면
 		{
-			if (GetAsyncKeyState((int)iter->second->vecKey[i]) & 0x8000)
-				++iCount;
-		}
-
-		if (iCount == iter->second->vecKey.size())
-		{
-			if (!iter->second->bPress && !iter->second->bPush)
+			if (!m_bPress[m_KeyList[i]] && !m_bPush[m_KeyList[i]]) //Key 상태가 Press , Push가 모두 False였다면
 			{
-				iter->second->bPress = true;
-				iter->second->bPush = true;
+				m_bPush[m_KeyList[i]] = true; // 현재 Key의 Push true
+				m_bPress[m_KeyList[i]] = true; // 현재 Key의 Press true
 			}
-
-			else if (iter->second->bPress)
+			else // 둘중에 하나라도 true 상태였다면
 			{
-				iter->second->bPress = false;
+				m_bPress[m_KeyList[i]] = false; // 현재 Key의 Press false
+				m_bPush[m_KeyList[i]] = true;	// 현재 Key의 Push true
 			}
 		}
 
-		else if (iter->second->bPush)
+		else if (m_bPress[m_KeyList[i]] || m_bPush[m_KeyList[i]])
+			// 만약에 안눌려있는데 Press나 Push가 true일경우
 		{
-			iter->second->bUp = true;
-			iter->second->bPress = false;
-			iter->second->bPush = false;
+			m_bPress[m_KeyList[i]] = false; // 현재 Key Press false
+			m_bPush[m_KeyList[i]] = false; // 현재 key Push false
+			m_bRelease[m_KeyList[i]] = true; // 현재 Key Release true
 		}
 
-		else if (iter->second->bUp)
-			iter->second->bUp = false;
+		else if (m_bRelease[m_KeyList[i]]) // Key가 안눌려있는데 Release가 true일 경우
+		{
+			m_bRelease[m_KeyList[i]] = false; // 현재 Key Release false
+		}
 	}
+
+	unordered_map<string, PBindAxis>::iterator	iter;
+	unordered_map<string, PBindAxis>::iterator	iterEnd = m_mapAxis.end();
+
+	// Axis(이동관련 Key를 주로 사용함) Key Map을 순회한다.
+	for (iter = m_mapAxis.begin(); iter != iterEnd; ++iter)
+	{
+		// Map Key에 등록되어있는 Key List를 순회한다.
+		for (size_t i = 0; i < iter->second->KeyList.size(); ++i)
+		{
+			float	fScale = 0.f; // 지역변수 fScale 선언한다.
+
+			if (m_bPush[(iter->second->KeyList[i])->cKey]) // 현재 Key의 Push가 true일경우
+				fScale = (iter->second->KeyList[i])->fScale; // 현재 Key가 등록된 Scale 값을 지역변수에 넣는다.
+
+			// Func이 등록된 Key들은 Function이 계속 호출된다.
+			// Key가 안눌렸을때 0.f가 들어가서 옵션이 사용 안되게끔 하는데
+			// 선생님이 이거는 의도해서 구조를 작성했다고 함.
+			// 실제로 Key가 눌려서 Scale값이 들어가면 행위가 일어나고
+			// Key가 Release상태거나 아무런 행위를 안했을때는 Scale값에 0이들어가서
+			// 함수 호출했을때 행위가 일어나지 않는다.
+			if (iter->second->bFunctionBind) 
+				iter->second->func(fScale, fTime);
+		}
+	}
+
+	unordered_map<string, PBindAction>::iterator	iter2;
+	unordered_map<string, PBindAction>::iterator	iter2End = m_mapAction.end();
+
+	unsigned char	cSKey[SKEY_END] = { DIK_LSHIFT, DIK_LCONTROL, DIK_LALT };
+	//Special Key의 tag를 담을 변수 cSKey배열변수 선언
+	bool	bSKeyState[SKEY_END] = {};
+	//Special Key의 현재 Key 상태를 담을 bool 배열 변수 선언 
+	for (int i = 0; i < SKEY_END; ++i) // Special Key의 갯수만큼 반복 돌린다.
+	{
+		if (m_cKey[cSKey[i]] & 0x80) // Special Key의 키가 눌렸는지 Check 한다.
+		{
+			bSKeyState[i] = true; // Key가 눌려있다면 bool 배열의 현재 Key를 true로 정의한다.
+		}
+		else
+		{
+			bSKeyState[i] = false; // 아니라면 false로 정의한다.
+		}
+	}
+
+	// 조합키를 담은 mapAction Key를 순회한다.
+	for (iter2 = m_mapAction.begin(); iter2 != iter2End; ++iter2)
+	{
+		vector<PActionKey>::iterator	iter1;
+		vector<PActionKey>::iterator	iter1End = iter2->second->KeyList.end();
+		// ActionKey에 등록되어있는 KeyList도 순회한다.
+		for (iter1 = iter2->second->KeyList.begin(); iter1 != iter1End; ++iter1)
+		{
+			bool bSKeyEnable[SKEY_END] = { false  , false , false };
+			
+			for (int i = 0; i < SKEY_END; ++i)
+			{
+				if ((*iter1)->bSKey[i]) // Map key에 등록되어있는 Special Key가 true 상태라면
+				{
+					if (bSKeyState[i]) // 위에서 Check한 Special Key의 눌려져있는 상태가 true라면
+						bSKeyEnable[i] = true; // 지역변수로 선언한 KeyEnable 상태를 true로 정의한다
+
+					else
+						bSKeyEnable[i] = false; // 아니라면 false로 정의한다.
+				}
+				else // 반대로 Map Key에 등록된 SpecialKey가 false라면
+				{
+					if (bSKeyState[i]) // 눌려져 있을경우 Enable은 false가되고
+						bSKeyEnable[i] = false;
+
+					else
+						bSKeyEnable[i] = true; // 아닐경우 true가 된다.
+				}
+			}
+
+			if (m_bPush[(*iter1)->cKey] && bSKeyEnable[SKEY_CONTROL] &&
+				bSKeyEnable[SKEY_SHIFT] && bSKeyEnable[SKEY_ALT])
+				// 등록된 Key가 true이며 SpecialKey의 Enable상태가 모두 true라면
+			{
+				if (!(*iter1)->bPress && !(*iter1)->bPush)//Press와 Push상태가 모두 false라면
+				{
+					(*iter1)->bPress = true; // 현재 Key Press true
+					(*iter1)->bPush = true;// 현재 Key Push true
+				}
+
+				else // 둘중에 하나라도 true라면
+					(*iter1)->bPress = false;// 현재 Key의 Press 상태 false
+			}
+
+			else if ((*iter1)->bPress || (*iter1)->bPush) 
+				// Special키와 일반키가 조합이 다 안눌려 있는 상태라면
+				// Press와 Push 둘중에 하나라도 true 상태이면
+			{
+				(*iter1)->bPress = false;  // Press false
+				(*iter1)->bPush = false; // Push false
+				(*iter1)->bRelease = true; // Release true
+			}
+
+			else if ((*iter1)->bRelease)
+				// 활성화가 안되어있고 release가 true 상태이면
+			{
+				(*iter1)->bRelease = false; // release false
+			}
+
+			if (iter2->second->iKeyState & KEY_PRESS &&
+				(*iter1)->bPress && iter2->second->bFunctionBind[AT_PRESS])
+			{
+				iter2->second->func[AT_PRESS](fTime);
+			}
+
+			if (iter2->second->iKeyState & KEY_PUSH &&
+				(*iter1)->bPush && iter2->second->bFunctionBind[AT_PUSH])
+			{
+				iter2->second->func[AT_PUSH](fTime);
+			}
+
+			if (iter2->second->iKeyState & KEY_RELEASE &&
+				(*iter1)->bRelease && iter2->second->bFunctionBind[AT_RELEASE])
+			{
+				iter2->second->func[AT_RELEASE](fTime);
+			}
+		}
+	}
+
 
 	POINT	tMousePos;
 
@@ -172,22 +305,17 @@ void CInput::Update(float fTime)
 	ScreenToClient(WINDOWHANDLE, &tMousePos);
 
 	Vector2	vMousePos((float)tMousePos.x, (float)tMousePos.y);
-
 	RECT	rc = {};
 
 	GetClientRect(WINDOWHANDLE, &rc);
-
 	vMousePos.y = rc.bottom - vMousePos.y;
 
 	// 비율을 이용해서 디바이스 해상도 내에서의 좌표를 구한다.
 	vMousePos *= GET_SINGLE(CDevice)->GetWindowToDeviceResolution();
-
 	m_vMouseGap = vMousePos - m_vMouseClient;
-
 	m_vMouseClient = vMousePos;
 
 	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
-
 	CTransform*	pCameraTr = pScene->GetMainCameraTransform();
 	m_vMouseWorld = m_vMouseClient + Vector2(pCameraTr->GetWorldPos().x, pCameraTr->GetWorldPos().y);
 
@@ -197,54 +325,17 @@ void CInput::Update(float fTime)
 	m_pMouseTr->SetWorldPos(Vector3(m_vMouseClient.x, m_vMouseClient.y, 0.f));
 	m_pMouse->Update(fTime);
 
-	if (!m_bShowCursor && (m_vMouseClient.x < 0 || m_vMouseClient.x > _RESOLUTION.iWidth ||
-		m_vMouseClient.y < 0 || m_vMouseClient.y > _RESOLUTION.iHeight))
+	if (!m_bShowCursor && (m_vMouseClient.x < 0 || m_vMouseClient.x > _RESOLUTION.iWidth || m_vMouseClient.y < 0 || m_vMouseClient.y > _RESOLUTION.iHeight))
 	{
 		m_bShowCursor = true;
-
-		while (ShowCursor(TRUE) != 0)
-		{
-		}
+		while (ShowCursor(TRUE) != 0) {}
 	}
 
-	else if (m_bShowCursor && 0.f <= m_vMouseClient.x && m_vMouseClient.x <= _RESOLUTION.iWidth &&
-		0.f <= m_vMouseClient.y && m_vMouseClient.y <= _RESOLUTION.iHeight)
+	else if (m_bShowCursor && 0.f <= m_vMouseClient.x && m_vMouseClient.x <= _RESOLUTION.iWidth && 0.f <= m_vMouseClient.y && m_vMouseClient.y <= _RESOLUTION.iHeight)
 	{
 		m_bShowCursor = false;
-		while (ShowCursor(FALSE) >= 0)
-		{
-		}
+		while (ShowCursor(FALSE) >= 0) {}
 	}
-}
-
-bool CInput::KeyPress(const string & strKey)
-{
-	PKeyInfo	pInfo = FindKey(strKey);
-
-	if (!pInfo)
-		return false;
-
-	return pInfo->bPress;
-}
-
-bool CInput::KeyPush(const string & strKey)
-{
-	PKeyInfo	pInfo = FindKey(strKey);
-
-	if (!pInfo)
-		return false;
-
-	return pInfo->bPush;
-}
-
-bool CInput::KeyUp(const string & strKey)
-{
-	PKeyInfo	pInfo = FindKey(strKey);
-
-	if (!pInfo)
-		return false;
-
-	return pInfo->bUp;
 }
 
 void CInput::RenderMouse(float fTime)
@@ -256,9 +347,8 @@ void CInput::AddMouseCollision()
 {
 	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
 	CTransform*	pCameraTr = pScene->GetMainCameraTransform();
-
-	m_pWorldPoint->SetInfo(pCameraTr->GetWorldPos());
 	Vector3	vWorldPos = m_pWorldPoint->GetInfo();
+	m_pWorldPoint->SetInfo(pCameraTr->GetWorldPos());
 
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pScene);
@@ -266,11 +356,39 @@ void CInput::AddMouseCollision()
 	m_pMouse->LateUpdate(0.f);
 }
 
-PKeyInfo CInput::FindKey(const string & strKey)
+bool CInput::ReadKeyBoard()
 {
-	unordered_map<string, PKeyInfo>::iterator	iter = m_mapKey.find(strKey);
+	HRESULT	result = m_pKeyboard->GetDeviceState(256, m_cKey);
+	// 현재 Keyboard 256개의 Key 상태를 얻어온다.
 
-	if (iter == m_mapKey.end())
+	if (FAILED(result))
+	{
+		if (result == DIERR_INPUTLOST || result == DIERR_NOTACQUIRED)
+			// KeyBoard 장치 의 연결이 끊겼을경우
+			m_pKeyboard->Acquire();// 다시 연결 한다. 
+
+		else // 아닐경우(비정상으로 판단)
+			return false;//(false를 반환한다)
+	}
+
+	return true;
+}
+
+PBindAxis CInput::FindAxis(const std::string & _strName)
+{
+	unordered_map<string, PBindAxis>::iterator	iter = m_mapAxis.find(_strName);
+
+	if (iter == m_mapAxis.end())
+		return nullptr;
+
+	return iter->second;
+}
+
+PBindAction CInput::FindAction(const std::string & _strName)
+{
+	unordered_map<string, PBindAction>::iterator	iter = m_mapAction.find(_strName);
+
+	if (iter == m_mapAction.end())
 		return nullptr;
 
 	return iter->second;

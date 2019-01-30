@@ -24,7 +24,6 @@
 #include <d3dcompiler.h> // shader를 컴파일하는 기능을 제공한다
 #include <DirectXCollision.h>
 
-#pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
 #pragma comment(lib, "ImGui")
@@ -50,7 +49,7 @@ using namespace std;
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 
-//#include <Audio.h>
+#include <Audio.h>
 
 #include "PathManager.h"
 #include "Resource/ResourcesManager.h"

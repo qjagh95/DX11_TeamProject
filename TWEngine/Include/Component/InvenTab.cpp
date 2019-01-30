@@ -123,27 +123,27 @@ int CInvenTab::Input(float fTime)
 
 int CInvenTab::Update(float fTime)
 {
-	if (m_eState == ITS_MOUSEON || m_eState == ITS_CLICK)
-	{
-		if (KEYPUSH("LButton"))
-		{
-			m_eState = ITS_CLICK;
-			if (!m_strSound[ITS_CLICK - 1].empty())
-				GET_SINGLE(CSoundManager)->Play(m_strSound[ITS_CLICK - 1]);
-		}
+	//if (m_eState == ITS_MOUSEON || m_eState == ITS_CLICK)
+	//{
+	//	if (KEYPUSH("LButton"))
+	//	{
+	//		m_eState = ITS_CLICK;
+	//		if (!m_strSound[ITS_CLICK - 1].empty())
+	//			GET_SINGLE(CSoundManager)->Play(m_strSound[ITS_CLICK - 1]);
+	//	}
 
-		else if (KEYUP("LButton"))
-		{
-			//m_ClickCallback(fTime);
-		}
-	}
+	//	else if (KEYUP("LButton"))
+	//	{
+	//		//m_ClickCallback(fTime);
+	//	}
+	//}
 
-	if (m_eState == ITS_MOUSEON || m_eState == ITS_CLICK)
-	{
-		m_pAnimation->ChangeClip("ITab_On");
-	}
-	else
-		m_pAnimation->ChangeClip("ITab_Idle");
+	//if (m_eState == ITS_MOUSEON || m_eState == ITS_CLICK)
+	//{
+	//	m_pAnimation->ChangeClip("ITab_On");
+	//}
+	//else
+	//	m_pAnimation->ChangeClip("ITab_Idle");
 
 	return 0;
 }

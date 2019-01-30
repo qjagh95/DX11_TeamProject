@@ -19,7 +19,8 @@ private:
 	float		m_fInAngle;
 	float		m_fOutAngle;
 public:
-	LIGHT_TYPE  GetLightType() const;
+	LIGHT_TYPE  GetLightType()	const;
+	LightInfo	GetLightInfo()	const;
 
 public:
 	void SetLightType(LIGHT_TYPE eType);

@@ -34,6 +34,7 @@
 #define	ALPHA_BLEND			"AlphaBlend"
 #define ACC_BLEND			"AccBlend"
 #define	DEPTH_DISABLE		"DepthDisable"
+#define CULL_NONE			"CullNone"
 
 enum SHADER_TYPE
 {
@@ -41,3 +42,7 @@ enum SHADER_TYPE
 	ST_PIXEL,
 	ST_END
 };
+
+#include <dinput.h>
+#pragma comment(lib , "dinput8")
+#pragma comment(lib, "dxguid")

@@ -121,27 +121,27 @@ bool COptionTab::Init()
 
 int COptionTab::Input(float fTime)
 {
-	if (m_eState == OTS_MOUSEON || m_eState == OTS_CLICK)
-	{
-		if (KEYPUSH("LButton"))
-		{
-			m_eState = OTS_CLICK;
-			if (!m_strSound[OTS_CLICK - 1].empty())
-				GET_SINGLE(CSoundManager)->Play(m_strSound[OTS_CLICK - 1]);
-		}
+	//if (m_eState == OTS_MOUSEON || m_eState == OTS_CLICK)
+	//{
+	//	if (KEYPUSH("LButton"))
+	//	{
+	//		m_eState = OTS_CLICK;
+	//		if (!m_strSound[OTS_CLICK - 1].empty())
+	//			GET_SINGLE(CSoundManager)->Play(m_strSound[OTS_CLICK - 1]);
+	//	}
 
-		else if (KEYUP("LButton"))
-		{
-			//m_ClickCallback(fTime);
-		}
-	}
+	//	else if (KEYUP("LButton"))
+	//	{
+	//		//m_ClickCallback(fTime);
+	//	}
+	//}
 
-	if (m_eState == OTS_MOUSEON || m_eState == OTS_CLICK)
-	{
-		m_pAnimation->ChangeClip("OTab_On");
-	}
-	else
-		m_pAnimation->ChangeClip("OTab_Idle");
+	//if (m_eState == OTS_MOUSEON || m_eState == OTS_CLICK)
+	//{
+	//	m_pAnimation->ChangeClip("OTab_On");
+	//}
+	//else
+	//	m_pAnimation->ChangeClip("OTab_Idle");
 
 	return 0;
 }

@@ -114,28 +114,28 @@ bool CUIEndButton::Init()
 
 int CUIEndButton::Input(float fTime)
 {
-	if (m_eState == EBS_MOUSEON || m_eState == EBS_CLICK)
-	{
-		if (KEYPRESS("LButton"))
-		{
-			m_eState = EBS_CLICK;
+	//if (m_eState == EBS_MOUSEON || m_eState == EBS_CLICK)
+	//{
+	//	if (KEYPRESS("LButton"))
+	//	{
+	//		m_eState = EBS_CLICK;
 
-			if (!m_strSound[EBS_CLICK - 1].empty())
-				GET_SINGLE(CSoundManager)->Play(m_strSound[EBS_CLICK - 1]);
-		}
+	//		if (!m_strSound[EBS_CLICK - 1].empty())
+	//			GET_SINGLE(CSoundManager)->Play(m_strSound[EBS_CLICK - 1]);
+	//	}
 
-		else if (KEYUP("LButton"))
-		{
-			m_ClickCallback(fTime);
-		}
-	}
+	//	else if (KEYUP("LButton"))
+	//	{
+	//		m_ClickCallback(fTime);
+	//	}
+	//}
 
-	if (m_eState == EBS_MOUSEON || m_eState == EBS_CLICK)
-	{
-		m_pAnimation->ChangeClip("EndBtn_On");
-	}
-	else
-		m_pAnimation->ChangeClip("EndBtn_Idle");
+	//if (m_eState == EBS_MOUSEON || m_eState == EBS_CLICK)
+	//{
+	//	m_pAnimation->ChangeClip("EndBtn_On");
+	//}
+	//else
+	//	m_pAnimation->ChangeClip("EndBtn_Idle");
 
 	return 0;
 }

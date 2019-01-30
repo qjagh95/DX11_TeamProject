@@ -123,27 +123,27 @@ int CEquipTab::Input(float fTime)
 
 int CEquipTab::Update(float fTime)
 {
-	if (m_eState == ETS_MOUSEON || m_eState == ETS_CLICK)
-	{
-		if (KEYPUSH("LButton"))
-		{
-			m_eState = ETS_CLICK;
-			if (!m_strSound[ETS_CLICK - 1].empty())
-				GET_SINGLE(CSoundManager)->Play(m_strSound[ETS_CLICK - 1]);
-		}
+	//if (m_eState == ETS_MOUSEON || m_eState == ETS_CLICK)
+	//{
+	//	if (KEYPUSH("LButton"))
+	//	{
+	//		m_eState = ETS_CLICK;
+	//		if (!m_strSound[ETS_CLICK - 1].empty())
+	//			GET_SINGLE(CSoundManager)->Play(m_strSound[ETS_CLICK - 1]);
+	//	}
 
-		else if (KEYUP("LButton"))
-		{
-			//m_ClickCallback(fTime);
-		}
-	}
+	//	else if (KEYUP("LButton"))
+	//	{
+	//		//m_ClickCallback(fTime);
+	//	}
+	//}
 
-	if (m_eState == ETS_MOUSEON || m_eState == ETS_CLICK)
-	{
-		m_pAnimation->ChangeClip("ETab_On");
-	}
-	else
-		m_pAnimation->ChangeClip("ETab_Idle");
+	//if (m_eState == ETS_MOUSEON || m_eState == ETS_CLICK)
+	//{
+	//	m_pAnimation->ChangeClip("ETab_On");
+	//}
+	//else
+	//	m_pAnimation->ChangeClip("ETab_Idle");
 
 	return 0;
 }

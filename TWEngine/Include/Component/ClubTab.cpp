@@ -121,27 +121,27 @@ bool CClubTab::Init()
 
 int CClubTab::Input(float fTime)
 {
-	if (m_eState == CLTS_MOUSEON || m_eState == CLTS_CLICK)
-	{
-		if (KEYPUSH("LButton"))
-		{
-			m_eState = CLTS_CLICK;
-			if (!m_strSound[CLTS_CLICK - 1].empty())
-				GET_SINGLE(CSoundManager)->Play(m_strSound[CLTS_CLICK - 1]);
-		}
+	//if (m_eState == CLTS_MOUSEON || m_eState == CLTS_CLICK)
+	//{
+	//	if (KEYPUSH("LButton"))
+	//	{
+	//		m_eState = CLTS_CLICK;
+	//		if (!m_strSound[CLTS_CLICK - 1].empty())
+	//			GET_SINGLE(CSoundManager)->Play(m_strSound[CLTS_CLICK - 1]);
+	//	}
 
-		else if (KEYUP("LButton"))
-		{
-			//m_ClickCallback(fTime);
-		}
-	}
+	//	else if (KEYUP("LButton"))
+	//	{
+	//		//m_ClickCallback(fTime);
+	//	}
+	//}
 
-	if (m_eState == CLTS_MOUSEON || m_eState == CLTS_CLICK)
-	{
-		m_pAnimation->ChangeClip("CLTab_On");
-	}
-	else
-		m_pAnimation->ChangeClip("CLTab_Idle");
+	//if (m_eState == CLTS_MOUSEON || m_eState == CLTS_CLICK)
+	//{
+	//	m_pAnimation->ChangeClip("CLTab_On");
+	//}
+	//else
+	//	m_pAnimation->ChangeClip("CLTab_Idle");
 
 	return 0;
 }

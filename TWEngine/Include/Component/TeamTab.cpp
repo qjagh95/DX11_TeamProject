@@ -121,27 +121,27 @@ bool CTeamTab::Init()
 
 int CTeamTab::Input(float fTime)
 {
-	if (m_eState == TTS_MOUSEON || m_eState == TTS_CLICK)
-	{
-		if (KEYPUSH("LButton"))
-		{
-			m_eState = TTS_CLICK;
-			if (!m_strSound[TTS_CLICK - 1].empty())
-				GET_SINGLE(CSoundManager)->Play(m_strSound[TTS_CLICK - 1]);
-		}
+	//if (m_eState == TTS_MOUSEON || m_eState == TTS_CLICK)
+	//{
+	//	if (KEYPUSH("LButton"))
+	//	{
+	//		m_eState = TTS_CLICK;
+	//		if (!m_strSound[TTS_CLICK - 1].empty())
+	//			GET_SINGLE(CSoundManager)->Play(m_strSound[TTS_CLICK - 1]);
+	//	}
 
-		else if (KEYUP("LButton"))
-		{
-			//m_ClickCallback(fTime);
-		}
-	}
+	//	else if (KEYUP("LButton"))
+	//	{
+	//		//m_ClickCallback(fTime);
+	//	}
+	//}
 
-	if (m_eState == TTS_MOUSEON || m_eState == TTS_CLICK)
-	{
-		m_pAnimation->ChangeClip("TTab_On");
-	}
-	else
-		m_pAnimation->ChangeClip("TTab_Idle");
+	//if (m_eState == TTS_MOUSEON || m_eState == TTS_CLICK)
+	//{
+	//	m_pAnimation->ChangeClip("TTab_On");
+	//}
+	//else
+	//	m_pAnimation->ChangeClip("TTab_Idle");
 
 	return 0;
 }

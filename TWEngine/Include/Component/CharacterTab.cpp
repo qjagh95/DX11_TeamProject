@@ -120,27 +120,27 @@ bool CCharacterTab::Init()
 
 int CCharacterTab::Input(float fTime)
 {
-	if (m_eState == CTS_MOUSEON || m_eState == CTS_CLICK)
-	{
-		if (KEYPUSH("LButton"))
-		{
-			m_eState = CTS_CLICK;
-			if (!m_strSound[CTS_CLICK - 1].empty())
-				GET_SINGLE(CSoundManager)->Play(m_strSound[CTS_CLICK - 1]);
-		}
+	//if (m_eState == CTS_MOUSEON || m_eState == CTS_CLICK)
+	//{
+	//	if (KEYPUSH("LButton"))
+	//	{
+	//		m_eState = CTS_CLICK;
+	//		if (!m_strSound[CTS_CLICK - 1].empty())
+	//			GET_SINGLE(CSoundManager)->Play(m_strSound[CTS_CLICK - 1]);
+	//	}
 
-		else if (KEYUP("LButton"))
-		{
-			//m_ClickCallback(fTime);
-		}
-	}
+	//	else if (KEYUP("LButton"))
+	//	{
+	//		//m_ClickCallback(fTime);
+	//	}
+	//}
 
-	if (m_eState == CTS_MOUSEON || m_eState == CTS_CLICK)
-	{
-		m_pAnimation->ChangeClip("CTab_On");
-	}
-	else
-		m_pAnimation->ChangeClip("CTab_Idle");
+	//if (m_eState == CTS_MOUSEON || m_eState == CTS_CLICK)
+	//{
+	//	m_pAnimation->ChangeClip("CTab_On");
+	//}
+	//else
+	//	m_pAnimation->ChangeClip("CTab_Idle");
 
 	return 0;
 }
