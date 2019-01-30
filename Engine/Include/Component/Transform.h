@@ -79,6 +79,14 @@ private:
 	Matrix		m_matParent;
 	Matrix		m_matWorld;
 
+	Matrix m_ParentScale;
+	Matrix m_ParentPos;
+	Matrix m_ParentRot;
+
+	Matrix m_DeltaScale;
+	Matrix m_DeltaRot;
+	Matrix m_DeltaPos;
+
 public:
 	void SetWorldScale(const Vector3& vScale);
 	void SetWorldScale(float x, float y, float z);
@@ -106,9 +114,21 @@ public:
 	Matrix GetWorldRotMatrix()	const;
 	Matrix GetParentMatrix()	const;
 	Matrix GetWorldMatrix()	const;
-	Matrix GetParentMatrixFromNoScale()	const;
-	Matrix GetParentRotMatrix()	const;
-	Matrix GetParentPosMatrix()	const;
+	Matrix GetWorldScaleMatrix() const;
+	Matrix GetWorldPosMatrix() const;
+
+	void SetParentPos(const Matrix& parentPos);
+	void SetParentRot(const Matrix& parentRot);
+	void SetParentScale(const Matrix& parentScale);
+
+	Matrix GetParentPos() const;
+	Matrix GetParentRot() const;
+	Matrix GetParentScale() const;
+	Matrix GetRotDelta() const;
+	Matrix GetPosDelta() const;
+	Matrix GetScaleDelta() const;
+
+	void SetUpdate(bool Value) { m_bUpdate = Value; }
 
 public:
 	void Move(AXIS eAxis, float fSpeed);
@@ -129,11 +149,6 @@ public:
 	void LookAt(const Vector3& vPos, AXIS eAxis = AXIS_Z);
 	void LookAt2D(const Vector3& vPos);
 	void UpdateTransform();
-
-private:
-	void ScaleParent();
-	void RotParent();
-	void PosParent();
 
 public:
 	virtual bool Init();

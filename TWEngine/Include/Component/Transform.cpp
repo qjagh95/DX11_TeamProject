@@ -1,4 +1,5 @@
-#include "stdafx.h"
+
+#include "EngineHeader.h"
 #include "Transform.h"
 #include "../GameObject.h"
 
@@ -195,15 +196,11 @@ Matrix CTransform::GetLocalMatrix() const
 void CTransform::SetWorldScale(const Vector3 & vScale)
 {
 	m_vWorldScale = vScale;
-
-	ScaleParent();
 }
 
 void CTransform::SetWorldScale(float x, float y, float z)
 {
 	m_vWorldScale = Vector3(x, y, z);
-
-	ScaleParent();
 }
 
 void CTransform::SetWorldRot(const Vector3 & vRot)
@@ -267,8 +264,10 @@ void CTransform::SetWorldPos(const Vector3 & vPos)
 	m_vWorldRelativePos += m_vWorldMove;
 
 	m_vWorldPos = vPos;
+	m_bUpdate = true;
 
-	PosParent();
+
+	m_matWorldPos.Translation(m_vWorldPos);
 }
 
 void CTransform::SetWorldPos(float x, float y, float z)
@@ -279,21 +278,19 @@ void CTransform::SetWorldPos(float x, float y, float z)
 
 	m_vWorldPos = vPos;
 
-	PosParent();
+	m_bUpdate = true;
+
+	m_matWorldPos.Translation(vPos);
 }
 
 void CTransform::SetWorldRelativePos(const Vector3 & vPos)
 {
 	m_vWorldRelativePos = vPos;
-
-	PosParent();
 }
 
 void CTransform::SetWorldRelativePos(float x, float y, float z)
 {
 	m_vWorldRelativePos = Vector3(x, y, z);
-
-	PosParent();
 }
 
 void CTransform::SetWorldPivot(const Vector3 & vPivot)
@@ -310,14 +307,13 @@ void CTransform::ComputeWorldAxis()
 {
 	Matrix matRot = m_matWorldRot;
 
-	if (m_pParent)
-		matRot *= m_pParent->GetWorldRotMatrix();
-
 	for (int i = 0; i < 3; ++i)
 	{
 		m_vWorldAxis[i] = Vector3::Axis[i].TransformNormal(matRot);
 		m_vWorldAxis[i].Normalize();
 	}
+
+	m_bUpdate = true;
 }
 
 Vector3 CTransform::GetWorldScale() const
@@ -370,30 +366,6 @@ Matrix CTransform::GetWorldMatrix() const
 	return m_matWorld;
 }
 
-Matrix CTransform::GetParentMatrixFromNoScale() const
-{
-	if (!m_pParent)
-		return m_matWorldRot * m_matWorldPos;
-
-	return m_matWorldRot * m_matWorldPos * m_pParent->GetParentMatrixFromNoScale();
-}
-
-Matrix CTransform::GetParentRotMatrix() const
-{
-	if (!m_pParent)
-		return m_matWorldRot;
-
-	return m_matWorldRot * m_pParent->GetParentRotMatrix();
-}
-
-Matrix CTransform::GetParentPosMatrix() const
-{
-	if (!m_pParent)
-		return m_matWorldPos;
-
-	return m_matWorldPos * m_pParent->GetParentPosMatrix();
-}
-
 void CTransform::Move(AXIS eAxis, float fSpeed)
 {
 	Move(Vector3(m_vWorldAxis[eAxis] * fSpeed));
@@ -421,7 +393,8 @@ void CTransform::Move(const Vector3 & vMove)
 
 	m_vWorldMove = vMove;
 
-	PosParent();
+	m_matWorldPos.Translation(m_vWorldPos);
+	m_bUpdate = true;
 }
 
 void CTransform::RotationX(float x)
@@ -463,14 +436,38 @@ void CTransform::Rotation(const Vector3 & vRot)
 {
 	m_vWorldRot += vRot;
 
-	//if (m_vWorldRot.z >= 360.f)
-	//	m_vWorldRot.z -= 360.f;
-
 	m_matWorldRot.Rotation(m_vWorldRot);
 
-	ComputeWorldAxis();
+	m_bUpdate = true;
 
-	PosParent();
+	ComputeWorldAxis();
+}
+
+void CTransform::SetParentPos(const Matrix& parentPos)
+{
+	m_ParentPos = parentPos;
+}
+void CTransform::SetParentRot(const Matrix& parentRot)
+{
+	m_ParentRot = parentRot;
+}
+void CTransform::SetParentScale(const Matrix& parentScale)
+{
+	m_ParentScale = parentScale;
+}
+
+Matrix CTransform::GetParentPos() const
+{
+	return m_ParentPos;
+}
+Matrix CTransform::GetParentRot() const
+{
+	return m_ParentRot;
+
+}
+Matrix CTransform::GetParentScale() const
+{
+	return m_ParentScale;
 }
 
 void CTransform::LookAt(CGameObject * pObj, AXIS eAxis)
@@ -554,78 +551,27 @@ void CTransform::UpdateTransform()
 	}
 }
 
-void CTransform::ScaleParent()
+Matrix CTransform::GetRotDelta() const
 {
-	if (!m_pParent)
-		m_vWorldRelativeScale = m_vWorldScale;
-
-	else if (!(m_iParentFlag & TPF_SCALE))
-		m_vWorldRelativeScale = m_vWorldScale / m_pParent->m_vWorldScale;
-
-	else
-		m_vWorldRelativeScale = m_vWorldScale / m_pParent->m_vWorldScale;
-
-	m_matWorldScale.Scaling(m_vWorldScale);
-
-	m_bUpdate = true;
-
-	if (!m_ChildList.empty())
-	{
-		list<CTransform*>::iterator	iter;
-		list<CTransform*>::iterator	iterEnd = m_ChildList.end();
-
-		for (iter = m_ChildList.begin(); iter != iterEnd; ++iter)
-		{
-			(*iter)->ScaleParent();
-		}
-	}
+	return m_DeltaRot;
+}
+Matrix CTransform::GetPosDelta() const
+{
+	return m_DeltaPos;
+}
+Matrix CTransform::GetScaleDelta() const
+{
+	return m_DeltaScale;
 }
 
-void CTransform::PosParent()
+Matrix CTransform::GetWorldScaleMatrix() const
 {
-	if (!m_pParent)
-		m_vWorldRelativePos = m_vWorldPos;
+	return m_matWorldScale;
+}
 
-	else if (!(m_iParentFlag & TPF_POS))
-		m_vWorldRelativePos = m_vWorldPos;
-
-	m_matWorldPos.Translation(m_vWorldRelativePos);
-
-	if (m_pParent)
-	{
-		Matrix	matParent;
-		if (m_iParentFlag & TPF_POS && m_iParentFlag & TPF_ROT)
-		{
-			matParent = m_pParent->GetParentMatrixFromNoScale();
-		}
-
-		else if (m_iParentFlag & TPF_POS)
-			matParent = m_pParent->GetParentPosMatrix();
-
-		else if (m_iParentFlag & TPF_ROT)
-			matParent = m_pParent->GetParentRotMatrix();
-
-		else
-			matParent.Identity();
-
-		Vector3 vPos = m_vWorldRelativePos.TransformCoord(matParent);
-
-		m_vWorldMove = vPos - m_vWorldPos;
-		m_vWorldPos = vPos;
-	}
-
-	m_bUpdate = true;
-
-	if (!m_ChildList.empty())
-	{
-		list<CTransform*>::iterator	iter;
-		list<CTransform*>::iterator	iterEnd = m_ChildList.end();
-
-		for (iter = m_ChildList.begin(); iter != iterEnd; ++iter)
-		{
-			(*iter)->PosParent();
-		}
-	}
+Matrix CTransform::GetWorldPosMatrix() const
+{
+	return m_matWorldPos;
 }
 
 bool CTransform::Init()
@@ -647,26 +593,36 @@ int CTransform::Update(float fTime)
 	else if (!m_bUpdate)
 		return 0;
 
-	m_matLocal = m_matLocalScale * m_matLocalRot *
-		m_matLocalPos;
+	m_matLocal = m_matLocalScale * m_matLocalRot *	m_matLocalPos;
+	//최종World에 곱해질 Parent행렬 선언.
+	Matrix Parent;
+	Parent.Identity();
 
-	if (m_pParent)
+	//자기자신의 행렬정보를 변화량 변수에 넣어준 후 플래그에 따라서 곱한다.
+	m_DeltaScale = m_matWorldScale;
+	m_DeltaRot = m_matWorldRot;
+	m_DeltaPos = m_matWorldPos;
+
+	if (m_iParentFlag & TPF_SCALE)
 	{
-		if (m_iParentFlag & TPF_ROT && m_iParentFlag & TPF_POS)
-			m_matParent = m_pParent->GetParentMatrixFromNoScale();
+		m_DeltaScale *= m_ParentScale;
+		Parent *= m_ParentScale;
+	}
 
-		else if (m_iParentFlag & TPF_ROT)
-			m_matParent = m_pParent->GetParentRotMatrix();
+	if (m_iParentFlag & TPF_ROT)
+	{
+		m_DeltaRot *= m_ParentRot;
+		Parent *= m_ParentRot;
+	}
 
-		else if (m_iParentFlag & TPF_POS)
-			m_matParent = m_pParent->GetParentPosMatrix();
-
-		else
-			m_matParent.Identity();
+	if (m_iParentFlag & TPF_POS)
+	{
+		m_DeltaPos *= m_ParentPos;
+		Parent *= m_ParentPos;
 	}
 	
-	m_matWorld = m_matWorldScale * m_matWorldPos * m_matParent;
-	//m_matWorld = m_matWorldScale * m_matWorldPos * m_matParent * m_matWorldRot;
+	m_matWorld = m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matParent;
+	m_matWorld *= Parent;
 	
 	m_bUpdate = false;
 
@@ -684,23 +640,35 @@ int CTransform::LateUpdate(float fTime)
 	m_matLocal = m_matLocalScale * m_matLocalRot *
 		m_matLocalPos;
 
-	if (m_pParent)
+	//최종World에 곱해질 Parent행렬 선언.
+	Matrix Parent;
+	Parent.Identity();
+
+	//자기자신의 행렬정보를 변화량 변수에 넣어준 후 플래그에 따라서 곱한다.
+	m_DeltaScale = m_matWorldScale;
+	m_DeltaRot = m_matWorldRot;
+	m_DeltaPos = m_matWorldPos;
+
+	if (m_iParentFlag & TPF_SCALE)
 	{
-		if (m_iParentFlag & TPF_ROT && m_iParentFlag & TPF_POS)
-			m_matParent = m_pParent->GetParentMatrixFromNoScale();
-
-		else if (m_iParentFlag & TPF_ROT)
-			m_matParent = m_pParent->GetParentRotMatrix();
-
-		else if (m_iParentFlag & TPF_POS)
-			m_matParent = m_pParent->GetParentPosMatrix();
-
-		else
-			m_matParent.Identity();
+		m_DeltaScale *= m_ParentScale;
+		Parent *= m_ParentScale;
 	}
 
-	m_matWorld = m_matWorldScale * m_matWorldRot *
-		m_matWorldPos * m_matParent;
+	if (m_iParentFlag & TPF_ROT)
+	{
+		m_DeltaRot *= m_ParentRot;
+		Parent *= m_ParentRot;
+	}
+
+	if (m_iParentFlag & TPF_POS)
+	{
+		m_DeltaPos *= m_ParentPos;
+		Parent *= m_ParentPos;
+	}
+
+	m_matWorld = m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matParent;
+	m_matWorld *= Parent;
 
 	m_bUpdate = false;
 

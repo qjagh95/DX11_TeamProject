@@ -1,6 +1,4 @@
 #pragma once
-
-#include "Engine.h"
 #include "Component/Animation2D.h"
 
 PUN_BEGIN
@@ -8,7 +6,7 @@ PUN_BEGIN
 typedef struct PUN_DLL _tagKeyInfo
 {
 	string			strName;
-	vector<DWORD>	vecKey;
+	vector<__int64>	vecKey;
 	bool			bPress;
 	bool			bPush;
 	bool			bUp;
@@ -56,7 +54,7 @@ public:
 
 		if (strcmp(pType, "int") == 0 || strcmp(pType, "char") == 0)
 		{
-			m_pCreateKey->vecKey.push_back((DWORD)value);
+			m_pCreateKey->vecKey.push_back((__int64)value);
 		}
 
 		else
@@ -84,7 +82,7 @@ public:
 
 		if (strcmp(pType, "int") == 0 || strcmp(pType, "char") == 0)
 		{
-			m_pCreateKey->vecKey.push_back((DWORD)value);
+			m_pCreateKey->vecKey.push_back((__int64)value);
 		}
 
 		else

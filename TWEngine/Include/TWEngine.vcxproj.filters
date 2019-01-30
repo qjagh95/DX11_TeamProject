@@ -5,36 +5,11 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="01. Core">
       <UniqueIdentifier>{cb8c8820-1ece-4654-8e5c-fde2cd8a86e4}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Core\01. Device">
       <UniqueIdentifier>{0acb2d45-b016-48b5-a287-6e384dfc0f4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Core\02. Math">
-      <UniqueIdentifier>{27687b62-9e82-4475-8d61-5da16088bfa8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Core\03. PathManager">
-      <UniqueIdentifier>{23c69db8-209c-469f-aae5-6e76a572efbd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Core\04. Timer">
-      <UniqueIdentifier>{33634480-e771-44ca-a410-d9db6611e3c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Core\05. Input">
-      <UniqueIdentifier>{03dac7a4-e2f7-4757-865c-7e6a567c0907}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Core\06. CollisionManager">
-      <UniqueIdentifier>{85d75a3c-7593-4878-83f8-2fef4f63667e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Core\07. Font">
-      <UniqueIdentifier>{609a6aff-6093-43c3-9d48-897304fcf97f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Core\08. Sound">
-      <UniqueIdentifier>{1a0ef6e6-6dc0-4a65-ab53-87fa6f2316e6}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Resources">
       <UniqueIdentifier>{5b246b34-8f1e-4782-b307-8f98db22e155}</UniqueIdentifier>
@@ -102,12 +77,6 @@
     <Filter Include="06. Component\11. Navigation">
       <UniqueIdentifier>{be952377-dfae-4799-9e78-806e26d71995}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Core\09. Navigation">
-      <UniqueIdentifier>{7f3f5cc3-7908-4678-81ab-d4cedd8616aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Core\10. Debug">
-      <UniqueIdentifier>{b9746976-6692-45f3-9742-430489c583d0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. Component\08. UI\01. Bar">
       <UniqueIdentifier>{699aad5c-eb1b-4c5d-8866-b64e908409b2}</UniqueIdentifier>
     </Filter>
@@ -127,55 +96,64 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="01. Core\11. BineryFileIO">
-      <UniqueIdentifier>{a71992b5-b86b-4121-af51-b7beb802b6b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. Component\12. Light">
       <UniqueIdentifier>{e8b9c130-a6b4-4d28-bca4-8a88fd3aa910}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Core\02. PathManager">
+      <UniqueIdentifier>{23c69db8-209c-469f-aae5-6e76a572efbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\03. Timer">
+      <UniqueIdentifier>{33634480-e771-44ca-a410-d9db6611e3c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\04. Input">
+      <UniqueIdentifier>{03dac7a4-e2f7-4757-865c-7e6a567c0907}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\05. CollisionManager">
+      <UniqueIdentifier>{85d75a3c-7593-4878-83f8-2fef4f63667e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\06. Font">
+      <UniqueIdentifier>{609a6aff-6093-43c3-9d48-897304fcf97f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\07. Sound">
+      <UniqueIdentifier>{1a0ef6e6-6dc0-4a65-ab53-87fa6f2316e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\08. Navigation">
+      <UniqueIdentifier>{7f3f5cc3-7908-4678-81ab-d4cedd8616aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\09.. BineryFileIO">
+      <UniqueIdentifier>{a71992b5-b86b-4121-af51-b7beb802b6b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\10. GUIManager">
+      <UniqueIdentifier>{86c2d808-7cf2-4083-bf22-2fa689f5f85a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\11. SoundManager">
+      <UniqueIdentifier>{4ef551b6-9bf0-47ad-824f-a3e206c80617}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>01. Core</Filter>
-    </ClCompile>
     <ClCompile Include="Core.cpp">
       <Filter>01. Core</Filter>
     </ClCompile>
     <ClCompile Include="Device.cpp">
       <Filter>01. Core\01. Device</Filter>
     </ClCompile>
-    <ClCompile Include="EngineMath.cpp">
-      <Filter>01. Core\02. Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector3.cpp">
-      <Filter>01. Core\02. Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector2.cpp">
-      <Filter>01. Core\02. Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector4.cpp">
-      <Filter>01. Core\02. Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix.cpp">
-      <Filter>01. Core\02. Math</Filter>
-    </ClCompile>
     <ClCompile Include="Ref.cpp">
       <Filter>01. Core</Filter>
     </ClCompile>
     <ClCompile Include="PathManager.cpp">
-      <Filter>01. Core\03. PathManager</Filter>
+      <Filter>01. Core\02. PathManager</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>01. Core\04. Timer</Filter>
+      <Filter>01. Core\03. Timer</Filter>
     </ClCompile>
     <ClCompile Include="TimerManager.cpp">
-      <Filter>01. Core\04. Timer</Filter>
+      <Filter>01. Core\03. Timer</Filter>
     </ClCompile>
     <ClCompile Include="FontManager.cpp">
-      <Filter>01. Core\07. Font</Filter>
+      <Filter>01. Core\06. Font</Filter>
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Mesh.cpp">
       <Filter>02. Resources\01. Mesh</Filter>
@@ -238,7 +216,7 @@
       <Filter>03. Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
-      <Filter>01. Core\05. Input</Filter>
+      <Filter>01. Core\04. Input</Filter>
     </ClCompile>
     <ClCompile Include="Rendering\BlendState.cpp">
       <Filter>03. Rendering\02. RenderState</Filter>
@@ -256,7 +234,7 @@
       <Filter>06. Component\06. Animation</Filter>
     </ClCompile>
     <ClCompile Include="CollisionManager.cpp">
-      <Filter>01. Core\06. CollisionManager</Filter>
+      <Filter>01. Core\05. CollisionManager</Filter>
     </ClCompile>
     <ClCompile Include="Component\Collider.cpp">
       <Filter>06. Component\07. Collider</Filter>
@@ -289,13 +267,10 @@
       <Filter>06. Component\11. Navigation</Filter>
     </ClCompile>
     <ClCompile Include="NavigationManager.cpp">
-      <Filter>01. Core\09. Navigation</Filter>
+      <Filter>01. Core\08. Navigation</Filter>
     </ClCompile>
     <ClCompile Include="Component\Text.cpp">
       <Filter>06. Component\08. UI</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>01. Core\10. Debug</Filter>
     </ClCompile>
     <ClCompile Include="Component\Bar.cpp">
       <Filter>06. Component\08. UI\01. Bar</Filter>
@@ -360,11 +335,23 @@
     <ClCompile Include="Component\Light.cpp">
       <Filter>06. Component\12. Light</Filter>
     </ClCompile>
+    <ClCompile Include="BineryReader.cpp">
+      <Filter>01. Core\09.. BineryFileIO</Filter>
+    </ClCompile>
+    <ClCompile Include="BineryWriter.cpp">
+      <Filter>01. Core\09.. BineryFileIO</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineHeader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIManager.cpp">
+      <Filter>01. Core\10. GUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManagerT.cpp">
+      <Filter>01. Core\11. SoundManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>01. Core</Filter>
-    </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -380,21 +367,6 @@
     <ClInclude Include="Device.h">
       <Filter>01. Core\01. Device</Filter>
     </ClInclude>
-    <ClInclude Include="EngineMath.h">
-      <Filter>01. Core\02. Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector3.h">
-      <Filter>01. Core\02. Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>01. Core\02. Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector4.h">
-      <Filter>01. Core\02. Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Matrix.h">
-      <Filter>01. Core\02. Math</Filter>
-    </ClInclude>
     <ClInclude Include="Flag.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -402,43 +374,43 @@
       <Filter>01. Core</Filter>
     </ClInclude>
     <ClInclude Include="PathManager.h">
-      <Filter>01. Core\03. PathManager</Filter>
+      <Filter>01. Core\02. PathManager</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>01. Core\04. Timer</Filter>
+      <Filter>01. Core\03. Timer</Filter>
     </ClInclude>
     <ClInclude Include="TimerManager.h">
-      <Filter>01. Core\04. Timer</Filter>
+      <Filter>01. Core\03. Timer</Filter>
     </ClInclude>
     <ClInclude Include="FontManager.h">
-      <Filter>01. Core\07. Font</Filter>
+      <Filter>01. Core\06. Font</Filter>
     </ClInclude>
     <ClInclude Include="fmod.h">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="fmod.hpp">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="fmod_codec.h">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="fmod_common.h">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="fmod_dsp.h">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="fmod_dsp_effects.h">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="fmod_errors.h">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="fmod_output.h">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="SoundManager.h">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Mesh.h">
       <Filter>02. Resources\01. Mesh</Filter>
@@ -504,7 +476,7 @@
       <Filter>03. Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>01. Core\05. Input</Filter>
+      <Filter>01. Core\04. Input</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\BlendState.h">
       <Filter>03. Rendering\02. RenderState</Filter>
@@ -522,7 +494,7 @@
       <Filter>06. Component\06. Animation</Filter>
     </ClInclude>
     <ClInclude Include="CollisionManager.h">
-      <Filter>01. Core\06. CollisionManager</Filter>
+      <Filter>01. Core\05. CollisionManager</Filter>
     </ClInclude>
     <ClInclude Include="Component\Collider.h">
       <Filter>06. Component\07. Collider</Filter>
@@ -555,13 +527,10 @@
       <Filter>06. Component\11. Navigation</Filter>
     </ClInclude>
     <ClInclude Include="NavigationManager.h">
-      <Filter>01. Core\09. Navigation</Filter>
+      <Filter>01. Core\08. Navigation</Filter>
     </ClInclude>
     <ClInclude Include="Component\Text.h">
       <Filter>06. Component\08. UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Debug.h">
-      <Filter>01. Core\10. Debug</Filter>
     </ClInclude>
     <ClInclude Include="Component\Bar.h">
       <Filter>06. Component\08. UI\01. Bar</Filter>
@@ -626,26 +595,38 @@
     <ClInclude Include="Component\Light.h">
       <Filter>06. Component\12. Light</Filter>
     </ClInclude>
+    <ClInclude Include="BineryReader.h">
+      <Filter>01. Core\09.. BineryFileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="BineryWriter.h">
+      <Filter>01. Core\09.. BineryFileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineHeader.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIManager.h">
+      <Filter>01. Core\10. GUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManagerT.h">
+      <Filter>01. Core\11. SoundManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\copy.bat">
       <Filter>소스 파일</Filter>
     </None>
     <None Include="fmod.cs">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </None>
     <None Include="fmod_dsp.cs">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </None>
     <None Include="fmod_errors.cs">
-      <Filter>01. Core\08. Sound</Filter>
+      <Filter>01. Core\07. Sound</Filter>
     </None>
     <None Include="Resource\DirectXTex.inl">
       <Filter>02. Resources\02. Texture</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\exclude.txt" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\Collider.fx">

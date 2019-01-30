@@ -1,6 +1,5 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Texture.h"
-#include "../PathManager.h"
 #include "../Device.h"
 
 PUN_USING
@@ -19,12 +18,12 @@ CTexture::~CTexture()
 
 int CTexture::GetWidth() const
 {
-	return m_vecImage[0]->GetImage(0, 0, 0)->width;
+	return (int)m_vecImage[0]->GetImage(0, 0, 0)->width;
 }
 
 int CTexture::GetHeight() const
 {
-	return m_vecImage[0]->GetImage(0, 0, 0)->height;
+	return (int)m_vecImage[0]->GetImage(0, 0, 0)->height;
 }
 
 const uint8_t* CTexture::GetPixels() const
@@ -251,7 +250,7 @@ bool CTexture::CreateShaderResourceArray()
 	tArrayDesc.Width = tTexDesc.Width;
 	tArrayDesc.Height = tTexDesc.Height;
 	tArrayDesc.MipLevels = tTexDesc.MipLevels;
-	tArrayDesc.ArraySize = vecTexture.size();
+	tArrayDesc.ArraySize = (UINT)vecTexture.size();
 	tArrayDesc.Format = tTexDesc.Format;
 	tArrayDesc.SampleDesc.Count = 1;
 	tArrayDesc.SampleDesc.Quality = 0;
@@ -260,17 +259,17 @@ bool CTexture::CreateShaderResourceArray()
 
 	// 위에서 설정한 정보를 이용해서 비어있는 Array Texture를 생성한다.
 	ID3D11Texture2D*	pArrayTexture = NULL;
-	if (FAILED(DEVICE->CreateTexture2D(&tArrayDesc, NULL, &pArrayTexture)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateTexture2D(&tArrayDesc, NULL, &pArrayTexture)))
 	{
 		assert(false);
 		return false;
 	}	
 
 	// Array Texture의 픽셀정보를 불러온 텍스쳐의 픽셀정보로 채워준다.
-	for (size_t i = 0; i < vecTexture.size(); ++i)
+	for (UINT i = 0; i < vecTexture.size(); ++i)
 	{
 		// 각각의 텍스쳐들을 밉맵 수준만큼 반복한다.
-		for (size_t mip = 0; mip < tTexDesc.MipLevels; ++mip)
+		for (UINT mip = 0; mip < tTexDesc.MipLevels; ++mip)
 		{
 			// 텍스처를 Map을 걸어준다.
 			D3D11_MAPPED_SUBRESOURCE	tMap = {};
@@ -290,9 +289,9 @@ bool CTexture::CreateShaderResourceArray()
 	tViewDesc.Texture2DArray.MostDetailedMip = 0;
 	tViewDesc.Texture2DArray.MipLevels = tArrayDesc.MipLevels;
 	tViewDesc.Texture2DArray.FirstArraySlice = 0;
-	tViewDesc.Texture2DArray.ArraySize = vecTexture.size();
+	tViewDesc.Texture2DArray.ArraySize = (UINT)vecTexture.size();
 
-	if (FAILED(DEVICE->CreateShaderResourceView(pArrayTexture, &tViewDesc, &m_pSRV)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(pArrayTexture, &tViewDesc, &m_pSRV)))
 	{
 		assert(false);
 		return false;

@@ -1,9 +1,7 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Renderer.h"
-#include "../Resource/ResourcesManager.h"
 #include "../Resource/Mesh.h"
 #include "../Rendering/Shader.h"
-#include "../Rendering/ShaderManager.h"
 #include "../Device.h"
 #include "Transform.h"
 #include "Camera.h"
@@ -11,7 +9,6 @@
 #include "Material.h"
 #include "../GameObject.h"
 #include "../Rendering/RenderState.h"
-#include "../Rendering/RenderManager.h"
 #include "Animation2D.h"
 
 PUN_USING
@@ -288,9 +285,9 @@ void CRenderer::Render(float fTime)
 	CONTEXT->IASetInputLayout(m_pLayout);
 	m_pShader->SetShader();
 
-	for (size_t i = 0; i < m_pMesh->GetContainCount(); ++i)
+	for (int i = 0; i < m_pMesh->GetContainCount(); ++i)
 	{
-		for (size_t j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
+		for (int j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
 		{
 			m_pMaterial->SetShader(i, j);
 

@@ -18,11 +18,9 @@ public:
 		D3D11_PRIMITIVE_TOPOLOGY ePrimitive, void* pIdx = nullptr, int iIdxCount = 0,
 		int iIdxSize = 0, D3D11_USAGE eIdxUsage = D3D11_USAGE_DEFAULT,
 		DXGI_FORMAT eFmt = DXGI_FORMAT_R16_UINT);
-	bool CreateTexture(const string& strName, const TCHAR* pFileName,
-		const string& strPathKey = TEXTURE_PATH);
+	bool CreateTexture(const string& strName, const TCHAR* pFileName, const string& strPathKey = TEXTURE_PATH);
 	bool CreateTextureFromFullPath(const string& strName, const TCHAR* pFullPath);
-	bool CreateTexture(const string& strName, const vector<const TCHAR*>& vecFileName,
-		const string& strPathKey = TEXTURE_PATH);
+	bool CreateTexture(const string& strName, const vector<const TCHAR*>& vecFileName, const string& strPathKey = TEXTURE_PATH);
 	bool CreateTextureFromFullPath(const string& strName, const vector<const TCHAR*>& vecFullPath);
 	bool CreateSampler(const string& strName,
 		D3D11_FILTER eFilter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "CharacterTab.h"
 #include "Renderer.h"
 #include "Material.h"
@@ -6,7 +6,6 @@
 #include "Transform.h"
 #include "../GameObject.h"
 #include "../Input.h"
-#include "../SoundManager.h"
 #include "Animation2D.h"
 
 PUN_USING

@@ -298,8 +298,8 @@ void CEditorForm::LoadStage(const CString & strFullPath)
 
 	m_iTileNumX = m_pStage->GetTileNumX();
 	m_iTileNumY = m_pStage->GetTileNumY();
-	m_iTileSizeX = m_pStage->GetTileScale().x;
-	m_iTileSizeY = m_pStage->GetTileScale().y;
+	m_iTileSizeX = (int)m_pStage->GetTileScale().x;
+	m_iTileSizeY = (int)m_pStage->GetTileScale().y;
 
 	UpdateData(FALSE);
 

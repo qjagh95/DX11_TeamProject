@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #define	ROOT_PATH	"RootPath"
 #define	SHADER_PATH	"ShaderPath"
 #define	TEXTURE_PATH	"TexturePath"

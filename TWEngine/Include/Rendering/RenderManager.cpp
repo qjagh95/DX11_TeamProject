@@ -1,6 +1,6 @@
-#include "stdafx.h"
+
+#include "EngineHeader.h"
 #include "RenderManager.h"
-#include "ShaderManager.h"
 #include "BlendState.h"
 #include "DepthState.h"
 #include "RenderTarget.h"
@@ -291,7 +291,7 @@ void CRenderManager::SetMRT(const string & strMRTKey)
 		pDepth = pMRT->pOldDepth;
 	}
 
-	CDevice::GetInst()->GetContext()->OMSetRenderTargets(pMRT->vecTarget.size(), &pMRT->vecTarget[0], pDepth);
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((UINT)pMRT->vecTarget.size(), &pMRT->vecTarget[0], pDepth);
 }
 
 void CRenderManager::ResetMRT(const string & strMRTKey)
@@ -301,7 +301,7 @@ void CRenderManager::ResetMRT(const string & strMRTKey)
 	if (!pMRT)
 		return;
 
-	CONTEXT->OMSetRenderTargets(pMRT->vecOldTarget.size(), &pMRT->vecOldTarget[0],
+	CONTEXT->OMSetRenderTargets((UINT)pMRT->vecOldTarget.size(), &pMRT->vecOldTarget[0],
 		pMRT->pOldDepth);
 
 	for (size_t i = 0; i < pMRT->vecOldTarget.size(); ++i)

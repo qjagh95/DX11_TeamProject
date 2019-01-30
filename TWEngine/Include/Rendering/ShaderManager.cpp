@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "ShaderManager.h"
 #include "Shader.h"
 #include "../Device.h"
@@ -187,8 +187,8 @@ bool CShaderManager::CreateInputLayout(const string & strName,
 	if (pLayout)
 		return false;
 
-	if (FAILED(DEVICE->CreateInputLayout(&m_vecInputDesc[0],
-		m_vecInputDesc.size(), pShader->GetVSCode(),
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateInputLayout(&m_vecInputDesc[0],
+		(UINT)m_vecInputDesc.size(), pShader->GetVSCode(),
 		pShader->GetVSCodeSize(), &pLayout)))
 		return false;
 

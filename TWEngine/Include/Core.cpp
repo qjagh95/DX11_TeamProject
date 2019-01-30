@@ -1,22 +1,10 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Core.h"
 #include "Device.h"
-#include "Resource/ResourcesManager.h"
-#include "Rendering\RenderManager.h"
-#include "PathManager.h"
 #include "Resource/Mesh.h"
 #include "Rendering/Shader.h"
-#include "Rendering/ShaderManager.h"
-#include "Scene/SceneManager.h"
 #include "Timer.h"
-#include "TimerManager.h"
-#include "CollisionManager.h"
 #include "Input.h"
-//#include "ThreadManager.h"
-#include "FontManager.h"
-#include "SoundManager.h"
-#include "ObjectManager.h"
-#include "NavigationManager.h"
 
 PUN_USING
 
@@ -44,9 +32,10 @@ CCore::~CCore()
 	DESTROY_SINGLE(CPathManager);
 	DESTROY_SINGLE(CRenderManager);
 	DESTROY_SINGLE(CResourcesManager);
-	//DESTROY_SINGLE(CThreadManager);
 	DESTROY_SINGLE(CNavigationManager);
 	DESTROY_SINGLE(CDevice);
+	GUIManager::Delete();
+	SoundManagerT::Delete();
 }
 
 HWND CCore::GetWindowHandle() const
@@ -114,10 +103,6 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 
 	SetClearColor(0xff, 0x69, 0xb4, 0x00);
 
-	//// 스레드 관리자 초기화
-	//if (!GET_SINGLE(CThreadManager)->Init())
-	//	return false;
-
 	// 경로관리자 초기화
 	if (!GET_SINGLE(CPathManager)->Init())
 		return false;
@@ -162,7 +147,12 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 	if (!GET_SINGLE(CSceneManager)->Init())
 		return false;
 
-	m_fTimeScale = 1.f;
+	if (SoundManagerT::Get()->Init() == false)
+		return false;
+
+	GUIManager::Get()->CreateImGui(m_hWnd, CDevice::GetInst()->GetDevice(), CDevice::GetInst()->GetContext());
+
+	m_fTimeScale = 1.0f;
 
 	return true;
 }
@@ -196,23 +186,18 @@ int CCore::Run()
 void CCore::Logic()
 {
 	CTimer*	pTimer = GET_SINGLE(CTimerManager)->FindTimer("MainTimer");
-
 	pTimer->Update();
 
-	float	fTime = pTimer->GetTime();	
-	
-	if (Input(fTime) == 1)
-		return;
+	float fTime = pTimer->GetTime();	
 
-	if (Update(fTime) == 1)
-		return;
+#ifdef _DEBUG
+	GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
+#endif
 
-	if (LateUpdate(fTime) == 1)
-		return;
-
-	if (Collision(fTime) == 1)
-		return;
-
+	Input(fTime);
+	Update(fTime);
+	LateUpdate(fTime);
+	Collision(fTime);
 	Render(fTime);
 }
 
@@ -250,11 +235,15 @@ void CCore::Render(float fTime)
 	GET_SINGLE(CDevice)->Clear(m_fClearColor);
 
 	GET_SINGLE(CSceneManager)->Render(fTime);
-
 	GET_SINGLE(CRenderManager)->Render(fTime);
 
-	// 마지막으로 마우스를 출력한다.
+		// 마지막으로 마우스를 출력한다.
 	GET_SINGLE(CInput)->RenderMouse(fTime);
+
+#ifdef _DEBUG
+	GUIManager::Get()->ImGuiEnd();
+#endif
+
 
 	GET_SINGLE(CDevice)->Present();
 }
@@ -289,7 +278,7 @@ void CCore::CreateWnd(const TCHAR * pTitle, const TCHAR * pClass)
 	if (!m_hWnd)
 		return;
 
-	RECT		rc = { 0, 0, m_tRS.iWidth, m_tRS.iHeight };
+	RECT		rc = { 0, 0, (LONG)m_tRS.iWidth, (LONG)m_tRS.iHeight };
 
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 	SetWindowPos(m_hWnd, HWND_TOPMOST, 100, 100, rc.right - rc.left, rc.bottom - rc.top,
@@ -299,8 +288,16 @@ void CCore::CreateWnd(const TCHAR * pTitle, const TCHAR * pClass)
 	UpdateWindow(m_hWnd);
 }
 
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CCore::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+#ifdef _DEBUG
+
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		return true;
+
+#endif
+
 	switch (message)
 	{
 	case WM_DESTROY:

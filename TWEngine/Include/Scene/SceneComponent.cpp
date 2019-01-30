@@ -1,4 +1,5 @@
-#include "stdafx.h"
+
+#include "EngineHeader.h"
 #include "SceneComponent.h"
 
 PUN_USING

@@ -1,12 +1,9 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "ColliderPixel.h"
 #include "Transform.h"
-#include "../Rendering/RenderManager.h"
-#include "../Resource/ResourcesManager.h"
 #include "Camera.h"
 #include "../Scene/Scene.h"
 #include "../Resource/Mesh.h"
-#include "../Rendering/ShaderManager.h"
 #include "ColliderPoint.h"
 #include "ColliderOBB.h"
 #include "ColliderRect.h"
@@ -79,7 +76,7 @@ void CColliderPixel::SetInfo(const Vector3 & vMin, const Pixel24 & tPixel,
 	fclose(pFile);
 
 	m_tRelativeInfo.tBox.vMin = vMin;
-	m_tRelativeInfo.tBox.vMax = vMin + Vector3(iWidth, iHeight, 0);
+	m_tRelativeInfo.tBox.vMax = vMin + Vector3((float)iWidth, (float)iHeight, 0);
 	m_tRelativeInfo.tBox.vLength = m_tRelativeInfo.tBox.vMax - vMin;
 
 	m_tRelativeInfo.tBox.vMin.z = 0.f;

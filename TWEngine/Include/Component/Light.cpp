@@ -1,7 +1,6 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Light.h"
 #include "Transform.h"
-#include "../Rendering/ShaderManager.h"
 
 PUN_USING
 

@@ -1,21 +1,20 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "BineryReader.h"
 #include "PathManager.h"
+#include <atlbase.h>
 
 PUN_USING
 
 BineryRead::BineryRead(const string& FileName)
 {
-	wstring Temp;
-	Temp = CPathManager::GetInst()->FindPath(DATA_PATH);
+	string Temp = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
 
 	if (Temp.empty() == true)
 		return;
 
-	Temp += CA2W(FileName.c_str());
-	string Temp2 = CW2A(Temp.c_str());
+	Temp += FileName;
 
-	m_ReadFile.open(Temp2.c_str(), ios::binary);
+	m_ReadFile.open(Temp.c_str(), ios::binary);
 }
 
 BineryRead::BineryRead(const wstring& FileName)
@@ -37,14 +36,11 @@ BineryRead::~BineryRead()
 
 bool BineryRead::ReadBool()
 {
-	int Temp = -1;
+	bool Return;
 
-	m_ReadFile.read((char*)&Temp, sizeof(bool));
+	m_ReadFile.read((char*)&Return, sizeof(bool));
 
-	if (Temp == -1)
-		TrueAssert(true);
-
-	return (bool)Temp;
+	return Return;
 }
 
 int BineryRead::ReadInt()
@@ -138,9 +134,7 @@ wstring BineryRead::ReadWString()
 	m_ReadFile.read((char*)&Datalen, sizeof(size_t));
 	m_ReadFile.read(getString, Datalen);
 
-	wstring ReturnString = CA2W(getString);
-
-	return ReturnString;
+	return wstring(CA2W(getString));
 }
 
 void BineryRead::ReadData(bool & Data)

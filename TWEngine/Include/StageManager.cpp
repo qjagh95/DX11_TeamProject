@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "StageManager.h"
 #include "Component/Stage2D.h"
 

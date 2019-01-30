@@ -1,6 +1,5 @@
 #pragma once
 PUN_BEGIN
-
 class PUN_DLL BineryWrite
 {
 public:

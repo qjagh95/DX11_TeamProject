@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "BlendState.h"
 #include "../Device.h"
 
@@ -59,7 +59,7 @@ bool CBlendState::CreateState(BOOL bAlphaCoverage,
 
 	m_vecTargetDesc.clear();
 
-	if (FAILED(DEVICE->CreateBlendState(&tDesc, (ID3D11BlendState**)&m_pState)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateBlendState(&tDesc, (ID3D11BlendState**)&m_pState)))
 		return false;
 
 	return true;

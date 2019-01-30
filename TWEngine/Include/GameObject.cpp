@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "GameObject.h"
 #include "Scene/Layer.h"
 #include "Component/Transform.h"
@@ -50,7 +50,6 @@ CGameObject::CGameObject(const CGameObject & obj)
 	if (pRenderer)
 	{
 		pRenderer->CheckComponent();
-		//pRenderer->SetMaterial
 		SAFE_RELEASE(pRenderer);
 	}
 
@@ -442,6 +441,27 @@ int CGameObject::Update(float fTime)
 
 	m_pTransform->Update(fTime);
 
+	if (m_ChildList.empty() == true)
+		return 0;
+
+	//자식이 있다면 자식트랜스폼에 부모의 정보가 저장된 행렬과 자식의 Transform정보를 곱하여
+	//자식의 Parent행렬에 넣어준다.
+
+	list<CGameObject*>::iterator StartIter1 = m_ChildList.begin();
+	list<CGameObject*>::iterator EndIter1 = m_ChildList.end();
+
+	Matrix S = m_pTransform->GetWorldScaleMatrix() * m_pTransform->GetParentScale();
+	Matrix R = m_pTransform->GetWorldRotMatrix() * m_pTransform->GetParentRot();
+	Matrix T = m_pTransform->GetWorldPosMatrix() * m_pTransform->GetParentPos();
+
+	for (; StartIter1 != EndIter1; StartIter1++)
+	{
+		(*StartIter1)->GetTransform()->SetParentScale(S);
+		(*StartIter1)->GetTransform()->SetParentRot(R);
+		(*StartIter1)->GetTransform()->SetParentPos(T);
+		(*StartIter1)->GetTransform()->SetUpdate(true);
+	}
+
 	return 0;
 }
 
@@ -479,6 +499,27 @@ int CGameObject::LateUpdate(float fTime)
 
 	m_pTransform->LateUpdate(fTime);
 
+	if (m_ChildList.empty() == true)
+		return 0;
+
+	//자식이 있다면 자식트랜스폼에 부모의 정보가 저장된 행렬과 자식의 Transform정보를 곱하여
+	//자식의 Parent행렬에 넣어준다.
+
+	list<CGameObject*>::iterator StartIter1 = m_ChildList.begin();
+	list<CGameObject*>::iterator EndIter1 = m_ChildList.end();
+
+	Matrix S = m_pTransform->GetWorldScaleMatrix() * m_pTransform->GetParentScale();
+	Matrix R = m_pTransform->GetWorldRotMatrix() * m_pTransform->GetParentRot();
+	Matrix T = m_pTransform->GetWorldPosMatrix() * m_pTransform->GetParentPos();
+
+	for (; StartIter1 != EndIter1; StartIter1++)
+	{
+		(*StartIter1)->GetTransform()->SetParentScale(S);
+		(*StartIter1)->GetTransform()->SetParentRot(R);
+		(*StartIter1)->GetTransform()->SetParentPos(T);
+		(*StartIter1)->GetTransform()->SetUpdate(true);
+	}
+
 	return 0;
 }
 
@@ -500,7 +541,6 @@ void CGameObject::Render(float fTime)
 		if (!pRenderer->GetActive())
 		{
 			pRenderer->Release();
-
 			m_ComList.remove(pRenderer);
 		}
 

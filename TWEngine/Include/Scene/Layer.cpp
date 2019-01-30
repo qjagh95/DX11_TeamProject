@@ -1,8 +1,7 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Layer.h"
 #include "Scene.h"
 #include "../GameObject.h"
-#include "../Rendering/RenderManager.h"
 
 PUN_USING
 

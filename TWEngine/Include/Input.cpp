@@ -1,6 +1,5 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Input.h"
-#include "GameObject.h"
 #include "Component/Transform.h"
 #include "Component/Renderer.h"
 #include "Component/Material.h"
@@ -133,7 +132,7 @@ void CInput::Update(float fTime)
 		size_t	iCount = 0;
 		for (size_t i = 0; i < iter->second->vecKey.size(); ++i)
 		{
-			if (GetAsyncKeyState(iter->second->vecKey[i]) & 0x8000)
+			if (GetAsyncKeyState((int)iter->second->vecKey[i]) & 0x8000)
 				++iCount;
 		}
 
@@ -167,7 +166,7 @@ void CInput::Update(float fTime)
 	GetCursorPos(&tMousePos);
 	ScreenToClient(WINDOWHANDLE, &tMousePos);
 
-	Vector2	vMousePos(tMousePos.x, tMousePos.y);
+	Vector2	vMousePos((float)tMousePos.x, (float)tMousePos.y);
 
 	RECT	rc = {};
 
@@ -185,14 +184,12 @@ void CInput::Update(float fTime)
 	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
 
 	CTransform*	pCameraTr = pScene->GetMainCameraTransform();
-
 	m_vMouseWorld = m_vMouseClient + Vector2(pCameraTr->GetWorldPos().x, pCameraTr->GetWorldPos().y);
 
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pScene);
 
 	m_pMouseTr->SetWorldPos(Vector3(m_vMouseClient.x, m_vMouseClient.y, 0.f));
-
 	m_pMouse->Update(fTime);
 
 	if (!m_bShowCursor && (m_vMouseClient.x < 0 || m_vMouseClient.x > _RESOLUTION.iWidth ||
@@ -253,17 +250,12 @@ void CInput::RenderMouse(float fTime)
 void CInput::AddMouseCollision()
 {
 	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
-
 	CTransform*	pCameraTr = pScene->GetMainCameraTransform();
 
 	m_pWorldPoint->SetInfo(pCameraTr->GetWorldPos());
-
 	Vector3	vWorldPos = m_pWorldPoint->GetInfo();
 
-	//m_vWorldPos
-
 	SAFE_RELEASE(pCameraTr);
-
 	SAFE_RELEASE(pScene);
 
 	m_pMouse->LateUpdate(0.f);

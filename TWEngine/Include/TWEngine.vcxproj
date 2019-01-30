@@ -77,6 +77,7 @@
     <TargetName>$(ProjectName)_Debug</TargetName>
     <TargetExt>.dll</TargetExt>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../../Math/Include/;../../ImGui/</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -85,6 +86,7 @@
     <TargetName>$(ProjectName)64_Debug</TargetName>
     <TargetExt>.dll</TargetExt>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../../Math/Include/;../../ImGui/</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -92,6 +94,7 @@
     <IntDir>../BinObj/</IntDir>
     <TargetExt>.dll</TargetExt>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../../Math/Include/;../../ImGui/</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -100,15 +103,18 @@
     <TargetName>$(ProjectName)64</TargetName>
     <TargetExt>.dll</TargetExt>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../../Math/Include/;../../ImGui/</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>PUN_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PUN_EXPORT;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);MATH_IMPORT;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeaderFile>EngineHeader.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>../../DirectXTK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -124,14 +130,18 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>PUN_EXPORT;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PUN_EXPORT;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);MATH_IMPORT;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeaderFile>EngineHeader.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>../../DirectXTK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>DirectXTex64_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>call "$(SolutionDir)"Copy.bat</Command>
@@ -144,9 +154,11 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>PUN_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PUN_EXPORT;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);MATH_IMPORT;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeaderFile>EngineHeader.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>../../DirectXTK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,9 +178,11 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>PUN_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PUN_EXPORT;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);MATH_IMPORT;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeaderFile>EngineHeader.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>../../DirectXTK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -182,6 +196,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BineryReader.h" />
+    <ClInclude Include="BineryWriter.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Component\Animation2D.h" />
     <ClInclude Include="Component\Bar.h" />
@@ -223,10 +239,8 @@
     <ClInclude Include="Component\UIEndButton.h" />
     <ClInclude Include="Component\UserComponent.h" />
     <ClInclude Include="Core.h" />
-    <ClInclude Include="Debug.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="Engine.h" />
-    <ClInclude Include="EngineMath.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="fmod.h" />
     <ClInclude Include="fmod.hpp" />
@@ -238,9 +252,9 @@
     <ClInclude Include="fmod_output.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GUIManager.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Macro.h" />
-    <ClInclude Include="Matrix.h" />
     <ClInclude Include="NavigationManager.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="PathManager.h" />
@@ -262,16 +276,16 @@
     <ClInclude Include="Scene\SceneComponent.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="SoundManagerT.h" />
     <ClInclude Include="StageManager.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="EngineHeader.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />
     <ClInclude Include="Types.h" />
-    <ClInclude Include="Vector2.h" />
-    <ClInclude Include="Vector3.h" />
-    <ClInclude Include="Vector4.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BineryReader.cpp" />
+    <ClCompile Include="BineryWriter.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Component\Animation2D.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -505,9 +519,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Core.cpp" />
-    <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Device.cpp" />
-    <ClCompile Include="EngineMath.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="GameObject.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -515,8 +527,8 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="GUIManager.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="NavigationManager.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="PathManager.cpp" />
@@ -625,8 +637,9 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">&amp;(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">&amp;(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="SoundManagerT.cpp" />
     <ClCompile Include="StageManager.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="EngineHeader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -634,9 +647,6 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
-    <ClCompile Include="Vector2.cpp" />
-    <ClCompile Include="Vector3.cpp" />
-    <ClCompile Include="Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\copy.bat" />
@@ -644,9 +654,6 @@
     <None Include="fmod_dsp.cs" />
     <None Include="fmod_errors.cs" />
     <None Include="Resource\DirectXTex.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\exclude.txt" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\BackColorShader.fx">
@@ -715,6 +722,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj">
+      <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mathlib\Mathlib.vcxproj">
+      <Project>{bc993d7f-3c50-412d-a85b-472c7138aec9}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

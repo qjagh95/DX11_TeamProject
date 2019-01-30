@@ -1,14 +1,10 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "RenderTarget.h"
 #include "../Device.h"
 #include "Shader.h"
-#include "ShaderManager.h"
-#include "../Resource/ResourcesManager.h"
 #include "../Resource/Mesh.h"
 #include "DepthState.h"
-#include "RenderManager.h"
 #include "../Scene/Scene.h"
-#include "../Scene/SceneManager.h"
 #include "../Component/Camera.h"
 #include "../Resource/Sampler.h"
 
@@ -77,14 +73,14 @@ bool CRenderTarget::CreateRenderTarget(DXGI_FORMAT eTargetFmt, const Vector3 & v
 	tDesc.Format = eTargetFmt;
 	tDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	if (FAILED(DEVICE->CreateTexture2D(&tDesc, nullptr, &m_pTargetTex)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateTexture2D(&tDesc, nullptr, &m_pTargetTex)))
 		return false;
 
 	// 만들어진 텍스처로 ShaderResourceView와 TargetView를 생성한다.
-	if (FAILED(DEVICE->CreateShaderResourceView(m_pTargetTex, nullptr, &m_pTargetSRV)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(m_pTargetTex, nullptr, &m_pTargetSRV)))
 		return false;
 
-	if (FAILED(DEVICE->CreateRenderTargetView(m_pTargetTex, nullptr, &m_pTargetView)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateRenderTargetView(m_pTargetTex, nullptr, &m_pTargetView)))
 		return false;
 
 	if (eDepthFmt != DXGI_FORMAT_UNKNOWN)
@@ -98,10 +94,10 @@ bool CRenderTarget::CreateRenderTarget(DXGI_FORMAT eTargetFmt, const Vector3 & v
 		tDesc.Format = eDepthFmt;
 		tDesc.Usage = D3D11_USAGE_DEFAULT;
 
-		if (FAILED(DEVICE->CreateTexture2D(&tDesc, nullptr, &m_pDepthTex)))
+		if (FAILED(CDevice::GetInst()->GetDevice()->CreateTexture2D(&tDesc, nullptr, &m_pDepthTex)))
 			return false;
 
-		if (FAILED(DEVICE->CreateDepthStencilView(m_pDepthTex, nullptr, &m_pDepthView)))
+		if (FAILED(CDevice::GetInst()->GetDevice()->CreateDepthStencilView(m_pDepthTex, nullptr, &m_pDepthView)))
 			return false;
 	}
 

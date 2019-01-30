@@ -1,10 +1,9 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Component.h"
 #include "../Scene/Scene.h"
 #include "../Scene/Layer.h"
 #include "../GameObject.h"
 #include "Transform.h"
-#include "../PathManager.h"
 
 PUN_USING
 

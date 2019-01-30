@@ -1,9 +1,6 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "DamageNumber.h"
-#include "Renderer.h"
-#include "Material.h"
 #include "../GameObject.h"
-#include "Transform.h"
 
 PUN_USING
 
@@ -65,7 +62,7 @@ void CDamageNumber::SetNumber(int iNumber)
 	m_iNumber = iNumber;
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 	char* pNumberTex = new char[MAX_PATH];
-	sprintf(pNumberTex, "%s%d", "DamageNumber", iNumber);
+	sprintf_s(pNumberTex, strlen(pNumberTex), "%s%d", "DamageNumber", iNumber);
 
 	TCHAR* pFileName = new TCHAR[MAX_PATH];
 	memset(pFileName, 0, sizeof(TCHAR) * MAX_PATH);

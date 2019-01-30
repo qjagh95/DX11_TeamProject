@@ -1,6 +1,5 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "SoundManager.h"
-#include "PathManager.h"
 #include "Scene/Scene.h"
 
 PUN_USING

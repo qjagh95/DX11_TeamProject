@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Device.h"
 
 PUN_USING
@@ -101,7 +101,7 @@ bool CDevice::Init(HWND hWnd, unsigned int iWidth,
 	tSwapDesc.Windowed = bWindowMode;
 	tSwapDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-	if (FAILED(D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, iFlag, &eFLevel,
+	if (FAILED(D3D11CreateDeviceAndSwapChain(NULLPTR, D3D_DRIVER_TYPE_HARDWARE, 0, iFlag, &eFLevel,
 		1, D3D11_SDK_VERSION, &tSwapDesc,
 		&m_pSwapChain, &m_pDevice, &eFLevel1, &m_pContext)))
 		return false;
@@ -141,8 +141,8 @@ bool CDevice::Init(HWND hWnd, unsigned int iWidth,
 
 	D3D11_VIEWPORT	tVP = {};
 
-	tVP.Width = iWidth;
-	tVP.Height = iHeight;
+	tVP.Width = (float)iWidth;
+	tVP.Height = (float)iHeight;
 	tVP.MaxDepth = 1.f;
 
 	m_pContext->RSSetViewports(1, &tVP);

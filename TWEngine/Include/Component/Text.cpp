@@ -1,10 +1,8 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Text.h"
 #include "../FontManager.h"
-#include "../Rendering/ShaderManager.h"
 #include "../Rendering/RenderState.h"
 #include "../Rendering/Shader.h"
-#include "../Resource/ResourcesManager.h"
 #include "../Resource/Mesh.h"
 #include "../Scene/Scene.h"
 #include "Camera.h"
@@ -84,7 +82,7 @@ void CText::SetFont(TCHAR * pFont, float fSize)
 	m_vColor = Vector4::Black;
 
 	m_pTextFormat = GET_SINGLE(CFontManager)->MakeFont(m_pFont,
-		fSize, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STRETCH_ULTRA_EXPANDED,
+		(int)fSize, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STRETCH_ULTRA_EXPANDED,
 		fSize, L"ko");
 
 	m_pBrush = GET_SINGLE(CFontManager)->CreateBrush(m_vColor.x,

@@ -1,9 +1,7 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Collider.h"
 #include "../Rendering/Shader.h"
-#include "../Rendering/ShaderManager.h"
 #include "../Device.h"
-#include "../Rendering/RenderManager.h"
 #include "../Rendering/RenderState.h"
 #include "../Resource/Mesh.h"
 

@@ -1,4 +1,4 @@
- #include "stdafx.h"
+#include "EngineHeader.h"
 #include "Stage2D.h"
 #include "Transform.h"
 #include "../GameObject.h"
@@ -203,27 +203,27 @@ int CStage2D::GetAdjTileIndex(int x, int y, ASTAR_NODE_DIR eDir, STAGE2D_TILE_TY
 		switch (eDir)
 		{
 		case AND_LT:
-			if (x - 1 < 0 || y + 1 >= m_iNumY)
+			if (x - 1 < 0 || y + 1 >= (int)m_iNumY)
 				return -1;
 
 			return (y + 1) * m_iNumX + (x - 1);
 		case AND_T:
-			if (y + 1 >= m_iNumY)
+			if (y + 1 >= (int)m_iNumY)
 				return -1;
 
 			return (y + 1) * m_iNumX + x;
 		case AND_RT:
-			if (x + 1 >= m_iNumX || y + 1 >= m_iNumY)
+			if (x + 1 >= (int)m_iNumX || y + 1 >= (int)m_iNumY)
 				return -1;
 
 			return (y + 1) * m_iNumX + (x + 1);
 		case AND_R:
-			if (x + 1 >= m_iNumX)
+			if (x + 1 >= (int)m_iNumX)
 				return -1;
 
 			return y * m_iNumX + (x + 1);
 		case AND_RB:
-			if (x + 1 >= m_iNumX || y - 1 < 0)
+			if (x + 1 >= (int)m_iNumX || y - 1 < 0)
 				return -1;
 
 			return (y - 1) * m_iNumX + (x + 1);
@@ -251,7 +251,7 @@ int CStage2D::GetAdjTileIndex(int x, int y, ASTAR_NODE_DIR eDir, STAGE2D_TILE_TY
 		case AND_LT:
 			if (y % 2 == 0)
 			{
-				if (x - 1 < 0 || y + 1 >= m_iNumY)
+				if (x - 1 < 0 || y + 1 >= (int)m_iNumY)
 					return -1;
 
 				return (y + 1) * m_iNumX + (x - 1);
@@ -259,20 +259,20 @@ int CStage2D::GetAdjTileIndex(int x, int y, ASTAR_NODE_DIR eDir, STAGE2D_TILE_TY
 
 			else
 			{
-				if (y + 1 >= m_iNumY)
+				if (y + 1 >= (int)m_iNumY)
 					return -1;
 
 				return (y + 1) * m_iNumX + x;
 			}
 		case AND_T:
-			if (y + 2 >= m_iNumY)
+			if (y + 2 >= (int)m_iNumY)
 				return -1;
 
 			return (y + 2) * m_iNumX + x;
 		case AND_RT:
 			if (y % 2 == 0)
 			{
-				if (y + 1 >= m_iNumY)
+				if (y + 1 >= (int)m_iNumY)
 					return -1;
 
 				return (y + 1) * m_iNumX + x;
@@ -280,13 +280,13 @@ int CStage2D::GetAdjTileIndex(int x, int y, ASTAR_NODE_DIR eDir, STAGE2D_TILE_TY
 
 			else
 			{
-				if (x + 1 >= m_iNumX || y + 1 >= m_iNumY)
+				if (x + 1 >= (int)m_iNumX || y + 1 >= (int)m_iNumY)
 					return -1;
 
 				return (y + 1) * m_iNumX + (x + 1);
 			}
 		case AND_R:
-			if (x + 1 >= m_iNumX)
+			if (x + 1 >= (int)m_iNumX)
 				return -1;
 
 			return y * m_iNumX + (x + 1);
@@ -301,7 +301,7 @@ int CStage2D::GetAdjTileIndex(int x, int y, ASTAR_NODE_DIR eDir, STAGE2D_TILE_TY
 
 			else
 			{
-				if (x + 1 >= m_iNumX || y - 1 < 0)
+				if (x + 1 >= (int)m_iNumX || y - 1 < 0)
 					return -1;
 
 				return (y - 1) * m_iNumX + (x + 1);
@@ -463,12 +463,12 @@ int CStage2D::GetTileIndex(const Vector3 & vPos) const
 
 int CStage2D::GetRectTileIndex(const Vector3 & vPos) const
 {
-	int	x = (vPos.x - m_vStartPos.x) / m_vTileScale.x;
-	if (x < 0 || x >= m_iNumX)
+	int	x = (int)((vPos.x - m_vStartPos.x) / m_vTileScale.x);
+	if (x < 0 || x >= (int)m_iNumX)
 		return -1;
 
-	int	y = (vPos.y - m_vStartPos.y) / m_vTileScale.y;
-	if (y < 0 || y >= m_iNumY)
+	int	y = (int)((vPos.y - m_vStartPos.y) / m_vTileScale.y);
+	if (y < 0 || y >= (int)m_iNumY)
 		return -1;
 
 	return y * m_iNumX + x;
@@ -495,7 +495,7 @@ int CStage2D::GetIsometricTileIndexX(const Vector3 & vPos) const
 
 	int	iY = GetIsometricTileIndexY(vPos);
 
-	if (iY < 0 || iY >= m_iNumY)
+	if (iY < 0 || iY >= (int)m_iNumY)
 		return -1;
 
 	float	x = vPos.x - m_vStartPos.x;
@@ -508,7 +508,7 @@ int CStage2D::GetIsometricTileIndexX(const Vector3 & vPos) const
 	else
 		idx = ((int)x - (int)m_vTileScale.x / 2) / (int)m_vTileScale.x;
 
-	if (idx < 0 || idx >= m_iNumX)
+	if (idx < 0 || idx >= (int)m_iNumX)
 		return -1;
 
 	return idx;
@@ -574,7 +574,7 @@ int CStage2D::GetIsometricTileIndexY(const Vector3 & vPos) const
 
 			else if (iYIdx == 1)
 			{
-				if (iXIdx > m_iNumX - 1)
+				if (iXIdx > (int)m_iNumX - 1)
 					return -1;
 
 				return 1;
@@ -582,7 +582,7 @@ int CStage2D::GetIsometricTileIndexY(const Vector3 & vPos) const
 
 			else
 			{
-				if (iXIdx > m_iNumX - 1)
+				if (iXIdx > (int)m_iNumX - 1)
 					return -1;
 
 				return (iYIdx - 1) * 3 - (iYIdx - 2);
@@ -640,7 +640,7 @@ int CStage2D::GetIsometricTileIndexY(const Vector3 & vPos) const
 		{
 			if (iYIdx == 0)
 			{
-				if (iXIdx > m_iNumX - 1)
+				if (iXIdx > (int)m_iNumX - 1)
 					return -1;
 
 				else
@@ -649,7 +649,7 @@ int CStage2D::GetIsometricTileIndexY(const Vector3 & vPos) const
 
 			else if (iYIdx == 1)
 			{
-				if (iXIdx > m_iNumX - 1)
+				if (iXIdx > (int)m_iNumX - 1)
 					return -1;
 
 				else
@@ -658,7 +658,7 @@ int CStage2D::GetIsometricTileIndexY(const Vector3 & vPos) const
 
 			else
 			{
-				if (iXIdx > m_iNumX - 1)
+				if (iXIdx > (int)m_iNumX - 1)
 					return -1;
 
 				return (iYIdx - 1) * 3 - (iYIdx - 2) + 2;
@@ -729,37 +729,15 @@ int CStage2D::Update(float fTime)
 	vEndPos.y += _RESOLUTION.iHeight;
 
 	if (vCameraPos.x + _RESOLUTION.iWidth / 2.f < 0)
-		vEndPos.x = _RESOLUTION.iWidth;//_RESOLUTION.iWidth;
-	else if (vCameraPos.x + _RESOLUTION.iWidth >= vEndPos.x)
-		vCameraPos.x = m_vWorldSize.x/*m_vWorldSize.x*/ - _RESOLUTION.iWidth;
+		vEndPos.x = (float)_RESOLUTION.iWidth;//_RESOLUTION.iWidth;
+	else if (vCameraPos.x + (float)_RESOLUTION.iWidth >= vEndPos.x)
+		vCameraPos.x = m_vWorldSize.x/*m_vWorldSize.x*/ - (float)_RESOLUTION.iWidth;
 
-	if (vCameraPos.y + _RESOLUTION.iHeight / 2 < 0)
-		vEndPos.y = _RESOLUTION.iHeight;//_RESOLUTION.iHeight;//_RESOLUTION.iHeight;1200.f;
-	else if (vCameraPos.y + _RESOLUTION.iHeight >= vEndPos.y)
-		vCameraPos.y = m_vWorldSize.y - _RESOLUTION.iHeight;
+	if (vCameraPos.y + (float)_RESOLUTION.iHeight / 2 < 0)
+		vEndPos.y = (float)_RESOLUTION.iHeight;//_RESOLUTION.iHeight;//_RESOLUTION.iHeight;1200.f;
+	else if (vCameraPos.y + (float)_RESOLUTION.iHeight >= vEndPos.y)
+		vCameraPos.y = m_vWorldSize.y - (float)_RESOLUTION.iHeight;
 	vCameraPos = m_vStartPos;
-
-	/*
-	if (m_vPos.x + _RESOLUTION.iWidth / 2.f >= m_vWorldScale.x)
-	{
-		vWorldMouse.x += (m_vWorldScale.x - _RESOLUTION.iWidth);
-	}
-	else if(m_vPos.x >= _RESOLUTION.iWidth / 2.f &&
-		m_vPos.x + _RESOLUTION.iWidth / 2.f < m_vWorldScale.x)
-	{
-		vWorldMouse.x += (m_vPos.x - _RESOLUTION.iWidth / 2.f);
-	}
-	
-	if (m_vPos.y + _RESOLUTION.iHeight / 2.f >= m_vWorldScale.y)
-	{
-		vWorldMouse.y += (m_vWorldScale.y - _RESOLUTION.iHeight);
-	}
-	else if (m_vPos.y >= _RESOLUTION.iHeight / 2.f &&
-		m_vPos.y + _RESOLUTION.iHeight / 2.f < m_vWorldScale.y)
-	{
-		vWorldMouse.y += (m_vPos.y - _RESOLUTION.iHeight / 2.f);
-	}
-	*/	
 
 	vCameraPos /= m_vTileScale;
 	vEndPos /= m_vTileScale;
@@ -768,28 +746,28 @@ int CStage2D::Update(float fTime)
 	if (m_iStartX < 0)
 		m_iStartX = 0;
 
-	else if (m_iStartX >= m_iNumX)
+	else if (m_iStartX >= (int)m_iNumX)
 		m_iStartX = m_iNumX - 1;
 
 	m_iStartY = (int)vCameraPos.y;
 	if (m_iStartY < 0)
 		m_iStartY = 0;
 
-	else if (m_iStartY >= m_iNumY)
+	else if (m_iStartY >= (int)m_iNumY)
 		m_iStartY = m_iNumY - 1;
 
 	m_iEndX = (int)vEndPos.x + 1;
 	if (m_iEndX < 0)
 		m_iEndX = 0;
 
-	else if (m_iEndX >= m_iNumX)
+	else if (m_iEndX >= (int)m_iNumX)
 		m_iEndX = m_iNumX - 1;
 
 	m_iEndY = (int)vEndPos.y * 2 + 1;
 	if (m_iEndY < 0)
 		m_iEndY = 0;
 
-	else if (m_iEndY >= m_iNumY)
+	else if (m_iEndY >= (int)m_iNumY)
 		m_iEndY = m_iNumY - 1;
 
 	for (int i = m_iStartY; i <= m_iEndY; ++i)
@@ -805,9 +783,9 @@ int CStage2D::Update(float fTime)
 
 int CStage2D::LateUpdate(float fTime)
 {
-	for (UINT i = m_iStartY; i < m_iEndY; ++i)
+	for (int i = m_iStartY; i < m_iEndY; ++i)
 	{
-		for (UINT j = m_iStartX; j < m_iEndX; ++j)
+		for (int j = m_iStartX; j < m_iEndX; ++j)
 		{
 			m_vecTileObj[i * m_iNumX + j]->LateUpdate(fTime);
 		}
@@ -818,9 +796,9 @@ int CStage2D::LateUpdate(float fTime)
 
 void CStage2D::Collision(float fTime)
 {
-	for (UINT i = m_iStartY; i < m_iEndY; ++i)
+	for (int i = m_iStartY; i < m_iEndY; ++i)
 	{
-		for (UINT j = m_iStartX; j < m_iEndX; ++j)
+		for (int j = m_iStartX; j < m_iEndX; ++j)
 		{
 			m_vecTileObj[i * m_iNumX + j]->Collision(fTime);
 		}
@@ -829,9 +807,9 @@ void CStage2D::Collision(float fTime)
 
 void CStage2D::Render(float fTime)
 {
-	for (UINT i = m_iStartY; i < m_iEndY; ++i)
+	for (int i = m_iStartY; i < m_iEndY; ++i)
 	{
-		for (UINT j = m_iStartX; j < m_iEndX; ++j)
+		for (int j = m_iStartX; j < m_iEndX; ++j)
 		{
 			m_vecTileObj[i * m_iNumX + j]->Render(fTime);
 		}
@@ -870,10 +848,6 @@ void CStage2D::Save(FILE * pFile)
 		m_vecTile[i]->Save(pFile);
 	}
 
-	/*fwrite(&m_iStartX, sizeof(int), 1, pFile);
-	fwrite(&m_iStartY, sizeof(int), 1, pFile);
-	fwrite(&m_iEndX, sizeof(int), 1, pFile);
-	fwrite(&m_iEndY, sizeof(int), 1, pFile);*/
 }
 
 void CStage2D::Load(FILE * pFile)
@@ -903,9 +877,9 @@ void CStage2D::Load(FILE * pFile)
 	m_vecTile.resize(m_iNumX * m_iNumY);
 	m_vecTileTr.resize(m_iNumX * m_iNumY);
 
-	for (int i = 0; i < m_iNumY; ++i)
+	for (int i = 0; i < (int)m_iNumY; ++i)
 	{
-		for (int j = 0; j < m_iNumX; ++j)
+		for (int j = 0; j < (int)m_iNumX; ++j)
 		{
 			int	iIndex = i * m_iNumX + j;
 

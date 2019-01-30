@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "DepthState.h"
 #include "../Device.h"
 
@@ -30,7 +30,7 @@ bool CDepthState::CreateState(BOOL bDepthEnable,
 	tDesc.FrontFace = tFrontFace;
 	tDesc.BackFace = tBackFace;
 
-	if (FAILED(DEVICE->CreateDepthStencilState(&tDesc,
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateDepthStencilState(&tDesc,
 		(ID3D11DepthStencilState**)&m_pState)))
 		return false;
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "BineryWriter.h"
 #include "PathManager.h"
 
@@ -6,16 +6,15 @@ PUN_USING
 
 BineryWrite::BineryWrite(const string& FileName)
 {
-	wstring Temp;
-	Temp = CPathManager::GetInst()->FindPath(DATA_PATH);
+	string Temp;
+	Temp = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
 	
 	if (Temp.empty() == true)
 		return;
 
-	Temp += CA2W(FileName.c_str());
-	string Temp2 = CW2A(Temp.c_str());
+	Temp += FileName;
 
-	m_WriteFile = ofstream(Temp2.c_str(), ios_base::binary);
+	m_WriteFile = ofstream(Temp.c_str(), ios_base::binary);
 }
 
 BineryWrite::BineryWrite(const wstring& FileName)
@@ -81,11 +80,11 @@ void BineryWrite::WriteData(const string & Data)
 
 void BineryWrite::WriteData(const wstring & Data)
 {
-	string Temp = CW2A(Data.c_str());
+	wstring Temp = Data.c_str();
 	size_t Datalen = Data.length();
 
 	m_WriteFile.write((char*)&Datalen, sizeof(size_t));
-	m_WriteFile.write(Temp.c_str(), Datalen);
+	m_WriteFile.write(CW2A(Temp.c_str()), Datalen);
 }
 
 void BineryWrite::WriteData(const char * Data)
@@ -100,10 +99,8 @@ void BineryWrite::WriteData(const char * Data)
 void BineryWrite::WriteData(const wchar_t * Data)
 {
 	wstring Temp = Data;
-	string Temp2 = CW2A(Temp.c_str());
-
-	size_t Datalen = Temp2.length();
+	size_t Datalen = Temp.length();
 
 	m_WriteFile.write((char*)&Datalen, sizeof(size_t));
-	m_WriteFile.write(Temp2.c_str(), Datalen);
+	m_WriteFile.write(CW2A(Temp.c_str()), Datalen);
 }

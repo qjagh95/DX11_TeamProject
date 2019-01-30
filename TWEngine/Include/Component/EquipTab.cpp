@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "EquipTab.h"
 #include "Renderer.h"
 #include "Material.h"

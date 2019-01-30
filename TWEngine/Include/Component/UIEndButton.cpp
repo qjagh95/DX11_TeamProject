@@ -1,12 +1,9 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "UIEndButton.h"
-#include "Renderer.h"
-#include "Material.h"
 #include "ColliderRect.h"
 #include "Transform.h"
 #include "../GameObject.h"
 #include "../Input.h"
-#include "../SoundManager.h"
 
 PUN_USING
 

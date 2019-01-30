@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Mesh.h"
 #include "../Device.h"
 
@@ -206,7 +206,7 @@ bool CMesh::CreateVertexBuffer(void * pData, int iCount, int iSize, D3D11_USAGE 
 	D3D11_SUBRESOURCE_DATA	tResource = {};
 	tResource.pSysMem = pContainer->tVB.pData;
 
-	if (FAILED(DEVICE->CreateBuffer(&tDesc, &tResource, &pContainer->tVB.pBuffer)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateBuffer(&tDesc, &tResource, &pContainer->tVB.pBuffer)))
 		return false;
 
 	char*	pVertices = (char*)pData;
@@ -271,7 +271,7 @@ bool CMesh::CreateIndexBuffer(void * pData, int iCount, int iSize, D3D11_USAGE e
 	D3D11_SUBRESOURCE_DATA	tResource = {};
 	tResource.pSysMem = tIB.pData;
 
-	if (FAILED(DEVICE->CreateBuffer(&tDesc, &tResource, &tIB.pBuffer)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateBuffer(&tDesc, &tResource, &tIB.pBuffer)))
 		return false;
 
 	pContainer->vecIB.push_back(tIB);

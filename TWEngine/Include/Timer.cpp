@@ -1,6 +1,7 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Timer.h"
-#include "Debug.h"
+#include "Core.h"
+
 
 PUN_USING
 
@@ -47,23 +48,25 @@ void CTimer::Update()
 	LARGE_INTEGER	tTick;
 	QueryPerformanceCounter(&tTick);
 
-	m_fTime = (tTick.QuadPart - m_tTick.QuadPart) /
-		(float)m_tSecond.QuadPart;
-
+	m_fTime = (tTick.QuadPart - m_tTick.QuadPart) / (float)m_tSecond.QuadPart;
 	m_tTick = tTick;
 
+	m_iTick++;
 	m_fFPSTime += m_fTime;
-	++m_iTick;
 
-	if (m_iTick == 60)
+	if (m_fFPSTime >= 1.0f)
 	{
+#ifdef _DEBUG
+		static char Buffer[255] = {};
+		sprintf_s(Buffer, "Frame : %d", m_iTick);
+
+		SetWindowTextA(CCore::GetInst()->GetWindowHandle(), Buffer);
+#endif
+
 		m_fFPS = m_iTick / m_fFPSTime;
 		m_fFPSTime = 0.f;
 		m_iTick = 0;
 
-		char strText[128] = {};
-		sprintf_s(strText, "FPS : %f, DeltaTime : %f", m_fFPS, m_fTime);
-
-		CDebug::OutputTitle(strText);
 	}
+
 }

@@ -1,4 +1,5 @@
-#include "stdafx.h"
+
+#include "EngineHeader.h"
 #include "ResourcesManager.h"
 #include "Mesh.h"
 #include "Texture.h"

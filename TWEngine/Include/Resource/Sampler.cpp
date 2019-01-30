@@ -1,4 +1,5 @@
-#include "stdafx.h"
+
+#include "EngineHeader.h"
 #include "Sampler.h"
 #include "../Device.h"
 
@@ -34,7 +35,7 @@ bool CSampler::CreateSampler(const string & strName, D3D11_FILTER eFilter,
 	float	f = 1.f;
 	memcpy(tDesc.BorderColor, &f, sizeof(float) * 4);
 
-	if (FAILED(DEVICE->CreateSamplerState(&tDesc, &m_pSampler)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateSamplerState(&tDesc, &m_pSampler)))
 		return false;
 
 	return true;

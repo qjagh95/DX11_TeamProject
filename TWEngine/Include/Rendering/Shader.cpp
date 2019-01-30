@@ -1,7 +1,7 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Shader.h"
 #include "../Device.h"
-#include "../PathManager.h"
+
 
 PUN_USING
 
@@ -83,7 +83,7 @@ bool CShader::LoadVertexShader(const TCHAR * pFileName, char * pEntry, const str
 	}
 
 	// Blob에 컴파일된 코드를 이용해서 VertexShader 객체를 만들어낸다.
-	if (FAILED(DEVICE->CreateVertexShader(m_pVSBlob->GetBufferPointer(),
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateVertexShader(m_pVSBlob->GetBufferPointer(),
 		m_pVSBlob->GetBufferSize(), nullptr, &m_pVS)))
 		return false;
 
@@ -119,7 +119,7 @@ bool CShader::LoadPixelShader(const TCHAR * pFileName, char * pEntry, const stri
 	}
 
 	// Blob에 컴파일된 코드를 이용해서 VertexShader 객체를 만들어낸다.
-	if (FAILED(DEVICE->CreatePixelShader(m_pPSBlob->GetBufferPointer(),
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreatePixelShader(m_pPSBlob->GetBufferPointer(),
 		m_pPSBlob->GetBufferSize(), nullptr, &m_pPS)))
 		return false;
 

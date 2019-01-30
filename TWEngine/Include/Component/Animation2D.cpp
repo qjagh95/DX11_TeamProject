@@ -1,6 +1,5 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Animation2D.h"
-#include "../Resource/ResourcesManager.h"
 #include "../Resource/Texture.h"
 #include "../PathManager.h"
 #include "../GameObject.h"
@@ -84,8 +83,8 @@ void CAnimation2D::AddClip(const string & strName,
 		pFileName, strPathKey);
 	pClip->pTexture = GET_SINGLE(CResourcesManager)->FindTexture(strTexKey);
 	pClip->iTexRegister = 0;
-	pClip->fTextureWidth = pClip->pTexture->GetWidth();
-	pClip->fTextureHeight = pClip->pTexture->GetHeight();
+	pClip->fTextureWidth =(float)pClip->pTexture->GetWidth();
+	pClip->fTextureHeight = (float)pClip->pTexture->GetHeight();
 
 	m_mapClip.insert(make_pair(strName, pClip));
 
@@ -124,8 +123,8 @@ void CAnimation2D::AddClip(const string & strName, ANIMATION2D_TYPE eType,
 	GET_SINGLE(CResourcesManager)->CreateTexture(strTexKey,
 		vecFileName, strPathKey);
 	pClip->pTexture = GET_SINGLE(CResourcesManager)->FindTexture(strTexKey);
-	pClip->fTextureWidth = pClip->pTexture->GetWidth();
-	pClip->fTextureHeight = pClip->pTexture->GetHeight();
+	pClip->fTextureWidth = (float)pClip->pTexture->GetWidth();
+	pClip->fTextureHeight = (float)pClip->pTexture->GetHeight();
 
 	m_mapClip.insert(make_pair(strName, pClip));
 
@@ -231,7 +230,7 @@ int CAnimation2D::LateUpdate(float fTime)
 
 			if (m_pCurClip->eOption == AO_ONCE_LAST)
 			{
-				m_pCurClip->iFrame = m_pCurClip->vecFrame.size() - 1;
+				m_pCurClip->iFrame = (int)m_pCurClip->vecFrame.size() - 1;
 				break;
 			}
 		}

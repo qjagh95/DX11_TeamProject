@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "Scene.h"
 #include "Layer.h"
 #include "SceneComponent.h"
@@ -6,7 +6,6 @@
 #include "../Component/Camera.h"
 #include "../Component/Transform.h"
 #include "../Device.h"
-#include "../CollisionManager.h"
 #include "../Input.h"
 #include "../SoundManager.h"
 #include "../Component/Light.h"
@@ -96,7 +95,7 @@ bool CScene::Init()
 
 	m_pMainCameraObj = CreateCamera("MainCamera",
 		Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE,
-		_RESOLUTION.iWidth, _RESOLUTION.iHeight,
+		(float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight,
 		60.f, 0.03f, 1000.f);
 
 	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
@@ -104,7 +103,7 @@ bool CScene::Init()
 
 	m_pUICameraObj = CreateCamera("UICamera",
 		Vector3(0.f, 0.f, 0.f), CT_ORTHO,
-		_RESOLUTION.iWidth, _RESOLUTION.iHeight,
+		(float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight,
 		60.f, 0.f, 1000.f);
 
 	m_pUICameraTr = m_pUICameraObj->GetTransform();

@@ -61,6 +61,7 @@ private:
 
 public:
 	class CTransform* GetTransform()	const;
+	class CTransform* GetTransformNoneCount() const { return m_pTransform; }
 	const list<class CComponent*>* GetComponentList()	const;
 	bool EmptyComponent()	const;
 

@@ -75,7 +75,7 @@
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)64_Debug</TargetName>
-    <IncludePath>../../Engine/Include/;$(IncludePath)</IncludePath>
+    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;$(IncludePath)</IncludePath>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -83,14 +83,14 @@
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)_Debug</TargetName>
-    <IncludePath>../../Engine/Include/;$(IncludePath)</IncludePath>
+    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;$(IncludePath)</IncludePath>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
-    <IncludePath>../../Engine/Include/;$(IncludePath)</IncludePath>
+    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;$(IncludePath)</IncludePath>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -98,7 +98,7 @@
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)64</TargetName>
-    <IncludePath>../../Engine/Include/;$(IncludePath)</IncludePath>
+    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;$(IncludePath)</IncludePath>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -108,11 +108,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../../DirectXTK/Inc/;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>TWEngine64_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -122,6 +124,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../../DirectXTK/Inc/;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,6 +141,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../../DirectXTK/Inc/;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,6 +160,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../../DirectXTK/Inc/;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -188,6 +193,17 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj">
+      <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Mathlib\Mathlib.vcxproj">
+      <Project>{bc993d7f-3c50-412d-a85b-472c7138aec9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TWEngine\Include\TWEngine.vcxproj">
+      <Project>{8c2e0787-528d-412a-88d2-cb4a6123eeaa}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

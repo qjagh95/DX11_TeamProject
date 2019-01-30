@@ -1,4 +1,5 @@
-#include "stdafx.h"
+
+#include "EngineHeader.h"
 #include "SceneManager.h"
 #include "Scene.h"
 #include "../Input.h"

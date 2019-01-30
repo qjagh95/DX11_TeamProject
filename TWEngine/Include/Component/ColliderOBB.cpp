@@ -1,16 +1,11 @@
-#include "stdafx.h"
+#include "EngineHeader.h"
 #include "ColliderOBB.h"
 #include "Transform.h"
-#include "../Rendering/RenderManager.h"
-#include "../Resource/ResourcesManager.h"
 #include "Camera.h"
 #include "../Scene/Scene.h"
-#include "../Resource/Mesh.h"
-#include "../Rendering/ShaderManager.h"
 #include "ColliderPoint.h"
 #include "ColliderRect.h"
 #include "ColliderPixel.h"
-#include "../EngineMath.h"
 
 PUN_USING
 
@@ -69,7 +64,7 @@ int CColliderOBB::LateUpdate(float fTime)
 	Vector3 vPos = m_pTransform->GetWorldPos() - m_pTransform->GetPivot() *
 		m_pTransform->GetWorldScale();
 
-	Matrix	matWorld = m_pTransform->GetParentRotMatrix();
+	Matrix	matWorld = m_pTransform->GetRotDelta();
 	memcpy(&matWorld._41, &m_pTransform->GetWorldPos(), sizeof(Vector3));
 
 	m_tInfo.vCenter = m_tRelativeInfo.vCenter.TransformCoord(matWorld);

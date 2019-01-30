@@ -39,13 +39,9 @@
 #include <afxcontrolbars.h>
 #include <atlimage.h>
 
-#include "Core.h"
+#include <EngineHeader.h>
+#include <Core.h>
 PUN_USING
-
-
-
-
-
 
 
 #ifdef _UNICODE
