@@ -129,6 +129,9 @@
     <Filter Include="01. Core\11. SoundManager">
       <UniqueIdentifier>{4ef551b6-9bf0-47ad-824f-a3e206c80617}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Resources\01. Mesh\00. FBXSDK">
+      <UniqueIdentifier>{74603be7-31c8-46ad-a073-5d40310aea7c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -355,6 +358,9 @@
     </ClCompile>
     <ClCompile Include="Rendering\RasterizerState.cpp">
       <Filter>03. Rendering\02. RenderState</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\FbxLoader.cpp">
+      <Filter>02. Resources\01. Mesh\00. FBXSDK</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -621,6 +627,9 @@
     </ClInclude>
     <ClInclude Include="Rendering\RasterizerState.h">
       <Filter>03. Rendering\02. RenderState</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\FbxLoader.h">
+      <Filter>02. Resources\01. Mesh\00. FBXSDK</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
