@@ -156,7 +156,7 @@ bool CUIBar::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "Bar", TEXT("UI/HPMP/HP_Bar.png"));
+	//pMaterial->SetDiffuseTex(0, "Bar", TEXT("UI/HPMP/HP_Bar.png"));
 
 	SAFE_RELEASE(pMaterial);
 

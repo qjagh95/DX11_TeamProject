@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Engine.h"
+
 PUN_BEGIN
 
 class PUN_DLL CShaderManager

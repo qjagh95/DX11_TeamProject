@@ -7,6 +7,9 @@
 #include "../Scene/Scene.h"
 #include "../Component/Camera.h"
 #include "../Resource/Sampler.h"
+#include "../Resource/Texture.h"
+#include "../Resource/DirectXTex.h"
+#include "../PathManager.h"
 
 PUN_USING
 
@@ -69,6 +72,7 @@ bool CRenderTarget::CreateRenderTarget(DXGI_FORMAT eTargetFmt, const Vector3 & v
 	tDesc.ArraySize = 1;
 	tDesc.SampleDesc.Count = 1;
 	tDesc.SampleDesc.Quality = 0;
+	tDesc.MipLevels = 1;
 	tDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 	tDesc.Format = eTargetFmt;
 	tDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -77,10 +81,12 @@ bool CRenderTarget::CreateRenderTarget(DXGI_FORMAT eTargetFmt, const Vector3 & v
 		return false;
 
 	// 만들어진 텍스처로 ShaderResourceView와 TargetView를 생성한다.
-	if (FAILED(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(m_pTargetTex, nullptr, &m_pTargetSRV)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(m_pTargetTex, nullptr, 
+		&m_pTargetSRV)))
 		return false;
 
-	if (FAILED(CDevice::GetInst()->GetDevice()->CreateRenderTargetView(m_pTargetTex, nullptr, &m_pTargetView)))
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateRenderTargetView(m_pTargetTex, nullptr, 
+		&m_pTargetView)))
 		return false;
 
 	if (eDepthFmt != DXGI_FORMAT_UNKNOWN)
@@ -187,6 +193,7 @@ void CRenderTarget::Render(float fTime)
 	tTransform.matWV = tTransform.matWorld * matView;
 	tTransform.matWVP = tTransform.matWV * matProj;
 	tTransform.vLength = m_pMesh->GetLength();
+	tTransform.vPivot = Vector3::Zero;
 
 	tTransform.matWorld.Transpose();
 	tTransform.matView.Transpose();
@@ -202,18 +209,20 @@ void CRenderTarget::Render(float fTime)
 
 	m_pDepthState->SetState();
 
-	CONTEXT->IASetInputLayout(m_pLayout);
 
 	CONTEXT->PSSetShaderResources(0, 1, &m_pTargetSRV);
 
 	m_pShader->SetShader();
 
+	CONTEXT->IASetInputLayout(m_pLayout);
+
 	m_pMesh->Render();
 
-	ID3D11ShaderResourceView*	pSRV = nullptr;
-	CONTEXT->PSSetShaderResources(0, 1, &pSRV);
-
 	m_pDepthState->ResetState();
+
+	ID3D11ShaderResourceView*	pSRV = nullptr;
+
+	CONTEXT->PSSetShaderResources(0, 1, &pSRV);
 }
 
 void CRenderTarget::RenderFullScreen()
@@ -225,6 +234,7 @@ void CRenderTarget::RenderFullScreen()
 
 	if (m_pSampler)
 		m_pSampler->SetShader(0);
+
 	CONTEXT->PSSetShaderResources(0, 1, &m_pTargetSRV);
 
 	m_pFullScreenShader->SetShader();
@@ -247,4 +257,14 @@ void CRenderTarget::RenderFullScreen()
 void CRenderTarget::SetShader(int iRegister)
 {
 	CONTEXT->PSSetShaderResources(iRegister, 1, &m_pTargetSRV);
+}
+
+void CRenderTarget::ResetShader(int _iRegister)
+{
+	ID3D11ShaderResourceView* pSRV = nullptr;
+	CDevice::GetInst()->GetContext()->PSSetShaderResources(_iRegister, 1, &pSRV);
+}
+
+void CRenderTarget::Save(const TCHAR * _pFileName, const std::string & _strPathKey)
+{
 }

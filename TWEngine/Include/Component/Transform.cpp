@@ -196,11 +196,15 @@ Matrix CTransform::GetLocalMatrix() const
 void CTransform::SetWorldScale(const Vector3 & vScale)
 {
 	m_vWorldScale = vScale;
+
+	m_matWorldScale.Scaling(m_vWorldScale);
 }
 
 void CTransform::SetWorldScale(float x, float y, float z)
 {
 	m_vWorldScale = Vector3(x, y, z);
+
+	m_matWorldScale.Scaling(m_vWorldScale);
 }
 
 void CTransform::SetWorldRot(const Vector3 & vRot)

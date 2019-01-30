@@ -75,7 +75,7 @@
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)64_Debug</TargetName>
-    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;$(IncludePath)</IncludePath>
+    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;../../DirectXTK/Inc/;$(IncludePath)</IncludePath>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -83,14 +83,14 @@
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)_Debug</TargetName>
-    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;$(IncludePath)</IncludePath>
+    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;../../DirectXTK/Inc/;$(IncludePath)</IncludePath>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
-    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;$(IncludePath)</IncludePath>
+    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;../../DirectXTK/Inc/;$(IncludePath)</IncludePath>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -98,7 +98,7 @@
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)64</TargetName>
-    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;$(IncludePath)</IncludePath>
+    <IncludePath>../../Engine/Include/;../../Math/Include/;../../ImGui/;../../DirectXTK/Inc/;$(IncludePath)</IncludePath>
     <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -109,6 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../../DirectXTK/Inc/;</AdditionalIncludeDirectories>
+      <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,6 +126,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../../DirectXTK/Inc/;</AdditionalIncludeDirectories>
+      <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,6 +144,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../../DirectXTK/Inc/;</AdditionalIncludeDirectories>
+      <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,6 +164,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../../DirectXTK/Inc/;</AdditionalIncludeDirectories>
+      <IncludeInUnityFile>true</IncludeInUnityFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

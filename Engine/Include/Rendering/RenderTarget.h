@@ -50,6 +50,8 @@ public:
 	void Render(float fTime);
 	void RenderFullScreen();
 	void SetShader(int iRegister);
+	void ResetShader(int _iRegister);
+	void Save(const TCHAR* _pFileName, const std::string& _strPathKey);
 };
 
 PUN_END

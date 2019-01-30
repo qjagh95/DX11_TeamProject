@@ -24,8 +24,8 @@ bool SoundManagerT::Init()
 #endif
 	m_AudioEngine = make_unique<AudioEngine>(Flag);
 
-	CreateSoundEffect("BGM", TEXT("bgm_Dnf.wav"));
-	CreateSoundEffect("Effect", TEXT("teleporter_send.wav"));
+	//CreateSoundEffect("BGM", TEXT("bgm_Dnf.wav"));
+	//CreateSoundEffect("Effect", TEXT("teleporter_send.wav"));
 
 	return true;
 }

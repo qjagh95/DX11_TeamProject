@@ -25,7 +25,7 @@ typedef struct _tagRenderGroup
 
 typedef struct PUN_DLL _tagMRT
 {
-	vector<ID3D11RenderTargetView*>	vecTarget;
+	vector<class CRenderTarget*>	vecTarget;
 	vector<ID3D11RenderTargetView*>	vecOldTarget;
 	ID3D11DepthStencilView*	pDepth;
 	ID3D11DepthStencilView*	pOldDepth;
@@ -42,7 +42,9 @@ private:
 	class CBlendState*	m_pCreateState;
 	GAME_MODE			m_eGameMode;
 	bool				m_bDeferred;
-
+	class CRenderState* m_pDepthDisable;
+	class CSampler*     m_pGBufferSampler;
+	class CShader*		m_pLightAccDirShader;
 public:
 	GAME_MODE GetGameMode()	const;
 	bool GetRenderingMode()	const;
@@ -79,6 +81,7 @@ public:
 	
 	bool AddMRT(const string& strMRTKey, const string& strTargetKey);
 	bool AddMRTDepth(const string& strMRTKey, const string& strTargetKey);
+	void ClearMRT(const string& strMRTKey, float fClearColor[4]);
 	void SetMRT(const string& strMRTKey);
 	void ResetMRT(const string& strMRTKey);
 	PMRT FindMRT(const string& strMRTKey);
@@ -93,6 +96,10 @@ private:
 	void RenderForward(float fTime);
 	void RenderDeferred(float fTime);
 	void RenderGBuffer(float fTime);
+	void RenderLightAcc(float fTime);
+	void RenderLightDir(float fTime, class CLight* pLight);
+	void RenderLightPoint(float fTime, class CLight* pLight);
+	void RenderLightSpot(float fTime, class CLight* pLight);
 
 	DECLARE_SINGLE(CRenderManager)
 };

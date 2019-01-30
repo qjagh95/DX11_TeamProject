@@ -8,7 +8,7 @@ class PUN_DLL CTexture :
 	public CRef
 {
 	friend class CResourcesManager;
-
+	friend class CRenderTarget;
 private:
 	CTexture();
 	~CTexture();

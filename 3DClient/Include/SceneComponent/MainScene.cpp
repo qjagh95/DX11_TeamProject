@@ -49,6 +49,12 @@ bool CMainScene::Init()
 
 	SAFE_RELEASE(pObject);
 
+	pObject = CGameObject::CreateObject("UI", pUILayer);
+	CUIBar* pBar = pObject->AddComponent<CUIBar>("Bar");
+
+	SAFE_RELEASE(pBar);
+	SAFE_RELEASE(pObject);
+
 	CreatePrototype();
 
 	SAFE_RELEASE(pDefaultLayer);

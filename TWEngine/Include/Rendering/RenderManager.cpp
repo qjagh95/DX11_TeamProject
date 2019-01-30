@@ -7,6 +7,9 @@
 #include "../GameObject.h"
 #include "../Component/Light.h"
 #include "../Device.h"
+#include "../Resource/ResourcesManager.h"
+#include "../Resource/Sampler.h"
+#include "Shader.h"
 
 PUN_USING
 
@@ -22,6 +25,13 @@ CRenderManager::CRenderManager() :
 
 CRenderManager::~CRenderManager()
 {
+	SAFE_RELEASE(m_pLightAccDirShader);
+	SAFE_RELEASE(m_pGBufferSampler);
+	SAFE_RELEASE(m_pDepthDisable);
+
+
+	Safe_Delete_Map(m_mapMRT);
+
 	unordered_map<string, CRenderTarget*>::iterator	iter;
 	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
 
@@ -38,9 +48,10 @@ CRenderManager::~CRenderManager()
 		{
 			SAFE_RELEASE(m_tRenderObj[i].pList[j]);
 		}
-
 		m_tRenderObj[i].iSize = 0;
 	}
+	
+	
 
 	Safe_Release_Map(m_mapRenderState);
 	DESTROY_SINGLE(CShaderManager);
@@ -71,38 +82,48 @@ bool CRenderManager::Init()
 	if (!GET_SINGLE(CShaderManager)->Init())
 		return false;
 
+	//////////////////////Blend//////////////////////////////
 	AddBlendTargetDesc(TRUE);
 	CreateBlendState(ALPHA_BLEND);
+	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, 
+		D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE , D3D11_BLEND_ONE);
+
+	CreateBlendState(ACC_BLEND);
+	///////////////////////////////////////////////////////
+
+	//////////////////////Depth//////////////////////////
 	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
-
-	Vector3 vPos;
-	vPos.x = CDevice::GetInst()->GetResolution().iWidth - 100.f;
-
+	m_pDepthDisable = FindRenderState(DEPTH_DISABLE);
+	//////////////////////////////////////////////////////
 	// 포스트 이펙트용 렌더링타겟 생성
-	if (!CreateRenderTarget("PostEffect", DXGI_FORMAT_R8G8B8A8_UNORM, 
+	Vector3	vPos;
+	vPos.x = _RESOLUTION.iWidth - 100.f;
+
+	if (!CreateRenderTarget("PostEffect", DXGI_FORMAT_R8G8B8A8_UNORM,
 		vPos, Vector3(100.f, 100.f, 1.f), true))
 		return false;
 
-	////////Albedo Target 생성///////////////////////
+	// Albedo
+	vPos.x = 0.f;
 	if (!CreateRenderTarget("Albedo", DXGI_FORMAT_R32G32B32A32_FLOAT,
-		Vector3::Zero , Vector3(100.f, 100.f, 1.f), true))
+		Vector3::Zero, Vector3(100.f, 100.f, 1.f), true))
 		return false;
 
-	////////Normal Target 생성///////////////////////
+	// Normal
 	vPos.x = 0.f;
 	vPos.y = 100.f;
 	if (!CreateRenderTarget("Normal", DXGI_FORMAT_R32G32B32A32_FLOAT,
 		vPos, Vector3(100.f, 100.f, 1.f), true))
 		return false;
 
-	////////Depth Target 생성///////////////////////
+	// Depth
 	vPos.x = 0.f;
 	vPos.y = 200.f;
 	if (!CreateRenderTarget("Depth", DXGI_FORMAT_R32G32B32A32_FLOAT,
 		vPos, Vector3(100.f, 100.f, 1.f), true))
 		return false;
 
-	////////Material(Specular) Target 생성///////////////////////
+	// Material
 	vPos.x = 0.f;
 	vPos.y = 300.f;
 	if (!CreateRenderTarget("Material", DXGI_FORMAT_R32G32B32A32_FLOAT,
@@ -114,7 +135,27 @@ bool CRenderManager::Init()
 	AddMRT("GBuffer", "Depth");
 	AddMRT("GBuffer", "Material");
 
-	m_bDeferred = true;
+	// Light Dif
+	vPos.x = 100.f;
+	vPos.y = 0.f;
+	if (!CreateRenderTarget("LightAccDif", DXGI_FORMAT_R32G32B32A32_FLOAT,
+		vPos, Vector3(100.f, 100.f, 1.f), true))
+		return false;
+
+	// Light Spc
+	vPos.x = 100.f;
+	vPos.y = 100.f;
+	if (!CreateRenderTarget("LightAccSpc", DXGI_FORMAT_R32G32B32A32_FLOAT,
+		vPos, Vector3(100.f, 100.f, 1.f), true))
+		return false;
+
+	AddMRT("LightAcc", "Albedo");
+	AddMRT("LightAcc", "Normal");
+
+	m_pGBufferSampler = GET_SINGLE(CResourcesManager)->FindSampler(SAMPLER_POINT);
+
+	m_pLightAccDirShader = GET_SINGLE(CShaderManager)->FindShader(LIGHT_DIR_ACC_SHADER);
+
 	return true;
 }
 
@@ -232,7 +273,7 @@ bool CRenderManager::AddMRT(const string & strMRTKey, const string & strTargetKe
 	{
 		pMRT = new MRT;
 		pMRT->pDepth = nullptr;
-		//m_mapMRT.insert(std::make_pair(strMRTKey, pMRT));
+		m_mapMRT.insert(std::make_pair(strMRTKey, pMRT));
 	}
 
 	CRenderTarget* pTarget = FindRenderTarget(strTargetKey);
@@ -242,7 +283,7 @@ bool CRenderManager::AddMRT(const string & strMRTKey, const string & strTargetKe
 		return false;
 	}
 
-	pMRT->vecTarget.push_back(pTarget->GetRenderTargetView());
+	pMRT->vecTarget.push_back(pTarget);
 
 	return true;
 }
@@ -272,26 +313,50 @@ bool CRenderManager::AddMRTDepth(const string & strMRTKey, const string & strTar
 	return true;
 }
 
-void CRenderManager::SetMRT(const string & strMRTKey)
+void CRenderManager::ClearMRT(const string & strMRTKey, float fClearColor[4])
 {
 	PMRT pMRT = FindMRT(strMRTKey);
-	
-	if (pMRT == nullptr)
-	{
+
+	if (!pMRT)
 		return;
+
+	for (size_t i = 0; i < pMRT->vecTarget.size(); ++i)
+	{
+		pMRT->vecTarget[i]->SetClearColor(fClearColor);
+		pMRT->vecTarget[i]->ClearTarget();
 	}
+
+	if (pMRT->pDepth)
+		CDevice::GetInst()->GetContext()->ClearDepthStencilView(pMRT->pDepth, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+}
+
+void CRenderManager::SetMRT(const string & strMRTKey)
+{
+	PMRT	pMRT = FindMRT(strMRTKey);
+
+	if (!pMRT)
+		return;
 
 	if (pMRT->vecOldTarget.empty())
 		pMRT->vecOldTarget.resize(pMRT->vecTarget.size());
 
-	ID3D11DepthStencilView* pDepth = pMRT->pDepth;
-	
-	if (pDepth == nullptr)
-	{
+	CONTEXT->OMGetRenderTargets(pMRT->vecTarget.size(), &pMRT->vecOldTarget[0],
+		&pMRT->pOldDepth);
+
+	ID3D11DepthStencilView*	pDepth = pMRT->pDepth;
+
+	if (!pDepth)
 		pDepth = pMRT->pOldDepth;
+
+	vector<ID3D11RenderTargetView*>	vecTarget;
+
+	for (size_t i = 0; i < pMRT->vecTarget.size(); ++i)
+	{
+		vecTarget.push_back(pMRT->vecTarget[i]->GetRenderTargetView());
 	}
 
-	CDevice::GetInst()->GetContext()->OMSetRenderTargets((UINT)pMRT->vecTarget.size(), &pMRT->vecTarget[0], pDepth);
+	CONTEXT->OMSetRenderTargets(pMRT->vecTarget.size(), &vecTarget[0],
+		pDepth);
 }
 
 void CRenderManager::ResetMRT(const string & strMRTKey)
@@ -326,19 +391,23 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 {
 	if (m_eGameMode == GM_3D)
 	{
-		RENDER_GROUP	rg = RG_NORMAL;
+		//RENDER_GROUP	rg = RG_NORMAL;
 
-		if (pObj->CheckComponentFromType(CT_STAGE2D))
-		{
-			rg = RG_LANDSCAPE;
-		}
+		//if (pObj->CheckComponentFromType(CT_STAGE2D))
+		//{
+		//	rg = RG_LANDSCAPE;
+		//}
 
-		else if (pObj->CheckComponentFromType(CT_UI))
-		{
-			rg = RG_UI;
-		}
+		//else if (pObj->CheckComponentFromType(CT_UI))
+		//{
+		//	rg = RG_UI;
+		//}
 
-		else if (pObj->CheckComponentFromType(CT_LIGHT))
+		//else if (pObj->CheckComponentFromType(CT_LIGHT))
+
+		RENDER_GROUP	rg = pObj->GetRenderGroup();
+
+		if (rg == RG_LIGHT)
 		{
 			if (m_tLightGroup.iSize == m_tLightGroup.iCapacity)
 			{
@@ -354,6 +423,23 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 			}
 			m_tLightGroup.pList[m_tLightGroup.iSize] = pObj;
 			++m_tLightGroup.iSize;
+
+			/*
+			밑의 부분은 '그려질 오브젝트이면서 빛을 가지고 있는 오브젝트'의 경우
+			(EX. 횃불, 전구 (근데 이건 조명따로 횃불따로 해도 될 것 같은.. 읍읍) 
+			 또는 파티클)
+			렌더러를 가지고 있을 것이기 때문에 렌더러 유무 체크를 해주어야 한다고
+			판단해서 추가함.
+			렌더러를 가지고 있지않은 순수 조명의 경우 m_tLightGroup에서만 처리되게 하고
+			렌더러를 가진 오브젝트의 경우 m_tLightGroup에서 처리해줌과 동시에
+			렌더 그룹에 포함시켜 화면에 렌더한다.
+			일단 디폴트로 NORMAL에 넣었지만 아마 EFFECT라든지 그런 렌더 그룹을
+			따로 만들어서 넣어줘야 할 지도 모르겠다.
+			*/
+			if (!pObj->CheckComponentFromType(CT_RENDERER))
+				return;
+			else
+				rg = RG_NORMAL;
 		}
 
 		if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)
@@ -374,17 +460,19 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 
 	else
 	{
-		RENDER_GROUP	rg = RG_NORMAL;
+		//RENDER_GROUP	rg = RG_NORMAL;
 
-		if (pObj->CheckComponentFromType(CT_STAGE2D))
-		{
-			rg = RG_LANDSCAPE;
-		}
+		//if (pObj->CheckComponentFromType(CT_STAGE2D))
+		//{
+		//	rg = RG_LANDSCAPE;
+		//}
 
-		else if (pObj->CheckComponentFromType(CT_UI))
-		{
-			rg = RG_UI;
-		}
+		//else if (pObj->CheckComponentFromType(CT_UI))
+		//{
+		//	rg = RG_UI;
+		//}
+
+		RENDER_GROUP	rg = pObj->GetRenderGroup();
 
 		if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)
 		{
@@ -489,7 +577,7 @@ void CRenderManager::Render3D(float fTime)
 
 	CRenderState*	pAlphaBlend = FindRenderState(ALPHA_BLEND);
 
-	pAlphaBlend->SetState();
+	//pAlphaBlend->SetState();
 
 	unordered_map<string, CRenderTarget*>::iterator	iter;
 	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
@@ -499,7 +587,7 @@ void CRenderManager::Render3D(float fTime)
 		iter->second->Render(fTime);
 	}
 
-	pAlphaBlend->ResetState();
+	//pAlphaBlend->ResetState();
 
 	SAFE_RELEASE(pAlphaBlend);
 }
@@ -575,6 +663,19 @@ void CRenderManager::RenderDeferred(float fTime)
 	// GBuffer를 만들어준다.
 	RenderGBuffer(fTime);
 
+	// 조명 누적버퍼를 만들어준다.
+	//RenderLightAcc(fTime);
+
+	// UI출력
+	for (int i = RG_UI; i < RG_END; ++i)
+	{
+		for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
+		{
+			m_tRenderObj[i].pList[j]->Render(fTime);
+		}
+	}
+
+	m_tLightGroup.iSize = 0;
 
 	for (int i = RG_LANDSCAPE; i < RG_END; ++i)
 	{
@@ -585,7 +686,14 @@ void CRenderManager::RenderDeferred(float fTime)
 void CRenderManager::RenderGBuffer(float fTime)
 {
 	// GBuffer MRT로 타겟을 교체한다.
+	float	fClearColor[4] = {1.f , 0.f , 0.f , 1.f};
+	ClearMRT("GBuffer", fClearColor);
 	SetMRT("GBuffer");
+	//CRenderTarget*	pTarget = FindRenderTarget("Albedo");
+
+	//pTarget->SetClearColor(Vector4::Yellow);
+	//pTarget->ClearTarget();
+	//pTarget->SetTarget();
 
 	for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
 	{
@@ -595,5 +703,86 @@ void CRenderManager::RenderGBuffer(float fTime)
 		}
 	}
 
+	//pTarget->ResetTarget();
+
 	ResetMRT("GBuffer");
+
+	//pTarget->RenderFullScreen();
+}
+
+void CRenderManager::RenderLightAcc(float fTime)
+{
+	float	fClearColor[4] = {};
+	ClearMRT("LightAcc", fClearColor);
+	SetMRT("LightAcc");
+
+	m_pLightAccDirShader->SetShader();
+
+	CRenderState*	pAccBlend = FindRenderState(ACC_BLEND);
+
+	pAccBlend->SetState();
+
+	m_pDepthDisable->SetState();
+
+	m_pGBufferSampler->SetShader(10);
+
+	// GBuffer를 얻어온다.
+	PMRT	pGBuffer = FindMRT("GBuffer");
+
+	pGBuffer->vecTarget[1]->SetShader(11);
+	pGBuffer->vecTarget[2]->SetShader(12);
+
+	for (int i = 0; i < m_tLightGroup.iSize; ++i)
+	{
+		CLight*	pLight = m_tLightGroup.pList[i]->FindComponentFromType<CLight>(CT_LIGHT);
+
+		switch (pLight->GetLightType())
+		{
+		case LT_DIR:
+			RenderLightDir(fTime, pLight);
+			break;
+		case LT_POINT:
+			RenderLightPoint(fTime, pLight);
+			break;
+		case LT_SPOT:
+			RenderLightSpot(fTime, pLight);
+			break;
+		}
+
+		SAFE_RELEASE(pLight);
+	}
+
+	pGBuffer->vecTarget[1]->ResetShader(11);
+	pGBuffer->vecTarget[2]->ResetShader(12);
+
+	m_pDepthDisable->ResetState();
+
+	pAccBlend->ResetState();
+
+	SAFE_RELEASE(pAccBlend);
+
+	ResetMRT("LightAcc");
+}
+
+void CRenderManager::RenderLightDir(float fTime, CLight * pLight)
+{
+	// 조명 정보를 상수버퍼에 넘겨준다.
+	pLight->SetShader();
+
+	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
+	CONTEXT->IASetInputLayout(nullptr);
+
+	UINT iOffset = 0;
+	CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CONTEXT->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	CONTEXT->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	CONTEXT->Draw(4, 0);
+}
+
+void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
+{
+}
+
+void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
+{
 }

@@ -644,5 +644,8 @@
     <FxCompile Include="..\Bin\Shader\BackColorShader.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Light.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

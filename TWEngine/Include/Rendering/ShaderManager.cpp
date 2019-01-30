@@ -69,6 +69,11 @@ bool CShaderManager::Init()
 	if (!LoadShader(FULLSCREEN_SHADER, TEXT("Standard.fx"), pEntry))
 		return false;
 
+	pEntry[ST_VERTEX] = (char*)"LightDirVS";
+	pEntry[ST_PIXEL] = (char*)"LightAccPS";
+	if (!LoadShader(LIGHT_DIR_ACC_SHADER, TEXT("Light.fx"), pEntry))
+		return false;
+
 	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement((char*)"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 8);
 

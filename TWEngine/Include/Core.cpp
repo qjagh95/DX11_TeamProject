@@ -15,7 +15,7 @@ bool CCore::m_bLoop = true;
 CCore::CCore()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(61821);
+	//_CrtSetBreakAlloc(1495);
 
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 }
@@ -237,13 +237,11 @@ void CCore::Render(float fTime)
 	GET_SINGLE(CSceneManager)->Render(fTime);
 	GET_SINGLE(CRenderManager)->Render(fTime);
 
-		// 마지막으로 마우스를 출력한다.
-	GET_SINGLE(CInput)->RenderMouse(fTime);
-
 #ifdef _DEBUG
 	GUIManager::Get()->ImGuiEnd();
 #endif
 
+	GET_SINGLE(CInput)->RenderMouse(fTime);
 
 	GET_SINGLE(CDevice)->Present();
 }

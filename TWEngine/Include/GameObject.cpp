@@ -17,6 +17,7 @@ CGameObject::CGameObject() :
 	m_pParent(nullptr)
 {
 	SetTag("GameObject");
+	m_eRenderGroup = RG_NORMAL;
 }
 
 CGameObject::CGameObject(const CGameObject & obj)
@@ -346,6 +347,11 @@ const list<class CComponent*>* CGameObject::GetComponentList() const
 	return &m_ComList;
 }
 
+RENDER_GROUP CGameObject::GetRenderGroup() const
+{
+	return m_eRenderGroup;
+}
+
 bool CGameObject::EmptyComponent() const
 {
 	return m_ComList.empty();
@@ -617,6 +623,13 @@ CComponent* CGameObject::AddComponent(CComponent* pCom)
 	pCom->AddRef();
 
 	m_ComList.push_back(pCom);
+
+	if (pCom->GetComponentType() == CT_UI)
+		m_eRenderGroup = RG_UI;
+	else if (pCom->GetComponentType() == CT_STAGE2D)
+		m_eRenderGroup = RG_LANDSCAPE;
+	else if (pCom->GetComponentType() == CT_LIGHT)
+		m_eRenderGroup = RG_LIGHT;
 
 	CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
 

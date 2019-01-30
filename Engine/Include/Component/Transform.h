@@ -150,6 +150,10 @@ public:
 	void LookAt2D(const Vector3& vPos);
 	void UpdateTransform();
 
+private:
+	void ScaleParent();
+	void RotParent();
+
 public:
 	virtual bool Init();
 	virtual int Update(float fTime);

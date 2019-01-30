@@ -178,6 +178,7 @@ bool CResourcesManager::Init()
 
 	// 선형필터링 하나 생성한다.
 	CreateSampler(SAMPLER_LINEAR);
+	CreateSampler(SAMPLER_POINT, D3D11_FILTER_MIN_MAG_MIP_POINT);
 
 	return true;
 }

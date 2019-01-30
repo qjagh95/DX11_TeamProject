@@ -37,6 +37,7 @@ private:
 	class CScene*	m_pScene;
 	class CLayer*	m_pLayer;
 	string			m_strLayerName;
+	RENDER_GROUP	m_eRenderGroup;
 	int				m_iLayerZOrder;
 
 public:
@@ -63,6 +64,7 @@ public:
 	class CTransform* GetTransform()	const;
 	class CTransform* GetTransformNoneCount() const { return m_pTransform; }
 	const list<class CComponent*>* GetComponentList()	const;
+	RENDER_GROUP	 GetRenderGroup() const;
 	bool EmptyComponent()	const;
 
 public:
@@ -140,6 +142,13 @@ public:
 			SAFE_RELEASE(pCom);
 			return nullptr;
 		}
+
+		if (pCom->GetComponentType() == CT_UI)
+			m_eRenderGroup = RG_UI;
+		else if (pCom->GetComponentType() == CT_STAGE2D)
+			m_eRenderGroup = RG_LANDSCAPE;
+		else if (pCom->GetComponentType() == CT_LIGHT)
+			m_eRenderGroup = RG_LIGHT;
 
 		return (T*)AddComponent(pCom);
 	}

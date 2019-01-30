@@ -50,6 +50,8 @@ using namespace std;
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 
+//#include <Audio.h>
+
 #include "PathManager.h"
 #include "Resource/ResourcesManager.h"
 #include "Scene/SceneManager.h"
@@ -64,6 +66,7 @@ using namespace std;
 #include "NavigationManager.h"
 #include "FontManager.h"
 #include "GUIManager.h"
+#include "SoundManagerT.h"
 
 #include "Scene/Scene.h"
 #include "Scene/Layer.h"
