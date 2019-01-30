@@ -72,6 +72,8 @@ public:
 
 	class CRenderState* FindRenderState(const string& strName);
 
+	class CRenderState * FindRenderStateNonCount(const string & strName);
+
 	bool CreateRenderTarget(const string& strName, DXGI_FORMAT eTargetFmt,
 		const Vector3& vPos, const Vector3& vScale,
 		bool bDrawDebug = true, const Vector4& vClearColor = Vector4(0.f, 0.f, 0.f, 0.f),

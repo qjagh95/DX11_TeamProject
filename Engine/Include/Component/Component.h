@@ -24,7 +24,9 @@ public:
 	class CScene*		GetScene()	const;
 	class CLayer*		GetLayer()	const;
 	class CGameObject*	GetGameObject()	const;
+	class CGameObject * GetGameObjectNonCount() const;
 	class CTransform*	GetTransform()	const;
+	class CTransform * GetTransformNonCount() const;
 
 protected:
 	COMPONENT_TYPE	m_eComType;

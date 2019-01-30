@@ -38,9 +38,19 @@ CGameObject * CScene::GetMainCameraObj() const
 	return m_pMainCameraObj;
 }
 
+CGameObject * CScene::GetMainCameraObjNonCount() const
+{
+	return m_pMainCameraObj;
+}
+
 CCamera * CScene::GetMainCamera() const
 {
 	m_pMainCamera->AddRef();
+	return m_pMainCamera;
+}
+
+CCamera * CScene::GetMainCameraNonCount() const
+{
 	return m_pMainCamera;
 }
 
@@ -50,9 +60,20 @@ CTransform * CScene::GetMainCameraTransform() const
 	return m_pMainCameraTr;
 }
 
+CTransform * CScene::GetMainCameraTransformNonCount() const
+{
+	return m_pMainCameraTr;
+}
+
+
 CGameObject * CScene::GetUICameraObj() const
 {
 	m_pUICameraObj->AddRef();
+	return m_pUICameraObj;
+}
+
+CGameObject * CScene::GetUICameraObjNonCount() const
+{
 	return m_pUICameraObj;
 }
 
@@ -62,9 +83,19 @@ CCamera * CScene::GetUICamera() const
 	return m_pUICamera;
 }
 
+CCamera * CScene::GetUICameraNonCount() const
+{
+	return m_pUICamera;
+}
+
 CTransform * CScene::GetUICameraTransform() const
 {
 	m_pUICameraTr->AddRef();
+	return m_pUICameraTr;
+}
+
+CTransform * CScene::GetUICameraTransformNonCount() const
+{
 	return m_pUICameraTr;
 }
 

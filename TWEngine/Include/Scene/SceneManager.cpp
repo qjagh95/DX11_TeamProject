@@ -29,11 +29,21 @@ CScene * CSceneManager::GetScene() const
 	return m_pScene;
 }
 
+CScene * CSceneManager::GetSceneNonCount() const
+{
+	return m_pScene;
+}
+
 CScene * CSceneManager::GetNextScene() const
 {
 	m_pNextScene->AddRef();
 	return m_pNextScene;
 }
+CScene * CSceneManager::GetNextSceneNonCount() const
+{
+	return m_pNextScene;
+}
+
 
 bool CSceneManager::Init()
 {

@@ -18,6 +18,7 @@ public:
 	bool LoadShader(const string& strName, const TCHAR* pFileName,
 		char* pEntry[ST_END], const string& strPathKey = SHADER_PATH);
 	class CShader* FindShader(const string& strName);
+	class CShader * FindShaderNonCount(const string & strName);
 	void AddInputElement(char* pSemantic, int iIdx, DXGI_FORMAT eFmt,
 		int iSize, int iInputSlot = 0, D3D11_INPUT_CLASSIFICATION eInputClass = D3D11_INPUT_PER_VERTEX_DATA,
 		int iInstanceStepRate = 0);

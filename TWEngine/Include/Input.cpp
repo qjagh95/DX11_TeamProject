@@ -32,7 +32,12 @@ CInput::~CInput()
 
 CGameObject * CInput::GetMouseObj() const
 {
-	//m_pMouse->AddRef();
+	m_pMouse->AddRef();
+	return m_pMouse;
+}
+
+CGameObject * CInput::GetMouseObjNonCount() const
+{
 	return m_pMouse;
 }
 

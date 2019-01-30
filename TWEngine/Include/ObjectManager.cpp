@@ -85,6 +85,23 @@ CGameObject * CObjectManager::FindDontDestroyObj(const string & strTag)
 	return nullptr;
 }
 
+CGameObject * CObjectManager::FindDontDestroyObjNonCount(const string & strTag)
+{
+	list<CGameObject*>::iterator	iter;
+	list<CGameObject*>::iterator	iterEnd = m_DontDestroyObj.end();
+
+	for (iter = m_DontDestroyObj.begin(); iter != iterEnd; ++iter)
+	{
+		if (strTag == (*iter)->GetTag())
+		{
+			return *iter;
+		}
+	}
+
+	return nullptr;
+}
+
+
 bool CObjectManager::Init()
 {
 	return true;

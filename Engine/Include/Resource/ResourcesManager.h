@@ -31,8 +31,11 @@ public:
 		D3D11_TEXTURE_ADDRESS_MODE eW = D3D11_TEXTURE_ADDRESS_WRAP);
 
 	class CMesh*	FindMesh(const string& strName);
+	class CMesh * FindMeshNonCount(const string & strName);
 	class CTexture* FindTexture(const string& strName);
+	class CTexture * FindTextureNonCount(const string & strName);
 	class CSampler* FindSampler(const string& strName);
+	class CSampler * FindSamplerNonCount(const string & strName);
 
 	DECLARE_SINGLE(CResourcesManager)
 };

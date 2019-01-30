@@ -13,6 +13,7 @@ public:
 	void ChangeScene(class CScene*  pScene);
 	bool CheckDontDestroyObj(const string& strTag);
 	class CGameObject* FindDontDestroyObj(const string& strTag);
+	class CGameObject * FindDontDestroyObjNonCount(const string & strTag);
 
 public:
 	void SetObj(class CGameObject* pObj);

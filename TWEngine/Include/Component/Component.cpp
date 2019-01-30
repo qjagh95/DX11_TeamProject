@@ -38,12 +38,21 @@ CGameObject * CComponent::GetGameObject() const
 	return m_pObject;
 }
 
+CGameObject * CComponent::GetGameObjectNonCount() const
+{
+	return m_pObject;
+}
+
 CTransform * CComponent::GetTransform() const
 {
 	m_pTransform->AddRef();
 	return m_pTransform;
 }
 
+CTransform * CComponent::GetTransformNonCount() const
+{
+	return m_pTransform;
+}
 
 COMPONENT_TYPE CComponent::GetComponentType() const
 {

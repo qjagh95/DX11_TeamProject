@@ -26,6 +26,11 @@ CScene * CLayer::GetScene() const
 	return m_pScene;
 }
 
+CScene * CLayer::GetSceneNonCount() const
+{
+	return m_pScene;
+}
+
 void CLayer::SetZOrder(int iZOrder)
 {
 	m_iZOrder = iZOrder;
@@ -191,6 +196,24 @@ void CLayer::AddObject(CGameObject * pObj)
 }
 
 CGameObject * CLayer::FindObject(const string & strTag)
+{
+	list<CGameObject*>::iterator	iter;
+	list<CGameObject*>::iterator	iterEnd = m_ObjList.end();
+
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetTag() == strTag)
+		{
+			(*iter)->AddRef();
+			return *iter;
+		}
+	}
+
+	return nullptr;
+}
+
+
+CGameObject * CLayer::FindObjectNonCount(const string & strTag)
 {
 	list<CGameObject*>::iterator	iter;
 	list<CGameObject*>::iterator	iterEnd = m_ObjList.end();

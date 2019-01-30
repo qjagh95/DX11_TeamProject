@@ -230,6 +230,17 @@ CRenderState * CRenderManager::FindRenderState(const string & strName)
 	return iter->second;
 }
 
+CRenderState * CRenderManager::FindRenderStateNonCount(const string & strName)
+{
+	unordered_map<string, CRenderState*>::iterator	iter = m_mapRenderState.find(strName);
+
+	if (iter == m_mapRenderState.end())
+		return nullptr;
+
+	return iter->second;
+}
+
+
 bool CRenderManager::CreateRenderTarget(const string & strName, DXGI_FORMAT eTargetFmt,
 	const Vector3 & vPos, const Vector3 & vScale, bool bDrawDebug,
 	const Vector4 & vClearColor, DXGI_FORMAT eDepthFmt)

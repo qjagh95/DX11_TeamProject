@@ -62,6 +62,7 @@ private:
 
 public:
 	class CTransform* GetTransform()	const;
+	class CTransform * GetTransformNonCount() const;
 	class CTransform* GetTransformNoneCount() const { return m_pTransform; }
 	const list<class CComponent*>* GetComponentList()	const;
 	RENDER_GROUP	 GetRenderGroup() const;
@@ -83,7 +84,9 @@ public:
 public:
 	class CComponent* AddComponent(class CComponent* pCom);
 	const list<CComponent*>* FindComponentsFromTag(const string& strTag);
+	const list<CComponent*>* FindComponentsFromTagNonCount(const string & strTag);
 	const list<CComponent*>* FindComponentsFromType(COMPONENT_TYPE eType);
+	const list<CComponent*>* FindComponentsFromTypeNonCount(COMPONENT_TYPE eType);
 	bool CheckComponentFromType(COMPONENT_TYPE eType);
 public:
 	void Save(FILE* pFile);
@@ -109,6 +112,24 @@ public:
 	}
 
 	template <typename T>
+	T* FindComponentFromTagNonCount(const string& strTag)
+	{
+		list<CComponent*>::iterator	iter;
+		list<CComponent*>::iterator	iterEnd = m_ComList.end();
+
+		for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+		{
+			if ((*iter)->GetTag() == strTag)
+			{
+				return (T*)*iter;
+			}
+		}
+
+		return nullptr;
+	}
+
+
+	template <typename T>
 	T* FindComponentFromType(COMPONENT_TYPE eType)
 	{
 		typename list<class CComponent*>::iterator	iter;
@@ -125,6 +146,24 @@ public:
 
 		return nullptr;
 	}
+
+	template <typename T>
+	T* FindComponentFromTypeNonCount(COMPONENT_TYPE eType)
+	{
+		typename list<class CComponent*>::iterator	iter;
+		typename list<class CComponent*>::iterator	iterEnd = m_ComList.end();
+
+		for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+		{
+			if ((*iter)->GetComponentType() == eType)
+			{
+				return (T*)*iter;
+			}
+		}
+
+		return nullptr;
+	}
+
 
 	template <typename T>
 	T* AddComponent(const string& strTag)

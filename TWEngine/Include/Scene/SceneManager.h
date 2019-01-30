@@ -14,7 +14,9 @@ private:
 
 public:
 	class CScene* GetScene()	const;
+	class CScene * GetSceneNonCount() const;
 	class CScene* GetNextScene()	const;
+	class CScene * GetNextSceneNonCount() const;
 
 public:
 	bool Init();

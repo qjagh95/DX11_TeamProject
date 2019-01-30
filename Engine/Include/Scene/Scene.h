@@ -26,11 +26,17 @@ private:
 
 public:
 	class CGameObject* GetMainCameraObj()	const;
+	class CGameObject * GetMainCameraObjNonCount() const;
 	class CCamera* GetMainCamera()	const;
+	class CCamera * GetMainCameraNonCount() const;
 	class CTransform* GetMainCameraTransform()	const;
+	class CTransform * GetMainCameraTransformNonCount() const;
 	class CGameObject* GetUICameraObj()	const;
+	class CGameObject * GetUICameraObjNonCount() const;
 	class CCamera* GetUICamera()	const;
+	class CCamera * GetUICameraNonCount() const;
 	class CTransform* GetUICameraTransform()	const;
+	class CTransform * GetUICameraTransformNonCount() const;
 
 public:
 	void Start();

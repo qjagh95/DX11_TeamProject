@@ -20,6 +20,7 @@ private:
 public:
 	int GetZOrder()	const;
 	class CScene*	GetScene()	const;
+	class CScene * GetSceneNonCount() const;
 
 public:
 	void SetZOrder(int iZOrder);
@@ -36,6 +37,7 @@ public:
 public:
 	void AddObject(class CGameObject* pObj);
 	class CGameObject* FindObject(const string & strTag);
+	class CGameObject * FindObjectNonCount(const string & strTag);
 	void EraseObject(class CGameObject* pObj);
 	bool ListEmpty()
 	{

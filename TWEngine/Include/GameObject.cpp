@@ -342,6 +342,12 @@ CTransform * CGameObject::GetTransform() const
 	return m_pTransform;
 }
 
+CTransform * CGameObject::GetTransformNonCount() const
+{
+	return m_pTransform;
+}
+
+
 const list<class CComponent*>* CGameObject::GetComponentList() const
 {
 	return &m_ComList;
@@ -661,6 +667,24 @@ const list<CComponent*>* CGameObject::FindComponentsFromTag(const string & strTa
 	return &m_FindList;
 }
 
+const list<CComponent*>* CGameObject::FindComponentsFromTagNonCount(const string & strTag)
+{
+	Safe_Release_VecList(m_FindList);
+
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetTag() == strTag)
+		{
+			m_FindList.push_back(*iter);
+		}
+	}
+
+	return &m_FindList;
+}
+
 const list<CComponent*>* CGameObject::FindComponentsFromType(COMPONENT_TYPE eType)
 {
 	Safe_Release_VecList(m_FindList);
@@ -679,6 +703,25 @@ const list<CComponent*>* CGameObject::FindComponentsFromType(COMPONENT_TYPE eTyp
 
 	return &m_FindList;
 }
+
+const list<CComponent*>* CGameObject::FindComponentsFromTypeNonCount(COMPONENT_TYPE eType)
+{
+	Safe_Release_VecList(m_FindList);
+
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetComponentType() == eType)
+		{
+			m_FindList.push_back(*iter);
+		}
+	}
+
+	return &m_FindList;
+}
+
 
 bool CGameObject::CheckComponentFromType(COMPONENT_TYPE eType)
 {

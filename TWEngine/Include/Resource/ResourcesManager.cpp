@@ -343,6 +343,16 @@ CMesh * CResourcesManager::FindMesh(const string & strName)
 	return iter->second;
 }
 
+CMesh * CResourcesManager::FindMeshNonCount(const string & strName)
+{
+	unordered_map<string, class CMesh*>::iterator	iter = m_mapMesh.find(strName);
+
+	if (iter == m_mapMesh.end())
+		return nullptr;
+
+	return iter->second;
+}
+
 CTexture * CResourcesManager::FindTexture(const string & strName)
 {
 	unordered_map<string, CTexture*>::iterator	iter = m_mapTexture.find(strName);
@@ -355,6 +365,16 @@ CTexture * CResourcesManager::FindTexture(const string & strName)
 	return iter->second;
 }
 
+CTexture * CResourcesManager::FindTextureNonCount(const string & strName)
+{
+	unordered_map<string, CTexture*>::iterator	iter = m_mapTexture.find(strName);
+
+	if (iter == m_mapTexture.end())
+		return nullptr;
+
+	return iter->second;
+}
+
 CSampler * CResourcesManager::FindSampler(const string & strName)
 {
 	unordered_map<string, CSampler*>::iterator	iter = m_mapSampler.find(strName);
@@ -363,6 +383,16 @@ CSampler * CResourcesManager::FindSampler(const string & strName)
 		return nullptr;
 
 	iter->second->AddRef();
+
+	return iter->second;
+}
+
+CSampler * CResourcesManager::FindSamplerNonCount(const string & strName)
+{
+	unordered_map<string, CSampler*>::iterator	iter = m_mapSampler.find(strName);
+
+	if (iter == m_mapSampler.end())
+		return nullptr;
 
 	return iter->second;
 }

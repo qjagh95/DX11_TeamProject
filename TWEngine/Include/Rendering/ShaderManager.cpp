@@ -159,6 +159,17 @@ CShader * CShaderManager::FindShader(const string & strName)
 	return iter->second;
 }
 
+CShader * CShaderManager::FindShaderNonCount(const string & strName)
+{
+	unordered_map<string, CShader*>::iterator	iter = m_mapShader.find(strName);
+
+	if (iter == m_mapShader.end())
+		return nullptr;
+
+	return iter->second;
+}
+
+
 void CShaderManager::AddInputElement(char * pSemantic, int iIdx,
 	DXGI_FORMAT eFmt, int iSize, int iInputSlot,
 	D3D11_INPUT_CLASSIFICATION eInputClass, int iInstanceStepRate)

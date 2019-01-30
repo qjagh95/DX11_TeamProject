@@ -27,6 +27,7 @@ private:
 
 public:
 	class CGameObject*	GetMouseObj()	const;
+	class CGameObject * GetMouseObjNonCount() const;
 	Vector2	GetMouseGap()	const;
 	Vector2 GetMouseClient()	const;
 	Vector2 GetMouseWorld()	const;
