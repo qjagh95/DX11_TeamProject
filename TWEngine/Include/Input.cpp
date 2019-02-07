@@ -113,6 +113,7 @@ bool CInput::Init()
 	CMaterial*	pMaterial = m_pMouse->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
 	pMaterial->SetDiffuseTex(0, "Mouse", TEXT("0.png"));
+	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
 

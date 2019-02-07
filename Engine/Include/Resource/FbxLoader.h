@@ -24,17 +24,17 @@ typedef struct PUN_DLL _tagFBXMeshContainer
 	vector<Vector2>	vecUV;
 	vector<Vector3>	vecTangent;
 	vector<Vector3>	vecBinormal;
-	//vector<Vector4>	vecBlendWeight;
-	//vector<Vector4>	vecBlendIndex;
+	vector<Vector4>	vecBlendWeight;
+	vector<Vector4>	vecBlendIndex;
 	vector<vector<UINT>>	vecIndices;
 	//unordered_map<int, vector<FBXWEIGHT>>	mapWeights;
 	bool				bBump;
-	//bool				bAnimation;
+	bool				bAnimation;
 
 	_tagFBXMeshContainer()
 	{
 		bBump = false;
-		//bAnimation = false;
+		bAnimation = false;
 	}
 }FBXMESHCONTAINER, *PFBXMESHCONTAINER;
 

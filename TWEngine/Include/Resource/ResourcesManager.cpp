@@ -192,7 +192,7 @@ bool CResourcesManager::Init()
 	CreateMesh("LightSphereVolume", STANDARD_NORMAL_COLOR_SHADER, POS_LAYOUT,
 		&vecSpherePos[0], vecSpherePos.size(), sizeof(Vector3), D3D11_USAGE_DEFAULT,
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecSphereIdx[0],
-		vecSphereIdx.size(), 4, D3D11_USAGE_DEFAULT,
+		(int)vecSphereIdx.size(), 4, D3D11_USAGE_DEFAULT,
 		DXGI_FORMAT_R32_UINT);
 
 
@@ -347,6 +347,52 @@ bool CResourcesManager::CreateSampler(const string & strName,
 	}
 
 	m_mapSampler.insert(make_pair(strName, pSampler));
+
+	return true;
+}
+
+bool CResourcesManager::LoadMesh(const string & strName, const TCHAR * pFileName, const string & strPathKey)
+{
+	CMesh*	pMesh = FindMesh(strName);
+
+	if (pMesh)
+	{
+		SAFE_RELEASE(pMesh);
+		return false;
+	}
+
+	pMesh = new CMesh;
+
+	if (!pMesh->LoadMesh(strName, pFileName, strPathKey))
+	{
+		SAFE_RELEASE(pMesh);
+		return false;
+	}
+
+	m_mapMesh.insert(make_pair(strName, pMesh));
+
+	return true;
+}
+
+bool CResourcesManager::LoadMeshFromFullPath(const string & strName, const TCHAR * pFullPath)
+{
+	CMesh*	pMesh = FindMesh(strName);
+
+	if (pMesh)
+	{
+		SAFE_RELEASE(pMesh);
+		return false;
+	}
+
+	pMesh = new CMesh;
+
+	if (!pMesh->LoadMesh(strName, pFullPath))
+	{
+		SAFE_RELEASE(pMesh);
+		return false;
+	}
+
+	m_mapMesh.insert(make_pair(strName, pMesh));
 
 	return true;
 }
@@ -509,7 +555,7 @@ void CResourcesManager::Subdivide(vector<VertexNormalTex>& vecVertices, vector<i
 	// *-----*-----*
 // v0    m2     v2
 
-	UINT numTris = vecCopyIndex.size() / 3;
+	UINT numTris = (UINT)vecCopyIndex.size() / 3;
 	for (UINT i = 0; i < numTris; ++i)
 	{
 		VertexNormalTex v0 = vecCopyVertex[vecCopyIndex[i * 3 + 0]];

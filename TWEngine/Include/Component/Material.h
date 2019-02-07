@@ -23,19 +23,17 @@ typedef struct PUN_DLL _tagTextureSet
 typedef struct PUN_DLL _tagSubsetMaterial
 {
 	Material	tMaterial;
-	class CTexture*	pDiffuseTex;
-	int				iDiffuseRegister;
-	class CSampler*	pDifSampler;
-	int				iDifSamplerRegister;
-
+	PTextureSet	pDiffuse;
+	PTextureSet	pNormal;
+	PTextureSet	pSpecular;
 	vector<TextureSet>	vecMultiTex;
 
 	_tagSubsetMaterial() :
-		pDiffuseTex(nullptr),
-		iDiffuseRegister(-1),
-		pDifSampler(nullptr),
-		iDifSamplerRegister(0)
+		pDiffuse(nullptr),
+		pNormal(nullptr),
+		pSpecular(nullptr) 
 	{
+		tMaterial.vSpecular.w = 3.2f;
 	}
 }SubsetMaterial, *PSubsetMaterial;
 
@@ -43,6 +41,7 @@ class PUN_DLL CMaterial :
 	public CComponent
 {
 	friend class CGameObject;
+	friend class CMesh;
 
 private:
 	CMaterial();
@@ -53,8 +52,9 @@ private:
 	vector<vector<PSubsetMaterial>>	m_vecMaterial;
 
 public:
-	void SetMaterial(const Vector4& vDiffuse, int iContainer = 0,
-		int iSubset = 0);
+	void SetMaterial(const Vector4& vDiffuse, const Vector4& vAmbient,
+		const Vector4& vSpecular, float fSpecularPower,
+		const Vector4& vEmissive, int iContainer = 0, int iSubset = 0);
 	void SetDiffuseTex(int iRegister, const string& strKey, int iContainer = 0,
 		int iSubset = 0);
 	void SetDiffuseTex(int iRegister, const string& strKey, const TCHAR* pFileName,
@@ -71,6 +71,23 @@ public:
 		int iContainer = 0, int iSubset = 0);
 	void SetSampler(int iRegister, const string& strKey,
 		int iContainer = 0, int iSubset = 0);
+
+	void SetNormalTex(int iRegister, const string& strKey, const TCHAR* pFileName,
+		const string& strPathKey = TEXTURE_PATH,
+		int iContainer = 0, int iSubset = 0);
+	void SetNormalTexFromFullPath(int iRegister, const string& strKey,
+		const TCHAR* pFullPath, int iContainer = 0, int iSubset = 0);
+	void SetNormalSampler(int iRegister, const string& strKey,
+		int iContainer = 0, int iSubset = 0);
+
+	void SetSpecularTex(int iRegister, const string& strKey, const TCHAR* pFileName,
+		const string& strPathKey = TEXTURE_PATH,
+		int iContainer = 0, int iSubset = 0);
+	void SetSpecularTexFromFullPath(int iRegister, const string& strKey,
+		const TCHAR* pFullPath, int iContainer = 0, int iSubset = 0);
+	void SetSpecularSampler(int iRegister, const string& strKey,
+		int iContainer = 0, int iSubset = 0);
+
 	void AddMultiTex(int iSmpRegister, const string& strSmpKey, int iRegister,
 		const string& strKey, const TCHAR* pFileName,
 		const string& strPathKey = TEXTURE_PATH,
@@ -92,6 +109,7 @@ public:
 	void AddMultiSampler(int iRegister, const string& strKey,
 		int iContainer = 0, int iSubset = 0);*/
 
+	void ClearContainer();
 public:
 	virtual bool Init();
 	virtual int Input(float fTime);

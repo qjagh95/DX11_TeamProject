@@ -113,6 +113,11 @@ bool CShaderManager::Init()
 	if (!CreateInputLayout(POS_NORMAL_COLOR_LAYOUT, STANDARD_NORMAL_COLOR_SHADER))
 		return false;
 
+	pEntry[ST_VERTEX] = (char*)"StandardBumpVS";
+	pEntry[ST_PIXEL] = (char*)"StandardBumpPS";
+	if (!LoadShader(STANDARD_BUMP_SHADER, TEXT("Standard.fx"), pEntry))
+		return false;
+
 //#ifdef _DEBUG
 	pEntry[ST_VERTEX] = (char*)"ColliderVS";
 	pEntry[ST_PIXEL] = (char*)"ColliderPS";
@@ -120,6 +125,22 @@ bool CShaderManager::Init()
 		return false;
 
 //#endif	// _DEBUG
+
+	pEntry[ST_VERTEX] = (char*)"Vertex3DVS";
+	pEntry[ST_PIXEL] = (char*)"Vertex3DPS";
+	if (!LoadShader("Vertex3D", TEXT("Share.fx"), pEntry))
+		return false;
+
+	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement((char*)"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement((char*)"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 8);
+	AddInputElement((char*)"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement((char*)"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement((char*)"BLENDWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
+	AddInputElement((char*)"BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
+
+	if (!CreateInputLayout(VERTEX3D_LAYOUT, "Vertex3D"))
+		return false;
 
 	// 상수버퍼 만들기
 	CreateCBuffer("Transform", 0, sizeof(TransformCBuffer),

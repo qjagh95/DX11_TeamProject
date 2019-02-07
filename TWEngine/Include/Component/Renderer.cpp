@@ -117,6 +117,29 @@ void CRenderer::SetMesh(const string & strKey)
 	}
 }
 
+void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName, const string & strPathKey)
+{
+	SAFE_RELEASE(m_pMesh);
+	GET_SINGLE(CResourcesManager)->LoadMesh(strKey, pFileName, strPathKey);
+	m_pMesh = GET_SINGLE(CResourcesManager)->FindMesh(strKey);
+
+	if (m_pMesh)
+	{
+		SetShader(m_pMesh->GetShaderKey());
+		SetInputLayout(m_pMesh->GetInputLayoutKey());
+		
+		CMaterial* pMaterial = m_pMesh->CloneMaterial();
+
+		if (pMaterial)
+		{
+			SAFE_RELEASE(m_pMaterial);
+			m_pMaterial = pMaterial;
+			m_pObject->RemoveComponentFromType(CT_MATERIAL);
+			m_pObject->AddComponent(m_pMaterial);
+		}
+	}
+}
+
 void CRenderer::SetShader(CShader * pShader)
 {
 	SAFE_RELEASE(m_pShader);
@@ -227,11 +250,13 @@ PRendererCBuffer CRenderer::FindRendererCBuffer(const string & strName)
 
 void CRenderer::AfterClone()
 {
+	SAFE_RELEASE(m_pMaterial);
 	m_pMaterial = FindComponentFromType<CMaterial>(CT_MATERIAL);
 }
 
 bool CRenderer::Init()
 {
+	SAFE_RELEASE(m_pMaterial);
 	// 재질정보는 반드시 같이 생성되게 한다.
 	m_pMaterial = AddComponent<CMaterial>("Material");
 
@@ -319,7 +344,7 @@ void CRenderer::UpdateTransform()
 	else
 		pMainCamera = m_pScene->GetMainCamera();
 
-	tCBuffer.matWorld = m_pTransform->GetWorldMatrix();
+	tCBuffer.matWorld = m_pTransform->GetLocalMatrix() * m_pTransform->GetWorldMatrix();
 	tCBuffer.matView = pMainCamera->GetViewMatrix();
 	tCBuffer.matProj = pMainCamera->GetProjMatrix();
 	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;

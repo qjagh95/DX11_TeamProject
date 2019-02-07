@@ -5,6 +5,7 @@
 #define	TEXTURE_PATH	"TexturePath"
 #define	SOUND_PATH	"SoundPath"
 #define	DATA_PATH	"DataPath"
+#define	MESH_PATH	"MeshPath"
 
 // ========== Default Sampler Key ==========
 #define	SAMPLER_LINEAR	"Linear"
@@ -23,12 +24,14 @@
 #define	LIGHT_BLEND_SHADER  "LightBlendShader"
 #define SHADOW_SHADER	"ShadowShader"
 #define	STANDARD_NORMAL_COLOR_SHADER	"StandardNormalColorShader"
+#define	STANDARD_BUMP_SHADER			"StandardBumpShader"
 
 // ========== Input Layout Key =============
 #define	POS_COLOR_LAYOUT		"PosColorLayout"
 #define	POS_NORMAL_COLOR_LAYOUT		"PosNormalColorLayout"
 #define	POS_UV_LAYOUT		"PosUVLayout"
 #define	POS_LAYOUT		"PosLayout"
+#define	VERTEX3D_LAYOUT	"Vertex3DLayout"
 
 // ========== RenderState Key =============
 #define	ALPHA_BLEND			"AlphaBlend"

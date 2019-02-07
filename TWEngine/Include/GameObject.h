@@ -88,6 +88,8 @@ public:
 	const list<CComponent*>* FindComponentsFromType(COMPONENT_TYPE eType);
 	const list<CComponent*>* FindComponentsFromTypeNonCount(COMPONENT_TYPE eType);
 	bool CheckComponentFromType(COMPONENT_TYPE eType);
+	void RemoveComponentFromType(COMPONENT_TYPE eType);
+
 public:
 	void Save(FILE* pFile);
 	void Load(FILE* pFile);

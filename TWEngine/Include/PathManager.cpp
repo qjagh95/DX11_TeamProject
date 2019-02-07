@@ -34,7 +34,7 @@ bool CPathManager::Init()
 	AddPath(TEXTURE_PATH, TEXT("Texture\\"));
 	AddPath(SOUND_PATH, TEXT("Sound\\"));
 	AddPath(DATA_PATH, TEXT("Data\\"));
-
+	AddPath(MESH_PATH, L"Mesh\\");
 	return true;
 }
 

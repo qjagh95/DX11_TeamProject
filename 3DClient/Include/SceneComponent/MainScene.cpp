@@ -41,15 +41,14 @@ bool CMainScene::Init()
 
 	CTransform*	pTransform = pObject->GetTransform();
 
-	pTransform->SetWorldScale(3.f, 1.f, 3.f);
 	pTransform->SetWorldPos(0.f, 0.f, 0.f);
 	m_pTr = pTransform;
 
 	SAFE_RELEASE(pTransform);
 
 	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
-	pRenderer->SetMesh("Pyramid");
-	pRenderer->SetShader(STANDARD_NORMAL_COLOR_SHADER);
+	pRenderer->SetMesh("Player" , L"Monster4.fbx");
+	//pRenderer->SetShader(STANDARD_NORMAL_COLOR_SHADER);
 
 	SAFE_RELEASE(pRenderer);
 

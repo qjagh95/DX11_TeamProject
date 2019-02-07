@@ -737,6 +737,22 @@ bool CGameObject::CheckComponentFromType(COMPONENT_TYPE eType)
 	return false;
 }
 
+void CGameObject::RemoveComponentFromType(COMPONENT_TYPE eType)
+{
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetComponentType() == eType)
+		{
+			SAFE_RELEASE((*iter));
+			m_ComList.erase(iter);
+			return;
+		}
+	}
+}
+
 void CGameObject::Save(FILE * pFile)
 {
 }

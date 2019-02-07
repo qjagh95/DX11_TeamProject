@@ -66,6 +66,7 @@ private:
 	Vector3					m_vMin;
 	Vector3					m_vMax;
 	Vector3					m_vLength;
+	class CMaterial*		m_pMaterial;
 
 public:
 	Vector3 GetCenter()	const;
@@ -87,13 +88,25 @@ public:
 		void* pIdx = nullptr, int iIdxCount = 0, int iIdxSize = 0,
 		D3D11_USAGE eIdxUsage = D3D11_USAGE_DEFAULT,
 		DXGI_FORMAT eFmt = DXGI_FORMAT_R16_UINT);
+	bool LoadMesh(const string& strName, const TCHAR* pFileName,
+		const string& strPathKey = MESH_PATH);
+	bool LoadMeshFromFullPath(const string& strName, const TCHAR* pFullPath);
 	void Render();
 	void Render(int iContainer, int iSubset);
 	void UpdateVertexBuffer(void* pData, int iContainer = 0);
+	class CMaterial* CloneMaterial();
 
 private:
 	bool CreateVertexBuffer(void* pData, int iCount, int iSize, D3D11_USAGE eUsage);
 	bool CreateIndexBuffer(void* pData, int iCount, int iSize, D3D11_USAGE eUsage, DXGI_FORMAT eFmt);
+
+public:
+	bool Save(const char* _pFileName, const std::string& _strPathKey = MESH_PATH);
+	bool SaveFromFullPath(const char* _pFullPath);
+	bool Load(const char* _pFileName, const std::string& _strPathKey = MESH_PATH);
+	bool LoadFromFullPath(const char* _pFullPath);
+private:
+	bool ConvertFbx(class CFbxLoader* pLoader, const char* _pFullPath);
 };
 
 PUN_END

@@ -249,4 +249,14 @@ typedef struct PUN_DLL _tagVertexNormalTex
 	Vector2		vUV;
 }VertexNormalTex, *PVertexNormalTex;
 
+typedef struct PUN_DLL _tagVertex3D
+{
+	Vector3		vPos;
+	Vector3		vNormal;
+	Vector2		vUV;
+	Vector3		vTangent;
+	Vector3		vBinormal;
+	Vector4		vWeight;
+	Vector4		vIndex;
+}Vertex3D , *PVertex3D;
 PUN_END

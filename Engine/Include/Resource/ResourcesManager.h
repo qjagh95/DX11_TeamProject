@@ -30,6 +30,9 @@ public:
 		D3D11_TEXTURE_ADDRESS_MODE eV = D3D11_TEXTURE_ADDRESS_WRAP,
 		D3D11_TEXTURE_ADDRESS_MODE eW = D3D11_TEXTURE_ADDRESS_WRAP);
 
+	bool LoadMesh(const string& strName, const TCHAR* pFileName,
+		const string& strPathKey = MESH_PATH);
+	bool LoadMeshFromFullPath(const string& strName, const TCHAR* pFullPath);
 	class CMesh*	FindMesh(const string& strName);
 	class CMesh * FindMeshNonCount(const string & strName);
 	class CTexture* FindTexture(const string& strName);

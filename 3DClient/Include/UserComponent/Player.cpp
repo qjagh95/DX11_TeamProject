@@ -26,9 +26,16 @@ void CPlayer::AfterClone()
 
 bool CPlayer::Init()
 {
+	m_pTransform->SetLocalRot(0.f, -90.f, 0.f);
+	m_pTransform->SetWorldScale(0.1f, 0.1f, 0.1f);
+
 	GET_SINGLE(CInput)->BindAxis("Move", this, &CPlayer::Move);
 	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_W, 1.f);
 	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_S, -1.f);
+
+	GET_SINGLE(CInput)->BindAxis("Rotation", this, &CPlayer::Rotation);
+	GET_SINGLE(CInput)->AddKeyScale("Rotation", DIK_D, 1.f);
+	GET_SINGLE(CInput)->AddKeyScale("Rotation", DIK_A, -1.f);
 
 	GET_SINGLE(CInput)->BindAction("Fire", KEY_PRESS, this, &CPlayer::Fire);
 	GET_SINGLE(CInput)->AddKeyAction("Fire", DIK_SPACE);
@@ -90,4 +97,12 @@ void CPlayer::Fire1(float fTime)
 void CPlayer::Fire1Release(float fTime)
 {
 	OutputDebugString(TEXT("Fire1Release\n"));
+}
+
+void CPlayer::Rotation(float fScale, float fTime)
+{
+	if (fScale == 0.f)
+		return;
+
+	m_pTransform->RotationY(180.f * fScale, fTime);
 }

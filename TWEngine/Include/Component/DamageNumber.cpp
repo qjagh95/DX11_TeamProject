@@ -110,7 +110,7 @@ bool CDamageNumber::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetMaterial(Vector4::White);
+	//pMaterial->SetMaterial(Vector4::White);
 
 	SAFE_RELEASE(pMaterial);
 
