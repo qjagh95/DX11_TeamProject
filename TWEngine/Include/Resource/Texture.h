@@ -16,6 +16,7 @@ private:
 private:
 	vector<ScratchImage*>		m_vecImage;
 	ID3D11ShaderResourceView*	m_pSRV;
+	std::vector<TCHAR*>			m_vecFullPath;
 	TCHAR						m_strFullPath[MAX_PATH];
 
 public:
@@ -23,6 +24,10 @@ public:
 	int GetHeight()	const;
 	const uint8_t*	GetPixels()	const;
 	size_t GetPixelSize()	const;
+	const std::vector<TCHAR*>* GetFullPath() const
+	{
+		return &m_vecFullPath;
+	}
 
 public:
 	bool LoadTexture(const string& strName, const TCHAR* pFileName,

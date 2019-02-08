@@ -118,12 +118,18 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CMaterial* Clone();
-
+	virtual void Save(FILE* pFile);
+	virtual void Load(FILE* pFile);
+	virtual void SaveFromPath(const char* pFileName, const string& strPathKey = DATA_PATH);
+	virtual void LoadFromPath(const char* pFileName, const string& strPathKey = DATA_PATH);
 public:
 	void SetShader(int iContainer = 0, int iSubset = 0);
 
+
 private:
 	PSubsetMaterial CreateSubset();
+	void SaveTextureSet(FILE* pFile, PTextureSet pTexture);
+	void LoadTextureSet(FILE* pFile, PTextureSet* ppTexture);
 };
 
 PUN_END

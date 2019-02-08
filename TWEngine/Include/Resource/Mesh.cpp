@@ -142,7 +142,7 @@ bool CMesh::LoadMeshFromFullPath(const string & strName, const TCHAR * pFullPath
 		return ConvertFbx(&loader , strFullPath);
 	}
 
-	return true;
+	return LoadFromFullPath(strFullPath);
 }
 
 void CMesh::Render()
@@ -390,9 +390,38 @@ bool CMesh::SaveFromFullPath(const char * _pFullPath)
 		fwrite(&pContainer->tVB.iSize, sizeof(int), 1, pFile);
 		fwrite(&pContainer->tVB.iCount, sizeof(int), 1, pFile);
 		fwrite(&pContainer->tVB.eUsage, sizeof(D3D11_USAGE), 1, pFile);
-		fwrite(&pContainer->tVB.pData, pContainer->tVB.iSize, 
+		fwrite(pContainer->tVB.pData, pContainer->tVB.iSize, 
 			pContainer->tVB.iCount, pFile);
+
+		size_t	iIdxCount = pContainer->vecIB.size();
+
+		fwrite(&iIdxCount, sizeof(size_t), 1, pFile);
+
+		for (size_t j = 0; j < iIdxCount; ++j)
+		{
+			fwrite(&pContainer->vecIB[j].eFmt, sizeof(DXGI_FORMAT),
+				1, pFile);
+			fwrite(&pContainer->vecIB[j].iSize, sizeof(int), 1, pFile);
+			fwrite(&pContainer->vecIB[j].iCount, sizeof(int), 1, pFile);
+			fwrite(&pContainer->vecIB[j].eUsage, sizeof(D3D11_USAGE), 1, pFile);
+			fwrite(pContainer->vecIB[j].pData, pContainer->vecIB[j].iSize,
+				pContainer->vecIB[j].iCount, pFile);
+		}
 	}
+
+	bool	bMaterial = false;
+
+	if (m_pMaterial)
+	{
+		bMaterial = true;
+
+		fwrite(&bMaterial, sizeof(bool), 1, pFile);
+
+		m_pMaterial->Save(pFile);
+	}
+
+	else
+		fwrite(&bMaterial, sizeof(bool), 1, pFile);
 
 	fclose(pFile);
 
@@ -401,12 +430,120 @@ bool CMesh::SaveFromFullPath(const char * _pFullPath)
 
 bool CMesh::Load(const char * _pFileName, const std::string & _strPathKey)
 {
-	return false;
+	char	strFullPath[MAX_PATH] = {};
+	const char* pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(_strPathKey);
+
+	if (pPath)
+		strcpy_s(strFullPath, pPath);
+	strcat_s(strFullPath, _pFileName);
+
+	return LoadFromFullPath(strFullPath);
 }
 
 bool CMesh::LoadFromFullPath(const char * _pFullPath)
 {
-	return false;
+	FILE*	pFile = nullptr;
+
+	fopen_s(&pFile, _pFullPath, "rb");
+
+	if (!pFile)
+		return false;
+
+	int	iLength = 0;
+
+	// Tag 길이를 저장한다.
+	fread(&iLength, 4, 1, pFile);
+	char	strTag[256] = {};
+	fread(strTag, 1, iLength, pFile);
+	m_strTag = strTag;
+
+	// ShaderName 길이를 저장한다.
+	iLength = 0;
+	fread(&iLength, 4, 1, pFile);
+	char	strShaderKey[256] = {};
+	fread(strShaderKey, 1, iLength, pFile);
+	m_strShaderKey = strShaderKey;
+
+	// 입력레이아웃 이름 길이를 저장한다.
+	iLength = 0;
+	fread(&iLength, 4, 1, pFile);
+	char	strLayoutKey[256] = {};
+	fread(strLayoutKey, 1, iLength, pFile);
+	m_strInputLayoutKey = strLayoutKey;
+
+	fread(&m_vCenter, sizeof(Vector3), 1, pFile);
+	fread(&m_fRadius, sizeof(float), 1, pFile);
+	fread(&m_vMin, sizeof(Vector3), 1, pFile);
+	fread(&m_vMax, sizeof(Vector3), 1, pFile);
+	fread(&m_vLength, sizeof(Vector3), 1, pFile);
+
+	size_t	iContainer = 0;
+
+	fread(&iContainer, sizeof(size_t), 1, pFile);
+
+	for (size_t i = 0; i < iContainer; ++i)
+	{
+		PMeshContainer	pContainer = new MeshContainer;
+		m_vecMeshContainer.push_back(pContainer);
+
+		int	iVtxSize = 0;
+		int	iVtxCount = 0;
+		D3D11_USAGE	eUsage;
+
+		fread(&pContainer->ePrimitive, sizeof(D3D11_PRIMITIVE_TOPOLOGY), 1, pFile);
+		fread(&iVtxSize, sizeof(int), 1, pFile);
+		fread(&iVtxCount, sizeof(int), 1, pFile);
+		fread(&eUsage, sizeof(D3D11_USAGE), 1, pFile);
+		char*	pData = new char[iVtxSize * iVtxCount];
+		fread(pData, iVtxSize,
+			iVtxCount, pFile);
+
+		CreateVertexBuffer(pData, iVtxCount, iVtxSize, eUsage);
+
+		SAFE_DELETE_ARRAY(pData);
+
+		size_t	iIdxCount = 0;
+
+		fread(&iIdxCount, sizeof(size_t), 1, pFile);
+
+		for (size_t j = 0; j < iIdxCount; ++j)
+		{
+			DXGI_FORMAT	eFmt;
+			int	iIdxSize = 0;
+			int	iIdxCount = 0;
+			fread(&eFmt, sizeof(DXGI_FORMAT), 1, pFile);
+			fread(&iIdxSize, sizeof(int), 1, pFile);
+			fread(&iIdxCount, sizeof(int), 1, pFile);
+			fread(&eUsage, sizeof(D3D11_USAGE), 1, pFile);
+
+			char*	pData = new char[iIdxSize * iIdxCount];
+
+			fread(pData, iIdxSize, iIdxCount, pFile);
+
+			CreateIndexBuffer(pData, iIdxCount, iIdxSize, eUsage, eFmt);
+
+			SAFE_DELETE_ARRAY(pData);
+		}
+	}
+
+	bool	bMaterial = false;
+	fread(&bMaterial, sizeof(bool), 1, pFile);
+
+	if (bMaterial)
+	{
+		SAFE_RELEASE(m_pMaterial);
+		bMaterial = true;
+
+		m_pMaterial = new CMaterial;
+
+		m_pMaterial->Init();
+
+		m_pMaterial->Load(pFile);
+	}
+
+	fclose(pFile);
+
+	return true;
 }
 
 bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
@@ -726,12 +863,12 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
 	//	m_pAnimation->AddClip(AO_LOOP, *iterC);
 	//}
 
-	//char strFullPath[MAX_PATH] = {};
-	//strcpy_s(strFullPath, _pFullPath);
-	//int iPathLength = strlen(strFullPath);
-	//strcpy_s(&strFullPath[iPathLength - 3], 3, "msh");
+	char strFullPath[MAX_PATH] = {};
+	strcpy_s(strFullPath, _pFullPath);
+	int iPathLength = strlen(strFullPath);
+	strcpy_s(&strFullPath[iPathLength - 3], 4 , "msh");
 
-	//SaveFromFullPath(strFullPath);
+	SaveFromFullPath(strFullPath);
 
 	return true;
 }

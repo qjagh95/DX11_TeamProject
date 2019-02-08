@@ -4,7 +4,9 @@ PUN_USING
 
 CFbxLoader::CFbxLoader() :
 	m_pManager(NULL),
-	m_pScene(NULL)
+	m_pScene(NULL),
+	m_bMixamo(false),
+	m_iLoadType(FLT_ALL)
 {
 }
 
@@ -25,13 +27,26 @@ CFbxLoader::~CFbxLoader()
 
 	Safe_Delete_VecList(m_vecMeshContainer);
 
+	for (int i = 0; i < m_NameArr.Size(); ++i)
+	{
+		m_NameArr[i]->Clear();
+		delete m_NameArr[i];
+	}
+
+	m_NameArr.Clear();
+
+	Safe_Delete_VecList(m_vecClip);
+	Safe_Delete_VecList(m_vecBones);
+
 	m_pScene->Clear();
 	m_pScene->Destroy();
 	m_pManager->Destroy();
 }
 
-bool CFbxLoader::LoadFbx(const char * pFullPath)
+bool CFbxLoader::LoadFbx(const char * pFullPath, FBX_LOAD_TYPE eType)
 {
+	m_iLoadType = eType;
+
 	// FbxManager 객체를 생성한다.
 	m_pManager = FbxManager::Create();
 
@@ -52,6 +67,23 @@ bool CFbxLoader::LoadFbx(const char * pFullPath)
 
 	// 위에서 만들어낸 정보를 FbxScene에 노드를 구성한다.
 	pImporter->Import(m_pScene);
+
+	m_pScene->FillAnimStackNameArray(m_NameArr);
+
+	if (m_NameArr.GetCount() > 0)
+	{
+		LoadAnimationClip();
+
+		// 본 정보를 읽어온다.
+		LoadBone(m_pScene->GetRootNode());
+
+		// 클립이 가지고 있는 프레임을 본 개수만큼 resize 해준다.
+		// 원래 Animation Clip에서 하던것이다.
+		for (size_t i = 0; i < m_vecClip.size(); ++i)
+		{
+			m_vecClip[i]->vecBoneKeyFrame.resize(m_vecBones.size());
+		}
+	}
 
 	if (m_pScene->GetGlobalSettings().GetAxisSystem() != FbxAxisSystem::Max)
 		m_pScene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
@@ -314,6 +346,8 @@ void CFbxLoader::LoadMesh(FbxMesh * pMesh)
 		pContainer->vecIndices[iMtrlID].push_back(iIdx[2]);
 		pContainer->vecIndices[iMtrlID].push_back(iIdx[1]);
 	}
+
+	LoadAnimation(pMesh, pContainer);
 }
 
 void CFbxLoader::LoadNormal(FbxMesh * pMesh,
@@ -480,4 +514,189 @@ void CFbxLoader::LoadBinormal(FbxMesh * pMesh, PFBXMESHCONTAINER pContainer, int
 	pContainer->vecBinormal[iControlIndex].x = (float)vBinormal.mData[0];
 	pContainer->vecBinormal[iControlIndex].y = (float)vBinormal.mData[2];
 	pContainer->vecBinormal[iControlIndex].z = (float)vBinormal.mData[1];
+}
+
+void CFbxLoader::LoadAnimationClip()
+{
+	int	iCount = m_NameArr.GetCount();
+
+	FbxTime::EMode	eTimeMode = m_pScene->GetGlobalSettings().GetTimeMode();
+
+	for (int i = 0; i < iCount; ++i)
+	{
+		// m_NameArr에 저장된 이름으로 Scene으로부터 FbxAnimStack 객체를 얻어온다.
+		FbxAnimStack*	pAnimStack = m_pScene->FindMember<FbxAnimStack>(m_NameArr[i]->Buffer());
+
+		if (!pAnimStack)
+			continue;
+
+		PFBXANIMATIONCLIP	pClip = new FBXANIMATIONCLIP;
+
+		pClip->strName = pAnimStack->GetName();
+
+		if (pClip->strName == "mixamo.com")
+			m_bMixamo = true;
+
+		FbxTakeInfo*	pTake = m_pScene->GetTakeInfo(pClip->strName.c_str());
+
+		pClip->tStart = pTake->mLocalTimeSpan.GetStart();
+		pClip->tEnd = pTake->mLocalTimeSpan.GetStop();
+		// GetFrameCount 함수를 호출하고  time모드를 넣어주면 시간을 프레임으로
+		// 변환해준다. 몇프레임 짜리 애니메이션 인지를 구해준다.
+		pClip->lTimeLength = pClip->tEnd.GetFrameCount(eTimeMode) -
+			pClip->tStart.GetFrameCount(eTimeMode);
+		pClip->eTimeMode = eTimeMode;
+
+		m_vecClip.push_back(pClip);
+	}
+}
+
+void CFbxLoader::LoadBone(FbxNode * pNode)
+{
+	int	iChildCount = pNode->GetChildCount();
+
+	for (int i = 0; i < iChildCount; ++i)
+	{
+		LoadBoneRecursive(pNode->GetChild(i), 0, 0, -1);
+	}
+}
+
+void CFbxLoader::LoadBoneRecursive(FbxNode * pNode, int iDepth, int iIndex, int iParent)
+{
+	FbxNodeAttribute*	pAttr = pNode->GetNodeAttribute();
+
+	if (pAttr && pAttr->GetAttributeType() ==
+		FbxNodeAttribute::eSkeleton)
+	{
+		PFBXBONE	pBone = new FBXBONE;
+
+		pBone->strName = pNode->GetName();
+		if (m_bMixamo)
+			pBone->strName.erase(0, 10);
+		pBone->iDepth = iDepth;
+		pBone->iParentIndex = iParent;
+
+		m_vecBones.push_back(pBone);
+	}
+
+	int	iChildCount = pNode->GetChildCount();
+
+	for (int i = 0; i < iChildCount; ++i)
+	{
+		LoadBoneRecursive(pNode->GetChild(i), iDepth + 1,
+			m_vecBones.size(), iIndex);
+	}
+}
+
+void CFbxLoader::LoadAnimation(FbxMesh * pMesh, PFBXMESHCONTAINER pContainer)
+{
+	int	iSkinCount = pMesh->GetDeformerCount(FbxDeformer::eSkin);
+
+	if (iSkinCount <= 0)
+		return;
+
+	// 메쉬의 정점 수를 얻어온다.
+	int	iCPCount = pMesh->GetControlPointsCount();
+
+	// 정점의 가중치 정보와 본인덱스 정보는 정점 수만큼
+	// 만들어져야 한다.
+	pContainer->vecBlendWeight.resize(iCPCount);
+	pContainer->vecBlendIndex.resize(iCPCount);
+
+	pContainer->bAnimation = true;
+	FbxAMatrix	matTransform = GetTransform(pMesh->GetNode());
+
+	for (int i = 0; i < iSkinCount; ++i)
+	{
+		FbxSkin*	pSkin = (FbxSkin*)pMesh->GetDeformer(i, FbxDeformer::eSkin);
+
+		if (!pSkin)
+			continue;
+
+		FbxSkin::EType	eSkinningType = pSkin->GetSkinningType();
+
+		if (eSkinningType == FbxSkin::eRigid ||
+			eSkinningType == FbxSkin::eLinear)
+		{
+			// Cluster : 관절을 의미한다.
+			int	iClusterCount = pSkin->GetClusterCount();
+
+			for (int j = 0; j < iClusterCount; ++j)
+			{
+				FbxCluster*	pCluster = pSkin->GetCluster(j);
+
+				if (!pCluster->GetLink())
+					continue;
+
+				string	strBoneName = pCluster->GetLink()->GetName();
+
+				if (m_bMixamo)
+					strBoneName.erase(0, 10);
+
+				int	iBoneIndex = FindBoneFromName(strBoneName);
+
+				LoadWeightAndIndex(pCluster, iBoneIndex, pContainer);
+
+				LoadOffsetMatrix(pCluster, matTransform, iBoneIndex, pContainer);
+
+				m_vecBones[iBoneIndex]->matBone = matTransform;
+
+				LoadTimeTransform(pMesh->GetNode(), pCluster,
+					matTransform, iBoneIndex);
+			}
+		}
+	}
+
+	ChangeWeightAndIndices(pContainer);
+}
+
+FbxAMatrix CFbxLoader::GetTransform(FbxNode * pNode)
+{
+	const FbxVector4	vT = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
+	const FbxVector4	vR = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
+	const FbxVector4	vS = pNode->GetGeometricScaling(FbxNode::eSourcePivot);
+
+	return FbxAMatrix(vT, vR, vS);
+}
+
+int CFbxLoader::FindBoneFromName(const string & strName)
+{
+	for (size_t i = 0; i < m_vecBones.size(); ++i)
+	{
+		if (m_vecBones[i]->strName == strName)
+			return i;
+	}
+
+	return -1;
+}
+
+void CFbxLoader::LoadWeightAndIndex(FbxCluster * pCluster, int iBoneIndex, PFBXMESHCONTAINER pContainer)
+{
+	int	iControlIndicesCount = pCluster->GetControlPointIndicesCount();
+
+	for (int i = 0; i < iControlIndicesCount; ++i)
+	{
+		FBXWEIGHT	tWeight = {};
+
+		tWeight.iIndex = iBoneIndex;
+		tWeight.dWeight = pCluster->GetControlPointWeights()[i];
+
+		int	iClusterIndex = pCluster->GetControlPointIndices()[i];
+
+		// map의 특징 : 키를 이용해 인덱스처럼 접근할 경우 해당 키가 없다면
+		// 만들어준다.
+		pContainer->mapWeights[iClusterIndex].push_back(tWeight);
+	}
+}
+
+void CFbxLoader::LoadOffsetMatrix(FbxCluster * pCluster, const FbxAMatrix & matTransform, int iBoneIndex, PFBXMESHCONTAINER pContainer)
+{
+}
+
+void CFbxLoader::LoadTimeTransform(FbxNode * pNode, FbxCluster * pCluster, const FbxAMatrix & matTransform, int iBoneIndex)
+{
+}
+
+void CFbxLoader::ChangeWeightAndIndices(PFBXMESHCONTAINER pContainer)
+{
 }

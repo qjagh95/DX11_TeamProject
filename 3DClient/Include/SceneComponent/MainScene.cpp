@@ -47,7 +47,8 @@ bool CMainScene::Init()
 	SAFE_RELEASE(pTransform);
 
 	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
-	pRenderer->SetMesh("Player" , L"Monster4.fbx");
+	//pRenderer->SetMesh("Player" , L"Monster4.fbx");
+	pRenderer->SetMesh("Player", L"Monster4.msh");
 	//pRenderer->SetShader(STANDARD_NORMAL_COLOR_SHADER);
 
 	SAFE_RELEASE(pRenderer);

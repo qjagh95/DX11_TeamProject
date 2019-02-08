@@ -560,6 +560,85 @@ CMaterial * CMaterial::Clone()
 	return new CMaterial(*this);
 }
 
+void CMaterial::Save(FILE * pFile)
+{
+	size_t	iContainer = m_vecMaterial.size();
+	fwrite(&iContainer, sizeof(size_t), 1, pFile);
+
+	for (size_t i = 0; i < iContainer; ++i)
+	{
+		size_t iSubset = m_vecMaterial[i].size();
+		fwrite(&iSubset, sizeof(size_t), 1, pFile);
+
+		for (size_t j = 0; j < iSubset; ++j)
+		{
+			PSubsetMaterial	pSubset = m_vecMaterial[i][j];
+
+			fwrite(&pSubset->tMaterial, sizeof(Material), 1, pFile);
+
+			SaveTextureSet(pFile, pSubset->pDiffuse);
+			SaveTextureSet(pFile, pSubset->pNormal);
+			SaveTextureSet(pFile, pSubset->pSpecular);
+
+			size_t	iMultiTexCount = pSubset->vecMultiTex.size();
+
+			fwrite(&iMultiTexCount, sizeof(size_t), 1, pFile);
+
+			for (size_t k = 0; k < iMultiTexCount; ++k)
+			{
+				SaveTextureSet(pFile, &pSubset->vecMultiTex[k]);
+			}
+		}
+	}
+}
+
+void CMaterial::Load(FILE * pFile)
+{
+	ClearContainer();
+
+
+	size_t	iContainer = 0;
+	fread(&iContainer, sizeof(size_t), 1, pFile);
+
+	for (size_t i = 0; i < iContainer; ++i)
+	{
+		size_t iSubset = 0;
+		fread(&iSubset, sizeof(size_t), 1, pFile);
+
+		vector<PSubsetMaterial>	vecMtrl;
+		m_vecMaterial.push_back(vecMtrl);
+
+		for (size_t j = 0; j < iSubset; ++j)
+		{
+			PSubsetMaterial	pSubset = new SubsetMaterial;
+			m_vecMaterial[i].push_back(pSubset);
+
+			fread(&pSubset->tMaterial, sizeof(Material), 1, pFile);
+
+			LoadTextureSet(pFile, &pSubset->pDiffuse);
+			LoadTextureSet(pFile, &pSubset->pNormal);
+			LoadTextureSet(pFile, &pSubset->pSpecular);
+
+			/*size_t	iMultiTexCount = pSubset->vecMultiTex.size();
+
+			fread(&iMultiTexCount, sizeof(size_t), 1, pFile);
+
+			for (size_t k = 0; k < iMultiTexCount; ++k)
+			{
+				LoadTextureSet(pFile, &pSubset->vecMultiTex[k]);
+			}*/
+		}
+	}
+}
+
+void CMaterial::SaveFromPath(const char * pFileName, const string & strPathKey)
+{
+}
+
+void CMaterial::LoadFromPath(const char * pFileName, const string & strPathKey)
+{
+}
+
 void CMaterial::SetShader(int iContainer, int iSubset)
 {
 	PSubsetMaterial	pMaterial = m_vecMaterial[iContainer][iSubset];
@@ -615,4 +694,161 @@ PSubsetMaterial CMaterial::CreateSubset()
 	PSubsetMaterial pMtrl = new SubsetMaterial;
 
 	return pMtrl;
+}
+
+void CMaterial::SaveTextureSet(FILE * pFile, PTextureSet pTexture)
+{
+	bool	bTexEnable = false;
+
+	if (pTexture)
+	{
+		bTexEnable = true;
+		fwrite(&bTexEnable, sizeof(bool), 1, pFile);
+
+		string	strTexKey = pTexture->pTex->GetTag();
+		size_t	iKeyLength = strTexKey.length();
+		fwrite(&iKeyLength, sizeof(size_t), 1, pFile);
+		fwrite(strTexKey.c_str(), 1, iKeyLength, pFile);
+
+		// Texture 경로를 얻어온다.
+		const vector<TCHAR*>* pPathList =
+			pTexture->pTex->GetFullPath();
+
+		size_t iPathCount = pPathList->size();
+		fwrite(&iPathCount, sizeof(size_t), 1, pFile);
+
+		vector<TCHAR*>::const_iterator	iter;
+		vector<TCHAR*>::const_iterator	iterEnd = pPathList->end();
+
+		for (iter = pPathList->begin(); iter != iterEnd; ++iter)
+		{
+			int	iPathLength = lstrlen(*iter);
+			char	strPath[MAX_PATH] = {};
+
+#ifdef UNICODE
+			WideCharToMultiByte(CP_ACP, 0, *iter, -1, strPath, iPathLength, 0, 0);
+#else
+			strcpy_s(strPath, *iter);
+#endif // UNICODE
+			_strupr_s(strPath);
+
+			for (int k = iPathLength - 1; k >= 0; --k)
+			{
+				if (strPath[k] == '\\' || strPath[k] == '/')
+				{
+					char	strBin[3];
+					strBin[0] = 'N';
+					strBin[1] = 'I';
+					strBin[2] = 'B';
+					bool	bEnable = true;
+					for (int l = 1; l < 4; ++l)
+					{
+						if (strPath[k - l] != strBin[l - 1])
+						{
+							bEnable = false;
+							break;
+						}
+					}
+
+					if (bEnable)
+					{
+						char	strSavePath[MAX_PATH] = {};
+						int	iSaveCount = iPathLength - (k + 1);
+						memcpy(strSavePath, &strPath[k + 1], sizeof(char) * iSaveCount);
+						fwrite(&iSaveCount, sizeof(int), 1, pFile);
+						fwrite(strSavePath, sizeof(char), iSaveCount, pFile);
+						break;
+					}
+				}
+			}
+		}
+
+		// Sampler Key
+		size_t	iSmpKeyLength = pTexture->pSampler->GetTag().length();
+
+		fwrite(&iSmpKeyLength, sizeof(size_t), 1, pFile);
+		fwrite(pTexture->pSampler->GetTag().c_str(), sizeof(char),
+			iSmpKeyLength, pFile);
+
+		fwrite(&pTexture->iRegister, sizeof(int), 1, pFile);
+		fwrite(&pTexture->iSamplerRegister, sizeof(int), 1, pFile);
+	}
+
+	else
+		fwrite(&bTexEnable, sizeof(bool), 1, pFile);
+}
+
+void CMaterial::LoadTextureSet(FILE * pFile, PTextureSet * ppTexture)
+{
+	bool	bTexEnable = false;
+	fread(&bTexEnable, sizeof(bool), 1, pFile);
+
+	if (bTexEnable)
+	{
+		char	strTexKey[256] = {};
+		size_t	iKeyLength = 0;
+		fread(&iKeyLength, sizeof(size_t), 1, pFile);
+		fread(strTexKey, 1, iKeyLength, pFile);
+
+		size_t iPathCount = 0;
+		fread(&iPathCount, sizeof(size_t), 1, pFile);
+
+		if (iPathCount == 1)
+		{
+			char	strPath[MAX_PATH] = {};
+			int	iSaveCount = 0;
+			fread(&iSaveCount, sizeof(int), 1, pFile);
+			fread(strPath, sizeof(char), iSaveCount, pFile);
+
+			TCHAR	strLoadPath[MAX_PATH] = {};
+
+#ifdef UNICODE
+			MultiByteToWideChar(CP_ACP, 0, strPath, -1, strLoadPath, strlen(strPath) * 2);
+#else
+			strcpy_s(strLoadPath, strPath);
+#endif // UNICODE
+
+			*ppTexture = new TextureSet;
+
+			GET_SINGLE(CResourcesManager)->CreateTexture(strTexKey, strLoadPath, ROOT_PATH);
+			(*ppTexture)->pTex = GET_SINGLE(CResourcesManager)->FindTexture(strTexKey);
+		}
+
+		else
+		{
+			vector<const TCHAR*>	vecPath;
+			for (size_t i = 0; i < iPathCount; ++i)
+			{
+				char	strPath[MAX_PATH] = {};
+				int	iSaveCount = 0;
+				fread(&iSaveCount, sizeof(int), 1, pFile);
+				fread(strPath, sizeof(char), iSaveCount, pFile);
+
+				TCHAR*	strLoadPath = new TCHAR[MAX_PATH];
+				memset(strLoadPath, 0, sizeof(TCHAR) * MAX_PATH);
+
+#ifdef UNICODE
+				MultiByteToWideChar(CP_ACP, 0, strPath, -1, strLoadPath, strlen(strPath) * 2);
+#else
+				strcpy_s(strLoadPath, strPath);
+#endif // UNICODE
+				vecPath.push_back(strLoadPath);
+			}
+			*ppTexture = new TextureSet;
+
+			GET_SINGLE(CResourcesManager)->CreateTexture(strTexKey, vecPath, ROOT_PATH);
+			(*ppTexture)->pTex = GET_SINGLE(CResourcesManager)->FindTexture(strTexKey);
+		}
+
+		// Sampler Key
+		size_t	iSmpKeyLength = 0;
+
+		fread(&iSmpKeyLength, sizeof(size_t), 1, pFile);
+		char	strSmpKey[256] = {};
+		fread(strSmpKey, sizeof(char), iSmpKeyLength, pFile);
+		(*ppTexture)->pSampler = GET_SINGLE(CResourcesManager)->FindSampler(strSmpKey);
+
+		fread(&(*ppTexture)->iRegister, sizeof(int), 1, pFile);
+		fread(&(*ppTexture)->iSamplerRegister, sizeof(int), 1, pFile);
+	}
 }

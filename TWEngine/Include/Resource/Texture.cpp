@@ -12,6 +12,14 @@ CTexture::CTexture() :
 
 CTexture::~CTexture()
 {
+	for (size_t i = 0; i < m_vecFullPath.size(); ++i)
+	{
+		SAFE_DELETE_ARRAY(m_vecFullPath[i]);
+	}
+
+	m_vecFullPath.clear();
+
+
 	SAFE_RELEASE(m_pSRV);
 	Safe_Delete_VecList(m_vecImage);
 }
@@ -55,7 +63,13 @@ bool CTexture::LoadTextureFromFullPath(const string & strName,
 	const TCHAR * pFullPath)
 {
 	SetTag(strName);
-	lstrcpy(m_strFullPath, pFullPath);
+
+	TCHAR*	pSavePath = new TCHAR[MAX_PATH];
+	memset(pSavePath, 0, sizeof(TCHAR) * MAX_PATH);
+
+	lstrcpy(pSavePath, pFullPath);
+
+	m_vecFullPath.push_back(pSavePath);
 
 	TCHAR	strExt[_MAX_EXT] = {};
 	char	ext[_MAX_EXT] = {};
@@ -113,6 +127,13 @@ bool CTexture::LoadTexture(const string & strName,
 
 		lstrcat(strFullPath, vecFileName[i]);
 
+		TCHAR*	pSavePath = new TCHAR[MAX_PATH];
+		memset(pSavePath, 0, sizeof(TCHAR) * MAX_PATH);
+
+		lstrcpy(pSavePath, strFullPath);
+
+		m_vecFullPath.push_back(pSavePath);
+
 		memcpy(m_strFullPath, strFullPath, sizeof(TCHAR) * MAX_PATH);
 
 		TCHAR	strExt[_MAX_EXT] = {};
@@ -163,6 +184,13 @@ bool CTexture::LoadTextureFromFullPath(const string & strName,
 
 	for (size_t i = 0; i < vecFullPath.size(); ++i)
 	{
+		TCHAR*	pSavePath = new TCHAR[MAX_PATH];
+		memset(pSavePath, 0, sizeof(TCHAR) * MAX_PATH);
+
+		lstrcpy(pSavePath, vecFullPath[i]);
+
+		m_vecFullPath.push_back(pSavePath);
+
 		memcpy(m_strFullPath, vecFullPath[i], sizeof(TCHAR) * MAX_PATH);
 
 		TCHAR	strExt[_MAX_EXT] = {};
