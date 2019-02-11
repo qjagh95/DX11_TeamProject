@@ -689,14 +689,158 @@ void CFbxLoader::LoadWeightAndIndex(FbxCluster * pCluster, int iBoneIndex, PFBXM
 	}
 }
 
-void CFbxLoader::LoadOffsetMatrix(FbxCluster * pCluster, const FbxAMatrix & matTransform, int iBoneIndex, PFBXMESHCONTAINER pContainer)
+void CFbxLoader::LoadOffsetMatrix(FbxCluster * pCluster, const FbxAMatrix & matTransform, int iBoneIndex,
+	PFBXMESHCONTAINER pContainer) // Offset 행렬을 구한다.
 {
+	FbxAMatrix	matCluster;
+	FbxAMatrix	matClusterLink;
+
+	pCluster->GetTransformMatrix(matCluster); // 현재 관절의 Matrix를 얻어온다.
+	pCluster->GetTransformLinkMatrix(matClusterLink); // 이 관절과 연결 되어 있는 관절(보통 부모)의 Transform을 얻어온다
+
+	// Reflect Matrix를 만든다(y , z축이 바뀌어져 있는 행렬(FBXSDK 행렬) DirectX Matrix로 변환한다)
+	FbxVector4	v1 = { 1.0, 0.0, 0.0, 0.0 };
+	FbxVector4	v2 = { 0.0, 0.0, 1.0, 0.0 };
+	FbxVector4	v3 = { 0.0, 1.0, 0.0, 0.0 };
+	FbxVector4	v4 = { 0.0, 0.0, 0.0, 1.0 };
+
+	FbxAMatrix	matReflect;
+	matReflect.mData[0] = v1;
+	matReflect.mData[1] = v2;
+	matReflect.mData[2] = v3;
+	matReflect.mData[3] = v4;
+
+	/*
+	1 0 0 0   1 2 3 4   1 0 0 0
+	0 0 1 0   5 6 7 8   0 0 1 0
+	0 1 0 0 * 9 0 1 2 * 0 1 0 0
+	0 0 0 1   3 4 5 6   0 0 0 1
+
+	1 2 3 4   1 0 0 0
+	9 0 1 2   0 0 1 0
+	5 6 7 8 * 0 1 0 0
+	3 4 5 6   0 0 0 1
+
+	1 3 2 4
+	9 1 0 2
+	5 7 6 8
+	3 5 4 6
+	*/
+
+	FbxAMatrix	matOffset;
+	matOffset = matClusterLink.Inverse() * matCluster * matTransform;
+	// Link되어있는 행렬의 역행렬(이부분 제거) * matCluster * matTransform(Setting하려는 행렬)
+	matOffset = matReflect * matOffset * matReflect;
+
+	m_vecBones[iBoneIndex]->matOffset = matOffset;
 }
 
 void CFbxLoader::LoadTimeTransform(FbxNode * pNode, FbxCluster * pCluster, const FbxAMatrix & matTransform, int iBoneIndex)
 {
+	FbxVector4	v1 = { 1.0, 0.0, 0.0, 0.0 };
+	FbxVector4	v2 = { 0.0, 0.0, 1.0, 0.0 };
+	FbxVector4	v3 = { 0.0, 1.0, 0.0, 0.0 };
+	FbxVector4	v4 = { 0.0, 0.0, 0.0, 1.0 };
+
+	FbxAMatrix	matReflect; // Y,Z축을 바꾸기 위한 Reflect 행렬 생성
+	matReflect.mData[0] = v1;
+	matReflect.mData[1] = v2;
+	matReflect.mData[2] = v3;
+	matReflect.mData[3] = v4;
+
+	if (m_bMixamo) // 이 FBX파일이 Mixamo 파일일경우
+	{
+		vector<PFBXANIMATIONCLIP>::iterator	iter; 
+		vector<PFBXANIMATIONCLIP>::iterator	iterEnd = m_vecClip.end();
+
+		for (iter = m_vecClip.begin(); iter != iterEnd;)
+		{
+			if ((*iter)->strName != "mixamo.com")
+			{
+				SAFE_DELETE((*iter));
+				iter = m_vecClip.erase(iter);
+				iterEnd = m_vecClip.end();
+			}
+
+			else
+				++iter;
+		}
+	}
+
+	for (size_t i = 0; i < m_vecClip.size(); ++i)
+	{
+		FbxLongLong	Start = m_vecClip[i]->tStart.GetFrameCount(m_vecClip[i]->eTimeMode);
+		FbxLongLong	End = m_vecClip[i]->tEnd.GetFrameCount(m_vecClip[i]->eTimeMode);
+
+		m_vecClip[i]->vecBoneKeyFrame[iBoneIndex].iBoneIndex = iBoneIndex;
+
+		// 전체 프레임 수만큼 반복한다.
+		for (FbxLongLong j = Start; j <= End; ++j)
+		{
+			FbxTime	tTime = {};
+
+			// 현재 프레임에 해당하는 FbxTime을 만들어낸다.
+			tTime.SetFrame(j, m_vecClip[i]->eTimeMode);
+
+			// EvaluateGlobalTransform
+			FbxAMatrix	matOffset = pNode->EvaluateGlobalTransform(tTime) * matTransform;
+			FbxAMatrix	matCur = matOffset.Inverse() * pCluster->GetLink()->EvaluateGlobalTransform(tTime);
+
+			matCur = matReflect * matCur * matReflect;
+
+			FBXKEYFRAME	tKeyFrame = {};
+
+			tKeyFrame.dTime = tTime.GetSecondDouble();
+			tKeyFrame.matTransform = matCur;
+
+			m_vecClip[i]->vecBoneKeyFrame[iBoneIndex].vecKeyFrame.push_back(tKeyFrame);
+		}
+	}
 }
 
 void CFbxLoader::ChangeWeightAndIndices(PFBXMESHCONTAINER pContainer)
 {
+	unordered_map<int, vector<FBXWEIGHT>>::iterator	iter;
+	unordered_map<int, vector<FBXWEIGHT>>::iterator	iterEnd = pContainer->mapWeights.end();
+
+	for (iter = pContainer->mapWeights.begin(); iter != iterEnd; ++iter)
+	{
+		if (iter->second.size() > 4)
+		{
+			// 가중치 값에 따라 내림차순 정렬한다.
+			sort(iter->second.begin(), iter->second.end(), [](const FBXWEIGHT& lhs, const FBXWEIGHT& rhs)
+			{
+				return lhs.dWeight > rhs.dWeight;
+			});
+
+			double	dSum = 0.0;
+
+			for (int i = 0; i < 4; ++i)
+			{
+				dSum += iter->second[i].dWeight;
+			}
+
+			double	dInterpolate = 1.f - dSum;
+
+			vector<FBXWEIGHT>::iterator	iterErase = iter->second.begin() + 4;
+
+			iter->second.erase(iterErase, iter->second.end());
+			iter->second[0].dWeight += dInterpolate;
+		}
+
+		float	fWeight[4] = {};
+		int		iIndex[4] = {};
+
+		for (int i = 0; i < iter->second.size(); ++i)
+		{
+			fWeight[i] = iter->second[i].dWeight;
+			iIndex[i] = iter->second[i].iIndex;
+		}
+
+		Vector4	vWeight = fWeight;
+		Vector4	vIndex = iIndex;
+
+		pContainer->vecBlendWeight[iter->first] = vWeight;
+		pContainer->vecBlendIndex[iter->first] = vIndex;
+	}
 }

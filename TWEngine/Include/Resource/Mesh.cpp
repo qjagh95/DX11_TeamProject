@@ -4,17 +4,20 @@
 #include "../PathManager.h"
 #include "FbxLoader.h"
 #include "../Component/Material.h"
+#include "../Component/Animation.h"
 
 PUN_USING
 
 CMesh::CMesh()
-	:m_pMaterial(nullptr)
+	:m_pMaterial(nullptr),
+	 m_pAnimation(nullptr)
 {
 }
 
 
 CMesh::~CMesh()
 {
+	SAFE_RELEASE(m_pAnimation);
 	SAFE_RELEASE(m_pMaterial);
 
 	for (size_t i = 0; i < m_vecMeshContainer.size(); ++i)
@@ -727,41 +730,41 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
 		}
 	}
 
-	// 텍스쳐가 저장된 폴더명을 키로 변경한다.
-	//char	strFullName[MAX_PATH] = {};
-	//iterM = pMaterials->begin();
-	//strcpy_s(strFullName, (*iterM)[0]->strDifTex.c_str());
+	//텍스쳐가 저장된 폴더명을 키로 변경한다.
+	char	strFullName[MAX_PATH] = {};
+	iterM = pMaterials->begin();
+	strcpy_s(strFullName, (*iterM)[0]->strDifTex.c_str());
 
-	//int	iLength = strlen(strFullName);
-	//for (int i = iLength - 1; i >= 0; --i)
-	//{
-	//	if (strFullName[i] == '\\' || strFullName[i] == '/')
-	//	{
-	//		memset(strFullName + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
-	//		strFullName[i] = '\\';
-	//		//strFullName[i] = 0;
-	//		break;
-	//	}
-	//}
+	int	iLength = strlen(strFullName);
+	for (int i = iLength - 1; i >= 0; --i)
+	{
+		if (strFullName[i] == '\\' || strFullName[i] == '/')
+		{
+			memset(strFullName + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
+			strFullName[i] = '\\';
+			//strFullName[i] = 0;
+			break;
+		}
+	}
 
-	//char	strChange[MAX_PATH] = {};
-	//strcpy_s(strChange, strFullName);
-	//iLength = strlen(strChange);
-	//for (int i = iLength - 2; i >= 0; --i)
-	//{
-	//	if (strChange[i] == '\\' || strChange[i] == '/')
-	//	{
-	//		memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
-	//		break;
-	//	}
-	//}
+	char	strChange[MAX_PATH] = {};
+	strcpy_s(strChange, strFullName);
+	iLength = strlen(strChange);
+	for (int i = iLength - 2; i >= 0; --i)
+	{
+		if (strChange[i] == '\\' || strChange[i] == '/')
+		{
+			memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
+			break;
+		}
+	}
 
-	//strcat_s(strChange, m_strTag.c_str());
-	//strcat_s(strChange, "\\");
+	strcat_s(strChange, m_strTag.c_str());
+	strcat_s(strChange, "\\");
 
-	//MoveFileA(strFullName, strChange);
+	MoveFileA(strFullName, strChange);
 
-	// Mesh\\ 까지의 경로를 제거한다.
+	 //Mesh\\ 까지의 경로를 제거한다.
 	/*iLength = strlen(strChange);
 	for (int i = iLength - 2; i >= 0; --i)
 	{
@@ -794,81 +797,79 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
 	m_vCenter = (m_vMax + m_vMin) / 2.f;
 	m_fRadius = m_vLength.Length() / 2.f;
 
-	// 애니메이션 처리
-	//const vector<PFBXBONE>*	pvecBone = pLoader->GetBones();
+	const vector<PFBXBONE>*	pvecBone = pLoader->GetBones();
 
-	//if (pvecBone->empty())
-	//	return true;
+	if (pvecBone->empty())
+		return true;
 
-	//SAFE_RELEASE(m_pAnimation);
+	SAFE_RELEASE(m_pAnimation);
 
-	//m_pAnimation = new CAnimation;
+	m_pAnimation = new CAnimation;
 
-	//if (!m_pAnimation->Init())
-	//{
-	//	SAFE_RELEASE(m_pAnimation);
-	//	return false;
-	//}
+	if (!m_pAnimation->Init())
+	{
+		SAFE_RELEASE(m_pAnimation);
+		return false;
+	}
 
-	////// 본 수만큼 반복한다.
-	//vector<PFBXBONE>::const_iterator	iterB;
-	//vector<PFBXBONE>::const_iterator	iterBEnd = pvecBone->end();
+	//// 본 수만큼 반복한다.
+	vector<PFBXBONE>::const_iterator	iterB;
+	vector<PFBXBONE>::const_iterator	iterBEnd = pvecBone->end();
 
-	//for (iterB = pvecBone->begin(); iterB != iterBEnd; ++iterB)
-	//{
-	//	PBONE	pBone = new BONE;
+	for (iterB = pvecBone->begin(); iterB != iterBEnd; ++iterB)
+	{
+		PBONE	pBone = new BONE;
 
-	//	pBone->strName = (*iterB)->strName;
-	//	pBone->iDepth = (*iterB)->iDepth;
-	//	pBone->iParentIndex = (*iterB)->iParentIndex;
+		pBone->strName = (*iterB)->strName;
+		pBone->iDepth = (*iterB)->iDepth;
+		pBone->iParentIndex = (*iterB)->iParentIndex;
 
-	//	float	fMat[4][4];
+		float	fMat[4][4];
 
-	//	for (int i = 0; i < 4; ++i)
-	//	{
-	//		for (int j = 0; j < 4; ++j)
-	//		{
-	//			fMat[i][j] = (*iterB)->matOffset.mData[i].mData[j];
-	//		}
-	//	}
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 4; ++j)
+			{
+				fMat[i][j] = (*iterB)->matOffset.mData[i].mData[j];
+			}
+		}
 
-	//	pBone->matOffset = new Matrix;
-	//	*pBone->matOffset = fMat;
+		pBone->matOffset = new Matrix;
+		*pBone->matOffset = fMat;
 
-	//	for (int i = 0; i < 4; ++i)
-	//	{
-	//		for (int j = 0; j < 4; ++j)
-	//		{
-	//			fMat[i][j] = (*iterB)->matBone.mData[i].mData[j];
-	//		}
-	//	}
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 4; ++j)
+			{
+				fMat[i][j] = (*iterB)->matBone.mData[i].mData[j];
+			}
+		}
 
-	//	pBone->matBone = new Matrix;
-	//	*pBone->matBone = fMat;
+		pBone->matBone = new Matrix;
+		*pBone->matBone = fMat;
 
-	//	m_pAnimation->AddBone(pBone);
-	//}
+		m_pAnimation->AddBone(pBone);
+	}
 
-	//m_pAnimation->CreateBoneTexture();
+	m_pAnimation->CreateBoneTexture();
 
-	//// 애니메이션 클립을 추가한다.
-	//const vector<PFBXANIMATIONCLIP>* pvecClip = pLoader->GetClips();
+	// 애니메이션 클립을 추가한다.
+	const vector<PFBXANIMATIONCLIP>* pvecClip = pLoader->GetClips();
 
-	//// 클립을 읽어온다.
-	//vector<PFBXANIMATIONCLIP>::const_iterator	iterC;
-	//vector<PFBXANIMATIONCLIP>::const_iterator	iterCEnd = pvecClip->end();
+	// 클립을 읽어온다.
+	vector<PFBXANIMATIONCLIP>::const_iterator	iterC;
+	vector<PFBXANIMATIONCLIP>::const_iterator	iterCEnd = pvecClip->end();
 
-	//for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
-	//{
-	//	m_pAnimation->AddClip(AO_LOOP, *iterC);
-	//}
+	for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
+	{
+		m_pAnimation->AddClip(AO_LOOP, *iterC);
+	}
 
-	char strFullPath[MAX_PATH] = {};
+	char	strFullPath[MAX_PATH] = {};
 	strcpy_s(strFullPath, _pFullPath);
-	int iPathLength = strlen(strFullPath);
-	strcpy_s(&strFullPath[iPathLength - 3], 4 , "msh");
+	int	iPathLength = strlen(strFullPath);
+	memcpy(&strFullPath[iPathLength - 3], "msh", 3);
 
 	SaveFromFullPath(strFullPath);
-
 	return true;
 }

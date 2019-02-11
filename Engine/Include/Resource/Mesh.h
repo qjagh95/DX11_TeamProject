@@ -67,6 +67,7 @@ private:
 	Vector3					m_vMax;
 	Vector3					m_vLength;
 	class CMaterial*		m_pMaterial;
+	class CAnimation*		m_pAnimation;
 
 public:
 	Vector3 GetCenter()	const;

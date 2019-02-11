@@ -207,6 +207,7 @@
     <ClInclude Include="BineryReader.h" />
     <ClInclude Include="BineryWriter.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="Component\Animation.h" />
     <ClInclude Include="Component\Animation2D.h" />
     <ClInclude Include="Component\Bar.h" />
     <ClInclude Include="Component\Camera.h" />
@@ -298,6 +299,7 @@
     <ClCompile Include="BineryReader.cpp" />
     <ClCompile Include="BineryWriter.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="Component\Animation.cpp" />
     <ClCompile Include="Component\Animation2D.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

@@ -362,6 +362,9 @@
     <ClCompile Include="Resource\FbxLoader.cpp">
       <Filter>02. Resources\01. Mesh\00. FBXSDK</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Animation.cpp">
+      <Filter>06. Component\06. Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -630,6 +633,9 @@
     </ClInclude>
     <ClInclude Include="Resource\FbxLoader.h">
       <Filter>02. Resources\01. Mesh\00. FBXSDK</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Animation.h">
+      <Filter>06. Component\06. Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
