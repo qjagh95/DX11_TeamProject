@@ -38,6 +38,19 @@
 #define ACC_BLEND			"AccBlend"
 #define	DEPTH_DISABLE		"DepthDisable"
 #define CULL_NONE			"CullNone"
+#define ZERO_BLEND "ZeroBlend"
+#define ALL_BLEND "AllBlend"
+#define WIRE_FRAME "WireFrame"
+#define DEPTH_GRATOR "DepthGrator"
+#define DEPTH_LESS "DepthLess"
+#define FRONT_CULL "FrontCull"
+#define BACK_CULL "BackCull"
+
+// ========== Volume Mesh Key=============
+#define SPHERE_VOLUME "SphereVolum"
+#define CAPSUL_VOLUME "CapsulVolum"
+#define CORN_VOLUME "CornVolum"
+#define CYLINDER_VOLUME "CylinderVolum"
 
 enum SHADER_TYPE
 {

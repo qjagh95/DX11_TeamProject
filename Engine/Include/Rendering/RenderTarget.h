@@ -36,6 +36,7 @@ private:
 public:
 	ID3D11RenderTargetView* GetRenderTargetView()	const;
 	ID3D11DepthStencilView* GetDepthView()	const;
+	ID3D11ShaderResourceView* GetShaderResourceView() const { return m_pTargetSRV; }
 
 public:
 	bool CreateRenderTarget(DXGI_FORMAT eTargetFmt,

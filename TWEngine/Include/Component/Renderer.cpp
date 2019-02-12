@@ -267,8 +267,6 @@ bool CRenderer::Init()
 
 int CRenderer::Update(float fTime)
 {
-	m_tComponentCBuffer.iDeferred = CRenderManager::GetInst()->GetRenderingMode() == true ? 1 : 0;
-
 	return 0;
 }
 
@@ -304,8 +302,7 @@ void CRenderer::Render(float fTime)
 		GET_SINGLE(CShaderManager)->UpdateCBuffer(iter->first, iter->second->pBuffer);
 	}
 
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("Component",
-		&m_tComponentCBuffer);
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Component", &m_tComponentCBuffer);
 
 	CONTEXT->IASetInputLayout(m_pLayout);
 	m_pShader->SetShader();

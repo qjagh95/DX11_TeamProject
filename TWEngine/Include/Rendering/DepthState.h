@@ -25,6 +25,8 @@ public:
 		UINT8 iStencilReadMask = 0, UINT8 iStencilWriteMask = 0,
 		D3D11_DEPTH_STENCILOP_DESC tFrontFace = {},
 		D3D11_DEPTH_STENCILOP_DESC tBackFace = {});
+	
+	void SetStencilRef(UINT Value) { m_iStencilRef = Value; }
 
 public:
 	virtual void SetState();

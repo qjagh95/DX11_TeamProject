@@ -7,12 +7,12 @@ class PUN_DLL CLight :
 	public CComponent
 {
 	friend class CGameObject;
+	friend class CScene;
 
 private:
 	CLight();
 	CLight(const CLight& light);
 	~CLight();
-
 
 private:
 	LightInfo	m_tInfo;
@@ -26,9 +26,8 @@ public:
 	void SetLightType(LIGHT_TYPE eType);
 	void SetLightRange(float fRange);
 	void SetAngle(float fInAngle, float fOutAngle);
-	void SetLightColor(const Vector4& vDif, const Vector4& vAmb,
-		const Vector4& vSpc);
-	void SetShader();
+	void SetLightColor(const Vector4& vDif, const Vector4& vAmb, const Vector4& vSpc);
+	void UpdateLightCBuffer();
 
 public:
 	virtual void Start();

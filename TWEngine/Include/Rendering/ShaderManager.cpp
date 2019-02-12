@@ -84,7 +84,7 @@ bool CShaderManager::Init()
 	if (!CreateInputLayout(POS_LAYOUT, LIGHT_POINT_ACC_SHADER))
 		return false;
 
-	pEntry[ST_VERTEX] = (char*)"LightDirVS";
+	pEntry[ST_VERTEX] = (char*)"LightPointVS";
 	pEntry[ST_PIXEL] = (char*)"LightAccPS";
 	if (!LoadShader(LIGHT_SPOT_ACC_SHADER, TEXT("Light.fx"), pEntry))
 		return false;
@@ -156,6 +156,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("Button", 9, sizeof(ButtonCBuffer), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Bar", 9, sizeof(BarCBuffer), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Light", 3, sizeof(LightInfo), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("PublicCBuffer", 5, sizeof(PublicCBuffer), CST_VERTEX | CST_PIXEL);
 
 	return true;
 }

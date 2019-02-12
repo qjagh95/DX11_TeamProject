@@ -136,8 +136,7 @@ typedef struct PUN_DLL _tagComponentCBuffer
 {
 	int		iTextureAnimation2D;
 	int		iAnimationType;
-	int		iDeferred;
-	float	fEmpty;
+	Vector2	fEmpty;
 }ComponentCBuffer, *PComponentCBuffer;
 
 typedef struct PUN_DLL _tagClip2DFrame
@@ -239,7 +238,8 @@ typedef struct PUN_DLL _tagLightInfo
 	float	fRange;
 	float	fInAngle;
 	float	fOutAngle;
-	Vector2	vEmpty;
+	float   fFallOff;
+	float	vEmpty;
 }LightInfo, *PLightInfo;
 
 typedef struct PUN_DLL _tagVertexNormalTex
@@ -259,4 +259,16 @@ typedef struct PUN_DLL _tagVertex3D
 	Vector4		vWeight;
 	Vector4		vIndex;
 }Vertex3D , *PVertex3D;
+
+struct PUN_DLL PublicCBuffer
+{
+	float DeltaTime;
+	float PlusedDeltaTime;
+	int isDeferred;
+	int isWireFrame;
+	int Empty1234;
+	Vector2 ViewPortSize;
+	float Empty;
+};
+
 PUN_END

@@ -191,7 +191,7 @@ void CCore::Logic()
 	float fTime = pTimer->GetTime();	
 
 #ifdef _DEBUG
-	//GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
+	GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
 #endif
 
 	Input(fTime);
@@ -238,7 +238,7 @@ void CCore::Render(float fTime)
 	GET_SINGLE(CRenderManager)->Render(fTime);
 
 #ifdef _DEBUG
-	//GUIManager::Get()->ImGuiEnd();
+	GUIManager::Get()->ImGuiEnd();
 #endif
 
 	GET_SINGLE(CInput)->RenderMouse(fTime);

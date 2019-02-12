@@ -583,8 +583,7 @@ void CFbxLoader::LoadBoneRecursive(FbxNode * pNode, int iDepth, int iIndex, int 
 
 	for (int i = 0; i < iChildCount; ++i)
 	{
-		LoadBoneRecursive(pNode->GetChild(i), iDepth + 1,
-			m_vecBones.size(), iIndex);
+		LoadBoneRecursive(pNode->GetChild(i), iDepth + 1, (int)m_vecBones.size(), iIndex);
 	}
 }
 
@@ -661,7 +660,7 @@ FbxAMatrix CFbxLoader::GetTransform(FbxNode * pNode)
 
 int CFbxLoader::FindBoneFromName(const string & strName)
 {
-	for (size_t i = 0; i < m_vecBones.size(); ++i)
+	for (int i = 0; i < m_vecBones.size(); ++i)
 	{
 		if (m_vecBones[i]->strName == strName)
 			return i;
@@ -833,8 +832,8 @@ void CFbxLoader::ChangeWeightAndIndices(PFBXMESHCONTAINER pContainer)
 
 		for (int i = 0; i < iter->second.size(); ++i)
 		{
-			fWeight[i] = iter->second[i].dWeight;
-			iIndex[i] = iter->second[i].iIndex;
+			fWeight[i] = (float)iter->second[i].dWeight;
+			iIndex[i] = (int)iter->second[i].iIndex;
 		}
 
 		Vector4	vWeight = fWeight;

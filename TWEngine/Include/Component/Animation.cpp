@@ -131,7 +131,7 @@ bool CAnimation::CreateBoneTexture()
 	tDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	tDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	tDesc.Height = 1;
-	tDesc.Width = m_vecBones.size() * 4;
+	tDesc.Width = (UINT)m_vecBones.size() * 4;
 	tDesc.MipLevels = 1;
 	tDesc.SampleDesc.Quality = 0;
 	tDesc.SampleDesc.Count = 1;
@@ -180,13 +180,13 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 	pAnimClip->iChangeFrame = 0;
 
 	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
-	pAnimClip->iStartFrame = pClip->tStart.GetFrameCount(pClip->eTimeMode);
-	pAnimClip->iEndFrame = pClip->tEnd.GetFrameCount(pClip->eTimeMode);
+	pAnimClip->iStartFrame = (int)pClip->tStart.GetFrameCount(pClip->eTimeMode);
+	pAnimClip->iEndFrame = (int)pClip->tEnd.GetFrameCount(pClip->eTimeMode);
 	pAnimClip->iFrameLength = pAnimClip->iEndFrame - pAnimClip->iStartFrame;
 
 	// 시간 정보를 저장해준다.
-	pAnimClip->fStartTime = pClip->tStart.GetSecondDouble();
-	pAnimClip->fEndTime = pClip->tEnd.GetSecondDouble();
+	pAnimClip->fStartTime = (float)pClip->tStart.GetSecondDouble();
+	pAnimClip->fEndTime = (float)pClip->tEnd.GetSecondDouble();
 	pAnimClip->fTimeLength = pAnimClip->fEndTime - pAnimClip->fStartTime;
 
 	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
@@ -306,7 +306,7 @@ PBONE CAnimation::FindBone(const string & strBoneName)
 
 int CAnimation::FindBoneIndex(const string & strBoneName)
 {
-	for (size_t i = 0; i < m_vecBones.size(); ++i)
+	for (int i = 0; i < m_vecBones.size(); ++i)
 	{
 		if (m_vecBones[i]->strName == strBoneName)
 			return i;
@@ -614,14 +614,11 @@ int CAnimation::Update(float fTime)
 				// 현재 프레임의 시간을 얻어온다.
 				double	 dFrameTime = pCurKey->dTime;
 
-				float	fPercent = (fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime;
+				float	fPercent = (float)(fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime;
 
-				XMVECTOR	vS = XMVectorLerp(pCurKey->vScale.Convert(),
-					pNextKey->vScale.Convert(), fPercent);
-				XMVECTOR	vT = XMVectorLerp(pCurKey->vPos.Convert(),
-					pNextKey->vPos.Convert(), fPercent);
-				XMVECTOR	vR = XMQuaternionSlerp(pCurKey->vRot.Convert(),
-					pNextKey->vRot.Convert(), fPercent);
+				XMVECTOR	vS = XMVectorLerp(pCurKey->vScale.Convert(),pNextKey->vScale.Convert(), fPercent);
+				XMVECTOR	vT = XMVectorLerp(pCurKey->vPos.Convert(),pNextKey->vPos.Convert(), fPercent);
+				XMVECTOR	vR = XMQuaternionSlerp(pCurKey->vRot.Convert(),pNextKey->vRot.Convert(), fPercent);
 
 				XMVECTOR	vZero = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 

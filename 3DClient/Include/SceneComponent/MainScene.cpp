@@ -16,6 +16,7 @@
 #include "Component/Light.h"
 #include "Input.h"
 #include "../UserComponent/Player.h"
+
 CMainScene::CMainScene()
 {
 }
@@ -34,7 +35,6 @@ bool CMainScene::Init()
 	CLayer* pStageLayer = m_pScene->FindLayer("Stage");
 
 	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);	
-
 	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
 
 	SAFE_RELEASE(pPlayer);
@@ -63,42 +63,35 @@ bool CMainScene::Init()
 
 	CreatePrototype();
 
-	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight1",
-		pDefaultLayer);
+	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight1", pDefaultLayer);
 
 	pTransform = pLightObj->GetTransform();
 
 	pTransform->SetWorldRot(90.f, 0.f, 0.f);
 	pTransform->SetWorldPos(0.f, 4.f, 0.f);
 
-
 	SAFE_RELEASE(pTransform);
 
 	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight1");
 
-	pLight->SetLightColor(Vector4::HotPink, Vector4::HotPink,
-		Vector4::HotPink);
+	pLight->SetLightColor(Vector4::HotPink, Vector4::HotPink, Vector4::HotPink);
 	pLight->SetLightType(LT_SPOT);
 	pLight->SetLightRange(10.f);
 	pLight->SetAngle(60.f, 90.f);
 
 	SAFE_RELEASE(pLight);
-
 	SAFE_RELEASE(pLightObj);
 
-	pLightObj = CGameObject::CreateObject("GlobalLight2",
-		pDefaultLayer);
+	pLightObj = CGameObject::CreateObject("GlobalLight2", pDefaultLayer);
 
 	pTransform = pLightObj->GetTransform();
-
 	pTransform->SetWorldPos(-2.f, 0.f, 0.f);
 
 	SAFE_RELEASE(pTransform);
 
 	pLight = pLightObj->AddComponent<CLight>("GlobalLight2");
 
-	pLight->SetLightColor(Vector4::Blue, Vector4::Blue,
-		Vector4::Blue);
+	pLight->SetLightColor(Vector4::Blue, Vector4::Blue, Vector4::Blue);
 	pLight->SetLightType(LT_POINT);
 	pLight->SetLightRange(10.f);
 

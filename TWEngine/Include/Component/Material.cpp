@@ -803,7 +803,7 @@ void CMaterial::LoadTextureSet(FILE * pFile, PTextureSet * ppTexture)
 			TCHAR	strLoadPath[MAX_PATH] = {};
 
 #ifdef UNICODE
-			MultiByteToWideChar(CP_ACP, 0, strPath, -1, strLoadPath, strlen(strPath) * 2);
+			MultiByteToWideChar(CP_ACP, 0, strPath, -1, strLoadPath, (int)strlen(strPath) * 2);
 #else
 			strcpy_s(strLoadPath, strPath);
 #endif // UNICODE
@@ -828,7 +828,7 @@ void CMaterial::LoadTextureSet(FILE * pFile, PTextureSet * ppTexture)
 				memset(strLoadPath, 0, sizeof(TCHAR) * MAX_PATH);
 
 #ifdef UNICODE
-				MultiByteToWideChar(CP_ACP, 0, strPath, -1, strLoadPath, strlen(strPath) * 2);
+				MultiByteToWideChar(CP_ACP, 0, strPath, -1, strLoadPath, (int)strlen(strPath) * 2);
 #else
 				strcpy_s(strLoadPath, strPath);
 #endif // UNICODE

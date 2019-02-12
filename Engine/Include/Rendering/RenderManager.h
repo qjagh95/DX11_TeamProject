@@ -17,45 +17,59 @@ typedef struct _tagRenderGroup
 		pList = new CGameObject*[iCapacity];
 	}
 
-	~_tagRenderGroup()
-	{
-		delete[]	pList;
-	}
+	~_tagRenderGroup() { delete[]	pList; }
 }RenderGroup, *PRenderGroup;
 
-typedef struct PUN_DLL _tagMRT
-{
-	vector<class CRenderTarget*>	vecTarget;
-	vector<ID3D11RenderTargetView*>	vecOldTarget;
-	ID3D11DepthStencilView*	pDepth;
-	ID3D11DepthStencilView*	pOldDepth;
-}MRT, *PMRT;
-
+class CMesh;
+class CShader;
+class CRenderTarget;
+class CSampler;
+class CRenderState;
+class CBlendState;
+class CMultiRenderTarget;
 class PUN_DLL CRenderManager
 {
 private:
-	unordered_map<string, PMRT>					m_mapMRT;
-	unordered_map<string, class CRenderState*>	m_mapRenderState;
-	unordered_map<string, class CRenderTarget*>	m_mapRenderTarget;
-	RenderGroup									m_tRenderObj[RG_END];
-	RenderGroup									m_tLightGroup;
-	GAME_MODE									m_eGameMode;
-	bool										m_bDeferred;
-	ID3D11InputLayout*							m_pPointLightLayout;
-	class CBlendState*							m_pCreateState;
-	class CRenderState*							m_pDepthDisable;
-	class CRenderState*							m_pCullNone;
-	class CSampler*								m_pGBufferSampler;
-	class CShader*								m_pLightAccDirShader;
-	class CShader*								m_pLightAccPointShader;
-	class CShader*								m_pLightAccSpotShader;
-	class CShader*								m_pLightBlendShader;
-	class CShader*								m_pFullScreenShader;
-	class CMesh*								m_pPointLightVolume;                                            
-	class CRenderTarget*						m_pAlbedoTarget;
-	class CRenderTarget*						m_pLightBlendTarget;
-	class CRenderTarget*						m_pLightAccDifTarget;
-	class CRenderTarget*						m_pLightAccSpcTarget;
+	unordered_map<string, CRenderState*> m_mapRenderState;
+	unordered_map<string, CRenderTarget*> m_mapRenderTarget;
+	unordered_map<string, CMultiRenderTarget*> m_mapMultiTarget;
+
+	RenderGroup	m_tRenderObj[RG_END];
+	RenderGroup	m_tLightGroup;
+	GAME_MODE m_eGameMode;
+	bool m_bDeferred;
+	ID3D11InputLayout* m_pPointLightLayout;
+	CBlendState* m_pCreateState;
+	CRenderState*	m_pDepthDisable;
+	CRenderState*	m_pCullNone;
+	CSampler* m_pGBufferSampler;
+	CShader* m_pLightAccDirShader;
+	CShader* m_pLightAccPointShader;
+	CShader* m_pLightAccSpotShader;
+	CShader* m_pLightBlendShader;
+	CShader* m_pFullScreenShader;
+	CRenderTarget* m_pAlbedoTarget;
+	CRenderTarget* m_pLightBlendTarget;
+	CRenderTarget* m_pLightAccDifTarget;
+	CRenderTarget* m_pLightAccSpcTarget;
+
+	CRenderState* m_pAddBlend;
+	CRenderState* m_pDepthGrator;
+	CRenderState* m_pDepthLess;
+	CRenderState* m_pFrontCull;
+	CRenderState* m_pBackCull;
+	CRenderState* m_pWireFrame;
+	CRenderState* m_pZeroBlend;
+	CRenderState* m_pAllBlend;
+
+	CMultiRenderTarget* m_pGBufferMultiTarget;
+	CMultiRenderTarget* m_pLightMultiTarget;
+
+	bool m_bWireFrame;
+	CMesh* m_pSphereVolum;
+	CMesh* m_pCornVolum;
+
+	PublicCBuffer m_tCBuffer;
 
 public:
 	GAME_MODE GetGameMode()	const;
@@ -97,13 +111,12 @@ public:
 		DXGI_FORMAT eDepthFmt = DXGI_FORMAT_UNKNOWN);
 
 	class CRenderTarget* FindRenderTarget(const string& strName);
-	
-	bool AddMRT(const string& strMRTKey, const string& strTargetKey);
-	bool AddMRTDepth(const string& strMRTKey, const string& strTargetKey);
-	void ClearMRT(const string& strMRTKey, float fClearColor[4]);
-	void SetMRT(const string& strMRTKey);
-	void ResetMRT(const string& strMRTKey);
-	PMRT FindMRT(const string& strMRTKey);
+
+	bool CreateMultiTarget(const string& MultiKey);
+	bool AddMultiRenderTarget(const string& MultiKey, const string& TargetKey);
+	bool AddMultiRenderTargetDepthView(const string& MultiKey, const string& TargetKey);
+
+	CMultiRenderTarget* FindMultiTarget(const string& MultiKey);
 
 public:
 	void AddRenderObj(class CGameObject* pObj);

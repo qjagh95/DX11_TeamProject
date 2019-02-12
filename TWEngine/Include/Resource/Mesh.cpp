@@ -355,19 +355,19 @@ bool CMesh::SaveFromFullPath(const char * _pFullPath)
 	if (!pFile)
 		return false;
 
-	int iLength = m_strTag.length();
+	int iLength = (int)m_strTag.length();
 
 	//Mesh Tag길이를 저장한다
 	fwrite(&iLength, 4, 1, pFile);
 	fwrite(m_strTag.c_str(), 1, iLength, pFile);
 	
 	//ShaderName , string 길이를 저장한다.
-	iLength = m_strShaderKey.length();
+	iLength = (int)m_strShaderKey.length();
 	fwrite(&iLength, 4, 1, pFile);
 	fwrite(m_strShaderKey.c_str(), 1, iLength, pFile);
 
 	//입력 레이아웃 이름 , string 길이 를 저장한다.
-	iLength = m_strInputLayoutKey.length();
+	iLength = (int)m_strInputLayoutKey.length();
 	fwrite(&iLength, 4, 1, pFile);
 	fwrite(m_strInputLayoutKey.c_str(), 1, iLength, pFile);
 
@@ -735,7 +735,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
 	iterM = pMaterials->begin();
 	strcpy_s(strFullName, (*iterM)[0]->strDifTex.c_str());
 
-	int	iLength = strlen(strFullName);
+	int	iLength = (int)strlen(strFullName);
 	for (int i = iLength - 1; i >= 0; --i)
 	{
 		if (strFullName[i] == '\\' || strFullName[i] == '/')
@@ -749,7 +749,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
 
 	char	strChange[MAX_PATH] = {};
 	strcpy_s(strChange, strFullName);
-	iLength = strlen(strChange);
+	iLength = (int)strlen(strChange);
 	for (int i = iLength - 2; i >= 0; --i)
 	{
 		if (strChange[i] == '\\' || strChange[i] == '/')
@@ -830,7 +830,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				fMat[i][j] = (*iterB)->matOffset.mData[i].mData[j];
+				fMat[i][j] = (float)(*iterB)->matOffset.mData[i].mData[j];
 			}
 		}
 
@@ -841,7 +841,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				fMat[i][j] = (*iterB)->matBone.mData[i].mData[j];
+				fMat[i][j] = (float)(*iterB)->matBone.mData[i].mData[j];
 			}
 		}
 
@@ -867,7 +867,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
 
 	char	strFullPath[MAX_PATH] = {};
 	strcpy_s(strFullPath, _pFullPath);
-	int	iPathLength = strlen(strFullPath);
+	int	iPathLength = (int)strlen(strFullPath);
 	memcpy(&strFullPath[iPathLength - 3], "msh", 3);
 
 	SaveFromFullPath(strFullPath);

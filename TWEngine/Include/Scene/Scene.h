@@ -54,6 +54,7 @@ public:
 	void SortLayer();
 	void EnableLayer(const string& strTag, bool bEnable);
 	class CGameObject* FindObject(const string & strTag);
+	class CGameObject* FindObjectNonCount(const string & strTag);
 	class CGameObject* CreateCamera(const string& strTag,
 		const Vector3& vPos,
 		CAMERA_TYPE eType, float fWidth, float fHeight,
@@ -62,6 +63,7 @@ public:
 
 private:
 	class CGameObject* FindCamera(const string& strTag);
+	void Debug();
 
 public:
 	static bool SortLayerZOrder(const class CLayer* pSrc, const class CLayer* pDest);

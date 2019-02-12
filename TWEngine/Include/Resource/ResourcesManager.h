@@ -41,9 +41,10 @@ public:
 	class CSampler * FindSamplerNonCount(const string & strName);
 
 public:
-	void CreateSphere(vector<VertexNormalTex>& vecVertex, vector<int>& vecIndex,
-		float fRadius,
-		unsigned int iSubDivision);
+	void CreateSphereVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount);
+	void CreateCapsulVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
+	void CreateCornVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
+	void CreateCylinderVolum(const string& KeyName, float Radius, int Height, int SliceCount);
 
 private:
 	void Subdivide(vector<VertexNormalTex>& vecVertices, vector<int>& vecIndices);

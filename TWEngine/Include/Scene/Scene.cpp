@@ -19,6 +19,7 @@ CScene::CScene()
 CScene::~CScene()
 {
 	GET_SINGLE(CSoundManager)->DeleteSound(this);
+
 	CGameObject::DestroyPrototype(this);
 	Safe_Release_VecList(m_LayerList);
 	Safe_Release_VecList(m_SceneComponentList);
@@ -124,27 +125,15 @@ bool CScene::Init()
 	AddLayer("Default", 0);
 	AddLayer("UI", INT_MAX - 1);
 
-	m_pMainCameraObj = CreateCamera("MainCamera",
-		Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE,
-		(float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight,
-		60.f, 0.03f, 1000.f);
-
-	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
+	m_pMainCameraObj = CreateCamera("MainCamera",Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE,(float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight,45.f, 0.03f, 1000.f);	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
 	m_pMainCamera = m_pMainCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
-
-	m_pUICameraObj = CreateCamera("UICamera",
-		Vector3(0.f, 0.f, 0.f), CT_ORTHO,
-		(float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight,
-		60.f, 0.f, 1000.f);
+	m_pUICameraObj = CreateCamera("UICamera", Vector3(0.f, 0.f, 0.f), CT_ORTHO,	(float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight,	60.f, 0.f, 1000.f);
 
 	m_pUICameraTr = m_pUICameraObj->GetTransform();
 	m_pUICamera = m_pUICameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
 
 	CLayer*	pLayer = FindLayer("Default");
-
-	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight",
-		pLayer);
-
+	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLayer);
 	CTransform*	pTransform = pLightObj->GetTransform();
 
 	pTransform->SetWorldRot(-90.f, 0.f, 0.f);
@@ -159,9 +148,7 @@ bool CScene::Init()
 	pLight->SetAngle(60.f, 90.f);
 
 	SAFE_RELEASE(pLight);
-
 	SAFE_RELEASE(pLightObj);
-
 	SAFE_RELEASE(pLayer);
 
 	return true;
@@ -265,6 +252,7 @@ int CScene::Update(float fTime)
 	}
 
 	m_pMainCameraObj->Update(fTime);
+	Debug();
 
 	return 0;
 }
@@ -505,6 +493,21 @@ CGameObject * CScene::FindObject(const string & strTag)
 
 	return nullptr;
 }
+CGameObject* CScene::FindObjectNonCount(const string & strTag)
+{
+	list<CLayer*>::iterator	iter;
+	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
+
+	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
+	{
+		CGameObject*	pObj = (*iter)->FindObjectNonCount(strTag);
+
+		if (pObj)
+			return pObj;
+	}
+
+	return nullptr;
+}
 
 CGameObject * CScene::CreateCamera(const string & strTag,
 	const Vector3& vPos,
@@ -585,3 +588,43 @@ void CScene::EnableSceneComponent(const string & strTag, bool bEnable)
 	}
 }
 
+void CScene::Debug()
+{
+	ImGui::Text("GlobalLight");
+	ImGui::BeginTabBar("AA");
+	ImGui::EndTabBar();
+
+	static int GlobalLightType = 0;
+
+	CGameObject* getObject = FindObjectNonCount("GlobalLight");
+	CLight* getLight = getObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	const char* Items[3] = { "Direction", "Point", "Spot"};
+	ImGui::Text("LightType");
+	ImGui::Combo("", &getLight->m_tInfo.iLightType, Items, 3);
+
+	ImGui::Text("LightInfo");
+
+	ImGui::SliderFloat4("Ambient", (float*)&getLight->m_tInfo.vAmb, -1.0f, 1.0f);
+	ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tInfo.vDif, -1.0f, 1.0f);
+	ImGui::SliderFloat3("Specular", (float*)&getLight->m_tInfo.vSpc, -1.0f, 1.0f);
+	ImGui::SliderFloat3("Direction", (float*)&getLight->m_tInfo.vDir, -1.0f, 1.0f);
+	ImGui::SliderFloat("Range", (float*)&getLight->m_tInfo.fRange, 0.0f, 20.0f);
+	ImGui::SliderFloat("FallOff", (float*)&getLight->m_tInfo.fFallOff, 0.0f, 20.0f);
+
+	ImGui::Text("LightPos");
+
+	ImGui::SliderFloat3("Pos", (float*)&getLight->m_tInfo.vPos, -1.0f, 20.0f);
+
+	ImGui::BeginTabBar("BB");
+	ImGui::EndTabBar();
+
+	ImGui::Text("Camera");
+
+	static Vector3 CameraPos;
+	ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -50.0f, 50.0f);
+	m_pMainCameraTr->SetWorldPos(CameraPos);
+
+	ImGui::BeginTabBar("Camera");
+	ImGui::EndTabBar();
+}

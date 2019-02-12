@@ -9,6 +9,7 @@ CLight::CLight()
 	m_tInfo.vDif = Vector4::White;
 	m_tInfo.vAmb = Vector4(0.2f, 0.2f, 0.2f, 1.f);
 	m_tInfo.vSpc = Vector4::White;
+	m_tInfo.fFallOff = 0.0f;
 	m_eComType = CT_LIGHT;
 }
 
@@ -59,10 +60,9 @@ void CLight::SetLightColor(const Vector4 & vDif, const Vector4 & vAmb, const Vec
 	m_tInfo.vSpc = vSpc;
 }
 
-void CLight::SetShader()
+void CLight::UpdateLightCBuffer()
 {
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("Light",
-		&m_tInfo);
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Light", &m_tInfo);
 }
 
 void CLight::Start()
@@ -75,6 +75,8 @@ void CLight::AfterClone()
 
 bool CLight::Init()
 {
+	m_pTransform->SetLocalRotX(90.0f);
+
 	return true;
 }
 
@@ -90,14 +92,11 @@ int CLight::Update(float fTime)
 
 int CLight::LateUpdate(float fTime)
 {
-	//Point LIght는 위치정보와 빛의세기(Range)만 필요하므로 각도를 
-	//받아오지 않는다.
-	if (m_tInfo.iLightType != LT_POINT)
-		m_tInfo.vDir = m_pTransform->GetWorldAxis(AXIS_Z);
-
-	//
 	if (m_tInfo.iLightType != LT_DIR)
-		m_tInfo.vPos = m_pTransform->GetWorldPos();
+		m_pTransform->SetWorldPos(m_tInfo.vPos);
+
+	if (m_tInfo.iLightType == LT_SPOT)
+		m_pTransform->SetWorldRot(RadianToDegree(m_tInfo.vDir.y), RadianToDegree(m_tInfo.vDir.x), 0.0f);
 
 	return 0;
 }
