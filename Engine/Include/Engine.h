@@ -24,7 +24,10 @@
 #define	LIGHT_BLEND_SHADER  "LightBlendShader"
 #define SHADOW_SHADER	"ShadowShader"
 #define	STANDARD_NORMAL_COLOR_SHADER	"StandardNormalColorShader"
-#define	STANDARD_BUMP_SHADER			"StandardBumpShader"
+#define	STANDARD_BUMP_SHADER		"StandardBumpShader"
+#define	STANDARD_BUMP_ANIM_SHADER		"StandardBumpAnimShader"
+#define	STANDARD_TEX_NORMAL_SHADER		"StandardTexNormalShader"
+#define	STANDARD_TEX_NORMAL_ANIM_SHADER		"StandardTexNormalAnimShader"
 
 // ========== Input Layout Key =============
 #define	POS_COLOR_LAYOUT		"PosColorLayout"

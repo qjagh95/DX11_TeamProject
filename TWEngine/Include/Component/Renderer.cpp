@@ -1,7 +1,8 @@
-#include "EngineHeader.h"
 #include "Renderer.h"
+#include "../Resource/ResourcesManager.h"
 #include "../Resource/Mesh.h"
 #include "../Rendering/Shader.h"
+#include "../Rendering/ShaderManager.h"
 #include "../Device.h"
 #include "Transform.h"
 #include "Camera.h"
@@ -9,7 +10,9 @@
 #include "Material.h"
 #include "../GameObject.h"
 #include "../Rendering/RenderState.h"
+#include "../Rendering/RenderManager.h"
 #include "Animation2D.h"
+#include "Animation.h"
 
 PUN_USING
 
@@ -18,6 +21,7 @@ CRenderer::CRenderer() :
 	m_pShader(nullptr),
 	m_pLayout(nullptr),
 	m_pMaterial(nullptr),
+	m_pBoneTex(nullptr),
 	m_b2DRenderer(false)
 {
 	m_eComType = CT_RENDERER;
@@ -62,6 +66,8 @@ CRenderer::CRenderer(const CRenderer & renderer) :
 
 		m_mapCBuffer.insert(make_pair(iter->first, pBuffer));
 	}
+
+	m_pBoneTex = nullptr;
 }
 
 CRenderer::~CRenderer()
@@ -85,6 +91,11 @@ CRenderer::~CRenderer()
 	}
 
 	m_mapCBuffer.clear();
+}
+
+void CRenderer::SetBoneTexture(ID3D11ShaderResourceView * pBoneTex)
+{
+	m_pBoneTex = pBoneTex;
 }
 
 void CRenderer::Enable2DRenderer()
@@ -117,7 +128,8 @@ void CRenderer::SetMesh(const string & strKey)
 	}
 }
 
-void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName, const string & strPathKey)
+void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName,
+	const string & strPathKey)
 {
 	SAFE_RELEASE(m_pMesh);
 	GET_SINGLE(CResourcesManager)->LoadMesh(strKey, pFileName, strPathKey);
@@ -127,8 +139,9 @@ void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName, const st
 	{
 		SetShader(m_pMesh->GetShaderKey());
 		SetInputLayout(m_pMesh->GetInputLayoutKey());
-		
-		CMaterial* pMaterial = m_pMesh->CloneMaterial();
+
+
+		CMaterial*	pMaterial = m_pMesh->CloneMaterial();
 
 		if (pMaterial)
 		{
@@ -136,6 +149,15 @@ void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName, const st
 			m_pMaterial = pMaterial;
 			m_pObject->RemoveComponentFromType(CT_MATERIAL);
 			m_pObject->AddComponent(m_pMaterial);
+		}
+
+		CAnimation*	pAnimation = m_pMesh->CloneAnimation();
+
+		if (pAnimation)
+		{
+			m_pObject->RemoveComponentFromType(CT_ANIMATION);
+			m_pObject->AddComponent(pAnimation);
+			SAFE_RELEASE(pAnimation);
 		}
 	}
 }
@@ -288,6 +310,9 @@ void CRenderer::Render(float fTime)
 
 	UpdateTransform();
 
+	if (m_pBoneTex)
+		CONTEXT->VSSetShaderResources(3, 1, &m_pBoneTex);
+
 	for (int i = 0; i < RS_END; ++i)
 	{
 		if (m_pRenderState[i])
@@ -302,14 +327,15 @@ void CRenderer::Render(float fTime)
 		GET_SINGLE(CShaderManager)->UpdateCBuffer(iter->first, iter->second->pBuffer);
 	}
 
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("Component", &m_tComponentCBuffer);
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Component",
+		&m_tComponentCBuffer);
 
 	CONTEXT->IASetInputLayout(m_pLayout);
 	m_pShader->SetShader();
 
-	for (int i = 0; i < m_pMesh->GetContainCount(); ++i)
+	for (size_t i = 0; i < m_pMesh->GetContainCount(); ++i)
 	{
-		for (int j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
+		for (size_t j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
 		{
 			m_pMaterial->SetShader(i, j);
 

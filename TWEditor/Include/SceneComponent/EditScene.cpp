@@ -55,4 +55,5 @@ int CEditScene::Input(float fTime)
 
 int CEditScene::Update(float fTime)
 {
+	return 0;
 }

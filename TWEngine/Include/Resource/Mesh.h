@@ -1,4 +1,5 @@
 #pragma once
+#include "../EngineHeader.h"
 #include "../Ref.h"
 
 PUN_BEGIN
@@ -96,7 +97,7 @@ public:
 	void Render(int iContainer, int iSubset);
 	void UpdateVertexBuffer(void* pData, int iContainer = 0);
 	class CMaterial* CloneMaterial();
-
+	class CAnimation* CloneAnimation();
 private:
 	bool CreateVertexBuffer(void* pData, int iCount, int iSize, D3D11_USAGE eUsage);
 	bool CreateIndexBuffer(void* pData, int iCount, int iSize, D3D11_USAGE eUsage, DXGI_FORMAT eFmt);

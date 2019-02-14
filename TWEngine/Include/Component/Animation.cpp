@@ -2,6 +2,7 @@
 #include "../Device.h"
 #include "../Resource/FbxLoader.h"
 #include "../GameObject.h"
+#include "../PathManager.h"
 
 PUN_USING
 
@@ -23,6 +24,7 @@ CAnimation::CAnimation() :
 CAnimation::CAnimation(const CAnimation & anim) :
 	CComponent(anim)
 {
+	m_pNextClip = nullptr;
 	m_fAnimationGlobalTime = 0.f;
 	m_fClipProgress = 0.f;
 	m_fChangeTime = 0.f;
@@ -35,28 +37,30 @@ CAnimation::CAnimation(const CAnimation & anim) :
 		++m_vecBones[i]->iRefCount;
 	}
 
-	//for (size_t i = 0; i < anim.m_vecBones.size(); ++i)
-	//{
-	//	PBONE	pBone = new BONE;
+	/*for (size_t i = 0; i < anim.m_vecBones.size(); ++i)
+	{
+		PBONE	pBone = new BONE;
 
-	//	*pBone = *anim.m_vecBones[i];
+		*pBone = *anim.m_vecBones[i];
 
-	//	pBone->matOffset = new Matrix;
-	//	pBone->matBone = new Matrix;
+		pBone->matOffset = new Matrix;
+		pBone->matBone = new Matrix;
 
-	//	*pBone->matOffset = *anim.m_vecBones[i]->matOffset;
-	//	*pBone->matBone = *anim.m_vecBones[i]->matBone;
+		*pBone->matOffset = *anim.m_vecBones[i]->matOffset;
+		*pBone->matBone = *anim.m_vecBones[i]->matBone;
 
-	//	/*list<CBoneSocket*>::const_iterator	iterB;
-	//	list<CBoneSocket*>::const_iterator	iterBEnd = anim.m_vecBones[i]->SocketList.end();
+		list<CBoneSocket*>::const_iterator	iterB;
+		list<CBoneSocket*>::const_iterator	iterBEnd = anim.m_vecBones[i]->SocketList.end();
 
-	//	for (iterB = anim.m_vecBones[i]->SocketList.begin(); iterB != iterBEnd; ++iterB)
-	//	{
-	//		pBone->SocketList.push_back((*iterB)->Clone());
-	//	}*/
+		for (iterB = anim.m_vecBones[i]->SocketList.begin(); iterB != iterBEnd; ++iterB)
+		{
+			pBone->SocketList.push_back((*iterB)->Clone());
+		}
 
-	//	m_vecBones.push_back(pBone);
-	//}
+		m_vecBones.push_back(pBone);
+	}*/
+
+	m_pBoneTex = nullptr;
 
 	CreateBoneTexture();
 
@@ -131,7 +135,7 @@ bool CAnimation::CreateBoneTexture()
 	tDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	tDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	tDesc.Height = 1;
-	tDesc.Width = (UINT)m_vecBones.size() * 4;
+	tDesc.Width = m_vecBones.size() * 4;
 	tDesc.MipLevels = 1;
 	tDesc.SampleDesc.Quality = 0;
 	tDesc.SampleDesc.Count = 1;
@@ -180,13 +184,13 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 	pAnimClip->iChangeFrame = 0;
 
 	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
-	pAnimClip->iStartFrame = (int)pClip->tStart.GetFrameCount(pClip->eTimeMode);
-	pAnimClip->iEndFrame = (int)pClip->tEnd.GetFrameCount(pClip->eTimeMode);
+	pAnimClip->iStartFrame = pClip->tStart.GetFrameCount(pClip->eTimeMode);
+	pAnimClip->iEndFrame = pClip->tEnd.GetFrameCount(pClip->eTimeMode);
 	pAnimClip->iFrameLength = pAnimClip->iEndFrame - pAnimClip->iStartFrame;
 
 	// 시간 정보를 저장해준다.
-	pAnimClip->fStartTime = (float)pClip->tStart.GetSecondDouble();
-	pAnimClip->fEndTime = (float)pClip->tEnd.GetSecondDouble();
+	pAnimClip->fStartTime = pClip->tStart.GetSecondDouble();
+	pAnimClip->fEndTime = pClip->tEnd.GetSecondDouble();
 	pAnimClip->fTimeLength = pAnimClip->fEndTime - pAnimClip->fStartTime;
 
 	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
@@ -256,12 +260,12 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 
 PANIMATIONCLIP CAnimation::FindClip(const string & strName)
 {
-	std::unordered_map<std::string, PANIMATIONCLIP>::iterator Iter = m_mapClip.find(strName);
-	
-	if (Iter == m_mapClip.end())
+	unordered_map<string, PANIMATIONCLIP>::iterator	iter = m_mapClip.find(strName);
+
+	if (iter == m_mapClip.end())
 		return nullptr;
 
-	return Iter->second;
+	return iter->second;
 }
 
 bool CAnimation::IsAnimationEnd() const
@@ -269,7 +273,8 @@ bool CAnimation::IsAnimationEnd() const
 	return m_bEnd;
 }
 
-void CAnimation::ChangeClipKey(const string & strOrigin, const string & strChange)
+void CAnimation::ChangeClipKey(const string & strOrigin,
+	const string & strChange)
 {
 	unordered_map<string, PANIMATIONCLIP>::iterator	iter = m_mapClip.find(strOrigin);
 
@@ -306,7 +311,7 @@ PBONE CAnimation::FindBone(const string & strBoneName)
 
 int CAnimation::FindBoneIndex(const string & strBoneName)
 {
-	for (int i = 0; i < m_vecBones.size(); ++i)
+	for (size_t i = 0; i < m_vecBones.size(); ++i)
 	{
 		if (m_vecBones[i]->strName == strBoneName)
 			return i;
@@ -345,47 +350,302 @@ ID3D11ShaderResourceView * CAnimation::GetBoneTexture() const
 	return m_pBoneRV;
 }
 
-bool CAnimation::Save(const wchar_t * pFileName, const string & strPathKey)
+bool CAnimation::Save(const TCHAR * pFileName, const string & strPathKey)
 {
-	return false;
+	char	strFileName[MAX_PATH] = {};
+
+#ifdef UNICODE
+	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName),
+		NULL, NULL);
+#else
+	strcpy_s(strFileName, pFileName);
+#endif // UNICODE
+
+	return Save(strFileName, strPathKey);
 }
 
 bool CAnimation::Save(const char * pFileName, const string & strPathKey)
 {
-	return false;
+	const char*	pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);
+
+	string	strFullPath;
+
+	if (pPath)
+		strFullPath = pPath;
+
+	strFullPath += pFileName;
+
+	return SaveFromFullPath(strFullPath.c_str());
 }
 
-bool CAnimation::SaveFromFullPath(const wchar_t * pFullPath)
+bool CAnimation::SaveFromFullPath(const TCHAR * pFullPath)
 {
-	return false;
+	char	strFileName[MAX_PATH] = {};
+
+#ifdef UNICODE
+	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath),
+		NULL, NULL);
+#else
+	strcpy_s(strFileName, pFileName);
+#endif // UNICODE
+
+	return SaveFromFullPath(strFileName);
 }
 
 bool CAnimation::SaveFromFullPath(const char * pFullPath)
 {
-	return false;
+	FILE*	pFile = NULL;
+
+	fopen_s(&pFile, pFullPath, "wb");
+
+	if (!pFile)
+		return false;
+
+	// ===================== 본 정보 저장 =====================
+	size_t	iCount = m_vecBones.size();
+
+	fwrite(&iCount, sizeof(size_t), 1, pFile);
+
+	size_t	iLength = 0;
+
+	for (size_t i = 0; i < iCount; ++i)
+	{
+		iLength = m_vecBones[i]->strName.length();
+		fwrite(&iLength, sizeof(size_t), 1, pFile);
+		fwrite(m_vecBones[i]->strName.c_str(), sizeof(char), iLength, pFile);
+
+		fwrite(&m_vecBones[i]->iDepth, sizeof(int), 1, pFile);
+		fwrite(&m_vecBones[i]->iParentIndex, sizeof(int), 1, pFile);
+		fwrite(&m_vecBones[i]->matOffset->matrix, sizeof(XMMATRIX), 1, pFile);
+		fwrite(&m_vecBones[i]->matBone->matrix, sizeof(XMMATRIX), 1, pFile);
+	}
+
+	fwrite(&m_fChangeLimitTime, sizeof(float), 1, pFile);
+
+	// 애니메이션 클립정보를 저장한다.
+	iCount = m_mapClip.size();
+
+	fwrite(&iCount, sizeof(size_t), 1, pFile);
+
+	iLength = m_pDefaultClip->strName.length();
+	fwrite(&iLength, sizeof(size_t), 1, pFile);
+	fwrite(m_pDefaultClip->strName.c_str(), sizeof(char),
+		iLength, pFile);
+
+	iLength = m_pCurClip->strName.length();
+	fwrite(&iLength, sizeof(size_t), 1, pFile);
+	fwrite(m_pCurClip->strName.c_str(), sizeof(char), iLength, pFile);
+
+	unordered_map<string, PANIMATIONCLIP>::iterator	iter;
+	unordered_map<string, PANIMATIONCLIP>::iterator	iterEnd = m_mapClip.end();
+
+	for (iter = m_mapClip.begin(); iter != iterEnd; ++iter)
+	{
+		PANIMATIONCLIP	pClip = iter->second;
+
+		// 애니메이션 클립 키를 저장한다.
+		iLength = pClip->strName.length();
+		fwrite(&iLength, sizeof(size_t), 1, pFile);
+		fwrite(pClip->strName.c_str(), sizeof(char), iLength, pFile);
+
+		fwrite(&pClip->eOption, sizeof(ANIMATION_OPTION), 1, pFile);
+
+		fwrite(&pClip->fStartTime, sizeof(float), 1, pFile);
+		fwrite(&pClip->fEndTime, sizeof(float), 1, pFile);
+		fwrite(&pClip->fTimeLength, sizeof(float), 1, pFile);
+		fwrite(&pClip->fFrameTime, sizeof(float), 1, pFile);
+
+		fwrite(&pClip->iFrameMode, sizeof(int), 1, pFile);
+		fwrite(&pClip->iStartFrame, sizeof(int), 1, pFile);
+		fwrite(&pClip->iEndFrame, sizeof(int), 1, pFile);
+		fwrite(&pClip->iFrameLength, sizeof(int), 1, pFile);
+
+		size_t	iCount = pClip->vecKeyFrame.size();
+
+		fwrite(&iCount, sizeof(size_t), 1, pFile);
+
+		for (size_t i = 0; i < iCount; ++i)
+		{
+			fwrite(&pClip->vecKeyFrame[i]->iBoneIndex, sizeof(int), 1,
+				pFile);
+
+			size_t	iFrameCount = pClip->vecKeyFrame[i]->vecKeyFrame.size();
+
+			fwrite(&iFrameCount, sizeof(size_t), 1, pFile);
+
+			for (size_t j = 0; j < iFrameCount; ++j)
+			{
+				fwrite(&pClip->vecKeyFrame[i]->vecKeyFrame[j]->dTime, sizeof(double), 1, pFile);
+				fwrite(&pClip->vecKeyFrame[i]->vecKeyFrame[j]->vPos, sizeof(Vector3), 1, pFile);
+				fwrite(&pClip->vecKeyFrame[i]->vecKeyFrame[j]->vScale, sizeof(Vector3), 1, pFile);
+				fwrite(&pClip->vecKeyFrame[i]->vecKeyFrame[j]->vRot, sizeof(Vector4), 1, pFile);
+			}
+		}
+	}
+
+	fclose(pFile);
+
+	return true;
 }
 
-bool CAnimation::Load(const wchar_t * pFileName, const string & strPathKey)
+bool CAnimation::Load(const TCHAR * pFileName, const string & strPathKey)
 {
-	return false;
+	char	strFileName[MAX_PATH] = {};
+
+#ifdef UNICODE
+	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName),
+		NULL, NULL);
+#else
+	strcpy_s(strFileName, pFileName);
+#endif // UNICODE
+
+	return Load(strFileName, strPathKey);
 }
 
 bool CAnimation::Load(const char * pFileName, const string & strPathKey)
 {
-	return false;
+	const char*	pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);
+
+	string	strFullPath;
+
+	if (pPath)
+		strFullPath = pPath;
+
+	strFullPath += pFileName;
+
+	return LoadFromFullPath(strFullPath.c_str());
 }
 
-bool CAnimation::LoadFromFullPath(const wchar_t * pFullPath)
+bool CAnimation::LoadFromFullPath(const TCHAR * pFullPath)
 {
-	return false;
+	char	strFileName[MAX_PATH] = {};
+
+#ifdef UNICODE
+	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath),
+		NULL, NULL);
+#else
+	strcpy_s(strFileName, pFileName);
+#endif // UNICODE
+
+	return LoadFromFullPath(strFileName);
 }
 
 bool CAnimation::LoadFromFullPath(const char * pFullPath)
 {
-	return false;
+	FILE*	pFile = NULL;
+
+	fopen_s(&pFile, pFullPath, "rb");
+
+	if (!pFile)
+		return false;
+
+	// ===================== 본 정보 읽기 =====================
+	size_t	iCount = 0;
+
+	fread(&iCount, sizeof(size_t), 1, pFile);
+
+	size_t	iLength = 0;
+
+	for (size_t i = 0; i < iCount; ++i)
+	{
+		PBONE	pBone = new BONE;
+		m_vecBones.push_back(pBone);
+
+		pBone->matBone = new Matrix;
+		pBone->matOffset = new Matrix;
+
+		char	strBoneName[256] = {};
+		fread(&iLength, sizeof(size_t), 1, pFile);
+		fread(strBoneName, sizeof(char), iLength, pFile);
+
+		fread(&pBone->iDepth, sizeof(int), 1, pFile);
+		fread(&pBone->iParentIndex, sizeof(int), 1, pFile);
+		fread(&pBone->matOffset->matrix, sizeof(XMMATRIX), 1, pFile);
+		fread(&pBone->matBone->matrix, sizeof(XMMATRIX), 1, pFile);
+	}
+
+	fread(&m_fChangeLimitTime, sizeof(float), 1, pFile);
+
+	// 애니메이션 클립정보를 저장한다.
+	fread(&iCount, sizeof(size_t), 1, pFile);
+
+	char	strDefaultClip[256] = {};
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	fread(strDefaultClip, sizeof(char),
+		iLength, pFile);
+
+	char	strCurClip[256] = {};
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	fread(strCurClip, sizeof(char), iLength, pFile);
+
+	for (int l = 0; l < iCount; ++l)
+	{
+		PANIMATIONCLIP	pClip = new ANIMATIONCLIP;
+
+		// 애니메이션 클립 키를 저장한다.
+		char	strClipName[256] = {};
+		fread(&iLength, sizeof(size_t), 1, pFile);
+		fread(strClipName, sizeof(char), iLength, pFile);
+
+		m_mapClip.insert(make_pair(strClipName, pClip));
+
+		pClip->strName = strClipName;
+		pClip->iChangeFrame = 0;
+
+		fread(&pClip->eOption, sizeof(ANIMATION_OPTION), 1, pFile);
+
+		fread(&pClip->fStartTime, sizeof(float), 1, pFile);
+		fread(&pClip->fEndTime, sizeof(float), 1, pFile);
+		fread(&pClip->fTimeLength, sizeof(float), 1, pFile);
+		fread(&pClip->fFrameTime, sizeof(float), 1, pFile);
+
+		fread(&pClip->iFrameMode, sizeof(int), 1, pFile);
+		fread(&pClip->iStartFrame, sizeof(int), 1, pFile);
+		fread(&pClip->iEndFrame, sizeof(int), 1, pFile);
+		fread(&pClip->iFrameLength, sizeof(int), 1, pFile);
+
+		size_t	iFrameCount = 0;
+
+		fread(&iFrameCount, sizeof(size_t), 1, pFile);
+
+		for (size_t i = 0; i < iFrameCount; ++i)
+		{
+			PBONEKEYFRAME	pBoneKeyFrame = new BONEKEYFRAME;
+			pClip->vecKeyFrame.push_back(pBoneKeyFrame);
+
+			fread(&pBoneKeyFrame->iBoneIndex, sizeof(int), 1,
+				pFile);
+
+			size_t	iBoneFrameCount = 0;
+
+			fread(&iBoneFrameCount, sizeof(size_t), 1, pFile);
+
+			for (size_t j = 0; j < iBoneFrameCount; ++j)
+			{
+				PKEYFRAME	pKeyFrame = new KEYFRAME;
+				pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
+
+				fread(&pKeyFrame->dTime, sizeof(double), 1, pFile);
+				fread(&pKeyFrame->vPos, sizeof(Vector3), 1, pFile);
+				fread(&pKeyFrame->vScale, sizeof(Vector3), 1, pFile);
+				fread(&pKeyFrame->vRot, sizeof(Vector4), 1, pFile);
+			}
+		}
+	}
+
+	m_pCurClip = FindClip(strCurClip);
+	m_pDefaultClip = FindClip(strDefaultClip);
+
+	fclose(pFile);
+
+	CreateBoneTexture();
+
+	return true;
 }
 
-bool CAnimation::ModifyClip(const string & strKey, const string & strChangeKey, ANIMATION_OPTION eOption, int iStartFrame, int iEndFrame)
+bool CAnimation::ModifyClip(const string & strKey,
+	const string & strChangeKey, ANIMATION_OPTION eOption,
+	int iStartFrame, int iEndFrame)
 {
 	PANIMATIONCLIP	pClip = FindClip(strKey);
 
@@ -614,11 +874,14 @@ int CAnimation::Update(float fTime)
 				// 현재 프레임의 시간을 얻어온다.
 				double	 dFrameTime = pCurKey->dTime;
 
-				float	fPercent = (float)(fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime;
+				float	fPercent = (fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime;
 
-				XMVECTOR	vS = XMVectorLerp(pCurKey->vScale.Convert(),pNextKey->vScale.Convert(), fPercent);
-				XMVECTOR	vT = XMVectorLerp(pCurKey->vPos.Convert(),pNextKey->vPos.Convert(), fPercent);
-				XMVECTOR	vR = XMQuaternionSlerp(pCurKey->vRot.Convert(),pNextKey->vRot.Convert(), fPercent);
+				XMVECTOR	vS = XMVectorLerp(pCurKey->vScale.Convert(),
+					pNextKey->vScale.Convert(), fPercent);
+				XMVECTOR	vT = XMVectorLerp(pCurKey->vPos.Convert(),
+					pNextKey->vPos.Convert(), fPercent);
+				XMVECTOR	vR = XMQuaternionSlerp(pCurKey->vRot.Convert(),
+					pNextKey->vRot.Convert(), fPercent);
 
 				XMVECTOR	vZero = XMVectorSet(0.f, 0.f, 0.f, 1.f);
 
@@ -639,7 +902,7 @@ int CAnimation::Update(float fTime)
 	if (!m_bEnd)
 	{
 		D3D11_MAPPED_SUBRESOURCE	tMap = {};
-		CDevice::GetInst()->GetContext()->Map(m_pBoneTex, 0, D3D11_MAP_WRITE_DISCARD, 0, &tMap);
+		CONTEXT->Map(m_pBoneTex, 0, D3D11_MAP_WRITE_DISCARD, 0, &tMap);
 
 		Matrix*	pMatrix = (Matrix*)tMap.pData;
 
@@ -648,7 +911,7 @@ int CAnimation::Update(float fTime)
 			pMatrix[i] = *m_vecBoneMatrix[i];
 		}
 
-		CDevice::GetInst()->GetContext()->Unmap(m_pBoneTex, 0);
+		CONTEXT->Unmap(m_pBoneTex, 0);
 	}
 
 	return 0;

@@ -7,6 +7,7 @@
 #include "Component/Renderer.h"
 #include "CollisionManager.h"
 #include "ObjectManager.h"
+#include "Component/Animation.h"
 
 PUN_USING
 
@@ -51,6 +52,16 @@ CGameObject::CGameObject(const CGameObject & obj)
 	if (pRenderer)
 	{
 		pRenderer->CheckComponent();
+
+		CAnimation*	pAnimation = FindComponentFromType<CAnimation>(CT_ANIMATION);
+
+		if (pAnimation)
+		{
+			pRenderer->SetBoneTexture(pAnimation->GetBoneTexture());
+
+			SAFE_RELEASE(pAnimation);
+		}
+
 		SAFE_RELEASE(pRenderer);
 	}
 
@@ -628,6 +639,30 @@ CComponent* CGameObject::AddComponent(CComponent* pCom)
 	pCom->m_pObject = this;
 	pCom->AddRef();
 
+	if (pCom->GetComponentType() == CT_RENDERER)
+	{
+		CAnimation*	pAnimation = FindComponentFromType<CAnimation>(CT_ANIMATION);
+
+		if (pAnimation)
+		{
+			((CRenderer*)pCom)->SetBoneTexture(pAnimation->GetBoneTexture());
+
+			SAFE_RELEASE(pAnimation);
+		}
+	}
+
+	else if (pCom->GetComponentType() == CT_ANIMATION)
+	{
+		CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
+
+		if (pRenderer)
+		{
+			pRenderer->SetBoneTexture(((CAnimation*)pCom)->GetBoneTexture());
+
+			SAFE_RELEASE(pRenderer);
+		}
+	}
+
 	m_ComList.push_back(pCom);
 
 	if (pCom->GetComponentType() == CT_UI)
@@ -642,6 +677,7 @@ CComponent* CGameObject::AddComponent(CComponent* pCom)
 	if (pRenderer)
 	{
 		pRenderer->CheckComponent();
+
 		SAFE_RELEASE(pRenderer);
 	}
 

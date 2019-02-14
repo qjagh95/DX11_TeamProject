@@ -118,6 +118,21 @@ bool CShaderManager::Init()
 	if (!LoadShader(STANDARD_BUMP_SHADER, TEXT("Standard.fx"), pEntry))
 		return false;
 
+	pEntry[ST_VERTEX] = (char*)"StandardBumpAnimVS";
+	pEntry[ST_PIXEL] = (char*)"StandardBumpPS";
+	if (!LoadShader(STANDARD_BUMP_ANIM_SHADER, TEXT("Standard.fx"), pEntry))
+		return false;
+
+	pEntry[ST_VERTEX] = (char*)"StandardTexNormalVS";
+	pEntry[ST_PIXEL] = (char*)"StandardBumpPS";
+	if (!LoadShader(STANDARD_TEX_NORMAL_SHADER, TEXT("Standard.fx"), pEntry))
+		return false;
+
+	pEntry[ST_VERTEX] = (char*)"StandardTexNormalAnimVS";
+	pEntry[ST_PIXEL] = (char*)"StandardBumpPS";
+	if (!LoadShader(STANDARD_TEX_NORMAL_ANIM_SHADER, TEXT("Standard.fx"), pEntry))
+		return false;
+
 //#ifdef _DEBUG
 	pEntry[ST_VERTEX] = (char*)"ColliderVS";
 	pEntry[ST_PIXEL] = (char*)"ColliderPS";

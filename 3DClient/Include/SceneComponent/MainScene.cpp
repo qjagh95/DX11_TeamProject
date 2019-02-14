@@ -30,40 +30,50 @@ bool CMainScene::Init()
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 
-	CLayer*	pDefaultLayer = m_pScene->FindLayer("Default");
-	CLayer*	pUILayer = m_pScene->FindLayer("UI");
-	CLayer* pStageLayer = m_pScene->FindLayer("Stage");
+	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
+	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
+	CLayer* pUILayer = m_pScene->FindLayer("UI");
+	CLayer* pTileLayer = m_pScene->FindLayer("Tile");
 
-	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);	
-	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
-
-	SAFE_RELEASE(pPlayer);
-
+	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
 	CTransform*	pTransform = pObject->GetTransform();
 
+	pTransform->SetWorldScale(3.f, 1.f, 3.f);
 	pTransform->SetWorldPos(0.f, 0.f, 0.f);
+
 	m_pTr = pTransform;
 
 	SAFE_RELEASE(pTransform);
 
 	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
-	//pRenderer->SetMesh("Player" , L"Monster4.fbx");
-	pRenderer->SetMesh("Player", L"Monster4.msh");
+	pRenderer->SetMesh("Player", TEXT("Monster4.fbx"));
+	//pRenderer->SetMesh("Player", TEXT("Monster4.fbx"));
 	//pRenderer->SetShader(STANDARD_NORMAL_COLOR_SHADER);
 
 	SAFE_RELEASE(pRenderer);
 
+	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
+
+	SAFE_RELEASE(pPlayer);
+
 	SAFE_RELEASE(pObject);
 
-	pObject = CGameObject::CreateObject("UI", pUILayer);
-	CUIBar* pBar = pObject->AddComponent<CUIBar>("Bar");
+	/*CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
+	CTransform*	pTransform = pObject->GetTransform();
 
-	SAFE_RELEASE(pBar);
-	SAFE_RELEASE(pObject);
+	pTransform->SetWorldScale(3.f, 1.f, 3.f);
+	pTransform->SetWorldPos(0.f, 1.f, 0.f);
 
-	CreatePrototype();
+	SAFE_RELEASE(pTransform);
 
-	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight1", pDefaultLayer);
+	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
+	pRenderer->SetMesh("ColorSphere");
+
+	SAFE_RELEASE(pRenderer);
+	SAFE_RELEASE(pObject);*/
+
+	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight1",
+		pDefaultLayer);
 
 	pTransform = pLightObj->GetTransform();
 
@@ -74,24 +84,29 @@ bool CMainScene::Init()
 
 	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight1");
 
-	pLight->SetLightColor(Vector4::HotPink, Vector4::HotPink, Vector4::HotPink);
+	pLight->SetLightColor(Vector4::HotPink, Vector4::HotPink,
+		Vector4::HotPink);
 	pLight->SetLightType(LT_SPOT);
 	pLight->SetLightRange(10.f);
 	pLight->SetAngle(60.f, 90.f);
 
 	SAFE_RELEASE(pLight);
+
 	SAFE_RELEASE(pLightObj);
 
-	pLightObj = CGameObject::CreateObject("GlobalLight2", pDefaultLayer);
+	pLightObj = CGameObject::CreateObject("GlobalLight2",
+		pDefaultLayer);
 
 	pTransform = pLightObj->GetTransform();
+
 	pTransform->SetWorldPos(-2.f, 0.f, 0.f);
 
 	SAFE_RELEASE(pTransform);
 
 	pLight = pLightObj->AddComponent<CLight>("GlobalLight2");
 
-	pLight->SetLightColor(Vector4::Blue, Vector4::Blue, Vector4::Blue);
+	pLight->SetLightColor(Vector4::Blue, Vector4::Blue,
+		Vector4::Blue);
 	pLight->SetLightType(LT_POINT);
 	pLight->SetLightRange(10.f);
 
@@ -99,16 +114,12 @@ bool CMainScene::Init()
 
 	SAFE_RELEASE(pLightObj);
 
+	SAFE_RELEASE(pCamera);
 
 	SAFE_RELEASE(pDefaultLayer);
 	SAFE_RELEASE(pUILayer);
-	SAFE_RELEASE(pStageLayer);
-
-	SAFE_RELEASE(pCamera);
-
-	GET_SINGLE(CInput)->BindAxis("Move", this, &CMainScene::Move);
-	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_W, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_S, -1.f);
+	SAFE_RELEASE(pTileLayer);
+	SAFE_RELEASE(pBackLayer);
 
 	return true;
 }

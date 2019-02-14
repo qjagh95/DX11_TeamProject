@@ -58,9 +58,9 @@ CRenderManager::~CRenderManager()
 	SAFE_RELEASE(m_pLightAccPointShader);
 	SAFE_RELEASE(m_pLightAccDirShader);
 	SAFE_RELEASE(m_pGBufferSampler);
-	SAFE_RELEASE(m_pDepthDisable);
 
 	Safe_Delete_Map(m_mapMultiTarget);
+	Safe_Release_Map(m_mapRenderState);
 
 	unordered_map<string, CRenderTarget*>::iterator	iter;
 	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
@@ -78,7 +78,7 @@ CRenderManager::~CRenderManager()
 		m_tRenderObj[i].iSize = 0;
 	}
 
-	Safe_Release_Map(m_mapRenderState);
+
 	DESTROY_SINGLE(CShaderManager);
 }
 
@@ -137,7 +137,7 @@ bool CRenderManager::Init()
 	Second.StencilFunc = D3D11_COMPARISON_NEVER; //통과 X
 
 	//앞면만 통과시키겠다.
-	CreateDepthStencilState(DEPTH_LESS, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_LESS, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK, D3D11_DEFAULT_STENCIL_READ_MASK, First, Second);	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
+	CreateDepthStencilState(DEPTH_LESS, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_LESS, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK, D3D11_DEFAULT_STENCIL_READ_MASK, First, Second);	
 
 	//////////////////////Blend//////////////////////////////
 	AddBlendTargetDesc(TRUE);
@@ -153,7 +153,6 @@ bool CRenderManager::Init()
 
 	//////////////////////Depth//////////////////////////
 	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
-	m_pDepthDisable = FindRenderState(DEPTH_DISABLE);
 	//////////////////////////////////////////////////////
 
 	CreateRasterizerState(CULL_NONE, D3D11_FILL_SOLID, D3D11_CULL_NONE);
@@ -240,7 +239,7 @@ bool CRenderManager::Init()
 	m_pAddBlend = FindRenderStateNonCount(ACC_BLEND);
 	m_pDepthLess = FindRenderStateNonCount(DEPTH_LESS);
 	m_pFrontCull = FindRenderStateNonCount(FRONT_CULL);
-	((CDepthState*)m_pFrontCull)->SetStencilRef(1); //스텐실값을 1로 채운다.
+	((CDepthState*)m_pDepthGrator)->SetStencilRef(1); //스텐실값을 1로 채운다.
 	m_pBackCull = FindRenderStateNonCount(BACK_CULL);
 	m_pWireFrame = FindRenderStateNonCount(WIRE_FRAME);
 	m_pCullNone = FindRenderStateNonCount(CULL_NONE);
@@ -459,7 +458,9 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 
 void CRenderManager::Render(float fTime)
 {
+#ifdef _DEBUG
 	ImGui::Checkbox("WireFrameMode", &m_bWireFrame);
+#endif
 	m_tCBuffer.DeltaTime = fTime;
 	m_tCBuffer.PlusedDeltaTime += fTime;
 	m_tCBuffer.isWireFrame = m_bWireFrame;
@@ -664,7 +665,7 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 	matScale.Scaling(pLight->GetLightInfo().fRange, pLight->GetLightInfo().fRange, pLight->GetLightInfo().fRange);
 	matPos.Translation(pLight->GetLightInfo().vPos);
 
-	getCamera = pScene->GetMainCamera();
+	getCamera = pScene->GetMainCameraNonCount();
 
 	TransformCBuffer cBuffer = {};
 	cBuffer.matWorld = matScale * matPos;
@@ -737,7 +738,7 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 	matRot.Rotation(pLight->GetTransformNonCount()->GetWorldRot());
 	matLocal = pLight->GetTransformNonCount()->GetLocalMatrix();
 
-	getCamera = pScene->GetMainCamera();
+	getCamera = pScene->GetMainCameraNonCount();
 
 	TransformCBuffer cBuffer = {};
 	cBuffer.matWorld = matLocal * matScale* matRot * matPos;

@@ -222,7 +222,6 @@ CGameObject * CLayer::FindObjectNonCount(const string & strTag)
 	{
 		if ((*iter)->GetTag() == strTag)
 		{
-			(*iter)->AddRef();
 			return *iter;
 		}
 	}

@@ -64,16 +64,12 @@ void GUIManager::Debug()
 
 	static Vector3 Pos = Vector3(0.0f, 1.0f, 1.0f);
 
-	CScene* getScene = CSceneManager::GetInst()->GetScene();
-	CGameObject* getObject = getScene->FindObject("Pyramid");
-	CGameObject* GetLightObj = getScene->FindObject("GlobalLight1");
+	CScene* getScene = CSceneManager::GetInst()->GetSceneNonCount();
+	CGameObject* getObject = getScene->FindObjectNonCount("Pyramid");
+	CGameObject* GetLightObj = getScene->FindObjectNonCount("GlobalLight1");
 
 	if (getObject == NULLPTR)
-	{
-		SAFE_RELEASE(getObject);
-		SAFE_RELEASE(getScene);
 		return;
-	}
 
 	ImGui::Text("Pyramid");
 
@@ -94,4 +90,5 @@ void GUIManager::Debug()
 	static float LightRotX;
 	static float LightRotY;
 	static float LightRotZ;
+
 }

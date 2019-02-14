@@ -252,7 +252,9 @@ int CScene::Update(float fTime)
 	}
 
 	m_pMainCameraObj->Update(fTime);
+#ifdef _DEBUG
 	Debug();
+#endif // DEBUG
 
 	return 0;
 }

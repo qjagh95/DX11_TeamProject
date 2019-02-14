@@ -1,4 +1,3 @@
-#include "EngineHeader.h"
 #include "Light.h"
 #include "Transform.h"
 

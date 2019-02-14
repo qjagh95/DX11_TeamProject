@@ -1,4 +1,5 @@
 #pragma once
+#include "../EngineHeader.h"
 #include "Component.h"
 
 PUN_BEGIN
@@ -22,6 +23,10 @@ private:
 	unordered_map<string, PRendererCBuffer>	m_mapCBuffer;
 	ComponentCBuffer	m_tComponentCBuffer;
 	bool				m_b2DRenderer;
+	ID3D11ShaderResourceView*  m_pBoneTex;
+
+public:
+	void SetBoneTexture(ID3D11ShaderResourceView* _pBoneTex);
 
 public:
 	void Enable2DRenderer();

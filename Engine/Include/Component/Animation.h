@@ -11,13 +11,12 @@ typedef struct PUN_DLL _tagBone
 	int			iParentIndex;
 	Matrix*		matOffset;
 	Matrix*		matBone;
-	int			iRefCount;
 	list<class CBoneSocket*>	SocketList;
+	int			iRefCount;
 
-	_tagBone()
-		:iRefCount(1)
+	_tagBone() :
+		iRefCount(1)
 	{
-
 	}
 }BONE, *PBONE;
 
@@ -33,12 +32,11 @@ typedef struct PUN_DLL _tagBoneKeyFrame
 {
 	int		iBoneIndex;
 	vector<PKEYFRAME>	vecKeyFrame;
-	int     iRefCount;
+	int			iRefCount;
 
-	_tagBoneKeyFrame()
-		:iRefCount(1)
+	_tagBoneKeyFrame() :
+		iRefCount(1)
 	{
-
 	}
 
 	~_tagBoneKeyFrame()
@@ -67,7 +65,6 @@ typedef struct PUN_DLL _tagAnimationClip
 	int					iEndFrame;
 	int					iFrameLength;
 	int					iFrameMode;
-	int					iAnimationLimitFrame;
 	int					iChangeFrame;
 	vector<PBONEKEYFRAME>		vecKeyFrame;
 	vector<PANIMATIONCALLBACK>	vecCallback;
@@ -76,7 +73,6 @@ typedef struct PUN_DLL _tagAnimationClip
 		eOption(AO_LOOP),
 		strName(""),
 		iFrameMode(0),
-		iAnimationLimitFrame(0),
 		fStartTime(0),
 		fEndTime(0),
 		fTimeLength(0),
@@ -103,8 +99,8 @@ typedef struct PUN_DLL _tagAnimationClip
 	}
 }ANIMATIONCLIP, *PANIMATIONCLIP;
 
-class PUN_DLL CAnimation
-	:public CComponent
+class PUN_DLL CAnimation :
+	public CComponent
 {
 	friend class CGameObject;
 	friend class CMesh;
@@ -147,13 +143,13 @@ public:
 	Matrix GetBoneMatrix(const string& strBoneName);
 	bool ChangeClip(const string& strClip);
 	ID3D11ShaderResourceView* GetBoneTexture()	const;
-	bool Save(const wchar_t* pFileName, const string& strPathKey = MESH_PATH);
+	bool Save(const TCHAR* pFileName, const string& strPathKey = MESH_PATH);
 	bool Save(const char* pFileName, const string& strPathKey = MESH_PATH);
-	bool SaveFromFullPath(const wchar_t* pFullPath);
+	bool SaveFromFullPath(const TCHAR* pFullPath);
 	bool SaveFromFullPath(const char* pFullPath);
-	bool Load(const wchar_t* pFileName, const string& strPathKey = MESH_PATH);
+	bool Load(const TCHAR* pFileName, const string& strPathKey = MESH_PATH);
 	bool Load(const char* pFileName, const string& strPathKey = MESH_PATH);
-	bool LoadFromFullPath(const wchar_t* pFullPath);
+	bool LoadFromFullPath(const TCHAR* pFullPath);
 	bool LoadFromFullPath(const char* pFullPath);
 	bool ModifyClip(const string& strKey, const string& strChangeKey,
 		ANIMATION_OPTION eOption, int iStartFrame, int iEndFrame);
@@ -173,4 +169,5 @@ public:
 };
 
 PUN_END
+
 

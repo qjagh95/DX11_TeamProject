@@ -26,22 +26,22 @@ Matrix::Matrix(const XMMATRIX & mat)
 
 Matrix Matrix::operator*(const union Matrix & mat) const
 {
-	return matrix * mat.matrix;
+	return Matrix(matrix * mat.matrix);
 }
 
 Matrix Matrix::operator*(const XMMATRIX & mat) const
 {
-	return matrix * mat;
+	return Matrix(matrix * mat);
 }
 
 Matrix Matrix::operator*(float val) const
 {
-	return matrix * val;
+	return Matrix(matrix * val);
 }
 
 Matrix Matrix::operator*(int val) const
 {
-	return matrix * (float)val;
+	return Matrix(matrix * (float)val);
 }
 
 Matrix & Matrix::operator*=(const union Matrix & mat)

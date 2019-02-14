@@ -68,6 +68,10 @@ bool CFbxLoader::LoadFbx(const char * pFullPath, FBX_LOAD_TYPE eType)
 	// 위에서 만들어낸 정보를 FbxScene에 노드를 구성한다.
 	pImporter->Import(m_pScene);
 
+
+	if (m_pScene->GetGlobalSettings().GetAxisSystem() != FbxAxisSystem::Max)
+		m_pScene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
+
 	m_pScene->FillAnimStackNameArray(m_NameArr);
 
 	if (m_NameArr.GetCount() > 0)
@@ -84,9 +88,6 @@ bool CFbxLoader::LoadFbx(const char * pFullPath, FBX_LOAD_TYPE eType)
 			m_vecClip[i]->vecBoneKeyFrame.resize(m_vecBones.size());
 		}
 	}
-
-	if (m_pScene->GetGlobalSettings().GetAxisSystem() != FbxAxisSystem::Max)
-		m_pScene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
 
 	Triangulate(m_pScene->GetRootNode());
 

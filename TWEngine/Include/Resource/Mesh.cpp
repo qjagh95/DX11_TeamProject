@@ -1,4 +1,3 @@
-#include "EngineHeader.h"
 #include "Mesh.h"
 #include "../Device.h"
 #include "../PathManager.h"
@@ -8,12 +7,11 @@
 
 PUN_USING
 
-CMesh::CMesh()
-	:m_pMaterial(nullptr),
-	 m_pAnimation(nullptr)
+CMesh::CMesh() :
+	m_pMaterial(nullptr),
+	m_pAnimation(nullptr)
 {
 }
-
 
 CMesh::~CMesh()
 {
@@ -109,7 +107,8 @@ bool CMesh::CreateMesh(const string & strName, const string & strShaderKey, cons
 	return true;
 }
 
-bool CMesh::LoadMesh(const string & strName, const TCHAR * pFileName, const string & strPathKey)
+bool CMesh::LoadMesh(const string & strName, const TCHAR * pFileName,
+	const string & strPathKey)
 {
 	TCHAR	strFullPath[MAX_PATH] = {};
 
@@ -122,7 +121,8 @@ bool CMesh::LoadMesh(const string & strName, const TCHAR * pFileName, const stri
 	return LoadMeshFromFullPath(strName, strFullPath);
 }
 
-bool CMesh::LoadMeshFromFullPath(const string & strName, const TCHAR * pFullPath)
+bool CMesh::LoadMeshFromFullPath(const string & strName,
+	const TCHAR * pFullPath)
 {
 	m_strTag = strName;
 
@@ -142,7 +142,7 @@ bool CMesh::LoadMeshFromFullPath(const string & strName, const TCHAR * pFullPath
 		if (!loader.LoadFbx(strFullPath))
 			return false;
 
-		return ConvertFbx(&loader , strFullPath);
+		return ConvertFbx(&loader, strFullPath);
 	}
 
 	return LoadFromFullPath(strFullPath);
@@ -209,31 +209,38 @@ void CMesh::UpdateVertexBuffer(void * pData, int iContainer)
 
 	switch (pContainer->tVB.eUsage)
 	{
-	case D3D11_USAGE_DEFAULT:
-		CONTEXT->UpdateSubresource(pContainer->tVB.pBuffer,
-			0, nullptr, pData, 0, 0);
+		case D3D11_USAGE_DEFAULT:
+			CONTEXT->UpdateSubresource(pContainer->tVB.pBuffer,
+				0, nullptr, pData, 0, 0);
+			break;
+		case D3D11_USAGE_DYNAMIC:
+		{
+			D3D11_MAPPED_SUBRESOURCE	tMap;
+			CONTEXT->Map(pContainer->tVB.pBuffer, 0, D3D11_MAP_WRITE_DISCARD,
+				0, &tMap);
+
+			memcpy(tMap.pData, pData, pContainer->tVB.iSize * pContainer->tVB.iCount);
+
+			CONTEXT->Unmap(pContainer->tVB.pBuffer, 0);
+		}
 		break;
-	case D3D11_USAGE_DYNAMIC:
-	{
-		
-
-		D3D11_MAPPED_SUBRESOURCE	tMap;
-		CONTEXT->Map(pContainer->tVB.pBuffer, 0, D3D11_MAP_WRITE_DISCARD,
-			0, &tMap);
-
-		memcpy(tMap.pData, pData, pContainer->tVB.iSize * pContainer->tVB.iCount);
-
-		CONTEXT->Unmap(pContainer->tVB.pBuffer, 0);
-
-		
-	}
-	break;
 	}
 }
 
 CMaterial * CMesh::CloneMaterial()
 {
+	if (!m_pMaterial)
+		return nullptr;
+
 	return m_pMaterial->Clone();
+}
+
+CAnimation * CMesh::CloneAnimation()
+{
+	if (!m_pAnimation)
+		return nullptr;
+
+	return m_pAnimation->Clone();
 }
 
 bool CMesh::CreateVertexBuffer(void * pData, int iCount, int iSize, D3D11_USAGE eUsage)
@@ -259,7 +266,7 @@ bool CMesh::CreateVertexBuffer(void * pData, int iCount, int iSize, D3D11_USAGE 
 	D3D11_SUBRESOURCE_DATA	tResource = {};
 	tResource.pSysMem = pContainer->tVB.pData;
 
-	if (FAILED(CDevice::GetInst()->GetDevice()->CreateBuffer(&tDesc, &tResource, &pContainer->tVB.pBuffer)))
+	if (FAILED(DEVICE->CreateBuffer(&tDesc, &tResource, &pContainer->tVB.pBuffer)))
 		return false;
 
 	char*	pVertices = (char*)pData;
@@ -324,7 +331,7 @@ bool CMesh::CreateIndexBuffer(void * pData, int iCount, int iSize, D3D11_USAGE e
 	D3D11_SUBRESOURCE_DATA	tResource = {};
 	tResource.pSysMem = tIB.pData;
 
-	if (FAILED(CDevice::GetInst()->GetDevice()->CreateBuffer(&tDesc, &tResource, &tIB.pBuffer)))
+	if (FAILED(DEVICE->CreateBuffer(&tDesc, &tResource, &tIB.pBuffer)))
 		return false;
 
 	pContainer->vecIB.push_back(tIB);
@@ -332,68 +339,397 @@ bool CMesh::CreateIndexBuffer(void * pData, int iCount, int iSize, D3D11_USAGE e
 	return true;
 }
 
-bool CMesh::Save(const char * _pFileName, const std::string & _strPathKey)
+bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 {
-	char strFullPath[MAX_PATH] = {};
-	const char* pPath = CPathManager::GetInst()->FindPathFromMultibyte(_strPathKey);
-	
-	if (pPath)
+	const vector<PFBXMESHCONTAINER>*	pvecContainer = pLoader->GetMeshContainers();
+	const vector<vector<PFBXMATERIAL>>*	pvecMaterials = pLoader->GetMaterials();
+
+	vector<PFBXMESHCONTAINER>::const_iterator	iter;
+	vector<PFBXMESHCONTAINER>::const_iterator	iterEnd = pvecContainer->end();
+
+	vector<bool>	vecEmptyIndex;
+
+	for (iter = pvecContainer->begin(); iter != iterEnd; ++iter)
 	{
-		strcpy_s(strFullPath, pPath);
-		strcat_s(strFullPath, _pFileName);
+		PMeshContainer	pContainer = new MeshContainer;
+
+		m_strInputLayoutKey = VERTEX3D_LAYOUT;
+
+		m_vecMeshContainer.push_back(pContainer);
+
+		int	iVtxSize = 0;
+
+		// 범프가 있을 경우
+		if ((*iter)->bBump)
+		{
+			if ((*iter)->bAnimation)
+			{
+				m_strShaderKey = STANDARD_BUMP_ANIM_SHADER;
+			}
+
+			else
+			{
+				m_strShaderKey = STANDARD_BUMP_SHADER;
+			}
+		}
+
+		// 범프가 없을 경우
+		else
+		{
+			if ((*iter)->bAnimation)
+			{
+				m_strShaderKey = STANDARD_TEX_NORMAL_ANIM_SHADER;
+			}
+
+			else
+			{
+				m_strShaderKey = STANDARD_TEX_NORMAL_SHADER;
+			}
+		}
+
+		vector<Vertex3D>	vecVtx;
+		iVtxSize = sizeof(Vertex3D);
+
+		for (size_t i = 0; i < (*iter)->vecPos.size(); ++i)
+		{
+			Vertex3D	tVtx = {};
+
+			tVtx.vPos = (*iter)->vecPos[i];
+			tVtx.vNormal = (*iter)->vecNormal[i];
+			tVtx.vUV = (*iter)->vecUV[i];
+
+			if (!(*iter)->vecTangent.empty())
+				tVtx.vTangent = (*iter)->vecTangent[i];
+
+			if (!(*iter)->vecBinormal.empty())
+				tVtx.vBinormal = (*iter)->vecBinormal[i];
+
+			if (!(*iter)->vecBlendWeight.empty())
+			{
+				tVtx.vWeight = (*iter)->vecBlendWeight[i];
+				tVtx.vIndex = (*iter)->vecBlendIndex[i];
+			}
+
+			vecVtx.push_back(tVtx);
+		}
+
+		pContainer->ePrimitive = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+		if (!CreateVertexBuffer(&vecVtx[0], vecVtx.size(),
+			iVtxSize, D3D11_USAGE_DEFAULT))
+			return false;
+
+		// 인덱스버퍼 생성
+		for (size_t i = 0; i < (*iter)->vecIndices.size(); ++i)
+		{
+			if ((*iter)->vecIndices[i].empty())
+			{
+				vecEmptyIndex.push_back(false);
+				continue;
+			}
+
+			vecEmptyIndex.push_back(true);
+
+			if (!CreateIndexBuffer(&(*iter)->vecIndices[i][0],
+				(*iter)->vecIndices[i].size(), 4,
+				D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT))
+				return false;
+		}
 	}
-	
+
+	// 재질 정보를 읽어온다.
+	const vector<vector<PFBXMATERIAL>>*	pMaterials = pLoader->GetMaterials();
+
+	vector<vector<PFBXMATERIAL>>::const_iterator	iterM;
+	vector<vector<PFBXMATERIAL>>::const_iterator	iterMEnd = pMaterials->end();
+
+	if (!pMaterials->empty())
+	{
+		// 실제 사용할 재질 클래스를 생성한다.
+		m_pMaterial = new CMaterial;
+
+		if (!m_pMaterial->Init())
+		{
+			SAFE_RELEASE(m_pMaterial);
+			return NULL;
+		}
+
+		m_pMaterial->ClearContainer();
+	}
+
+	int	iContainer = 0;
+	for (iterM = pMaterials->begin(); iterM != iterMEnd; ++iterM, ++iContainer)
+	{
+		for (size_t i = 0; i < (*iterM).size(); ++i)
+		{
+			// 인덱스 버퍼가 비어있을 경우에는 재질을 추가하지 않는다.
+			if (!vecEmptyIndex[i])
+				continue;
+
+			// 재질 정보를 얻어온다.
+			PFBXMATERIAL	pMtrl = (*iterM)[i];
+
+			m_pMaterial->SetMaterial(pMtrl->vDif, pMtrl->vAmb,
+				pMtrl->vSpc, pMtrl->fShininess, pMtrl->vEmv, iContainer, i);
+
+			// 이름을 불러온다.
+			char	strName[MAX_PATH] = {};
+			_splitpath_s(pMtrl->strDifTex.c_str(), NULL, 0, NULL, 0,
+				strName, MAX_PATH, NULL, 0);
+
+			TCHAR	strPath[MAX_PATH] = {};
+
+#ifdef UNICODE
+			MultiByteToWideChar(CP_ACP, 0, pMtrl->strDifTex.c_str(),
+				-1, strPath, pMtrl->strDifTex.length());
+#endif // UNICODE
+
+			m_pMaterial->SetSampler(0, SAMPLER_LINEAR, iContainer, i);
+			m_pMaterial->SetDiffuseTexFromFullPath(0, strName,
+				strPath, iContainer, i);
+
+			if (!pMtrl->strBumpTex.empty())
+			{
+				memset(strName, 0, MAX_PATH);
+				_splitpath_s(pMtrl->strBumpTex.c_str(), NULL, 0, NULL, 0,
+					strName, MAX_PATH, NULL, 0);
+
+				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);
+
+				MultiByteToWideChar(CP_ACP, 0, pMtrl->strBumpTex.c_str(),
+					-1, strPath, pMtrl->strBumpTex.length());
+
+				m_pMaterial->SetNormalSampler(0, SAMPLER_LINEAR, iContainer, i);
+				m_pMaterial->SetNormalTexFromFullPath(1, strName, strPath, iContainer, i);
+			}
+
+			if (!pMtrl->strSpcTex.empty())
+			{
+				memset(strName, 0, MAX_PATH);
+				_splitpath_s(pMtrl->strSpcTex.c_str(), NULL, 0, NULL, 0,
+					strName, MAX_PATH, NULL, 0);
+
+				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);
+
+				MultiByteToWideChar(CP_ACP, 0, pMtrl->strSpcTex.c_str(),
+					-1, strPath, pMtrl->strSpcTex.length());
+
+				m_pMaterial->SetSpecularSampler(0, SAMPLER_LINEAR, iContainer, i);
+				m_pMaterial->SetSpecularTexFromFullPath(2, strName, strPath, iContainer, i);
+			}
+		}
+	}
+
+	// 텍스쳐가 저장된 폴더명을 키로 변경한다.
+	//char	strFullName[MAX_PATH] = {};
+	//iterM = pMaterials->begin();
+	//strcpy_s(strFullName, (*iterM)[0]->strDifTex.c_str());
+
+	//int	iLength = strlen(strFullName);
+	//for (int i = iLength - 1; i >= 0; --i)
+	//{
+	//	if (strFullName[i] == '\\' || strFullName[i] == '/')
+	//	{
+	//		memset(strFullName + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
+	//		strFullName[i] = '\\';
+	//		//strFullName[i] = 0;
+	//		break;
+	//	}
+	//}
+
+	//char	strChange[MAX_PATH] = {};
+	//strcpy_s(strChange, strFullName);
+	//iLength = strlen(strChange);
+	//for (int i = iLength - 2; i >= 0; --i)
+	//{
+	//	if (strChange[i] == '\\' || strChange[i] == '/')
+	//	{
+	//		memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
+	//		break;
+	//	}
+	//}
+
+	//strcat_s(strChange, m_strTag.c_str());
+	//strcat_s(strChange, "\\");
+
+	//MoveFileA(strFullName, strChange);
+
+	// Mesh\\ 까지의 경로를 제거한다.
+	/*iLength = strlen(strChange);
+	for (int i = iLength - 2; i >= 0; --i)
+	{
+		char	cText[5] = {};
+		memcpy(cText, &strChange[i - 4], 4);
+		_strupr_s(cText);
+
+		if (strcmp(cText, "MESH") == 0)
+		{
+			memset(strChange, 0, sizeof(char) * (i + 1));
+			memcpy(strChange, &strChange[i + 1], sizeof(char) * (iLength - (i + 1)));
+			memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
+			break;
+		}
+	}*/
+
+	/*for (size_t i = 0; i < m_vecMeshContainer.size(); ++i)
+	{
+	PMESHCONTAINER	pContainer = m_vecMeshContainer[i];
+
+	for (size_t j = 0; j < pContainer->vecMaterial.size(); ++j)
+	{
+	pContainer->vecMaterial[j]->SetTexturePathKey(MESH_PATH);
+	pContainer->vecMaterial[j]->ChangeTexturePath(strChange);
+	}
+	}*/
+
+	m_vLength = m_vMax - m_vMin;
+
+	m_vCenter = (m_vMax + m_vMin) / 2.f;
+	m_fRadius = m_vLength.Length() / 2.f;
+
+	// 애니메이션 처리
+	const vector<PFBXBONE>*	pvecBone = pLoader->GetBones();
+
+	if (pvecBone->empty())
+		return true;
+
+	SAFE_RELEASE(m_pAnimation);
+
+	m_pAnimation = new CAnimation;
+
+	if (!m_pAnimation->Init())
+	{
+		SAFE_RELEASE(m_pAnimation);
+		return false;
+	}
+
+	//// 본 수만큼 반복한다.
+	vector<PFBXBONE>::const_iterator	iterB;
+	vector<PFBXBONE>::const_iterator	iterBEnd = pvecBone->end();
+
+	for (iterB = pvecBone->begin(); iterB != iterBEnd; ++iterB)
+	{
+		PBONE	pBone = new BONE;
+
+		pBone->strName = (*iterB)->strName;
+		pBone->iDepth = (*iterB)->iDepth;
+		pBone->iParentIndex = (*iterB)->iParentIndex;
+
+		float	fMat[4][4];
+
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 4; ++j)
+			{
+				fMat[i][j] = (*iterB)->matOffset.mData[i].mData[j];
+			}
+		}
+
+		pBone->matOffset = new Matrix;
+		*pBone->matOffset = fMat;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 4; ++j)
+			{
+				fMat[i][j] = (*iterB)->matBone.mData[i].mData[j];
+			}
+		}
+
+		pBone->matBone = new Matrix;
+		*pBone->matBone = fMat;
+
+		m_pAnimation->AddBone(pBone);
+	}
+
+	m_pAnimation->CreateBoneTexture();
+
+	// 애니메이션 클립을 추가한다.
+	const vector<PFBXANIMATIONCLIP>* pvecClip = pLoader->GetClips();
+
+	// 클립을 읽어온다.
+	vector<PFBXANIMATIONCLIP>::const_iterator	iterC;
+	vector<PFBXANIMATIONCLIP>::const_iterator	iterCEnd = pvecClip->end();
+
+	for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
+	{
+		m_pAnimation->AddClip(AO_LOOP, *iterC);
+	}
+
+	char	strFullPath[MAX_PATH] = {};
+	strcpy_s(strFullPath, pFullPath);
+	int	iPathLength = strlen(strFullPath);
+	memcpy(&strFullPath[iPathLength - 3], "msh", 3);
+
+	SaveFromFullPath(strFullPath);
+
+	if (m_pAnimation)
+	{
+		memcpy(&strFullPath[iPathLength - 3], "anm", 3);
+		m_pAnimation->SaveFromFullPath(strFullPath);
+	}
+
+	return true;
+}
+
+bool CMesh::Save(const char * pFileName, const string & strPathKey)
+{
+	char	strFullPath[MAX_PATH] = {};
+	const char* pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);
+
+	if (pPath)
+		strcpy_s(strFullPath, pPath);
+	strcat_s(strFullPath, pFileName);
+
 	return SaveFromFullPath(strFullPath);
 }
 
-bool CMesh::SaveFromFullPath(const char * _pFullPath)
+bool CMesh::SaveFromFullPath(const char * pFullPath)
 {
-	FILE* pFile = nullptr;
+	FILE*	pFile = nullptr;
 
-	fopen_s(&pFile, _pFullPath, "wb");
+	fopen_s(&pFile, pFullPath, "wb");
 
 	if (!pFile)
 		return false;
 
-	int iLength = (int)m_strTag.length();
+	int	iLength = m_strTag.length();
 
-	//Mesh Tag길이를 저장한다
+	// Tag 길이를 저장한다.
 	fwrite(&iLength, 4, 1, pFile);
 	fwrite(m_strTag.c_str(), 1, iLength, pFile);
-	
-	//ShaderName , string 길이를 저장한다.
-	iLength = (int)m_strShaderKey.length();
+
+	// ShaderName 길이를 저장한다.
+	iLength = m_strShaderKey.length();
 	fwrite(&iLength, 4, 1, pFile);
 	fwrite(m_strShaderKey.c_str(), 1, iLength, pFile);
 
-	//입력 레이아웃 이름 , string 길이 를 저장한다.
-	iLength = (int)m_strInputLayoutKey.length();
+	// 입력레이아웃 이름 길이를 저장한다.
+	iLength = m_strInputLayoutKey.length();
 	fwrite(&iLength, 4, 1, pFile);
 	fwrite(m_strInputLayoutKey.c_str(), 1, iLength, pFile);
 
-	//Mesh 정보들을 저장한다.
 	fwrite(&m_vCenter, sizeof(Vector3), 1, pFile);
 	fwrite(&m_fRadius, sizeof(float), 1, pFile);
 	fwrite(&m_vMin, sizeof(Vector3), 1, pFile);
 	fwrite(&m_vMax, sizeof(Vector3), 1, pFile);
 	fwrite(&m_vLength, sizeof(Vector3), 1, pFile);
 
-	size_t iContainer = m_vecMeshContainer.size();
+	size_t	iContainer = m_vecMeshContainer.size();
+
 	fwrite(&iContainer, sizeof(size_t), 1, pFile);
 
 	for (size_t i = 0; i < iContainer; ++i)
 	{
-		VertexBuffer tVB;
-		vector<IndexBuffer> vecIB;
-
-		PMeshContainer pContainer = m_vecMeshContainer[i];
+		PMeshContainer	pContainer = m_vecMeshContainer[i];
 
 		fwrite(&pContainer->ePrimitive, sizeof(D3D11_PRIMITIVE_TOPOLOGY),
 			1, pFile);
+
 		fwrite(&pContainer->tVB.iSize, sizeof(int), 1, pFile);
 		fwrite(&pContainer->tVB.iCount, sizeof(int), 1, pFile);
 		fwrite(&pContainer->tVB.eUsage, sizeof(D3D11_USAGE), 1, pFile);
-		fwrite(pContainer->tVB.pData, pContainer->tVB.iSize, 
+		fwrite(pContainer->tVB.pData, pContainer->tVB.iSize,
 			pContainer->tVB.iCount, pFile);
 
 		size_t	iIdxCount = pContainer->vecIB.size();
@@ -431,23 +767,23 @@ bool CMesh::SaveFromFullPath(const char * _pFullPath)
 	return true;
 }
 
-bool CMesh::Load(const char * _pFileName, const std::string & _strPathKey)
+bool CMesh::Load(const char * pFileName, const string & strPathKey)
 {
 	char	strFullPath[MAX_PATH] = {};
-	const char* pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(_strPathKey);
+	const char* pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);
 
 	if (pPath)
 		strcpy_s(strFullPath, pPath);
-	strcat_s(strFullPath, _pFileName);
+	strcat_s(strFullPath, pFileName);
 
 	return LoadFromFullPath(strFullPath);
 }
 
-bool CMesh::LoadFromFullPath(const char * _pFullPath)
+bool CMesh::LoadFromFullPath(const char * pFullPath)
 {
 	FILE*	pFile = nullptr;
 
-	fopen_s(&pFile, _pFullPath, "rb");
+	fopen_s(&pFile, pFullPath, "rb");
 
 	if (!pFile)
 		return false;
@@ -498,8 +834,7 @@ bool CMesh::LoadFromFullPath(const char * _pFullPath)
 		fread(&iVtxCount, sizeof(int), 1, pFile);
 		fread(&eUsage, sizeof(D3D11_USAGE), 1, pFile);
 		char*	pData = new char[iVtxSize * iVtxCount];
-		fread(pData, iVtxSize,
-			iVtxCount, pFile);
+		fread(pData, iVtxSize, iVtxCount, pFile);
 
 		CreateVertexBuffer(pData, iVtxCount, iVtxSize, eUsage);
 
@@ -519,7 +854,7 @@ bool CMesh::LoadFromFullPath(const char * _pFullPath)
 			fread(&iIdxCount, sizeof(int), 1, pFile);
 			fread(&eUsage, sizeof(D3D11_USAGE), 1, pFile);
 
-			char*	pData = new char[iIdxSize * iIdxCount];
+			pData = new char[iIdxSize * iIdxCount];
 
 			fread(pData, iIdxSize, iIdxCount, pFile);
 
@@ -546,330 +881,5 @@ bool CMesh::LoadFromFullPath(const char * _pFullPath)
 
 	fclose(pFile);
 
-	return true;
-}
-
-bool CMesh::ConvertFbx(CFbxLoader * pLoader , const char* _pFullPath)
-{
-	const vector<PFBXMESHCONTAINER>*	pvecContainer = pLoader->GetMeshContainers();
-	const vector<vector<PFBXMATERIAL>>*	pvecMaterials = pLoader->GetMaterials();
-
-	vector<PFBXMESHCONTAINER>::const_iterator	iter;
-	vector<PFBXMESHCONTAINER>::const_iterator	iterEnd = pvecContainer->end();
-
-	vector<bool>	vecEmptyIndex;
-
-	for (iter = pvecContainer->begin(); iter != iterEnd; ++iter)
-	{
-		PMeshContainer	pContainer = new MeshContainer;
-
-		m_strInputLayoutKey = VERTEX3D_LAYOUT;
-
-		m_vecMeshContainer.push_back(pContainer);
-
-		int	iVtxSize = 0;
-
-		// 범프가 있을 경우
-		if ((*iter)->bBump)
-		{
-			if ((*iter)->bAnimation)
-			{
-				//m_strShaderKey = STANDARD_BUMP_ANIM_SHADER;
-			}
-
-			else
-			{
-				m_strShaderKey = STANDARD_BUMP_SHADER;
-			}
-		}
-
-		// 범프가 없을 경우
-		else
-		{
-			if ((*iter)->bAnimation)
-			{
-				//m_strShaderKey = STANDARD_TEX_NORMAL_ANIM_SHADER;
-			}
-
-			else
-			{
-				//m_strShaderKey = STANDARD_TEX_NORMAL_SHADER;
-			}
-		}
-
-		vector<Vertex3D>	vecVtx;
-		iVtxSize = sizeof(Vertex3D);
-
-		for (size_t i = 0; i < (*iter)->vecPos.size(); ++i)
-		{
-			Vertex3D	tVtx = {};
-
-			tVtx.vPos = (*iter)->vecPos[i];
-			tVtx.vNormal = (*iter)->vecNormal[i];
-			tVtx.vUV = (*iter)->vecUV[i];
-
-			if (!(*iter)->vecTangent.empty())
-				tVtx.vTangent = (*iter)->vecTangent[i];
-
-			if (!(*iter)->vecBinormal.empty())
-				tVtx.vBinormal = (*iter)->vecBinormal[i];
-
-			if (!(*iter)->vecBlendWeight.empty())
-			{
-				tVtx.vWeight = (*iter)->vecBlendWeight[i];
-				tVtx.vIndex = (*iter)->vecBlendIndex[i];
-			}
-
-			vecVtx.push_back(tVtx);
-		}
-
-		pContainer->ePrimitive = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
-		if (!CreateVertexBuffer(&vecVtx[0], (int)vecVtx.size(),
-			(int)iVtxSize, D3D11_USAGE_DEFAULT))
-			return false;
-
-		// 인덱스버퍼 생성
-		for (size_t i = 0; i < (*iter)->vecIndices.size(); ++i)
-		{
-			if ((*iter)->vecIndices[i].empty())
-			{
-				vecEmptyIndex.push_back(false);
-				continue;
-			}
-
-			vecEmptyIndex.push_back(true);
-
-			if (!CreateIndexBuffer(&(*iter)->vecIndices[i][0],
-				(int)(*iter)->vecIndices[i].size(), 4,
-				D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT))
-				return false;
-		}
-	}
-
-	// 재질 정보를 읽어온다.
-	const vector<vector<PFBXMATERIAL>>*	pMaterials = pLoader->GetMaterials();
-
-	vector<vector<PFBXMATERIAL>>::const_iterator	iterM;
-	vector<vector<PFBXMATERIAL>>::const_iterator	iterMEnd = pMaterials->end();
-
-	if (!pMaterials->empty())
-	{
-		// 실제 사용할 재질 클래스를 생성한다.
-		m_pMaterial = new CMaterial;
-
-		if (!m_pMaterial->Init())
-		{
-			SAFE_RELEASE(m_pMaterial);
-			return NULL;
-		}
-
- 		m_pMaterial->ClearContainer();
-	}
-
-	int	iContainer = 0;
-	for (iterM = pMaterials->begin(); iterM != iterMEnd; ++iterM, ++iContainer)
-	{
-		for (size_t i = 0; i < (*iterM).size(); ++i)
-		{
-			// 인덱스 버퍼가 비어있을 경우에는 재질을 추가하지 않는다.
-			if (!vecEmptyIndex[i])
-				continue;
-
-			// 재질 정보를 얻어온다.
-			PFBXMATERIAL	pMtrl = (*iterM)[i];
-
-			m_pMaterial->SetMaterial(pMtrl->vDif, pMtrl->vAmb,
-				pMtrl->vSpc, pMtrl->fShininess, pMtrl->vEmv, iContainer, (int)i);
-
-			// 이름을 불러온다.
-			char	strName[MAX_PATH] = {};
-			_splitpath_s(pMtrl->strDifTex.c_str(), NULL, 0, NULL, 0,
-				strName, MAX_PATH, NULL, 0);
-
-			TCHAR	strPath[MAX_PATH] = {};
-
-#ifdef UNICODE
-			MultiByteToWideChar(CP_ACP, 0, pMtrl->strDifTex.c_str(),
-				-1, strPath, (int)pMtrl->strDifTex.length());
-#endif // UNICODE
-
-			m_pMaterial->SetSampler(0, SAMPLER_LINEAR, iContainer, (int)i);
-			m_pMaterial->SetDiffuseTexFromFullPath(0, strName,
-				strPath, iContainer, (int)i);
-
-			if (!pMtrl->strBumpTex.empty())
-			{
-				memset(strName, 0, MAX_PATH);
-				_splitpath_s(pMtrl->strBumpTex.c_str(), NULL, 0, NULL, 0,
-					strName, MAX_PATH, NULL, 0);
-
-				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);
-
-				MultiByteToWideChar(CP_ACP, 0, pMtrl->strBumpTex.c_str(),
-					-1, strPath, (int)pMtrl->strBumpTex.length());
-
-				m_pMaterial->SetNormalSampler(0, SAMPLER_LINEAR, iContainer, (int)i);
-				m_pMaterial->SetNormalTexFromFullPath(1, strName, strPath, iContainer, (int)i);
-			}
-
-			if (!pMtrl->strSpcTex.empty())
-			{
-				memset(strName, 0, MAX_PATH);
-				_splitpath_s(pMtrl->strSpcTex.c_str(), NULL, 0, NULL, 0,
-					strName, MAX_PATH, NULL, 0);
-
-				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);
-
-				MultiByteToWideChar(CP_ACP, 0, pMtrl->strSpcTex.c_str(),
-					-1, strPath, (int)pMtrl->strSpcTex.length());
-
-				m_pMaterial->SetSpecularSampler(0, SAMPLER_LINEAR, iContainer, (int)i);
-				m_pMaterial->SetSpecularTexFromFullPath(2, strName, strPath, iContainer, (int)i);
-			}
-		}
-	}
-
-	//텍스쳐가 저장된 폴더명을 키로 변경한다.
-	char	strFullName[MAX_PATH] = {};
-	iterM = pMaterials->begin();
-	strcpy_s(strFullName, (*iterM)[0]->strDifTex.c_str());
-
-	int	iLength = (int)strlen(strFullName);
-	for (int i = iLength - 1; i >= 0; --i)
-	{
-		if (strFullName[i] == '\\' || strFullName[i] == '/')
-		{
-			memset(strFullName + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
-			strFullName[i] = '\\';
-			//strFullName[i] = 0;
-			break;
-		}
-	}
-
-	char	strChange[MAX_PATH] = {};
-	strcpy_s(strChange, strFullName);
-	iLength = (int)strlen(strChange);
-	for (int i = iLength - 2; i >= 0; --i)
-	{
-		if (strChange[i] == '\\' || strChange[i] == '/')
-		{
-			memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
-			break;
-		}
-	}
-
-	strcat_s(strChange, m_strTag.c_str());
-	strcat_s(strChange, "\\");
-
-	MoveFileA(strFullName, strChange);
-
-	 //Mesh\\ 까지의 경로를 제거한다.
-	/*iLength = strlen(strChange);
-	for (int i = iLength - 2; i >= 0; --i)
-	{
-		char	cText[5] = {};
-		memcpy(cText, &strChange[i - 4], 4);
-		_strupr_s(cText);
-
-		if (strcmp(cText, "MESH") == 0)
-		{
-			memset(strChange, 0, sizeof(char) * (i + 1));
-			memcpy(strChange, &strChange[i + 1], sizeof(char) * (iLength - (i + 1)));
-			memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
-			break;
-		}
-	}*/
-
-	/*for (size_t i = 0; i < m_vecMeshContainer.size(); ++i)
-	{
-	PMESHCONTAINER	pContainer = m_vecMeshContainer[i];
-
-	for (size_t j = 0; j < pContainer->vecMaterial.size(); ++j)
-	{
-	pContainer->vecMaterial[j]->SetTexturePathKey(MESH_PATH);
-	pContainer->vecMaterial[j]->ChangeTexturePath(strChange);
-	}
-	}*/
-
-	m_vLength = m_vMax - m_vMin;
-
-	m_vCenter = (m_vMax + m_vMin) / 2.f;
-	m_fRadius = m_vLength.Length() / 2.f;
-
-	const vector<PFBXBONE>*	pvecBone = pLoader->GetBones();
-
-	if (pvecBone->empty())
-		return true;
-
-	SAFE_RELEASE(m_pAnimation);
-
-	m_pAnimation = new CAnimation;
-
-	if (!m_pAnimation->Init())
-	{
-		SAFE_RELEASE(m_pAnimation);
-		return false;
-	}
-
-	//// 본 수만큼 반복한다.
-	vector<PFBXBONE>::const_iterator	iterB;
-	vector<PFBXBONE>::const_iterator	iterBEnd = pvecBone->end();
-
-	for (iterB = pvecBone->begin(); iterB != iterBEnd; ++iterB)
-	{
-		PBONE	pBone = new BONE;
-
-		pBone->strName = (*iterB)->strName;
-		pBone->iDepth = (*iterB)->iDepth;
-		pBone->iParentIndex = (*iterB)->iParentIndex;
-
-		float	fMat[4][4];
-
-		for (int i = 0; i < 4; ++i)
-		{
-			for (int j = 0; j < 4; ++j)
-			{
-				fMat[i][j] = (float)(*iterB)->matOffset.mData[i].mData[j];
-			}
-		}
-
-		pBone->matOffset = new Matrix;
-		*pBone->matOffset = fMat;
-
-		for (int i = 0; i < 4; ++i)
-		{
-			for (int j = 0; j < 4; ++j)
-			{
-				fMat[i][j] = (float)(*iterB)->matBone.mData[i].mData[j];
-			}
-		}
-
-		pBone->matBone = new Matrix;
-		*pBone->matBone = fMat;
-
-		m_pAnimation->AddBone(pBone);
-	}
-
-	m_pAnimation->CreateBoneTexture();
-
-	// 애니메이션 클립을 추가한다.
-	const vector<PFBXANIMATIONCLIP>* pvecClip = pLoader->GetClips();
-
-	// 클립을 읽어온다.
-	vector<PFBXANIMATIONCLIP>::const_iterator	iterC;
-	vector<PFBXANIMATIONCLIP>::const_iterator	iterCEnd = pvecClip->end();
-
-	for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
-	{
-		m_pAnimation->AddClip(AO_LOOP, *iterC);
-	}
-
-	char	strFullPath[MAX_PATH] = {};
-	strcpy_s(strFullPath, _pFullPath);
-	int	iPathLength = (int)strlen(strFullPath);
-	memcpy(&strFullPath[iPathLength - 3], "msh", 3);
-
-	SaveFromFullPath(strFullPath);
 	return true;
 }

@@ -47,7 +47,7 @@ int CRef::Release()
 	if (m_iRefCount == 0)
 
 	{
-		delete this;
+ 		delete this;
 		return 0;
 	}
 
