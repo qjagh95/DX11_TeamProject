@@ -250,6 +250,9 @@ bool CRenderManager::Init()
 	m_pGBufferMultiTarget = FindMultiTarget("GBuffer");
 	m_pLightMultiTarget = FindMultiTarget("LightAcc");
 
+	CreateDepthStencilState(DEPTH_LESSEQUAL, TRUE,
+		D3D11_DEPTH_WRITE_MASK_ALL,
+		D3D11_COMPARISON_LESS_EQUAL);
 	return true;
 }
 
@@ -532,6 +535,17 @@ void CRenderManager::Render2D(float fTime)
 
 void CRenderManager::Render3D(float fTime)
 {
+	// Sky 출력
+	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
+
+	CGameObject*	pSkyObj = pScene->GetSkyObj();
+
+	pSkyObj->Render(fTime);
+
+	SAFE_RELEASE(pSkyObj);
+
+	SAFE_RELEASE(pScene);
+
 	// Forward Rendering 처리
 	if (!m_bDeferred)
 		RenderForward(fTime);

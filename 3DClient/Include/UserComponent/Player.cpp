@@ -3,6 +3,7 @@
 #include "Component/Transform.h"
 
 CPlayer::CPlayer()
+	: m_pAnimation(nullptr)
 {
 }
 
@@ -14,6 +15,7 @@ CPlayer::CPlayer(const CPlayer & com)
 
 CPlayer::~CPlayer()
 {
+	SAFE_RELEASE(m_pAnimation);
 }
 
 void CPlayer::Start()
@@ -44,6 +46,16 @@ bool CPlayer::Init()
 	GET_SINGLE(CInput)->BindAction("Fire1", KEY_PRESS, this, &CPlayer::Fire1);
 	GET_SINGLE(CInput)->BindAction("Fire1", KEY_RELEASE, this, &CPlayer::Fire1Release);
 	GET_SINGLE(CInput)->AddKeyAction("Fire1", DIK_SPACE, bSKey);
+
+	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
+	
+	pRenderer->SetMesh("Player", TEXT("Monster4.msh"));
+
+	SAFE_RELEASE(pRenderer);
+
+	m_pAnimation = m_pObject->AddComponent<CAnimation>("Animation");
+
+	m_pAnimation->Load("Monster4.anm");
 
 	return true;
 }

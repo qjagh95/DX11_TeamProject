@@ -93,7 +93,7 @@ CRenderer::~CRenderer()
 	m_mapCBuffer.clear();
 }
 
-void CRenderer::SetBoneTexture(ID3D11ShaderResourceView * pBoneTex)
+void CRenderer::SetBoneTexture(ID3D11ShaderResourceView** pBoneTex)
 {
 	m_pBoneTex = pBoneTex;
 }
@@ -311,7 +311,7 @@ void CRenderer::Render(float fTime)
 	UpdateTransform();
 
 	if (m_pBoneTex)
-		CONTEXT->VSSetShaderResources(3, 1, &m_pBoneTex);
+		CONTEXT->VSSetShaderResources(3, 1, m_pBoneTex);
 
 	for (int i = 0; i < RS_END; ++i)
 	{

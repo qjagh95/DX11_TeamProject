@@ -24,6 +24,8 @@ private:
 	class CTransform*	m_pUICameraTr;
 	class CCamera*		m_pUICamera;
 
+	class CGameObject*	m_pSkyObj;
+	class CMaterial*	m_pSkyMtrl;
 public:
 	class CGameObject* GetMainCameraObj()	const;
 	class CGameObject * GetMainCameraObjNonCount() const;
@@ -37,6 +39,8 @@ public:
 	class CCamera * GetUICameraNonCount() const;
 	class CTransform* GetUICameraTransform()	const;
 	class CTransform * GetUICameraTransformNonCount() const;
+	class CGameObject* GetSkyObj()	const;
+	class CMaterial* GetSkyMaterial()	const;
 
 public:
 	void Start();

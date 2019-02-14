@@ -1,7 +1,7 @@
 #pragma once
 #include "../stdafx.h"
 #include "Component/UserComponent.h"
-
+#include "Component/Animation.h"
 PUN_USING
 
 class CPlayer
@@ -9,6 +9,8 @@ class CPlayer
 {
 	friend class CGameObject;
 
+private:
+	CAnimation* m_pAnimation;
 protected:
 	CPlayer();
 	CPlayer(const CPlayer& com);

@@ -183,7 +183,7 @@ bool CResourcesManager::Init()
 	CreateCylinderVolum(CYLINDER_VOLUME, 0.5f, 3, 32);
 	CreateCapsulVolum(CAPSUL_VOLUME, 0.5f, 3, 64, 128);
 	CreateCornVolum(CORN_VOLUME, 0.5f, 0.5f, 64, 128);
-
+	CreateSphereVolum("Sky", 0.5f, 64, 128, "Sky", POS_LAYOUT);
 	return true;
 }
 
@@ -447,7 +447,7 @@ CSampler * CResourcesManager::FindSamplerNonCount(const string & strName)
 	return iter->second;
 }
 
-void CResourcesManager::CreateSphereVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount)
+void CResourcesManager::CreateSphereVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount, const string& ShaderKey, const string& LayoutKey)
 {
 	vector<VertexNormalColor> vecVertexData;
 
@@ -508,7 +508,7 @@ void CResourcesManager::CreateSphereVolum(const string& KeyName, float Radius, i
 		}
 	}
 
-	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertexData[0], (int)vecVertexData.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+	CreateMesh(KeyName, ShaderKey, LayoutKey, &vecVertexData[0], (int)vecVertexData.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
 
 void CResourcesManager::CreateCapsulVolum(const string & KeyName, float Radius, float Height, int StackSlice, int SliceCount)
@@ -769,3 +769,76 @@ void CResourcesManager::CreateCornVolum(const string & KeyName, float Radius, fl
 
 	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertex[0], (int)vecVertex.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
+
+//void CResourcesManager::CreateSphere(vector<VertexNormalTex>& vecVertex,
+//	vector<int>& vecIndex, float fRadius, unsigned int iSubDivision)
+//{
+//	// Put a cap on the number of subdivisions.
+//	iSubDivision = min(iSubDivision, 5);
+//
+//	// Approximate a sphere by tessellating an icosahedron.
+//	const float X = 0.525731f;
+//	const float Z = 0.850651f;
+//
+//	Vector3 pos[12] =
+//	{
+//		Vector3(-X, 0.0f, Z),  Vector3(X, 0.0f, Z),
+//		Vector3(-X, 0.0f, -Z), Vector3(X, 0.0f, -Z),
+//		Vector3(0.0f, Z, X),   Vector3(0.0f, Z, -X),
+//		Vector3(0.0f, -Z, X),  Vector3(0.0f, -Z, -X),
+//		Vector3(Z, X, 0.0f),   Vector3(-Z, X, 0.0f),
+//		Vector3(Z, -X, 0.0f),  Vector3(-Z, -X, 0.0f)
+//	};
+//
+//	DWORD k[60] =
+//	{
+//		1,4,0,  4,9,0,  4,5,9,  8,5,4,  1,8,4,
+//		1,10,8, 10,3,8, 8,3,5,  3,2,5,  3,7,2,
+//		3,10,7, 10,6,7, 6,11,7, 6,0,11, 6,1,0,
+//		10,1,6, 11,0,9, 2,11,9, 5,2,9,  11,2,7
+//	};
+//
+//	vecVertex.resize(12);
+//	vecIndex.resize(60);
+//
+//	for (UINT i = 0; i < 12; ++i)
+//		vecVertex[i].vPos = pos[i];
+//
+//	for (UINT i = 0; i < 60; ++i)
+//		vecIndex[i] = k[i];
+//
+//	for (UINT i = 0; i < iSubDivision; ++i)
+//		Subdivide(vecVertex, vecIndex);
+//
+//	// Project vertices onto sphere and scale.
+//	for (UINT i = 0; i < vecVertex.size(); ++i)
+//	{
+//		// Project onto unit sphere.
+//		Vector3	vN = vecVertex[i].vPos;
+//		vN.Normalize();
+//
+//		// Project onto sphere.
+//		Vector3 p = vN * fRadius;
+//
+//		vecVertex[i].vPos = p;
+//		// Normal이 있을 경우 따로 저장한다.
+//
+//		// Derive texture coordinates from spherical coordinates.
+//		float theta = AngleFromXY(
+//			vecVertex[i].vPos.x,
+//			vecVertex[i].vPos.z);
+//
+//		float phi = acosf(vecVertex[i].vPos.y / fRadius);
+//
+//		vecVertex[i].vUV.x = theta / XM_2PI;
+//		vecVertex[i].vUV.y = phi / XM_PI;
+//
+//		// Partial derivative of P with respect to theta
+//		/*vecVertices[i].vTangent.x = -fRadius*sinf(phi)*sinf(theta);
+//		vecVertices[i].vTangent.y = 0.0f;
+//		vecVertices[i].vTangent.z = +fRadius*sinf(phi)*cosf(theta);*/
+//
+//		//XMVECTOR T = XMLoadFloat3(&vecVertices[i].TangentU);
+//		//XMStoreFloat3(&meshData.Vertices[i].TangentU, XMVector3Normalize(T));
+//	}
+//}

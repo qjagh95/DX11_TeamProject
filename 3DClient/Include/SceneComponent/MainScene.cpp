@@ -45,13 +45,6 @@ bool CMainScene::Init()
 
 	SAFE_RELEASE(pTransform);
 
-	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
-	pRenderer->SetMesh("Player", TEXT("Monster4.fbx"));
-	//pRenderer->SetMesh("Player", TEXT("Monster4.fbx"));
-	//pRenderer->SetShader(STANDARD_NORMAL_COLOR_SHADER);
-
-	SAFE_RELEASE(pRenderer);
-
 	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
 
 	SAFE_RELEASE(pPlayer);

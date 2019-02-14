@@ -142,7 +142,7 @@ public:
 	int FindBoneIndex(const string& strBoneName);
 	Matrix GetBoneMatrix(const string& strBoneName);
 	bool ChangeClip(const string& strClip);
-	ID3D11ShaderResourceView* GetBoneTexture()	const;
+	ID3D11ShaderResourceView** GetBoneTexture();
 	bool Save(const TCHAR* pFileName, const string& strPathKey = MESH_PATH);
 	bool Save(const char* pFileName, const string& strPathKey = MESH_PATH);
 	bool SaveFromFullPath(const TCHAR* pFullPath);

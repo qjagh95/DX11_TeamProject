@@ -48,6 +48,7 @@
 #define DEPTH_LESS "DepthLess"
 #define FRONT_CULL "FrontCull"
 #define BACK_CULL "BackCull"
+#define	DEPTH_LESSEQUAL		"DepthLessEqual"
 
 // ========== Volume Mesh Key=============
 #define SPHERE_VOLUME "SphereVolum"

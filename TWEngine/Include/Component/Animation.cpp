@@ -345,9 +345,9 @@ bool CAnimation::ChangeClip(const string & strClip)
 	return true;
 }
 
-ID3D11ShaderResourceView * CAnimation::GetBoneTexture() const
+ID3D11ShaderResourceView** CAnimation::GetBoneTexture()
 {
-	return m_pBoneRV;
+	return &m_pBoneRV;
 }
 
 bool CAnimation::Save(const TCHAR * pFileName, const string & strPathKey)

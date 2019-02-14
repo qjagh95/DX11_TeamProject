@@ -9,15 +9,22 @@
 #include "../Input.h"
 #include "../SoundManager.h"
 #include "../Component/Light.h"
+#include "../Component/Material.h"
+#include "../Component/Renderer.h"
 
 PUN_USING
 
 CScene::CScene()
 {
+	m_pSkyObj = nullptr;
+	m_pSkyMtrl = nullptr;
 }
 
 CScene::~CScene()
 {
+	SAFE_RELEASE(m_pSkyObj);
+	SAFE_RELEASE(m_pSkyMtrl);
+
 	GET_SINGLE(CSoundManager)->DeleteSound(this);
 
 	CGameObject::DestroyPrototype(this);
@@ -100,6 +107,18 @@ CTransform * CScene::GetUICameraTransformNonCount() const
 	return m_pUICameraTr;
 }
 
+CGameObject * CScene::GetSkyObj() const
+{
+	m_pSkyObj->AddRef();
+	return m_pSkyObj;
+}
+
+CMaterial * CScene::GetSkyMaterial() const
+{
+	m_pSkyMtrl->AddRef();
+	return m_pSkyMtrl;
+}
+
 void CScene::Start()
 {
 	list<CLayer*>::iterator	iter;
@@ -150,6 +169,30 @@ bool CScene::Init()
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pLightObj);
 	SAFE_RELEASE(pLayer);
+
+	m_pSkyObj = CGameObject::CreateObject("Sky");
+
+	m_pSkyObj->SetScene(this);
+
+	CTransform*	pSkyTr = m_pSkyObj->GetTransform();
+
+	pSkyTr->SetWorldScale(100000.f, 100000.f, 100000.f);
+	pSkyTr->Update(0.f);
+
+	SAFE_RELEASE(pSkyTr);
+
+	CRenderer*	pRenderer = m_pSkyObj->AddComponent<CRenderer>("SkyRenderer");
+
+	pRenderer->SetMesh("Sky");
+	pRenderer->SetRenderState(DEPTH_LESSEQUAL);
+	pRenderer->SetRenderState(CULL_NONE);
+
+	SAFE_RELEASE(pRenderer);
+
+	m_pSkyMtrl = m_pSkyObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
+	m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
 
 	return true;
 }
@@ -207,6 +250,14 @@ int CScene::Input(float fTime)
 
 int CScene::Update(float fTime)
 {
+	CTransform*	pTr = m_pSkyObj->GetTransform();
+
+	pTr->RotationY(3.f, fTime);
+	pTr->Update(fTime);
+
+	SAFE_RELEASE(pTr);
+
+
 	list<CSceneComponent*>::iterator	iter1;
 	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
 
