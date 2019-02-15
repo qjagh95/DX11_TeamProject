@@ -17,8 +17,8 @@ private:
 public:
 	static CGameObject* CreateObject(const string& strTag = "GameObject",
 		class CLayer* pLayer = nullptr, bool bDontDestroy = false);
-	static CGameObject* CreateDonDestroyObject(const string& strTag = "GameObject",
-		class CLayer* pLayer = nullptr, bool bDontDestroy = false , bool _bImmediatelyUse = true);
+	//static CGameObject* CreateDonDestroyObject(const string& strTag = "GameObject",
+	//	class CLayer* pLayer = nullptr, bool bDontDestroy = false , bool _bImmediatelyUse = true);
 	static CGameObject* CreatePrototype(const string& strTag,
 		bool bCurrent = true);
 	static CGameObject* CreateClone(const string& strTag,

@@ -141,6 +141,8 @@ int CCamera::Update(float fTime)
 	if (m_pTarget)
 	{
 		Vector3	vMove = m_pTarget->GetWorldMove();
+	
+		m_pTransform->SetWorldRot(m_pTarget->GetWorldRot());
 
 		if (vMove != Vector3::Zero)
 		{
@@ -148,8 +150,7 @@ int CCamera::Update(float fTime)
 		}
 	}
 
-	Vector3	vPos = m_pTransform->GetWorldPos();
-
+	Vector3	vPos = m_pTransform->GetWorldPos() + m_pTransform->GetLocalPos();
 	/*
 	Xx Xy Xz 0
 	Yx Yy Yz 0
@@ -176,6 +177,7 @@ int CCamera::Update(float fTime)
 	{
 		m_matView[3][i] = vPos.Dot(m_pTransform->GetWorldAxis((AXIS)i));
 	}
+
 
 	return 0;
 }

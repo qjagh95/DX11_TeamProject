@@ -181,15 +181,21 @@
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SceneComponent\FirTestScene.h" />
     <ClInclude Include="SceneComponent\MainScene.h" />
+    <ClInclude Include="SceneComponent\SecTestScene.h" />
     <ClInclude Include="SceneComponent\StartScene.h" />
+    <ClInclude Include="SceneComponent\TrdTestScene.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UserComponent\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SceneComponent\FirTestScene.cpp" />
     <ClCompile Include="SceneComponent\MainScene.cpp" />
+    <ClCompile Include="SceneComponent\SecTestScene.cpp" />
     <ClCompile Include="SceneComponent\StartScene.cpp" />
+    <ClCompile Include="SceneComponent\TrdTestScene.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

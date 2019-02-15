@@ -5,21 +5,15 @@ PUN_BEGIN
 class PUN_DLL CObjectManager
 {
 private:
-	list<class CGameObject*>	m_DontDestroyObj;
-	class CGameObject*			m_pObj;
-
+	std::list<class CGameObject*> m_DontDestroyObjList;
 public:
-	void AddDontDestroyObj(class CGameObject* pObj);
-	void ChangeScene(class CScene*  pScene);
-	bool CheckDontDestroyObj(const string& strTag);
-	class CGameObject* FindDontDestroyObj(const string& strTag);
-	class CGameObject * FindDontDestroyObjNonCount(const string & strTag);
-
-public:
-	void SetObj(class CGameObject* pObj);
-	void ChangeSceneObject(class CScene* pScene);
-public:
-	class CGameObject*	GetObj() const;
+	void ChangeScene(class CScene* _pScene , class CGameObject* _pObject , const std::string& _strLayerName = "Default");
+	void ChangeSceneFromDontDestroyObj(class CScene* _pScene);
+	void PushDontDestoryObject(class CGameObject* _pObject);
+	bool RemoveDontDestroyObject(class CGameObject* _pObject);
+	bool RemoveDontDestroyObject(const std::string& _strTag);
+	class CGameObject* FindDonDestoryObject(const std::string& _strTag);
+	class CGameObject* FindDonDestoryObject(class CGameObject* _pObject);
 
 public:
 	bool Init();

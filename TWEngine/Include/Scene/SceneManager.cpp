@@ -100,7 +100,7 @@ int CSceneManager::ChangeScene()
 		m_pNextScene = nullptr;
 
 		GET_SINGLE(CInput)->ChangeMouseScene(m_pScene);
-		GET_SINGLE(CObjectManager)->ChangeScene(m_pScene);
+		GET_SINGLE(CObjectManager)->ChangeSceneFromDontDestroyObj(m_pScene);
 
 		m_pScene->Start();
 

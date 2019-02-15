@@ -97,12 +97,7 @@ CGameObject::~CGameObject()
 CGameObject * CGameObject::CreateObject(const string & strTag, CLayer * pLayer,
 	bool bDontDestroy)
 {
-	CGameObject*	pObj = GET_SINGLE(CObjectManager)->FindDontDestroyObj(strTag);
-
-	if (pObj)
-		return pObj;
-
-	pObj = new CGameObject;
+	CGameObject*	pObj = new CGameObject;
 
 	pObj->SetTag(strTag);
 
@@ -344,7 +339,7 @@ void CGameObject::AfterClone()
 
 void CGameObject::DontDestroyOnLoad()
 {
-	GET_SINGLE(CObjectManager)->AddDontDestroyObj(this);
+	GET_SINGLE(CObjectManager)->PushDontDestoryObject(this);
 }
 
 CTransform * CGameObject::GetTransform() const

@@ -39,6 +39,15 @@
     <ClInclude Include="UserComponent\Player.h">
       <Filter>02. UserComponent</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent\FirTestScene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\SecTestScene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\TrdTestScene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -55,6 +64,15 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Player.cpp">
       <Filter>02. UserComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\FirTestScene.cpp">
+      <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\SecTestScene.cpp">
+      <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\TrdTestScene.cpp">
+      <Filter>01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

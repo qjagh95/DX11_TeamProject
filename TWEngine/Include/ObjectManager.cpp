@@ -15,92 +15,100 @@ CObjectManager::CObjectManager()
 
 CObjectManager::~CObjectManager()
 {
-	Safe_Release_VecList(m_DontDestroyObj);
+	Safe_Release_VecList(m_DontDestroyObjList);
 }
 
-void CObjectManager::AddDontDestroyObj(CGameObject * pObj)
+void CObjectManager::ChangeScene(CScene * _pScene , class CGameObject* _pObject, const std::string& _strLayerName)
 {
-	list<CGameObject*>::iterator	iter;
-	list<CGameObject*>::iterator	iterEnd = m_DontDestroyObj.end();
+	CLayer* pLayer = _pScene->FindLayer(_strLayerName);
 
-	for (iter = m_DontDestroyObj.begin(); iter != iterEnd; ++iter)
+	pLayer->AddObject(_pObject);
+
+	SAFE_RELEASE(pLayer);
+}
+
+void CObjectManager::ChangeSceneFromDontDestroyObj(CScene* _pScene)
+{
+	std::list<CGameObject*>::iterator Iter;
+	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
+	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
 	{
-		if (pObj == *iter)
-			return;
+		ChangeScene(_pScene, *Iter , (*Iter)->GetLayerName());
 	}
-
-	pObj->AddRef();
-	m_DontDestroyObj.push_back(pObj);
 }
 
-void CObjectManager::ChangeScene(CScene * pScene)
+void CObjectManager::PushDontDestoryObject(CGameObject* _pObject)
 {
-	list<CGameObject*>::iterator	iter;
-	list<CGameObject*>::iterator	iterEnd = m_DontDestroyObj.end();
-
-	for (iter = m_DontDestroyObj.begin(); iter != iterEnd; ++iter)
+	if (FindDonDestoryObject(_pObject) != nullptr)
 	{
-		CLayer*	pLayer = pScene->FindLayer((*iter)->GetLayerName());
+		return;
+	}
+	
+	_pObject->AddRef();
+	m_DontDestroyObjList.push_back(_pObject);
+}
 
-		if (!pLayer)
+bool CObjectManager::RemoveDontDestroyObject(CGameObject * _pObject)
+{
+	std::list<CGameObject*>::iterator Iter;
+	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
+	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
+	{
+		if (*Iter == _pObject)
 		{
-			pScene->AddLayer((*iter)->GetLayerName(), (*iter)->GetLayerZOrder());
-			pLayer = pScene->FindLayer((*iter)->GetLayerName());
+			SAFE_RELEASE((*Iter));
+			m_DontDestroyObjList.erase(Iter);
+			return true;
 		}
-
-		pLayer->AddObject(*iter);
-
-		SAFE_RELEASE(pLayer);
 	}
+	
+	return false;
 }
 
-bool CObjectManager::CheckDontDestroyObj(const string & strTag)
+bool CObjectManager::RemoveDontDestroyObject(const std::string & _strTag)
 {
-	list<CGameObject*>::iterator	iter;
-	list<CGameObject*>::iterator	iterEnd = m_DontDestroyObj.end();
-
-	for (iter = m_DontDestroyObj.begin(); iter != iterEnd; ++iter)
+	std::list<CGameObject*>::iterator Iter;
+	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
+	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
 	{
-		if (strTag == (*iter)->GetTag())
+		if ((*Iter)->GetTag() == _strTag)
+		{
+			SAFE_RELEASE((*Iter));
+			m_DontDestroyObjList.erase(Iter);
 			return true;
+		}
 	}
 
 	return false;
 }
 
-CGameObject * CObjectManager::FindDontDestroyObj(const string & strTag)
+CGameObject * CObjectManager::FindDonDestoryObject(const std::string & _strTag)
 {
-	list<CGameObject*>::iterator	iter;
-	list<CGameObject*>::iterator	iterEnd = m_DontDestroyObj.end();
-
-	for (iter = m_DontDestroyObj.begin(); iter != iterEnd; ++iter)
+	std::list<CGameObject*>::iterator Iter;
+	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
+	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
 	{
-		if (strTag == (*iter)->GetTag())
+		if ((*Iter)->GetTag() == _strTag)
 		{
-			(*iter)->AddRef();
-			return *iter;
+			return *Iter;
 		}
 	}
-
 	return nullptr;
 }
 
-CGameObject * CObjectManager::FindDontDestroyObjNonCount(const string & strTag)
+CGameObject * CObjectManager::FindDonDestoryObject(CGameObject * _pObject)
 {
-	list<CGameObject*>::iterator	iter;
-	list<CGameObject*>::iterator	iterEnd = m_DontDestroyObj.end();
-
-	for (iter = m_DontDestroyObj.begin(); iter != iterEnd; ++iter)
+	std::list<CGameObject*>::iterator Iter;
+	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
+	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
 	{
-		if (strTag == (*iter)->GetTag())
+		if (*Iter == _pObject)
 		{
-			return *iter;
+			return *Iter;
 		}
 	}
-
 	return nullptr;
 }
-
 
 bool CObjectManager::Init()
 {
