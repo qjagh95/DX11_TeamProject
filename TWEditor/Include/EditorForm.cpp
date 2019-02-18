@@ -28,31 +28,27 @@ CEditorForm::CEditorForm()
 	, m_vScale(0)
 	, m_vRot(0)
 	, m_vPos(0)
-	, m_iTileNumX(0)
-	, m_iTileNumY(0)
-	, m_iTileSizeX(0)
-	, m_iTileSizeY(0)
-	, m_pStageObj(nullptr)
-	, m_pStage(nullptr)
-	, m_pStageTr(nullptr)
+	, m_strName(_T(""))
+	, m_iStartFrame(0)
+	, m_iEndFrame(0)
+	, m_fPlayTime(0)
+	, m_pAnimObj(nullptr)
+	, m_pAnimation(nullptr)
+	, m_pAnimRenderer(nullptr)
 {
 
 }
 
 CEditorForm::~CEditorForm()
 {
-	SAFE_RELEASE(m_pStageObj);
-	SAFE_RELEASE(m_pStage);
-	SAFE_RELEASE(m_pStageTr);/*
-	SAFE_RELEASE(m_pTileObj);
-	SAFE_RELEASE(m_pTile);
-	SAFE_RELEASE(m_pTileTr);*/
+	SAFE_RELEASE(m_pAnimObj);
+	SAFE_RELEASE(m_pAnimation);
+	SAFE_RELEASE(m_pAnimRenderer);
 }
 
 void CEditorForm::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT_NAME, m_strTag);
 	DDX_Text(pDX, IDC_EDIT_SCALEX, m_vScale.x);
 	DDX_Text(pDX, IDC_EDIT_SCALEY, m_vScale.y);
 	DDX_Text(pDX, IDC_EDIT_SCALEZ, m_vScale.z);
@@ -62,20 +58,17 @@ void CEditorForm::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_POSX, m_vPos.x);
 	DDX_Text(pDX, IDC_EDIT_POSY, m_vPos.y);
 	DDX_Text(pDX, IDC_EDIT_POSZ, m_vPos.z);
-	DDX_Control(pDX, IDC_COMBO_TILETYPE, m_TileTypeCombo);
-	DDX_Text(pDX, IDC_EDIT_TILENUMX, m_iTileNumX);
-	DDX_Text(pDX, IDC_EDIT_TILENUMY, m_iTileNumY);
-	DDX_Text(pDX, IDC_EDIT_TILESIZEX, m_iTileSizeX);
-	DDX_Text(pDX, IDC_EDIT_TILESIZEY, m_iTileSizeY);
-	DDX_Control(pDX, IDC_COMBO_TILEOPTION, m_TileOptionCombo);
-	DDX_Control(pDX, IDC_COMBO_TILESHAPE, m_TileShapeCombo);
-	//DDX_Control(pDX, IDC_STATIC, m_pPicture);
-	DDX_Control(pDX, IDC_PIC, m_pPic);
+	DDX_Text(pDX, IDC_EDIT_ANIMNAME, m_strName);
+	DDX_Text(pDX, IDC_EDIT_STARTFRAME, m_iStartFrame);
+	DDX_Text(pDX, IDC_EDIT_ENDFRAME, m_iEndFrame);
+	DDX_Text(pDX, IDC_EDIT__ANIMPLAYTIME, m_fPlayTime);
+	DDX_Control(pDX, IDC_LIST_ANIMLIST, m_ClipList);
+	DDX_Control(pDX, IDC_COMBO_ANIMOPTION, m_OptionCombo);
 }
 
 
 BEGIN_MESSAGE_MAP(CEditorForm, CFormView)
-	ON_EN_CHANGE(IDC_EDIT_NAME, &CEditorForm::OnEnChangeEditName)
+	ON_CBN_SELCHANGE(IDC_COMBO_ANIMOPTION, &CEditorForm::OnCbnSelchangeComboAnimCombo)
 	ON_EN_CHANGE(IDC_EDIT_SCALEX, &CEditorForm::OnEnChangeEditScalex)
 	ON_EN_CHANGE(IDC_EDIT_SCALEY, &CEditorForm::OnEnChangeEditScaley)
 	ON_EN_CHANGE(IDC_EDIT_SCALEZ, &CEditorForm::OnEnChangeEditScalez)
@@ -85,13 +78,18 @@ BEGIN_MESSAGE_MAP(CEditorForm, CFormView)
 	ON_EN_CHANGE(IDC_EDIT_POSX, &CEditorForm::OnEnChangeEditPosx)
 	ON_EN_CHANGE(IDC_EDIT_POSY, &CEditorForm::OnEnChangeEditPosy)
 	ON_EN_CHANGE(IDC_EDIT_POSZ, &CEditorForm::OnEnChangeEditPosz)
-	ON_BN_CLICKED(IDC_BUTTON_CREATESTAGE, &CEditorForm::OnBnClickedButtonCreatestage)
-	ON_WM_CREATE()
-	ON_BN_CLICKED(IDC_BUTTON_LOAD, &CEditorForm::OnBnClickedButtonLoad)
-	ON_BN_CLICKED(IDC_BUTTON_SAVE, &CEditorForm::OnBnClickedButtonSave)
-	ON_CBN_SELCHANGE(IDC_COMBO_TILESHAPE, &CEditorForm::OnCbnSelchangeComboTileshape)
-	ON_BN_CLICKED(IDC_BUTTON_SELECT_TILE, &CEditorForm::OnBnClickedButtonSelectTile)
-	ON_BN_CLICKED(IDC_PIC, &CEditorForm::OnBnClickedPic)
+	ON_EN_CHANGE(IDC_EDIT_ANIMNAME, &CEditorForm::OnEnChangeEditAnimname)
+	ON_EN_CHANGE(IDC_EDIT_STARTFRAME, &CEditorForm::OnEnChangeEditStartframe)
+	ON_EN_CHANGE(IDC_EDIT_ENDFRAME, &CEditorForm::OnEnChangeEditEndframe)
+	ON_EN_CHANGE(IDC_EDIT__ANIMPLAYTIME, &CEditorForm::OnEnChangeEdit)
+	ON_LBN_SELCHANGE(IDC_LIST_ANIMLIST, &CEditorForm::OnLbnSelchangeListAnimlist)
+	ON_BN_CLICKED(IDC_BUTTON_SAVECLIP, &CEditorForm::OnBnClickedButtonSaveclip)
+	ON_BN_CLICKED(IDC_BUTTON_LOADCLIP, &CEditorForm::OnBnClickedButtonLoadclip)
+	ON_BN_CLICKED(IDC_BUTTON_SAVEMESH, &CEditorForm::OnBnClickedButtonSavemesh)
+	ON_BN_CLICKED(IDC_BUTTON_LOADMESH, &CEditorForm::OnBnClickedButtonLoadmesh)
+	ON_BN_CLICKED(IDC_BUTTON_ANIMADD, &CEditorForm::OnBnClickedButtonAnimadd)
+	ON_BN_CLICKED(IDC_BUTTON_ANIMMODIFY, &CEditorForm::OnBnClickedButtonAnimmodify)
+	ON_BN_CLICKED(IDC_BUTTON__LOADFBX, &CEditorForm::OnBnClickedButtonLoadFbx)
 END_MESSAGE_MAP()
 
 #ifdef _DEBUG
@@ -109,51 +107,10 @@ void CEditorForm::Dump(CDumpContext& dc) const
 #endif //_DEBUG
 // CEditorForm 메시지 처리기
 
-void CEditorForm::OnEnChangeEditName()
-{
-}
-
-void CEditorForm::OnEnChangeEditScalex()
-{
-}
-
-void CEditorForm::OnEnChangeEditScaley()
-{
-}
-
-void CEditorForm::OnEnChangeEditScalez()
-{
-}
-
-void CEditorForm::OnEnChangeEditRotx()
-{
-}
-
-void CEditorForm::OnEnChangeEditRoty()
-{
-}
-
-void CEditorForm::OnEnChangeEditRotz()
-{
-}
-
-void CEditorForm::OnEnChangeEditPosx()
-{
-}
-
-void CEditorForm::OnEnChangeEditPosy()
-{
-}
-
-void CEditorForm::OnEnChangeEditPosz()
-{
-}
-
 int CEditorForm::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFormView::OnCreate(lpCreateStruct) == -1)
 		return -1;
-
 
 	return 0;
 }
@@ -161,286 +118,347 @@ int CEditorForm::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CEditorForm::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
-
-	m_TileTypeCombo.SetCurSel(0);
-
-	m_TileOptionCombo.AddString(TEXT("일반타일"));
-	m_TileOptionCombo.AddString(TEXT("이동불가타일"));
-
-	m_TileShapeCombo.AddString(TEXT("CDTile1"));
-	m_TileShapeCombo.AddString(TEXT("CDTile2"));
-	m_TileShapeCombo.AddString(TEXT("CDTile3"));
-	m_TileShapeCombo.AddString(TEXT("CDTile4"));
-	m_TileShapeCombo.AddString(TEXT("CDTile5"));
-	m_TileShapeCombo.AddString(TEXT("CDTile6"));
-	m_TileShapeCombo.AddString(TEXT("CDTile7"));
-	m_TileShapeCombo.AddString(TEXT("CDTile8"));
-	m_TileShapeCombo.AddString(TEXT("CDTile9"));
-	m_TileShapeCombo.AddString(TEXT("CDTile10"));
-	m_TileShapeCombo.AddString(TEXT("CDTile11"));
-	m_TileShapeCombo.AddString(TEXT("CDTile12"));
-	m_TileShapeCombo.AddString(TEXT("CDTile13"));
-	m_TileShapeCombo.AddString(TEXT("CDTile14"));
-	m_TileShapeCombo.AddString(TEXT("CDTile15"));
-	m_TileShapeCombo.AddString(TEXT("CDTile16"));
-	
-	m_TileShapeCombo.AddString(TEXT("CDXTile1"));
-	m_TileShapeCombo.AddString(TEXT("CDXTile2"));
-
-	m_TileOptionCombo.SetCurSel(0);
-	m_TileShapeCombo.SetCurSel(0);
 }
 
-void CEditorForm::OnBnClickedButtonCreatestage()
+
+void CEditorForm::OnCbnSelchangeComboAnimCombo()
 {
-	if (m_pStageObj)
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CEditorForm::OnEnChangeEditScalex()
+{
+	UpdateData(TRUE);
+
+	CTransform*	pTr = m_pAnimObj->GetTransform();
+
+	Vector3 vScale = pTr->GetWorldScale();
+	vScale.x = m_vScale.x;
+
+	pTr->SetWorldScale(vScale);
+
+	SAFE_RELEASE(pTr);
+}
+
+
+void CEditorForm::OnEnChangeEditScaley()
+{
+	UpdateData(TRUE);
+
+	CTransform*	pTr = m_pAnimObj->GetTransform();
+
+	Vector3 vScale = pTr->GetWorldScale();
+	vScale.y = m_vScale.y;
+
+	pTr->SetWorldScale(vScale);
+
+	SAFE_RELEASE(pTr);
+}
+
+
+void CEditorForm::OnEnChangeEditScalez()
+{
+	UpdateData(TRUE);
+
+	CTransform*	pTr = m_pAnimObj->GetTransform();
+
+	Vector3 vScale = pTr->GetWorldScale();
+	vScale.z = m_vScale.z;
+
+	pTr->SetWorldScale(vScale);
+
+	SAFE_RELEASE(pTr);
+}
+
+
+void CEditorForm::OnEnChangeEditRotx()
+{
+	UpdateData(TRUE);
+
+	CTransform*	pTr = m_pAnimObj->GetTransform();
+
+	pTr->SetWorldRotX(m_vRot.x);
+
+	SAFE_RELEASE(pTr);
+}
+
+
+void CEditorForm::OnEnChangeEditRoty()
+{
+	UpdateData(TRUE);
+
+	CTransform*	pTr = m_pAnimObj->GetTransform();
+
+	pTr->SetWorldRotY(m_vRot.y);
+
+	SAFE_RELEASE(pTr);
+}
+
+
+void CEditorForm::OnEnChangeEditRotz()
+{
+	UpdateData(TRUE);
+
+	CTransform*	pTr = m_pAnimObj->GetTransform();
+
+	pTr->SetWorldRotZ(m_vRot.z);
+
+	SAFE_RELEASE(pTr);
+}
+
+
+void CEditorForm::OnEnChangeEditPosx()
+{
+	UpdateData(TRUE);
+
+	CTransform*	pTr = m_pAnimObj->GetTransform();
+
+	Vector3 vPos = pTr->GetWorldPos();
+	vPos.x = m_vPos.x;
+	pTr->SetWorldPos(vPos);
+
+	SAFE_RELEASE(pTr);
+}
+
+
+void CEditorForm::OnEnChangeEditPosy()
+{
+	UpdateData(TRUE);
+
+	CTransform*	pTr = m_pAnimObj->GetTransform();
+
+	Vector3 vPos = pTr->GetWorldPos();
+	vPos.y = m_vPos.y;
+	pTr->SetWorldPos(vPos);
+
+	SAFE_RELEASE(pTr);
+}
+
+
+void CEditorForm::OnEnChangeEditPosz()
+{
+	UpdateData(TRUE);
+
+	CTransform*	pTr = m_pAnimObj->GetTransform();
+
+	Vector3 vPos = pTr->GetWorldPos();
+	vPos.z = m_vPos.z;
+	pTr->SetWorldPos(vPos);
+
+	SAFE_RELEASE(pTr);
+}
+
+
+void CEditorForm::OnEnChangeEditAnimname()
+{
+	// TODO:  RICHEDIT 컨트롤인 경우, 이 컨트롤은
+	// CFormView::OnInitDialog() 함수를 재지정 
+	//하고 마스크에 OR 연산하여 설정된 ENM_CHANGE 플래그를 지정하여 CRichEditCtrl().SetEventMask()를 호출하지 않으면
+	// 이 알림 메시지를 보내지 않습니다.
+
+	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CEditorForm::OnEnChangeEditStartframe()
+{
+	// TODO:  RICHEDIT 컨트롤인 경우, 이 컨트롤은
+	// CFormView::OnInitDialog() 함수를 재지정 
+	//하고 마스크에 OR 연산하여 설정된 ENM_CHANGE 플래그를 지정하여 CRichEditCtrl().SetEventMask()를 호출하지 않으면
+	// 이 알림 메시지를 보내지 않습니다.
+
+	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CEditorForm::OnEnChangeEditEndframe()
+{
+	// TODO:  RICHEDIT 컨트롤인 경우, 이 컨트롤은
+	// CFormView::OnInitDialog() 함수를 재지정 
+	//하고 마스크에 OR 연산하여 설정된 ENM_CHANGE 플래그를 지정하여 CRichEditCtrl().SetEventMask()를 호출하지 않으면
+	// 이 알림 메시지를 보내지 않습니다.
+
+	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CEditorForm::OnEnChangeEdit()
+{
+	// TODO:  RICHEDIT 컨트롤인 경우, 이 컨트롤은
+	// CFormView::OnInitDialog() 함수를 재지정 
+	//하고 마스크에 OR 연산하여 설정된 ENM_CHANGE 플래그를 지정하여 CRichEditCtrl().SetEventMask()를 호출하지 않으면
+	// 이 알림 메시지를 보내지 않습니다.
+
+	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CEditorForm::OnLbnSelchangeListAnimlist()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CEditorForm::OnBnClickedButtonSaveclip()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CEditorForm::OnBnClickedButtonLoadclip()
+{
+	const TCHAR*	pFilter = TEXT("MeshFile(*.msh)|*.msh|FbxFile(*.fbx)|*.fbx|모든파일(*.*)|*.*||");
+	CFileDialog dlg(TRUE, TEXT(".msh"), nullptr, OFN_HIDEREADONLY, pFilter);
+
+	if (dlg.DoModal() == IDOK)
+	{
+		// 전체 경로를 얻어온다
+		CString strPath = dlg.GetPathName();
+
+		if (!m_pAnimObj)
+		{
+			CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
+			CLayer*	pLayer = pScene->FindLayer("Default");
+
+			m_pAnimObj = CGameObject::CreateObject("AnimObj",
+				pLayer);
+
+			SAFE_RELEASE(pScene);
+			SAFE_RELEASE(pLayer);
+		}
+
+		if (!m_pAnimation)
+			m_pAnimation = m_pAnimObj->FindComponentFromType<CAnimation>(CT_ANIMATION);
+
+		PANIMATIONCLIP	pClip = m_pAnimation->GetCurrentClip();
+
+		m_strName = CA2CT(pClip->strName.c_str());
+		m_iStartFrame = pClip->iStartFrame;
+		m_iEndFrame = pClip->iEndFrame;
+		m_fPlayTime = 1.f;
+
+		m_OptionCombo.SetCurSel(pClip->eOption);
+
+		m_ClipList.AddString(m_strName);
+
+		UpdateData(FALSE);
+	}
+}
+
+
+void CEditorForm::OnBnClickedButtonSavemesh()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CEditorForm::OnBnClickedButtonLoadmesh()
+{
+	const TCHAR*	pFilter = TEXT("MeshFile(*.msh)|*.msh|모든파일(*.*)|*.*||");
+	CFileDialog	dlg(TRUE, TEXT(".msh"), nullptr, OFN_HIDEREADONLY, pFilter);
+
+	if (dlg.DoModal() == IDOK)
+	{
+		// 전체 경로를 얻어온다.
+		CString	strPath = dlg.GetPathName();
+
+		// GameObject를 생성하고 fbx를 로드해서 출력한다.
+		if (!m_pAnimObj)
+		{
+			CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
+			CLayer*	pLayer = pScene->FindLayer("Default");
+
+			m_pAnimObj = CGameObject::CreateObject("AnimObj",
+				pLayer);
+
+			SAFE_RELEASE(pScene);
+			SAFE_RELEASE(pLayer);
+		}
+
+		if (!m_pAnimRenderer)
+			m_pAnimRenderer = m_pAnimObj->AddComponent<CRenderer>("AnimRenderer");
+
+		m_pAnimRenderer->SetMeshFromFullPath("AnimObj", strPath.GetString());
+
+	}
+}
+
+
+void CEditorForm::OnBnClickedButtonAnimadd()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+void CEditorForm::OnBnClickedButtonAnimmodify()
+{
+	if (m_ClipList.GetCurSel() == -1)
+	{
+		AfxMessageBox(TEXT("클립을 선택하세요."));
 		return;
+	}
+
+	int iIndex = m_ClipList.GetCurSel();
+
+	CString	strName;
+	m_ClipList.GetText(iIndex, strName);
 
 	UpdateData(TRUE);
 
-	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
-	CLayer*	pStageLayer = pScene->FindLayer("Stage_Front");
+	string	strOriginName = CT2CA(strName);
+	string	strChangeName = CT2CA(m_strName);
 
-	m_pStageObj = CGameObject::CreateObject("StageObj", pStageLayer);
+	m_pAnimation->ModifyClip(strOriginName, strChangeName,
+		(ANIMATION_OPTION)m_OptionCombo.GetCurSel(),
+		m_iStartFrame, m_iEndFrame);
 
-	CRenderer* pRenderer = m_pStageObj->AddComponent<CRenderer>("StageRenderer");
-
-	pRenderer->SetMesh("TexRect");
-
-	SAFE_RELEASE(pRenderer);
-
-	CMaterial* pMaterial = m_pStageObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
-
-	pMaterial->SetDiffuseTex(0, "Stage3", TEXT("ChristMasDungeon.png"));
-
-	SAFE_RELEASE(pMaterial);
-
-	m_pStage = m_pStageObj->AddComponent<CStage2D>("Stage");
-
-	int	iTileType = m_TileTypeCombo.GetCurSel();
-
-	Vector3	vTileScale = Vector3((float)m_iTileSizeX, (float)m_iTileSizeY, 1.f);
-
-	m_pStage->CreateTile(m_iTileNumX, m_iTileNumY, Vector3::Zero, vTileScale,
-		(STAGE2D_TILE_TYPE)iTileType);
-
-	m_pStageTr = m_pStageObj->GetTransform();	
-
-	SAFE_RELEASE(pStageLayer);
-	SAFE_RELEASE(pScene);
-
-	UpdateData(FALSE);
+	// ListBox의 이름을 변경해주면 된다
 }
 
-void CEditorForm::SaveStage(const CString & strFullPath)
+
+
+void CEditorForm::OnBnClickedButtonLoadFbx()
 {
-	// string으로 변환한다
-	string	strPath = CT2CA(strFullPath);
-
-	FILE*	pFile = nullptr;
-
-	fopen_s(&pFile, strPath.c_str(), "wb");
-
-	if (!pFile)
-		return;
-
-	m_pStage->Save(pFile);
-
-	fclose(pFile);
-}
-
-void CEditorForm::LoadStage(const CString & strFullPath)
-{
-	// string으로 변환한다.
-	string	strPath = CT2CA(strFullPath);
-
-	FILE*	pFile = nullptr;
-
-	fopen_s(&pFile, strPath.c_str(), "rb");
-
-	if (!pFile)
-		return;
-
-	if (m_pStageObj)
-		m_pStageObj->Die();
-
-	SAFE_RELEASE(m_pStageObj);
-	SAFE_RELEASE(m_pStage);
-	SAFE_RELEASE(m_pStageTr);
-
-	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
-	CLayer*	pStageLayer = pScene->FindLayer("Stage");
-
-	m_pStageObj = CGameObject::CreateObject("StageObj", pStageLayer);
-
-	CRenderer* pRenderer = m_pStageObj->AddComponent<CRenderer>("StageRenderer");
-
-	pRenderer->SetMesh("TexRect");
-
-	SAFE_RELEASE(pRenderer);
-
-	CMaterial* pMaterial = m_pStageObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
-
-	pMaterial->SetDiffuseTex(0, "Stage3", TEXT("ChristMasDungeon.png"));
-
-	SAFE_RELEASE(pMaterial);
-
-	m_pStage = m_pStageObj->AddComponent<CStage2D>("Stage");
-
-	m_pStage->Load(pFile);
-
-	m_pStageTr = m_pStageObj->GetTransform();
-
-	SAFE_RELEASE(pStageLayer);
-	SAFE_RELEASE(pScene);
-
-	m_TileTypeCombo.SetCurSel(m_pStage->GetTileType());
-
-	m_iTileNumX = m_pStage->GetTileNumX();
-	m_iTileNumY = m_pStage->GetTileNumY();
-	m_iTileSizeX = (int)m_pStage->GetTileScale().x;
-	m_iTileSizeY = (int)m_pStage->GetTileScale().y;
-
-	UpdateData(FALSE);
-
-	fclose(pFile);
-}
-
-void CEditorForm::OnBnClickedButtonLoad()
-{
-	const TCHAR*	pFilter = TEXT("StageFile(*.stg)|*.stg|모든파일(*.*)|*.*||");
-	CFileDialog	dlg(TRUE, TEXT(".stg"), nullptr, OFN_HIDEREADONLY, pFilter);
+	const TCHAR*	pFilter = TEXT("FbxFile(*.fbx)|*.fbx|모든파일(*.*)|*.*||");
+	CFileDialog	dlg(TRUE, TEXT(".fbx"), nullptr, OFN_HIDEREADONLY, pFilter);
 
 	if (dlg.DoModal() == IDOK)
 	{
 		// 전체 경로를 얻어온다.
 		CString	strPath = dlg.GetPathName();
 
-		LoadStage(strPath);
-	}
-}
+		// GameObject를 생성하고 fbx를 로드해서 출력한다.
+		SAFE_RELEASE(m_pAnimObj);
+		SAFE_RELEASE(m_pAnimation);
+		SAFE_RELEASE(m_pAnimRenderer);
 
+		CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
+		CLayer*	pLayer = pScene->FindLayer("Default");
 
-void CEditorForm::OnBnClickedButtonSave()
-{
-	if (!m_pStageObj)
-	{
-		AfxMessageBox(TEXT("스테이지가 없다."));
-		return;
-	}
+		m_pAnimObj = CGameObject::CreateObject("AnimObj",
+			pLayer);
 
-	const TCHAR*	pFilter = TEXT("StageFile(*.stg)|*.stg|모든파일(*.*)|*.*||");
-	CFileDialog	dlg(FALSE, TEXT(".stg"), nullptr, OFN_OVERWRITEPROMPT, pFilter);
+		m_pAnimRenderer = m_pAnimObj->AddComponent<CRenderer>("AnimRenderer");
 
-	if (dlg.DoModal() == IDOK)
-	{
-		// 전체 경로를 얻어온다.
-		CString	strPath = dlg.GetPathName();
+		m_pAnimRenderer->SetMeshFromFullPath("AnimObj", strPath.GetString());
 
-		SaveStage(strPath);
-	}
-}
+		m_pAnimation = m_pAnimObj->FindComponentFromType<CAnimation>(CT_ANIMATION);
 
-void CEditorForm::OnCbnSelchangeComboTileshape()
-{
+		PANIMATIONCLIP	pClip = m_pAnimation->GetCurrentClip();
 
-}
+		m_strName = CA2CT(pClip->strName.c_str());
+		m_iStartFrame = pClip->iStartFrame;
+		m_iEndFrame = pClip->iEndFrame;
+		m_fPlayTime = 1.f;
 
-void CEditorForm::OnDraw(CDC* pDC)
-{
-	CImage  Img;
-	
-	if (m_TileShapeCombo.GetCurSel() == 0)
-	{
-		auto r = Img.Load(L"MapTile1.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 1)
-	{
-		auto r = Img.Load(L"MapTile2.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 2)
-	{
-		auto r = Img.Load(L"MapTile3.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 3)
-	{
-		auto r = Img.Load(L"MapTile4.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 4)
-	{
-		auto r = Img.Load(L"MapTile5.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 5)
-	{
-		auto r = Img.Load(L"MapTile6.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 6)
-	{
-		auto r = Img.Load(L"MapTile7.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 7)
-	{
-		auto r = Img.Load(L"MapTile8.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 8)
-	{
-		auto r = Img.Load(L"MapTile9.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 9)
-	{
-		auto r = Img.Load(L"MapTile10.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 10)
-	{
-		auto r = Img.Load(L"MapTile11.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 11)
-	{
-		auto r = Img.Load(L"MapTile12.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 12)
-	{
-		auto r = Img.Load(L"MapTile13.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 13)
-	{
-		auto r = Img.Load(L"MapTile14.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 14)
-	{
-		auto r = Img.Load(L"MapTile15.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-	else if (m_TileShapeCombo.GetCurSel() == 15)
-	{
-		auto r = Img.Load(L"MapTile16.png");
-		Img.Draw(pDC->m_hDC, 340, 430);
-	}
-}
+		m_OptionCombo.SetCurSel(pClip->eOption);
 
-void CEditorForm::OnBnClickedButtonSelectTile()
-{
-	CDC* pDC;
-	pDC = GetDC();
-	OnDraw(pDC);
-}
+		m_ClipList.AddString(m_strName);
 
+		UpdateData(FALSE);
 
-void CEditorForm::OnBnClickedPic()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+		SAFE_RELEASE(pScene);
+		SAFE_RELEASE(pLayer);
+	}
 }

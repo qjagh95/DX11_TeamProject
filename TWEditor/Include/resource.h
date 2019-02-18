@@ -35,15 +35,29 @@
 #define IDC_BUTTON_SELECT_TILE          1023
 #define IDC_PIC                         1024
 #define IDC_BTN_TILEOPTION              1025
+#define IDC_EDIT_ANIMNAME               1026
+#define IDC_EDIT_STARTFRAME             1027
+#define IDC_EDIT_ENDFRAME               1028
+#define IDC_EDIT__ANIMPLAYTIME          1029
+#define IDC_BUTTON_ANIMADD              1030
+#define IDC_BUTTON_ANIMMODIFY           1031
+#define IDC_LIST_ANIMLIST               1032
+#define IDC_COMBO_ANIMOPTION            1033
+#define IDC_BUTTON__LOADFBX             1034
+#define IDC_BUTTON_SAVECLIP             1035
+#define IDC_BUTTON_LOADCLIP             1037
+#define IDC_BUTTON_SAVEMESH             1038
+#define IDC_BUTTON_LOADMESH             1039
+#define IDC_EDIT10                      1047
 #define ID_GAMEOBJECT_MONSTER           32771
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        317
+#define _APS_NEXT_RESOURCE_VALUE        318
 #define _APS_NEXT_COMMAND_VALUE         32772
-#define _APS_NEXT_CONTROL_VALUE         1026
+#define _APS_NEXT_CONTROL_VALUE         1037
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

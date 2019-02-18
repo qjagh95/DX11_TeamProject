@@ -3,8 +3,9 @@
 
 // CEditorForm 폼 뷰
 #include "GameObject.h"
-#include "Component/Stage2D.h"
 #include "Component/Transform.h"
+#include "Component/Animation.h"
+#include "Component/Renderer.h"
 #include "afxwin.h"
 
 PUN_USING
@@ -39,7 +40,10 @@ public:
 	Vector3	m_vScale;
 	Vector3	m_vRot;
 	Vector3	m_vPos;
-	afx_msg void OnEnChangeEditName();
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	virtual void OnInitialUpdate();
+
+	afx_msg void OnCbnSelchangeComboAnimCombo();
 	afx_msg void OnEnChangeEditScalex();
 	afx_msg void OnEnChangeEditScaley();
 	afx_msg void OnEnChangeEditScalez();
@@ -49,61 +53,26 @@ public:
 	afx_msg void OnEnChangeEditPosx();
 	afx_msg void OnEnChangeEditPosy();
 	afx_msg void OnEnChangeEditPosz();
-	afx_msg void OnBnClickedButtonCreatestage();
-	int m_iTileNumX;	
-	int m_iTileNumY;
-	int m_iTileSizeX;
-	int m_iTileSizeY;
-	CComboBox		m_TileTypeCombo;
-	CGameObject*	m_pStageObj;
-	CStage2D*		m_pStage;
-	CTransform*		m_pStageTr;
-	CGameObject*	m_pTileObj;
-	CTile2D*		m_pTile;
-	CTransform*		m_pTileTr;
-	CImage			m_Image;
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	virtual void OnInitialUpdate();
+	CString m_strName;
+	afx_msg void OnEnChangeEditAnimname();
+	int m_iStartFrame;
+	afx_msg void OnEnChangeEditStartframe();
+	int m_iEndFrame;
+	afx_msg void OnEnChangeEditEndframe();
+	float m_fPlayTime;
+	afx_msg void OnEnChangeEdit();
+	CListBox m_ClipList;
+	afx_msg void OnLbnSelchangeListAnimlist();
+	CComboBox m_OptionCombo;
 
-public:
-	CGameObject*	GetStageObj()	const
-	{
-		return m_pStageObj;
-	}
-
-	CStage2D*	GetStage()	const
-	{
-		return m_pStage;
-	}
-
-	CTransform* GetStageTr()	const
-	{
-		return m_pStageTr;
-	}
-
-	CComboBox m_TileOptionCombo;
-
-	int GetTileOption()	const
-	{
-		return m_TileOptionCombo.GetCurSel();
-	}
-
-	CComboBox m_TileShapeCombo;
-
-	int GetTileShape()	const
-	{
-		return m_TileShapeCombo.GetCurSel();
-	}
-
-public:
-	void SaveStage(const CString& strFullPath);
-	void LoadStage(const CString& strFullPath);
-
-	afx_msg void OnBnClickedButtonLoad();
-	afx_msg void OnBnClickedButtonSave();
-	afx_msg void OnCbnSelchangeComboTileshape();
-	virtual void OnDraw(CDC* /*pDC*/);
-	afx_msg void OnBnClickedButtonSelectTile();
-	afx_msg void OnBnClickedPic();
-	CStatic m_pPic;
+	CGameObject*	m_pAnimObj;
+	CAnimation*		m_pAnimation;
+	CRenderer*		m_pAnimRenderer;
+	afx_msg void OnBnClickedButtonSaveclip();
+	afx_msg void OnBnClickedButtonLoadclip();
+	afx_msg void OnBnClickedButtonSavemesh();
+	afx_msg void OnBnClickedButtonLoadmesh();
+	afx_msg void OnBnClickedButtonAnimadd();
+	afx_msg void OnBnClickedButtonAnimmodify();
+	afx_msg void OnBnClickedButtonLoadFbx();
 };

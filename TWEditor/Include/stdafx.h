@@ -40,7 +40,7 @@
 #include <atlimage.h>
 
 #include <EngineHeader.h>
-#include <Core.h>
+#include "Core.h"
 PUN_USING
 
 

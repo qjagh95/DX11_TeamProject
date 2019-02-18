@@ -15,7 +15,9 @@ CAnimation::CAnimation() :
 	m_fAnimationGlobalTime(0.f),
 	m_fClipProgress(0.f),
 	m_fChangeTime(0.f),
-	m_fChangeLimitTime(0.25f)
+	m_fChangeLimitTime(0.25f),
+	m_fFrameTime(-1.f),
+	m_iFrameMode(0)
 {
 	m_eComType = CT_ANIMATION;
 }
@@ -29,6 +31,8 @@ CAnimation::CAnimation(const CAnimation & anim) :
 	m_fClipProgress = 0.f;
 	m_fChangeTime = 0.f;
 	m_fChangeLimitTime = anim.m_fChangeLimitTime;
+	m_fFrameTime = anim.m_fFrameTime;
+	m_iFrameMode = anim.m_iFrameMode;
 
 	m_vecBones = anim.m_vecBones;
 
@@ -249,6 +253,12 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 
 	pAnimClip->fFrameTime = 1.f / pAnimClip->iFrameMode;
 
+	if (m_iFrameMode == 0)
+	{
+		m_iFrameMode = pAnimClip->iFrameMode;
+		m_fFrameTime = pAnimClip->fFrameTime;
+	}
+
 	if (m_mapClip.empty())
 	{
 		m_pDefaultClip = pAnimClip;
@@ -256,6 +266,39 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 	}
 
 	m_mapClip.insert(make_pair(pAnimClip->strName, pAnimClip));
+}
+
+void CAnimation::AddClip(const TCHAR * pFullPath)
+{
+	char	strFullPath[MAX_PATH] = {};
+
+#ifdef UNICODE
+	WideCharToMultiByte(CP_UTF8, 0, pFullPath, -1, strFullPath, lstrlen(pFullPath),
+		0, 0);
+#else
+	strcpy_s(strFullPath, pFullPath);
+#endif // UNICODE
+
+	AddClipFromMultibyte(strFullPath);
+}
+
+void CAnimation::AddClipFromMultibyte(const char * pFullPath)
+{
+	char	strExt[_MAX_EXT] = {};
+
+	_splitpath_s(pFullPath, 0, 0, 0, 0, 0, 0, strExt, _MAX_EXT);
+
+	_strupr_s(strExt);
+
+	if (strcmp(strExt, ".FBX") == 0)
+	{
+		LoadFbxAnimation(pFullPath);
+	}
+
+	else
+	{
+		LoadFromFullPath(pFullPath);
+	}
 }
 
 PANIMATIONCLIP CAnimation::FindClip(const string & strName)
@@ -271,6 +314,11 @@ PANIMATIONCLIP CAnimation::FindClip(const string & strName)
 bool CAnimation::IsAnimationEnd() const
 {
 	return m_bEnd;
+}
+
+PANIMATIONCLIP CAnimation::GetCurrentClip() const
+{
+	return m_pCurClip;
 }
 
 void CAnimation::ChangeClipKey(const string & strOrigin,
@@ -399,35 +447,16 @@ bool CAnimation::SaveFromFullPath(const char * pFullPath)
 	fopen_s(&pFile, pFullPath, "wb");
 
 	if (!pFile)
-		return false;
-
-	// ===================== 본 정보 저장 =====================
-	size_t	iCount = m_vecBones.size();
-
-	fwrite(&iCount, sizeof(size_t), 1, pFile);
-
-	size_t	iLength = 0;
-
-	for (size_t i = 0; i < iCount; ++i)
-	{
-		iLength = m_vecBones[i]->strName.length();
-		fwrite(&iLength, sizeof(size_t), 1, pFile);
-		fwrite(m_vecBones[i]->strName.c_str(), sizeof(char), iLength, pFile);
-
-		fwrite(&m_vecBones[i]->iDepth, sizeof(int), 1, pFile);
-		fwrite(&m_vecBones[i]->iParentIndex, sizeof(int), 1, pFile);
-		fwrite(&m_vecBones[i]->matOffset->matrix, sizeof(XMMATRIX), 1, pFile);
-		fwrite(&m_vecBones[i]->matBone->matrix, sizeof(XMMATRIX), 1, pFile);
-	}
+		return false;	
 
 	fwrite(&m_fChangeLimitTime, sizeof(float), 1, pFile);
 
 	// 애니메이션 클립정보를 저장한다.
-	iCount = m_mapClip.size();
+	size_t iCount = m_mapClip.size();
 
 	fwrite(&iCount, sizeof(size_t), 1, pFile);
 
-	iLength = m_pDefaultClip->strName.length();
+	size_t iLength = m_pDefaultClip->strName.length();
 	fwrite(&iLength, sizeof(size_t), 1, pFile);
 	fwrite(m_pDefaultClip->strName.c_str(), sizeof(char),
 		iLength, pFile);
@@ -538,35 +567,11 @@ bool CAnimation::LoadFromFullPath(const char * pFullPath)
 
 	if (!pFile)
 		return false;
-
-	// ===================== 본 정보 읽기 =====================
-	size_t	iCount = 0;
-
-	fread(&iCount, sizeof(size_t), 1, pFile);
-
-	size_t	iLength = 0;
-
-	for (size_t i = 0; i < iCount; ++i)
-	{
-		PBONE	pBone = new BONE;
-		m_vecBones.push_back(pBone);
-
-		pBone->matBone = new Matrix;
-		pBone->matOffset = new Matrix;
-
-		char	strBoneName[256] = {};
-		fread(&iLength, sizeof(size_t), 1, pFile);
-		fread(strBoneName, sizeof(char), iLength, pFile);
-
-		fread(&pBone->iDepth, sizeof(int), 1, pFile);
-		fread(&pBone->iParentIndex, sizeof(int), 1, pFile);
-		fread(&pBone->matOffset->matrix, sizeof(XMMATRIX), 1, pFile);
-		fread(&pBone->matBone->matrix, sizeof(XMMATRIX), 1, pFile);
-	}
-
+	
 	fread(&m_fChangeLimitTime, sizeof(float), 1, pFile);
 
 	// 애니메이션 클립정보를 저장한다.
+	size_t iCount = 0, iLength = 0;
 	fread(&iCount, sizeof(size_t), 1, pFile);
 
 	char	strDefaultClip[256] = {};
@@ -643,6 +648,164 @@ bool CAnimation::LoadFromFullPath(const char * pFullPath)
 	return true;
 }
 
+bool CAnimation::SaveBone(const TCHAR * pFileName, const string & strPathKey)
+{
+	char	strFileName[MAX_PATH] = {};
+
+#ifdef UNICODE
+	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName),
+		NULL, NULL);
+#else
+	strcpy_s(strFileName, pFileName);
+#endif // UNICODE
+
+	return SaveBone(strFileName, strPathKey);
+}
+
+bool CAnimation::SaveBone(const char * pFileName, const string & strPathKey)
+{
+	const char*	pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);
+
+	string	strFullPath;
+
+	if (pPath)
+		strFullPath = pPath;
+
+	strFullPath += pFileName;
+
+	return SaveBoneFromFullPath(strFullPath.c_str());
+}
+
+bool CAnimation::SaveBoneFromFullPath(const TCHAR * pFullPath)
+{
+	char	strFileName[MAX_PATH] = {};
+
+#ifdef UNICODE
+	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath),
+		NULL, NULL);
+#else
+	strcpy_s(strFileName, pFileName);
+#endif // UNICODE
+
+	return SaveBoneFromFullPath(strFileName);
+}
+
+bool CAnimation::SaveBoneFromFullPath(const char * pFullPath)
+{
+	FILE*	pFile = NULL;
+
+	fopen_s(&pFile, pFullPath, "wb");
+
+	if (!pFile)
+		return false;
+
+	// ===================== 본 정보 저장 =====================
+	size_t	iCount = m_vecBones.size();
+
+	fwrite(&iCount, sizeof(size_t), 1, pFile);
+
+	size_t	iLength = 0;
+
+	for (size_t i = 0; i < iCount; ++i)
+	{
+		iLength = m_vecBones[i]->strName.length();
+		fwrite(&iLength, sizeof(size_t), 1, pFile);
+		fwrite(m_vecBones[i]->strName.c_str(), sizeof(char), iLength, pFile);
+
+		fwrite(&m_vecBones[i]->iDepth, sizeof(int), 1, pFile);
+		fwrite(&m_vecBones[i]->iParentIndex, sizeof(int), 1, pFile);
+		fwrite(&m_vecBones[i]->matOffset->matrix, sizeof(XMMATRIX), 1, pFile);
+		fwrite(&m_vecBones[i]->matBone->matrix, sizeof(XMMATRIX), 1, pFile);
+	}
+
+	fclose(pFile);
+
+	return true;
+}
+
+
+bool CAnimation::LoadBone(const TCHAR * pFileName, const string & strPathKey)
+{
+	char	strFileName[MAX_PATH] = {};
+
+#ifdef UNICODE
+	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName),
+		NULL, NULL);
+#else
+	strcpy_s(strFileName, pFileName);
+#endif // UNICODE
+
+	return LoadBone(strFileName, strPathKey);
+}
+
+bool CAnimation::LoadBone(const char * pFileName, const string & strPathKey)
+{
+	const char*	pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);
+
+	string	strFullPath;
+
+	if (pPath)
+		strFullPath = pPath;
+
+	strFullPath += pFileName;
+
+	return LoadBoneFromFullPath(strFullPath.c_str());
+}
+
+bool CAnimation::LoadBoneFromFullPath(const TCHAR * pFullPath)
+{
+	char	strFileName[MAX_PATH] = {};
+
+#ifdef UNICODE
+	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath),
+		NULL, NULL);
+#else
+	strcpy_s(strFileName, pFileName);
+#endif // UNICODE
+
+	return LoadBoneFromFullPath(strFileName);
+}
+
+bool CAnimation::LoadBoneFromFullPath(const char * pFullPath)
+{
+	FILE*	pFile = NULL;
+
+	fopen_s(&pFile, pFullPath, "rb");
+
+	if (!pFile)
+		return false;
+
+	// ===================== 본 정보 읽기 =====================
+	size_t	iCount = 0;
+
+	fread(&iCount, sizeof(size_t), 1, pFile);
+
+	size_t	iLength = 0;
+
+	for (size_t i = 0; i < iCount; ++i)
+	{
+		PBONE	pBone = new BONE;
+		m_vecBones.push_back(pBone);
+
+		pBone->matBone = new Matrix;
+		pBone->matOffset = new Matrix;
+
+		char	strBoneName[256] = {};
+		fread(&iLength, sizeof(size_t), 1, pFile);
+		fread(strBoneName, sizeof(char), iLength, pFile);
+		pBone->strName = strBoneName;
+
+		fread(&pBone->iDepth, sizeof(int), 1, pFile);
+		fread(&pBone->iParentIndex, sizeof(int), 1, pFile);
+		fread(&pBone->matOffset->matrix, sizeof(XMMATRIX), 1, pFile);
+		fread(&pBone->matBone->matrix, sizeof(XMMATRIX), 1, pFile);
+	}
+
+	fclose(pFile);
+
+	return true;
+}
+
 bool CAnimation::ModifyClip(const string & strKey,
 	const string & strChangeKey, ANIMATION_OPTION eOption,
 	int iStartFrame, int iEndFrame)
@@ -666,13 +829,7 @@ bool CAnimation::ModifyClip(const string & strKey,
 	pClip->fTimeLength = pClip->fEndTime - pClip->fStartTime;
 
 	m_mapClip.insert(make_pair(strChangeKey, pClip));
-
-	if (m_pDefaultClip->strName == strKey)
-		m_pDefaultClip->strName = strChangeKey;
-
-	if (m_pCurClip->strName == strKey)
-		m_pCurClip->strName = strChangeKey;
-
+	
 	return true;
 }
 
@@ -706,6 +863,25 @@ bool CAnimation::ReturnDefaultClip()
 	ChangeClip(m_pDefaultClip->strName);
 
 	return true;
+}
+
+void CAnimation::LoadFbxAnimation(const char * pFullPath)
+{
+	CFbxLoader	loader;
+
+	loader.LoadFbx(pFullPath);
+
+	// 애니메이션 클립을 추가한다.
+	const vector<PFBXANIMATIONCLIP>* pvecClip = loader.GetClips();
+
+	// 클립을 읽어온다.
+	vector<PFBXANIMATIONCLIP>::const_iterator	iterC;
+	vector<PFBXANIMATIONCLIP>::const_iterator	iterCEnd = pvecClip->end();
+
+	for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
+	{
+		AddClip(AO_LOOP, *iterC);
+	}
 }
 
 void CAnimation::Start()

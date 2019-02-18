@@ -89,7 +89,7 @@ void CTWEditorView::OnInitialUpdate()
 	CView::OnInitialUpdate(); 
 
 	GET_SINGLE(CCore)->Init(AfxGetInstanceHandle(), m_hWnd, 1280, 720);
-	CCore::GetInst()->SetGameMode(GM_2D);
+	CCore::GetInst()->SetGameMode(GM_3D);
 
 	// Edit Scene 추가
 	GET_SINGLE(CSceneManager)->AddSceneComponent<CEditScene>("EditScene");

@@ -370,7 +370,7 @@ bool CResourcesManager::LoadMeshFromFullPath(const string & strName, const TCHAR
 
 	pMesh = new CMesh;
 
-	if (!pMesh->LoadMesh(strName, pFullPath))
+	if (!pMesh->LoadMeshFromFullPath(strName, pFullPath))
 	{
 		SAFE_RELEASE(pMesh);
 		return false;

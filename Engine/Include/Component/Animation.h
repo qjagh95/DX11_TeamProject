@@ -123,6 +123,8 @@ private:
 	float					m_fClipProgress;
 	float					m_fChangeTime;
 	float					m_fChangeLimitTime;
+	float					m_fFrameTime;
+	int						m_iFrameMode;
 	vector<Matrix*>			m_vecBoneMatrix;
 	Vector3					m_vBlendScale;
 	Vector4					m_vBlendRot;
@@ -133,8 +135,11 @@ public:
 	bool CreateBoneTexture();
 	void AddClip(ANIMATION_OPTION eOption,
 		struct _tagFbxAnimationClip* pClip);
+	void AddClip(const TCHAR* pFullPath);
+	void AddClipFromMultibyte(const char* pFullPath);
 	PANIMATIONCLIP FindClip(const string& strName);
 	bool IsAnimationEnd()	const;
+	PANIMATIONCLIP GetCurrentClip()	const;
 
 public:
 	void ChangeClipKey(const string& strOrigin, const string& strChange);
@@ -151,10 +156,21 @@ public:
 	bool Load(const char* pFileName, const string& strPathKey = MESH_PATH);
 	bool LoadFromFullPath(const TCHAR* pFullPath);
 	bool LoadFromFullPath(const char* pFullPath);
+	bool SaveBone(const TCHAR* pFileName, const string& strPathKey = MESH_PATH);
+	bool SaveBone(const char* pFileName, const string& strPathKey = MESH_PATH);
+	bool SaveBoneFromFullPath(const TCHAR* pFullPath);
+	bool SaveBoneFromFullPath(const char* pFullPath);
+	bool LoadBone(const TCHAR* pFileName, const string& strPathKey = MESH_PATH);
+	bool LoadBone(const char* pFileName, const string& strPathKey = MESH_PATH);
+	bool LoadBoneFromFullPath(const TCHAR* pFullPath);
+	bool LoadBoneFromFullPath(const char* pFullPath);
 	bool ModifyClip(const string& strKey, const string& strChangeKey,
 		ANIMATION_OPTION eOption, int iStartFrame, int iEndFrame);
 	bool DeleteClip(const string& strKey);
 	bool ReturnDefaultClip();
+
+private:
+	void LoadFbxAnimation(const char* pFullPath);
 
 public:
 	virtual void Start();

@@ -16,44 +16,54 @@
 #include "Core.h"
 #include "../MainFrm.h"
 #include "../EditorForm.h"
-#include "Component/Tile2D.h"
 #include "Input.h"
+#include "Component/Light.h"
 
 CEditScene::CEditScene()
 {
-	m_bTile = false;
 }
 
 CEditScene::~CEditScene()
 {
-	if (m_bTile)
-	{
-		SAFE_RELEASE(m_pTileObj);
-		//SAFE_RELEASE(m_pTile);
-		SAFE_RELEASE(m_pTileTr);
-	}
 }
 
 bool CEditScene::Init()
-{
+{	
+	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
+	CLayer*	pLayer = pScene->FindLayer("Default");
 
-	CCamera*	pCamera = m_pScene->GetMainCamera();
+	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight1",
+		pLayer);
 
-	pCamera->SetCameraType(CT_ORTHO);
-	pCamera->SetNear(0.f);
-	//pCamera->SetWorldSize(Vector3(8960.f, 5040.f, 0.f));
+	CTransform* pTransform = pLightObj->GetTransform();
 
-	SAFE_RELEASE(pCamera);	
-		
+	pTransform->SetWorldRot(90.f, 0.f, 0.f);
+	pTransform->SetWorldPos(0.f, 4.f, 0.f);
+
+	SAFE_RELEASE(pTransform);
+
+	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight1");
+
+	pLight->SetLightColor(Vector4::HotPink, Vector4::HotPink,
+		Vector4::HotPink);
+	pLight->SetLightType(LT_SPOT);
+	pLight->SetLightRange(10.f);
+	pLight->SetAngle(60.f, 90.f);
+
+	SAFE_RELEASE(pLight);
+
+	SAFE_RELEASE(pLightObj);
+
+	SAFE_RELEASE(pScene);
+	SAFE_RELEASE(pLayer);
+
 	return true;
-}
-
-int CEditScene::Input(float fTime)
-{
-	return 0;
 }
 
 int CEditScene::Update(float fTime)
 {
+	CMainFrame*	pMainFrame = (CMainFrame*)AfxGetMainWnd();
+	CEditorForm*	pForm = pMainFrame->GetEditorForm();
+
 	return 0;
 }

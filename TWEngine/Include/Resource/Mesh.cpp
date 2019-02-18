@@ -665,6 +665,9 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 
 	if (m_pAnimation)
 	{
+		memcpy(&strFullPath[iPathLength - 3], "bne", 3);
+		m_pAnimation->SaveBoneFromFullPath(strFullPath);
+
 		memcpy(&strFullPath[iPathLength - 3], "anm", 3);
 		m_pAnimation->SaveFromFullPath(strFullPath);
 	}

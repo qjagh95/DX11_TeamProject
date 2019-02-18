@@ -91,14 +91,13 @@ bool CInput::Init()
 		return false;
 
 	if (FAILED(m_pKeyboard->SetDataFormat(&c_dfDIKeyboard)))
-		return false;
+		return false;	
 
-	if (FAILED(m_pKeyboard->SetCooperativeLevel(WINDOWHANDLE, DISCL_EXCLUSIVE | DISCL_FOREGROUND)))
-		return false;
+	/*if (FAILED(m_pKeyboard->SetCooperativeLevel(WINDOWHANDLE, DISCL_EXCLUSIVE | DISCL_FOREGROUND)))
+		return false;*/
 	
 	//if (FAILED(m_pKeyboard->Acquire()))
 	//	return false;
-	m_pKeyboard->Acquire();
 
 	m_pMouse = CGameObject::CreateObject("MouseObj");
 

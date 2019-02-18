@@ -150,7 +150,7 @@ bool CScene::Init()
 
 	m_pUICameraTr = m_pUICameraObj->GetTransform();
 	m_pUICamera = m_pUICameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
-
+	
 	CLayer*	pLayer = FindLayer("Default");
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLayer);
 	CTransform*	pTransform = pLightObj->GetTransform();
@@ -162,7 +162,7 @@ bool CScene::Init()
 
 	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight");
 	pLight->SetLightColor(Vector4::Gold, Vector4::Gold,	Vector4::Gold);
-	pLight->SetLightType(LT_SPOT);
+	pLight->SetLightType(LT_DIR);
 	pLight->SetLightRange(10.f);
 	pLight->SetAngle(60.f, 90.f);
 

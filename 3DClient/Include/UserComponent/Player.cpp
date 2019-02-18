@@ -49,13 +49,13 @@ bool CPlayer::Init()
 
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
 	
-	pRenderer->SetMesh("Player", TEXT("Monster4.msh"));
+	pRenderer->SetMesh("Player", TEXT("Monster4.fbx"));
 
 	SAFE_RELEASE(pRenderer);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation>("Animation");
 
-	m_pAnimation->Load("Monster4.anm");
+	//m_pAnimation->Load("Monster4.anm");
 
 	return true;
 }

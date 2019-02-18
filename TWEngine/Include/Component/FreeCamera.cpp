@@ -34,25 +34,25 @@ bool CFreeCamera::Init()
 
 int CFreeCamera::Input(float fTime)
 {
-	//if (KEYPUSH("CameraFront"))
-	//{
-	//	m_pTransform->Move(AXIS_Y, m_fSpeed, fTime);
-	//}
+	if (GetAsyncKeyState('A') & 0x8000)
+	{
+		m_pTransform->RotationZ(180.f, fTime);
+	}
 
-	//if (KEYPUSH("CameraBack"))
-	//{
-	//	m_pTransform->Move(AXIS_Y, -m_fSpeed, fTime);
-	//}
+	if (GetAsyncKeyState('D') & 0x8000)
+	{
+		m_pTransform->RotationZ(-180.f, fTime);
+	}
 
-	//if (KEYPUSH("CameraLeft"))
-	//{
-	//	m_pTransform->Move(AXIS_X, -m_fSpeed, fTime);
-	//}
+	if (GetAsyncKeyState('W') & 0x8000)
+	{
+		m_pTransform->Move(AXIS_Z, 400.f, fTime);
+	}
 
-	//if (KEYPUSH("CameraRight"))
-	//{
-	//	m_pTransform->Move(AXIS_X, m_fSpeed, fTime);
-	//}
+	if (GetAsyncKeyState('S') & 0x8000)
+	{
+		m_pTransform->Move(AXIS_Z, -400.f, fTime);
+	}
 
 	return 0;
 }

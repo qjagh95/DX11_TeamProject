@@ -89,6 +89,7 @@ enum PUN_DLL FBX_LOAD_TYPE
 class PUN_DLL CFbxLoader
 {
 	friend class CMesh;
+	friend class CAnimation;
 
 private:
 	FbxManager*		m_pManager;

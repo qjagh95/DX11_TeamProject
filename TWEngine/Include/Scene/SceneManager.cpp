@@ -44,7 +44,6 @@ CScene * CSceneManager::GetNextSceneNonCount() const
 	return m_pNextScene;
 }
 
-
 bool CSceneManager::Init()
 {
 	m_pScene = new CScene;

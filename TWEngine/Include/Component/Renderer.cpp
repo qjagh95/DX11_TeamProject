@@ -162,6 +162,40 @@ void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName,
 	}
 }
 
+void CRenderer::SetMeshFromFullPath(const string & strKey, const TCHAR * pFullPath)
+{
+	SAFE_RELEASE(m_pMesh);
+	GET_SINGLE(CResourcesManager)->LoadMeshFromFullPath(strKey,
+		pFullPath);
+	m_pMesh = GET_SINGLE(CResourcesManager)->FindMesh(strKey);
+
+	if (m_pMesh)
+	{
+		SetShader(m_pMesh->GetShaderKey());
+		SetInputLayout(m_pMesh->GetInputLayoutKey());
+
+
+		CMaterial*	pMaterial = m_pMesh->CloneMaterial();
+
+		if (pMaterial)
+		{
+			SAFE_RELEASE(m_pMaterial);
+			m_pMaterial = pMaterial;
+			m_pObject->RemoveComponentFromType(CT_MATERIAL);
+			m_pObject->AddComponent(m_pMaterial);
+		}
+
+		CAnimation*	pAnimation = m_pMesh->CloneAnimation();
+
+		if (pAnimation)
+		{
+			m_pObject->RemoveComponentFromType(CT_ANIMATION);
+			m_pObject->AddComponent(pAnimation);
+			SAFE_RELEASE(pAnimation);
+		}
+	}
+}
+
 void CRenderer::SetShader(CShader * pShader)
 {
 	SAFE_RELEASE(m_pShader);
