@@ -48,7 +48,9 @@
 #define IDC_BUTTON_LOADCLIP             1037
 #define IDC_BUTTON_SAVEMESH             1038
 #define IDC_BUTTON_LOADMESH             1039
-#define IDC_EDIT10                      1047
+#define IDC_CHECK_CLIPDIVIDE            1041
+#define IDC_BUTTON1                     1042
+#define IDC_BUTTON_SENDCLIENT           1042
 #define ID_GAMEOBJECT_MONSTER           32771
 
 // Next default values for new objects
@@ -57,7 +59,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        318
 #define _APS_NEXT_COMMAND_VALUE         32772
-#define _APS_NEXT_CONTROL_VALUE         1037
+#define _APS_NEXT_CONTROL_VALUE         1043
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

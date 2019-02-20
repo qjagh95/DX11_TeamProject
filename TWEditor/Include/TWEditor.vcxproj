@@ -237,6 +237,7 @@
     <ResourceCompile Include="TWEditor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\EditorCopy.bat" />
     <None Include="res\TWEditor.rc2" />
   </ItemGroup>
   <ItemGroup>

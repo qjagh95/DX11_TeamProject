@@ -16,7 +16,7 @@ CAnimation::CAnimation() :
 	m_fClipProgress(0.f),
 	m_fChangeTime(0.f),
 	m_fChangeLimitTime(0.25f),
-	m_fFrameTime(-1.f),
+	m_fFrameTime(1.f / 30.f),
 	m_iFrameMode(0)
 {
 	m_eComType = CT_ANIMATION;
@@ -124,6 +124,11 @@ CAnimation::~CAnimation()
 	m_vecBones.clear();
 }
 
+const list<string>* CAnimation::GetAddClipName() const
+{
+	return &m_strAddClipName;
+}
+
 void CAnimation::AddBone(PBONE pBone)
 {
 	m_vecBones.push_back(pBone);
@@ -187,6 +192,19 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 
 	pAnimClip->iChangeFrame = 0;
 
+	switch (pClip->eTimeMode)
+	{
+	case FbxTime::eFrames24:
+		pAnimClip->iFrameMode = 24;
+		break;
+	case FbxTime::eFrames30:
+		pAnimClip->iFrameMode = 30;
+		break;
+	case FbxTime::eFrames60:
+		pAnimClip->iFrameMode = 60;
+		break;
+	}
+
 	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
 	pAnimClip->iStartFrame = pClip->tStart.GetFrameCount(pClip->eTimeMode);
 	pAnimClip->iEndFrame = pClip->tEnd.GetFrameCount(pClip->eTimeMode);
@@ -237,21 +255,8 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 			pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
 		}
 	}
-
-	switch (pClip->eTimeMode)
-	{
-	case FbxTime::eFrames24:
-		pAnimClip->iFrameMode = 24;
-		break;
-	case FbxTime::eFrames30:
-		pAnimClip->iFrameMode = 30;
-		break;
-	case FbxTime::eFrames60:
-		pAnimClip->iFrameMode = 60;
-		break;
-	}
-
-	pAnimClip->fFrameTime = 1.f / pAnimClip->iFrameMode;
+	
+	pAnimClip->fFrameTime = pAnimClip->fPlayTime / pAnimClip->iFrameLength;
 
 	if (m_iFrameMode == 0)
 	{
@@ -264,6 +269,88 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 		m_pDefaultClip = pAnimClip;
 		m_pCurClip = pAnimClip;
 	}
+
+	m_strAddClipName.clear();
+
+	m_strAddClipName.push_back(pAnimClip->strName);
+
+	m_mapClip.insert(make_pair(pAnimClip->strName, pAnimClip));
+}
+
+void CAnimation::AddClip(const string & strName, ANIMATION_OPTION eOption, 
+	int iStartFrame, int iEndFrame)
+{
+}
+
+void CAnimation::AddClip(const string & strName, ANIMATION_OPTION eOption, 
+	int iStartFrame, int iEndFrame, float fPlayTime, 
+	const vector<PBONEKEYFRAME>& vecFrame)
+{
+	PANIMATIONCLIP	pAnimClip = FindClip(strName);
+
+	if (pAnimClip)
+		return;
+
+	pAnimClip = new ANIMATIONCLIP;
+
+	// 인자로 들어온 애니메이션 옵션정보를 설정한다.
+	pAnimClip->eOption = eOption;
+	pAnimClip->strName = strName;
+
+	pAnimClip->iChangeFrame = 0;
+
+	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
+	pAnimClip->iStartFrame = 0;
+	pAnimClip->iEndFrame = iEndFrame - iStartFrame;
+	pAnimClip->iFrameLength = pAnimClip->iEndFrame - pAnimClip->iStartFrame + 1;
+
+	pAnimClip->fPlayTime = fPlayTime;
+	pAnimClip->fFrameTime = fPlayTime / pAnimClip->iFrameLength;
+
+	// 시간 정보를 저장해준다.
+	pAnimClip->fStartTime = 0.f;
+	pAnimClip->fEndTime = pAnimClip->iEndFrame * pAnimClip->fFrameTime;
+	pAnimClip->fTimeLength = pAnimClip->fEndTime - pAnimClip->fStartTime;
+
+
+	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
+	// 뽑아온다.
+	for (size_t i = 0; i < vecFrame.size(); ++i)
+	{
+		PBONEKEYFRAME	pBoneKeyFrame = new BONEKEYFRAME;
+
+		pBoneKeyFrame->iBoneIndex = vecFrame[i]->iBoneIndex;
+
+		pAnimClip->vecKeyFrame.push_back(pBoneKeyFrame);
+
+		// 아래부터 키프레임 정보를 저장한다.
+		pBoneKeyFrame->vecKeyFrame.reserve(pAnimClip->iFrameLength);
+
+		if (!vecFrame[i]->vecKeyFrame.empty())
+		{
+			for (size_t j = iStartFrame; j <= iEndFrame; ++j)
+			{
+				PKEYFRAME	pKeyFrame = new KEYFRAME;
+
+				pKeyFrame->dTime = (j - iStartFrame) * pAnimClip->fFrameTime;
+				pKeyFrame->vScale = vecFrame[i]->vecKeyFrame[j]->vScale;
+				pKeyFrame->vRot = vecFrame[i]->vecKeyFrame[j]->vRot;
+				pKeyFrame->vPos = vecFrame[i]->vecKeyFrame[j]->vPos;
+
+				pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
+			}
+		}
+	}
+
+	if (m_mapClip.empty())
+	{
+		m_pDefaultClip = pAnimClip;
+		m_pCurClip = pAnimClip;
+	}
+
+	m_strAddClipName.clear();
+
+	m_strAddClipName.push_back(pAnimClip->strName);
 
 	m_mapClip.insert(make_pair(pAnimClip->strName, pAnimClip));
 }
@@ -319,6 +406,29 @@ bool CAnimation::IsAnimationEnd() const
 PANIMATIONCLIP CAnimation::GetCurrentClip() const
 {
 	return m_pCurClip;
+}
+
+void CAnimation::GetCurrentKeyFrame(vector<PBONEKEYFRAME>& vecFrame)
+{
+	for (size_t i = 0; i < m_pCurClip->vecKeyFrame.size(); ++i)
+	{
+		PBONEKEYFRAME	pBoneFrame = new BONEKEYFRAME;
+		vecFrame.push_back(pBoneFrame);
+
+		pBoneFrame->iBoneIndex = m_pCurClip->vecKeyFrame[i]->iBoneIndex;
+
+		for (size_t j = 0; j < m_pCurClip->vecKeyFrame[i]->vecKeyFrame.size(); ++j)
+		{
+			PKEYFRAME	pFrame = new KEYFRAME;
+
+			pFrame->dTime = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[j]->dTime;
+			pFrame->vScale = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[j]->vScale;
+			pFrame->vPos = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[j]->vPos;
+			pFrame->vRot = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[j]->vRot;
+
+			pBoneFrame->vecKeyFrame.push_back(pFrame);
+		}
+	}
 }
 
 void CAnimation::ChangeClipKey(const string & strOrigin,
@@ -449,6 +559,7 @@ bool CAnimation::SaveFromFullPath(const char * pFullPath)
 	if (!pFile)
 		return false;	
 
+	fwrite(&m_iFrameMode, sizeof(float), 1, pFile);
 	fwrite(&m_fChangeLimitTime, sizeof(float), 1, pFile);
 
 	// 애니메이션 클립정보를 저장한다.
@@ -567,7 +678,8 @@ bool CAnimation::LoadFromFullPath(const char * pFullPath)
 
 	if (!pFile)
 		return false;
-	
+
+	fread(&m_iFrameMode, sizeof(float), 1, pFile);
 	fread(&m_fChangeLimitTime, sizeof(float), 1, pFile);
 
 	// 애니메이션 클립정보를 저장한다.
@@ -583,6 +695,8 @@ bool CAnimation::LoadFromFullPath(const char * pFullPath)
 	fread(&iLength, sizeof(size_t), 1, pFile);
 	fread(strCurClip, sizeof(char), iLength, pFile);
 
+	m_strAddClipName.clear();
+
 	for (int l = 0; l < iCount; ++l)
 	{
 		PANIMATIONCLIP	pClip = new ANIMATIONCLIP;
@@ -591,6 +705,8 @@ bool CAnimation::LoadFromFullPath(const char * pFullPath)
 		char	strClipName[256] = {};
 		fread(&iLength, sizeof(size_t), 1, pFile);
 		fread(strClipName, sizeof(char), iLength, pFile);
+
+		m_strAddClipName.push_back(strClipName);
 
 		m_mapClip.insert(make_pair(strClipName, pClip));
 
@@ -806,9 +922,29 @@ bool CAnimation::LoadBoneFromFullPath(const char * pFullPath)
 	return true;
 }
 
+bool CAnimation::LoadBoneAndAnimationFullPath(const TCHAR * pFullPath)
+{
+	// 본 파일로 이름을 변환한다.
+	TCHAR	strBone[MAX_PATH] = {};
+
+	lstrcpy(strBone, pFullPath);
+
+	int	iLength = lstrlen(strBone);
+
+	strBone[iLength - 3] = 'b';
+	strBone[iLength - 2] = 'n';
+	strBone[iLength - 1] = 'e';
+
+	if (!LoadBoneFromFullPath(strBone))
+		return false;
+
+	return LoadFromFullPath(pFullPath);
+}
+
 bool CAnimation::ModifyClip(const string & strKey,
 	const string & strChangeKey, ANIMATION_OPTION eOption,
-	int iStartFrame, int iEndFrame)
+	int iStartFrame, int iEndFrame, float fPlayTime, 
+	const vector<PBONEKEYFRAME>& vecFrame)
 {
 	PANIMATIONCLIP	pClip = FindClip(strKey);
 
@@ -817,19 +953,52 @@ bool CAnimation::ModifyClip(const string & strKey,
 
 	m_mapClip.erase(strKey);
 
-	int	iLength = iEndFrame - iStartFrame;
+	int	iLength = iEndFrame - iStartFrame + 1;
 
+	pClip->fPlayTime = fPlayTime;
+	pClip->fFrameTime = pClip->fPlayTime / iLength;
 	pClip->eOption = eOption;
 	pClip->strName = strChangeKey;
-	pClip->iStartFrame = iStartFrame;
-	pClip->iEndFrame = iEndFrame;
-	pClip->iFrameLength = iEndFrame - iStartFrame;
+	pClip->iStartFrame = 0;
+	pClip->iEndFrame = iEndFrame - iStartFrame;
+	pClip->iFrameLength = iLength;
 	pClip->fStartTime = 0.f;
-	pClip->fEndTime = iLength / (float)pClip->iFrameMode;
+	pClip->fEndTime = iLength * pClip->fFrameTime;
 	pClip->fTimeLength = pClip->fEndTime - pClip->fStartTime;
 
+	Safe_Delete_VecList(pClip->vecKeyFrame);
+
+	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
+	// 뽑아온다.
+	for (size_t i = 0; i < vecFrame.size(); ++i)
+	{
+		PBONEKEYFRAME	pBoneKeyFrame = new BONEKEYFRAME;
+
+		pBoneKeyFrame->iBoneIndex = vecFrame[i]->iBoneIndex;
+
+		pClip->vecKeyFrame.push_back(pBoneKeyFrame);
+
+		// 아래부터 키프레임 정보를 저장한다.
+		pBoneKeyFrame->vecKeyFrame.reserve(vecFrame[i]->vecKeyFrame.size());
+
+		if (!vecFrame[i]->vecKeyFrame.empty())
+		{
+			for (size_t j = iStartFrame; j <= iEndFrame; ++j)
+			{
+				PKEYFRAME	pKeyFrame = new KEYFRAME;
+
+				pKeyFrame->dTime = (j - iStartFrame) * pClip->fFrameTime;
+				pKeyFrame->vScale = vecFrame[i]->vecKeyFrame[j]->vScale;
+				pKeyFrame->vRot = vecFrame[i]->vecKeyFrame[j]->vRot;
+				pKeyFrame->vPos = vecFrame[i]->vecKeyFrame[j]->vPos;
+
+				pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
+			}
+		}
+	}
+
 	m_mapClip.insert(make_pair(strChangeKey, pClip));
-	
+
 	return true;
 }
 
@@ -839,6 +1008,8 @@ bool CAnimation::DeleteClip(const string & strKey)
 
 	if (iter == m_mapClip.end())
 		return false;
+
+	m_mapClip.erase(iter);
 
 	SAFE_DELETE(iter->second);
 
@@ -852,8 +1023,6 @@ bool CAnimation::DeleteClip(const string & strKey)
 	{
 		m_pCurClip = m_pDefaultClip;
 	}
-
-	m_mapClip.erase(iter);
 
 	return true;
 }
@@ -878,9 +1047,13 @@ void CAnimation::LoadFbxAnimation(const char * pFullPath)
 	vector<PFBXANIMATIONCLIP>::const_iterator	iterC;
 	vector<PFBXANIMATIONCLIP>::const_iterator	iterCEnd = pvecClip->end();
 
+	m_strAddClipName.clear();
+
 	for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
 	{
 		AddClip(AO_LOOP, *iterC);
+
+		m_strAddClipName.push_back((*iterC)->strName);
 	}
 }
 
@@ -1006,7 +1179,7 @@ int CAnimation::Update(float fTime)
 		int	iStartFrame = m_pCurClip->iStartFrame;
 		int	iEndFrame = m_pCurClip->iEndFrame;
 
-		int	iFrameIndex = (int)(fAnimationTime * m_pCurClip->iFrameMode);
+		int	iFrameIndex = (int)(fAnimationTime / m_pCurClip->fFrameTime);
 
 		if (m_bEnd)
 		{

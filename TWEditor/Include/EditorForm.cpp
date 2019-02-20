@@ -35,6 +35,7 @@ CEditorForm::CEditorForm()
 	, m_pAnimObj(nullptr)
 	, m_pAnimation(nullptr)
 	, m_pAnimRenderer(nullptr)
+	, m_bClipDivide(FALSE)
 {
 
 }
@@ -64,6 +65,7 @@ void CEditorForm::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT__ANIMPLAYTIME, m_fPlayTime);
 	DDX_Control(pDX, IDC_LIST_ANIMLIST, m_ClipList);
 	DDX_Control(pDX, IDC_COMBO_ANIMOPTION, m_OptionCombo);
+	DDX_Check(pDX, IDC_CHECK_CLIPDIVIDE, m_bClipDivide);
 }
 
 
@@ -89,7 +91,9 @@ BEGIN_MESSAGE_MAP(CEditorForm, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON_LOADMESH, &CEditorForm::OnBnClickedButtonLoadmesh)
 	ON_BN_CLICKED(IDC_BUTTON_ANIMADD, &CEditorForm::OnBnClickedButtonAnimadd)
 	ON_BN_CLICKED(IDC_BUTTON_ANIMMODIFY, &CEditorForm::OnBnClickedButtonAnimmodify)
-	ON_BN_CLICKED(IDC_BUTTON__LOADFBX, &CEditorForm::OnBnClickedButtonLoadFbx)
+	ON_BN_CLICKED(IDC_BUTTON__LOADFBX, &CEditorForm::OnBnClickedButtonLoadFbx)	
+	ON_BN_CLICKED(IDC_CHECK_CLIPDIVIDE, &CEditorForm::OnBnClickedCheckClipdivide)
+	ON_BN_CLICKED(IDC_BUTTON_SENDCLIENT, &CEditorForm::OnBnClickedButtonSendclient)
 END_MESSAGE_MAP()
 
 #ifdef _DEBUG
@@ -296,20 +300,61 @@ void CEditorForm::OnEnChangeEdit()
 
 void CEditorForm::OnLbnSelchangeListAnimlist()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (m_ClipList.GetCurSel() == -1)
+	{
+		AfxMessageBox(TEXT("클립을 선택하세요"));
+		return;
+	}
+
+	int	iIndex = m_ClipList.GetCurSel();
+
+	CString	strName;
+	m_ClipList.GetText(iIndex, strName);
+
+	char	strOriginName[256] = {};
+
+	WideCharToMultiByte(CP_ACP, 0, strName.GetString(), -1,
+		strOriginName, strName.GetLength(), 0, 0);
+
+	PANIMATIONCLIP	pClip = m_pAnimation->FindClip(strOriginName);
+
+	if (!pClip)
+		return;
+
+	m_strName = strName;
+	m_iStartFrame = pClip->iStartFrame;
+	m_iEndFrame = pClip->iEndFrame;
+	m_fPlayTime = pClip->fPlayTime;
+	m_OptionCombo.SetCurSel(pClip->eOption);
+
+	m_pAnimation->ChangeClip(strOriginName);
+
+	UpdateData(FALSE);
 }
 
 
 void CEditorForm::OnBnClickedButtonSaveclip()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (!m_pAnimation)
+		return;
+
+	const TCHAR*	pFilter = TEXT("ClipFile(*.anm)|*.anm|FbxFile(*.fbx)|*.fbx|모든파일(*.*)|*.*||");
+	CFileDialog	dlg(FALSE, TEXT(".anm"), nullptr, OFN_OVERWRITEPROMPT, pFilter);
+
+	if (dlg.DoModal() == IDOK)
+	{
+		// 전체 경로를 얻어온다.
+		CString	strPath = dlg.GetPathName();
+
+		m_pAnimation->SaveFromFullPath(strPath.GetString());
+	}
 }
 
 
 void CEditorForm::OnBnClickedButtonLoadclip()
 {
-	const TCHAR*	pFilter = TEXT("MeshFile(*.msh)|*.msh|FbxFile(*.fbx)|*.fbx|모든파일(*.*)|*.*||");
-	CFileDialog dlg(TRUE, TEXT(".msh"), nullptr, OFN_HIDEREADONLY, pFilter);
+	const TCHAR*	pFilter = TEXT("ClipFile(*.anm)|*.anm|FbxFile(*.fbx)|*.fbx|모든파일(*.*)|*.*||");
+	CFileDialog	dlg(TRUE, TEXT(".anm"), nullptr, OFN_HIDEREADONLY, pFilter);
 
 	if (dlg.DoModal() == IDOK)
 	{
@@ -328,8 +373,21 @@ void CEditorForm::OnBnClickedButtonLoadclip()
 			SAFE_RELEASE(pLayer);
 		}
 
+
 		if (!m_pAnimation)
-			m_pAnimation = m_pAnimObj->FindComponentFromType<CAnimation>(CT_ANIMATION);
+			m_pAnimation = m_pAnimObj->AddComponent<CAnimation>("Animation");
+
+		int	iLength = strPath.GetLength();
+
+		if (strPath[iLength - 3] == 'f' &&
+			strPath[iLength - 2] == 'b' &&
+			strPath[iLength - 1] == 'x')
+			m_pAnimation->AddClip(strPath.GetString());
+
+		else
+			m_pAnimation->LoadBoneAndAnimationFullPath(strPath);
+
+		const list<string>*	pClipNameList = m_pAnimation->GetAddClipName();
 
 		PANIMATIONCLIP	pClip = m_pAnimation->GetCurrentClip();
 
@@ -340,7 +398,14 @@ void CEditorForm::OnBnClickedButtonLoadclip()
 
 		m_OptionCombo.SetCurSel(pClip->eOption);
 
-		m_ClipList.AddString(m_strName);
+		list<string>::const_iterator	iter;
+		list<string>::const_iterator	iterEnd = pClipNameList->end();
+
+		for (iter = pClipNameList->begin(); iter != iterEnd; ++iter)
+		{
+			CString	strClipName = CA2CT((*iter).c_str());
+			m_ClipList.AddString(strClipName);
+		}
 
 		UpdateData(FALSE);
 	}
@@ -387,7 +452,24 @@ void CEditorForm::OnBnClickedButtonLoadmesh()
 
 void CEditorForm::OnBnClickedButtonAnimadd()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (!m_pAnimation)
+		return;
+
+	if (m_bClipDivide)
+	{
+		UpdateData(TRUE);
+
+		char	strOriginName[256] = {};
+
+		WideCharToMultiByte(CP_ACP, 0, m_strName.GetString(), -1,
+			strOriginName, m_strName.GetLength(), 0, 0);
+
+		m_pAnimation->AddClip(strOriginName,
+			(ANIMATION_OPTION)m_OptionCombo.GetCurSel(),
+			m_iStartFrame, m_iEndFrame, m_fPlayTime, m_vecDivideKeyFrame);
+
+		m_ClipList.AddString(m_strName);
+	}
 }
 
 
@@ -395,25 +477,40 @@ void CEditorForm::OnBnClickedButtonAnimmodify()
 {
 	if (m_ClipList.GetCurSel() == -1)
 	{
-		AfxMessageBox(TEXT("클립을 선택하세요."));
+		AfxMessageBox(TEXT("클립을 선택하세요"));
 		return;
 	}
 
-	int iIndex = m_ClipList.GetCurSel();
+	else if (!m_pAnimation)
+		return;
 
-	CString	strName;
-	m_ClipList.GetText(iIndex, strName);
+	if (m_bClipDivide)
+	{
+		int	iIndex = m_ClipList.GetCurSel();
 
-	UpdateData(TRUE);
+		CString	strName;
+		m_ClipList.GetText(iIndex, strName);
 
-	string	strOriginName = CT2CA(strName);
-	string	strChangeName = CT2CA(m_strName);
+		UpdateData(TRUE);
 
-	m_pAnimation->ModifyClip(strOriginName, strChangeName,
-		(ANIMATION_OPTION)m_OptionCombo.GetCurSel(),
-		m_iStartFrame, m_iEndFrame);
+		char	strOriginName[256] = {};
 
-	// ListBox의 이름을 변경해주면 된다
+		WideCharToMultiByte(CP_ACP, 0, strName.GetString(), -1,
+			strOriginName, strName.GetLength(), 0, 0);
+
+		char	strChangeName[256] = {};
+
+		WideCharToMultiByte(CP_ACP, 0, m_strName.GetString(), -1,
+			strChangeName, m_strName.GetLength(), 0, 0);
+
+		m_pAnimation->ModifyClip(strOriginName, strChangeName,
+			(ANIMATION_OPTION)m_OptionCombo.GetCurSel(),
+			m_iStartFrame, m_iEndFrame, m_fPlayTime, m_vecDivideKeyFrame);
+
+		// ListBox의 이름을 변경해주면 된다.
+		m_ClipList.DeleteString(iIndex);
+		m_ClipList.AddString(m_strName);
+	}
 }
 
 
@@ -461,4 +558,33 @@ void CEditorForm::OnBnClickedButtonLoadFbx()
 		SAFE_RELEASE(pScene);
 		SAFE_RELEASE(pLayer);
 	}
+}
+
+void CEditorForm::OnBnClickedCheckClipdivide()
+{
+	if (!m_pAnimation)
+	{
+		m_bClipDivide = FALSE;
+
+		UpdateData(FALSE);
+		return;
+	}
+
+	UpdateData(TRUE);
+
+	if (m_bClipDivide)
+	{
+		m_pAnimation->GetCurrentKeyFrame(m_vecDivideKeyFrame);
+	}
+
+	else
+	{
+		Safe_Delete_VecList(m_vecDivideKeyFrame);
+	}
+}
+
+void CEditorForm::OnBnClickedButtonSendclient()
+{
+	ShellExecuteA(nullptr, "open", "EditorCopy.bat", nullptr,
+		nullptr, SW_SHOW);
 }

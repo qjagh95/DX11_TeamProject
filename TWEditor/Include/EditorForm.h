@@ -68,6 +68,8 @@ public:
 	CGameObject*	m_pAnimObj;
 	CAnimation*		m_pAnimation;
 	CRenderer*		m_pAnimRenderer;
+	vector<PBONEKEYFRAME>	m_vecDivideKeyFrame;
+
 	afx_msg void OnBnClickedButtonSaveclip();
 	afx_msg void OnBnClickedButtonLoadclip();
 	afx_msg void OnBnClickedButtonSavemesh();
@@ -75,4 +77,7 @@ public:
 	afx_msg void OnBnClickedButtonAnimadd();
 	afx_msg void OnBnClickedButtonAnimmodify();
 	afx_msg void OnBnClickedButtonLoadFbx();
+	BOOL m_bClipDivide;
+	afx_msg void OnBnClickedCheckClipdivide();
+	afx_msg void OnBnClickedButtonSendclient();
 };

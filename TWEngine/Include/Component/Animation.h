@@ -61,6 +61,7 @@ typedef struct PUN_DLL _tagAnimationClip
 	float				fEndTime;
 	float				fTimeLength;
 	float				fFrameTime;
+	float				fPlayTime;
 	int					iStartFrame;
 	int					iEndFrame;
 	int					iFrameLength;
@@ -78,7 +79,8 @@ typedef struct PUN_DLL _tagAnimationClip
 		fTimeLength(0),
 		iStartFrame(0),
 		iEndFrame(0),
-		iFrameLength(0)
+		iFrameLength(0),
+		fPlayTime(1.f)
 	{
 	}
 
@@ -115,6 +117,7 @@ private:
 	ID3D11Texture2D*	m_pBoneTex;
 	ID3D11ShaderResourceView*	m_pBoneRV;
 	unordered_map<string, PANIMATIONCLIP>	m_mapClip;
+	list<string>			m_strAddClipName;
 	PANIMATIONCLIP			m_pDefaultClip;
 	PANIMATIONCLIP			m_pCurClip;
 	PANIMATIONCLIP			m_pNextClip;
@@ -131,15 +134,24 @@ private:
 	Vector3					m_vBlendPos;
 
 public:
+	const list<string>* GetAddClipName()	const;
+
+public:
 	void AddBone(PBONE pBone);
 	bool CreateBoneTexture();
 	void AddClip(ANIMATION_OPTION eOption,
 		struct _tagFbxAnimationClip* pClip);
+	void AddClip(const string& strName, ANIMATION_OPTION eOption,
+		int iStartFrame, int iEndFrame);
+	void AddClip(const string& strName, ANIMATION_OPTION eOption,
+		int iStartFrame, int iEndFrame, float fPlayTime,
+		const vector<PBONEKEYFRAME>& vecFrame);
 	void AddClip(const TCHAR* pFullPath);
 	void AddClipFromMultibyte(const char* pFullPath);
 	PANIMATIONCLIP FindClip(const string& strName);
 	bool IsAnimationEnd()	const;
 	PANIMATIONCLIP GetCurrentClip()	const;
+	void GetCurrentKeyFrame(vector<PBONEKEYFRAME>& vecFrame);
 
 public:
 	void ChangeClipKey(const string& strOrigin, const string& strChange);
@@ -164,8 +176,10 @@ public:
 	bool LoadBone(const char* pFileName, const string& strPathKey = MESH_PATH);
 	bool LoadBoneFromFullPath(const TCHAR* pFullPath);
 	bool LoadBoneFromFullPath(const char* pFullPath);
+	bool LoadBoneAndAnimationFullPath(const TCHAR* pFullPath);
 	bool ModifyClip(const string& strKey, const string& strChangeKey,
-		ANIMATION_OPTION eOption, int iStartFrame, int iEndFrame);
+		ANIMATION_OPTION eOption, int iStartFrame, int iEndFrame,
+		float fPlayTime, const vector<PBONEKEYFRAME>& vecFrame);
 	bool DeleteClip(const string& strKey);
 	bool ReturnDefaultClip();
 
