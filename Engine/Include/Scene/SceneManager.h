@@ -34,7 +34,7 @@ public:
 	void ChangeLayerZOrder(const string& strTag, int iZOrder, bool bCurrent = true);
 	class CLayer* FindLayer(const string& strTag, bool bCurrent = true);
 	class CGameObject* FindObject(const string& strTag);
-	void CreateNextScene(bool bChange = true);
+	void CreateNextScene(bool bChange = true , const std::string& _strTag = "");
 	void ChangeEnable();
 
 public:

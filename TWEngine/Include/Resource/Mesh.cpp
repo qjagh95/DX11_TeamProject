@@ -590,70 +590,74 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 	// 애니메이션 처리
 	const vector<PFBXBONE>*	pvecBone = pLoader->GetBones();
 
-	if (pvecBone->empty())
-		return true;
-
-	SAFE_RELEASE(m_pAnimation);
-
-	m_pAnimation = new CAnimation;
-
-	if (!m_pAnimation->Init())
+	if (pvecBone->empty() == false)
 	{
 		SAFE_RELEASE(m_pAnimation);
-		return false;
-	}
 
-	//// 본 수만큼 반복한다.
-	vector<PFBXBONE>::const_iterator	iterB;
-	vector<PFBXBONE>::const_iterator	iterBEnd = pvecBone->end();
+		m_pAnimation = new CAnimation;
 
-	for (iterB = pvecBone->begin(); iterB != iterBEnd; ++iterB)
-	{
-		PBONE	pBone = new BONE;
-
-		pBone->strName = (*iterB)->strName;
-		pBone->iDepth = (*iterB)->iDepth;
-		pBone->iParentIndex = (*iterB)->iParentIndex;
-
-		float	fMat[4][4];
-
-		for (int i = 0; i < 4; ++i)
+		if (!m_pAnimation->Init())
 		{
-			for (int j = 0; j < 4; ++j)
-			{
-				fMat[i][j] = (*iterB)->matOffset.mData[i].mData[j];
-			}
+			SAFE_RELEASE(m_pAnimation);
+			return false;
 		}
 
-		pBone->matOffset = new Matrix;
-		*pBone->matOffset = fMat;
+		//// 본 수만큼 반복한다.
+		vector<PFBXBONE>::const_iterator	iterB;
+		vector<PFBXBONE>::const_iterator	iterBEnd = pvecBone->end();
 
-		for (int i = 0; i < 4; ++i)
+		for (iterB = pvecBone->begin(); iterB != iterBEnd; ++iterB)
 		{
-			for (int j = 0; j < 4; ++j)
+			PBONE	pBone = new BONE;
+
+			pBone->strName = (*iterB)->strName;
+			pBone->iDepth = (*iterB)->iDepth;
+			pBone->iParentIndex = (*iterB)->iParentIndex;
+
+			float	fMat[4][4];
+
+			for (int i = 0; i < 4; ++i)
 			{
-				fMat[i][j] = (*iterB)->matBone.mData[i].mData[j];
+				for (int j = 0; j < 4; ++j)
+				{
+					fMat[i][j] = (*iterB)->matOffset.mData[i].mData[j];
+				}
 			}
+
+			pBone->matOffset = new Matrix;
+			*pBone->matOffset = fMat;
+
+			for (int i = 0; i < 4; ++i)
+			{
+				for (int j = 0; j < 4; ++j)
+				{
+					fMat[i][j] = (*iterB)->matBone.mData[i].mData[j];
+				}
+			}
+
+			pBone->matBone = new Matrix;
+			*pBone->matBone = fMat;
+
+			m_pAnimation->AddBone(pBone);
 		}
 
-		pBone->matBone = new Matrix;
-		*pBone->matBone = fMat;
+		m_pAnimation->CreateBoneTexture();
 
-		m_pAnimation->AddBone(pBone);
+		// 애니메이션 클립을 추가한다.
+		const vector<PFBXANIMATIONCLIP>* pvecClip = pLoader->GetClips();
+
+		// 클립을 읽어온다.
+		vector<PFBXANIMATIONCLIP>::const_iterator	iterC;
+		vector<PFBXANIMATIONCLIP>::const_iterator	iterCEnd = pvecClip->end();
+
+		for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
+		{
+			m_pAnimation->AddClip(AO_LOOP, *iterC);
+		}
 	}
-
-	m_pAnimation->CreateBoneTexture();
-
-	// 애니메이션 클립을 추가한다.
-	const vector<PFBXANIMATIONCLIP>* pvecClip = pLoader->GetClips();
-
-	// 클립을 읽어온다.
-	vector<PFBXANIMATIONCLIP>::const_iterator	iterC;
-	vector<PFBXANIMATIONCLIP>::const_iterator	iterCEnd = pvecClip->end();
-
-	for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
+	else
 	{
-		m_pAnimation->AddClip(AO_LOOP, *iterC);
+		m_pAnimation = nullptr;
 	}
 
 	char	strFullPath[MAX_PATH] = {};

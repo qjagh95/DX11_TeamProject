@@ -48,6 +48,9 @@
     <ClInclude Include="SceneComponent\TrdTestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Field.h">
+      <Filter>02. UserComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -73,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="SceneComponent\TrdTestScene.cpp">
       <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Field.cpp">
+      <Filter>02. UserComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

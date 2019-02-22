@@ -619,14 +619,16 @@ void CMaterial::Load(FILE * pFile)
 			LoadTextureSet(pFile, &pSubset->pNormal);
 			LoadTextureSet(pFile, &pSubset->pSpecular);
 
-			/*size_t	iMultiTexCount = pSubset->vecMultiTex.size();
+			size_t	iMultiTexCount = pSubset->vecMultiTex.size();
 
 			fread(&iMultiTexCount, sizeof(size_t), 1, pFile);
 
+			PTextureSet pTexSet = nullptr;
 			for (size_t k = 0; k < iMultiTexCount; ++k)
 			{
-				LoadTextureSet(pFile, &pSubset->vecMultiTex[k]);
-			}*/
+				pTexSet = &pSubset->vecMultiTex[k];
+				LoadTextureSet(pFile, &pTexSet);
+			}
 		}
 	}
 }

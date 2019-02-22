@@ -144,55 +144,39 @@ bool CScene::Init()
 	AddLayer("Default", 0);
 	AddLayer("UI", INT_MAX - 1);
 
-	m_pMainCameraObj = CreateCamera("MainCamera",Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE,(float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight,45.f, 0.03f, 1000.f);	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
+	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 45.f, 0.03f, 1000.f);	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
 	m_pMainCamera = m_pMainCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
-	m_pUICameraObj = CreateCamera("UICamera", Vector3(0.f, 0.f, 0.f), CT_ORTHO,	(float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight,	60.f, 0.f, 1000.f);
+	m_pUICameraObj = CreateCamera("UICamera", Vector3(0.f, 0.f, 0.f), CT_ORTHO, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 60.f, 0.f, 1000.f);
 
 	m_pUICameraTr = m_pUICameraObj->GetTransform();
 	m_pUICamera = m_pUICameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
-	
+
 	CLayer*	pLayer = FindLayer("Default");
-	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLayer);
-	CTransform*	pTransform = pLightObj->GetTransform();
-
-	pTransform->SetWorldRot(-90.f, 0.f, 0.f);
-	pTransform->SetWorldPos(0.f, -1.f, 0.f);
-
-	SAFE_RELEASE(pTransform);
-
-	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-	pLight->SetLightColor(Vector4::Gold, Vector4::Gold,	Vector4::Gold);
-	pLight->SetLightType(LT_DIR);
-	pLight->SetLightRange(10.f);
-	pLight->SetAngle(60.f, 90.f);
-
-	SAFE_RELEASE(pLight);
-	SAFE_RELEASE(pLightObj);
 	SAFE_RELEASE(pLayer);
 
-	m_pSkyObj = CGameObject::CreateObject("Sky");
+	//m_pSkyObj = CGameObject::CreateObject("Sky");
 
-	m_pSkyObj->SetScene(this);
+	//m_pSkyObj->SetScene(this);
 
-	CTransform*	pSkyTr = m_pSkyObj->GetTransform();
+	//CTransform*	pSkyTr = m_pSkyObj->GetTransform();
 
-	pSkyTr->SetWorldScale(100000.f, 100000.f, 100000.f);
-	pSkyTr->Update(0.f);
+	//pSkyTr->SetWorldScale(100000.f, 100000.f, 100000.f);
+	//pSkyTr->Update(0.f);
 
-	SAFE_RELEASE(pSkyTr);
+	//SAFE_RELEASE(pSkyTr);
 
-	CRenderer*	pRenderer = m_pSkyObj->AddComponent<CRenderer>("SkyRenderer");
+	//CRenderer*	pRenderer = m_pSkyObj->AddComponent<CRenderer>("SkyRenderer");
 
-	pRenderer->SetMesh("Sky");
-	pRenderer->SetRenderState(DEPTH_LESSEQUAL);
-	pRenderer->SetRenderState(CULL_NONE);
+	//pRenderer->SetMesh("Sky");
+	//pRenderer->SetRenderState(DEPTH_LESSEQUAL);
+	//pRenderer->SetRenderState(CULL_NONE);
 
-	SAFE_RELEASE(pRenderer);
+	//SAFE_RELEASE(pRenderer);
 
-	m_pSkyMtrl = m_pSkyObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+	//m_pSkyMtrl = m_pSkyObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
-	m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
+	//m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
+	//m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
 
 	return true;
 }
@@ -250,12 +234,12 @@ int CScene::Input(float fTime)
 
 int CScene::Update(float fTime)
 {
-	CTransform*	pTr = m_pSkyObj->GetTransform();
+	//CTransform*	pTr = m_pSkyObj->GetTransform();
 
-	pTr->RotationY(3.f, fTime);
-	pTr->Update(fTime);
+	//pTr->RotationY(3.f, fTime);
+	//pTr->Update(fTime);
 
-	SAFE_RELEASE(pTr);
+	//SAFE_RELEASE(pTr);
 
 
 	list<CSceneComponent*>::iterator	iter1;
@@ -651,8 +635,7 @@ void CScene::Debug()
 
 	CGameObject* getObject = FindObjectNonCount("GlobalLight");
 	CLight* getLight = getObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
-
-	const char* Items[3] = { "Direction", "Point", "Spot"};
+	const char* Items[3] = { "Direction", "Point", "Spot" };
 	ImGui::Text("LightType");
 	ImGui::Combo("", &getLight->m_tInfo.iLightType, Items, 3);
 
@@ -675,8 +658,8 @@ void CScene::Debug()
 	ImGui::Text("Camera");
 
 	static Vector3 CameraPos;
-	ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -50.0f, 50.0f);
-	m_pMainCameraTr->SetWorldPos(CameraPos);
+	//ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -500.f, 50.0f);
+	//m_pMainCameraTr->SetWorldPos(CameraPos);
 
 	ImGui::BeginTabBar("Camera");
 	ImGui::EndTabBar();

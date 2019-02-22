@@ -112,16 +112,17 @@ CGameObject * CGameObject::CreateObject(const string & strTag, CLayer * pLayer,
 
 	if (pLayer)
 	{
-		if (!bDontDestroy)
-			pLayer->AddObject(pObj);
+		//if (!bDontDestroy)
+		//	pLayer->AddObject(pObj);
 
-		else
-		{
-			class CScene* pScene = pLayer->GetScene();
-			pObj->SetScene(pScene);
-			pObj->SetLayer(pLayer);
-			SAFE_RELEASE(pScene);
-		}
+		//else
+		//{
+		//	class CScene* pScene = pLayer->GetScene();
+		//	pObj->SetScene(pScene);
+		//	pObj->SetLayer(pLayer);
+		//	SAFE_RELEASE(pScene);
+		//}
+		pLayer->AddObject(pObj);
 	}
 
 	return pObj;

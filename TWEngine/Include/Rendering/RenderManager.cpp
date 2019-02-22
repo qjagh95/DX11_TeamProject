@@ -536,15 +536,15 @@ void CRenderManager::Render2D(float fTime)
 void CRenderManager::Render3D(float fTime)
 {
 	// Sky 출력
-	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
+	//CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
 
-	CGameObject*	pSkyObj = pScene->GetSkyObj();
+	//CGameObject*	pSkyObj = pScene->GetSkyObj();
 
-	pSkyObj->Render(fTime);
+	//pSkyObj->Render(fTime);
 
-	SAFE_RELEASE(pSkyObj);
+	//SAFE_RELEASE(pSkyObj);
 
-	SAFE_RELEASE(pScene);
+	//SAFE_RELEASE(pScene);
 
 	// Forward Rendering 처리
 	if (!m_bDeferred)

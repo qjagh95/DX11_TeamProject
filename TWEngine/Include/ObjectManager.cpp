@@ -3,6 +3,7 @@
 #include "Scene/Scene.h"
 #include "Scene/Layer.h"
 #include "GameObject.h"
+#include "Component/Camera.h"
 
 PUN_USING
 
@@ -18,7 +19,7 @@ CObjectManager::~CObjectManager()
 	Safe_Release_VecList(m_DontDestroyObjList);
 }
 
-void CObjectManager::ChangeScene(CScene * _pScene , class CGameObject* _pObject, const std::string& _strLayerName)
+void CObjectManager::ChangeScene(CScene * _pScene, class CGameObject* _pObject, const std::string& _strLayerName)
 {
 	CLayer* pLayer = _pScene->FindLayer(_strLayerName);
 
@@ -33,7 +34,16 @@ void CObjectManager::ChangeSceneFromDontDestroyObj(CScene* _pScene)
 	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
 	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
 	{
-		ChangeScene(_pScene, *Iter , (*Iter)->GetLayerName());
+		if ((*Iter)->GetTag() == "TestObject")
+		{
+			CCamera* pCamera = _pScene->GetMainCamera();
+
+			pCamera->SetTarget((*Iter));
+
+			SAFE_RELEASE(pCamera);
+		}
+
+		ChangeScene(_pScene, *Iter, (*Iter)->GetLayerName());
 	}
 }
 
@@ -43,7 +53,7 @@ void CObjectManager::PushDontDestoryObject(CGameObject* _pObject)
 	{
 		return;
 	}
-	
+
 	_pObject->AddRef();
 	m_DontDestroyObjList.push_back(_pObject);
 }
@@ -61,7 +71,7 @@ bool CObjectManager::RemoveDontDestroyObject(CGameObject * _pObject)
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 

@@ -101,7 +101,7 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 	if (!GET_SINGLE(CDevice)->Init(hWnd, iWidth, iHeight, bWindowMode))
 		return false;
 
-	SetClearColor(0xff, 0x69, 0xb4, 0x00);
+	SetClearColor(0x00, 0x00, 0x00, 0x00);
 
 	// 경로관리자 초기화
 	if (!GET_SINGLE(CPathManager)->Init())

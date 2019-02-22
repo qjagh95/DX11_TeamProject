@@ -99,7 +99,6 @@ int CSceneManager::ChangeScene()
 		m_pNextScene = nullptr;
 
 		GET_SINGLE(CInput)->ChangeMouseScene(m_pScene);
-		GET_SINGLE(CObjectManager)->ChangeSceneFromDontDestroyObj(m_pScene);
 
 		m_pScene->Start();
 
@@ -148,12 +147,14 @@ CGameObject * CSceneManager::FindObject(const string & strTag)
 	return m_pNextScene->FindObject(strTag);
 }
 
-void CSceneManager::CreateNextScene(bool bChange)
+void CSceneManager::CreateNextScene(bool bChange , const std::string& _strTag)
 {
 	SAFE_RELEASE(m_pNextScene);
 	m_pNextScene = new CScene;
-
+	m_pNextScene->SetTag(_strTag);
 	m_pNextScene->Init();
+
+	GET_SINGLE(CObjectManager)->ChangeSceneFromDontDestroyObj(m_pNextScene);
 
 	m_bChange = bChange;
 }

@@ -27,8 +27,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// MainScene Ãß°¡
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CStartScene>("StartScene");
-	GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
-	//GET_SINGLE(CSceneManager)->AddSceneComponent<CFirTestScene>("FirTestScene");
+	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
+	GET_SINGLE(CSceneManager)->AddSceneComponent<CFirTestScene>("FirTestScene");
 
 	int iRet = CCore::GetInst()->Run();
 
