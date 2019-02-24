@@ -28,7 +28,7 @@
 #define	STANDARD_BUMP_ANIM_SHADER		"StandardBumpAnimShader"
 #define	STANDARD_TEX_NORMAL_SHADER		"StandardTexNormalShader"
 #define	STANDARD_TEX_NORMAL_ANIM_SHADER		"StandardTexNormalAnimShader"
-
+#define LANDSCAPE_SHADER					"LandScapeShader"
 // ========== Input Layout Key =============
 #define	POS_COLOR_LAYOUT		"PosColorLayout"
 #define	POS_NORMAL_COLOR_LAYOUT		"PosNormalColorLayout"

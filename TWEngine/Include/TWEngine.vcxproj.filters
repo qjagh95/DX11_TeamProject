@@ -132,6 +132,12 @@
     <Filter Include="02. Resources\01. Mesh\00. FBXSDK">
       <UniqueIdentifier>{74603be7-31c8-46ad-a073-5d40310aea7c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Component\13. LandScape">
+      <UniqueIdentifier>{1fdec378-5aae-4707-ba50-6026f08b9586}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Component\14.Arm">
+      <UniqueIdentifier>{460c8ac4-64b8-4ac8-b75a-c7577d5a23dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -364,6 +370,12 @@
     </ClCompile>
     <ClCompile Include="Component\Animation.cpp">
       <Filter>06. Component\06. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\LandScape.cpp">
+      <Filter>06. Component\13. LandScape</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Arm.cpp">
+      <Filter>06. Component\14.Arm</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -637,6 +649,15 @@
     <ClInclude Include="Component\Animation.h">
       <Filter>06. Component\06. Animation</Filter>
     </ClInclude>
+    <ClInclude Include="Component\LandScape.h">
+      <Filter>06. Component\13. LandScape</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Arm.h">
+      <Filter>06. Component\14.Arm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\copy.bat">
@@ -677,5 +698,11 @@
     <FxCompile Include="..\Bin\Shader\Sky.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\LandScape.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TWEngine.rc" />
   </ItemGroup>
 </Project>

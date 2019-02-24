@@ -133,6 +133,11 @@ bool CShaderManager::Init()
 	if (!LoadShader(STANDARD_TEX_NORMAL_ANIM_SHADER, TEXT("Standard.fx"), pEntry))
 		return false;
 
+	pEntry[ST_VERTEX] = (char*)"LandScapeVS";
+	pEntry[ST_PIXEL] = (char*)"LandScapePS";
+	if (!LoadShader(LANDSCAPE_SHADER, TEXT("LandScape.fx"), pEntry))
+		return false;
+
 	pEntry[ST_VERTEX] = (char*)"SkyVS";
 	pEntry[ST_PIXEL] = (char*)"SkyPS";
 	if (!LoadShader("Sky", TEXT("Sky.fx"), pEntry))

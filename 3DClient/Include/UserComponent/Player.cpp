@@ -72,21 +72,21 @@ int CPlayer::Update(float fTime)
 	//m_pTransform->RotationX(18.f * fRotationX, fTime);
 	//m_pTransform->RotationY(18.f * fRotationY, fTime);
 
-	if (m_pTransform->GetWorldPos().z >= 0)
-	{
-		if (m_pScene->GetTag() == "" || m_pScene->GetTag() == "TrdTestScene")
-		{
-			GET_SINGLE(CSceneManager)->CreateNextScene(true , "SecTestScene");
-			GET_SINGLE(CSceneManager)->AddSceneComponent<CSecTestScene>("SecTestScene", false);
-			m_pTransform->SetWorldPos(0.f, 0.f, -300.f);
-		}
-		else
-		{
-			GET_SINGLE(CSceneManager)->CreateNextScene(true, "TrdTestScene");
-			GET_SINGLE(CSceneManager)->AddSceneComponent<CTrdTestScene>("TrdTestScene", false);
-			m_pTransform->SetWorldPos(0.f, 0.f, -300.f);
-		}
-	}
+	//if (m_pTransform->GetWorldPos().z >= 0)
+	//{
+	//	if (m_pScene->GetTag() == "" || m_pScene->GetTag() == "TrdTestScene")
+	//	{
+	//		GET_SINGLE(CSceneManager)->CreateNextScene(true , "SecTestScene");
+	//		GET_SINGLE(CSceneManager)->AddSceneComponent<CSecTestScene>("SecTestScene", false);
+	//		m_pTransform->SetWorldPos(0.f, 0.f, -300.f);
+	//	}
+	//	else
+	//	{
+	//		GET_SINGLE(CSceneManager)->CreateNextScene(true, "TrdTestScene");
+	//		GET_SINGLE(CSceneManager)->AddSceneComponent<CTrdTestScene>("TrdTestScene", false);
+	//		m_pTransform->SetWorldPos(0.f, 0.f, -300.f);
+	//	}
+	//}
 
 	return 0;
 }

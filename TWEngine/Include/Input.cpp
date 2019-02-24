@@ -19,7 +19,9 @@ CInput::CInput() :
 	m_pKeyboard(nullptr),
 	m_pMouseTr(nullptr),
 	m_pMouse(nullptr),
-	m_bShowCursor(false)
+	m_bShowCursor(false),
+	m_sWheel(0),
+	m_bFocus(false)
 {
 }
 
@@ -71,6 +73,21 @@ Vector3 CInput::GetMousePos() const
 	return m_pMouseTr->GetWorldPos();
 }
 
+Vector2 CInput::GetMouse3DGap() const
+{
+	return m_vMouse3DGap;
+}
+
+Vector2 CInput::GetMouse3DClient() const
+{
+	return m_vMouse3DClient;
+}
+
+Vector2 CInput::GetMouse3DWorld() const
+{
+	return m_vMouse3DWorld;
+}
+
 void CInput::ChangeMouseScene(CScene * pScene)
 {
 	m_pMouse->SetScene(pScene);
@@ -79,6 +96,21 @@ void CInput::ChangeMouseScene(CScene * pScene)
 void CInput::SetWorldMousePos(Vector3 _vPos)
 {
 	m_vMouseWorld = Vector2(_vPos.x , _vPos.y);
+}
+
+void CInput::SetWheelDir(short _sWheel)
+{
+	m_sWheel = _sWheel / 120;
+}
+
+void CInput::ClearWheel()
+{
+	m_sWheel = 0;
+}
+
+short CInput::GetWheelDir() const
+{
+	return m_sWheel;
 }
 
 bool CInput::Init()
@@ -138,12 +170,143 @@ bool CInput::Init()
 	memset(m_bRelease, 0, sizeof(bool) * 256);
 	memset(m_cKey, 0, sizeof(unsigned char) * 256);
 
+	memset(m_bMousePress, 0, sizeof(bool) * MS_END);
+	memset(m_bMousePush, 0, sizeof(bool) * MS_END);
+	memset(m_bMouseRelease, 0, sizeof(bool) * MS_END);
 	return true;
 }
 
 void CInput::Update(float fTime)
 {
 	ReadKeyBoard(); // 256개의 Keyboard 상태를 얻어온다.
+
+	POINT tMousePos = {};
+
+	GetCursorPos(&tMousePos);
+	ScreenToClient(WINDOWHANDLE, &tMousePos);
+
+	Vector2	vMousePos(tMousePos.x, tMousePos.y);
+	Vector2	vMouse3DPos = vMousePos;
+
+	RECT	rc = {};
+
+	GetClientRect(WINDOWHANDLE, &rc);
+
+	vMousePos.y = rc.bottom - vMousePos.y;
+
+	// 비율을 이용해서 디바이스 해상도 내에서의 좌표를 구한다.
+	vMousePos *= GET_SINGLE(CDevice)->GetWindowToDeviceResolution();
+	vMouse3DPos *= GET_SINGLE(CDevice)->GetWindowToDeviceResolution();
+
+	m_vMouseGap = vMousePos - m_vMouseClient;
+	m_vMouse3DGap = vMouse3DPos - m_vMouse3DClient;
+
+	m_vMouseClient = vMousePos;
+	m_vMouse3DClient = vMouse3DPos;
+
+	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
+
+	CTransform*	pCameraTr = pScene->GetMainCameraTransform();
+
+	m_vMouseWorld = m_vMouseClient + Vector2(pCameraTr->GetWorldPos().x, pCameraTr->GetWorldPos().y);
+
+	SAFE_RELEASE(pCameraTr);
+	SAFE_RELEASE(pScene);
+
+	m_pMouseTr->SetWorldPos(Vector3(m_vMouseClient.x, m_vMouseClient.y, 0.f));
+
+	m_pMouse->Update(fTime);
+
+
+	if (!m_bShowCursor && (m_vMouseClient.x < 0 || m_vMouseClient.x > _RESOLUTION.iWidth ||
+		m_vMouseClient.y < 0 || m_vMouseClient.y > _RESOLUTION.iHeight))
+	{
+		m_bShowCursor = true;
+
+		while (ShowCursor(TRUE) != 0)
+		{
+		}
+	}
+
+	else if (m_bShowCursor && 0.f <= m_vMouseClient.x && m_vMouseClient.x <= _RESOLUTION.iWidth &&
+		0.f <= m_vMouseClient.y && m_vMouseClient.y <= _RESOLUTION.iHeight)
+	{
+		m_bShowCursor = false;
+		while (ShowCursor(FALSE) >= 0)
+		{
+		}
+	}
+
+	HWND	hWnd = GetActiveWindow();
+
+	// 포커스가 없을때는 마우스가 윈도우 안에 있어도 무조건 포커스를 false로 한다.
+	if (hWnd == 0)
+	{
+		m_bFocus = false;
+	}
+
+	else
+	{
+		// 순수한 윈도우 상에서의 마우스 위치가 윈도우 창을 벗어났는지 판단한다.
+		POINT	ptFocus;
+		GetCursorPos(&ptFocus);
+		ScreenToClient(WINDOWHANDLE, &ptFocus);
+
+		RECT	tWindowRC;
+		GetClientRect(WINDOWHANDLE, &tWindowRC);
+
+		if (ptFocus.x < 0 || ptFocus.y < 0 || ptFocus.x > tWindowRC.right ||
+			ptFocus.y > tWindowRC.bottom)
+			m_bFocus = false;
+
+		else
+			m_bFocus = true;
+	}
+
+	static float	ftime11 = 0.f;
+	ftime11 += fTime;
+
+	if (ftime11 >= 2.f)
+	{
+		ftime11 = 0.f;
+		TCHAR	str[256] = {};
+		wsprintf(str, TEXT("Active Window : %d\n"), hWnd);
+
+		OutputDebugString(str);
+	}
+
+	if (!m_bFocus)
+	{
+		ClearKeyState();
+		return;
+	}
+
+	const char	cMouse[3] = { VK_LBUTTON, VK_RBUTTON, VK_MBUTTON };
+
+	for (int i = 0; i < MS_END; ++i)
+	{
+		if (GetAsyncKeyState(cMouse[i]) & 0x8000)
+		{
+			if (!m_bMousePress[i] && !m_bMousePush[i])
+			{
+				m_bMousePress[i] = true;
+				m_bMousePush[i] = true;
+			}
+
+			else if (m_bMousePush[i])
+				m_bMousePress[i] = false;
+		}
+
+		else if (m_bMousePush[i])
+		{
+			m_bMousePress[i] = false;
+			m_bMousePush[i] = false;
+			m_bMouseRelease[i] = true;
+		}
+
+		else if (m_bMouseRelease[i])
+			m_bMouseRelease[i] = false;
+	}
 
 	//256개의 KeyList를 순회한다.
 	for (size_t i = 0; i < m_KeyList.size(); ++i)
@@ -250,7 +413,29 @@ void CInput::Update(float fTime)
 				}
 			}
 
-			if (m_bPush[(*iter1)->cKey] && bSKeyEnable[SKEY_CONTROL] &&
+			bool	bPush = false;
+			bool	bPress = false;
+			bool	bRelease = false;
+
+			// 마우스 처리
+			if ((*iter1)->cKey >= DIK_LBUTTON)
+			{
+				unsigned char	cMouseIndex = (*iter1)->cKey - DIK_LBUTTON;
+
+				bPress = m_bMousePress[cMouseIndex];
+				bPush = m_bMousePush[cMouseIndex];
+				bRelease = m_bMouseRelease[cMouseIndex];
+			}
+
+			// 키보드 처리
+			else
+			{
+				bPress = m_bPress[(*iter1)->cKey];
+				bPush = m_bPush[(*iter1)->cKey];
+				bRelease = m_bRelease[(*iter1)->cKey];
+			}
+
+			if (bPush && bSKeyEnable[SKEY_CONTROL] &&
 				bSKeyEnable[SKEY_SHIFT] && bSKeyEnable[SKEY_ALT])
 				// 등록된 Key가 true이며 SpecialKey의 Enable상태가 모두 true라면
 			{
@@ -300,43 +485,6 @@ void CInput::Update(float fTime)
 	}
 
 
-	POINT	tMousePos;
-
-	GetCursorPos(&tMousePos);
-	ScreenToClient(WINDOWHANDLE, &tMousePos);
-
-	Vector2	vMousePos((float)tMousePos.x, (float)tMousePos.y);
-	RECT	rc = {};
-
-	GetClientRect(WINDOWHANDLE, &rc);
-	vMousePos.y = rc.bottom - vMousePos.y;
-
-	// 비율을 이용해서 디바이스 해상도 내에서의 좌표를 구한다.
-	vMousePos *= GET_SINGLE(CDevice)->GetWindowToDeviceResolution();
-	m_vMouseGap = vMousePos - m_vMouseClient;
-	m_vMouseClient = vMousePos;
-
-	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
-	CTransform*	pCameraTr = pScene->GetMainCameraTransform();
-	m_vMouseWorld = m_vMouseClient + Vector2(pCameraTr->GetWorldPos().x, pCameraTr->GetWorldPos().y);
-
-	SAFE_RELEASE(pCameraTr);
-	SAFE_RELEASE(pScene);
-
-	m_pMouseTr->SetWorldPos(Vector3(m_vMouseClient.x, m_vMouseClient.y, 0.f));
-	m_pMouse->Update(fTime);
-
-	if (!m_bShowCursor && (m_vMouseClient.x < 0 || m_vMouseClient.x > _RESOLUTION.iWidth || m_vMouseClient.y < 0 || m_vMouseClient.y > _RESOLUTION.iHeight))
-	{
-		m_bShowCursor = true;
-		while (ShowCursor(TRUE) != 0) {}
-	}
-
-	else if (m_bShowCursor && 0.f <= m_vMouseClient.x && m_vMouseClient.x <= _RESOLUTION.iWidth && 0.f <= m_vMouseClient.y && m_vMouseClient.y <= _RESOLUTION.iHeight)
-	{
-		m_bShowCursor = false;
-		while (ShowCursor(FALSE) >= 0) {}
-	}
 }
 
 void CInput::RenderMouse(float fTime)
@@ -373,6 +521,37 @@ bool CInput::ReadKeyBoard()
 	}
 
 	return true;
+}
+
+void CInput::ClearKeyState()
+{
+	m_sWheel = 0;
+
+	vector<unsigned char>::iterator	iterKey;
+	vector<unsigned char>::iterator	iterKeyEnd = m_KeyList.end();
+
+	for (iterKey = m_KeyList.begin(); iterKey != iterKeyEnd; ++iterKey)
+	{
+		m_bPress[*iterKey] = false;
+		m_bPush[*iterKey] = false;
+		m_bRelease[*iterKey] = false;
+	}
+
+	unordered_map<string, PBindAction>::iterator	iter2;
+	unordered_map<string, PBindAction>::iterator	iter2End = m_mapAction.end();
+
+	for (iter2 = m_mapAction.begin(); iter2 != iter2End; ++iter2)
+	{
+		vector<PActionKey>::iterator	iter1;
+		vector<PActionKey>::iterator	iter1End = iter2->second->KeyList.end();
+
+		for (iter1 = iter2->second->KeyList.begin(); iter1 != iter1End; ++iter1)
+		{
+			(*iter1)->bPress = false;
+			(*iter1)->bPush = false;
+			(*iter1)->bRelease = false;
+		}
+	}
 }
 
 PBindAxis CInput::FindAxis(const std::string & _strName)

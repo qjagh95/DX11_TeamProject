@@ -154,29 +154,29 @@ bool CScene::Init()
 	CLayer*	pLayer = FindLayer("Default");
 	SAFE_RELEASE(pLayer);
 
-	//m_pSkyObj = CGameObject::CreateObject("Sky");
+	m_pSkyObj = CGameObject::CreateObject("Sky");
 
-	//m_pSkyObj->SetScene(this);
+	m_pSkyObj->SetScene(this);
 
-	//CTransform*	pSkyTr = m_pSkyObj->GetTransform();
+	CTransform*	pSkyTr = m_pSkyObj->GetTransform();
 
-	//pSkyTr->SetWorldScale(100000.f, 100000.f, 100000.f);
-	//pSkyTr->Update(0.f);
+	pSkyTr->SetWorldScale(100000.f, 100000.f, 100000.f);
+	pSkyTr->Update(0.f);
 
-	//SAFE_RELEASE(pSkyTr);
+	SAFE_RELEASE(pSkyTr);
 
-	//CRenderer*	pRenderer = m_pSkyObj->AddComponent<CRenderer>("SkyRenderer");
+	CRenderer*	pRenderer = m_pSkyObj->AddComponent<CRenderer>("SkyRenderer");
 
-	//pRenderer->SetMesh("Sky");
-	//pRenderer->SetRenderState(DEPTH_LESSEQUAL);
-	//pRenderer->SetRenderState(CULL_NONE);
+	pRenderer->SetMesh("Sky");
+	pRenderer->SetRenderState(DEPTH_LESSEQUAL);
+	pRenderer->SetRenderState(CULL_NONE);
 
-	//SAFE_RELEASE(pRenderer);
+	SAFE_RELEASE(pRenderer);
 
-	//m_pSkyMtrl = m_pSkyObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+	m_pSkyMtrl = m_pSkyObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	//m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
-	//m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
+	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
+	m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
 
 	return true;
 }
@@ -234,12 +234,12 @@ int CScene::Input(float fTime)
 
 int CScene::Update(float fTime)
 {
-	//CTransform*	pTr = m_pSkyObj->GetTransform();
+	CTransform*	pTr = m_pSkyObj->GetTransform();
 
-	//pTr->RotationY(3.f, fTime);
-	//pTr->Update(fTime);
+	pTr->RotationY(3.f, fTime);
+	pTr->Update(fTime);
 
-	//SAFE_RELEASE(pTr);
+	SAFE_RELEASE(pTr);
 
 
 	list<CSceneComponent*>::iterator	iter1;
@@ -645,7 +645,7 @@ void CScene::Debug()
 	ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tInfo.vDif, -1.0f, 1.0f);
 	ImGui::SliderFloat3("Specular", (float*)&getLight->m_tInfo.vSpc, -1.0f, 1.0f);
 	ImGui::SliderFloat3("Direction", (float*)&getLight->m_tInfo.vDir, -1.0f, 1.0f);
-	ImGui::SliderFloat("Range", (float*)&getLight->m_tInfo.fRange, 0.0f, 20.0f);
+	ImGui::SliderFloat("Range", (float*)&getLight->m_tInfo.fRange, 0.0f, 5000.f);
 	ImGui::SliderFloat("FallOff", (float*)&getLight->m_tInfo.fFallOff, 0.0f, 20.0f);
 
 	ImGui::Text("LightPos");

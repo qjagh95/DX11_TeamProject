@@ -3,6 +3,10 @@
 
 PUN_BEGIN
 
+#define	DIK_LBUTTON	0xfd
+#define	DIK_RBUTTON	0xfe
+#define	DIK_MBUTTON	0xff
+
 typedef struct PUN_DLL _tagKeyScale // Key가 꾹눌렸을때(BindAxis 방식) 행위를 하기위해서 Key의 이름과 크기값을 가진 구조체
 {
 	unsigned char cKey;
@@ -71,6 +75,11 @@ private:
 	bool							m_bPush[256];
 	bool							m_bRelease[256];
 	std::vector<unsigned char>		m_KeyList;
+	short							m_sWheel;
+	bool							m_bFocus;
+	bool							m_bMousePress[MS_END];
+	bool							m_bMousePush[MS_END];
+	bool							m_bMouseRelease[MS_END];
 
 private:
 	std::unordered_map<std::string, PBindAxis>  m_mapAxis;
@@ -80,6 +89,9 @@ private:
 	Vector2					m_vMouseClient;
 	Vector2					m_vMouseWorld;
 	Vector2					m_vMouseGap;
+	Vector2					m_vMouse3DClient;
+	Vector2					m_vMouse3DWorld;
+	Vector2					m_vMouse3DGap;
 	class CGameObject*		m_pMouse;
 	class CTransform*		m_pMouseTr;
 	bool					m_bShowCursor;
@@ -92,8 +104,15 @@ public:
 	Vector2 GetMouseClient()	const;
 	Vector2 GetMouseWorld()	const;
 	Vector3 GetMousePos() const;
+	Vector2 GetMouse3DGap()	const;
+	Vector2 GetMouse3DClient()	const;
+	Vector2 GetMouse3DWorld()	const;
 	void ChangeMouseScene(class CScene* pScene);
 	void SetWorldMousePos(Vector3 _vPos);
+	void SetWheelDir(short _sWheel);
+	void ClearWheel();
+	short GetWheelDir() const;
+
 public:
 	bool Init();
 	void Update(float fTime);	
@@ -101,7 +120,7 @@ public:
 	void AddMouseCollision();
 private:
 	bool ReadKeyBoard();
-
+	void ClearKeyState();
 public:
 	PBindAxis FindAxis(const std::string& _strName);
 	PBindAction FindAction(const std::string& _strName);

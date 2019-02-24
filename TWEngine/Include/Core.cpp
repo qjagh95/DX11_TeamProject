@@ -15,7 +15,7 @@ bool CCore::m_bLoop = true;
 CCore::CCore()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(1087);
+	//_CrtSetBreakAlloc(2258);
 
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 }
@@ -101,7 +101,7 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 	if (!GET_SINGLE(CDevice)->Init(hWnd, iWidth, iHeight, bWindowMode))
 		return false;
 
-	SetClearColor(0x00, 0x00, 0x00, 0x00);
+	SetClearColor(0x00, 0xff, 0x00, 0x00);
 
 	// 경로관리자 초기화
 	if (!GET_SINGLE(CPathManager)->Init())
@@ -244,6 +244,8 @@ void CCore::Render(float fTime)
 	GET_SINGLE(CInput)->RenderMouse(fTime);
 
 	GET_SINGLE(CDevice)->Present();
+
+	CInput::GetInst()->ClearWheel();
 }
 
 void CCore::Register(const TCHAR * pClass, int iIconID, int iSmallIconID)
@@ -298,6 +300,9 @@ LRESULT CCore::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
+	case WM_MOUSEWHEEL:
+		CInput::GetInst()->SetWheelDir(HIWORD(wParam));
+		break;
 	case WM_DESTROY:
 		m_bLoop = false;
 		PostQuitMessage(0);

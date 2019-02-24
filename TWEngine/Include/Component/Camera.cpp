@@ -30,11 +30,13 @@ CCamera::~CCamera()
 
 void CCamera::SetTarget(CGameObject * pTarget)
 {
+	SAFE_RELEASE(m_pTarget);
 	m_pTarget = pTarget->GetTransform();
 }
 
 void CCamera::SetTarget(CComponent * pTarget)
 {
+	SAFE_RELEASE(m_pTarget);
 	m_pTarget = pTarget->GetTransform();
 }
 
@@ -140,10 +142,10 @@ int CCamera::Update(float fTime)
 
 	if (m_pTarget)
 	{
-		m_pTransform->SetWorldPos(m_pTarget->GetWorldPos());
+		//m_pTransform->SetWorldPos(m_pTarget->GetWorldPos());
 		Vector3	vMove = m_pTarget->GetWorldMove();
 
-		m_pTransform->SetWorldRot(m_pTarget->GetWorldRot());
+		//m_pTransform->SetWorldRot(m_pTarget->GetWorldRot());
 
 		if (vMove != Vector3::Zero)
 		{

@@ -209,6 +209,7 @@
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Component\Animation.h" />
     <ClInclude Include="Component\Animation2D.h" />
+    <ClInclude Include="Component\Arm.h" />
     <ClInclude Include="Component\Bar.h" />
     <ClInclude Include="Component\Camera.h" />
     <ClInclude Include="Component\CharacterTab.h" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Component\FreeCamera.h" />
     <ClInclude Include="Component\HPMP.h" />
     <ClInclude Include="Component\InvenTab.h" />
+    <ClInclude Include="Component\LandScape.h" />
     <ClInclude Include="Component\Light.h" />
     <ClInclude Include="Component\Material.h" />
     <ClInclude Include="Component\MonsterBackBar.h" />
@@ -277,6 +279,7 @@
     <ClInclude Include="Rendering\RenderTarget.h" />
     <ClInclude Include="Rendering\Shader.h" />
     <ClInclude Include="Rendering\ShaderManager.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Resource\DirectXTex.h" />
     <ClInclude Include="Resource\FbxLoader.h" />
     <ClInclude Include="Resource\Mesh.h" />
@@ -306,6 +309,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Component\Arm.cpp" />
     <ClCompile Include="Component\Bar.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -408,6 +412,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Component\LandScape.cpp" />
     <ClCompile Include="Component\Light.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -700,6 +705,20 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\LandScape.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LandScapeVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LandScapeVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LandScapeVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LandScapeVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="..\Bin\Shader\Light.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
@@ -782,6 +801,9 @@
     <ProjectReference Include="..\..\Mathlib\Mathlib.vcxproj">
       <Project>{bc993d7f-3c50-412d-a85b-472c7138aec9}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TWEngine.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -211,9 +211,10 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 	pAnimClip->iFrameLength = pAnimClip->iEndFrame - pAnimClip->iStartFrame;
 
 	// 시간 정보를 저장해준다.
-	pAnimClip->fStartTime = pClip->tStart.GetSecondDouble();
-	pAnimClip->fEndTime = pClip->tEnd.GetSecondDouble();
-	pAnimClip->fTimeLength = pAnimClip->fEndTime - pAnimClip->fStartTime;
+	pAnimClip->fStartTime = 0.f;
+	pAnimClip->fEndTime = pAnimClip->fPlayTime;
+	pAnimClip->fTimeLength = pAnimClip->fPlayTime;
+	pAnimClip->fFrameTime = pAnimClip->fPlayTime / pAnimClip->iFrameLength;
 
 	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
 	// 뽑아온다.
@@ -232,7 +233,7 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 		{
 			PKEYFRAME	pKeyFrame = new KEYFRAME;
 
-			pKeyFrame->dTime = pClip->vecBoneKeyFrame[i].vecKeyFrame[j].dTime;
+			pKeyFrame->dTime = j * pAnimClip->fFrameTime;
 
 			// 현재 본의 키 프레임에 해당하는 행렬 정보를 얻어온다.
 			FbxAMatrix	mat = pClip->vecBoneKeyFrame[i].vecKeyFrame[j].matTransform;
@@ -256,7 +257,6 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 		}
 	}
 	
-	pAnimClip->fFrameTime = pAnimClip->fPlayTime / pAnimClip->iFrameLength;
 
 	if (m_iFrameMode == 0)
 	{
@@ -302,15 +302,15 @@ void CAnimation::AddClip(const string & strName, ANIMATION_OPTION eOption,
 	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
 	pAnimClip->iStartFrame = 0;
 	pAnimClip->iEndFrame = iEndFrame - iStartFrame;
-	pAnimClip->iFrameLength = pAnimClip->iEndFrame - pAnimClip->iStartFrame + 1;
+	pAnimClip->iFrameLength = pAnimClip->iEndFrame - pAnimClip->iStartFrame;
 
 	pAnimClip->fPlayTime = fPlayTime;
 	pAnimClip->fFrameTime = fPlayTime / pAnimClip->iFrameLength;
 
 	// 시간 정보를 저장해준다.
 	pAnimClip->fStartTime = 0.f;
-	pAnimClip->fEndTime = pAnimClip->iEndFrame * pAnimClip->fFrameTime;
-	pAnimClip->fTimeLength = pAnimClip->fEndTime - pAnimClip->fStartTime;
+	pAnimClip->fEndTime = pAnimClip->fPlayTime;
+	pAnimClip->fTimeLength = pAnimClip->fPlayTime;
 
 
 	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
@@ -594,7 +594,7 @@ bool CAnimation::SaveFromFullPath(const char * pFullPath)
 		fwrite(&pClip->fEndTime, sizeof(float), 1, pFile);
 		fwrite(&pClip->fTimeLength, sizeof(float), 1, pFile);
 		fwrite(&pClip->fFrameTime, sizeof(float), 1, pFile);
-
+		fwrite(&pClip->fPlayTime, sizeof(float), 1, pFile);
 		fwrite(&pClip->iFrameMode, sizeof(int), 1, pFile);
 		fwrite(&pClip->iStartFrame, sizeof(int), 1, pFile);
 		fwrite(&pClip->iEndFrame, sizeof(int), 1, pFile);
@@ -719,7 +719,7 @@ bool CAnimation::LoadFromFullPath(const char * pFullPath)
 		fread(&pClip->fEndTime, sizeof(float), 1, pFile);
 		fread(&pClip->fTimeLength, sizeof(float), 1, pFile);
 		fread(&pClip->fFrameTime, sizeof(float), 1, pFile);
-
+		fread(&pClip->fPlayTime, sizeof(float), 1, pFile);
 		fread(&pClip->iFrameMode, sizeof(int), 1, pFile);
 		fread(&pClip->iStartFrame, sizeof(int), 1, pFile);
 		fread(&pClip->iEndFrame, sizeof(int), 1, pFile);
@@ -953,18 +953,18 @@ bool CAnimation::ModifyClip(const string & strKey,
 
 	m_mapClip.erase(strKey);
 
-	int	iLength = iEndFrame - iStartFrame + 1;
+	int	iLength = iEndFrame - iStartFrame;
 
 	pClip->fPlayTime = fPlayTime;
 	pClip->fFrameTime = pClip->fPlayTime / iLength;
 	pClip->eOption = eOption;
 	pClip->strName = strChangeKey;
 	pClip->iStartFrame = 0;
-	pClip->iEndFrame = iEndFrame - iStartFrame;
+	pClip->iEndFrame = iLength;
 	pClip->iFrameLength = iLength;
 	pClip->fStartTime = 0.f;
-	pClip->fEndTime = iLength * pClip->fFrameTime;
-	pClip->fTimeLength = pClip->fEndTime - pClip->fStartTime;
+	pClip->fEndTime = fPlayTime;
+	pClip->fTimeLength = fPlayTime;
 
 	Safe_Delete_VecList(pClip->vecKeyFrame);
 

@@ -16,7 +16,8 @@
 #include "Input.h"
 #include "../UserComponent/Player.h"
 #include "../UserComponent/Field.h"
-
+#include "Component/LandScape.h"
+#include "Component/Arm.h"
 CFirTestScene::CFirTestScene()
 {
 }
@@ -49,14 +50,14 @@ bool CFirTestScene::Init()
 
 	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
 
-	pRenderer->SetMesh("BlackCow", TEXT("Monster4.fbx"));
+	pRenderer->SetMesh("BlackCow", TEXT("Monster4.msh"));
 
-	//CAnimation* pAnimation = pObject->FindComponentFromType<CAnimation>(CT_ANIMATION);
+	CAnimation* pAnimation = pObject->AddComponent<CAnimation>("Animation");
 
-	//pAnimation->LoadBone("Monster4.bne");
-	//pAnimation->Load("Monster4.anm");
+	pAnimation->LoadBone("Monster4.bne");
+	pAnimation->Load("Monster4.anm");
 
-	//SAFE_RELEASE(pAnimation);
+	SAFE_RELEASE(pAnimation);
 	SAFE_RELEASE(pRenderer);
 
 	SAFE_RELEASE(pObject);
@@ -72,10 +73,17 @@ bool CFirTestScene::Init()
 	pObject = CGameObject::CreateObject("TestObject", pDefaultLayer, true);
 	pTransform = pObject->GetTransform();
 
-	pTransform->SetWorldPos(0.f, 0.f, -300.f);
+	pTransform->SetWorldPos(0.f, 300.f, -300.f);
+	pTransform->SetWorldRotX(45.f);
 	pCamera->SetTarget(pObject);
 	m_pTr = pTransform;
 
+	CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
+
+	pArm->EnableMouse();
+	pArm->SetTarget(pTransform);
+
+	SAFE_RELEASE(pArm);
 	SAFE_RELEASE(pTransform);
 
 	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
@@ -99,51 +107,10 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pRenderer);
 	SAFE_RELEASE(pObject);*/
 
-	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight1",
-		pDefaultLayer, true);
-
-	pTransform = pLightObj->GetTransform();
-
-	pTransform->SetWorldRot(90.f, 0.f, 0.f);
-	pTransform->SetWorldPos(0.f, 4.f, 0.f);
-
-	SAFE_RELEASE(pTransform);
-
-	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight1");
-
-	pLight->SetLightColor(Vector4::White, Vector4::White,
-		Vector4::White);
-	pLight->SetLightType(LT_SPOT);
-	pLight->SetLightRange(10.f);
-	pLight->SetAngle(60.f, 90.f);
-
-	SAFE_RELEASE(pLight);
-
-	SAFE_RELEASE(pLightObj);
-
-	pLightObj = CGameObject::CreateObject("GlobalLight2",
-		pDefaultLayer, true);
-
-	pTransform = pLightObj->GetTransform();
-
-	pTransform->SetWorldPos(-2.f, 0.f, 0.f);
-
-	SAFE_RELEASE(pTransform);
-
-	pLight = pLightObj->AddComponent<CLight>("GlobalLight2");
-
-	pLight->SetLightColor(Vector4::White, Vector4::White,
-		Vector4::White);
-	pLight->SetLightType(LT_POINT);
-	pLight->SetLightRange(10.f);
-
-	SAFE_RELEASE(pLight);
-
-	SAFE_RELEASE(pLightObj);
 
 	SAFE_RELEASE(pCamera);
 
-	pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
+	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
 	pTransform = pLightObj->GetTransform();
 
 	pTransform->SetWorldRot(-90.f, 0.f, 0.f);
@@ -151,14 +118,32 @@ bool CFirTestScene::Init()
 
 	SAFE_RELEASE(pTransform);
 
-	pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
+	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
+	pLight->SetLightColor(Vector4::Red, Vector4::White, Vector4::Blue);
 	pLight->SetLightType(LT_SPOT);
 	pLight->SetLightRange(10.f);
 	pLight->SetAngle(60.f, 90.f);
 
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pLightObj);
+
+	CGameObject* pLandScapeObj = CGameObject::CreateObject("LandScape", pDefaultLayer);
+
+	pTransform = pLandScapeObj->GetTransform();
+
+	pTransform->SetWorldScale(3.f, 1.f, 3.f);
+	pTransform->SetWorldPos(0.f, -2.f, 0.f);
+
+	SAFE_RELEASE(pTransform);
+
+	CLandScape*	pLandScape = pLandScapeObj->AddComponent<CLandScape>("LandScape");
+
+	pLandScape->CreateLandScape("LandScape", 129, 129, "LandScapeDif",
+		TEXT("LandScape/Terrain_Cliff_11.dds"), "LandScape/height1_24.bmp");
+
+	SAFE_RELEASE(pLandScape);
+
+	SAFE_RELEASE(pLandScapeObj);
 
 
 	SAFE_RELEASE(pDefaultLayer);
