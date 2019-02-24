@@ -57,7 +57,7 @@ void CUIButton::SetSound(const string & strFileName, BUTTON_STATE eState)
 {
 	m_strSound[eState - 1] = strFileName;
 
-	GET_SINGLE(CSoundManager)->LoadSound(m_pScene, false, strFileName.c_str());
+	//GET_SINGLE(CSoundManager)->LoadSound(m_pScene, false, strFileName.c_str());
 }
 
 void CUIButton::AfterClone()
@@ -181,8 +181,8 @@ void CUIButton::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 	{
 		m_eState = BS_MOUSEON;
 
-		if (!m_strSound[BS_MOUSEON - 1].empty())
-			GET_SINGLE(CSoundManager)->Play(m_strSound[BS_MOUSEON - 1]);
+		//if (!m_strSound[BS_MOUSEON - 1].empty())
+		//	GET_SINGLE(CSoundManager)->Play(m_strSound[BS_MOUSEON - 1]);
 	}
 }
 
@@ -192,8 +192,8 @@ void CUIButton::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 	{
 		m_eState = BS_NORMAL;
 
-		if (!m_strSound[BS_NORMAL - 1].empty())
-			GET_SINGLE(CSoundManager)->Play(m_strSound[BS_NORMAL - 1]);
+		//if (!m_strSound[BS_NORMAL - 1].empty())
+		//	GET_SINGLE(CSoundManager)->Play(m_strSound[BS_NORMAL - 1]);
 	}
 }
 

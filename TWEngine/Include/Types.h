@@ -1,4 +1,5 @@
 #pragma once
+#include <MathHeader.h>
 #include "Flag.h"
 
 PUN_BEGIN

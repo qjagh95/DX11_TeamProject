@@ -187,7 +187,7 @@ bool CShaderManager::Init()
 }
 
 bool CShaderManager::LoadShader(const string & strName,
-	const TCHAR * pFileName, char * pEntry[ST_END],
+	const TCHAR * pFileName, char * pEntry[SHADER_TYPE::ST_END],
 	const string & strPathKey)
 {
 	CShader*	pShader = FindShader(strName);

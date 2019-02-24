@@ -4,6 +4,7 @@
 #include "FbxLoader.h"
 #include "../Component/Material.h"
 #include "../Component/Animation.h"
+#include "BineryWriter.h"
 
 PUN_USING
 
@@ -415,7 +416,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 
 		pContainer->ePrimitive = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-		if (!CreateVertexBuffer(&vecVtx[0], vecVtx.size(),
+		if (!CreateVertexBuffer(&vecVtx[0], (int)vecVtx.size(),
 			iVtxSize, D3D11_USAGE_DEFAULT))
 			return false;
 
@@ -431,7 +432,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 			vecEmptyIndex.push_back(true);
 
 			if (!CreateIndexBuffer(&(*iter)->vecIndices[i][0],
-				(*iter)->vecIndices[i].size(), 4,
+				(int)(*iter)->vecIndices[i].size(), 4,
 				D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT))
 				return false;
 		}
@@ -470,7 +471,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 			PFBXMATERIAL	pMtrl = (*iterM)[i];
 
 			m_pMaterial->SetMaterial(pMtrl->vDif, pMtrl->vAmb,
-				pMtrl->vSpc, pMtrl->fShininess, pMtrl->vEmv, iContainer, i);
+				pMtrl->vSpc, pMtrl->fShininess, pMtrl->vEmv, iContainer, (int)i);
 
 			// 이름을 불러온다.
 			char	strName[MAX_PATH] = {};
@@ -481,12 +482,12 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 
 #ifdef UNICODE
 			MultiByteToWideChar(CP_ACP, 0, pMtrl->strDifTex.c_str(),
-				-1, strPath, pMtrl->strDifTex.length());
+				-1, strPath, (int)pMtrl->strDifTex.length());
 #endif // UNICODE
 
-			m_pMaterial->SetSampler(0, SAMPLER_LINEAR, iContainer, i);
+			m_pMaterial->SetSampler(0, SAMPLER_LINEAR, iContainer, (int)i);
 			m_pMaterial->SetDiffuseTexFromFullPath(0, strName,
-				strPath, iContainer, i);
+				strPath, iContainer, (int)i);
 
 			if (!pMtrl->strBumpTex.empty())
 			{
@@ -497,10 +498,10 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);
 
 				MultiByteToWideChar(CP_ACP, 0, pMtrl->strBumpTex.c_str(),
-					-1, strPath, pMtrl->strBumpTex.length());
+					-1, strPath, (int)pMtrl->strBumpTex.length());
 
-				m_pMaterial->SetNormalSampler(0, SAMPLER_LINEAR, iContainer, i);
-				m_pMaterial->SetNormalTexFromFullPath(1, strName, strPath, iContainer, i);
+				m_pMaterial->SetNormalSampler(0, SAMPLER_LINEAR, iContainer, (int)i);
+				m_pMaterial->SetNormalTexFromFullPath(1, strName, strPath, iContainer, (int)i);
 			}
 
 			if (!pMtrl->strSpcTex.empty())
@@ -512,75 +513,13 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);
 
 				MultiByteToWideChar(CP_ACP, 0, pMtrl->strSpcTex.c_str(),
-					-1, strPath, pMtrl->strSpcTex.length());
+					-1, strPath, (int)pMtrl->strSpcTex.length());
 
-				m_pMaterial->SetSpecularSampler(0, SAMPLER_LINEAR, iContainer, i);
-				m_pMaterial->SetSpecularTexFromFullPath(2, strName, strPath, iContainer, i);
+				m_pMaterial->SetSpecularSampler(0, SAMPLER_LINEAR, iContainer, (int)i);
+				m_pMaterial->SetSpecularTexFromFullPath(2, strName, strPath, iContainer, (int)i);
 			}
 		}
 	}
-
-	// 텍스쳐가 저장된 폴더명을 키로 변경한다.
-	//char	strFullName[MAX_PATH] = {};
-	//iterM = pMaterials->begin();
-	//strcpy_s(strFullName, (*iterM)[0]->strDifTex.c_str());
-
-	//int	iLength = strlen(strFullName);
-	//for (int i = iLength - 1; i >= 0; --i)
-	//{
-	//	if (strFullName[i] == '\\' || strFullName[i] == '/')
-	//	{
-	//		memset(strFullName + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
-	//		strFullName[i] = '\\';
-	//		//strFullName[i] = 0;
-	//		break;
-	//	}
-	//}
-
-	//char	strChange[MAX_PATH] = {};
-	//strcpy_s(strChange, strFullName);
-	//iLength = strlen(strChange);
-	//for (int i = iLength - 2; i >= 0; --i)
-	//{
-	//	if (strChange[i] == '\\' || strChange[i] == '/')
-	//	{
-	//		memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
-	//		break;
-	//	}
-	//}
-
-	//strcat_s(strChange, m_strTag.c_str());
-	//strcat_s(strChange, "\\");
-
-	//MoveFileA(strFullName, strChange);
-
-	// Mesh\\ 까지의 경로를 제거한다.
-	/*iLength = strlen(strChange);
-	for (int i = iLength - 2; i >= 0; --i)
-	{
-		char	cText[5] = {};
-		memcpy(cText, &strChange[i - 4], 4);
-		_strupr_s(cText);
-
-		if (strcmp(cText, "MESH") == 0)
-		{
-			memset(strChange, 0, sizeof(char) * (i + 1));
-			memcpy(strChange, &strChange[i + 1], sizeof(char) * (iLength - (i + 1)));
-			memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
-			break;
-		}
-	}*/
-
-	/*for (size_t i = 0; i < m_vecMeshContainer.size(); ++i)
-	{
-	PMESHCONTAINER	pContainer = m_vecMeshContainer[i];
-
-	for (size_t j = 0; j < pContainer->vecMaterial.size(); ++j)
-	{
-	pContainer->vecMaterial[j]->SetTexturePathKey(MESH_PATH);
-	pContainer->vecMaterial[j]->ChangeTexturePath(strChange);
-	}
-	}*/
 
 	m_vLength = m_vMax - m_vMin;
 
@@ -620,7 +559,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 			{
 				for (int j = 0; j < 4; ++j)
 				{
-					fMat[i][j] = (*iterB)->matOffset.mData[i].mData[j];
+					fMat[i][j] = (float)((*iterB)->matOffset.mData[i].mData[j]);
 				}
 			}
 
@@ -631,7 +570,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 			{
 				for (int j = 0; j < 4; ++j)
 				{
-					fMat[i][j] = (*iterB)->matBone.mData[i].mData[j];
+					fMat[i][j] = (float)((*iterB)->matBone.mData[i].mData[j]);
 				}
 			}
 
@@ -662,7 +601,7 @@ bool CMesh::ConvertFbx(CFbxLoader * pLoader, const char* pFullPath)
 
 	char	strFullPath[MAX_PATH] = {};
 	strcpy_s(strFullPath, pFullPath);
-	int	iPathLength = strlen(strFullPath);
+	int	iPathLength = (int)strlen(strFullPath);
 	memcpy(&strFullPath[iPathLength - 3], "msh", 3);
 
 	SaveFromFullPath(strFullPath);
@@ -700,19 +639,19 @@ bool CMesh::SaveFromFullPath(const char * pFullPath)
 	if (!pFile)
 		return false;
 
-	int	iLength = m_strTag.length();
+	int	iLength = (int)m_strTag.length();
 
 	// Tag 길이를 저장한다.
 	fwrite(&iLength, 4, 1, pFile);
 	fwrite(m_strTag.c_str(), 1, iLength, pFile);
 
 	// ShaderName 길이를 저장한다.
-	iLength = m_strShaderKey.length();
+	iLength = (int)m_strShaderKey.length();
 	fwrite(&iLength, 4, 1, pFile);
 	fwrite(m_strShaderKey.c_str(), 1, iLength, pFile);
 
 	// 입력레이아웃 이름 길이를 저장한다.
-	iLength = m_strInputLayoutKey.length();
+	iLength = (int)m_strInputLayoutKey.length();
 	fwrite(&iLength, 4, 1, pFile);
 	fwrite(m_strInputLayoutKey.c_str(), 1, iLength, pFile);
 

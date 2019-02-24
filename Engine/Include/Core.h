@@ -2,6 +2,7 @@
 
 PUN_BEGIN
 
+class CTimer;
 class PUN_DLL CCore
 {
 private:
@@ -12,6 +13,7 @@ private:
 	float		m_fClearColor[4];
 	float		m_fTimeScale;
 	GAME_MODE	m_eGameMode;
+	CTimer*		m_pTimer;
 
 public:
 	HWND GetWindowHandle()	const;

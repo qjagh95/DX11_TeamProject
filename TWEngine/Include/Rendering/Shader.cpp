@@ -2,7 +2,6 @@
 #include "Shader.h"
 #include "../Device.h"
 
-
 PUN_USING
 
 CShader::CShader() :
@@ -32,7 +31,7 @@ SIZE_T CShader::GetVSCodeSize() const
 }
 
 bool CShader::LoadShader(const string & strName,
-	const TCHAR * pFileName, char * pEntry[ST_END],
+	const TCHAR * pFileName, char * pEntry[SHADER_TYPE::ST_END],
 	const string & strPathKey)
 {
 	m_strName = strName;

@@ -185,7 +185,7 @@ void CInput::Update(float fTime)
 	GetCursorPos(&tMousePos);
 	ScreenToClient(WINDOWHANDLE, &tMousePos);
 
-	Vector2	vMousePos(tMousePos.x, tMousePos.y);
+	Vector2	vMousePos((float)tMousePos.x, (float)tMousePos.y);
 	Vector2	vMouse3DPos = vMousePos;
 
 	RECT	rc = {};

@@ -1,3 +1,4 @@
+#include "../ClientHeader.h"
 #include "stdafx.h"
 #include "StartScene.h"
 #include "Scene/Scene.h"

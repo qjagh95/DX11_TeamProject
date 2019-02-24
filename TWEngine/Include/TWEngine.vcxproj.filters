@@ -62,9 +62,6 @@
     <Filter Include="06. Component\08. UI">
       <UniqueIdentifier>{7d8219fd-11da-49ca-872e-5fed960210ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. Component\09. Sound">
-      <UniqueIdentifier>{67d5353c-5db3-484c-abd4-45c313937521}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. Component\10. Stage2D">
       <UniqueIdentifier>{db5fae1f-d4cc-4b6f-8703-01b407af6e29}</UniqueIdentifier>
     </Filter>
@@ -80,17 +77,8 @@
     <Filter Include="06. Component\08. UI\01. Bar">
       <UniqueIdentifier>{699aad5c-eb1b-4c5d-8866-b64e908409b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. Component\08. UI\02. RightTab">
-      <UniqueIdentifier>{fa83f682-71b9-4529-8954-f67df13f2b0c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. Component\08. UI\03. Button">
       <UniqueIdentifier>{c3f2c43b-42d1-46ed-a8db-30b73b56e35c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. Component\08. UI\04. Slot">
-      <UniqueIdentifier>{238a7540-426c-45ac-8e82-ea859bcafd50}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. Component\08. UI\05. Number">
-      <UniqueIdentifier>{3b5361c7-43ac-4209-b481-8ccd54596d17}</UniqueIdentifier>
     </Filter>
     <Filter Include="헤더 파일">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
@@ -114,14 +102,8 @@
     <Filter Include="01. Core\06. Font">
       <UniqueIdentifier>{609a6aff-6093-43c3-9d48-897304fcf97f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Core\07. Sound">
-      <UniqueIdentifier>{1a0ef6e6-6dc0-4a65-ab53-87fa6f2316e6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Core\08. Navigation">
       <UniqueIdentifier>{7f3f5cc3-7908-4678-81ab-d4cedd8616aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Core\09.. BineryFileIO">
-      <UniqueIdentifier>{a71992b5-b86b-4121-af51-b7beb802b6b2}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Core\10. GUIManager">
       <UniqueIdentifier>{86c2d808-7cf2-4083-bf22-2fa689f5f85a}</UniqueIdentifier>
@@ -137,6 +119,9 @@
     </Filter>
     <Filter Include="06. Component\14.Arm">
       <UniqueIdentifier>{460c8ac4-64b8-4ac8-b75a-c7577d5a23dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Core\09. BineryFileIO">
+      <UniqueIdentifier>{a71992b5-b86b-4121-af51-b7beb802b6b2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -160,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="FontManager.cpp">
       <Filter>01. Core\06. Font</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundManager.cpp">
-      <Filter>01. Core\07. Sound</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Mesh.cpp">
       <Filter>02. Resources\01. Mesh</Filter>
@@ -260,9 +242,6 @@
     <ClCompile Include="Component\ColliderPoint.cpp">
       <Filter>06. Component\07. Collider</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Sound.cpp">
-      <Filter>06. Component\09. Sound</Filter>
-    </ClCompile>
     <ClCompile Include="Component\UI.cpp">
       <Filter>06. Component\08. UI</Filter>
     </ClCompile>
@@ -287,77 +266,23 @@
     <ClCompile Include="Component\UIBar.cpp">
       <Filter>06. Component\08. UI\01. Bar</Filter>
     </ClCompile>
-    <ClCompile Include="Component\CharacterTab.cpp">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\InvenTab.cpp">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\EquipTab.cpp">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClCompile>
     <ClCompile Include="Component\UIButton.cpp">
       <Filter>06. Component\08. UI\03. Button</Filter>
     </ClCompile>
-    <ClCompile Include="Component\QuickSlot.cpp">
-      <Filter>06. Component\08. UI\04. Slot</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\ExpBar.cpp">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\MPBar.cpp">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\SPBar.cpp">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClCompile>
     <ClCompile Include="StageManager.cpp">
       <Filter>06. Component\10. Stage2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\DamageNumber.cpp">
-      <Filter>06. Component\08. UI\05. Number</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\HPMP.cpp">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\UIEndButton.cpp">
-      <Filter>06. Component\08. UI\03. Button</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\MonsterBar.cpp">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\MonsterBackBar.cpp">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\ClubTab.cpp">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\ComboTab.cpp">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\OptionTab.cpp">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\TeamTab.cpp">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
     </ClCompile>
     <ClCompile Include="Component\Light.cpp">
       <Filter>06. Component\12. Light</Filter>
     </ClCompile>
     <ClCompile Include="BineryReader.cpp">
-      <Filter>01. Core\09.. BineryFileIO</Filter>
+      <Filter>01. Core\09. BineryFileIO</Filter>
     </ClCompile>
     <ClCompile Include="BineryWriter.cpp">
-      <Filter>01. Core\09.. BineryFileIO</Filter>
-    </ClCompile>
-    <ClCompile Include="EngineHeader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>01. Core\09. BineryFileIO</Filter>
     </ClCompile>
     <ClCompile Include="GUIManager.cpp">
       <Filter>01. Core\10. GUIManager</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundManagerT.cpp">
-      <Filter>01. Core\11. SoundManager</Filter>
     </ClCompile>
     <ClCompile Include="Rendering\MultiRenderTarget.cpp">
       <Filter>03. Rendering\03. RenderTarget</Filter>
@@ -377,11 +302,14 @@
     <ClCompile Include="Component\Arm.cpp">
       <Filter>06. Component\14.Arm</Filter>
     </ClCompile>
+    <ClCompile Include="EngineHeader.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>01. Core\11. SoundManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Macro.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -411,33 +339,6 @@
     </ClInclude>
     <ClInclude Include="FontManager.h">
       <Filter>01. Core\06. Font</Filter>
-    </ClInclude>
-    <ClInclude Include="fmod.h">
-      <Filter>01. Core\07. Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="fmod.hpp">
-      <Filter>01. Core\07. Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="fmod_codec.h">
-      <Filter>01. Core\07. Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="fmod_common.h">
-      <Filter>01. Core\07. Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="fmod_dsp.h">
-      <Filter>01. Core\07. Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="fmod_dsp_effects.h">
-      <Filter>01. Core\07. Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="fmod_errors.h">
-      <Filter>01. Core\07. Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="fmod_output.h">
-      <Filter>01. Core\07. Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundManager.h">
-      <Filter>01. Core\07. Sound</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Mesh.h">
       <Filter>02. Resources\01. Mesh</Filter>
@@ -538,9 +439,6 @@
     <ClInclude Include="Component\ColliderPoint.h">
       <Filter>06. Component\07. Collider</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Sound.h">
-      <Filter>06. Component\09. Sound</Filter>
-    </ClInclude>
     <ClInclude Include="Component\UI.h">
       <Filter>06. Component\08. UI</Filter>
     </ClInclude>
@@ -565,77 +463,23 @@
     <ClInclude Include="Component\UIBar.h">
       <Filter>06. Component\08. UI\01. Bar</Filter>
     </ClInclude>
-    <ClInclude Include="Component\CharacterTab.h">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\InvenTab.h">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\EquipTab.h">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClInclude>
     <ClInclude Include="Component\UIButton.h">
       <Filter>06. Component\08. UI\03. Button</Filter>
     </ClInclude>
-    <ClInclude Include="Component\QuickSlot.h">
-      <Filter>06. Component\08. UI\04. Slot</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\ExpBar.h">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\MPBar.h">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\SPBar.h">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClInclude>
     <ClInclude Include="StageManager.h">
       <Filter>06. Component\10. Stage2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\DamageNumber.h">
-      <Filter>06. Component\08. UI\05. Number</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\HPMP.h">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\UIEndButton.h">
-      <Filter>06. Component\08. UI\03. Button</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\MonsterBar.h">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\MonsterBackBar.h">
-      <Filter>06. Component\08. UI\01. Bar</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\ClubTab.h">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\ComboTab.h">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\OptionTab.h">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\TeamTab.h">
-      <Filter>06. Component\08. UI\02. RightTab</Filter>
     </ClInclude>
     <ClInclude Include="Component\Light.h">
       <Filter>06. Component\12. Light</Filter>
     </ClInclude>
     <ClInclude Include="BineryReader.h">
-      <Filter>01. Core\09.. BineryFileIO</Filter>
+      <Filter>01. Core\09. BineryFileIO</Filter>
     </ClInclude>
     <ClInclude Include="BineryWriter.h">
-      <Filter>01. Core\09.. BineryFileIO</Filter>
-    </ClInclude>
-    <ClInclude Include="EngineHeader.h">
-      <Filter>소스 파일</Filter>
+      <Filter>01. Core\09. BineryFileIO</Filter>
     </ClInclude>
     <ClInclude Include="GUIManager.h">
       <Filter>01. Core\10. GUIManager</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundManagerT.h">
-      <Filter>01. Core\11. SoundManager</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\MultiRenderTarget.h">
       <Filter>03. Rendering\03. RenderTarget</Filter>
@@ -658,19 +502,16 @@
     <ClInclude Include="Component\Arm.h">
       <Filter>06. Component\14.Arm</Filter>
     </ClInclude>
+    <ClInclude Include="EngineHeader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>01. Core\11. SoundManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\copy.bat">
       <Filter>소스 파일</Filter>
-    </None>
-    <None Include="fmod.cs">
-      <Filter>01. Core\07. Sound</Filter>
-    </None>
-    <None Include="fmod_dsp.cs">
-      <Filter>01. Core\07. Sound</Filter>
-    </None>
-    <None Include="fmod_errors.cs">
-      <Filter>01. Core\07. Sound</Filter>
     </None>
     <None Include="Resource\DirectXTex.inl">
       <Filter>02. Resources\02. Texture</Filter>
@@ -703,6 +544,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="TWEngine.rc" />
+    <ResourceCompile Include="TWEngine.rc">
+      <Filter>헤더 파일</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

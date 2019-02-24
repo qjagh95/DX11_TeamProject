@@ -111,11 +111,12 @@
       <AdditionalIncludeDirectories>../../DirectXTK/Inc/;</AdditionalIncludeDirectories>
       <IncludeInUnityFile>true</IncludeInUnityFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <PrecompiledHeaderFile />
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>TWEngine64_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ImGui_Debug.lib;TWEngine64_Debug.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>wWinMainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
@@ -175,18 +176,17 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>TWEngine64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ImGui.lib;TWEngine64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Client.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneComponent\FirTestScene.h" />
     <ClInclude Include="SceneComponent\MainScene.h" />
     <ClInclude Include="SceneComponent\SecTestScene.h" />
     <ClInclude Include="SceneComponent\StartScene.h" />
     <ClInclude Include="SceneComponent\TrdTestScene.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ClientHeader.h" />
     <ClInclude Include="UserComponent\Field.h" />
     <ClInclude Include="UserComponent\Player.h" />
   </ItemGroup>
@@ -197,12 +197,6 @@
     <ClCompile Include="SceneComponent\SecTestScene.cpp" />
     <ClCompile Include="SceneComponent\StartScene.cpp" />
     <ClCompile Include="SceneComponent\TrdTestScene.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="UserComponent\Field.cpp" />
     <ClCompile Include="UserComponent\Player.cpp" />
   </ItemGroup>

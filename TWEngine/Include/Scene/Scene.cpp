@@ -25,8 +25,6 @@ CScene::~CScene()
 	SAFE_RELEASE(m_pSkyObj);
 	SAFE_RELEASE(m_pSkyMtrl);
 
-	GET_SINGLE(CSoundManager)->DeleteSound(this);
-
 	CGameObject::DestroyPrototype(this);
 	Safe_Release_VecList(m_LayerList);
 	Safe_Release_VecList(m_SceneComponentList);
@@ -287,9 +285,8 @@ int CScene::Update(float fTime)
 	}
 
 	m_pMainCameraObj->Update(fTime);
-#ifdef _DEBUG
+
 	Debug();
-#endif // DEBUG
 
 	return 0;
 }
@@ -626,7 +623,7 @@ void CScene::EnableSceneComponent(const string & strTag, bool bEnable)
 }
 
 void CScene::Debug()
-{
+{	
 	ImGui::Text("GlobalLight");
 	ImGui::BeginTabBar("AA");
 	ImGui::EndTabBar();
@@ -634,6 +631,12 @@ void CScene::Debug()
 	static int GlobalLightType = 0;
 
 	CGameObject* getObject = FindObjectNonCount("GlobalLight");
+
+	if (getObject == NULLPTR)
+		return;
+
+	ImGui::Checkbox("WireFrameMode", &CRenderManager::GetInst()->m_bWireFrame);
+
 	CLight* getLight = getObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
 	const char* Items[3] = { "Direction", "Point", "Spot" };
 	ImGui::Text("LightType");

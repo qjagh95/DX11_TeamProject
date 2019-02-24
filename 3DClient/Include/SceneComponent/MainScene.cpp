@@ -1,22 +1,12 @@
-#include "stdafx.h"
+#include "../ClientHeader.h"
 #include "MainScene.h"
-#include "Scene/Scene.h"
-#include "Scene/Layer.h"
-#include "GameObject.h"
-#include "Scene/SceneManager.h"
-#include "Component/Transform.h"
-#include "Component/Renderer.h"
+
 #include "Component/Camera.h"
-#include "Component/Material.h"
-#include "Component/Stage2D.h"
-#include "Component/UIBar.h"
-#include "NavigationManager.h"
-#include "Component/Sound.h"
-#include "SoundManager.h"
 #include "Component/Light.h"
-#include "Input.h"
-#include "../UserComponent/Player.h"
 #include "Component/LandScape.h"
+
+#include "../UserComponent/Player.h"
+
 CMainScene::CMainScene()
 {
 }

@@ -369,11 +369,11 @@ void CRenderer::Render(float fTime)
 
 	for (size_t i = 0; i < m_pMesh->GetContainCount(); ++i)
 	{
-		for (size_t j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
+		for (size_t j = 0; j < m_pMesh->GetSubsetCount((int)i); ++j)
 		{
-			m_pMaterial->SetShader(i, j);
+			m_pMaterial->SetShader((int)i, (int)j);
 
-			m_pMesh->Render(i, j);
+			m_pMesh->Render((int)i, (int)j);
 		}
 	}
 

@@ -10,6 +10,7 @@
 // ========== Default Sampler Key ==========
 #define	SAMPLER_LINEAR	"Linear"
 #define SAMPLER_POINT   "Point"
+
 // ========== Shader Key ========
 #define	STANDARD_COLOR_SHADER	"StandardColorShader"
 #define	STANDARD_TEX_SHADER	"StandardTexShader"
@@ -55,13 +56,6 @@
 #define CAPSUL_VOLUME "CapsulVolum"
 #define CORN_VOLUME "CornVolum"
 #define CYLINDER_VOLUME "CylinderVolum"
-
-enum SHADER_TYPE
-{
-	ST_VERTEX,
-	ST_PIXEL,
-	ST_END
-};
 
 #include <dinput.h>
 #pragma comment(lib , "dinput8")

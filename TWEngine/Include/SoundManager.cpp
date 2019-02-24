@@ -1,296 +1,145 @@
 #include "EngineHeader.h"
 #include "SoundManager.h"
 #include "Scene/Scene.h"
+#include "Component/Transform.h"
 
 PUN_USING
+SINGLETON_VAR_INIT(CSoundManager)
 
-DEFINITION_SINGLE(CSoundManager)
+shared_ptr<SoundEffect> CSoundManager::m_NULLPTR1;
+shared_ptr<SoundEffectInstance> CSoundManager::m_NULLPTR2;
 
 CSoundManager::CSoundManager()
 {
-	memset(m_pChannel, 0, sizeof(Channel*) * 2);
 }
-
 
 CSoundManager::~CSoundManager()
 {
-	unordered_map<string, PSOUNDINFO>::iterator	iter;
-	unordered_map<string, PSOUNDINFO>::iterator	iterEnd = m_mapSound.end();
 
-	for (iter = m_mapSound.begin(); iter != iterEnd; ++iter)
-	{
-		iter->second->pSound->release();
-		SAFE_DELETE(iter->second);
-	}
-
-	m_pSystem->close();
-	m_pSystem->release();
 }
 
 bool CSoundManager::Init()
 {
-	System_Create(&m_pSystem);
-
-	m_pSystem->init(20, FMOD_INIT_NORMAL, nullptr);
-
-	return true;
-}
-
-bool CSoundManager::LoadSound(CScene* pScene, bool bLoop,
-	const char * pFileName, const string & strPathKey)
-{
-	PSOUNDINFO	pSound = FindSound(pFileName);
-
-	if (pSound)
-		return false;
-
-	const char*	pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);
-
-	string	strFullPath;
-
-	if (pPath)
-		strFullPath = pPath;
-
-	strFullPath += pFileName;
-
-	pSound = new SOUNDINFO;
-
-	pSound->pScene = pScene;
-	pSound->bLoop = bLoop;
-
-	FMOD_MODE	eMode = FMOD_LOOP_NORMAL;
-
-	if (!bLoop)
-		eMode = FMOD_DEFAULT;
-
-	m_pSystem->createSound(strFullPath.c_str(), eMode, NULL, &pSound->pSound);
-
-	m_mapSound.insert(make_pair(pFileName, pSound));
-
-	return true;
-}
-
-bool CSoundManager::LoadSound(const string & strKey, bool bLoop, const TCHAR * pFileName, const string & strPathKey)
-{
-	PSOUNDINFO pSound = FindSound(strKey);
-
-	if (pSound)
-		return false;
-
-	const char* pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);
-
-	string strFullPath;
-
-	if (pPath)
-		strFullPath = pPath;
-
-	char strFileName[MAX_PATH] = {};
-
-#ifdef _WIN64
-	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName), 0, 0);
-#else
-	strcpy_s(strFileName, pFileName);
+	AUDIO_ENGINE_FLAGS Flag = AudioEngine_Default;
+#ifdef _DEBUG
+	Flag = Flag | AudioEngine_Debug;
 #endif
-	strFullPath += strFileName;
+	m_AudioEngine = make_unique<AudioEngine>(Flag);
 
-	pSound = new SOUNDINFO;
-
-	pSound->bLoop = bLoop;
-
-	FMOD_MODE eMode = FMOD_LOOP_NORMAL;
-
-	if (!bLoop)
-		eMode = FMOD_DEFAULT;
-
-	m_pSystem->createSound(strFullPath.c_str(), eMode, NULL, &pSound->pSound);
-
-	m_mapSound.insert(make_pair(strKey, pSound));
+	//CreateSoundEffect("BGM", TEXT("bgm_Dnf.wav"));
+	//CreateSoundEffect("Effect", TEXT("BugChange.wav"));
 
 	return true;
-}
-
-void CSoundManager::Play(const string & strKey, bool bBGM)
-{
-	PSOUNDINFO pSound = FindSound(strKey);
-
-	if (!pSound)
-		return;
-
-	/*if (bBGM)
-	{
-		m_pSystem->playSound(pSound->pSound, NULL, false, &m_pChannel[0]);
-	}*/
-
-	if (bBGM)
-	{
-		m_pSystem->playSound(pSound->pSound, NULL, false, &m_pChannel[0]);
-		pSound->iChannel = 0;
-	}
-
-
-	else
-	{
-		int iChannel = -1;
-
-		for (int i = 0; i < 20; ++i)
-		{
-			if (!m_bChannel[i])
-			{
-				iChannel = i + 1;
-				m_bChannel[i] = true;
-				break;
-			}
-		}
-
-		if (iChannel == -1)
-			iChannel = 1;
-
-		m_pSystem->playSound(pSound->pSound, NULL, false, &m_pChannel[iChannel]);
-
-		pSound->iChannel = iChannel;
-	}
-}
-
-void CSoundManager::Stop(const string & strKey, bool bBGM)
-{
-	PSOUNDINFO pSound = FindSound(strKey);
-	if (!pSound)
-		return;
-
-	m_pChannel[pSound->iChannel]->stop();
-
-	m_bChannel[pSound->iChannel - 1] = false;
-
-	m_pChannel[pSound->iChannel] = nullptr;
-}
-
-void CSoundManager::Pause(const string & strKey, bool bBGM)
-{
-	PSOUNDINFO	pSound = FindSound(strKey);
-
-	if (!pSound)
-		return;
-
-	if (bBGM)
-	{
-		m_pChannel[0]->setPaused(false);
-	}
-
-	else
-	{
-		m_pSystem->playSound(pSound->pSound, NULL, false, &m_pChannel[1]);
-	}
-}
-
-void CSoundManager::Pause()
-{
-	ChannelGroup*	pGroup;
-	m_pSystem->getMasterChannelGroup(&pGroup);
-
-	pGroup->setPaused(true);
-}
-
-void CSoundManager::Resume()
-{
-	ChannelGroup*	pGroup;
-	m_pSystem->getMasterChannelGroup(&pGroup);
-
-	pGroup->setPaused(false);
-}
-
-void CSoundManager::SetMasterVolume(float fVolume)
-{
-	ChannelGroup*	pGroup;
-	m_pSystem->getMasterChannelGroup(&pGroup);
-
-	pGroup->setVolume(fVolume);
-}
-
-void CSoundManager::SetVolume(float fVolume, bool bBGM)
-{
-	if (bBGM)
-		m_pChannel[0]->setVolume(fVolume);
-
-	else
-		m_pChannel[1]->setVolume(fVolume);
-}
-
-void CSoundManager::DeleteSound()
-{
-	unordered_map<string, PSOUNDINFO>::iterator	iter;
-	unordered_map<string, PSOUNDINFO>::iterator	iterEnd = m_mapSound.end();
-
-	for (iter = m_mapSound.begin(); iter != iterEnd; ++iter)
-	{
-		iter->second->pSound->release();
-		SAFE_DELETE(iter->second);
-	}
-
-	m_mapSound.clear();
-}
-
-void CSoundManager::DeleteSound(CScene * pScene)
-{
-	unordered_map<string, PSOUNDINFO>::iterator	iter;
-	unordered_map<string, PSOUNDINFO>::iterator	iterEnd = m_mapSound.end();
-
-	for (iter = m_mapSound.begin(); iter != iterEnd;)
-	{
-		if (iter->second->pScene == pScene)
-		{
-			iter->second->pSound->release();
-			SAFE_DELETE(iter->second);
-			iter = m_mapSound.erase(iter);
-			iterEnd = m_mapSound.end();
-		}
-
-		else
-			++iter;
-	}
-
-	for (int i = 0; i < 2; ++i)
-	{
-		if (m_pChannel[i])
-			m_pChannel[i]->stop();
-	}
-}
-
-void CSoundManager::DeleteSound(const char * pFileName)
-{
-	unordered_map<string, PSOUNDINFO>::iterator	iter = m_mapSound.find(pFileName);
-
-	if (iter == m_mapSound.end())
-		return;
-
-	iter->second->pSound->release();
-	SAFE_DELETE(iter->second);
-	m_mapSound.erase(iter);
 }
 
 void CSoundManager::Update()
 {
-	for (int i = 1; i < 20; ++i)
-	{
-		if (m_bChannel[i - 1])
-		{
-			bool bPlay = false;
-			m_pChannel[i]->isPlaying(&bPlay);
+	m_AudioEngine->Update();
+}
 
-			if (!bPlay)
-			{
-				m_pChannel[i] = nullptr;
-				m_bChannel[i - 1] = false;
-			}
-		}
+void CSoundManager::AllStop()
+{
+	m_AudioEngine->Suspend();
+}
+
+void CSoundManager::Restart()
+{
+	m_AudioEngine->Resume();
+}
+
+void CSoundManager::CreateSoundEffect(const string & KeyName, const wstring & FileName, const string & PathKey)
+{
+	if (FindSoundEffect(KeyName) != m_NULLPTR1)
+		return;
+
+	const TCHAR* pPath = CPathManager::GetInst()->FindPath(PathKey);
+	wstring	FullPath;
+
+	if (pPath != NULLPTR)
+		FullPath = pPath;
+
+	FullPath += FileName;
+
+	unique_ptr<SoundEffect> newSoundEffect = make_unique<SoundEffect>(m_AudioEngine.get(), FullPath.c_str());
+	m_SoundEffectMap.insert(make_pair(KeyName, move(newSoundEffect)));
+}
+
+void CSoundManager::CreateBGMList(const string & KeyName, unique_ptr<SoundEffectInstance> instance)
+{
+	m_SoundEffectInstanceMap.insert(make_pair(KeyName, move(instance)));
+}
+
+void CSoundManager::RemoveBGMList(const string & KeyName)
+{
+	unordered_map<string, shared_ptr<SoundEffectInstance>>::iterator FindIter = m_SoundEffectInstanceMap.find(KeyName);
+
+	if (FindIter == m_SoundEffectInstanceMap.end())
+		return;
+
+	m_SoundEffectInstanceMap.erase(FindIter);
+}
+
+void CSoundManager::SoundPlay(const string & KeyName, SOUND_TYPE type, const Vector3& EmitterPos)
+{
+	switch (type)
+	{
+	case ST_EFFECT:
+	{
+		auto Sound = FindSoundEffect(KeyName);
+		Sound->Play();
+	}
+	break;
+	case ST_BGM:
+	{
+		auto Sound = FindSoundEffect(KeyName)->CreateInstance();
+		Sound->Play(true);
+		CreateBGMList(KeyName, move(Sound));
+	}
+	break;
+	case ST_3D:
+	{
+		Vector3 cPos = CSceneManager::GetInst()->GetSceneNonCount()->GetMainCameraTransformNonCount()->GetWorldPos();
+		XMFLOAT3 Convert1;
+		Convert1.x = cPos.x;
+		Convert1.y = cPos.y;
+		Convert1.z = cPos.z;
+
+		m_Listener.SetPosition(Convert1);
+
+		XMFLOAT3 Convert2;
+		Convert2.x = EmitterPos.x;
+		Convert2.y = EmitterPos.y;
+		Convert2.z = EmitterPos.z;
+
+		m_Emitter.SetPosition(Convert2);
+
+		auto Sound = FindSoundEffect(KeyName)->CreateInstance(SoundEffectInstance_Use3D | SoundEffectInstance_ReverbUseFilters);
+		Sound->Play(false);
+		Sound->Apply3D(m_Listener, m_Emitter);
+
+		RemoveBGMList(KeyName);
+		CreateBGMList(KeyName, move(Sound));
+	}
+	break;
 	}
 }
 
-CSoundManager::PSOUNDINFO CSoundManager::FindSound(const string & strKey)
+shared_ptr<SoundEffect> const & CSoundManager::FindSoundEffect(const string & KeyName)
 {
-	unordered_map<string, PSOUNDINFO>::iterator	iter = m_mapSound.find(strKey);
+	unordered_map<string, shared_ptr<SoundEffect>>::iterator FindIter = m_SoundEffectMap.find(KeyName);
 
-	if (iter == m_mapSound.end())
-		return nullptr;
+	if (FindIter == m_SoundEffectMap.end())
+		return m_NULLPTR1;
 
-	return iter->second;
+	return FindIter->second;
+}
+
+shared_ptr<SoundEffectInstance> const & CSoundManager::FindSoundEffectInstance(const string & KeyName)
+{
+	unordered_map<string, shared_ptr<SoundEffectInstance>>::iterator FindIter = m_SoundEffectInstanceMap.find(KeyName);
+
+	if (FindIter == m_SoundEffectInstanceMap.end())
+		return m_NULLPTR2;
+
+	return FindIter->second;
 }

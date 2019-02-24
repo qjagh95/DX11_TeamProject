@@ -1,8 +1,5 @@
 #pragma once
-
 #include "Scene/SceneComponent.h"
-#include "Component/Stage2D.h"
-#include "Component/Transform.h"
 
 PUN_USING
 

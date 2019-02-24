@@ -68,7 +68,7 @@ bool CLandScape::CreateLandScape(const string& strName,
 
 			unsigned char*	pLine = new unsigned char[m_iNumX * iPixelSize];
 
-			for (int i = 0; i < m_iNumZ / 2; ++i)
+			for (unsigned int i = 0; i < m_iNumZ / 2; ++i)
 			{
 				memcpy(pLine, &pHeight[i * m_iNumX * iPixelSize],
 					sizeof(unsigned char) * (m_iNumX * iPixelSize));
@@ -99,7 +99,7 @@ bool CLandScape::CreateLandScape(const string& strName,
 				y = pHeight[i * m_iNumX * iPixelSize + j * iPixelSize] * 0.5f;
 			}
 
-			tVtx.vPos = Vector3(j, y, m_iNumZ - i - 1);
+			tVtx.vPos = Vector3((float)j, (float)y, (float)(m_iNumZ - i - 1));
 			tVtx.vNormal = Vector3(0.f, -1.f, 0.f);
 			tVtx.vUV = Vector2((float)j, (float)i);
 
@@ -111,9 +111,9 @@ bool CLandScape::CreateLandScape(const string& strName,
 	}
 
 	// 인덱스 정보를 만든다.
-	for (int i = 0; i < m_iNumZ - 1; ++i)
+	for (unsigned int i = 0; i < m_iNumZ - 1; ++i)
 	{
-		for (int j = 0; j < m_iNumX - 1; ++j)
+		for (unsigned int j = 0; j < m_iNumX - 1; ++j)
 		{
 			int	iAddr = i * m_iNumX + j;
 
@@ -132,8 +132,8 @@ bool CLandScape::CreateLandScape(const string& strName,
 	SetTag(strName);
 
 	GET_SINGLE(CResourcesManager)->CreateMesh(strName, LANDSCAPE_SHADER, VERTEX3D_LAYOUT,
-		&m_vecVtx[0], m_vecVtx.size(), sizeof(Vertex3D), D3D11_USAGE_DEFAULT,
-		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &m_vecIdx[0], m_vecIdx.size(),
+		&m_vecVtx[0], (int)m_vecVtx.size(), sizeof(Vertex3D), D3D11_USAGE_DEFAULT,
+		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &m_vecIdx[0], (int)m_vecIdx.size(),
 		4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
 	CRenderer*	pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);

@@ -144,7 +144,7 @@ bool CAnimation::CreateBoneTexture()
 	tDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	tDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	tDesc.Height = 1;
-	tDesc.Width = m_vecBones.size() * 4;
+	tDesc.Width = (UINT)m_vecBones.size() * 4;
 	tDesc.MipLevels = 1;
 	tDesc.SampleDesc.Quality = 0;
 	tDesc.SampleDesc.Count = 1;
@@ -206,8 +206,8 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 	}
 
 	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
-	pAnimClip->iStartFrame = pClip->tStart.GetFrameCount(pClip->eTimeMode);
-	pAnimClip->iEndFrame = pClip->tEnd.GetFrameCount(pClip->eTimeMode);
+	pAnimClip->iStartFrame = (int)pClip->tStart.GetFrameCount(pClip->eTimeMode);
+	pAnimClip->iEndFrame = (int)pClip->tEnd.GetFrameCount(pClip->eTimeMode);
 	pAnimClip->iFrameLength = pAnimClip->iEndFrame - pAnimClip->iStartFrame;
 
 	// 시간 정보를 저장해준다.
@@ -472,7 +472,7 @@ int CAnimation::FindBoneIndex(const string & strBoneName)
 	for (size_t i = 0; i < m_vecBones.size(); ++i)
 	{
 		if (m_vecBones[i]->strName == strBoneName)
-			return i;
+			return (int)i;
 	}
 
 	return -1;
@@ -1223,7 +1223,7 @@ int CAnimation::Update(float fTime)
 				// 현재 프레임의 시간을 얻어온다.
 				double	 dFrameTime = pCurKey->dTime;
 
-				float	fPercent = (fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime;
+				float	fPercent = (float)((fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime);
 
 				XMVECTOR	vS = XMVectorLerp(pCurKey->vScale.Convert(),
 					pNextKey->vScale.Convert(), fPercent);

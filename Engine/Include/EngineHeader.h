@@ -19,6 +19,7 @@
 #include <process.h>
 #include <memory>
 #include <memory.h>
+#include <time.h>
 
 #include <d3d11.h>
 #include <d3dcompiler.h> // shader를 컴파일하는 기능을 제공한다
@@ -26,7 +27,6 @@
 
 #pragma comment(lib, "d3d11")
 #pragma comment(lib, "d3dcompiler")
-#pragma comment(lib, "ImGui")
 
 #include <d2d1.h>
 #include <dwrite.h>
@@ -39,11 +39,14 @@
 #include <Vector4.h>
 #include <Vector2.h>
 #include <Matrix.h>
+#include <dinput.h>
+
+#pragma comment(lib , "dinput8")
+#pragma comment(lib, "dxguid")
 
 using namespace std;
 
 #include "Types.h"
-#include "Engine.h"
 
 #include <imgui.h>
 #include <imgui_impl_dx11.h>
@@ -65,7 +68,8 @@ using namespace std;
 #include "NavigationManager.h"
 #include "FontManager.h"
 #include "GUIManager.h"
-#include "SoundManagerT.h"
+#include "SoundManager.h"
+#include "Input.h"
 
 #include "Scene/Scene.h"
 #include "Scene/Layer.h"
@@ -76,3 +80,6 @@ using namespace std;
 #include "Component/Transform.h"
 #include "Component/Collider.h"
 #include "Resource/Mesh.h"
+
+#include "BineryWriter.h"
+#include "BineryReader.h"

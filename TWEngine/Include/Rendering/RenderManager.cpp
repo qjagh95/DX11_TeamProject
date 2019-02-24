@@ -461,9 +461,6 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 
 void CRenderManager::Render(float fTime)
 {
-#ifdef _DEBUG
-	ImGui::Checkbox("WireFrameMode", &m_bWireFrame);
-#endif
 	m_tCBuffer.DeltaTime = fTime;
 	m_tCBuffer.PlusedDeltaTime += fTime;
 	m_tCBuffer.isWireFrame = m_bWireFrame;
@@ -536,15 +533,12 @@ void CRenderManager::Render2D(float fTime)
 void CRenderManager::Render3D(float fTime)
 {
 	 //Sky 출력
-	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
+	CScene*	pScene = GET_SINGLE(CSceneManager)->GetSceneNonCount();
 
-	CGameObject*	pSkyObj = pScene->GetSkyObj();
-
+	CGameObject* pSkyObj = pScene->GetSkyObj();
 	pSkyObj->Render(fTime);
 
 	SAFE_RELEASE(pSkyObj);
-
-	SAFE_RELEASE(pScene);
 
 	// Forward Rendering 처리
 	if (!m_bDeferred)
@@ -615,8 +609,7 @@ void CRenderManager::RenderLightAcc(float fTime)
 
 	m_pLightAccDirShader->SetShader();
 
-	CRenderState* pAccBlend = FindRenderState(ACC_BLEND);
-	pAccBlend->SetState();
+	m_pAddBlend->SetState();
 	m_pDepthDisable->SetState();
 	m_pGBufferSampler->SetShader(10);
 	m_pGBufferMultiTarget->SetShaderResource(10);
@@ -641,10 +634,8 @@ void CRenderManager::RenderLightAcc(float fTime)
 	}
 
 	m_pDepthDisable->ResetState();
-	pAccBlend->ResetState();
+	m_pAddBlend->ResetState();
 	m_pGBufferMultiTarget->ResetShaderResource(10);
-
-	SAFE_RELEASE(pAccBlend);
 
 	m_pLightMultiTarget->ResetTarget();
 }

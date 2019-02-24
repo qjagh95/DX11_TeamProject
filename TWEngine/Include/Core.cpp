@@ -4,7 +4,6 @@
 #include "Resource/Mesh.h"
 #include "Rendering/Shader.h"
 #include "Timer.h"
-#include "Input.h"
 
 PUN_USING
 
@@ -14,6 +13,7 @@ bool CCore::m_bLoop = true;
 
 CCore::CCore()
 {
+	m_pTimer = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//_CrtSetBreakAlloc(2258);
 
@@ -24,7 +24,6 @@ CCore::~CCore()
 {
 	DESTROY_SINGLE(CSceneManager);
 	DESTROY_SINGLE(CObjectManager);
-	DESTROY_SINGLE(CSoundManager);
 	DESTROY_SINGLE(CFontManager);
 	DESTROY_SINGLE(CInput);
 	DESTROY_SINGLE(CCollisionManager);
@@ -35,7 +34,7 @@ CCore::~CCore()
 	DESTROY_SINGLE(CNavigationManager);
 	DESTROY_SINGLE(CDevice);
 	GUIManager::Delete();
-	SoundManagerT::Delete();
+	CSoundManager::Delete();
 }
 
 HWND CCore::GetWindowHandle() const
@@ -64,15 +63,6 @@ void CCore::SetGameMode(GAME_MODE eMode)
 	GET_SINGLE(CRenderManager)->SetGameMode(eMode);
 }
 
-void CCore::SetMasterVolume(float fVolume)
-{
-	GET_SINGLE(CSoundManager)->SetMasterVolume(fVolume);
-}
-
-void CCore::SetVolume(float fVolume, bool bBGM)
-{
-	GET_SINGLE(CSoundManager)->SetVolume(fVolume, bBGM);
-}
 
 bool CCore::Init(HINSTANCE hInst, unsigned int iWidth,
 	unsigned int iHeight, const TCHAR * pTitle,
@@ -105,54 +95,83 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 
 	// 경로관리자 초기화
 	if (!GET_SINGLE(CPathManager)->Init())
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// 리소스 관리자 초기화
 	if (!GET_SINGLE(CResourcesManager)->Init())
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// 렌더링 관리자 초기화
 	if (!GET_SINGLE(CRenderManager)->Init())
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// 타이머 관리자 초기화
 	if (!GET_SINGLE(CTimerManager)->Init())
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// 입력관리자 초기화
 	if (!GET_SINGLE(CInput)->Init())
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// 충돌 관리자 초기화
 	if (!GET_SINGLE(CCollisionManager)->Init())
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// 폰트 관리자 초기화
 	if (!GET_SINGLE(CFontManager)->Init())
+	{
+		TrueAssert(true);
 		return false;
-
-	// 사운드 관리자 초기화
-	if (!GET_SINGLE(CSoundManager)->Init())
-		return false;
+	}
 
 	// 오브젝트 관리자 초기화
 	if (!GET_SINGLE(CObjectManager)->Init())
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// 내비게이션 관리자 초기화
 	if (!GET_SINGLE(CNavigationManager)->Init())
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// 장면관리자 초기화
 	if (!GET_SINGLE(CSceneManager)->Init())
+	{
+		TrueAssert(true);
 		return false;
+	}
 
-	if (SoundManagerT::Get()->Init() == false)
+	if (CSoundManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	GUIManager::Get()->CreateImGui(m_hWnd, CDevice::GetInst()->GetDevice(), CDevice::GetInst()->GetContext());
-
 	m_fTimeScale = 1.0f;
+	m_pTimer = CTimerManager::GetInst()->FindTimer("MainTimer");
 
 	return true;
 }
@@ -172,7 +191,6 @@ int CCore::Run()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
 		else
 		{
 			// 실제 게임 구현부분은 여기에 들어와야 한다.
@@ -185,14 +203,10 @@ int CCore::Run()
 
 void CCore::Logic()
 {
-	CTimer*	pTimer = GET_SINGLE(CTimerManager)->FindTimer("MainTimer");
-	pTimer->Update();
+	m_pTimer->Update();
+	float fTime = m_pTimer->GetTime();
 
-	float fTime = pTimer->GetTime();	
-
-#ifdef _DEBUG
 	GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
-#endif
 
 	Input(fTime);
 	Update(fTime);
@@ -233,18 +247,12 @@ void CCore::Render(float fTime)
 {
 	// 타겟뷰와 깊이뷰 초기화
 	GET_SINGLE(CDevice)->Clear(m_fClearColor);
-
 	GET_SINGLE(CSceneManager)->Render(fTime);
 	GET_SINGLE(CRenderManager)->Render(fTime);
 
-#ifdef _DEBUG
 	GUIManager::Get()->ImGuiEnd();
-#endif
-
 	GET_SINGLE(CInput)->RenderMouse(fTime);
-
 	GET_SINGLE(CDevice)->Present();
-
 	CInput::GetInst()->ClearWheel();
 }
 
@@ -291,12 +299,8 @@ void CCore::CreateWnd(const TCHAR * pTitle, const TCHAR * pClass)
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT CCore::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-#ifdef _DEBUG
-
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
 		return true;
-
-#endif
 
 	switch (message)
 	{

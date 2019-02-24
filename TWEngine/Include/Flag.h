@@ -32,6 +32,13 @@ enum AXIS
 	AXIS_END
 };
 
+enum SHADER_TYPE
+{
+	ST_VERTEX,
+	ST_PIXEL,
+	ST_END
+};
+
 enum CBUFFER_SHADER_TYPE
 {
 	CST_VERTEX = 0X1,
@@ -298,4 +305,13 @@ enum MOUSE_STATE
 	MS_MBUTTON,
 	MS_END
 };
+
+enum SOUND_TYPE
+{
+	ST_EFFECT,
+	ST_BGM,
+	ST_3D,
+	ST_MAX,
+};
+
 PUN_END

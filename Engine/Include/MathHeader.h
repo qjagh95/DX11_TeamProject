@@ -16,7 +16,6 @@ using namespace DirectX::PackedVector;
 #define MATH_DLL __declspec(dllimport)
 #endif
 
-
 #define PUN_PI 3.141592f
 
 float MATH_DLL RadianToDegree(float radian);

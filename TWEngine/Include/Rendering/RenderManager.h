@@ -1,7 +1,5 @@
 #pragma once
 
-#include "../Engine.h"
-
 PUN_BEGIN
 
 typedef struct _tagRenderGroup
@@ -52,7 +50,6 @@ private:
 	CRenderTarget* m_pLightBlendTarget;
 	CRenderTarget* m_pLightAccDifTarget;
 	CRenderTarget* m_pLightAccSpcTarget;
-
 	CRenderState* m_pAddBlend;
 	CRenderState* m_pDepthGrator;
 	CRenderState* m_pDepthLess;
@@ -65,7 +62,6 @@ private:
 	CMultiRenderTarget* m_pGBufferMultiTarget;
 	CMultiRenderTarget* m_pLightMultiTarget;
 
-	bool m_bWireFrame;
 	CMesh* m_pSphereVolum;
 	CMesh* m_pCornVolum;
 
@@ -74,6 +70,8 @@ private:
 public:
 	GAME_MODE GetGameMode()	const;
 	bool GetRenderingMode()	const;
+	bool m_bWireFrame;
+
 public:
 	void SetGameMode(GAME_MODE eMode);
 	void EnableDeferredRendering();

@@ -1,5 +1,5 @@
 #pragma once
-#include "../stdafx.h"
+
 #include "Component/UserComponent.h"
 PUN_USING
 

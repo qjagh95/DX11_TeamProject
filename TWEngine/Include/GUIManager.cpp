@@ -20,14 +20,12 @@ GUIManager::~GUIManager()
 
 void GUIManager::CreateImGui(HWND hWnd, ID3D11Device * Device, ID3D11DeviceContext * DeviceConstext)
 {
-#ifdef _DEBUG
 	IMGUI_CHECKVERSION();
 	CreateContext();
 	StyleColorsClassic();
 
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(Device, DeviceConstext);
-#endif
 }
 
 void GUIManager::ImGuiBegin(const char * TitleName)

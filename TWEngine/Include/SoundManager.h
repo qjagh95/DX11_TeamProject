@@ -1,55 +1,42 @@
 #pragma once
-#include "fmod.hpp"
-
-using namespace FMOD;
-
-#ifdef _WIN64
-#pragma comment(lib, "fmod64_vc")
-#else
-#pragma comment(lib, "fmod_vc")
-#endif
 
 PUN_BEGIN
 
 class PUN_DLL CSoundManager
 {
-private:
-	typedef struct _tagSoundInfo
-	{
-		Sound*	pSound;
-		bool	bLoop;
-		class CScene*	pScene;
-		int		iChannel;
-	}SOUNDINFO, *PSOUNDINFO;
-
-private:
-	System *	m_pSystem;
-	Channel*	m_pChannel[20];
-	bool		m_bChannel[19];
-	unordered_map<string, PSOUNDINFO>	m_mapSound;
+	//단발 Sound Effect
+	//루프 Sound EffectInstance
 
 public:
 	bool Init();
-	bool LoadSound(class CScene* pScene, bool bLoop, const char* pFileName,
-		const string& strPathKey = SOUND_PATH);
-	bool LoadSound(const string& strKey, bool bLoop, const TCHAR* pFileName,
-		const string& strPathKey = SOUND_PATH);
-	void Play(const string& strKey, bool bBGM = false);
-	void Stop(const string& strKey, bool bBGM = false);
-	void Pause(const string& strKey, bool bBGM = false);
-	void Pause();
-	void Resume();
-	void SetMasterVolume(float fVolume);
-	void SetVolume(float fVolume, bool bBGM = false);
-	void DeleteSound();
-	void DeleteSound(class CScene* pScene);
-	void DeleteSound(const char* pFileName);
 	void Update();
+	void AllStop();
+	void Restart();
+
+	void CreateSoundEffect(const string& KeyName, const wstring& FileName, const string& PathKey = SOUND_PATH);
+	void SoundPlay(const string& KeyName, SOUND_TYPE type, const Vector3& EmitterPos = Vector3::Zero);
+
+	shared_ptr<SoundEffect> const& FindSoundEffect(const string& KeyName);
+	shared_ptr<SoundEffectInstance> const& FindSoundEffectInstance(const string& KeyName);
 
 private:
-	PSOUNDINFO FindSound(const string& strKey);
+	void CreateBGMList(const string& KeyName, unique_ptr<SoundEffectInstance> instance);
+	void RemoveBGMList(const string& KeyName);
 
-	DECLARE_SINGLE(CSoundManager)
+private:
+	unique_ptr<AudioEngine> m_AudioEngine;
+	unordered_map<string, shared_ptr<SoundEffect>> m_SoundEffectMap;
+	unordered_map<string, shared_ptr<SoundEffectInstance>> m_SoundEffectInstanceMap;
+
+	AudioListener m_Listener;
+	AudioEmitter m_Emitter;
+	SOUND_TYPE m_State;
+
+	static shared_ptr<SoundEffect> m_NULLPTR1;
+	static shared_ptr<SoundEffectInstance> m_NULLPTR2;
+
+private:
+	CLASS_IN_SINGLE(CSoundManager)
 };
 
 PUN_END

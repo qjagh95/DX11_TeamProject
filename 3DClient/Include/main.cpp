@@ -1,12 +1,8 @@
-#include "stdafx.h"
+#include "ClientHeader.h"
 #include "Core.h"
-#include "Scene/SceneManager.h"
-#include "Scene/Scene.h"
 #include "SceneComponent/MainScene.h"
 #include "SceneComponent/StartScene.h"
-#include <time.h>
 #include "SceneComponent/FirTestScene.h"
-
 
 PUN_USING
 
