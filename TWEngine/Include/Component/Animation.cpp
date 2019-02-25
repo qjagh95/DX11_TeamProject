@@ -1,3 +1,4 @@
+#include "../EngineHeader.h"
 #include "Animation.h"
 #include "../Device.h"
 #include "../Resource/FbxLoader.h"

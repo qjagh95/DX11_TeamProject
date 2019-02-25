@@ -1,9 +1,6 @@
-
 #include "EngineHeader.h"
 #include "SceneManager.h"
 #include "Scene.h"
-#include "../Input.h"
-#include "../ObjectManager.h"
 #include "../Component/Stage2D.h"
 
 PUN_USING

@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="01. Core">
       <UniqueIdentifier>{cb8c8820-1ece-4654-8e5c-fde2cd8a86e4}</UniqueIdentifier>
     </Filter>
@@ -122,6 +118,13 @@
     </Filter>
     <Filter Include="01. Core\09. BineryFileIO">
       <UniqueIdentifier>{a71992b5-b86b-4121-af51-b7beb802b6b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditScene">
+      <UniqueIdentifier>{bfb4f440-e81e-401c-a7ca-810dcc7906f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="배치 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -307,6 +310,9 @@
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
       <Filter>01. Core\11. SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorScene.cpp">
+      <Filter>EditScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -508,10 +514,13 @@
     <ClInclude Include="SoundManager.h">
       <Filter>01. Core\11. SoundManager</Filter>
     </ClInclude>
+    <ClInclude Include="EditorScene.h">
+      <Filter>EditScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\copy.bat">
-      <Filter>소스 파일</Filter>
+      <Filter>배치 파일</Filter>
     </None>
     <None Include="Resource\DirectXTex.inl">
       <Filter>02. Resources\02. Texture</Filter>

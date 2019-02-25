@@ -1,6 +1,6 @@
+#include "../EngineHeader.h"
 #include "Mesh.h"
 #include "../Device.h"
-#include "../PathManager.h"
 #include "FbxLoader.h"
 #include "../Component/Material.h"
 #include "../Component/Animation.h"

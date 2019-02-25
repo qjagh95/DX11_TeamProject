@@ -24,8 +24,6 @@ public:
 		unsigned char g, unsigned char b,
 		unsigned char a);
 	void SetGameMode(GAME_MODE eMode);
-	void SetMasterVolume(float fVolume);
-	void SetVolume(float fVolume, bool bBGM = false);
 
 public:
 	bool Init(HINSTANCE hInst, unsigned int iWidth,
@@ -34,8 +32,13 @@ public:
 		bool bWindowMode = true);
 	bool Init(HINSTANCE hInst, HWND hWnd, unsigned int iWidth,
 		unsigned int iHeight, bool bWindowMode = true);
+	bool EditInit(HWND hWnd, unsigned int iWidth,
+		unsigned int iHeight, bool bWindowMode = true);
 	int Run();
 	void Logic();
+
+	void EditLogic();
+	void EditDelete();
 
 private:
 	int Input(float fTime);
@@ -43,12 +46,12 @@ private:
 	int LateUpdate(float fTime);
 	int Collision(float fTime);
 	void Render(float fTime);
+	void EditRender(float fTime);
 
 private:
 	void Register(const TCHAR* pClass, int iIconID, int iSmallIconID);
 	void CreateWnd(const TCHAR* pTitle, const TCHAR* pClass);
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
 
 	DECLARE_SINGLE(CCore)
 };

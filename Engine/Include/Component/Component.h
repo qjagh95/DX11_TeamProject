@@ -1,6 +1,5 @@
 #pragma once
 #include "../Ref.h"
-#include "../GameObject.h"
 
 PUN_BEGIN
 

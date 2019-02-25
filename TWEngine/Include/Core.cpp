@@ -35,6 +35,7 @@ CCore::~CCore()
 	DESTROY_SINGLE(CDevice);
 	GUIManager::Delete();
 	CSoundManager::Delete();
+	CoUninitialize();
 }
 
 HWND CCore::GetWindowHandle() const
@@ -87,9 +88,14 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 	m_tRS.iWidth = iWidth;
 	m_tRS.iHeight = iHeight;
 
+	CoInitializeEx(NULLPTR, COINIT_MULTITHREADED);
+
 	// Device 초기화
 	if (!GET_SINGLE(CDevice)->Init(hWnd, iWidth, iHeight, bWindowMode))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	SetClearColor(0x00, 0xff, 0x00, 0x00);
 
@@ -316,4 +322,138 @@ LRESULT CCore::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	return 0;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//TODO : Editor 전용
+bool CCore::EditInit(HWND hWnd, unsigned int iWidth, unsigned int iHeight, bool bWindowMode)
+{
+	m_hWnd = hWnd;
+	m_tRS.iWidth = iWidth;
+	m_tRS.iHeight = iHeight;
+
+	CoInitializeEx(NULLPTR, COINIT_MULTITHREADED);
+
+	// Device 초기화
+	if (!CDevice::GetInst()->Init(hWnd, iWidth, iHeight, bWindowMode))
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	SetClearColor(0x00, 0xff, 0x00, 0x00);
+
+	// 경로관리자 초기화
+	if (!CPathManager::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 리소스 관리자 초기화
+	if (!CResourcesManager::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 렌더링 관리자 초기화
+	if (!CRenderManager::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 타이머 관리자 초기화
+	if (!CTimerManager::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 입력관리자 초기화
+	if (!CInput::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 충돌 관리자 초기화
+	if (!CCollisionManager::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 폰트 관리자 초기화
+	if (!CFontManager::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 오브젝트 관리자 초기화
+	if (!CObjectManager::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 내비게이션 관리자 초기화
+	if (!CNavigationManager::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 장면관리자 초기화
+	if (!CSceneManager::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	m_fTimeScale = 1.0f;
+	m_pTimer = CTimerManager::GetInst()->FindTimer("MainTimer");
+
+	return true;
+}
+void CCore::EditLogic()
+{
+	m_pTimer->Update();
+	float fTime = m_pTimer->GetTime();
+
+	Input(fTime);
+	Update(fTime);
+	LateUpdate(fTime);
+	Collision(fTime);
+	EditRender(fTime);
+}
+
+void CCore::EditDelete()
+{
+	DESTROY_SINGLE(CSceneManager);
+	DESTROY_SINGLE(CObjectManager);
+	DESTROY_SINGLE(CFontManager);
+	DESTROY_SINGLE(CInput);
+	DESTROY_SINGLE(CCollisionManager);
+	DESTROY_SINGLE(CTimerManager);
+	DESTROY_SINGLE(CPathManager);
+	DESTROY_SINGLE(CRenderManager);
+	DESTROY_SINGLE(CResourcesManager);
+	DESTROY_SINGLE(CNavigationManager);
+	DESTROY_SINGLE(CDevice);
+	CoUninitialize();
+}
+
+void CCore::EditRender(float fTime)
+{
+	// 타겟뷰와 깊이뷰 초기화
+	GET_SINGLE(CDevice)->Clear(m_fClearColor);
+	GET_SINGLE(CSceneManager)->Render(fTime);
+	GET_SINGLE(CRenderManager)->Render(fTime);
+
+	GET_SINGLE(CInput)->RenderMouse(fTime);
+	GET_SINGLE(CDevice)->Present();
+	CInput::GetInst()->ClearWheel();
 }

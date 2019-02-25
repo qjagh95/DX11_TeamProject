@@ -1,8 +1,6 @@
-#include "Arm.h"
-#include "../Input.h"
-#include "Transform.h"
-#include "../GameObject.h"
+#include "../EngineHeader.h"
 #include "../Device.h"
+#include "Arm.h"
 
 PUN_USING
 

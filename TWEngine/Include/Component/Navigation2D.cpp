@@ -1,6 +1,5 @@
 #include "EngineHeader.h"
 #include "Navigation2D.h"
-#include "../NavigationManager.h"
 #include "Transform.h"
 
 PUN_USING

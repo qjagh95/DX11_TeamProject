@@ -1,6 +1,4 @@
 #pragma once
-#include <stack>
-#include <algorithm>
 
 using namespace std;
 

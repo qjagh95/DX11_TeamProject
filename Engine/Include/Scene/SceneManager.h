@@ -1,7 +1,4 @@
 #pragma once
-
-#include "../EngineHeader.h"
-
 PUN_BEGIN
 
 class PUN_DLL CSceneManager

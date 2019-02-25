@@ -613,6 +613,7 @@ void CRenderManager::RenderLightAcc(float fTime)
 	m_pDepthDisable->SetState();
 	m_pGBufferSampler->SetShader(10);
 	m_pGBufferMultiTarget->SetShaderResource(10);
+
 	for (int i = 0; i < m_tLightGroup.iSize; ++i)
 	{
 		CLight*	pLight = m_tLightGroup.pList[i]->FindComponentFromType<CLight>(CT_LIGHT);
@@ -737,7 +738,7 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 	CCamera* getCamera = NULLPTR;
 
 	Matrix	matScale, matPos, matRot, matLocal;
-	//Radious Àß¸ð¸§
+
 	matScale.Scaling(pLight->GetLightInfo().fRange, pLight->GetLightInfo().fRange, pLight->GetLightInfo().fRange);
 	matPos.Translation(pLight->GetLightInfo().vPos);
 	matRot.Rotation(pLight->GetTransformNonCount()->GetWorldRot());

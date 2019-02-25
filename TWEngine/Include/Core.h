@@ -24,8 +24,6 @@ public:
 		unsigned char g, unsigned char b,
 		unsigned char a);
 	void SetGameMode(GAME_MODE eMode);
-	void SetMasterVolume(float fVolume);
-	void SetVolume(float fVolume, bool bBGM = false);
 
 public:
 	bool Init(HINSTANCE hInst, unsigned int iWidth,
@@ -37,12 +35,19 @@ public:
 	int Run();
 	void Logic();
 
+	bool EditInit(HWND hWnd, unsigned int iWidth,
+		unsigned int iHeight, bool bWindowMode = true);
+	void EditLogic();
+	void EditDelete();
+
 private:
 	int Input(float fTime);
 	int Update(float fTime);
 	int LateUpdate(float fTime);
 	int Collision(float fTime);
 	void Render(float fTime);
+
+	void EditRender(float fTime);
 
 private:
 	void Register(const TCHAR* pClass, int iIconID, int iSmallIconID);

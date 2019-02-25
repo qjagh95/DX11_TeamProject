@@ -1,5 +1,5 @@
 #pragma once
-#include "../EngineHeader.h"
+
 #include "fbxsdk.h"
 
 PUN_BEGIN

@@ -1,5 +1,4 @@
 #pragma once
-#include "Component/Animation2D.h"
 
 PUN_BEGIN
 

@@ -1,22 +1,11 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "EditScene.h"
-#include "Scene/Scene.h"
-#include "Scene/Layer.h"
-#include "GameObject.h"
-#include "Component/Transform.h"
-#include "Component/Renderer.h"
-#include "Component/Camera.h"
-#include "Component/ColliderRect.h"
-#include "Component/ColliderPixel.h"
-#include "Component/Material.h"
-#include "PathManager.h"
-#include "Component/Sound.h"
 #include "Device.h"
-#include "Scene/SceneManager.h"
 #include "Core.h"
 #include "../MainFrm.h"
 #include "../EditorForm.h"
-#include "Input.h"
+#include "Component/ColliderRect.h"
+#include "Component/ColliderPixel.h"
 #include "Component/Light.h"
 
 CEditScene::CEditScene()
@@ -63,7 +52,7 @@ bool CEditScene::Init()
 int CEditScene::Update(float fTime)
 {
 	CMainFrame*	pMainFrame = (CMainFrame*)AfxGetMainWnd();
-	CEditorForm*	pForm = pMainFrame->GetEditorForm();
+	CEditorForm* pForm = pMainFrame->GetEditorForm();
 
 	return 0;
 }

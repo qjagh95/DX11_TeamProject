@@ -9,6 +9,7 @@
 #include "CollisionManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "Component/Animation2D.h"
 
 PUN_USING
 

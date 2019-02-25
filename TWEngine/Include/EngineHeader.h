@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <string>
 #include <crtdbg.h>
+#include <stack>
+#include <algorithm>
 #include <conio.h>
 #include <assert.h>
 #include <array>
@@ -34,11 +36,6 @@
 #pragma comment(lib, "dwrite")
 #pragma warning(disable:4251)
 
-#include <MathHeader.h>
-#include <Vector3.h>
-#include <Vector4.h>
-#include <Vector2.h>
-#include <Matrix.h>
 #include <dinput.h>
 
 #pragma comment(lib , "dinput8")
@@ -46,13 +43,17 @@
 
 using namespace std;
 
-#include "Types.h"
-
 #include <imgui.h>
 #include <imgui_impl_dx11.h>
 #include <imgui_impl_win32.h>
 
 #include <Audio.h>
+
+#include <MathHeader.h>
+
+#include "Macro.h"
+#include "Flag.h"
+#include "Types.h"
 
 #include "PathManager.h"
 #include "Resource/ResourcesManager.h"

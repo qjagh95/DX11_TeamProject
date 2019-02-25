@@ -1,9 +1,5 @@
+#include "../EngineHeader.h"
 #include "LandScape.h"
-#include "Renderer.h"
-#include "Material.h"
-#include "../PathManager.h"
-#include "../Resource/ResourcesManager.h"
-#include "../GameObject.h"
 
 PUN_USING
 

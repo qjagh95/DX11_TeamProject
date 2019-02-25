@@ -1,3 +1,4 @@
+#include "../EngineHeader.h"
 #include "FbxLoader.h"
 
 PUN_USING
