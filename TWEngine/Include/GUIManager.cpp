@@ -1,5 +1,6 @@
 #include "EngineHeader.h"
 #include "GUIManager.h"
+#include "Core.h"
 
 PUN_USING
 SINGLETON_VAR_INIT(GUIManager)
@@ -56,6 +57,9 @@ void GUIManager::ImGuiEnd()
 
 void GUIManager::Debug()
 {
+	if (CCore::GetInst()->m_bEditorMode == true)
+		return;
+
 	static float RotX;
 	static float RotY;
 	static float RotZ;

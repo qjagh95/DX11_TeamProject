@@ -1,7 +1,5 @@
 #include "EngineHeader.h"
 #include "Layer.h"
-#include "Scene.h"
-#include "../GameObject.h"
 
 PUN_USING
 

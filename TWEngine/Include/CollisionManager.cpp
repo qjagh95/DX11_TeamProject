@@ -2,10 +2,11 @@
 #include "GameObject.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "Component/Collider.h"
 #include "Component/Transform.h"
+#include "Component/ColliderPoint.h"
 #include "Device.h"
 #include "Input.h"
-#include "Component/ColliderPoint.h"
 
 PUN_USING
 

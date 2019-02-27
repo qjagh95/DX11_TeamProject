@@ -1,7 +1,5 @@
 #pragma once
 
-using namespace std;
-
 PUN_BEGIN
 
 class PUN_DLL CNavigationManager

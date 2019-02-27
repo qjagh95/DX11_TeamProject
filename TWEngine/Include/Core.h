@@ -18,6 +18,7 @@ private:
 public:
 	HWND GetWindowHandle()	const;
 	HINSTANCE GetWindowInstance()	const;
+	bool m_bEditorMode;
 
 public:
 	void SetClearColor(unsigned char r,
@@ -35,7 +36,7 @@ public:
 	int Run();
 	void Logic();
 
-	bool EditInit(HWND hWnd, unsigned int iWidth,
+	bool EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth,
 		unsigned int iHeight, bool bWindowMode = true);
 	void EditLogic();
 	void EditDelete();

@@ -1,16 +1,10 @@
 #include "EngineHeader.h"
-#include "Scene.h"
 #include "Layer.h"
 #include "SceneComponent.h"
-#include "../GameObject.h"
-#include "../Component/Camera.h"
-#include "../Component/Transform.h"
+#include "../Core.h"
 #include "../Device.h"
-#include "../Input.h"
-#include "../SoundManager.h"
+#include "../Component/Camera.h"
 #include "../Component/Light.h"
-#include "../Component/Material.h"
-#include "../Component/Renderer.h"
 
 PUN_USING
 
@@ -286,8 +280,8 @@ int CScene::Update(float fTime)
 
 	m_pMainCameraObj->Update(fTime);
 
-	Debug();
 
+	Debug();
 	return 0;
 }
 
@@ -624,6 +618,9 @@ void CScene::EnableSceneComponent(const string & strTag, bool bEnable)
 
 void CScene::Debug()
 {	
+	if (CCore::GetInst()->m_bEditorMode == true)
+		return;
+
 	ImGui::Text("GlobalLight");
 	ImGui::BeginTabBar("AA");
 	ImGui::EndTabBar();

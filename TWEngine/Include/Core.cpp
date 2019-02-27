@@ -13,6 +13,7 @@ bool CCore::m_bLoop = true;
 
 CCore::CCore()
 {
+	m_bEditorMode = false;
 	m_pTimer = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//_CrtSetBreakAlloc(2258);
@@ -326,8 +327,10 @@ LRESULT CCore::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //TODO : Editor 전용
-bool CCore::EditInit(HWND hWnd, unsigned int iWidth, unsigned int iHeight, bool bWindowMode)
+bool CCore::EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth, unsigned int iHeight, bool bWindowMode)
 {
+	m_bEditorMode = true;
+	m_hInst = hInstance;
 	m_hWnd = hWnd;
 	m_tRS.iWidth = iWidth;
 	m_tRS.iHeight = iHeight;
@@ -335,7 +338,7 @@ bool CCore::EditInit(HWND hWnd, unsigned int iWidth, unsigned int iHeight, bool 
 	CoInitializeEx(NULLPTR, COINIT_MULTITHREADED);
 
 	// Device 초기화
-	if (!CDevice::GetInst()->Init(hWnd, iWidth, iHeight, bWindowMode))
+	if (!CDevice::GetInst()->EditInit(hWnd, iWidth, iHeight, bWindowMode))
 	{
 		TrueAssert(true);
 		return false;
@@ -385,12 +388,12 @@ bool CCore::EditInit(HWND hWnd, unsigned int iWidth, unsigned int iHeight, bool 
 		return false;
 	}
 
-	// 폰트 관리자 초기화
-	if (!CFontManager::GetInst()->Init())
-	{
-		TrueAssert(true);
-		return false;
-	}
+	//// 폰트 관리자 초기화
+	//if (!CFontManager::GetInst()->Init())
+	//{
+	//	TrueAssert(true);
+	//	return false;
+	//}
 
 	// 오브젝트 관리자 초기화
 	if (!CObjectManager::GetInst()->Init())

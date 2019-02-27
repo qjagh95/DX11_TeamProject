@@ -1,15 +1,5 @@
 #pragma once
 
-#define PUN_BEGIN	namespace PUN{
-#define PUN_END		}
-#define PUN_USING	using namespace PUN;
-
-#ifdef PUN_EXPORT
-#define PUN_DLL __declspec(dllexport) // 메모리 정렬도 해준다
-#else
-#define PUN_DLL __declspec(dllimport)
-#endif // PUN_EXPORT
-
 #include "Flag.h"
 #include "Macro.h"
 

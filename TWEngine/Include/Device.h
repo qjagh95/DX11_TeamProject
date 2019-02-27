@@ -29,6 +29,8 @@ public:
 public:
 	bool Init(HWND hWnd, unsigned int iWidth, 
 		unsigned int iHeight, bool bWindowMode);
+	bool EditInit(HWND hWnd, unsigned int iWidth,
+		unsigned int iHeight, bool bWindowMode);
 	void Clear(float fClearColor[4]);
 	void Present();
 

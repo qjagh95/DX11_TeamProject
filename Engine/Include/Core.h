@@ -18,6 +18,7 @@ private:
 public:
 	HWND GetWindowHandle()	const;
 	HINSTANCE GetWindowInstance()	const;
+	bool m_bEditorMode;
 
 public:
 	void SetClearColor(unsigned char r,
@@ -32,11 +33,11 @@ public:
 		bool bWindowMode = true);
 	bool Init(HINSTANCE hInst, HWND hWnd, unsigned int iWidth,
 		unsigned int iHeight, bool bWindowMode = true);
-	bool EditInit(HWND hWnd, unsigned int iWidth,
-		unsigned int iHeight, bool bWindowMode = true);
 	int Run();
 	void Logic();
 
+	bool EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth,
+		unsigned int iHeight, bool bWindowMode = true);
 	void EditLogic();
 	void EditDelete();
 
@@ -46,12 +47,14 @@ private:
 	int LateUpdate(float fTime);
 	int Collision(float fTime);
 	void Render(float fTime);
+
 	void EditRender(float fTime);
 
 private:
 	void Register(const TCHAR* pClass, int iIconID, int iSmallIconID);
 	void CreateWnd(const TCHAR* pTitle, const TCHAR* pClass);
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 
 	DECLARE_SINGLE(CCore)
 };

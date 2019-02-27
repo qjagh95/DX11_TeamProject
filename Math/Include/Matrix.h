@@ -4,7 +4,7 @@
 #include "Vector4.h"
 
 //바이트정렬 바이트를 16배수로 맞춰준다 (SIMD 레지스터를 사용한다)
-union __declspec(dllexport) __declspec(align(16)) Matrix
+union MATH_DLL __declspec(align(16)) Matrix
 {
 	XMMATRIX matrix;
 	struct

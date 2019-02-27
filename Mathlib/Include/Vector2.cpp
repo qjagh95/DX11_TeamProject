@@ -708,7 +708,7 @@ float Vector2::Length() const
 {
 	XMVECTOR Src = XMLoadFloat2((XMFLOAT2*)this);
 
-	return XMVectorGetX(XMVector3Length(Src));
+	return XMVectorGetX(XMVector2Length(Src));
 }
 void Vector2::Normalize()
 {
@@ -722,20 +722,20 @@ float Vector2::Dot(const Vector2 & vec) const
 	XMVECTOR Src = XMLoadFloat2((XMFLOAT2*)this);
 	XMVECTOR Dest = XMLoadFloat2((XMFLOAT2*)&vec);
 
-	return XMVectorGetX(XMVector3Dot(Src, Dest));
+	return XMVectorGetX(XMVector2Dot(Src, Dest));
 }
 float Vector2::Dot(const XMVECTOR & Xmvec) const
 {
 	XMVECTOR Src = XMLoadFloat2((XMFLOAT2*)this);
 
-	return XMVectorGetX(XMVector3Dot(Src, Xmvec));
+	return XMVectorGetX(XMVector2Dot(Src, Xmvec));
 }
 float Vector2::Dot(const XMFLOAT2 & XmFloat) const
 {
 	XMVECTOR Src = XMLoadFloat2((XMFLOAT2*)this);
 	XMVECTOR Dest = XMLoadFloat2((XMFLOAT2*)&XmFloat);
 
-	return XMVectorGetX(XMVector3Dot(Src, Dest));
+	return XMVectorGetX(XMVector2Dot(Src, Dest));
 }
 float Vector2::Dot(float Val[2]) const
 {
@@ -744,7 +744,7 @@ float Vector2::Dot(float Val[2]) const
 	XMVECTOR Src = XMLoadFloat2((XMFLOAT2*)this);
 	XMVECTOR Dest = XMLoadFloat2((XMFLOAT2*)&Temp);
 
-	return XMVectorGetX(XMVector3Dot(Src, Dest));
+	return XMVectorGetX(XMVector2Dot(Src, Dest));
 
 }
 float Vector2::Dot(int Val[2]) const
@@ -754,7 +754,7 @@ float Vector2::Dot(int Val[2]) const
 	XMVECTOR Src = XMLoadFloat2((XMFLOAT2*)this);
 	XMVECTOR Dest = XMLoadFloat2((XMFLOAT2*)&Temp);
 
-	return XMVectorGetX(XMVector3Dot(Src, Dest));
+	return XMVectorGetX(XMVector2Dot(Src, Dest));
 }
 /////////////////////////////////////////////////////////////////////////
 
@@ -762,6 +762,6 @@ Vector2 Vector2::Normalize(const Vector2 & vec)
 {
 	XMVECTOR Src = XMLoadFloat2((XMFLOAT2*)&vec);
 
-	return Vector2(XMVector3Normalize(Src));
+	return Vector2(XMVector2Normalize(Src));
 }
 /////////////////////////////////////////////////////////////////////////

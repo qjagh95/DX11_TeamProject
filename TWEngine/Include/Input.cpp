@@ -116,8 +116,7 @@ short CInput::GetWheelDir() const
 
 bool CInput::Init()
 {
-	if (FAILED(DirectInput8Create(WINDOWINSTANCE, DIRECTINPUT_VERSION, IID_IDirectInput8,
-		(void**)&m_pInput, nullptr)))
+	if (FAILED(DirectInput8Create(WINDOWINSTANCE, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_pInput, nullptr)))
 		return false;
 
 	if (FAILED(m_pInput->CreateDevice(GUID_SysKeyboard, &m_pKeyboard, nullptr)))
@@ -264,6 +263,7 @@ void CInput::Update(float fTime)
 			m_bFocus = true;
 	}
 
+#ifdef _DEBUG
 	static float	ftime11 = 0.f;
 	ftime11 += fTime;
 
@@ -275,6 +275,7 @@ void CInput::Update(float fTime)
 
 		OutputDebugString(str);
 	}
+#endif
 
 	if (!m_bFocus)
 	{

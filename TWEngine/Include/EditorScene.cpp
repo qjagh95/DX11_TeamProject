@@ -91,7 +91,6 @@ bool EditorScene::Init()
 
 	SAFE_RELEASE(pLandScapeObj);
 
-
 	SAFE_RELEASE(pDefaultLayer);
 	SAFE_RELEASE(pUILayer);
 	SAFE_RELEASE(pTileLayer);

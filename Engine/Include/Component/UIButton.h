@@ -1,9 +1,9 @@
 #pragma once
 #include "UI.h"
-#include "Animation2D.h"
 
 PUN_BEGIN
 
+class CAnimation2D;
 class PUN_DLL CUIButton :
 	public CUI
 {

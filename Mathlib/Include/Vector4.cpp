@@ -868,13 +868,13 @@ float Vector4::Length() const
 {
 	XMVECTOR Src = XMLoadFloat4((XMFLOAT4*)this);
 
-	return XMVectorGetX(XMVector3Length(Src));
+	return XMVectorGetX(XMVector4Length(Src));
 }
 void Vector4::Normalize()
 {
 	XMVECTOR Src = XMLoadFloat4((XMFLOAT4*)this);
 
-	*this = XMVector3Normalize(Src);
+	*this = XMVector4Normalize(Src);
 }
 /////////////////////////////////////////////////////////////////////////
 float Vector4::Dot(const Vector4 & vec) const
@@ -920,7 +920,7 @@ Vector4 Vector4::Normalize(const Vector4 & vec)
 {
 	XMVECTOR Src = XMLoadFloat4((XMFLOAT4*)&vec);
 
-	return Vector4(XMVector3Normalize(Src));
+	return Vector4(XMVector4Normalize(Src));
 }
 /////////////////////////////////////////////////////////////////////////
 XMVECTOR Vector4::Convert()

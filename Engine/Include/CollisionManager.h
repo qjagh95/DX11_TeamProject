@@ -1,8 +1,6 @@
 #pragma once
-
-#include "Component/Collider.h"
-
 PUN_BEGIN
+
 
 enum COLLISION_GROUP_TYPE
 {
@@ -10,6 +8,7 @@ enum COLLISION_GROUP_TYPE
 	CGT_3D
 };
 
+class CCollider;
 class PUN_DLL CCollisionManager
 {
 private:
