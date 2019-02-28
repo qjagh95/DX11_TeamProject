@@ -182,7 +182,8 @@ bool CShaderManager::Init()
 	CreateCBuffer("Bar", 9, sizeof(BarCBuffer), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Light", 3, sizeof(LightInfo), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("PublicCBuffer", 5, sizeof(PublicCBuffer), CST_VERTEX | CST_PIXEL);
-
+	CreateCBuffer("LandScape", 11, sizeof(LandScapeCBuffer), CST_VERTEX | CST_PIXEL);
+	
 	return true;
 }
 

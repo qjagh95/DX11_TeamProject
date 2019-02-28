@@ -91,6 +91,10 @@ public:
 		const string& strKey, const TCHAR* pFileName,
 		const string& strPathKey = TEXTURE_PATH,
 		int iContainer = 0, int iSubset = 0);
+	void AddMultiTex(int iSmpRegister, const string& strSmpKey,
+		int iRegister, const string& strKey, const vector<const TCHAR*>& vecFileName,
+		const string& strPathKey = TEXTURE_PATH,
+		int iContainer = 0, int iSubset = 0);
 	/*void AddMultiTex(int iRegister, const string& strKey, int iContainer = 0,
 		int iSubset = 0);
 	void AddMultiTex(int iRegister, const string& strKey, const TCHAR* pFileName,

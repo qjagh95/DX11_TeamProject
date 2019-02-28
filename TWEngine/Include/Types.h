@@ -283,4 +283,10 @@ namespace PUN
 		float Empty;
 	};
 
+	typedef struct PUN_DLL _tagLandScapeCBuffer
+	{
+		float	fDetailLevel;
+		int		iSplatCount;
+		Vector2	vEmpty;
+	}LandScapeCBuffer, *PLandScapeCBuffer;
 }

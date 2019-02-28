@@ -20,6 +20,7 @@ namespace PUN
 		CT_TILE2D,
 		CT_NAVI2D,
 		CT_LIGHT,
+		CT_LANDSCAPE,
 		CT_END
 	};
 

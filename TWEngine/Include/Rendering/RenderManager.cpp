@@ -7,14 +7,9 @@
 #include "RasterizerState.h"
 #include "MultiRenderTarget.h"
 #include "../Device.h"
-#include "../GameObject.h"
 #include "../Resource/Sampler.h"
-#include "../Resource/ResourcesManager.h"
 #include "../Component/Light.h"
 #include "../Component/Camera.h"
-#include "../Component/Transform.h"
-#include "../Scene/Scene.h"
-#include "../Scene/SceneManager.h"
 
 PUN_USING
 
@@ -383,80 +378,77 @@ CRenderTarget * CRenderManager::FindRenderTarget(const string & strName)
 
 void CRenderManager::AddRenderObj(CGameObject * pObj)
 {
-	if (m_eGameMode == GM_3D)
+	RENDER_GROUP	rg = pObj->GetRenderGroup();
+
+	if (rg == RG_LIGHT)
 	{
-		RENDER_GROUP	rg = pObj->GetRenderGroup();
-
-		if (rg == RG_LIGHT)
+		if (m_tLightGroup.iSize == m_tLightGroup.iCapacity)
 		{
-			if (m_tLightGroup.iSize == m_tLightGroup.iCapacity)
-			{
-				m_tLightGroup.iCapacity *= 2;
+			m_tLightGroup.iCapacity *= 2;
 
-				CGameObject**	pList = new CGameObject*[m_tLightGroup.iCapacity];
+			CGameObject**	pList = new CGameObject*[m_tLightGroup.iCapacity];
 
-				memcpy(pList, m_tLightGroup.pList, sizeof(CGameObject*) * m_tLightGroup.iSize);
+			memcpy(pList, m_tLightGroup.pList, sizeof(CGameObject*) * m_tLightGroup.iSize);
 
-				SAFE_DELETE_ARRAY(m_tLightGroup.pList);
+			SAFE_DELETE_ARRAY(m_tLightGroup.pList);
 
-				m_tLightGroup.pList = pList;
-			}
-			m_tLightGroup.pList[m_tLightGroup.iSize] = pObj;
-			++m_tLightGroup.iSize;
-
-			/*
-			밑의 부분은 '그려질 오브젝트이면서 빛을 가지고 있는 오브젝트'의 경우
-			(EX. 횃불, 전구 (근데 이건 조명따로 횃불따로 해도 될 것 같은.. 읍읍) 
-			 또는 파티클)
-			렌더러를 가지고 있을 것이기 때문에 렌더러 유무 체크를 해주어야 한다고
-			판단해서 추가함.
-			렌더러를 가지고 있지않은 순수 조명의 경우 m_tLightGroup에서만 처리되게 하고
-			렌더러를 가진 오브젝트의 경우 m_tLightGroup에서 처리해줌과 동시에
-			렌더 그룹에 포함시켜 화면에 렌더한다.
-			일단 디폴트로 NORMAL에 넣었지만 아마 EFFECT라든지 그런 렌더 그룹을
-			따로 만들어서 넣어줘야 할 지도 모르겠다.
-			*/
-			if (!pObj->CheckComponentFromType(CT_RENDERER))
-				return;
-			else
-				rg = RG_NORMAL;
+			m_tLightGroup.pList = pList;
 		}
+		m_tLightGroup.pList[m_tLightGroup.iSize] = pObj;
+		++m_tLightGroup.iSize;
 
-		if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)
-		{
-			m_tRenderObj[rg].iCapacity *= 2;
-
-			CGameObject**	pList = new CGameObject*[m_tRenderObj[rg].iCapacity];
-
-			memcpy(pList, m_tRenderObj[rg].pList, sizeof(CGameObject*) * m_tRenderObj[rg].iSize);
-
-			SAFE_DELETE_ARRAY(m_tRenderObj[rg].pList);
-
-			m_tRenderObj[rg].pList = pList;
-		}
-		m_tRenderObj[rg].pList[m_tRenderObj[rg].iSize] = pObj;
-		++m_tRenderObj[rg].iSize;
+		/*
+		밑의 부분은 '그려질 오브젝트이면서 빛을 가지고 있는 오브젝트'의 경우
+		(EX. 횃불, 전구 (근데 이건 조명따로 횃불따로 해도 될 것 같은.. 읍읍) 
+			또는 파티클)
+		렌더러를 가지고 있을 것이기 때문에 렌더러 유무 체크를 해주어야 한다고
+		판단해서 추가함.
+		렌더러를 가지고 있지않은 순수 조명의 경우 m_tLightGroup에서만 처리되게 하고
+		렌더러를 가진 오브젝트의 경우 m_tLightGroup에서 처리해줌과 동시에
+		렌더 그룹에 포함시켜 화면에 렌더한다.
+		일단 디폴트로 NORMAL에 넣었지만 아마 EFFECT라든지 그런 렌더 그룹을
+		따로 만들어서 넣어줘야 할 지도 모르겠다.
+		*/
+		if (!pObj->CheckComponentFromType(CT_RENDERER))
+			return;
+		else
+			rg = RG_NORMAL;
 	}
 
-	else
+	if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)
 	{
-		RENDER_GROUP	rg = pObj->GetRenderGroup();
+		m_tRenderObj[rg].iCapacity *= 2;
 
-		if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)
-		{
-			m_tRenderObj[rg].iCapacity *= 2;
+		CGameObject**	pList = new CGameObject*[m_tRenderObj[rg].iCapacity];
 
-			CGameObject**	pList = new CGameObject*[m_tRenderObj[rg].iCapacity];
+		memcpy(pList, m_tRenderObj[rg].pList, sizeof(CGameObject*) * m_tRenderObj[rg].iSize);
 
-			memcpy(pList, m_tRenderObj[rg].pList, sizeof(CGameObject*) * m_tRenderObj[rg].iSize);
+		SAFE_DELETE_ARRAY(m_tRenderObj[rg].pList);
 
-			SAFE_DELETE_ARRAY(m_tRenderObj[rg].pList);
-
-			m_tRenderObj[rg].pList = pList;
-		}
-		m_tRenderObj[rg].pList[m_tRenderObj[rg].iSize] = pObj;
-		++m_tRenderObj[rg].iSize;
+		m_tRenderObj[rg].pList = pList;
 	}
+	m_tRenderObj[rg].pList[m_tRenderObj[rg].iSize] = pObj;
+	++m_tRenderObj[rg].iSize;
+	
+	//else
+	//{
+	//	RENDER_GROUP rg = pObj->GetRenderGroup();
+
+	//	if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)
+	//	{
+	//		m_tRenderObj[rg].iCapacity *= 2;
+
+	//		CGameObject**	pList = new CGameObject*[m_tRenderObj[rg].iCapacity];
+
+	//		memcpy(pList, m_tRenderObj[rg].pList, sizeof(CGameObject*) * m_tRenderObj[rg].iSize);
+
+	//		SAFE_DELETE_ARRAY(m_tRenderObj[rg].pList);
+
+	//		m_tRenderObj[rg].pList = pList;
+	//	}
+	//	m_tRenderObj[rg].pList[m_tRenderObj[rg].iSize] = pObj;
+	//	++m_tRenderObj[rg].iSize;
+	//}
 }
 
 void CRenderManager::Render(float fTime)

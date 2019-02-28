@@ -1,6 +1,9 @@
 #include "../EngineHeader.h"
-#include "../Device.h"
 #include "Arm.h"
+#include "../Input.h"
+#include "Transform.h"
+#include "../GameObject.h"
+#include "../Device.h"
 
 PUN_USING
 
@@ -79,7 +82,7 @@ void CArm::MouseRotation(float fTime)
 	if (vMove.y != 0.f)
 	{
 		float	fValueH = 180.f / _RESOLUTION.iHeight;
-		float	fAngle = vMove.y * fValueH;
+		float	fAngle = vMove.y * fValueH * -1.f;
 
 		m_pTransform->RotationX(fAngle);
 
@@ -133,7 +136,7 @@ int CArm::Update(float fTime)
 		if (sWheel != 0)
 		{
 			m_pTransform->Move(AXIS_Z, m_fSpeed * sWheel, fTime);
-			m_fDistance += m_fSpeed * sWheel * fTime;
+			m_fDistance += m_fSpeed * sWheel * fTime * -1;
 		}
 	}
 

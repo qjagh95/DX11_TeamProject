@@ -59,8 +59,8 @@ bool CMainScene::Init()
 
 	CLandScape*	pLandScape = pLandScapeObj->AddComponent<CLandScape>("LandScape");
 
-	pLandScape->CreateLandScape("LandScape", 129, 129, "LandScapeDif",
-		TEXT("LandScape/Terrain_Cliff_11.dds"), "LandScape/height1_32.bmp");
+	//pLandScape->CreateLandScape("LandScape", 129, 129, "LandScapeDif",
+	//	TEXT("LandScape/Terrain_Cliff_11.dds"), "LandScape/height1_32.bmp");
 
 	SAFE_RELEASE(pLandScape);
 

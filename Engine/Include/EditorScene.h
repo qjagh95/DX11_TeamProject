@@ -3,12 +3,10 @@
 
 PUN_BEGIN
 
-class CTransform;
 class PUN_DLL EditorScene : public CSceneComponent
 {
 private:
 	CTransform*	m_pTr;
-
 public:
 	bool Init() override;
 	int Update(float fTime) override;

@@ -11,7 +11,6 @@ CFirTestScene::CFirTestScene()
 {
 }
 
-
 CFirTestScene::~CFirTestScene()
 {
 }
@@ -128,7 +127,42 @@ bool CFirTestScene::Init()
 	CLandScape*	pLandScape = pLandScapeObj->AddComponent<CLandScape>("LandScape");
 
 	pLandScape->CreateLandScape("LandScape", 129, 129, "LandScapeDif",
-		TEXT("LandScape/Terrain_Cliff_11.dds"), "LandScape/height1_24.bmp");
+		TEXT("LandScape/Terrain_Cliff_11.dds"),
+		TEXT("LandScape/Terrain_Cliff_11_NRM.bmp"),
+		TEXT("LandScape/Terrain_Cliff_11_SPEC.bmp"),		"LandScape/height1.bmp");
+
+	vector<const TCHAR*>	vecSplatName;
+
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cave_01.dds"));
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cliff05.dds"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Pebbles_01.dds"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Cliff_15_Large.dds"));
+
+	pLandScape->AddSplatDifTexture("LandScapeSplatDif",	vecSplatName);
+
+	vecSplatName.clear();
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cave_01_NRM.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cliff05_NRM.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Pebbles_01_NRM.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Cliff_15_Large_NRM.bmp"));
+
+	pLandScape->AddSplatNrmTexture("LandScapeSplatNrm", vecSplatName);
+
+	vecSplatName.clear();
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cave_01_SPC.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cliff05_SPEC.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Pebbles_01_SPEC.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Cliff_15_Large_SPEC.bmp"));
+
+	pLandScape->AddSplatSpcTexture("LandScapeSplatSpc", vecSplatName);
+
+	vecSplatName.clear();
+	vecSplatName.push_back(TEXT("LandScape/RoadAlpha.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/SandBaseAlpha.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/StonAlpha.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/FlowerAlpha.bmp"));
+
+	pLandScape->AddSplatAlphaTexture("LandScapeSplatAlpha", vecSplatName);
 
 	SAFE_RELEASE(pLandScape);
 

@@ -4,8 +4,8 @@
 #include "Material.h"
 #include "ColliderRect.h"
 #include "Transform.h"
+#include "Animation2D.h"
 #include "../GameObject.h"
-#include "../Input.h"
 
 PUN_USING
 

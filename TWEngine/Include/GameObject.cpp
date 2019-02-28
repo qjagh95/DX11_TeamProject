@@ -354,7 +354,6 @@ CTransform * CGameObject::GetTransformNonCount() const
 	return m_pTransform;
 }
 
-
 const list<class CComponent*>* CGameObject::GetComponentList() const
 {
 	return &m_ComList;
@@ -663,7 +662,7 @@ CComponent* CGameObject::AddComponent(CComponent* pCom)
 
 	if (pCom->GetComponentType() == CT_UI)
 		m_eRenderGroup = RG_UI;
-	else if (pCom->GetComponentType() == CT_STAGE2D)
+	else if (pCom->GetComponentType() == CT_LANDSCAPE)
 		m_eRenderGroup = RG_LANDSCAPE;
 	else if (pCom->GetComponentType() == CT_LIGHT)
 		m_eRenderGroup = RG_LIGHT;
@@ -673,7 +672,6 @@ CComponent* CGameObject::AddComponent(CComponent* pCom)
 	if (pRenderer)
 	{
 		pRenderer->CheckComponent();
-
 		SAFE_RELEASE(pRenderer);
 	}
 

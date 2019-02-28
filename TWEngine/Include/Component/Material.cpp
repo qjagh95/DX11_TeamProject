@@ -482,6 +482,37 @@ void CMaterial::AddMultiTex(int iSmpRegister, const string& strSmpKey, int iRegi
 	pMaterial->vecMultiTex.push_back(tSet);
 }
 
+void CMaterial::AddMultiTex(int iSmpRegister, const string & strSmpKey, int iRegister, const string & strKey, const vector<const TCHAR*>& vecFileName, const string & strPathKey, int iContainer, int iSubset)
+{
+	if (iContainer >= m_vecMaterial.size())
+	{
+		vector<PSubsetMaterial>	vec;
+		m_vecMaterial.push_back(vec);
+	}
+
+	if (iSubset >= m_vecMaterial[iContainer].size())
+	{
+		m_vecMaterial[iContainer].push_back(CreateSubset());
+	}
+
+	PSubsetMaterial	pMaterial = m_vecMaterial[iContainer][iSubset];
+
+	if (pMaterial->vecMultiTex.size() == 4)
+		return;
+
+	TextureSet	tSet = {};
+
+	tSet.iRegister = iRegister;
+	tSet.iSamplerRegister = iSmpRegister;
+
+	GET_SINGLE(CResourcesManager)->CreateTexture(strKey, vecFileName, strPathKey);
+	tSet.pTex = GET_SINGLE(CResourcesManager)->FindTexture(strKey);
+
+	tSet.pSampler = GET_SINGLE(CResourcesManager)->FindSampler(strSmpKey);
+
+	pMaterial->vecMultiTex.push_back(tSet);
+}
+
 void CMaterial::ClearContainer()
 {
 	for (size_t i = 0; i < m_vecMaterial.size(); ++i)
