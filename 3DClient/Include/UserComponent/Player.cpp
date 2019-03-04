@@ -7,6 +7,9 @@
 #include "../SceneComponent/SecTestScene.h"
 #include "../SceneComponent/TrdTestScene.h"
 #include "Input.h"
+#include "NavigationManager3D.h"
+#include "NavigationMesh.h"
+
 CPlayer::CPlayer()
 	: m_pAnimation(nullptr)
 {
@@ -52,6 +55,17 @@ bool CPlayer::Init()
 	GET_SINGLE(CInput)->BindAction("Fire1", KEY_RELEASE, this, &CPlayer::Fire1Release);
 	GET_SINGLE(CInput)->AddKeyAction("Fire1", DIK_SPACE, bSKey);
 
+	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
+
+	pRenderer->SetMesh("BlackCow", TEXT("Monster4.msh"));
+
+	CAnimation* pAnimation = m_pObject->AddComponent<CAnimation>("Animation");
+
+	pAnimation->LoadBone("Monster4.bne");
+	pAnimation->Load("Monster4.anm");
+
+	SAFE_RELEASE(pAnimation);
+	SAFE_RELEASE(pRenderer);
 
 	return true;
 }
@@ -63,6 +77,18 @@ int CPlayer::Input(float fTime)
 
 int CPlayer::Update(float fTime)
 {
+	CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene,
+		m_pTransform->GetWorldPos());
+
+	if (pMesh)
+	{
+		float	fY = pMesh->GetY(m_pTransform->GetWorldPos());
+
+		Vector3 vPos = m_pTransform->GetWorldPos();
+		vPos.y = fY;
+		m_pTransform->SetWorldPos(vPos);
+	}
+
 	//float fRotationX = 0.f;
 	//float fRotationY = 0.f;
 	//fRotationX += -CInput::GetInst()->GetWorldMouseMove().y * 500.f * fTime;

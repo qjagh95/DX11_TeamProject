@@ -70,6 +70,7 @@ using namespace std;
 #include "FontManager.h"
 #include "GUIManager.h"
 #include "SoundManager.h"
+#include "NavigationManager3D.h"
 #include "Input.h"
 
 #include "Scene/Scene.h"

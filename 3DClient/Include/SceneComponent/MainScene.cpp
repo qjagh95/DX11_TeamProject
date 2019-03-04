@@ -6,6 +6,7 @@
 #include "Component/LandScape.h"
 
 #include "../UserComponent/Player.h"
+#include "Component/Arm.h"
 
 CMainScene::CMainScene()
 {
@@ -39,12 +40,22 @@ bool CMainScene::Init()
 	pTransform->SetWorldPos(0.f, 0.f, 0.f);
 
 	m_pTr = pTransform;
+
 	pCamera->SetTarget(pTransform);
+
+
+	CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
+
+	pArm->EnableMouse();
+	pArm->SetTarget(pTransform);
+
+	SAFE_RELEASE(pArm);
+
 	SAFE_RELEASE(pTransform);
 
-	//CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
+	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
 
-	//SAFE_RELEASE(pPlayer);
+	SAFE_RELEASE(pPlayer);
 
 	SAFE_RELEASE(pObject);
 
@@ -52,15 +63,55 @@ bool CMainScene::Init()
 
 	pTransform = pLandScapeObj->GetTransform();
 
-	pTransform->SetWorldScale(3.f, 1.f, 3.f);
-	pTransform->SetWorldPos(0.f, 0.f, 0.f);
+	//pTransform->SetWorldScale(3.f, 1.f, 3.f);
+	//pTransform->SetWorldPos(0.f, 0.f, 0.f);
 
 	SAFE_RELEASE(pTransform);
 
 	CLandScape*	pLandScape = pLandScapeObj->AddComponent<CLandScape>("LandScape");
 
-	//pLandScape->CreateLandScape("LandScape", 129, 129, "LandScapeDif",
-	//	TEXT("LandScape/Terrain_Cliff_11.dds"), "LandScape/height1_32.bmp");
+	pLandScape->CreateLandScape("LandScape", 129, 129, "LandScapeDif",
+		TEXT("LandScape/Terrain_Cliff_11.dds"),
+		TEXT("LandScape/Terrain_Cliff_11_NRM.bmp"),
+		TEXT("LandScape/Terrain_Cliff_11_SPEC.bmp"),
+		"LandScape/height1.bmp");
+
+	vector<const TCHAR*>	vecSplatName;
+
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cave_01.dds"));
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cliff05.dds"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Pebbles_01.dds"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Cliff_15_Large.dds"));
+
+	pLandScape->AddSplatDifTexture("LandScapeSplatDif",
+		vecSplatName);
+
+	vecSplatName.clear();
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cave_01_NRM.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cliff05_NRM.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Pebbles_01_NRM.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Cliff_15_Large_NRM.bmp"));
+
+	pLandScape->AddSplatNrmTexture("LandScapeSplatNrm",
+		vecSplatName);
+
+	vecSplatName.clear();
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cave_01_SPEC.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cliff05_SPEC.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Pebbles_01_SPEC.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/Terrain_Cliff_15_Large_SPEC.bmp"));
+
+	pLandScape->AddSplatSpcTexture("LandScapeSplatSpc",
+		vecSplatName);
+
+	vecSplatName.clear();
+	vecSplatName.push_back(TEXT("LandScape/RoadAlpha.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/SandBaseAlpha.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/StonAlpha.bmp"));
+	vecSplatName.push_back(TEXT("LandScape/FlowerAlpha.bmp"));
+
+	pLandScape->AddSplatAlphaTexture("LandScapeSplatAlpha",
+		vecSplatName);
 
 	SAFE_RELEASE(pLandScape);
 
@@ -81,7 +132,7 @@ bool CMainScene::Init()
 	SAFE_RELEASE(pObject);*/
 
 	CGameObject*	pLightObj = CGameObject::CreateObject("GlobalLight1",
-		pDefaultLayer, true);
+		pDefaultLayer);
 
 	pTransform = pLightObj->GetTransform();
 
@@ -92,8 +143,8 @@ bool CMainScene::Init()
 
 	CLight*	pLight = pLightObj->AddComponent<CLight>("GlobalLight1");
 
-	pLight->SetLightColor(Vector4::White, Vector4::White,
-		Vector4::White);
+	pLight->SetLightColor(Vector4::HotPink, Vector4::HotPink,
+		Vector4::HotPink);
 	pLight->SetLightType(LT_SPOT);
 	pLight->SetLightRange(10.f);
 	pLight->SetAngle(60.f, 90.f);
@@ -103,7 +154,7 @@ bool CMainScene::Init()
 	SAFE_RELEASE(pLightObj);
 
 	pLightObj = CGameObject::CreateObject("GlobalLight2",
-		pDefaultLayer, true);
+		pDefaultLayer);
 
 	pTransform = pLightObj->GetTransform();
 
@@ -113,8 +164,8 @@ bool CMainScene::Init()
 
 	pLight = pLightObj->AddComponent<CLight>("GlobalLight2");
 
-	pLight->SetLightColor(Vector4::White, Vector4::White,
-		Vector4::White);
+	pLight->SetLightColor(Vector4::Blue, Vector4::Blue,
+		Vector4::Blue);
 	pLight->SetLightType(LT_POINT);
 	pLight->SetLightRange(10.f);
 
@@ -123,24 +174,6 @@ bool CMainScene::Init()
 	SAFE_RELEASE(pLightObj);
 
 	SAFE_RELEASE(pCamera);
-
-	pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
-	pTransform = pLightObj->GetTransform();
-
-	pTransform->SetWorldRot(-90.f, 0.f, 0.f);
-	pTransform->SetWorldPos(0.f, -1.f, 0.f);
-
-	SAFE_RELEASE(pTransform);
-
-	pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
-	pLight->SetLightType(LT_SPOT);
-	pLight->SetLightRange(10.f);
-	pLight->SetAngle(60.f, 90.f);
-
-	SAFE_RELEASE(pLight);
-	SAFE_RELEASE(pLightObj);
-
 
 	SAFE_RELEASE(pDefaultLayer);
 	SAFE_RELEASE(pUILayer);

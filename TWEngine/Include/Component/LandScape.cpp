@@ -5,6 +5,9 @@
 #include "../PathManager.h"
 #include "../Resource/ResourcesManager.h"
 #include "../GameObject.h"
+#include "../NavigationMesh.h"
+#include "../NavigationManager3D.h"
+#include "Transform.h"
 
 PUN_USING
 
@@ -202,10 +205,35 @@ bool CLandScape::CreateLandScape(const string& strName,
 		pMaterial->SetSpecularSampler(0, SAMPLER_LINEAR);
 	}
 
-
 	SAFE_RELEASE(pMaterial);
 
 	SAFE_DELETE_ARRAY(pHeight);
+
+	m_pNavMesh = GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene);
+
+	Vector3 vCellPos[3];
+
+	for (int i = 0; i < m_iNumZ - 1; ++i)
+	{
+		for (int j = 0; j < m_iNumX - 1; ++j)
+		{
+			int iAddr = i * m_iNumX + j;
+
+			vCellPos[0] = m_vecVtx[iAddr].vPos;
+			vCellPos[1] = m_vecVtx[iAddr + 1].vPos;
+			vCellPos[2] = m_vecVtx[iAddr + m_iNumX + 1].vPos;
+
+			m_pNavMesh->AddCell(vCellPos);
+
+			vCellPos[0] = m_vecVtx[iAddr].vPos;
+			vCellPos[1] = m_vecVtx[iAddr + m_iNumX + 1].vPos;
+			vCellPos[2] = m_vecVtx[iAddr + m_iNumX].vPos;
+
+			m_pNavMesh->AddCell(vCellPos);
+		}
+	}
+
+	m_pNavMesh->CreateGridMapAdj(m_iNumX - 1);
 
 	return true;
 }

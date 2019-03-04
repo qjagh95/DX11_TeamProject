@@ -113,7 +113,7 @@ namespace EngineWrapper
 			// Renderer 컴포넌트 추가
 			PUN::CEditManager* pManager = PUN::CEditManager::GetInst();
 			std::string strTag = "renderer";
-			pManager->ObjectAddComponent(strTag);
+			//pManager->ObjectAddComponent(strTag);
 		}
 
 		void SetMesh()

@@ -317,6 +317,12 @@
     <ClCompile Include="EditManager.cpp">
       <Filter>EditScene</Filter>
     </ClCompile>
+    <ClCompile Include="NavigationMesh.cpp">
+      <Filter>01. Core\08. Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="NavigationManager3D.cpp">
+      <Filter>01. Core\08. Navigation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Macro.h">
@@ -522,6 +528,12 @@
     </ClInclude>
     <ClInclude Include="EditManager.h">
       <Filter>EditScene</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationMesh.h">
+      <Filter>01. Core\08. Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationManager3D.h">
+      <Filter>01. Core\08. Navigation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,7 @@
 #include "Rendering/Shader.h"
 #include "Timer.h"
 #include "EditManager.h"
+#include "NavigationManager3D.h"
 
 PUN_USING
 
@@ -34,6 +35,7 @@ CCore::~CCore()
 	DESTROY_SINGLE(CRenderManager);
 	DESTROY_SINGLE(CResourcesManager);
 	DESTROY_SINGLE(CNavigationManager);
+	DESTROY_SINGLE(CNavigationManager3D);
 	DESTROY_SINGLE(CDevice);
 	GUIManager::Delete();
 	CSoundManager::Delete();
@@ -159,6 +161,13 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 
 	// 내비게이션 관리자 초기화
 	if (!GET_SINGLE(CNavigationManager)->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	// 3D 내비게이션 관리자 초기화
+	if (!GET_SINGLE(CNavigationManager3D)->Init())
 	{
 		TrueAssert(true);
 		return false;

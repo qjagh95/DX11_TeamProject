@@ -243,6 +243,8 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="NavigationManager.h" />
+    <ClInclude Include="NavigationManager3D.h" />
+    <ClInclude Include="NavigationMesh.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="Ref.h" />
@@ -423,6 +425,8 @@
     <ClCompile Include="GUIManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="NavigationManager.cpp" />
+    <ClCompile Include="NavigationManager3D.cpp" />
+    <ClCompile Include="NavigationMesh.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="Ref.cpp" />

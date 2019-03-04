@@ -59,3 +59,16 @@ D:\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.csproj.CoreCompileInputs.cache
 D:\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.csproj.CopyComplete
 D:\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.exe
 D:\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.pdb
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\bin\Debug\WinForms.exe.config
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\bin\Debug\WinForms.exe
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\bin\Debug\WinForms.pdb
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\bin\Debug\EditWrapper.dll
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\bin\Debug\EditWrapper.pdb
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.csprojAssemblyReference.cache
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.Form1.resources
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.Properties.Resources.resources
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.csproj.GenerateResource.cache
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.csproj.CoreCompileInputs.cache
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.csproj.CopyComplete
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.exe
+C:\Users\cha93\Documents\Visual Studio 2017\Project\3DTeam\DX11_3D\WinFrom\WinForms\obj\Debug\WinForms.pdb

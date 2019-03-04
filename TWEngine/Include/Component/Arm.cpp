@@ -86,7 +86,6 @@ void CArm::MouseRotation(float fTime)
 
 		m_pTransform->RotationX(fAngle);
 
-		m_pTransform->SetWorldPos(m_pTarget->GetWorldPos() - m_pTransform->GetWorldAxis(AXIS_Z) * m_fDistance);
 	}
 }
 
@@ -139,6 +138,8 @@ int CArm::Update(float fTime)
 			m_fDistance += m_fSpeed * sWheel * fTime * -1;
 		}
 	}
+
+	m_pTransform->SetWorldPos(m_pTarget->GetWorldPos() - m_pTransform->GetWorldAxis(AXIS_Z) * m_fDistance);
 
 	return 0;
 }

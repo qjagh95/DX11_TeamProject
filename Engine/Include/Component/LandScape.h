@@ -14,12 +14,13 @@ protected:
 	virtual ~CLandScape();
 
 private:
-	unsigned int	m_iNumX;
-	unsigned int	m_iNumZ;
-	vector<Vertex3D>	m_vecVtx;
-	vector<int>			m_vecIdx;
-	vector<Vector3>		m_vecFaceNormal;
-	LandScapeCBuffer	m_tCBuffer;
+	unsigned int			m_iNumX;
+	unsigned int			m_iNumZ;
+	vector<Vertex3D>		m_vecVtx;
+	vector<int>				m_vecIdx;
+	vector<Vector3>			m_vecFaceNormal;
+	LandScapeCBuffer		m_tCBuffer;
+	class CNavigationMesh*	m_pNavMesh;
 
 public:
 	bool CreateLandScape(const string& strName,

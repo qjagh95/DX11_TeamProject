@@ -39,7 +39,7 @@ public:
 	bool Init();
 	void CreateObject(const std::string& _strTag, const std::string& _strLayerTag = "Default");
 	void ObjectAddComponent(std::vector<int>& _vecComType);
-	void ObjectAddComponent(std::string _strCompTag);
+	void ObjectAddComponent(std::string& _strCompTag);
 	void ActiveObjectSetTransform(Vector3 _vPos, Vector3 _vScale, Vector3 _vRot);
 	void ActiveObjectSetPosition(double _dX, double _dY,  double _dZ);
 	void ActiveObjectSetScale(double _dX, double _dY, double _dZ);

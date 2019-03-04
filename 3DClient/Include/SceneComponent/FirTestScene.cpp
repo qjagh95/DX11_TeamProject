@@ -34,19 +34,7 @@ bool CFirTestScene::Init()
 	pTransform->SetWorldScale(0.3f, 0.3f, 0.1f);
 	pTransform->SetWorldPos(0.f, 0.f, 0.f);
 
-	SAFE_RELEASE(pTransform);
-
-	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
-
-	pRenderer->SetMesh("BlackCow", TEXT("Monster4.msh"));
-
-	CAnimation* pAnimation = pObject->AddComponent<CAnimation>("Animation");
-
-	pAnimation->LoadBone("Monster4.bne");
-	pAnimation->Load("Monster4.anm");
-
-	SAFE_RELEASE(pAnimation);
-	SAFE_RELEASE(pRenderer);
+	SAFE_RELEASE(pTransform);	
 
 	SAFE_RELEASE(pObject);
 
@@ -176,6 +164,10 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pBackLayer);
 
 	return true;
+
+
+
+return true;
 }
 
 int CFirTestScene::Update(float fTime)
