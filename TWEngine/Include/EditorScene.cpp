@@ -59,17 +59,15 @@ bool EditorScene::Init()
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
 	pTransform = pLightObj->GetTransform();
 
-	pTransform->SetWorldRot(-90.f, 0.f, 0.f);
+	pTransform->SetWorldRot(45.f , 0.f, 0.f);
 	pTransform->SetWorldPos(0.f, -1.f, 0.f);
 
 	SAFE_RELEASE(pTransform);
 
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-	pLight->SetLightColor(Vector4::Red, Vector4::White, Vector4::Blue);
-	pLight->SetLightType(LT_SPOT);
-	pLight->SetLightRange(10.f);
-	pLight->SetAngle(60.f, 90.f);
-
+	pLight->SetLightColor(Vector4::White , Vector4::White, Vector4::White);
+	pLight->SetLightType(LT_DIR);
+	
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pLightObj);
 

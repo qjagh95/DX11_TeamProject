@@ -1,4 +1,3 @@
-
 #include "EngineHeader.h"
 #include "ResourcesManager.h"
 #include "Mesh.h"
@@ -391,6 +390,18 @@ CMesh * CResourcesManager::FindMesh(const string & strName)
 	iter->second->AddRef();
 
 	return iter->second;
+}
+
+vector<string>* CResourcesManager::GetMeshNameList()
+{
+	unordered_map<string, CMesh*>::iterator iter;
+	unordered_map<string, CMesh*>::iterator iterEnd = m_mapMesh.end();
+	for (iter = m_mapMesh.begin(); iter != iterEnd; ++iter)
+	{
+		m_vecMeshName.push_back(iter->first);
+	}
+
+	return &m_vecMeshName;
 }
 
 CMesh * CResourcesManager::FindMeshNonCount(const string & strName)

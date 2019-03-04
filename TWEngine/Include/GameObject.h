@@ -39,8 +39,16 @@ private:
 	string			m_strLayerName;
 	RENDER_GROUP	m_eRenderGroup;
 	int				m_iLayerZOrder;
-
+	int				m_iObjectListIdx;
 public:
+	void SetObjectListIndex(int _idx)
+	{
+		m_iObjectListIdx = _idx;
+	}
+	int GetObjectListIndex() const
+	{
+		return m_iObjectListIdx;
+	}
 	class CScene* GetScene()	const;
 	class CLayer* GetLayer()	const;
 	string GetLayerName()	const;

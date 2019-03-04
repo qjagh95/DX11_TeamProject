@@ -6,6 +6,7 @@ PUN_BEGIN
 class PUN_DLL CScene :
 	public CRef
 {
+	friend class CEditManager;
 	friend class CSceneManager;
 
 private:

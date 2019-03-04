@@ -8,6 +8,7 @@ private:
 	unordered_map<string, class CMesh*>		m_mapMesh;
 	unordered_map<string, class CTexture*>	m_mapTexture;
 	unordered_map<string, class CSampler*>	m_mapSampler;
+	vector<string> m_vecMeshName;
 
 public:
 	bool Init();
@@ -32,6 +33,8 @@ public:
 		const string& strPathKey = MESH_PATH);
 	bool LoadMeshFromFullPath(const string& strName, const TCHAR* pFullPath);
 	class CMesh*	FindMesh(const string& strName);
+	vector<string>* GetMeshNameList();
+
 	class CMesh * FindMeshNonCount(const string & strName);
 	class CTexture* FindTexture(const string& strName);
 	class CTexture * FindTextureNonCount(const string & strName);

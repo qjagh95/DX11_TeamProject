@@ -129,7 +129,8 @@ bool CFirTestScene::Init()
 	pLandScape->CreateLandScape("LandScape", 129, 129, "LandScapeDif",
 		TEXT("LandScape/Terrain_Cliff_11.dds"),
 		TEXT("LandScape/Terrain_Cliff_11_NRM.bmp"),
-		TEXT("LandScape/Terrain_Cliff_11_SPEC.bmp"),		"LandScape/height1.bmp");
+		TEXT("LandScape/Terrain_Cliff_11_SPEC.bmp"),
+		"LandScape/height1.bmp");
 
 	vector<const TCHAR*>	vecSplatName;
 

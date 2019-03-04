@@ -40,7 +40,7 @@ public:
 		unsigned int iHeight, bool bWindowMode = true);
 	void EditLogic();
 	void EditDelete();
-
+	void EditCreateObject(const std::string& _strTag);
 private:
 	int Input(float fTime);
 	int Update(float fTime);

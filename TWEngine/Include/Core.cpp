@@ -4,6 +4,7 @@
 #include "Resource/Mesh.h"
 #include "Rendering/Shader.h"
 #include "Timer.h"
+#include "EditManager.h"
 
 PUN_USING
 
@@ -169,6 +170,8 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 		TrueAssert(true);
 		return false;
 	}
+
+	
 
 	if (CSoundManager::Get()->Init() == false)
 	{
@@ -416,6 +419,12 @@ bool CCore::EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth, unsign
 		return false;
 	}
 
+	if (!GET_SINGLE(CEditManager)->GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	m_fTimeScale = 1.0f;
 	m_pTimer = CTimerManager::GetInst()->FindTimer("MainTimer");
 
@@ -445,8 +454,20 @@ void CCore::EditDelete()
 	DESTROY_SINGLE(CRenderManager);
 	DESTROY_SINGLE(CResourcesManager);
 	DESTROY_SINGLE(CNavigationManager);
+	DESTROY_SINGLE(CEditManager);
 	DESTROY_SINGLE(CDevice);
 	CoUninitialize();
+}
+
+void CCore::EditCreateObject(const std::string & _strTag)
+{
+	CScene* pScene = CSceneManager::GetInst()->GetScene();
+	CLayer* pLayer = pScene->FindLayer("Default");
+	CGameObject* pObject = CGameObject::CreateObject(_strTag , pLayer);
+	
+	SAFE_RELEASE(pObject);
+	SAFE_RELEASE(pScene);
+	SAFE_RELEASE(pLayer);
 }
 
 void CCore::EditRender(float fTime)

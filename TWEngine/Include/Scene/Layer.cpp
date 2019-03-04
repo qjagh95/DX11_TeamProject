@@ -189,6 +189,7 @@ void CLayer::AddObject(CGameObject * pObj)
 	pObj->SetScene(m_pScene);
 	pObj->SetLayer(this);
 	pObj->AddRef();
+	pObj->SetObjectListIndex(m_ObjList.size());
 
 	m_ObjList.push_back(pObj);
 }
@@ -225,4 +226,39 @@ CGameObject * CLayer::FindObjectNonCount(const string & strTag)
 	}
 
 	return nullptr;
+}
+
+void CLayer::GetLayerListObjTag(std::vector<std::string>* _vec)
+{
+	list<CGameObject*>::iterator	iter;
+	list<CGameObject*>::iterator	iterEnd = m_ObjList.end();
+
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		_vec->push_back((*iter)->GetTag());
+	}
+}
+
+CGameObject * CLayer::FindObjectFromIndex(int _idx)
+{
+	if (_idx >= m_ObjList.size())
+	{
+		return nullptr;
+	}
+
+	list<CGameObject*>::iterator	iter;
+	list<CGameObject*>::iterator	iterEnd = m_ObjList.end();
+
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetObjectListIndex() == _idx)
+		{
+			(*iter)->AddRef();
+			return *iter;
+		}
+	}
+
+	return nullptr;
+
+
 }

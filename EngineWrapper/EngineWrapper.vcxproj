@@ -79,6 +79,7 @@
     <IntDir>BinObj\</IntDir>
     <IncludePath>../Engine/Include/;../Math/Include/;../DirectXTK/Inc/;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)64_Debug</TargetName>
+    <LibraryPath>../Engine/Bin/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -107,8 +108,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>TWEngine64_Debug.lib;</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>call "$(SolutionDir)"EditorCopy.bat</Command>
@@ -176,18 +176,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\EditorCopy.bat" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Mathlib\Mathlib.vcxproj">
       <Project>{bc993d7f-3c50-412d-a85b-472c7138aec9}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\TWEngine\Include\TWEngine.vcxproj">
-      <Project>{8c2e0787-528d-412a-88d2-cb4a6123eeaa}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\EditorCopy.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

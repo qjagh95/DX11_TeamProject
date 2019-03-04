@@ -314,6 +314,9 @@
     <ClCompile Include="EditorScene.cpp">
       <Filter>EditScene</Filter>
     </ClCompile>
+    <ClCompile Include="EditManager.cpp">
+      <Filter>EditScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Macro.h">
@@ -515,6 +518,9 @@
       <Filter>01. Core\11. SoundManager</Filter>
     </ClInclude>
     <ClInclude Include="EditorScene.h">
+      <Filter>EditScene</Filter>
+    </ClInclude>
+    <ClInclude Include="EditManager.h">
       <Filter>EditScene</Filter>
     </ClInclude>
   </ItemGroup>

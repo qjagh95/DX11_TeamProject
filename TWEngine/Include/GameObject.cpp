@@ -15,7 +15,8 @@ unordered_map<class CScene*, unordered_map<string, CGameObject*>> CGameObject::m
 
 CGameObject::CGameObject() :
 	m_pTransform(nullptr),
-	m_pParent(nullptr)
+	m_pParent(nullptr),
+	m_iObjectListIdx(0)
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;

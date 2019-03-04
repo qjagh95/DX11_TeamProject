@@ -234,6 +234,7 @@
     <ClInclude Include="Component\UserComponent.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="Device.h" />
+    <ClInclude Include="EditManager.h" />
     <ClInclude Include="EditorScene.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="FontManager.h" />
@@ -410,6 +411,7 @@
     </ClCompile>
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Device.cpp" />
+    <ClCompile Include="EditManager.cpp" />
     <ClCompile Include="EditorScene.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="GameObject.cpp">

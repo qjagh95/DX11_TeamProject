@@ -3,3 +3,15 @@
 ################################################################################
 
 /.vs/3DGame/v15
+/3DClient/bin
+/Engine/Bin
+/EngineWrapper/Bin
+/Mathlib/Bin
+/TWEditor/Bin
+/TWEngine/Bin
+/WinFormEditor/bin
+/WinFormEditor/obj/Debug/TempPE
+/WinFormEditor/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/WinFormEditor/obj/Debug/DesignTimeResolveAssemblyReferences.cache
+/WinFormEditor/obj/Debug/WinFormEditor.csproj.CopyComplete
+/DirectXTK/Src/Shaders/Compiled
