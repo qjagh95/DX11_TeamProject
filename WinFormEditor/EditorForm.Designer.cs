@@ -29,23 +29,27 @@
         private void InitializeComponent()
         {
             this.DeviceWindow = new System.Windows.Forms.PictureBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.ChangeTag = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.ObjTagText = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.LogMessage = new System.Windows.Forms.GroupBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.LayerList = new System.Windows.Forms.ListBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.Inspector = new System.Windows.Forms.GroupBox();
+            this.InspectorTab = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.Component = new System.Windows.Forms.TabPage();
+            this.Effect = new System.Windows.Forms.TabPage();
             this.button4 = new System.Windows.Forms.Button();
             this.setMesh = new System.Windows.Forms.Button();
             this.MeshList = new System.Windows.Forms.ListBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.SetScale = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.RotationZ = new System.Windows.Forms.TextBox();
             this.RotationY = new System.Windows.Forms.TextBox();
@@ -69,66 +73,102 @@
             this.label4 = new System.Windows.Forms.Label();
             this.ObjectList = new System.Windows.Forms.GroupBox();
             this.ObjList = new System.Windows.Forms.ListBox();
+            this.FileSave = new System.Windows.Forms.Button();
+            this.FileLoad = new System.Windows.Forms.Button();
+            this.Renderer = new System.Windows.Forms.GroupBox();
+            this.ChangeLayer = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DeviceWindow)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
-            this.groupBox6.SuspendLayout();
+            this.Inspector.SuspendLayout();
+            this.InspectorTab.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.ObjectList.SuspendLayout();
+            this.Renderer.SuspendLayout();
             this.SuspendLayout();
             // 
             // DeviceWindow
             // 
             this.DeviceWindow.Location = new System.Drawing.Point(6, 29);
             this.DeviceWindow.Name = "DeviceWindow";
-            this.DeviceWindow.Size = new System.Drawing.Size(835, 511);
+            this.DeviceWindow.Size = new System.Drawing.Size(679, 511);
             this.DeviceWindow.TabIndex = 0;
             this.DeviceWindow.TabStop = false;
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Font = new System.Drawing.Font("맑은 고딕", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.groupBox1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.groupBox1.Location = new System.Drawing.Point(865, -4);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(298, 292);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Animation";
-            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
-            // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.textBox1);
-            this.groupBox2.Controls.Add(this.button1);
-            this.groupBox2.Font = new System.Drawing.Font("맑은 고딕", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.groupBox2.Location = new System.Drawing.Point(865, 480);
+            this.groupBox2.Controls.Add(this.ChangeLayer);
+            this.groupBox2.Controls.Add(this.ChangeTag);
+            this.groupBox2.Controls.Add(this.label11);
+            this.groupBox2.Controls.Add(this.comboBox1);
+            this.groupBox2.Controls.Add(this.label10);
+            this.groupBox2.Controls.Add(this.ObjTagText);
+            this.groupBox2.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.groupBox2.Location = new System.Drawing.Point(871, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(298, 68);
+            this.groupBox2.Size = new System.Drawing.Size(318, 79);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "CreateObj";
+            this.groupBox2.Text = "Create Object";
             // 
-            // textBox1
+            // ChangeTag
             // 
-            this.textBox1.BackColor = System.Drawing.SystemColors.Control;
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.textBox1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.textBox1.Location = new System.Drawing.Point(14, 33);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(113, 23);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.ChangeTag.Location = new System.Drawing.Point(213, 18);
+            this.ChangeTag.Name = "ChangeTag";
+            this.ChangeTag.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.ChangeTag.Size = new System.Drawing.Size(95, 23);
+            this.ChangeTag.TabIndex = 15;
+            this.ChangeTag.Text = "Change Tag";
+            this.ChangeTag.UseVisualStyleBackColor = true;
+            this.ChangeTag.Click += new System.EventHandler(this.ChangeTag_Click);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(16, 49);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(49, 17);
+            this.label11.TabIndex = 14;
+            this.label11.Text = "Layer :";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.BackColor = System.Drawing.SystemColors.Control;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(73, 46);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(103, 25);
+            this.comboBox1.TabIndex = 13;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(26, 21);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(39, 17);
+            this.label10.TabIndex = 12;
+            this.label10.Text = "Tag :";
+            // 
+            // ObjTagText
+            // 
+            this.ObjTagText.BackColor = System.Drawing.SystemColors.Control;
+            this.ObjTagText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ObjTagText.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.ObjTagText.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.ObjTagText.Location = new System.Drawing.Point(73, 18);
+            this.ObjTagText.Name = "ObjTagText";
+            this.ObjTagText.Size = new System.Drawing.Size(134, 23);
+            this.ObjTagText.TabIndex = 1;
+            this.ObjTagText.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.button1.Location = new System.Drawing.Point(133, 31);
+            this.button1.Location = new System.Drawing.Point(31, 417);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(110, 25);
             this.button1.TabIndex = 5;
@@ -140,22 +180,22 @@
             // 
             this.groupBox3.Controls.Add(this.DeviceWindow);
             this.groupBox3.Font = new System.Drawing.Font("맑은 고딕", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.groupBox3.Location = new System.Drawing.Point(12, -4);
+            this.groupBox3.Location = new System.Drawing.Point(168, -4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(847, 546);
+            this.groupBox3.Size = new System.Drawing.Size(691, 546);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Edit Scene";
+            this.groupBox3.Text = "Scene";
             // 
-            // groupBox4
+            // LogMessage
             // 
-            this.groupBox4.Font = new System.Drawing.Font("맑은 고딕", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.groupBox4.Location = new System.Drawing.Point(12, 542);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(847, 187);
-            this.groupBox4.TabIndex = 4;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Log";
+            this.LogMessage.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.LogMessage.Location = new System.Drawing.Point(168, 542);
+            this.LogMessage.Name = "LogMessage";
+            this.LogMessage.Size = new System.Drawing.Size(691, 86);
+            this.LogMessage.TabIndex = 4;
+            this.LogMessage.TabStop = false;
+            this.LogMessage.Text = "Log Message";
             // 
             // treeView1
             // 
@@ -172,41 +212,91 @@
             this.LayerList.ForeColor = System.Drawing.SystemColors.ControlText;
             this.LayerList.FormattingEnabled = true;
             this.LayerList.ItemHeight = 15;
-            this.LayerList.Location = new System.Drawing.Point(11, 34);
+            this.LayerList.Location = new System.Drawing.Point(11, 19);
             this.LayerList.Name = "LayerList";
-            this.LayerList.Size = new System.Drawing.Size(121, 139);
+            this.LayerList.Size = new System.Drawing.Size(121, 154);
             this.LayerList.TabIndex = 6;
             this.LayerList.SelectedIndexChanged += new System.EventHandler(this.LayerList_SelectedIndexChanged);
             // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.LayerList);
-            this.groupBox5.Font = new System.Drawing.Font("맑은 고딕", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.groupBox5.Location = new System.Drawing.Point(865, 294);
+            this.groupBox5.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.groupBox5.Location = new System.Drawing.Point(12, 448);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(144, 180);
+            this.groupBox5.Size = new System.Drawing.Size(150, 180);
             this.groupBox5.TabIndex = 7;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Layer List";
             // 
-            // groupBox6
+            // Inspector
             // 
-            this.groupBox6.Controls.Add(this.button4);
-            this.groupBox6.Controls.Add(this.setMesh);
-            this.groupBox6.Controls.Add(this.MeshList);
-            this.groupBox6.Controls.Add(this.groupBox7);
-            this.groupBox6.Font = new System.Drawing.Font("맑은 고딕", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox6.Location = new System.Drawing.Point(1169, -4);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(327, 552);
-            this.groupBox6.TabIndex = 8;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Component";
+            this.Inspector.Controls.Add(this.InspectorTab);
+            this.Inspector.Font = new System.Drawing.Font("맑은 고딕", 10F, System.Drawing.FontStyle.Bold);
+            this.Inspector.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.Inspector.Location = new System.Drawing.Point(1195, 0);
+            this.Inspector.Name = "Inspector";
+            this.Inspector.Size = new System.Drawing.Size(301, 628);
+            this.Inspector.TabIndex = 8;
+            this.Inspector.TabStop = false;
+            this.Inspector.Text = "Inspector";
+            // 
+            // InspectorTab
+            // 
+            this.InspectorTab.Controls.Add(this.tabPage1);
+            this.InspectorTab.Controls.Add(this.Component);
+            this.InspectorTab.Controls.Add(this.Effect);
+            this.InspectorTab.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.InspectorTab.Location = new System.Drawing.Point(6, 24);
+            this.InspectorTab.Multiline = true;
+            this.InspectorTab.Name = "InspectorTab";
+            this.InspectorTab.SelectedIndex = 0;
+            this.InspectorTab.Size = new System.Drawing.Size(295, 596);
+            this.InspectorTab.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPage1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.tabPage1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tabPage1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tabPage1.Location = new System.Drawing.Point(4, 26);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(287, 566);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Animation";
+            // 
+            // Component
+            // 
+            this.Component.BackColor = System.Drawing.SystemColors.Control;
+            this.Component.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.Component.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Component.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Component.Location = new System.Drawing.Point(4, 26);
+            this.Component.Name = "Component";
+            this.Component.Padding = new System.Windows.Forms.Padding(3);
+            this.Component.Size = new System.Drawing.Size(287, 566);
+            this.Component.TabIndex = 1;
+            this.Component.Text = "Component";
+            // 
+            // Effect
+            // 
+            this.Effect.BackColor = System.Drawing.SystemColors.Control;
+            this.Effect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.Effect.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Effect.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Effect.Location = new System.Drawing.Point(4, 26);
+            this.Effect.Name = "Effect";
+            this.Effect.Padding = new System.Windows.Forms.Padding(3);
+            this.Effect.Size = new System.Drawing.Size(287, 566);
+            this.Effect.TabIndex = 2;
+            this.Effect.Text = "Effect";
             // 
             // button4
             // 
-            this.button4.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.button4.Location = new System.Drawing.Point(154, 452);
+            this.button4.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button4.Location = new System.Drawing.Point(153, 307);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(163, 46);
             this.button4.TabIndex = 3;
@@ -216,7 +306,8 @@
             // 
             // setMesh
             // 
-            this.setMesh.Location = new System.Drawing.Point(154, 504);
+            this.setMesh.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.setMesh.Location = new System.Drawing.Point(153, 262);
             this.setMesh.Name = "setMesh";
             this.setMesh.Size = new System.Drawing.Size(163, 36);
             this.setMesh.TabIndex = 2;
@@ -227,60 +318,27 @@
             // MeshList
             // 
             this.MeshList.BackColor = System.Drawing.SystemColors.Control;
+            this.MeshList.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.MeshList.FormattingEnabled = true;
-            this.MeshList.ItemHeight = 28;
-            this.MeshList.Location = new System.Drawing.Point(8, 256);
+            this.MeshList.ItemHeight = 17;
+            this.MeshList.Location = new System.Drawing.Point(8, 26);
             this.MeshList.Name = "MeshList";
-            this.MeshList.Size = new System.Drawing.Size(140, 284);
+            this.MeshList.Size = new System.Drawing.Size(140, 327);
             this.MeshList.TabIndex = 1;
             this.MeshList.SelectedIndexChanged += new System.EventHandler(this.MeshList_SelectedIndexChanged);
             // 
             // groupBox7
             // 
-            this.groupBox7.Controls.Add(this.button3);
-            this.groupBox7.Controls.Add(this.SetScale);
-            this.groupBox7.Controls.Add(this.button2);
             this.groupBox7.Controls.Add(this.groupBox10);
             this.groupBox7.Controls.Add(this.groupBox8);
             this.groupBox7.Controls.Add(this.groupBox9);
             this.groupBox7.Font = new System.Drawing.Font("맑은 고딕", 10F, System.Drawing.FontStyle.Bold);
-            this.groupBox7.Location = new System.Drawing.Point(6, 33);
+            this.groupBox7.Location = new System.Drawing.Point(871, 80);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(315, 215);
+            this.groupBox7.Size = new System.Drawing.Size(318, 185);
             this.groupBox7.TabIndex = 0;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Transform";
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(214, 184);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(99, 31);
-            this.button3.TabIndex = 11;
-            this.button3.Text = "SetRotation";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.SetRotation_Click);
-            // 
-            // SetScale
-            // 
-            this.SetScale.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.SetScale.Location = new System.Drawing.Point(109, 184);
-            this.SetScale.Name = "SetScale";
-            this.SetScale.Size = new System.Drawing.Size(101, 30);
-            this.SetScale.TabIndex = 1;
-            this.SetScale.Text = "SetScale";
-            this.SetScale.UseVisualStyleBackColor = true;
-            this.SetScale.Click += new System.EventHandler(this.SetScale_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(0, 184);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(105, 30);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "SetPosition";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // groupBox10
             // 
@@ -300,6 +358,7 @@
             // RotationZ
             // 
             this.RotationZ.BackColor = System.Drawing.SystemColors.Control;
+            this.RotationZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.RotationZ.Location = new System.Drawing.Point(228, 15);
             this.RotationZ.Name = "RotationZ";
             this.RotationZ.Size = new System.Drawing.Size(80, 25);
@@ -309,6 +368,7 @@
             // RotationY
             // 
             this.RotationY.BackColor = System.Drawing.SystemColors.Control;
+            this.RotationY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.RotationY.Location = new System.Drawing.Point(123, 15);
             this.RotationY.Name = "RotationY";
             this.RotationY.Size = new System.Drawing.Size(84, 25);
@@ -318,6 +378,7 @@
             // RotationX
             // 
             this.RotationX.BackColor = System.Drawing.SystemColors.Control;
+            this.RotationX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.RotationX.Location = new System.Drawing.Point(20, 17);
             this.RotationX.Name = "RotationX";
             this.RotationX.Size = new System.Drawing.Size(80, 25);
@@ -372,6 +433,7 @@
             // PositionZ
             // 
             this.PositionZ.BackColor = System.Drawing.SystemColors.Control;
+            this.PositionZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PositionZ.Location = new System.Drawing.Point(229, 17);
             this.PositionZ.Name = "PositionZ";
             this.PositionZ.Size = new System.Drawing.Size(80, 25);
@@ -392,6 +454,7 @@
             // PositionY
             // 
             this.PositionY.BackColor = System.Drawing.SystemColors.Control;
+            this.PositionY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PositionY.Location = new System.Drawing.Point(123, 17);
             this.PositionY.Name = "PositionY";
             this.PositionY.Size = new System.Drawing.Size(87, 25);
@@ -412,6 +475,7 @@
             // PositionX
             // 
             this.PositionX.BackColor = System.Drawing.SystemColors.Control;
+            this.PositionX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PositionX.Location = new System.Drawing.Point(19, 17);
             this.PositionX.Name = "PositionX";
             this.PositionX.Size = new System.Drawing.Size(86, 25);
@@ -447,6 +511,7 @@
             // ScaleZ
             // 
             this.ScaleZ.BackColor = System.Drawing.SystemColors.Control;
+            this.ScaleZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ScaleZ.ForeColor = System.Drawing.SystemColors.ControlText;
             this.ScaleZ.Location = new System.Drawing.Point(228, 16);
             this.ScaleZ.Name = "ScaleZ";
@@ -457,6 +522,7 @@
             // ScaleY
             // 
             this.ScaleY.BackColor = System.Drawing.SystemColors.Control;
+            this.ScaleY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ScaleY.ForeColor = System.Drawing.SystemColors.ControlText;
             this.ScaleY.Location = new System.Drawing.Point(123, 17);
             this.ScaleY.Name = "ScaleY";
@@ -467,6 +533,7 @@
             // ScaleX
             // 
             this.ScaleX.BackColor = System.Drawing.SystemColors.Control;
+            this.ScaleX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ScaleX.ForeColor = System.Drawing.SystemColors.ControlText;
             this.ScaleX.Location = new System.Drawing.Point(20, 17);
             this.ScaleX.Name = "ScaleX";
@@ -507,13 +574,13 @@
             // ObjectList
             // 
             this.ObjectList.Controls.Add(this.ObjList);
-            this.ObjectList.Font = new System.Drawing.Font("맑은 고딕", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.ObjectList.Location = new System.Drawing.Point(1015, 294);
+            this.ObjectList.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.ObjectList.Location = new System.Drawing.Point(11, 77);
             this.ObjectList.Name = "ObjectList";
-            this.ObjectList.Size = new System.Drawing.Size(148, 180);
+            this.ObjectList.Size = new System.Drawing.Size(150, 365);
             this.ObjectList.TabIndex = 9;
             this.ObjectList.TabStop = false;
-            this.ObjectList.Text = "ObjectList";
+            this.ObjectList.Text = "Hierachy";
             // 
             // ObjList
             // 
@@ -522,25 +589,69 @@
             this.ObjList.ForeColor = System.Drawing.SystemColors.ControlText;
             this.ObjList.FormattingEnabled = true;
             this.ObjList.ItemHeight = 17;
-            this.ObjList.Location = new System.Drawing.Point(3, 30);
+            this.ObjList.Location = new System.Drawing.Point(5, 24);
             this.ObjList.Name = "ObjList";
-            this.ObjList.Size = new System.Drawing.Size(139, 140);
+            this.ObjList.Size = new System.Drawing.Size(139, 310);
             this.ObjList.TabIndex = 0;
             this.ObjList.SelectedIndexChanged += new System.EventHandler(this.ObjList_SelectedIndexChanged);
+            // 
+            // FileSave
+            // 
+            this.FileSave.Location = new System.Drawing.Point(11, 12);
+            this.FileSave.Name = "FileSave";
+            this.FileSave.Size = new System.Drawing.Size(71, 47);
+            this.FileSave.TabIndex = 10;
+            this.FileSave.Text = "File Save";
+            this.FileSave.UseVisualStyleBackColor = true;
+            // 
+            // FileLoad
+            // 
+            this.FileLoad.Location = new System.Drawing.Point(86, 12);
+            this.FileLoad.Name = "FileLoad";
+            this.FileLoad.Size = new System.Drawing.Size(75, 47);
+            this.FileLoad.TabIndex = 11;
+            this.FileLoad.Text = "File Load";
+            this.FileLoad.UseVisualStyleBackColor = true;
+            // 
+            // Renderer
+            // 
+            this.Renderer.Controls.Add(this.setMesh);
+            this.Renderer.Controls.Add(this.MeshList);
+            this.Renderer.Controls.Add(this.button4);
+            this.Renderer.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.Renderer.Location = new System.Drawing.Point(864, 270);
+            this.Renderer.Name = "Renderer";
+            this.Renderer.Size = new System.Drawing.Size(325, 358);
+            this.Renderer.TabIndex = 0;
+            this.Renderer.TabStop = false;
+            this.Renderer.Text = "Renderer";
+            // 
+            // ChangeLayer
+            // 
+            this.ChangeLayer.Location = new System.Drawing.Point(182, 47);
+            this.ChangeLayer.Name = "ChangeLayer";
+            this.ChangeLayer.Size = new System.Drawing.Size(126, 23);
+            this.ChangeLayer.TabIndex = 16;
+            this.ChangeLayer.Text = "Change Layer";
+            this.ChangeLayer.UseVisualStyleBackColor = true;
             // 
             // EditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1508, 738);
-            this.Controls.Add(this.ObjectList);
-            this.Controls.Add(this.groupBox6);
+            this.ClientSize = new System.Drawing.Size(1508, 634);
+            this.Controls.Add(this.FileLoad);
+            this.Controls.Add(this.FileSave);
+            this.Controls.Add(this.groupBox7);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.Inspector);
+            this.Controls.Add(this.LogMessage);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.ObjectList);
+            this.Controls.Add(this.Renderer);
             this.ForeColor = System.Drawing.SystemColors.WindowText;
             this.Name = "EditorForm";
             this.Text = "Form1";
@@ -552,7 +663,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
-            this.groupBox6.ResumeLayout(false);
+            this.Inspector.ResumeLayout(false);
+            this.InspectorTab.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
@@ -561,6 +673,7 @@
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
             this.ObjectList.ResumeLayout(false);
+            this.Renderer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -568,16 +681,15 @@
         #endregion
 
         private System.Windows.Forms.PictureBox DeviceWindow;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox LogMessage;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox ObjTagText;
         private System.Windows.Forms.ListBox LayerList;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.GroupBox Inspector;
         private System.Windows.Forms.GroupBox ObjectList;
         private System.Windows.Forms.ListBox ObjList;
         private System.Windows.Forms.GroupBox groupBox7;
@@ -589,7 +701,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox PositionX;
         private System.Windows.Forms.TextBox PositionZ;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.GroupBox groupBox10;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
@@ -600,14 +711,24 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox ScaleZ;
         private System.Windows.Forms.TextBox ScaleY;
-        private System.Windows.Forms.Button SetScale;
         private System.Windows.Forms.TextBox RotationZ;
         private System.Windows.Forms.TextBox RotationY;
         private System.Windows.Forms.TextBox RotationX;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.ListBox MeshList;
         private System.Windows.Forms.Button setMesh;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button FileSave;
+        private System.Windows.Forms.Button FileLoad;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.GroupBox Renderer;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage Component;
+        private System.Windows.Forms.TabPage Effect;
+        private System.Windows.Forms.TabControl InspectorTab;
+        private System.Windows.Forms.Button ChangeTag;
+        private System.Windows.Forms.Button ChangeLayer;
     }
 }
 

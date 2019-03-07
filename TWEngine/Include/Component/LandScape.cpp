@@ -11,7 +11,8 @@
 
 PUN_USING
 
-CLandScape::CLandScape()
+CLandScape::CLandScape() :
+	m_pNavMesh(nullptr)
 {
 	m_eComType = CT_LANDSCAPE;
 }
@@ -100,7 +101,7 @@ bool CLandScape::CreateLandScape(const string& strName,
 
 			float	y = 0.f;
 
-			if (pHeight)
+		//	if (pHeight)
 			{
 				y = pHeight[i * m_iNumX * iPixelSize + j * iPixelSize] * 0.05f;
 			}
@@ -209,31 +210,35 @@ bool CLandScape::CreateLandScape(const string& strName,
 
 	SAFE_DELETE_ARRAY(pHeight);
 
-	m_pNavMesh = GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene);
-
-	Vector3 vCellPos[3];
-
-	for (int i = 0; i < m_iNumZ - 1; ++i)
+	//if (pHeight)
 	{
-		for (int j = 0; j < m_iNumX - 1; ++j)
+		m_pNavMesh = GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene);
+
+		Vector3	vCellPos[3];
+
+		for (int i = 0; i < (int)m_iNumZ - 1; ++i)
 		{
-			int iAddr = i * m_iNumX + j;
+			for (int j = 0; j < (int)m_iNumX - 1; ++j)
+			{
+				int	iAddr = i * m_iNumX + j;
 
-			vCellPos[0] = m_vecVtx[iAddr].vPos;
-			vCellPos[1] = m_vecVtx[iAddr + 1].vPos;
-			vCellPos[2] = m_vecVtx[iAddr + m_iNumX + 1].vPos;
+				vCellPos[0] = m_vecVtx[iAddr].vPos;
+				vCellPos[1] = m_vecVtx[iAddr + 1].vPos;
+				vCellPos[2] = m_vecVtx[iAddr + m_iNumX + 1].vPos;
 
-			m_pNavMesh->AddCell(vCellPos);
+				m_pNavMesh->AddCell(vCellPos);
 
-			vCellPos[0] = m_vecVtx[iAddr].vPos;
-			vCellPos[1] = m_vecVtx[iAddr + m_iNumX + 1].vPos;
-			vCellPos[2] = m_vecVtx[iAddr + m_iNumX].vPos;
+				vCellPos[0] = m_vecVtx[iAddr].vPos;
+				vCellPos[1] = m_vecVtx[iAddr + m_iNumX + 1].vPos;
+				vCellPos[2] = m_vecVtx[iAddr + m_iNumX].vPos;
 
-			m_pNavMesh->AddCell(vCellPos);
+				m_pNavMesh->AddCell(vCellPos);
+			}
 		}
-	}
+		m_pNavMesh->CreateGridMapAdj(m_iNumX - 1);
 
-	m_pNavMesh->CreateGridMapAdj(m_iNumX - 1);
+		m_pNavMesh->Save("Nav.nav");
+	}
 
 	return true;
 }
@@ -340,6 +345,10 @@ int CLandScape::LateUpdate(float fTime)
 
 		SAFE_RELEASE(pRenderer);
 	}
+
+	// 내비메쉬에 이 지형의 트랜스폼에서 위치를 얻어와 지정해준다.
+	m_pNavMesh->SetOffset(m_pTransform->GetWorldPos());
+	m_pNavMesh->SetOffsetScale(m_pTransform->GetWorldScale());
 
 	return 0;
 }

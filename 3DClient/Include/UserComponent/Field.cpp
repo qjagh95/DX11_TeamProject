@@ -33,7 +33,7 @@ bool CField::Init()
 
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
 
-	pRenderer->SetMesh("floor", TEXT("ground_test_1.fbx"));
+	pRenderer->SetMesh("floor", TEXT("ground_test_1.msh"));
 
 	SAFE_RELEASE(pRenderer);
 

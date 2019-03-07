@@ -182,7 +182,15 @@ bool CResourcesManager::Init()
 	CreateCylinderVolum(CYLINDER_VOLUME, 0.5f, 3, 32);
 	CreateCapsulVolum(CAPSUL_VOLUME, 0.5f, 3, 64, 128);
 	CreateCornVolum(CORN_VOLUME, 0.5f, 0.5f, 64, 128);
-	CreateSphereVolum("Sky", 0.5f, 64, 128, "Sky", POS_LAYOUT);
+	CreateSphereVolum("Sky", 0.5f, 32, 64, "Sky", POS_LAYOUT);
+	return true;
+}
+
+bool CResourcesManager::SamplerInit()
+{
+	CreateSampler(SAMPLER_LINEAR);
+	CreateSampler(SAMPLER_POINT, D3D11_FILTER_MIN_MAG_MIP_POINT);
+
 	return true;
 }
 

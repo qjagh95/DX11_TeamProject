@@ -36,7 +36,7 @@ void CPlayer::AfterClone()
 
 bool CPlayer::Init()
 {
-	//m_pTransform->SetLocalRot(0.f, -90.f, 0.f);
+	m_pTransform->SetLocalRot(0.f, -90.f, 0.f);
 	m_pTransform->SetWorldScale(0.1f, 0.1f, 0.1f);
 
 	GET_SINGLE(CInput)->BindAxis("Move", this, &CPlayer::Move);

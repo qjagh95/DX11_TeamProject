@@ -455,7 +455,6 @@ void CCore::EditDelete()
 {
 	DESTROY_SINGLE(CSceneManager);
 	DESTROY_SINGLE(CObjectManager);
-	DESTROY_SINGLE(CFontManager);
 	DESTROY_SINGLE(CInput);
 	DESTROY_SINGLE(CCollisionManager);
 	DESTROY_SINGLE(CTimerManager);
@@ -465,7 +464,7 @@ void CCore::EditDelete()
 	DESTROY_SINGLE(CNavigationManager);
 	DESTROY_SINGLE(CEditManager);
 	DESTROY_SINGLE(CDevice);
-	CoUninitialize();
+	//CoUninitialize();
 }
 
 void CCore::EditCreateObject(const std::string & _strTag)

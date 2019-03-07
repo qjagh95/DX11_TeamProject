@@ -90,7 +90,7 @@ public:
 		D3D11_USAGE eIdxUsage = D3D11_USAGE_DEFAULT,
 		DXGI_FORMAT eFmt = DXGI_FORMAT_R16_UINT);
 	bool LoadMesh(const string& strName, const TCHAR* pFileName,
-		const string& strPathKey = MESH_PATH);
+		const string& strPathKey = MESH_DATA_PATH);
 	bool LoadMeshFromFullPath(const string& strName, const TCHAR* pFullPath);
 	void Render();
 	void Render(int iContainer, int iSubset);
@@ -104,7 +104,7 @@ private:
 public:
 	bool Save(const char* _pFileName, const std::string& _strPathKey = MESH_PATH);
 	bool SaveFromFullPath(const char* _pFullPath);
-	bool Load(const char* _pFileName, const std::string& _strPathKey = MESH_PATH);
+	bool Load(const char* _pFileName, const std::string& _strPathKey = MESH_DATA_PATH);
 	bool LoadFromFullPath(const char* _pFullPath);
 private:
 	bool ConvertFbx(class CFbxLoader* pLoader, const char* _pFullPath);

@@ -18,7 +18,7 @@ namespace WinFormEditor
         /////////////////////////////////////////////////////////////////////////
         public CoreWrapper coreWrapper = new CoreWrapper();
 
-        public static string m_strCreateObjTag;
+        public static string m_strChangeObjTag;
         public static string m_strLayerTag;
         public static int    m_iObjListIndex;
         public static string m_strPositionX;
@@ -42,6 +42,7 @@ namespace WinFormEditor
 
         public EditorForm()
         {
+
             InitializeComponent();
 
             //hInstance, hwnd얻어옴.
@@ -79,14 +80,14 @@ namespace WinFormEditor
 
         private void button1_Click(object sender, EventArgs e)
         {
-           coreWrapper.EditCreateObject(m_strCreateObjTag , m_strLayerTag);
-           ObjList.Items.Add(m_strCreateObjTag);
+           coreWrapper.EditCreateObject("NewObject" , m_strLayerTag);
+           ObjList.Items.Add("NewObject");
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            string ss = textBox1.Text.ToString();
-            m_strCreateObjTag = ss;
+            string ss = ObjTagText.Text.ToString();
+            m_strChangeObjTag = ss;
         }
 
         private void LayerList_SelectedIndexChanged(object sender, EventArgs e)
@@ -114,29 +115,54 @@ namespace WinFormEditor
 
         private void PositionX_TextChanged(object sender, EventArgs e)
         {
-            string ss = PositionX.Text.ToString();
-            m_strPositionX = ss;
-        }
-
-        private void PositionY_TextChanged(object sender, EventArgs e)
-        {
-            string ss = PositionY.Text.ToString();
-            m_strPositionY = ss;
-        }
-
-        private void PositionZ_TextChanged(object sender, EventArgs e)
-        {
-            string ss = PositionZ.Text.ToString();
-            m_strPositionZ = ss;
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
+            string tempstr = PositionX.Text.ToString();
+            m_strPositionX = tempstr;
+            if (m_strPositionX == "")
+            {
+                return;
+            }
             double dPosX = Convert.ToDouble(m_strPositionX);
             double dPosY = Convert.ToDouble(m_strPositionY);
             double dPosZ = Convert.ToDouble(m_strPositionZ);
             coreWrapper.ActiveObjSetPos(dPosX, dPosY, dPosZ);
         }
+
+        private void PositionY_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = PositionY.Text.ToString();
+            m_strPositionY = tempstr;
+            if (m_strPositionY == "")
+            {
+                return;
+            }
+
+            double dPosX = Convert.ToDouble(m_strPositionX);
+            double dPosY = Convert.ToDouble(m_strPositionY);
+            double dPosZ = Convert.ToDouble(m_strPositionZ);
+            coreWrapper.ActiveObjSetPos(dPosX, dPosY, dPosZ);
+        }
+
+        private void PositionZ_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = PositionZ.Text.ToString();
+            m_strPositionZ = tempstr;
+            if (m_strPositionZ == "")
+            {
+                return;
+            }
+            double dPosX = Convert.ToDouble(m_strPositionX);
+            double dPosY = Convert.ToDouble(m_strPositionY);
+            double dPosZ = Convert.ToDouble(m_strPositionZ);
+            coreWrapper.ActiveObjSetPos(dPosX, dPosY, dPosZ);
+        }
+
+        //private void button2_Click(object sender, EventArgs e)
+        //{
+        //    double dPosX = Convert.ToDouble(m_strPositionX);
+        //    double dPosY = Convert.ToDouble(m_strPositionY);
+        //    double dPosZ = Convert.ToDouble(m_strPositionZ);
+        //    coreWrapper.ActiveObjSetPos(dPosX, dPosY, dPosZ);
+        //}
 
         private void PositionX_Press(object sender, KeyPressEventArgs e)
         {
@@ -148,55 +174,106 @@ namespace WinFormEditor
 
         private void ScaleX_TextChanged(object sender, EventArgs e)
         {
-            string ss = ScaleX.Text.ToString();
-            m_strScaleX = ss;
-        }
-
-        private void ScaleY_TextChanged(object sender, EventArgs e)
-        {
-            string ss = ScaleY.Text.ToString();
-            m_strScaleY = ss;
-        }
-
-        private void ScaleZ_TextChanged(object sender, EventArgs e)
-        {
-            string ss = ScaleZ.Text.ToString();
-            m_strScaleZ = ss;
-        }
-
-        private void RotationX_TextChanged(object sender, EventArgs e)
-        {
-            string ss = RotationX.Text.ToString();
-            m_strRotX = ss;
-        }
-
-        private void RotationY_TextChanged(object sender, EventArgs e)
-        {
-            string ss = RotationY.Text.ToString();
-            m_strRotY = ss;
-        }
-
-        private void RotationZ_TextChanged(object sender, EventArgs e)
-        {
-            string ss = RotationZ.Text.ToString();
-            m_strRotZ = ss;
-        }
-
-        private void SetScale_Click(object sender, EventArgs e)
-        {
+            string tempstr = ScaleX.Text.ToString();
+            m_strScaleX = tempstr;
+            if (m_strScaleX == "")
+            {
+                m_strScaleX = "0";
+            }
             double dScaleX = Convert.ToDouble(m_strScaleX);
             double dScaleY = Convert.ToDouble(m_strScaleY);
             double dScaleZ = Convert.ToDouble(m_strScaleZ);
             coreWrapper.ActiveObjSetScale(dScaleX, dScaleY, dScaleZ);
         }
 
-        private void SetRotation_Click(object sender, EventArgs e)
+        private void ScaleY_TextChanged(object sender, EventArgs e)
         {
+            string tempstr = ScaleY.Text.ToString();
+            m_strScaleY = tempstr;
+            if (m_strScaleY == "")
+            {
+                return;
+            }
+            double dScaleX = Convert.ToDouble(m_strScaleX);
+            double dScaleY = Convert.ToDouble(m_strScaleY);
+            double dScaleZ = Convert.ToDouble(m_strScaleZ);
+            coreWrapper.ActiveObjSetScale(dScaleX, dScaleY, dScaleZ);
+        }
+
+        private void ScaleZ_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = ScaleZ.Text.ToString();
+            m_strScaleZ = tempstr;
+            if (m_strScaleZ == "")
+            {
+                return;
+            }
+            double dScaleX = Convert.ToDouble(m_strScaleX);
+            double dScaleY = Convert.ToDouble(m_strScaleY);
+            double dScaleZ = Convert.ToDouble(m_strScaleZ);
+            coreWrapper.ActiveObjSetScale(dScaleX, dScaleY, dScaleZ);
+        }
+
+        private void RotationX_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = RotationX.Text.ToString();
+            m_strRotX = tempstr;
+            if (m_strRotX == "")
+            {
+                return;
+            }
+
             double dRotX = Convert.ToDouble(m_strRotX);
             double dRotY = Convert.ToDouble(m_strRotY);
             double dRotZ = Convert.ToDouble(m_strRotZ);
             coreWrapper.ActiveObjSetRot(dRotX, dRotY, dRotZ);
         }
+
+        private void RotationY_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = RotationY.Text.ToString();
+            m_strRotY = tempstr;
+            if (m_strRotY == "")
+            {
+                return;
+            }
+
+            double dRotX = Convert.ToDouble(m_strRotX);
+            double dRotY = Convert.ToDouble(m_strRotY);
+            double dRotZ = Convert.ToDouble(m_strRotZ);
+            coreWrapper.ActiveObjSetRot(dRotX, dRotY, dRotZ);
+        }
+
+        private void RotationZ_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = RotationZ.Text.ToString();
+            m_strRotZ = tempstr;
+            if (m_strRotZ == "")
+            {
+                return;
+            }
+
+            double dRotX = Convert.ToDouble(m_strRotX);
+            double dRotY = Convert.ToDouble(m_strRotY);
+            double dRotZ = Convert.ToDouble(m_strRotZ);
+            coreWrapper.ActiveObjSetRot(dRotX, dRotY, dRotZ);
+        }
+
+        //private void SetScale_Click(object sender, EventArgs e)
+        //{
+        //    double dScaleX = Convert.ToDouble(m_strScaleX);
+        //    double dScaleY = Convert.ToDouble(m_strScaleY);
+        //    double dScaleZ = Convert.ToDouble(m_strScaleZ);
+        //    coreWrapper.ActiveObjSetScale(dScaleX, dScaleY, dScaleZ);
+        //}
+
+        //private void SetRotation_Click(object sender, EventArgs e)
+        //{
+        //    double dRotX = Convert.ToDouble(m_strRotX);
+        //    double dRotY = Convert.ToDouble(m_strRotY);
+        //    double dRotZ = Convert.ToDouble(m_strRotZ);
+        //    coreWrapper.ActiveObjSetRot(dRotX, dRotY, dRotZ);
+        //}
 
         private void MeshList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -207,16 +284,22 @@ namespace WinFormEditor
         private void SetMesh_Click(object sender, EventArgs e)
         {
             // '메시 등록' 버튼을 클릭 시 호출된다.
-            coreWrapper.SetMesh();
+            string strTemp = MeshList.SelectedItem.ToString();
+            coreWrapper.SetMesh(strTemp);
         }
 
         private void AddRenderComponent(object sender, EventArgs e)
         {
             // 'Renderer' 컴포넌트 추가
-
+            coreWrapper.AddRenderComponent();
         }
 
-
+        private void ChangeTag_Click(object sender, EventArgs e)
+        {
+            coreWrapper.SelectObjChangeTag(m_strChangeObjTag);
+            ObjList.Items[ObjList.SelectedIndex] = m_strChangeObjTag;
+            ObjTagText.Clear();
+        }
 
 
         /*

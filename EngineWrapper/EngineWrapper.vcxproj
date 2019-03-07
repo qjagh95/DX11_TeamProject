@@ -99,6 +99,7 @@
     <IntDir>BinObj\</IntDir>
     <IncludePath>../Engine/Include/;../Math/Include/;../DirectXTK/Inc/;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)64</TargetName>
+    <LibraryPath>../Engine/Bin/;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -142,8 +143,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>TWEngine64.lib;</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>call "$(SolutionDir)"EditorCopy.bat</Command>

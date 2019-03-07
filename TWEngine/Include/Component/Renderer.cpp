@@ -359,15 +359,21 @@ void CRenderer::Render(float fTime)
 		&m_tComponentCBuffer);
 
 	CONTEXT->IASetInputLayout(m_pLayout);
-	m_pShader->SetShader();
-
-	for (size_t i = 0; i < m_pMesh->GetContainCount(); ++i)
+	if (m_pShader)
 	{
-		for (size_t j = 0; j < m_pMesh->GetSubsetCount((int)i); ++j)
-		{
-			m_pMaterial->SetShader((int)i, (int)j);
+		m_pShader->SetShader();
+	}
 
-			m_pMesh->Render((int)i, (int)j);
+	if (m_pMesh)
+	{
+		for (size_t i = 0; i < m_pMesh->GetContainCount(); ++i)
+		{
+			for (size_t j = 0; j < m_pMesh->GetSubsetCount((int)i); ++j)
+			{
+				m_pMaterial->SetShader((int)i, (int)j);
+
+				m_pMesh->Render((int)i, (int)j);
+			}
 		}
 	}
 
@@ -403,7 +409,10 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matInvProj = tCBuffer.matProj;
 	tCBuffer.matInvProj.Inverse();
 	tCBuffer.vPivot = m_pTransform->GetPivot();
-	tCBuffer.vLength = m_pMesh->GetLength();
+	if (m_pMesh)
+	{
+		tCBuffer.vLength = m_pMesh->GetLength();
+	}
 
 	tCBuffer.matWorld.Transpose();
 	tCBuffer.matView.Transpose();

@@ -1,4 +1,5 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 
 #define	ROOT_PATH	"RootPath"
 #define	SHADER_PATH	"ShaderPath"
@@ -6,6 +7,7 @@
 #define	SOUND_PATH	"SoundPath"
 #define	DATA_PATH	"DataPath"
 #define	MESH_PATH	"MeshPath"
+#define	MESH_DATA_PATH "MeshDataPath"
 
 // ========== Default Sampler Key ==========
 #define	SAMPLER_LINEAR	"Linear"

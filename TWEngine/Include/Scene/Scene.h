@@ -68,7 +68,6 @@ public:
 
 private:
 	class CGameObject* FindCamera(const string& strTag);
-	void Debug();
 
 public:
 	static bool SortLayerZOrder(const class CLayer* pSrc, const class CLayer* pDest);

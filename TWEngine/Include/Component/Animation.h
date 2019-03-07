@@ -183,6 +183,9 @@ public:
 	bool DeleteClip(const string& strKey);
 	bool ReturnDefaultClip();
 
+	//디버그용 클립 넘기기 함수
+	void SkipToNextClip();
+
 private:
 	void LoadFbxAnimation(const char* pFullPath);
 

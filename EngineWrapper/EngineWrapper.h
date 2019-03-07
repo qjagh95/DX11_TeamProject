@@ -98,8 +98,8 @@ namespace EngineWrapper
 			vector<string>* vecMeshNameList = pManager->GetMeshNameList();
 			
 			// Marshal
-			cli::array<String^>^ arrStrMarshalList = gcnew cli::array<String^>(vecMeshNameList->size());
-			for (size_t i = 0; i < vecMeshNameList->size(); ++i)
+			cli::array<String^>^ arrStrMarshalList = gcnew cli::array<String^>((int)vecMeshNameList->size());
+			for (int i = 0; i < (int)vecMeshNameList->size(); ++i)
 			{
 				String^ marshalStr = marshal_as<String^>((*vecMeshNameList)[i]);
 				arrStrMarshalList[i] = marshalStr;
@@ -113,12 +113,21 @@ namespace EngineWrapper
 			// Renderer 컴포넌트 추가
 			PUN::CEditManager* pManager = PUN::CEditManager::GetInst();
 			std::string strTag = "renderer";
-			//pManager->ObjectAddComponent(strTag);
+			pManager->ObjectAddComponent(strTag);
 		}
 
-		void SetMesh()
+		void SetMesh(String ^ _strMeshTag)
 		{
-			
+			std::string str = marshal_as<std::string>(_strMeshTag);
+
+			PUN::CEditManager::GetInst()->ActiveObjectFromSetMesh(str);
+		}
+
+		void SelectObjChangeTag(String ^ _strObjTag)
+		{
+			std::string str = marshal_as<std::string>(_strObjTag);
+
+			PUN::CEditManager::GetInst()->ActiveObjectFromSetTag(str);
 		}
 	};
 }

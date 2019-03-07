@@ -12,6 +12,7 @@ private:
 
 public:
 	bool Init();
+	bool SamplerInit();
 	bool CreateMesh(const string& strName, const string& strShaderKey, const string& strLayoutKey,
 		void* pVtx, int iVtxCount, int iVtxSize, D3D11_USAGE eVtxUsage,
 		D3D11_PRIMITIVE_TOPOLOGY ePrimitive, void* pIdx = nullptr, int iIdxCount = 0,

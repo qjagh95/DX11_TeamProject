@@ -280,8 +280,6 @@ int CScene::Update(float fTime)
 
 	m_pMainCameraObj->Update(fTime);
 
-
-	Debug();
 	return 0;
 }
 
@@ -614,53 +612,4 @@ void CScene::EnableSceneComponent(const string & strTag, bool bEnable)
 			return;
 		}
 	}
-}
-
-void CScene::Debug()
-{	
-	if (CCore::GetInst()->m_bEditorMode == true)
-		return;
-
-	ImGui::Text("GlobalLight");
-	ImGui::BeginTabBar("AA");
-	ImGui::EndTabBar();
-
-	static int GlobalLightType = 0;
-
-	CGameObject* getObject = FindObjectNonCount("GlobalLight");
-
-	if (getObject == NULLPTR)
-		return;
-
-	ImGui::Checkbox("WireFrameMode", &CRenderManager::GetInst()->m_bWireFrame);
-
-	CLight* getLight = getObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
-	const char* Items[3] = { "Direction", "Point", "Spot" };
-	ImGui::Text("LightType");
-	ImGui::Combo("", &getLight->m_tInfo.iLightType, Items, 3);
-
-	ImGui::Text("LightInfo");
-
-	ImGui::SliderFloat4("Ambient", (float*)&getLight->m_tInfo.vAmb, -1.0f, 1.0f);
-	ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tInfo.vDif, -1.0f, 1.0f);
-	ImGui::SliderFloat3("Specular", (float*)&getLight->m_tInfo.vSpc, -1.0f, 1.0f);
-	ImGui::SliderFloat3("Direction", (float*)&getLight->m_tInfo.vDir, -1.0f, 1.0f);
-	ImGui::SliderFloat("Range", (float*)&getLight->m_tInfo.fRange, 0.0f, 5000.f);
-	ImGui::SliderFloat("FallOff", (float*)&getLight->m_tInfo.fFallOff, 0.0f, 20.0f);
-
-	ImGui::Text("LightPos");
-
-	ImGui::SliderFloat3("Pos", (float*)&getLight->m_tInfo.vPos, -1.0f, 20.0f);
-
-	ImGui::BeginTabBar("BB");
-	ImGui::EndTabBar();
-
-	ImGui::Text("Camera");
-
-	static Vector3 CameraPos;
-	//ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -500.f, 50.0f);
-	//m_pMainCameraTr->SetWorldPos(CameraPos);
-
-	ImGui::BeginTabBar("Camera");
-	ImGui::EndTabBar();
 }

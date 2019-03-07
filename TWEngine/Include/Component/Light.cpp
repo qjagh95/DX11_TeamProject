@@ -59,6 +59,11 @@ void CLight::SetLightColor(const Vector4 & vDif, const Vector4 & vAmb, const Vec
 	m_tInfo.vSpc = vSpc;
 }
 
+void CLight::SetLightDirection(const Vector3& Dir)
+{
+	m_tInfo.vDir = Dir;
+}
+
 void CLight::UpdateLightCBuffer()
 {
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Light", &m_tInfo);

@@ -216,6 +216,35 @@ void CEditManager::AddRenderer(const std::string & _strTag)
 	SAFE_RELEASE(pRenderer);
 }
 
+void CEditManager::ActiveObjectFromSetMesh(const std::string & _strMeshTag)
+{
+	if (m_pActiveObject == nullptr)
+	{
+		return;
+	}
+
+	CRenderer* pRenderer = m_pActiveObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (pRenderer == nullptr)
+	{
+		return;
+	}
+
+	pRenderer->SetMesh(_strMeshTag);
+
+	SAFE_RELEASE(pRenderer);
+}
+
+void CEditManager::ActiveObjectFromSetTag(const std::string & _strObjTag)
+{
+	if (m_pActiveObject == nullptr)
+	{
+		return;
+	}
+
+	m_pActiveObject->SetTag(_strObjTag);
+}
+
 vector<string>* CEditManager::GetMeshNameList()
 {
 	vector<string>* vecMeshNameList = CResourcesManager::GetInst()->GetMeshNameList();

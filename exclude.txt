@@ -1,3 +1,9 @@
 .exp
 .ilk
 .pdb
+.fbx
+.anm
+.msh
+.bne
+.dds
+.tga

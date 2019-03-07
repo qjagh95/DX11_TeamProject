@@ -26,6 +26,7 @@ public:
 public:
 	void SetLightType(LIGHT_TYPE eType);
 	void SetLightRange(float fRange);
+	void SetLightDirection(const Vector3& Dir);
 	void SetAngle(float fInAngle, float fOutAngle);
 	void SetLightColor(const Vector4& vDif, const Vector4& vAmb, const Vector4& vSpc);
 	void UpdateLightCBuffer();

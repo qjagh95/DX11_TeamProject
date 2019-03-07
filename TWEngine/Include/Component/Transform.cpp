@@ -2,6 +2,8 @@
 #include "EngineHeader.h"
 #include "Transform.h"
 #include "../GameObject.h"
+#include "../NavigationManager3D.h"
+#include "../NavigationMesh.h"
 
 PUN_USING
 
@@ -198,6 +200,8 @@ void CTransform::SetWorldScale(const Vector3 & vScale)
 	m_vWorldScale = vScale;
 
 	m_matWorldScale.Scaling(m_vWorldScale);
+
+	m_bUpdate = true;
 }
 
 void CTransform::SetWorldScale(float x, float y, float z)
@@ -205,6 +209,8 @@ void CTransform::SetWorldScale(float x, float y, float z)
 	m_vWorldScale = Vector3(x, y, z);
 
 	m_matWorldScale.Scaling(m_vWorldScale);
+
+	m_bUpdate = true;
 }
 
 void CTransform::SetWorldRot(const Vector3 & vRot)
@@ -392,6 +398,22 @@ void CTransform::Move(const Vector3 & vDir, float fSpeed, float fTime)
 
 void CTransform::Move(const Vector3 & vMove)
 {
+	Vector3	vPos = m_vWorldPos + vMove;
+
+	CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene,
+		vPos);
+
+	bool	bMove = true;
+
+	if (pMesh)
+	{
+		if (!pMesh->CheckCell(vPos))
+			bMove = false;
+	}
+
+	if (!bMove)
+		return;
+
 	m_vWorldRelativePos += vMove;
 	m_vWorldPos += vMove;
 

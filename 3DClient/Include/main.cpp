@@ -21,6 +21,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 
+	wstring RootPath = CPathManager::GetInst()->FindPath(ROOT_PATH);
+	SHELLEXECUTEINFO sei;
+	ZeroMemory(&sei, sizeof(SHELLEXECUTEINFO));
+	sei.cbSize = sizeof(SHELLEXECUTEINFO);
+
+ 	wstring FullPath;
+	FullPath = RootPath + L"FBXBineryExtractor64.exe";
+
+	sei.lpFile = FullPath.c_str();
+	sei.lpParameters = L"";
+	sei.nShow = SW_SHOW;
+	sei.fMask = SEE_MASK_NOCLOSEPROCESS;
+	sei.lpVerb = L"open";
+
+	//여기서 해당 프로세스가 종료될때까지 대기시킴.
+	DWORD result = ShellExecuteEx(&sei);
+	WaitForSingleObject(sei.hProcess, INFINITE);
+
 	// MainScene 추가
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CStartScene>("StartScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");

@@ -189,7 +189,7 @@ void CLayer::AddObject(CGameObject * pObj)
 	pObj->SetScene(m_pScene);
 	pObj->SetLayer(this);
 	pObj->AddRef();
-	pObj->SetObjectListIndex(m_ObjList.size());
+	pObj->SetObjectListIndex((int)m_ObjList.size());
 
 	m_ObjList.push_back(pObj);
 }

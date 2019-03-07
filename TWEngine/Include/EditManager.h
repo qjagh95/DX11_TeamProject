@@ -49,12 +49,13 @@ public:
 	void GetLayerListObjTag(const std::string& _strLayerTag);
 	int GetVecListObjSize() const
 	{
-		return m_vecstrObjList.size();
+		return (int)m_vecstrObjList.size();
 	}
 	std::string GetIndexFromObjTag(int _idx);
 	void SetIndexFromSetObject(int _idx , const std::string& _strLayerTag);
 	void AddRenderer(const std::string& _strTag);
-
+	void ActiveObjectFromSetMesh(const std::string& _strMeshTag);
+	void ActiveObjectFromSetTag(const std::string& _strObjTag);
 // Renderer
 public:
 	vector<string>* GetMeshNameList();

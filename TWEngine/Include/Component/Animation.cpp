@@ -207,15 +207,16 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 	}
 
 	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
-	pAnimClip->iStartFrame = (int)pClip->tStart.GetFrameCount(pClip->eTimeMode);
-	pAnimClip->iEndFrame = (int)pClip->tEnd.GetFrameCount(pClip->eTimeMode);
-	pAnimClip->iFrameLength = pAnimClip->iEndFrame - pAnimClip->iStartFrame;
+	pAnimClip->iStartFrame = 0; //영혁 수정 : Anm에서 매 클립 iStartFrame은 0
+	pAnimClip->iEndFrame = (int)(pClip->tEnd.GetFrameCount(pClip->eTimeMode) - pClip->tStart.GetFrameCount(pClip->eTimeMode));
+	pAnimClip->iFrameLength = (pAnimClip->iEndFrame) + 1; //영혁 수정 : 갯수는 iEndFrame + 1!
 
+
+	pAnimClip->fFrameTime = 1.f / (float)(pAnimClip->iFrameMode); //영혁 수정 : 우리 엔진용 프레임타임은 보통 30.f
 	// 시간 정보를 저장해준다.
 	pAnimClip->fStartTime = 0.f;
-	pAnimClip->fEndTime = pAnimClip->fPlayTime;
-	pAnimClip->fTimeLength = pAnimClip->fPlayTime;
-	pAnimClip->fFrameTime = pAnimClip->fPlayTime / pAnimClip->iFrameLength;
+	pAnimClip->fEndTime = (pAnimClip->iFrameLength) * (pAnimClip->fFrameTime);
+	pAnimClip->fTimeLength = pAnimClip->fEndTime; //영혁 수정 : fPlayTime을 언제 입력했죠??
 
 	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
 	// 뽑아온다.
@@ -1033,6 +1034,27 @@ bool CAnimation::ReturnDefaultClip()
 	ChangeClip(m_pDefaultClip->strName);
 
 	return true;
+}
+
+void CAnimation::SkipToNextClip()
+{
+	std::unordered_map<std::string, PUN::PANIMATIONCLIP>::iterator itr = m_mapClip.begin();
+
+	std::unordered_map<std::string, PUN::PANIMATIONCLIP>::iterator itrEnd = m_mapClip.end();
+
+	itr = m_mapClip.find(m_pCurClip->strName);
+
+	++itr;
+
+	if (itr != itrEnd)
+	{
+		ChangeClip(itr->second->strName);
+	}
+	else
+	{
+		itr = m_mapClip.begin();
+		ChangeClip(itr->second->strName);
+	}
 }
 
 void CAnimation::LoadFbxAnimation(const char * pFullPath)
