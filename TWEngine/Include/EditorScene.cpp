@@ -40,34 +40,29 @@ bool EditorScene::Init()
 
 	SAFE_RELEASE(pTransform);
 
-	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
+	//CRenderer* pRenderer = pObject->AddComponent<CRenderer>("Render");
 
-	pRenderer->SetMesh("BlackCow", TEXT("Monster4.msh"));
+	//pRenderer->SetMesh("BlackCow", TEXT("Monster4.msh"));
 
-	CAnimation* pAnimation = pObject->AddComponent<CAnimation>("Animation");
+	//CAnimation* pAnimation = pObject->AddComponent<CAnimation>("Animation");
 
-	pAnimation->LoadBone("Monster4.bne");
-	pAnimation->Load("Monster4.anm");
+	//pAnimation->LoadBone("Monster4.bne");
+	//pAnimation->Load("Monster4.anm");
 
-	SAFE_RELEASE(pAnimation);
-	SAFE_RELEASE(pRenderer);
+	//SAFE_RELEASE(pAnimation);
+	//SAFE_RELEASE(pRenderer);
 
 	SAFE_RELEASE(pObject);
 
 	SAFE_RELEASE(pCamera);
 
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
-	pTransform = pLightObj->GetTransform();
-
-	pTransform->SetWorldRot(45.f , 0.f, 0.f);
-	pTransform->SetWorldPos(0.f, -1.f, 0.f);
-
-	SAFE_RELEASE(pTransform);
 
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-	pLight->SetLightColor(Vector4::White , Vector4::White, Vector4::White);
+	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
 	pLight->SetLightType(LT_DIR);
-	
+	pLight->SetLightDirection(Vector3(1.0f, -1.0f, 1.0f));
+
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pLightObj);
 

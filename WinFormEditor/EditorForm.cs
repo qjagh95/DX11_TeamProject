@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,6 +31,10 @@ namespace WinFormEditor
         public static string m_strRotX;
         public static string m_strRotY;
         public static string m_strRotZ;
+        public static string m_strClipName;
+        public static string m_strStartFrame;
+        public static string m_strEndFrame;
+        public static string m_strAniTime;
 
         private void Run(object sender, EventArgs e)
         {
@@ -69,6 +74,9 @@ namespace WinFormEditor
             LayerList.Items.Add("Stage");
             LayerList.Items.Add("Default");
             LayerList.Items.Add("UI");
+
+            AnimationOptionBox.Items.Add("AO_LOOP");
+            AnimationOptionBox.Items.Add("AO_ONCE_DESTROY");
 
             // ResourcManager에서 생성된 메시 목록을 불러온다.
             string[] arrString = coreWrapper.GetMeshNameList();
@@ -117,6 +125,12 @@ namespace WinFormEditor
         {
             string tempstr = PositionX.Text.ToString();
             m_strPositionX = tempstr;
+
+            if (m_strPositionX.Length == 1 && m_strPositionX[0] == '-')
+            {
+                return;
+            }
+
             if (m_strPositionX == "")
             {
                 return;
@@ -131,6 +145,12 @@ namespace WinFormEditor
         {
             string tempstr = PositionY.Text.ToString();
             m_strPositionY = tempstr;
+
+            if (m_strPositionY.Length == 1 && m_strPositionY[0] == '-')
+            {
+                return;
+            }
+
             if (m_strPositionY == "")
             {
                 return;
@@ -146,6 +166,12 @@ namespace WinFormEditor
         {
             string tempstr = PositionZ.Text.ToString();
             m_strPositionZ = tempstr;
+
+            if (m_strPositionZ.Length == 1 && m_strPositionZ[0] == '-')
+            {
+                return;
+            }
+
             if (m_strPositionZ == "")
             {
                 return;
@@ -156,26 +182,29 @@ namespace WinFormEditor
             coreWrapper.ActiveObjSetPos(dPosX, dPosY, dPosZ);
         }
 
-        //private void button2_Click(object sender, EventArgs e)
-        //{
-        //    double dPosX = Convert.ToDouble(m_strPositionX);
-        //    double dPosY = Convert.ToDouble(m_strPositionY);
-        //    double dPosZ = Convert.ToDouble(m_strPositionZ);
-        //    coreWrapper.ActiveObjSetPos(dPosX, dPosY, dPosZ);
-        //}
-
-        private void PositionX_Press(object sender, KeyPressEventArgs e)
+        private void Transform_Press(object sender, KeyPressEventArgs e)
         {
-            //if (!(char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Back)))
-            //{
-            //    e.Handled = true;
-            //}
+            if ((e.KeyChar >= (char)48 && e.KeyChar <= (char)57) ||  e.KeyChar == (char)46
+                  || e.KeyChar == (char)8 || e.KeyChar == (char)127)
+            {
+
+            }
+            else
+            {
+                e.Handled = true;
+            }
         }
 
         private void ScaleX_TextChanged(object sender, EventArgs e)
         {
             string tempstr = ScaleX.Text.ToString();
             m_strScaleX = tempstr;
+
+            if (m_strScaleX.Length == 1 && m_strScaleX[0] == '-')
+            {
+                return;
+            }
+
             if (m_strScaleX == "")
             {
                 m_strScaleX = "0";
@@ -190,6 +219,13 @@ namespace WinFormEditor
         {
             string tempstr = ScaleY.Text.ToString();
             m_strScaleY = tempstr;
+       
+            if (m_strScaleY.Length == 1 && m_strScaleY[0] == '-')
+            {
+                return;
+            }
+
+
             if (m_strScaleY == "")
             {
                 return;
@@ -204,6 +240,13 @@ namespace WinFormEditor
         {
             string tempstr = ScaleZ.Text.ToString();
             m_strScaleZ = tempstr;
+
+            if (m_strScaleZ.Length == 1 && m_strScaleZ[0] == '-')
+            {
+                return;
+            }
+
+
             if (m_strScaleZ == "")
             {
                 return;
@@ -218,6 +261,13 @@ namespace WinFormEditor
         {
             string tempstr = RotationX.Text.ToString();
             m_strRotX = tempstr;
+
+            if (m_strRotX.Length == 1 && m_strRotX[0] == '-')
+            {
+                return;
+            }
+
+
             if (m_strRotX == "")
             {
                 return;
@@ -233,6 +283,13 @@ namespace WinFormEditor
         {
             string tempstr = RotationY.Text.ToString();
             m_strRotY = tempstr;
+
+            if (m_strRotY.Length == 1 && m_strRotY[0] == '-')
+            {
+                return;
+            }
+
+
             if (m_strRotY == "")
             {
                 return;
@@ -248,6 +305,13 @@ namespace WinFormEditor
         {
             string tempstr = RotationZ.Text.ToString();
             m_strRotZ = tempstr;
+
+            if (m_strRotZ.Length == 1 && m_strRotZ[0] == '-')
+            {
+                return;
+            }
+
+
             if (m_strRotZ == "")
             {
                 return;
@@ -258,22 +322,6 @@ namespace WinFormEditor
             double dRotZ = Convert.ToDouble(m_strRotZ);
             coreWrapper.ActiveObjSetRot(dRotX, dRotY, dRotZ);
         }
-
-        //private void SetScale_Click(object sender, EventArgs e)
-        //{
-        //    double dScaleX = Convert.ToDouble(m_strScaleX);
-        //    double dScaleY = Convert.ToDouble(m_strScaleY);
-        //    double dScaleZ = Convert.ToDouble(m_strScaleZ);
-        //    coreWrapper.ActiveObjSetScale(dScaleX, dScaleY, dScaleZ);
-        //}
-
-        //private void SetRotation_Click(object sender, EventArgs e)
-        //{
-        //    double dRotX = Convert.ToDouble(m_strRotX);
-        //    double dRotY = Convert.ToDouble(m_strRotY);
-        //    double dRotZ = Convert.ToDouble(m_strRotZ);
-        //    coreWrapper.ActiveObjSetRot(dRotX, dRotY, dRotZ);
-        //}
 
         private void MeshList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -301,17 +349,116 @@ namespace WinFormEditor
             ObjTagText.Clear();
         }
 
+        private void AnimationOption_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
-        /*
-숫자만 입력받게 하는 코드
-if (!(char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Back)))
-{
-e.Handled = true;
-}
-*/
+        }
 
-        //로직부분 건들XX 이 이후로 추가.
-        /////////////////////////////////////////////////////////////////////////
+        private void DivideClipBox_CheckedChanged(object sender, EventArgs e)
+        {
+        }
 
+        private void AnimationTagBox_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = AnimationTagBox.Text.ToString();
+            m_strClipName = tempstr;
+        }
+
+        private void AniStartFrameBox_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = AniStartFrameBox.Text.ToString();
+            m_strStartFrame = tempstr;
+        }
+
+        private void AniEndFrameBox_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = AniEndFrameBox.Text.ToString();
+            m_strEndFrame = tempstr;
+        }
+
+        private void AniTimeBox_TextChanged(object sender, EventArgs e)
+        {
+            string tempstr = AniTimeBox.Text.ToString();
+            m_strAniTime = tempstr;
+        }
+
+        private void ClipSave_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ClipLoad_Click(object sender, EventArgs e)
+        {
+            string filePath;
+            OpenFileDialog opdig = new OpenFileDialog();
+
+            opdig.InitialDirectory = Directory.GetCurrentDirectory();    
+            opdig.Filter = "ClipFile(*.anm)|*.anm|FbxFile(*.fbx)|*.fbx|모든파일(*.*)|*.*||";
+            opdig.RestoreDirectory = true;
+
+            if(opdig.ShowDialog() == DialogResult.OK)
+            {
+                filePath = opdig.FileName;
+
+                coreWrapper.LoadClipFromFullPath(filePath);
+
+                string[] arrString = coreWrapper.GetClipTagList();
+                for (int i = 0; i < arrString.Length; ++i)
+                {
+                    ClipList.Items.Add(arrString[i].ToString());
+                }
+
+            }
+        }
+
+        private void FbxLoad_Click(object sender, EventArgs e)
+        {
+            string filePath;
+            string fileName;
+            OpenFileDialog opdig = new OpenFileDialog();
+
+            opdig.InitialDirectory = Directory.GetCurrentDirectory();
+            opdig.Filter = "ClipFile(*.anm)|*.anm|FbxFile(*.fbx)|*.fbx|모든파일(*.*)|*.*||";
+            opdig.RestoreDirectory = true;
+
+            if (opdig.ShowDialog() == DialogResult.OK)
+            {
+                filePath = opdig.FileName;
+                fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                coreWrapper.LoadMeshFromFullPath(fileName, filePath);
+                MeshList.Items.Add(fileName);
+            }
+        }
+
+        private void MshSave_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MshLoad_Click(object sender, EventArgs e)
+        {
+            string filePath;
+            string fileName;
+            OpenFileDialog opdig = new OpenFileDialog();
+
+            opdig.InitialDirectory = Directory.GetCurrentDirectory();
+            opdig.Filter = "MeshFile(*.msh)|*.msh|모든파일(*.*)|*.*||";
+            opdig.RestoreDirectory = true;
+
+            if (opdig.ShowDialog() == DialogResult.OK)
+            {
+                filePath = opdig.FileName;
+                fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                coreWrapper.LoadMeshFromFullPath(fileName , filePath);
+                MeshList.Items.Add(fileName);
+            }
+        }
+
+        private void Scene_Click(object sender, MouseEventArgs e)
+        {
+            DeviceWindow.Focus();
+        }
     }
 }

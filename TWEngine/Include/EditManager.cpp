@@ -6,6 +6,7 @@
 #include "Scene/SceneManager.h"
 #include "Component/Renderer.h"
 #include "Resource/ResourcesManager.h"
+#include "Component/Animation.h"
 
 PUN_USING
 
@@ -13,7 +14,8 @@ CEditManager* CEditManager::m_pInst = nullptr;
 
 CEditManager::CEditManager()
 	:m_pScene(nullptr),
-	 m_pActiveObject(nullptr)
+	 m_pActiveObject(nullptr),
+	 m_pAnimation(nullptr)
 {
 }
 
@@ -22,6 +24,7 @@ CEditManager::~CEditManager()
 {
 	SAFE_RELEASE(m_pActiveObject);
 	SAFE_RELEASE(m_pScene);
+	SAFE_RELEASE(m_pAnimation);
 }
 
 bool CEditManager::Init()
@@ -173,6 +176,32 @@ void CEditManager::GetLayerListObjTag(const std::string & _strLayerTag)
 	SAFE_RELEASE(pLayer);
 }
 
+void CEditManager::LoadClipFromFullPath(const std::wstring & _strFullPath)
+{
+	if (m_pActiveObject == nullptr)
+	{
+		return;
+	}
+
+	if (m_pAnimation)
+	{ 
+		SAFE_RELEASE(m_pAnimation);
+		m_pActiveObject->RemoveComponentFromType(CT_ANIMATION);
+	}
+	
+	m_pAnimation = m_pActiveObject->AddComponent<CAnimation>("Animation");
+
+	int	iLength = _strFullPath.length();
+
+	if (_strFullPath[iLength - 3] == 'f' &&
+		_strFullPath[iLength - 2] == 'b' &&
+		_strFullPath[iLength - 1] == 'x')
+		m_pAnimation->AddClip(_strFullPath.c_str());
+
+	else
+		m_pAnimation->LoadBoneAndAnimationFullPath(_strFullPath.c_str());
+}
+
 std::string CEditManager::GetIndexFromObjTag(int _idx)
 {
 	if (_idx >= m_vecstrObjList.size())
@@ -243,6 +272,16 @@ void CEditManager::ActiveObjectFromSetTag(const std::string & _strObjTag)
 	}
 
 	m_pActiveObject->SetTag(_strObjTag);
+}
+
+void CEditManager::GetClipNameList(std::vector<std::string>* _vecstrClipList)
+{
+	if (m_pAnimation == nullptr)
+	{
+		return;
+	}
+
+	m_pAnimation->GetClipTagList(_vecstrClipList);
 }
 
 vector<string>* CEditManager::GetMeshNameList()

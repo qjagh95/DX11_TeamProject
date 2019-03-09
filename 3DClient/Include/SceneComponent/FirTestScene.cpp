@@ -70,8 +70,6 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pCamera);
 
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
-	pTransform = pLightObj->GetTransform();
-	SAFE_RELEASE(pTransform);
 
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
 	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);

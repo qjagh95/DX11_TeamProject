@@ -54,6 +54,8 @@ public:
 	void SetMaterial(const Vector4& vDiffuse, const Vector4& vAmbient,
 		const Vector4& vSpecular, float fSpecularPower,
 		const Vector4& vEmissive, int iContainer = 0, int iSubset = 0);
+	void SetEmissive(float fEmv);
+	void SetEmissive(float fEmv, int iContainer, int iSubset);
 	void SetDiffuseTex(int iRegister, const string& strKey, int iContainer = 0,
 		int iSubset = 0);
 	void SetDiffuseTex(int iRegister, const string& strKey, const TCHAR* pFileName,

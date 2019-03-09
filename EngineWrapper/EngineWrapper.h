@@ -9,6 +9,7 @@
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
 #include <cliext/vector>
+#include <Resource/ResourcesManager.h>
 
 using namespace System;
 using namespace std;
@@ -128,6 +129,35 @@ namespace EngineWrapper
 			std::string str = marshal_as<std::string>(_strObjTag);
 
 			PUN::CEditManager::GetInst()->ActiveObjectFromSetTag(str);
+		}
+
+		void LoadMeshFromFullPath(String ^ _strMeshKey , String ^ _strFullPath)
+		{
+			std::string strMeshKey = marshal_as<std::string>(_strMeshKey);
+			std::wstring strFullPath = marshal_as<std::wstring>(_strFullPath);
+
+			PUN::CResourcesManager::GetInst()->LoadMeshFromFullPath(strMeshKey, strFullPath.c_str());
+		}
+
+		void LoadClipFromFullPath(String ^ _strFullPath)
+		{
+			std::wstring strFullPath = marshal_as<std::wstring>(_strFullPath);
+			PUN::CEditManager::GetInst()->LoadClipFromFullPath(strFullPath);
+		}
+
+		cli::array<String^>^ GetClipTagList()
+		{
+			vector<string> vecstrClip;
+			PUN::CEditManager::GetInst()->GetClipNameList(&vecstrClip);
+
+			cli::array<String^>^ arrStrMarshalList = gcnew cli::array<String^>((int)vecstrClip.size());
+			for (int i = 0; i < (int)vecstrClip.size(); ++i)
+			{
+				String^ marshalStr = marshal_as<String^>(vecstrClip[i]);
+				arrStrMarshalList[i] = marshalStr;
+			}
+
+			return arrStrMarshalList;
 		}
 	};
 }

@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Input.h"
 #include "Component/Transform.h"
+#include "Component/Material.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "../SceneComponent/SecTestScene.h"
@@ -58,6 +59,12 @@ bool CPlayer::Init()
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
 
 	pRenderer->SetMesh("BlackCow", TEXT("Monster4.msh"));
+
+	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pMaterial->SetEmissive(1.f);
+
+	SAFE_RELEASE(pMaterial);
 
 	CAnimation* pAnimation = m_pObject->AddComponent<CAnimation>("Animation");
 

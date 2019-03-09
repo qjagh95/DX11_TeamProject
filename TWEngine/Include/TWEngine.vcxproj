@@ -240,6 +240,7 @@
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GUIManager.h" />
+    <ClInclude Include="Heap.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="NavigationManager.h" />

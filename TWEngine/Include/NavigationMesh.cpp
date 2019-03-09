@@ -10,6 +10,8 @@ CNavigationMesh::CNavigationMesh()
 	m_iSectionX = 1;
 	m_iSectionZ = 1;
 	m_pSection = new NavSection[m_iSectionX * m_iSectionZ];
+
+	m_OpenList.SetSortFunc(this, &CNavigationMesh::OpenListSort);
 }
 
 CNavigationMesh::~CNavigationMesh()
@@ -388,7 +390,56 @@ bool CNavigationMesh::CheckOnEdge(int iSrc, int iDest,
 	return false;
 }
 
-float CNavigationMesh::GetY(const Vector3 vPos)
+void CNavigationMesh::FindPath(Vector3 & vStart, const Vector3 & vEnd)
+{
+	PNavigationCell	pStart = FindCell(vStart);
+	PNavigationCell	pEnd = FindCell(vEnd);
+
+	if (!pStart || !pEnd)
+		return;
+
+	else if (!pEnd->bEnable)
+		return;
+
+	m_OpenList.Clear();
+
+	for (size_t i = 0; i < m_vecCell.size(); ++i)
+	{
+		m_vecCell[i]->Clear();
+	}
+
+	while (!m_FindStack.empty())
+	{
+		m_FindStack.pop();
+	}
+
+	// 시작 노드를 열린목록어 넣어준다.
+	pStart->eType = NCLT_OPEN;
+	pStart->fG = 0.f;
+	pStart->fH = vStart.Distance(vEnd);
+	pStart->fTotal = pStart->fH;
+
+	m_OpenList.Insert(pStart);
+
+	m_bFindEnd = false;
+
+	PNavigationCell	pCell = nullptr;
+
+	while (!m_OpenList.empty() && !m_bFindEnd)
+	{
+		// 열린목록에서 셀을 얻어온다.
+		m_OpenList.pop(pCell);
+
+		// 얻어온 셀은 닫힌목록으로 만들어준다.
+		pCell->eType = NCLT_CLOSE;
+
+		// 인접한 셀을 얻어온다. 열린목록에 포함시킬지 
+		// 판단해야 하기 때문이다.
+		AddOpenList(pCell, pEnd, vStart, vEnd);
+	}
+}
+
+float CNavigationMesh::GetY(const Vector3& vPos)
 {
 	if (!m_bGrid)
 	{
@@ -613,6 +664,100 @@ void CNavigationMesh::CreateSection()
 			}
 		}
 	}
+}
+
+void CNavigationMesh::AddOpenList(PNavigationCell pCell, PNavigationCell pEnd, const Vector3 & vStart, const Vector3 & vEnd)
+{
+	for (size_t i = 0; i < pCell->vecAdj.size(); ++i)
+	{
+		PNavigationCell	pAdj = m_vecCell[pCell->vecAdj[i].iIndex];
+
+		if (!pAdj->bEnable)
+			continue;
+
+		else if (pAdj->eType == NCLT_CLOSE)
+			continue;
+
+		// 도착셀을 찾았을 경우
+		if (pAdj == pEnd)
+		{
+			m_FindStack.push(pAdj->iIndex);
+
+			// 부모의 인덱스를 얻어온다.
+			int	iParent = pCell->iIndex;
+
+			while (iParent != -1)
+			{
+				m_FindStack.push(iParent);
+				iParent = m_vecCell[iParent]->iParentIdx;
+			}
+
+			// 스택으로 만들어진 경로를 원래대로 되돌린다.
+			vector<int>	vecPathIndex;
+
+			while (!m_FindStack.empty())
+			{
+				int	idx = m_FindStack.top();
+				m_FindStack.pop();
+				vecPathIndex.push_back(idx);
+			}
+
+			vector<int>	vecCenter;
+			for (size_t j = 0; j < vecPathIndex.size() - 1; ++j)
+			{
+				int	iEdgeIndex = -1;
+
+				pCell = m_vecCell[vecPathIndex[j]];
+
+				for (size_t k = 0; k < pCell->vecAdj.size(); ++k)
+				{
+					if (pCell->vecAdj[k].iIndex == vecPathIndex[j + 1])
+					{
+						iEdgeIndex = pCell->vecAdj[k].iEdgeIndex;
+						break;
+					}
+				}
+
+				// 위에서 어느 엣지를 기준으로 인접정보가 구성되었는지
+				// 찾았다면 여기서 센터정보를 구해준다.
+				vecCenter.push_back(iEdgeIndex);
+			}
+
+			// 정해진 경로의 인덱스 수만큼 반복하며 해당 삼각형을
+			// 관통하는지 판단한다.
+			Vector3	vStartPos = vStart;
+			for (size_t j = 2; j < vecPathIndex.size() - 1; ++j)
+			{
+				int	idx = vecPathIndex[j];
+
+				Vector3	vDir = m_vecCell[idx]->vEdgeCenter[vecCenter[j]] - vStartPos;
+				float	fDist = vDir.Length() + 0.1f;
+				vDir.Normalize();
+
+				Vector3	vEndPos = vStartPos + vDir * fDist;
+
+				for (int k = 0; k < 3; ++k)
+				{
+				}
+			}
+
+			m_bFindEnd = true;
+
+			return;
+		}
+
+
+	}
+}
+
+PNavigationCell CNavigationMesh::FindCell(const Vector3 & vPos)
+{
+	int	idx = GetCellIndex(vPos);
+
+	if (idx < 0 || idx >= m_vecCell.size())
+		return nullptr;
+
+	return m_vecCell[idx];
 }
 
 int CNavigationMesh::GetCellIndex(const Vector3 & vPos)
@@ -843,4 +988,9 @@ void CNavigationMesh::LoadFromFullPath(const char * pFullPath)
 	fclose(pFile);
 
 	CreateSection();
+}
+
+bool CNavigationMesh::OpenListSort(const PNavigationCell & pSrc, const PNavigationCell & pDest)
+{
+	return pSrc->fTotal < pDest->fTotal;
 }

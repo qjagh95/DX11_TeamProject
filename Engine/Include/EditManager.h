@@ -34,7 +34,7 @@ private:
 	CScene*		 m_pScene;
 	CGameObject* m_pActiveObject;
 	std::vector<std::string> m_vecstrObjList;
-
+	class CAnimation*		 m_pAnimation;
 public:
 	bool Init();
 	void CreateObject(const std::string& _strTag, const std::string& _strLayerTag = "Default");
@@ -47,6 +47,7 @@ public:
 
 	void SetActiveObject(const std::string& _strObjTag , const std::string& _strLayerTag);
 	void GetLayerListObjTag(const std::string& _strLayerTag);
+	void LoadClipFromFullPath(const std::wstring& _strFullPath);
 	int GetVecListObjSize() const
 	{
 		return (int)m_vecstrObjList.size();
@@ -56,6 +57,7 @@ public:
 	void AddRenderer(const std::string& _strTag);
 	void ActiveObjectFromSetMesh(const std::string& _strMeshTag);
 	void ActiveObjectFromSetTag(const std::string& _strObjTag);
+	void GetClipNameList(std::vector<std::string>* _vecstrClipList);
 // Renderer
 public:
 	vector<string>* GetMeshNameList();

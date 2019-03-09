@@ -132,6 +132,24 @@ void CMaterial::SetMaterial(const Vector4 & vDiffuse, const Vector4& vAmbient,
 	m_vecMaterial[iContainer][iSubset]->tMaterial.vSpecular.w = fSpecularPower;
 }
 
+void CMaterial::SetEmissive(float fEmv)
+{
+	for (size_t i = 0; i < m_vecMaterial.size(); ++i)
+	{
+		for (size_t j = 0; j < m_vecMaterial[i].size(); ++j)
+		{
+			m_vecMaterial[i][j]->tMaterial.vEmissive =
+				Vector4(fEmv, fEmv, fEmv, 1.f);
+		}
+	}
+}
+
+void CMaterial::SetEmissive(float fEmv, int iContainer, int iSubset)
+{
+	m_vecMaterial[iContainer][iSubset]->tMaterial.vEmissive =
+		Vector4(fEmv, fEmv, fEmv, 1.f);
+}
+
 void CMaterial::SetDiffuseTex(int iRegister, const string & strKey,
 	int iContainer, int iSubset)
 {
@@ -558,7 +576,7 @@ void CMaterial::ClearContainer()
 bool CMaterial::Init()
 {
 	SetMaterial(Vector4::White, Vector4::White, Vector4::White,
-		3.2f, Vector4::White);
+		3.2f, Vector4(0.f, 0.f, 0.f, 0.f));
 
 	return true;
 }
@@ -626,7 +644,6 @@ void CMaterial::Save(FILE * pFile)
 void CMaterial::Load(FILE * pFile)
 {
 	ClearContainer();
-
 
 	size_t	iContainer = 0;
 	fread(&iContainer, sizeof(size_t), 1, pFile);
@@ -813,7 +830,7 @@ void CMaterial::SaveTextureSet(FILE * pFile, PTextureSet pTexture)
 
 void CMaterial::LoadTextureSet(FILE * pFile, PTextureSet * ppTexture)
 {
-	bool	bTexEnable = false;
+	bool bTexEnable = false;
 	fread(&bTexEnable, sizeof(bool), 1, pFile);
 
 	if (bTexEnable)

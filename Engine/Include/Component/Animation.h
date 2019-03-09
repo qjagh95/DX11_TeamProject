@@ -132,10 +132,10 @@ private:
 	Vector3					m_vBlendScale;
 	Vector4					m_vBlendRot;
 	Vector3					m_vBlendPos;
-
+	
 public:
 	const list<string>* GetAddClipName()	const;
-
+	void GetClipTagList(std::vector<std::string>* _vecstrList);
 public:
 	void AddBone(PBONE pBone);
 	bool CreateBoneTexture();

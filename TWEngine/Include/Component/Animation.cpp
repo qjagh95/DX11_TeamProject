@@ -130,6 +130,17 @@ const list<string>* CAnimation::GetAddClipName() const
 	return &m_strAddClipName;
 }
 
+void CAnimation::GetClipTagList(std::vector<std::string>* _vecstrList)
+{
+	unordered_map<string, PANIMATIONCLIP>::const_iterator	iter;
+	unordered_map<string, PANIMATIONCLIP>::const_iterator	iterEnd = m_mapClip.end();
+
+	for (iter = m_mapClip.begin(); iter != iterEnd; ++iter)
+	{
+		_vecstrList->push_back(iter->second->strName);
+	}
+}
+
 void CAnimation::AddBone(PBONE pBone)
 {
 	m_vecBones.push_back(pBone);
