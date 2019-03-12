@@ -1022,19 +1022,20 @@ bool CAnimation::DeleteClip(const string & strKey)
 	if (iter == m_mapClip.end())
 		return false;
 
-	m_mapClip.erase(iter);
-
 	SAFE_DELETE(iter->second);
 
-	if (strKey == m_pDefaultClip->strName)
-	{
-		if (!m_mapClip.empty())
-			m_pDefaultClip = FindClip(m_mapClip.begin()->first);
-	}
+	m_mapClip.erase(iter);
 
-	if (strKey == m_pCurClip->strName)
+
+	if (!m_mapClip.empty())
 	{
+		m_pDefaultClip = FindClip(m_mapClip.begin()->first);
 		m_pCurClip = m_pDefaultClip;
+	}
+	else
+	{
+		m_pCurClip = nullptr;
+		m_pDefaultClip = nullptr;
 	}
 
 	return true;
@@ -1129,6 +1130,15 @@ int CAnimation::Update(float fTime)
 	// 모션이 변할때
 	if (m_pNextClip)
 	{
+		if (m_pCurClip == nullptr)
+		{
+			m_pCurClip = m_pNextClip;
+			m_pNextClip = nullptr;
+			m_fAnimationGlobalTime = 0.f;
+			m_fChangeTime = 0.f;
+		}
+
+
 		m_fChangeTime += fTime;
 
 		bool	bChange = false;
@@ -1227,7 +1237,6 @@ int CAnimation::Update(float fTime)
 				break;
 			}
 		}
-
 		else
 		{
 			int	iNextFrameIndex = iFrameIndex + 1;

@@ -830,7 +830,7 @@ void CMaterial::SaveTextureSet(FILE * pFile, PTextureSet pTexture)
 
 void CMaterial::LoadTextureSet(FILE * pFile, PTextureSet * ppTexture)
 {
-	bool bTexEnable = false;
+	bool	bTexEnable = false;
 	fread(&bTexEnable, sizeof(bool), 1, pFile);
 
 	if (bTexEnable)

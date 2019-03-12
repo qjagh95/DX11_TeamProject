@@ -13,22 +13,38 @@ CPathManager::~CPathManager()
 {
 }
 
-bool CPathManager::Init()
+bool CPathManager::Init(bool _bEditEnable)
 {
 	TCHAR	strPath[MAX_PATH] = {};
 
 	GetModuleFileName(nullptr, strPath, MAX_PATH);
+	wstring RootPath = strPath;
 
-	for (int i = lstrlen(strPath) - 1; i >= 0; --i)
+	if (_bEditEnable)
 	{
-		if (strPath[i] == '\\' || strPath[i] == '/')
+		for (size_t i = 0; i < 4; i++)
 		{
-			memset(strPath + (i + 1), 0, sizeof(TCHAR) * (MAX_PATH - (i + 1)));
-			break;
+			RootPath.erase(RootPath.find_last_of(L"\\"), RootPath.find_last_of(L"\\"));	
 		}
+		RootPath += L"\\3DClient\\bin\\";
+
+		m_mapPath.insert(make_pair(ROOT_PATH, RootPath.c_str()));
+	}
+	else
+	{
+		for (int i = lstrlen(strPath) - 1; i >= 0; --i)
+		{
+			if (strPath[i] == '\\' || strPath[i] == '/')
+			{
+				memset(strPath + (i + 1), 0, sizeof(TCHAR) * (MAX_PATH - (i + 1)));
+				break;
+			}
+		}
+
+		m_mapPath.insert(make_pair(ROOT_PATH, strPath));
 	}
 
-	m_mapPath.insert(make_pair(ROOT_PATH, strPath));
+
 
 	AddPath(SHADER_PATH, TEXT("Shader\\"));
 	AddPath(TEXTURE_PATH, TEXT("Texture\\"));

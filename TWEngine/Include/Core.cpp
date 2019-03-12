@@ -18,7 +18,7 @@ CCore::CCore()
 	m_bEditorMode = false;
 	m_pTimer = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(2258);
+	//_CrtSetBreakAlloc(2843);
 
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 }
@@ -359,7 +359,7 @@ bool CCore::EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth, unsign
 	SetClearColor(0x00, 0xff, 0x00, 0x00);
 
 	// 경로관리자 초기화
-	if (!CPathManager::GetInst()->Init())
+	if (!CPathManager::GetInst()->Init(true))
 	{
 		TrueAssert(true);
 		return false;
@@ -421,6 +421,12 @@ bool CCore::EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth, unsign
 		return false;
 	}
 
+	if (!CNavigationManager3D::GetInst()->Init())
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	// 장면관리자 초기화
 	if (!CSceneManager::GetInst()->Init())
 	{
@@ -462,6 +468,7 @@ void CCore::EditDelete()
 	DESTROY_SINGLE(CRenderManager);
 	DESTROY_SINGLE(CResourcesManager);
 	DESTROY_SINGLE(CNavigationManager);
+	CNavigationManager3D::DestroyInst();
 	DESTROY_SINGLE(CEditManager);
 	DESTROY_SINGLE(CDevice);
 	//CoUninitialize();

@@ -36,15 +36,33 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.ObjTagText = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.CreateObjectBtn = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.LogMessage = new System.Windows.Forms.GroupBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.LayerList = new System.Windows.Forms.ListBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.Inspector = new System.Windows.Forms.GroupBox();
             this.InspectorTab = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.DeleteClipBtn = new System.Windows.Forms.Button();
+            this.DeleteClipText = new System.Windows.Forms.TextBox();
+            this.ClipList = new System.Windows.Forms.ListBox();
+            this.DivideClipBox = new System.Windows.Forms.CheckBox();
+            this.ModifyClipBtn = new System.Windows.Forms.Button();
+            this.AddClipBtn = new System.Windows.Forms.Button();
+            this.AniTimeBox = new System.Windows.Forms.TextBox();
+            this.AniEndFrameBox = new System.Windows.Forms.TextBox();
+            this.AniStartFrameBox = new System.Windows.Forms.TextBox();
+            this.AnimationTagBox = new System.Windows.Forms.TextBox();
+            this.AnimationOptionBox = new System.Windows.Forms.ComboBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.MshLoad = new System.Windows.Forms.Button();
+            this.ClipLoad = new System.Windows.Forms.Button();
+            this.ClipSave = new System.Windows.Forms.Button();
             this.Component = new System.Windows.Forms.TabPage();
             this.Effect = new System.Windows.Forms.TabPage();
             this.button4 = new System.Windows.Forms.Button();
@@ -77,23 +95,7 @@
             this.FileSave = new System.Windows.Forms.Button();
             this.FileLoad = new System.Windows.Forms.Button();
             this.Renderer = new System.Windows.Forms.GroupBox();
-            this.ClipSave = new System.Windows.Forms.Button();
-            this.ClipLoad = new System.Windows.Forms.Button();
-            this.MshLoad = new System.Windows.Forms.Button();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.AnimationOptionBox = new System.Windows.Forms.ComboBox();
-            this.AnimationTagBox = new System.Windows.Forms.TextBox();
-            this.AniStartFrameBox = new System.Windows.Forms.TextBox();
-            this.AniEndFrameBox = new System.Windows.Forms.TextBox();
-            this.AniTimeBox = new System.Windows.Forms.TextBox();
-            this.AddClipBtn = new System.Windows.Forms.Button();
-            this.ModifyClipBtn = new System.Windows.Forms.Button();
-            this.DivideClipBox = new System.Windows.Forms.CheckBox();
-            this.ClipList = new System.Windows.Forms.ListBox();
+            this.LogMessage = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.DeviceWindow)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -136,9 +138,9 @@
             // 
             // ChangeLayer
             // 
-            this.ChangeLayer.Location = new System.Drawing.Point(182, 47);
+            this.ChangeLayer.Location = new System.Drawing.Point(203, 47);
             this.ChangeLayer.Name = "ChangeLayer";
-            this.ChangeLayer.Size = new System.Drawing.Size(126, 23);
+            this.ChangeLayer.Size = new System.Drawing.Size(105, 23);
             this.ChangeLayer.TabIndex = 16;
             this.ChangeLayer.Text = "Change Layer";
             this.ChangeLayer.UseVisualStyleBackColor = true;
@@ -169,7 +171,7 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(73, 46);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(103, 25);
+            this.comboBox1.Size = new System.Drawing.Size(124, 25);
             this.comboBox1.TabIndex = 13;
             // 
             // label10
@@ -193,16 +195,16 @@
             this.ObjTagText.TabIndex = 1;
             this.ObjTagText.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
-            // button1
+            // CreateObjectBtn
             // 
-            this.button1.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.button1.Location = new System.Drawing.Point(31, 417);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(110, 25);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Create Object";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.CreateObjectBtn.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.CreateObjectBtn.Location = new System.Drawing.Point(31, 417);
+            this.CreateObjectBtn.Name = "CreateObjectBtn";
+            this.CreateObjectBtn.Size = new System.Drawing.Size(110, 25);
+            this.CreateObjectBtn.TabIndex = 5;
+            this.CreateObjectBtn.Text = "Create Object";
+            this.CreateObjectBtn.UseVisualStyleBackColor = true;
+            this.CreateObjectBtn.Click += new System.EventHandler(this.button1_Click);
             // 
             // groupBox3
             // 
@@ -214,16 +216,6 @@
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Scene";
-            // 
-            // LogMessage
-            // 
-            this.LogMessage.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.LogMessage.Location = new System.Drawing.Point(168, 542);
-            this.LogMessage.Name = "LogMessage";
-            this.LogMessage.Size = new System.Drawing.Size(691, 86);
-            this.LogMessage.TabIndex = 4;
-            this.LogMessage.TabStop = false;
-            this.LogMessage.Text = "Log Message";
             // 
             // treeView1
             // 
@@ -287,6 +279,8 @@
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
             this.tabPage1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.tabPage1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tabPage1.Controls.Add(this.DeleteClipBtn);
+            this.tabPage1.Controls.Add(this.DeleteClipText);
             this.tabPage1.Controls.Add(this.ClipList);
             this.tabPage1.Controls.Add(this.DivideClipBox);
             this.tabPage1.Controls.Add(this.ModifyClipBtn);
@@ -304,13 +298,196 @@
             this.tabPage1.Controls.Add(this.MshLoad);
             this.tabPage1.Controls.Add(this.ClipLoad);
             this.tabPage1.Controls.Add(this.ClipSave);
-            this.tabPage1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.tabPage1.ForeColor = System.Drawing.SystemColors.Desktop;
             this.tabPage1.Location = new System.Drawing.Point(4, 26);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(287, 566);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Animation";
+            // 
+            // DeleteClipBtn
+            // 
+            this.DeleteClipBtn.Location = new System.Drawing.Point(167, 532);
+            this.DeleteClipBtn.Name = "DeleteClipBtn";
+            this.DeleteClipBtn.Size = new System.Drawing.Size(107, 26);
+            this.DeleteClipBtn.TabIndex = 29;
+            this.DeleteClipBtn.Text = "Delete Clip";
+            this.DeleteClipBtn.UseVisualStyleBackColor = true;
+            this.DeleteClipBtn.Click += new System.EventHandler(this.DeleteClipBtn_Click);
+            // 
+            // DeleteClipText
+            // 
+            this.DeleteClipText.BackColor = System.Drawing.SystemColors.Control;
+            this.DeleteClipText.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.DeleteClipText.Location = new System.Drawing.Point(5, 533);
+            this.DeleteClipText.Name = "DeleteClipText";
+            this.DeleteClipText.Size = new System.Drawing.Size(156, 25);
+            this.DeleteClipText.TabIndex = 28;
+            this.DeleteClipText.TextChanged += new System.EventHandler(this.DeleteClipText_TextChanged);
+            // 
+            // ClipList
+            // 
+            this.ClipList.BackColor = System.Drawing.SystemColors.Control;
+            this.ClipList.FormattingEnabled = true;
+            this.ClipList.ItemHeight = 17;
+            this.ClipList.Location = new System.Drawing.Point(6, 2);
+            this.ClipList.Name = "ClipList";
+            this.ClipList.Size = new System.Drawing.Size(272, 293);
+            this.ClipList.TabIndex = 27;
+            this.ClipList.SelectedIndexChanged += new System.EventHandler(this.ClipList_SelectedIndexChanged);
+            // 
+            // DivideClipBox
+            // 
+            this.DivideClipBox.AutoSize = true;
+            this.DivideClipBox.Location = new System.Drawing.Point(178, 321);
+            this.DivideClipBox.Name = "DivideClipBox";
+            this.DivideClipBox.Size = new System.Drawing.Size(96, 21);
+            this.DivideClipBox.TabIndex = 26;
+            this.DivideClipBox.Text = "Divide Clip";
+            this.DivideClipBox.UseVisualStyleBackColor = true;
+            this.DivideClipBox.CheckedChanged += new System.EventHandler(this.DivideClipBox_CheckedChanged);
+            // 
+            // ModifyClipBtn
+            // 
+            this.ModifyClipBtn.Location = new System.Drawing.Point(92, 306);
+            this.ModifyClipBtn.Name = "ModifyClipBtn";
+            this.ModifyClipBtn.Size = new System.Drawing.Size(73, 48);
+            this.ModifyClipBtn.TabIndex = 25;
+            this.ModifyClipBtn.Text = "Modify Clip";
+            this.ModifyClipBtn.UseVisualStyleBackColor = true;
+            this.ModifyClipBtn.Click += new System.EventHandler(this.ModifyClipBtn_Click);
+            // 
+            // AddClipBtn
+            // 
+            this.AddClipBtn.Location = new System.Drawing.Point(6, 306);
+            this.AddClipBtn.Name = "AddClipBtn";
+            this.AddClipBtn.Size = new System.Drawing.Size(74, 48);
+            this.AddClipBtn.TabIndex = 12;
+            this.AddClipBtn.Text = "Add Clip";
+            this.AddClipBtn.UseVisualStyleBackColor = true;
+            this.AddClipBtn.Click += new System.EventHandler(this.AddClipBtn_Click);
+            // 
+            // AniTimeBox
+            // 
+            this.AniTimeBox.BackColor = System.Drawing.SystemColors.Control;
+            this.AniTimeBox.Location = new System.Drawing.Point(129, 447);
+            this.AniTimeBox.Name = "AniTimeBox";
+            this.AniTimeBox.Size = new System.Drawing.Size(149, 25);
+            this.AniTimeBox.TabIndex = 24;
+            this.AniTimeBox.TextChanged += new System.EventHandler(this.AniTimeBox_TextChanged);
+            // 
+            // AniEndFrameBox
+            // 
+            this.AniEndFrameBox.BackColor = System.Drawing.SystemColors.Control;
+            this.AniEndFrameBox.Location = new System.Drawing.Point(130, 421);
+            this.AniEndFrameBox.Name = "AniEndFrameBox";
+            this.AniEndFrameBox.Size = new System.Drawing.Size(148, 25);
+            this.AniEndFrameBox.TabIndex = 23;
+            this.AniEndFrameBox.TextChanged += new System.EventHandler(this.AniEndFrameBox_TextChanged);
+            // 
+            // AniStartFrameBox
+            // 
+            this.AniStartFrameBox.BackColor = System.Drawing.SystemColors.Control;
+            this.AniStartFrameBox.Location = new System.Drawing.Point(130, 394);
+            this.AniStartFrameBox.Name = "AniStartFrameBox";
+            this.AniStartFrameBox.Size = new System.Drawing.Size(148, 25);
+            this.AniStartFrameBox.TabIndex = 22;
+            this.AniStartFrameBox.TextChanged += new System.EventHandler(this.AniStartFrameBox_TextChanged);
+            // 
+            // AnimationTagBox
+            // 
+            this.AnimationTagBox.BackColor = System.Drawing.SystemColors.Control;
+            this.AnimationTagBox.Location = new System.Drawing.Point(130, 366);
+            this.AnimationTagBox.Name = "AnimationTagBox";
+            this.AnimationTagBox.Size = new System.Drawing.Size(149, 25);
+            this.AnimationTagBox.TabIndex = 12;
+            this.AnimationTagBox.TextChanged += new System.EventHandler(this.AnimationTagBox_TextChanged);
+            // 
+            // AnimationOptionBox
+            // 
+            this.AnimationOptionBox.BackColor = System.Drawing.SystemColors.Control;
+            this.AnimationOptionBox.FormattingEnabled = true;
+            this.AnimationOptionBox.Location = new System.Drawing.Point(129, 474);
+            this.AnimationOptionBox.Name = "AnimationOptionBox";
+            this.AnimationOptionBox.Size = new System.Drawing.Size(149, 25);
+            this.AnimationOptionBox.TabIndex = 21;
+            this.AnimationOptionBox.SelectedIndexChanged += new System.EventHandler(this.AnimationOption_SelectedIndexChanged);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(3, 477);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(121, 17);
+            this.label16.TabIndex = 20;
+            this.label16.Text = "Animation Option";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(15, 449);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(109, 17);
+            this.label15.TabIndex = 19;
+            this.label15.Text = "Animation Time";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(50, 423);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(74, 17);
+            this.label14.TabIndex = 18;
+            this.label14.Text = "End Frame";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(44, 397);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(80, 17);
+            this.label13.TabIndex = 17;
+            this.label13.Text = "Start Frame";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(80, 368);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(44, 17);
+            this.label12.TabIndex = 12;
+            this.label12.Text = "Name";
+            // 
+            // MshLoad
+            // 
+            this.MshLoad.Location = new System.Drawing.Point(165, 503);
+            this.MshLoad.Name = "MshLoad";
+            this.MshLoad.Size = new System.Drawing.Size(118, 23);
+            this.MshLoad.TabIndex = 16;
+            this.MshLoad.Text = "Msh File Load";
+            this.MshLoad.UseVisualStyleBackColor = true;
+            this.MshLoad.Click += new System.EventHandler(this.MshLoad_Click);
+            // 
+            // ClipLoad
+            // 
+            this.ClipLoad.Location = new System.Drawing.Point(86, 503);
+            this.ClipLoad.Name = "ClipLoad";
+            this.ClipLoad.Size = new System.Drawing.Size(75, 23);
+            this.ClipLoad.TabIndex = 13;
+            this.ClipLoad.Text = "Clip Load";
+            this.ClipLoad.UseVisualStyleBackColor = true;
+            this.ClipLoad.Click += new System.EventHandler(this.ClipLoad_Click);
+            // 
+            // ClipSave
+            // 
+            this.ClipSave.Location = new System.Drawing.Point(5, 503);
+            this.ClipSave.Name = "ClipSave";
+            this.ClipSave.Size = new System.Drawing.Size(75, 23);
+            this.ClipSave.TabIndex = 0;
+            this.ClipSave.Text = "Clip Save";
+            this.ClipSave.UseVisualStyleBackColor = true;
+            this.ClipSave.Click += new System.EventHandler(this.ClipSave_Click);
             // 
             // Component
             // 
@@ -366,7 +543,7 @@
             this.MeshList.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.MeshList.FormattingEnabled = true;
             this.MeshList.ItemHeight = 17;
-            this.MeshList.Location = new System.Drawing.Point(8, 26);
+            this.MeshList.Location = new System.Drawing.Point(9, 18);
             this.MeshList.Name = "MeshList";
             this.MeshList.Size = new System.Drawing.Size(140, 327);
             this.MeshList.TabIndex = 1;
@@ -677,165 +854,15 @@
             this.Renderer.TabStop = false;
             this.Renderer.Text = "Renderer";
             // 
-            // ClipSave
+            // LogMessage
             // 
-            this.ClipSave.Location = new System.Drawing.Point(5, 503);
-            this.ClipSave.Name = "ClipSave";
-            this.ClipSave.Size = new System.Drawing.Size(75, 23);
-            this.ClipSave.TabIndex = 0;
-            this.ClipSave.Text = "Clip Save";
-            this.ClipSave.UseVisualStyleBackColor = true;
-            this.ClipSave.Click += new System.EventHandler(this.ClipSave_Click);
-            // 
-            // ClipLoad
-            // 
-            this.ClipLoad.Location = new System.Drawing.Point(86, 503);
-            this.ClipLoad.Name = "ClipLoad";
-            this.ClipLoad.Size = new System.Drawing.Size(75, 23);
-            this.ClipLoad.TabIndex = 13;
-            this.ClipLoad.Text = "Clip Load";
-            this.ClipLoad.UseVisualStyleBackColor = true;
-            this.ClipLoad.Click += new System.EventHandler(this.ClipLoad_Click);
-            // 
-            // MshLoad
-            // 
-            this.MshLoad.Location = new System.Drawing.Point(165, 503);
-            this.MshLoad.Name = "MshLoad";
-            this.MshLoad.Size = new System.Drawing.Size(118, 23);
-            this.MshLoad.TabIndex = 16;
-            this.MshLoad.Text = "Msh File Load";
-            this.MshLoad.UseVisualStyleBackColor = true;
-            this.MshLoad.Click += new System.EventHandler(this.MshLoad_Click);
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(80, 368);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(44, 17);
-            this.label12.TabIndex = 12;
-            this.label12.Text = "Name";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(44, 397);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(80, 17);
-            this.label13.TabIndex = 17;
-            this.label13.Text = "Start Frame";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(50, 423);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(74, 17);
-            this.label14.TabIndex = 18;
-            this.label14.Text = "End Frame";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(15, 449);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(109, 17);
-            this.label15.TabIndex = 19;
-            this.label15.Text = "Animation Time";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(3, 477);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(121, 17);
-            this.label16.TabIndex = 20;
-            this.label16.Text = "Animation Option";
-            // 
-            // AnimationOptionBox
-            // 
-            this.AnimationOptionBox.BackColor = System.Drawing.SystemColors.Control;
-            this.AnimationOptionBox.FormattingEnabled = true;
-            this.AnimationOptionBox.Location = new System.Drawing.Point(129, 474);
-            this.AnimationOptionBox.Name = "AnimationOptionBox";
-            this.AnimationOptionBox.Size = new System.Drawing.Size(149, 25);
-            this.AnimationOptionBox.TabIndex = 21;
-            this.AnimationOptionBox.SelectedIndexChanged += new System.EventHandler(this.AnimationOption_SelectedIndexChanged);
-            // 
-            // AnimationTagBox
-            // 
-            this.AnimationTagBox.BackColor = System.Drawing.SystemColors.Control;
-            this.AnimationTagBox.Location = new System.Drawing.Point(130, 366);
-            this.AnimationTagBox.Name = "AnimationTagBox";
-            this.AnimationTagBox.Size = new System.Drawing.Size(149, 25);
-            this.AnimationTagBox.TabIndex = 12;
-            this.AnimationTagBox.TextChanged += new System.EventHandler(this.AnimationTagBox_TextChanged);
-            // 
-            // AniStartFrameBox
-            // 
-            this.AniStartFrameBox.BackColor = System.Drawing.SystemColors.Control;
-            this.AniStartFrameBox.Location = new System.Drawing.Point(130, 394);
-            this.AniStartFrameBox.Name = "AniStartFrameBox";
-            this.AniStartFrameBox.Size = new System.Drawing.Size(148, 25);
-            this.AniStartFrameBox.TabIndex = 22;
-            this.AniStartFrameBox.TextChanged += new System.EventHandler(this.AniStartFrameBox_TextChanged);
-            // 
-            // AniEndFrameBox
-            // 
-            this.AniEndFrameBox.BackColor = System.Drawing.SystemColors.Control;
-            this.AniEndFrameBox.Location = new System.Drawing.Point(130, 421);
-            this.AniEndFrameBox.Name = "AniEndFrameBox";
-            this.AniEndFrameBox.Size = new System.Drawing.Size(148, 25);
-            this.AniEndFrameBox.TabIndex = 23;
-            this.AniEndFrameBox.TextChanged += new System.EventHandler(this.AniEndFrameBox_TextChanged);
-            // 
-            // AniTimeBox
-            // 
-            this.AniTimeBox.BackColor = System.Drawing.SystemColors.Control;
-            this.AniTimeBox.Location = new System.Drawing.Point(129, 447);
-            this.AniTimeBox.Name = "AniTimeBox";
-            this.AniTimeBox.Size = new System.Drawing.Size(149, 25);
-            this.AniTimeBox.TabIndex = 24;
-            this.AniTimeBox.TextChanged += new System.EventHandler(this.AniTimeBox_TextChanged);
-            // 
-            // AddClipBtn
-            // 
-            this.AddClipBtn.Location = new System.Drawing.Point(6, 306);
-            this.AddClipBtn.Name = "AddClipBtn";
-            this.AddClipBtn.Size = new System.Drawing.Size(74, 48);
-            this.AddClipBtn.TabIndex = 12;
-            this.AddClipBtn.Text = "Add Clip";
-            this.AddClipBtn.UseVisualStyleBackColor = true;
-            // 
-            // ModifyClipBtn
-            // 
-            this.ModifyClipBtn.Location = new System.Drawing.Point(92, 306);
-            this.ModifyClipBtn.Name = "ModifyClipBtn";
-            this.ModifyClipBtn.Size = new System.Drawing.Size(73, 48);
-            this.ModifyClipBtn.TabIndex = 25;
-            this.ModifyClipBtn.Text = "Modify Clip";
-            this.ModifyClipBtn.UseVisualStyleBackColor = true;
-            // 
-            // DivideClipBox
-            // 
-            this.DivideClipBox.AutoSize = true;
-            this.DivideClipBox.Location = new System.Drawing.Point(178, 321);
-            this.DivideClipBox.Name = "DivideClipBox";
-            this.DivideClipBox.Size = new System.Drawing.Size(96, 21);
-            this.DivideClipBox.TabIndex = 26;
-            this.DivideClipBox.Text = "Divide Clip";
-            this.DivideClipBox.UseVisualStyleBackColor = true;
-            this.DivideClipBox.CheckedChanged += new System.EventHandler(this.DivideClipBox_CheckedChanged);
-            // 
-            // ClipList
-            // 
-            this.ClipList.BackColor = System.Drawing.SystemColors.Control;
-            this.ClipList.FormattingEnabled = true;
-            this.ClipList.ItemHeight = 17;
-            this.ClipList.Location = new System.Drawing.Point(6, 2);
-            this.ClipList.Name = "ClipList";
-            this.ClipList.Size = new System.Drawing.Size(272, 293);
-            this.ClipList.TabIndex = 27;
+            this.LogMessage.BackColor = System.Drawing.SystemColors.Control;
+            this.LogMessage.FormattingEnabled = true;
+            this.LogMessage.ItemHeight = 12;
+            this.LogMessage.Location = new System.Drawing.Point(169, 540);
+            this.LogMessage.Name = "LogMessage";
+            this.LogMessage.Size = new System.Drawing.Size(684, 88);
+            this.LogMessage.TabIndex = 12;
             // 
             // EditorForm
             // 
@@ -843,13 +870,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1508, 634);
+            this.Controls.Add(this.LogMessage);
             this.Controls.Add(this.FileLoad);
             this.Controls.Add(this.FileSave);
             this.Controls.Add(this.groupBox7);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.CreateObjectBtn);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.Inspector);
-            this.Controls.Add(this.LogMessage);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.ObjectList);
@@ -887,8 +914,7 @@
         private System.Windows.Forms.PictureBox DeviceWindow;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.GroupBox LogMessage;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button CreateObjectBtn;
         private System.Windows.Forms.TreeView treeView1;
         private System.Windows.Forms.TextBox ObjTagText;
         private System.Windows.Forms.ListBox LayerList;
@@ -950,6 +976,9 @@
         private System.Windows.Forms.Button AddClipBtn;
         private System.Windows.Forms.CheckBox DivideClipBox;
         private System.Windows.Forms.ListBox ClipList;
+        private System.Windows.Forms.Button DeleteClipBtn;
+        private System.Windows.Forms.TextBox DeleteClipText;
+        private System.Windows.Forms.ListBox LogMessage;
     }
 }
 

@@ -390,6 +390,31 @@ bool CNavigationMesh::CheckOnEdge(int iSrc, int iDest,
 	return false;
 }
 
+bool CNavigationMesh::CheckPathDir(const Vector3 & _vSrc1, const Vector3 & _vSrc2, 
+	const Vector3 & _vDest1, const Vector3 & _vDest2, Vector3 & _vIntersect)
+{
+	double t;
+	double s;
+
+	double under = (_vDest2.z - _vDest1.z)*( _vSrc2.x - _vSrc1.x) - (_vDest2.x - _vDest1.x)*(_vSrc2.z - _vSrc1.z);
+	double _t = (_vDest2.x - _vDest1.x)*(_vSrc1.z - _vDest1.z) - (_vDest2.z - _vDest1.z)*(_vSrc1.x - _vDest1.x);
+	double _s = (_vSrc2.x - _vSrc1.x)*(_vSrc1.z - _vDest1.z) - (_vSrc2.z - _vSrc1.z)*(_vSrc1.x - _vDest1.x);
+
+	t = _t / under;
+	s = _s / under;
+
+	if (t<0.0 || t>1.0 || s<0.0 || s>1.0)
+		return false;
+
+	if (_t == 0 && _s == 0)
+		return false;
+
+	_vIntersect.x = _vSrc1.x + t * (double)(_vSrc2.x - _vSrc1.x);
+	_vIntersect.z = _vSrc1.z + t * (double)(_vSrc2.z - _vSrc1.z);
+
+	return true;
+}
+
 void CNavigationMesh::FindPath(Vector3 & vStart, const Vector3 & vEnd)
 {
 	PNavigationCell	pStart = FindCell(vStart);
@@ -726,27 +751,88 @@ void CNavigationMesh::AddOpenList(PNavigationCell pCell, PNavigationCell pEnd, c
 			// 정해진 경로의 인덱스 수만큼 반복하며 해당 삼각형을
 			// 관통하는지 판단한다.
 			Vector3	vStartPos = vStart;
+			std::vector<int> vecLastPath;
+			m_PathList.clear();
+
 			for (size_t j = 2; j < vecPathIndex.size() - 1; ++j)
 			{
 				int	idx = vecPathIndex[j];
 
 				Vector3	vDir = m_vecCell[idx]->vEdgeCenter[vecCenter[j]] - vStartPos;
-				float	fDist = vDir.Length() + 0.1f;
+				float	fDist = vDir.Length() + 1000.f;
 				vDir.Normalize();
 
 				Vector3	vEndPos = vStartPos + vDir * fDist;
+				int iEdgePathCount = 0;
 
 				for (int k = 0; k < 3; ++k)
 				{
+					Vector3	vEdgeStart, vEdgeEnd;
+
+					switch (k)
+					{
+					case 0:
+						vEdgeStart = m_vecCell[idx]->vPos[0];
+						vEdgeEnd = m_vecCell[idx]->vPos[1];
+						break;
+					case 1:
+						vEdgeStart = m_vecCell[idx]->vPos[2];
+						vEdgeEnd = m_vecCell[idx]->vPos[1];
+						break;
+					case 2:
+						vEdgeStart = m_vecCell[idx]->vPos[0];
+						vEdgeEnd = m_vecCell[idx]->vPos[2];
+						break;
+					}
+
+					Vector3	vIntersect;
+					if (CheckPathDir(vStartPos, vEndPos, vEdgeStart,
+						vEdgeEnd, vIntersect))
+					{
+						++iEdgePathCount;
+
+						if (iEdgePathCount == 2)
+							break;
+					}
+				}
+
+				if (iEdgePathCount < 2)
+				{
+					vecLastPath.push_back(vecPathIndex[j - 1]);
+					vStartPos = m_vecCell[vecPathIndex[j - 1]]->vEdgeCenter[vecCenter[j - 1]];
+					m_PathList.push_back(vStartPos);
 				}
 			}
+
+			m_PathList.push_back(vEnd);
 
 			m_bFindEnd = true;
 
 			return;
 		}
 
+		float	fG = pAdj->vCenter.Distance(pCell->vCenter);
+		float	fH = pAdj->vCenter.Distance(vEnd);
+		float	fTotal = fG + fH;
 
+		if (pAdj->eType == NCLT_NONE)
+		{
+			pAdj->fG = fG + pCell->fG;
+			pAdj->fH = fH;
+			pAdj->fTotal = fTotal + pCell->fG;
+			pAdj->iParentIdx = pCell->iIndex;
+			pAdj->eType = NCLT_OPEN;
+			m_OpenList.Insert(pAdj);
+		}
+
+		else if (pAdj->fG > fG + pCell->fG)
+		{
+			pAdj->fG = fG + pCell->fG;
+			pAdj->fH = fH;
+			pAdj->fTotal = fTotal + pCell->fG;
+			pAdj->iParentIdx = pCell->iIndex;
+			m_OpenList.Sort();
+		}
 	}
 }
 

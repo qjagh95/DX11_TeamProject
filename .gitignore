@@ -3,6 +3,7 @@
 ################################################################################
 
 /.vs/3DGame/v15
+/.vs/3DGame/v15
 /3DClient/bin/Texture
 /3DClient/bin/UI.cso
 /3DClient/bin/TWEngine_Debug.lib
@@ -150,7 +151,6 @@
 /EngineWrapper/Bin/DirectXTex.lib
 /EngineWrapper/Bin/Collider.cso
 /EngineWrapper/Bin/BackColorShader.cso
-/TWEditor/Bin/Texture
 /TWEditor/Bin/UI.cso
 /TWEditor/Bin/TWEngine_Debug.lib
 /TWEditor/Bin/TWEngine64_Debug.lib.r15
@@ -159,16 +159,6 @@
 /TWEditor/Bin/TWEngine64_Debug.dll.r15
 /TWEditor/Bin/TWEngine64_Debug.dll.r12
 /TWEditor/Bin/TWEngine64_Debug.dll
-/TWEditor/Bin/TWEngine64.lib
-/TWEditor/Bin/TWEngine64.ipdb
-/TWEditor/Bin/TWEngine64.iobj
-/TWEditor/Bin/TWEngine64.dll
-/TWEditor/Bin/TWEditor64_Debug.pdb.r15
-/TWEditor/Bin/TWEditor64_Debug.pdb.r12
-/TWEditor/Bin/TWEditor64_Debug.ilk.r15
-/TWEditor/Bin/TWEditor64_Debug.ilk.r12
-/TWEditor/Bin/TWEditor64_Debug.exe.r15
-/TWEditor/Bin/TWEditor64_Debug.exe.r12
 /TWEditor/Bin/Standard.cso
 /TWEditor/Bin/Sky.cso
 /TWEditor/Bin/Share.cso
@@ -177,11 +167,7 @@
 /TWEditor/Bin/Mathlib64_Debug.dll.r15
 /TWEditor/Bin/Mathlib64_Debug.dll.r12
 /TWEditor/Bin/Mathlib64_Debug.dll
-/TWEditor/Bin/Mathlib64.lib
-/TWEditor/Bin/Mathlib64.ipdb
-/TWEditor/Bin/Mathlib64.iobj
 /TWEditor/Bin/Mathlib64.dll
-/TWEditor/Bin/MapTile2.png
 /TWEditor/Bin/Light.cso
 /TWEditor/Bin/libfbxsdk_Debug.dll
 /TWEditor/Bin/libfbxsdk64_Debug.dll
@@ -198,14 +184,6 @@
 /TWEditor/Bin/DirectXTex.lib
 /TWEditor/Bin/Collider.cso
 /TWEditor/Bin/BackColorShader.cso
-/TWEditor/Bin/ApplyShadow.cso
-/TWEditor/Bin/3DClient64_Debug.pdb
-/TWEditor/Bin/3DClient64_Debug.ilk
-/TWEditor/Bin/3DClient64_Debug.exe
-/TWEditor/Bin/3DClient64.pdb
-/TWEditor/Bin/3DClient64.ipdb
-/TWEditor/Bin/3DClient64.iobj
-/TWEditor/Bin/3DClient64.exe
 /TWEngine/Bin/UI.cso
 /TWEngine/Bin/TWEngine_Debug.lib
 /TWEngine/Bin/TWEngine64_Debug.pdb.r15
@@ -246,7 +224,6 @@
 /TWEngine/Bin/DirectXTex.lib
 /TWEngine/Bin/Collider.cso
 /TWEngine/Bin/BackColorShader.cso
-/WinFormEditor/bin/Debug/Texture
 /WinFormEditor/bin/Debug/WinFormEditor.pdb
 /WinFormEditor/bin/Debug/WinFormEditor.exe.config
 /WinFormEditor/bin/Debug/WinFormEditor.exe
@@ -304,7 +281,6 @@
 /WinFormEditor/bin/Debug/3DClient64.ipdb
 /WinFormEditor/bin/Debug/3DClient64.iobj
 /WinFormEditor/bin/Debug/3DClient64.exe
-/WinFormEditor/bin/Release/Texture
 /WinFormEditor/bin/Release/WinFormEditor.pdb
 /WinFormEditor/bin/Release/WinFormEditor.exe.config
 /WinFormEditor/bin/Release/WinFormEditor.exe

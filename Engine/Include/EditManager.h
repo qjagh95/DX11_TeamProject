@@ -35,6 +35,18 @@ private:
 	CGameObject* m_pActiveObject;
 	std::vector<std::string> m_vecstrObjList;
 	class CAnimation*		 m_pAnimation;
+	std::vector<struct _tagBoneKeyFrame*> m_vecDivideFrame;
+public:
+	void SetDivideKeyFrame();
+	void DeleteDivideKeyFrame();
+	bool ModifyClip(const string & strKey,
+		const string & strChangeKey, int iOption,
+		int iStartFrame, int iEndFrame, float fPlayTime);
+
+	bool AddClip(const string & strKey, int iOption,
+		int iStartFrame, int iEndFrame, float fPlayTime);
+
+	void ChangeClip(const std::string& _strKey);
 public:
 	bool Init();
 	void CreateObject(const std::string& _strTag, const std::string& _strLayerTag = "Default");
@@ -44,20 +56,18 @@ public:
 	void ActiveObjectSetPosition(double _dX, double _dY,  double _dZ);
 	void ActiveObjectSetScale(double _dX, double _dY, double _dZ);
 	void ActiveObjectSetRotation(double _dX, double _dY, double _dZ);
-
+	void DeleteClip(const std::string & _strKey);
 	void SetActiveObject(const std::string& _strObjTag , const std::string& _strLayerTag);
 	void GetLayerListObjTag(const std::string& _strLayerTag);
 	void LoadClipFromFullPath(const std::wstring& _strFullPath);
-	int GetVecListObjSize() const
-	{
-		return (int)m_vecstrObjList.size();
-	}
+	int GetVecListObjSize() const {	return (int)m_vecstrObjList.size();}
 	std::string GetIndexFromObjTag(int _idx);
 	void SetIndexFromSetObject(int _idx , const std::string& _strLayerTag);
 	void AddRenderer(const std::string& _strTag);
 	void ActiveObjectFromSetMesh(const std::string& _strMeshTag);
 	void ActiveObjectFromSetTag(const std::string& _strObjTag);
 	void GetClipNameList(std::vector<std::string>* _vecstrClipList);
+	void ClipSaveFromFullPath(const std::string & _strFullPath);
 // Renderer
 public:
 	vector<string>* GetMeshNameList();

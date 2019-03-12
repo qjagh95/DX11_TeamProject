@@ -7,6 +7,7 @@
 #include "Component/Renderer.h"
 #include "Resource/ResourcesManager.h"
 #include "Component/Animation.h"
+#include "Core.h"
 
 PUN_USING
 
@@ -25,6 +26,77 @@ CEditManager::~CEditManager()
 	SAFE_RELEASE(m_pActiveObject);
 	SAFE_RELEASE(m_pScene);
 	SAFE_RELEASE(m_pAnimation);
+	Safe_Delete_VecList(m_vecDivideFrame);
+}
+
+void CEditManager::SetDivideKeyFrame()
+{
+	if (m_pAnimation == nullptr)
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
+		return;
+	}
+
+	m_pAnimation->GetCurrentKeyFrame(m_vecDivideFrame);
+}
+
+void CEditManager::DeleteDivideKeyFrame()
+{
+	if (m_vecDivideFrame.empty())
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("Divide Clip이 없습니다"), 0, MB_OK);
+		return;
+	}
+
+	Safe_Delete_VecList(m_vecDivideFrame);
+}
+
+bool CEditManager::ModifyClip(const string & strKey, const string & strChangeKey, int iOption, int iStartFrame, int iEndFrame, float fPlayTime)
+{
+	if (m_pAnimation == nullptr)
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
+		return false;
+	}
+
+	if (m_vecDivideFrame.empty())
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("Divide Clip이 없습니다"), 0, MB_OK);
+		return false;
+	}
+
+
+	return m_pAnimation->ModifyClip(strKey, strChangeKey, (ANIMATION_OPTION)iOption, iStartFrame, iEndFrame, fPlayTime, m_vecDivideFrame);
+}
+
+bool CEditManager::AddClip(const string & strKey, int iOption, int iStartFrame, int iEndFrame, float fPlayTime)
+{
+	if (m_pAnimation == nullptr)
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
+		return false;
+	}
+
+	if (m_vecDivideFrame.empty())
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("Divide Clip이 없습니다"), 0, MB_OK);
+		return false;
+	}
+
+   m_pAnimation->AddClip(strKey, (ANIMATION_OPTION)iOption, iStartFrame, iEndFrame, fPlayTime, m_vecDivideFrame);
+
+   return true;
+}
+
+void CEditManager::ChangeClip(const std::string & _strKey)
+{
+	if (m_pAnimation == nullptr)
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
+		return;
+	}
+	
+	m_pAnimation->ChangeClip(_strKey);
 }
 
 bool CEditManager::Init()
@@ -46,6 +118,7 @@ void CEditManager::CreateObject(const std::string & _strTag, const std::string &
 	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
 	if (pLayer == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Layer가 없습니다"), 0, MB_OK);
 		return;
 	}
 
@@ -53,6 +126,18 @@ void CEditManager::CreateObject(const std::string & _strTag, const std::string &
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLayer);
 }
+
+void CEditManager::DeleteClip(const std::string & _strKey)
+{
+	if (m_pAnimation == nullptr)
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
+		return;
+	}
+
+	m_pAnimation->DeleteClip(_strKey);
+}
+
 
 void CEditManager::ObjectAddComponent(std::vector<int>& _vecComType)
 {
@@ -71,6 +156,7 @@ void CEditManager::ObjectAddComponent(std::string& _strCompTag)
 {
 	if (m_pActiveObject == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
 	}
 
@@ -99,6 +185,7 @@ void CEditManager::ActiveObjectSetTransform(Vector3 _vPos, Vector3 _vScale, Vect
 {
 	if (m_pActiveObject == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
 	}
 
@@ -114,7 +201,10 @@ void CEditManager::ActiveObjectSetTransform(Vector3 _vPos, Vector3 _vScale, Vect
 void CEditManager::ActiveObjectSetPosition(double _dX, double _dY, double _dZ)
 {
 	if (m_pActiveObject == nullptr)
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
+	}
 
 	CTransform* pTransform = m_pActiveObject->GetTransform();
 	pTransform->SetWorldPos((float)_dX, (float)_dY, (float)_dZ);
@@ -125,7 +215,10 @@ void CEditManager::ActiveObjectSetPosition(double _dX, double _dY, double _dZ)
 void CEditManager::ActiveObjectSetScale(double _dX, double _dY, double _dZ)
 {
 	if (m_pActiveObject == nullptr)
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
+	}
 
 	CTransform* pTransform = m_pActiveObject->GetTransform();
 	pTransform->SetWorldScale(Vector3((float)_dX, (float)_dY, (float)_dZ));
@@ -136,7 +229,10 @@ void CEditManager::ActiveObjectSetScale(double _dX, double _dY, double _dZ)
 void CEditManager::ActiveObjectSetRotation(double _dX, double _dY, double _dZ)
 {
 	if (m_pActiveObject == nullptr)
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
+	}
 
 	CTransform* pTransform = m_pActiveObject->GetTransform();
 	pTransform->SetWorldRot(Vector3((float)_dX, (float)_dY, (float)_dZ));
@@ -180,6 +276,7 @@ void CEditManager::LoadClipFromFullPath(const std::wstring & _strFullPath)
 {
 	if (m_pActiveObject == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
 	}
 
@@ -191,7 +288,7 @@ void CEditManager::LoadClipFromFullPath(const std::wstring & _strFullPath)
 	
 	m_pAnimation = m_pActiveObject->AddComponent<CAnimation>("Animation");
 
-	int	iLength = _strFullPath.length();
+	int	iLength = (int)_strFullPath.length();
 
 	if (_strFullPath[iLength - 3] == 'f' &&
 		_strFullPath[iLength - 2] == 'b' &&
@@ -231,12 +328,14 @@ void CEditManager::AddRenderer(const std::string & _strTag)
 {
 	if (m_pActiveObject == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
 	}
-	
+
 	CRenderer* pRenderer = m_pActiveObject->FindComponentFromType<CRenderer>(CT_RENDERER);
-	if (pRenderer)
+	if (pRenderer == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object의 Renderer가 없습니다"), 0, MB_OK);
 		return;
 	}
 
@@ -249,13 +348,14 @@ void CEditManager::ActiveObjectFromSetMesh(const std::string & _strMeshTag)
 {
 	if (m_pActiveObject == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
 	}
 
 	CRenderer* pRenderer = m_pActiveObject->FindComponentFromType<CRenderer>(CT_RENDERER);
-
 	if (pRenderer == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object의 Renderer가 없습니다"), 0, MB_OK);
 		return;
 	}
 
@@ -268,6 +368,7 @@ void CEditManager::ActiveObjectFromSetTag(const std::string & _strObjTag)
 {
 	if (m_pActiveObject == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
 	}
 
@@ -278,10 +379,22 @@ void CEditManager::GetClipNameList(std::vector<std::string>* _vecstrClipList)
 {
 	if (m_pAnimation == nullptr)
 	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
 		return;
 	}
 
 	m_pAnimation->GetClipTagList(_vecstrClipList);
+}
+
+void CEditManager::ClipSaveFromFullPath(const std::string & _strFullPath)
+{
+	if (m_pAnimation == nullptr)
+	{
+		MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
+		return;
+	}
+
+	m_pAnimation->SaveFromFullPath(_strFullPath.c_str());
 }
 
 vector<string>* CEditManager::GetMeshNameList()

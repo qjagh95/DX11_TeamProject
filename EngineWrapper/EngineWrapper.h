@@ -159,5 +159,55 @@ namespace EngineWrapper
 
 			return arrStrMarshalList;
 		}
+
+		void SetDivideClip()
+		{
+			PUN::CEditManager::GetInst()->SetDivideKeyFrame();
+		}
+
+		void DeleteDivideClip()
+		{
+			PUN::CEditManager::GetInst()->DeleteDivideKeyFrame();
+		}
+		void DeleteClip(String ^ _strKey)
+		{
+			std::string strOriginKey = marshal_as<std::string>(_strKey);
+
+			PUN::CEditManager::GetInst()->DeleteClip(strOriginKey);
+		}
+
+		bool ModifyClip(String ^ _strKey,
+			String ^ _strChangeKey, int _iOption,
+			int _iStartFrame, int _iEndFrame, double _dPlayTime)
+		{
+			std::string strOriginKey = marshal_as<std::string>(_strKey);
+
+			std::string strChangeKey = marshal_as<std::string>(_strChangeKey);
+
+			return PUN::CEditManager::GetInst()->ModifyClip(strOriginKey, strChangeKey, _iOption, _iStartFrame, _iEndFrame, (float)_dPlayTime);
+		}
+
+		bool AddClip(String ^ _strKey, int _iOption,
+			int _iStartFrame, int _iEndFrame, double _dPlayTime)
+		{
+			std::string strOriginKey = marshal_as<std::string>(_strKey);
+
+			return PUN::CEditManager::GetInst()->AddClip(strOriginKey, _iOption, _iStartFrame, _iEndFrame, (float)_dPlayTime);
+
+			return true;
+		}
+
+		void ChangeClip(String ^ _strKey)
+		{
+			std::string strOriginKey = marshal_as<std::string>(_strKey);
+			
+			PUN::CEditManager::GetInst()->ChangeClip(strOriginKey);
+		}
+		void ClipSave(String ^ _strFullPath)
+		{
+			std::string strFullPath = marshal_as<std::string>(_strFullPath);
+
+			PUN::CEditManager::GetInst()->ClipSaveFromFullPath(strFullPath);
+		}
 	};
 }

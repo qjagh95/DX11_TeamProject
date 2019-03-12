@@ -81,6 +81,8 @@ using namespace std;
 #include "Component/Material.h"
 #include "Component/Transform.h"
 #include "Component/Collider.h"
+#include "Component/Animation.h"
+
 #include "Resource/Mesh.h"
 
 #include "BineryWriter.h"

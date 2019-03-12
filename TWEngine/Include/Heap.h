@@ -110,6 +110,10 @@ public:
 		return m_iSize == 0;
 	}
 
+	void Sort()
+	{
+		_Sort(m_iSize - 1);
+	}
 private:
 	void _Insert(int iIndex)
 	{
@@ -162,6 +166,10 @@ private:
 	}
 
 private:
+	void _Sort(int _iIndex)
+	{
+
+	}
 	static bool Sort(const T& src, const T& dest)
 	{
 		return src < dest;

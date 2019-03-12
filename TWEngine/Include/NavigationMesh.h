@@ -193,6 +193,8 @@ public:
 	void CreateAdj();
 	bool CheckOnEdge(int iSrc, int iDest, const Vector3& vOrigin1, const Vector3& vOrigin2,
 		const Vector3& vEdge, float fEdgeLength, int iEdge1, int iEdge2);
+	bool CheckPathDir(const Vector3& _vSrc1, const Vector3& _vSrc2,
+		const Vector3& _vDest1, const Vector3& _vDest2, Vector3& _vIntersect);
 	void FindPath(Vector3& vStart, const Vector3& vEnd);
 
 public:
