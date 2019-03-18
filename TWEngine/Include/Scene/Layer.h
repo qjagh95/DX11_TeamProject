@@ -17,6 +17,16 @@ private:
 	int				m_iZOrder;
 	list<class CGameObject*>	m_ObjList;
 
+	vector<float>* m_vecInput;
+	vector<float>* m_vecUpdate;
+	vector<float>* m_vecLateUpdate;
+	vector<float>* m_vecCollsion;
+	vector<float>* m_vecRender;
+
+	bool m_bHeader;
+	string m_HeaderName;
+	FileStream m_LogText;
+
 public:
 	int GetZOrder()	const;
 	class CScene*	GetScene()	const;

@@ -4,7 +4,7 @@
 #include "FbxLoader.h"
 #include "../Component/Material.h"
 #include "../Component/Animation.h"
-#include "BineryWriter.h"
+#include "BinaryWriter.h"
 
 PUN_USING
 

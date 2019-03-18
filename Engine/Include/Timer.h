@@ -19,10 +19,15 @@ private:
 	int				m_iTick;
 	float			m_fTimeScale;
 	string			m_strName;
+	int				m_iPlayTime;
+	float			m_fTimeVar;
+	int				m_iPlaySecond;
 
 public:
 	float	GetTime()	const;
 	float	GetFPS()	const;
+	int   GetFrame() const { return m_iPlayTime; }
+	int   GetSecond() const { return m_iPlaySecond - 1; }
 
 public:
 	void SetTimeScale(float fTimeScale);

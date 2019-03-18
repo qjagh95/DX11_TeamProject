@@ -43,7 +43,7 @@
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.Inspector = new System.Windows.Forms.GroupBox();
             this.InspectorTab = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.Animation = new System.Windows.Forms.TabPage();
             this.DeleteClipBtn = new System.Windows.Forms.Button();
             this.DeleteClipText = new System.Windows.Forms.TextBox();
             this.ClipList = new System.Windows.Forms.ListBox();
@@ -95,14 +95,17 @@
             this.FileSave = new System.Windows.Forms.Button();
             this.FileLoad = new System.Windows.Forms.Button();
             this.Renderer = new System.Windows.Forms.GroupBox();
+            this.AnimationBtn = new System.Windows.Forms.Button();
             this.LogMessage = new System.Windows.Forms.ListBox();
+            this.MeshListText = new System.Windows.Forms.Label();
+            this.LogText = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DeviceWindow)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.Inspector.SuspendLayout();
             this.InspectorTab.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.Animation.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox8.SuspendLayout();
@@ -127,30 +130,31 @@
             this.groupBox2.Controls.Add(this.label11);
             this.groupBox2.Controls.Add(this.comboBox1);
             this.groupBox2.Controls.Add(this.label10);
+            this.groupBox2.Controls.Add(this.CreateObjectBtn);
             this.groupBox2.Controls.Add(this.ObjTagText);
             this.groupBox2.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.groupBox2.Location = new System.Drawing.Point(871, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(318, 79);
+            this.groupBox2.Size = new System.Drawing.Size(318, 106);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Create Object";
             // 
             // ChangeLayer
             // 
-            this.ChangeLayer.Location = new System.Drawing.Point(203, 47);
+            this.ChangeLayer.Location = new System.Drawing.Point(212, 47);
             this.ChangeLayer.Name = "ChangeLayer";
-            this.ChangeLayer.Size = new System.Drawing.Size(105, 23);
+            this.ChangeLayer.Size = new System.Drawing.Size(96, 24);
             this.ChangeLayer.TabIndex = 16;
             this.ChangeLayer.Text = "Change Layer";
             this.ChangeLayer.UseVisualStyleBackColor = true;
             // 
             // ChangeTag
             // 
-            this.ChangeTag.Location = new System.Drawing.Point(213, 18);
+            this.ChangeTag.Location = new System.Drawing.Point(212, 16);
             this.ChangeTag.Name = "ChangeTag";
             this.ChangeTag.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.ChangeTag.Size = new System.Drawing.Size(95, 23);
+            this.ChangeTag.Size = new System.Drawing.Size(95, 25);
             this.ChangeTag.TabIndex = 15;
             this.ChangeTag.Text = "Change Tag";
             this.ChangeTag.UseVisualStyleBackColor = true;
@@ -171,7 +175,7 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(73, 46);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(124, 25);
+            this.comboBox1.Size = new System.Drawing.Size(133, 25);
             this.comboBox1.TabIndex = 13;
             // 
             // label10
@@ -198,9 +202,9 @@
             // CreateObjectBtn
             // 
             this.CreateObjectBtn.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.CreateObjectBtn.Location = new System.Drawing.Point(31, 417);
+            this.CreateObjectBtn.Location = new System.Drawing.Point(3, 77);
             this.CreateObjectBtn.Name = "CreateObjectBtn";
-            this.CreateObjectBtn.Size = new System.Drawing.Size(110, 25);
+            this.CreateObjectBtn.Size = new System.Drawing.Size(315, 29);
             this.CreateObjectBtn.TabIndex = 5;
             this.CreateObjectBtn.Text = "Create Object";
             this.CreateObjectBtn.UseVisualStyleBackColor = true;
@@ -263,7 +267,7 @@
             // 
             // InspectorTab
             // 
-            this.InspectorTab.Controls.Add(this.tabPage1);
+            this.InspectorTab.Controls.Add(this.Animation);
             this.InspectorTab.Controls.Add(this.Component);
             this.InspectorTab.Controls.Add(this.Effect);
             this.InspectorTab.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
@@ -274,37 +278,36 @@
             this.InspectorTab.Size = new System.Drawing.Size(295, 596);
             this.InspectorTab.TabIndex = 0;
             // 
-            // tabPage1
+            // Animation
             // 
-            this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPage1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.tabPage1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tabPage1.Controls.Add(this.DeleteClipBtn);
-            this.tabPage1.Controls.Add(this.DeleteClipText);
-            this.tabPage1.Controls.Add(this.ClipList);
-            this.tabPage1.Controls.Add(this.DivideClipBox);
-            this.tabPage1.Controls.Add(this.ModifyClipBtn);
-            this.tabPage1.Controls.Add(this.AddClipBtn);
-            this.tabPage1.Controls.Add(this.AniTimeBox);
-            this.tabPage1.Controls.Add(this.AniEndFrameBox);
-            this.tabPage1.Controls.Add(this.AniStartFrameBox);
-            this.tabPage1.Controls.Add(this.AnimationTagBox);
-            this.tabPage1.Controls.Add(this.AnimationOptionBox);
-            this.tabPage1.Controls.Add(this.label16);
-            this.tabPage1.Controls.Add(this.label15);
-            this.tabPage1.Controls.Add(this.label14);
-            this.tabPage1.Controls.Add(this.label13);
-            this.tabPage1.Controls.Add(this.label12);
-            this.tabPage1.Controls.Add(this.MshLoad);
-            this.tabPage1.Controls.Add(this.ClipLoad);
-            this.tabPage1.Controls.Add(this.ClipSave);
-            this.tabPage1.ForeColor = System.Drawing.SystemColors.Desktop;
-            this.tabPage1.Location = new System.Drawing.Point(4, 26);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(287, 566);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Animation";
+            this.Animation.BackColor = System.Drawing.SystemColors.Control;
+            this.Animation.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.Animation.Controls.Add(this.DeleteClipBtn);
+            this.Animation.Controls.Add(this.DeleteClipText);
+            this.Animation.Controls.Add(this.ClipList);
+            this.Animation.Controls.Add(this.DivideClipBox);
+            this.Animation.Controls.Add(this.ModifyClipBtn);
+            this.Animation.Controls.Add(this.AddClipBtn);
+            this.Animation.Controls.Add(this.AniTimeBox);
+            this.Animation.Controls.Add(this.AniEndFrameBox);
+            this.Animation.Controls.Add(this.AniStartFrameBox);
+            this.Animation.Controls.Add(this.AnimationTagBox);
+            this.Animation.Controls.Add(this.AnimationOptionBox);
+            this.Animation.Controls.Add(this.label16);
+            this.Animation.Controls.Add(this.label15);
+            this.Animation.Controls.Add(this.label14);
+            this.Animation.Controls.Add(this.label13);
+            this.Animation.Controls.Add(this.label12);
+            this.Animation.Controls.Add(this.MshLoad);
+            this.Animation.Controls.Add(this.ClipLoad);
+            this.Animation.Controls.Add(this.ClipSave);
+            this.Animation.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.Animation.Location = new System.Drawing.Point(4, 26);
+            this.Animation.Name = "Animation";
+            this.Animation.Padding = new System.Windows.Forms.Padding(3);
+            this.Animation.Size = new System.Drawing.Size(287, 566);
+            this.Animation.TabIndex = 0;
+            this.Animation.Text = "Animation";
             // 
             // DeleteClipBtn
             // 
@@ -493,7 +496,6 @@
             // 
             this.Component.BackColor = System.Drawing.SystemColors.Control;
             this.Component.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.Component.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Component.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Component.Location = new System.Drawing.Point(4, 26);
             this.Component.Name = "Component";
@@ -506,7 +508,6 @@
             // 
             this.Effect.BackColor = System.Drawing.SystemColors.Control;
             this.Effect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.Effect.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Effect.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Effect.Location = new System.Drawing.Point(4, 26);
             this.Effect.Name = "Effect";
@@ -543,9 +544,9 @@
             this.MeshList.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.MeshList.FormattingEnabled = true;
             this.MeshList.ItemHeight = 17;
-            this.MeshList.Location = new System.Drawing.Point(9, 18);
+            this.MeshList.Location = new System.Drawing.Point(9, 42);
             this.MeshList.Name = "MeshList";
-            this.MeshList.Size = new System.Drawing.Size(140, 327);
+            this.MeshList.Size = new System.Drawing.Size(140, 310);
             this.MeshList.TabIndex = 1;
             this.MeshList.SelectedIndexChanged += new System.EventHandler(this.MeshList_SelectedIndexChanged);
             // 
@@ -555,7 +556,7 @@
             this.groupBox7.Controls.Add(this.groupBox8);
             this.groupBox7.Controls.Add(this.groupBox9);
             this.groupBox7.Font = new System.Drawing.Font("맑은 고딕", 10F, System.Drawing.FontStyle.Bold);
-            this.groupBox7.Location = new System.Drawing.Point(871, 80);
+            this.groupBox7.Location = new System.Drawing.Point(871, 112);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(318, 185);
             this.groupBox7.TabIndex = 0;
@@ -648,9 +649,9 @@
             this.groupBox8.Controls.Add(this.label2);
             this.groupBox8.Controls.Add(this.PositionX);
             this.groupBox8.Controls.Add(this.label1);
-            this.groupBox8.Location = new System.Drawing.Point(0, 24);
+            this.groupBox8.Location = new System.Drawing.Point(0, 22);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(309, 48);
+            this.groupBox8.Size = new System.Drawing.Size(309, 51);
             this.groupBox8.TabIndex = 0;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Position";
@@ -819,7 +820,7 @@
             this.ObjList.ItemHeight = 17;
             this.ObjList.Location = new System.Drawing.Point(5, 24);
             this.ObjList.Name = "ObjList";
-            this.ObjList.Size = new System.Drawing.Size(139, 310);
+            this.ObjList.Size = new System.Drawing.Size(139, 327);
             this.ObjList.TabIndex = 0;
             this.ObjList.SelectedIndexChanged += new System.EventHandler(this.ObjList_SelectedIndexChanged);
             // 
@@ -843,38 +844,68 @@
             // 
             // Renderer
             // 
+            this.Renderer.Controls.Add(this.MeshListText);
+            this.Renderer.Controls.Add(this.AnimationBtn);
             this.Renderer.Controls.Add(this.setMesh);
             this.Renderer.Controls.Add(this.MeshList);
             this.Renderer.Controls.Add(this.button4);
             this.Renderer.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.Renderer.Location = new System.Drawing.Point(864, 270);
+            this.Renderer.Location = new System.Drawing.Point(864, 302);
             this.Renderer.Name = "Renderer";
             this.Renderer.Size = new System.Drawing.Size(325, 358);
             this.Renderer.TabIndex = 0;
             this.Renderer.TabStop = false;
             this.Renderer.Text = "Renderer";
             // 
+            // AnimationBtn
+            // 
+            this.AnimationBtn.Location = new System.Drawing.Point(153, 220);
+            this.AnimationBtn.Name = "AnimationBtn";
+            this.AnimationBtn.Size = new System.Drawing.Size(162, 33);
+            this.AnimationBtn.TabIndex = 4;
+            this.AnimationBtn.Text = "Set Animation";
+            this.AnimationBtn.UseVisualStyleBackColor = true;
+            this.AnimationBtn.Click += new System.EventHandler(this.AnimationBtn_Click);
+            // 
             // LogMessage
             // 
             this.LogMessage.BackColor = System.Drawing.SystemColors.Control;
             this.LogMessage.FormattingEnabled = true;
             this.LogMessage.ItemHeight = 12;
-            this.LogMessage.Location = new System.Drawing.Point(169, 540);
+            this.LogMessage.Location = new System.Drawing.Point(170, 571);
             this.LogMessage.Name = "LogMessage";
             this.LogMessage.Size = new System.Drawing.Size(684, 88);
             this.LogMessage.TabIndex = 12;
+            // 
+            // MeshListText
+            // 
+            this.MeshListText.AutoSize = true;
+            this.MeshListText.Location = new System.Drawing.Point(7, 22);
+            this.MeshListText.Name = "MeshListText";
+            this.MeshListText.Size = new System.Drawing.Size(64, 17);
+            this.MeshListText.TabIndex = 5;
+            this.MeshListText.Text = "MeshList";
+            // 
+            // LogText
+            // 
+            this.LogText.AutoSize = true;
+            this.LogText.Location = new System.Drawing.Point(172, 550);
+            this.LogText.Name = "LogText";
+            this.LogText.Size = new System.Drawing.Size(79, 12);
+            this.LogText.TabIndex = 13;
+            this.LogText.Text = "LogMessage";
             // 
             // EditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1508, 634);
+            this.ClientSize = new System.Drawing.Size(1508, 668);
+            this.Controls.Add(this.LogText);
             this.Controls.Add(this.LogMessage);
             this.Controls.Add(this.FileLoad);
             this.Controls.Add(this.FileSave);
             this.Controls.Add(this.groupBox7);
-            this.Controls.Add(this.CreateObjectBtn);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.Inspector);
             this.Controls.Add(this.groupBox3);
@@ -883,8 +914,8 @@
             this.Controls.Add(this.Renderer);
             this.ForeColor = System.Drawing.SystemColors.WindowText;
             this.Name = "EditorForm";
-            this.Text = "Form1";
-            this.TransparencyKey = System.Drawing.Color.White;
+            this.Text = "MeshList";
+            this.TransparencyKey = System.Drawing.Color.Gray;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Delete);
             this.Load += new System.EventHandler(this.EditorForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DeviceWindow)).EndInit();
@@ -894,8 +925,8 @@
             this.groupBox5.ResumeLayout(false);
             this.Inspector.ResumeLayout(false);
             this.InspectorTab.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
+            this.Animation.ResumeLayout(false);
+            this.Animation.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
@@ -905,7 +936,9 @@
             this.groupBox9.PerformLayout();
             this.ObjectList.ResumeLayout(false);
             this.Renderer.ResumeLayout(false);
+            this.Renderer.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -953,7 +986,7 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox Renderer;
-        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage Animation;
         private System.Windows.Forms.TabPage Component;
         private System.Windows.Forms.TabPage Effect;
         private System.Windows.Forms.TabControl InspectorTab;
@@ -979,6 +1012,9 @@
         private System.Windows.Forms.Button DeleteClipBtn;
         private System.Windows.Forms.TextBox DeleteClipText;
         private System.Windows.Forms.ListBox LogMessage;
+        private System.Windows.Forms.Button AnimationBtn;
+        private System.Windows.Forms.Label MeshListText;
+        private System.Windows.Forms.Label LogText;
     }
 }
 

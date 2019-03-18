@@ -148,7 +148,7 @@ void CPlayer::Move(float fScale, float fTime)
 	if (fScale == 0.f)
 		return;
 
-	m_pTransform->Move(AXIS_Z, 15.f * fScale, fTime);
+	m_pTransform->Move(AXIS_Z, 20.f * fScale, fTime);
 }
 
 void CPlayer::Fire(float fTime)

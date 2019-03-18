@@ -181,6 +181,11 @@ XMMATRIX Matrix::Translation(const Vector3 & vPos)
 
 XMMATRIX Matrix::RotationAxis(float Angle, Vector3 & Axis)
 {
+	if (Angle == 0.0f || Axis == Vector3::Zero)
+	{
+		return Identity();
+	}
+
 	matrix = XMMatrixRotationAxis(Axis.Convert(), DegreeToRadian(Angle));
 	return matrix;  
 }

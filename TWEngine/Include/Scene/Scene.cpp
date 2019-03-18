@@ -1,10 +1,11 @@
 #include "EngineHeader.h"
-#include "Layer.h"
-#include "SceneComponent.h"
 #include "../Core.h"
 #include "../Device.h"
-#include "../Component/Camera.h"
+#include "Layer.h"
+#include "SceneComponent.h"
+#include "../BinaryWriter.h"
 #include "../Component/Light.h"
+#include "../Component/Camera.h"
 
 PUN_USING
 
@@ -12,6 +13,13 @@ CScene::CScene()
 {
 	m_pSkyObj = nullptr;
 	m_pSkyMtrl = nullptr;
+
+	m_bHeader = false;
+	m_vecInput = NULLPTR;
+	m_vecUpdate = NULLPTR;
+	m_vecLateUpdate = NULLPTR;
+	m_vecCollsion = NULLPTR;
+	m_vecRender = NULLPTR;
 }
 
 CScene::~CScene()
@@ -136,6 +144,8 @@ bool CScene::Init()
 	AddLayer("Default", 0);
 	AddLayer("UI", INT_MAX - 1);
 
+	ProfileInit();
+
 	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 45.f, 0.03f, 1000.f);	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
 	m_pMainCamera = m_pMainCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
 	m_pUICameraObj = CreateCamera("UICamera", Vector3(0.f, 0.f, 0.f), CT_ORTHO, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 60.f, 0.f, 1000.f);
@@ -170,11 +180,26 @@ bool CScene::Init()
 	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
 	m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
 
+	if (CCore::GetInst()->m_bGuiMode == false)
+		m_bHeader = false;
+	else
+		m_bHeader = true;
+
+	wstring Path = CPathManager::GetInst()->FindPath(DATA_PATH);
+	m_LogText.Input.open(Path + L"SceneInput.txt");
+	m_LogText.Update.open(Path + L"SceneUpdate.txt");
+	m_LogText.LateUpdate.open(Path + L"SceneLateUpdate.txt");
+	m_LogText.Collsion.open(Path + L"SceneCollsion.txt");
+	m_LogText.Render.open(Path + L"SceneRender.txt");
+
 	return true;
 }
 
 int CScene::Input(float fTime)
 {
+	TimeInfo Info = {};
+	Info.Start = clock();
+
 	list<CSceneComponent*>::iterator	iter1;
 	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
 
@@ -221,18 +246,32 @@ int CScene::Input(float fTime)
 
 	m_pMainCameraObj->Input(fTime);
 
+	if (m_bHeader == false)
+		return 0;
+
+	Info.End = clock();
+	float Compute = (float)(Info.End - Info.Start) * 0.01f;
+	m_vecInput->push_back(Compute);
+
+	CCore::WriteLogText(m_LogText.Input, Compute);
+
+	if (m_vecInput->size() >= 100)
+		m_vecInput->erase(m_vecInput->begin());
+
 	return 0;
 }
 
 int CScene::Update(float fTime)
 {
+	TimeInfo Info = {};
+	Info.Start = clock();
+
 	CTransform*	pTr = m_pSkyObj->GetTransform();
 
 	pTr->RotationY(3.f, fTime);
 	pTr->Update(fTime);
 
 	SAFE_RELEASE(pTr);
-
 
 	list<CSceneComponent*>::iterator	iter1;
 	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
@@ -280,11 +319,26 @@ int CScene::Update(float fTime)
 
 	m_pMainCameraObj->Update(fTime);
 
+	if (m_bHeader == false)
+		return 0;
+
+	Info.End = clock();
+	float Compute = (float)(Info.End - Info.Start) * 0.01f;
+	m_vecUpdate->push_back(Compute);
+
+	CCore::WriteLogText(m_LogText.Update, Compute);
+
+	if (m_vecUpdate->size() >= 100)
+		m_vecUpdate->erase(m_vecUpdate->begin());
+
 	return 0;
 }
 
 int CScene::LateUpdate(float fTime)
 {
+	TimeInfo Info = {};
+	Info.Start = clock();
+
 	list<CSceneComponent*>::iterator	iter1;
 	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
 
@@ -330,12 +384,27 @@ int CScene::LateUpdate(float fTime)
 	}
 
 	m_pMainCameraObj->LateUpdate(fTime);
+	
+	if (m_bHeader == false)
+		return 0;
+
+	Info.End = clock();
+	float Compute = (float)(Info.End - Info.Start) * 0.01f;
+	m_vecLateUpdate->push_back(Compute);
+
+	CCore::WriteLogText(m_LogText.LateUpdate, Compute);
+
+	if (m_vecLateUpdate->size() >= 100)
+		m_vecLateUpdate->erase(m_vecLateUpdate->begin());
 
 	return 0;
 }
 
 void CScene::Collision(float fTime)
 {
+	TimeInfo Info = {};
+	Info.Start = clock();
+
 	list<CSceneComponent*>::iterator	iter1;
 	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
 
@@ -382,12 +451,26 @@ void CScene::Collision(float fTime)
 
 	// 마지막으로 마우스 충돌체를 넣어준다.
 	GET_SINGLE(CInput)->AddMouseCollision();
-
 	GET_SINGLE(CCollisionManager)->Collision(fTime);
+
+	if (m_bHeader == false)
+		return;
+
+	Info.End = clock();
+	float Compute = (float)(Info.End - Info.Start) * 0.01f;
+	m_vecCollsion->push_back(Compute);
+
+	CCore::WriteLogText(m_LogText.Render, Compute);
+
+	if (m_vecCollsion->size() >= 100)
+		m_vecCollsion->erase(m_vecCollsion->begin());
 }
 
 void CScene::Render(float fTime)
 {
+	TimeInfo Info = {};
+	Info.Start = clock();
+
 	list<CSceneComponent*>::iterator	iter1;
 	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
 
@@ -430,6 +513,25 @@ void CScene::Render(float fTime)
 
 		(*iter)->Render(fTime);
 		++iter;
+	}
+
+	if(CCore::GetInst()->m_bGuiMode == true)
+		m_bHeader = ImGui::CollapsingHeader("Scene");
+
+	if (m_bHeader == true)
+	{
+		Info.End = clock();
+		float Compute = (float)(Info.End - Info.Start) * 0.01f;
+		m_vecRender->push_back(Compute);
+
+		if (m_vecRender->size() >= 100)
+			m_vecRender->erase(m_vecRender->begin());
+
+		ImGui::PlotLines("Input", &m_vecInput->at(0), (int)m_vecInput->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
+		ImGui::PlotLines("Update", &m_vecUpdate->at(0), (int)m_vecUpdate->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
+		ImGui::PlotLines("LateUpdate", &m_vecLateUpdate->at(0), (int)m_vecLateUpdate->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
+		ImGui::PlotLines("Collsion", &m_vecCollsion->at(0), (int)m_vecCollsion->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
+		ImGui::PlotLines("Render", &m_vecRender->at(0), (int)m_vecRender->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
 	}
 }
 
@@ -594,6 +696,21 @@ CGameObject * CScene::FindCamera(const string & strTag)
 	return iter->second;
 }
 
+void CScene::ProfileInit()
+{
+	CCore::GetInst()->AddManagerVector("SceneInput");
+	CCore::GetInst()->AddManagerVector("SceneUpdate");
+	CCore::GetInst()->AddManagerVector("SceneLateUpdate");
+	CCore::GetInst()->AddManagerVector("SceneCollsion");
+	CCore::GetInst()->AddManagerVector("SceneRender");
+
+	m_vecInput = CCore::GetInst()->FindManagerMap("SceneInput");
+	m_vecUpdate = CCore::GetInst()->FindManagerMap("SceneUpdate");
+	m_vecLateUpdate = CCore::GetInst()->FindManagerMap("SceneLateUpdate");
+	m_vecCollsion = CCore::GetInst()->FindManagerMap("SceneCollsion");
+	m_vecRender = CCore::GetInst()->FindManagerMap("SceneRender");
+}
+
 bool CScene::SortLayerZOrder(const CLayer* pSrc, const CLayer* pDest)
 {
 	return pSrc->GetZOrder() < pDest->GetZOrder();
@@ -612,4 +729,53 @@ void CScene::EnableSceneComponent(const string & strTag, bool bEnable)
 			return;
 		}
 	}
+}
+
+void CScene::Save(string _fullPath)
+{
+	/* Function Create KDG */
+
+	// 파일 객체(ofstream) 생성
+	BinaryWrite instBW = BinaryWrite(_fullPath);
+
+	// 파일생성
+	ofstream ofs(_fullPath, ios_base::binary);
+
+	// 레이어 목록
+	list<CLayer*>::iterator iter;
+	list<CLayer*>::iterator iterEnd = m_LayerList.end();
+	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
+	{
+		string strLayerTag = (*iter)->GetTag();
+		size_t strLength = strlen(strLayerTag.c_str());
+		ofs.write((char*)&strLength, sizeof(CHAR_MAX));
+		ofs.write(strLayerTag.c_str(), strLength);
+	}
+
+	// 카메라 목록
+	unordered_map<string, CGameObject*>::iterator iterMap;
+	unordered_map<string, CGameObject*>::iterator iterEndMap = m_mapCamera.end();
+	for (iterMap = m_mapCamera.begin(); iterMap != iterEndMap; ++iterMap)
+	{
+		string strCameraTag = iterMap->second->GetTag();
+		size_t strLength = strlen(strCameraTag.c_str());
+		ofs.write((char*)&strLength, sizeof(CHAR_MAX));
+		ofs.write(strCameraTag.c_str(), strLength);
+	}
+
+	ofs.close();
+
+	// 테스트 출력
+	/*
+	ifstream ifs(_fullPath, ios_base::binary);
+	char chData[CHAR_MAX] = {};
+	for (size_t i = 0; i < m_LayerList.size(); ++i)
+	{
+		size_t strLength = 0;
+		ifs.read((char*)&strLength, sizeof(CHAR_MAX));
+		ifs.read(chData, strLength);
+		memset(chData, 0, sizeof(CHAR_MAX));
+	}
+	ifs.close();
+	*/
 }

@@ -7,6 +7,9 @@ PUN_USING
 
 CTimer::CTimer()
 {
+	m_iPlayTime = 0;
+	m_fTimeVar = 0.0f;
+	m_iPlaySecond = 0;
 }
 
 CTimer::~CTimer()
@@ -53,6 +56,15 @@ void CTimer::Update()
 
 	m_iTick++;
 	m_fFPSTime += m_fTime;
+	m_fTimeVar += m_fTime;
+
+	m_iPlayTime++;
+
+	if (m_fTimeVar > 0.3f)
+	{
+		m_iPlaySecond++;
+		m_fTimeVar = 0.0f;
+	}
 
 	if (m_fFPSTime >= 1.0f)
 	{
@@ -66,7 +78,6 @@ void CTimer::Update()
 		m_fFPS = m_iTick / m_fFPSTime;
 		m_fFPSTime = 0.f;
 		m_iTick = 0;
-
 	}
 
 }

@@ -14,11 +14,25 @@ private:
 	float		m_fTimeScale;
 	GAME_MODE	m_eGameMode;
 	CTimer*		m_pTimer;
+	bool		m_bHeader;
+	static unordered_map<string, vector<float>*> m_ManagerMap;
+	static time_t m_iTime;
+	static tm* m_pDateInfo;
+
+	vector<float>* m_vecInput;
+	vector<float>* m_vecUpdate;
+	vector<float>* m_vecLateUpdate;
+	vector<float>* m_vecCollsion;
+	vector<float>* m_vecRender;
+	FileStream m_LogText;
 
 public:
 	HWND GetWindowHandle()	const;
 	HINSTANCE GetWindowInstance()	const;
 	bool m_bEditorMode;
+	bool m_bGuiMode;
+	static int m_iVecIndex;
+	static void WriteLogText(ofstream& Stream, float Compute);
 
 public:
 	void SetClearColor(unsigned char r,
@@ -41,6 +55,9 @@ public:
 	void EditLogic();
 	void EditDelete();
 	void EditCreateObject(const std::string& _strTag);
+	void AddManagerVector(const string& KeyName);
+	vector<float>* FindManagerMap(const string& KeyName) const;
+
 private:
 	int Input(float fTime);
 	int Update(float fTime);
@@ -54,8 +71,8 @@ private:
 	void Register(const TCHAR* pClass, int iIconID, int iSmallIconID);
 	void CreateWnd(const TCHAR* pTitle, const TCHAR* pClass);
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-
+	void GUIOnOff(float fTime);
+	
 	DECLARE_SINGLE(CCore)
 };
 

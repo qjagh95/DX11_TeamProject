@@ -159,6 +159,8 @@ public:
 private:
 	string		m_strName;
 	vector<PNavigationCell>	m_vecCell;
+	PNavigationCell*		m_pCloseList;
+	int						m_iCloseListSize;
 	Vector3		m_vOffset;
 	Vector3		m_vOffsetScale;
 	Vector3		m_vMin;
@@ -180,6 +182,7 @@ public:
 	Vector3	GetMin()	const;
 	Vector3 GetMax()	const;
 	Vector3 GetOffset()	const;
+	list<Vector3> GetPathList()	const;
 
 public:
 	void SetOffset(const Vector3& vOffset);
@@ -195,7 +198,7 @@ public:
 		const Vector3& vEdge, float fEdgeLength, int iEdge1, int iEdge2);
 	bool CheckPathDir(const Vector3& _vSrc1, const Vector3& _vSrc2,
 		const Vector3& _vDest1, const Vector3& _vDest2, Vector3& _vIntersect);
-	void FindPath(Vector3& vStart, const Vector3& vEnd);
+	void FindPath(const Vector3& vStart, const Vector3& vEnd);
 
 public:
 	float GetY(const Vector3& vPos);

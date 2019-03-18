@@ -204,6 +204,4 @@ void CMainScene::CreatePrototype()
 void CMainScene::NextScene(float fTime)
 {
 	GET_SINGLE(CSceneManager)->CreateNextScene();
-	GET_SINGLE(CNavigationManager)->ClearStage2D();
-	//GET_SINGLE(CSceneManager)->AddSceneComponent<CCraidenScene>("Craiden", false);
 }

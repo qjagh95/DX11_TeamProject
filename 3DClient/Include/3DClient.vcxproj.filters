@@ -48,6 +48,9 @@
     <ClInclude Include="ClientHeader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Minion.h">
+      <Filter>02. UserComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,6 +75,9 @@
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Field.cpp">
+      <Filter>02. UserComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Minion.cpp">
       <Filter>02. UserComponent</Filter>
     </ClCompile>
   </ItemGroup>

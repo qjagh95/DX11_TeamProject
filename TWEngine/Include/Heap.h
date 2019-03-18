@@ -1,7 +1,5 @@
 #pragma once
 
-#include "EngineHeader.h"
-
 PUN_BEGIN
 
 template <typename T>
@@ -112,8 +110,35 @@ public:
 
 	void Sort()
 	{
-		_Sort(m_iSize - 1);
+		int	iIndex = m_iSize / 2 - 1;
+
+		while (iIndex >= 0)
+		{
+			// 구해준 인덱스로부터 해당 레벨의 가장 왼쪽 인덱스 까지 반복하며 heapify 를 수행해서
+			// 데이터를 정렬해준다.
+			int	iBuildCount = 1;
+			int	iBuildIndex = iIndex + 1;
+
+			while (iBuildIndex /= 2)
+			{
+				iBuildCount *= 2;
+			}
+
+			// 현재 레벨에서 가장 왼쪽 인덱스를 구한다.
+			--iBuildCount;
+
+			// 현재 구해준 인덱스에서 가장 왼쪽 인덱스를 빼서 반복할 개수를 구한다.
+			iBuildCount = iIndex - iBuildCount;
+
+			for (int i = 0; i <= iBuildCount; ++i)
+			{
+				HeapIfy(iIndex - i);
+			}
+
+			iIndex = iIndex - iBuildCount - 1;
+		}
 	}
+
 private:
 	void _Insert(int iIndex)
 	{
@@ -165,11 +190,36 @@ private:
 		}
 	}
 
-private:
-	void _Sort(int _iIndex)
+	void HeapIfy(int iIndex)
 	{
+		// 왼쪽 인덱스를 구한다.
+		int	iLeft = iIndex * 2 + 1;
 
+		if (iLeft >= m_iSize)
+			return;
+
+		int	iChildIndex = iLeft;
+
+		int	iRight = iIndex * 2 + 2;
+
+		if (iRight < m_iSize)
+		{
+			if (m_CmpFunc(m_pHeap[iRight], m_pHeap[iLeft]))
+				iChildIndex = iRight;
+		}
+
+		// 현재 인덱스와 정해진 자식노드의 인덱스의 key값들을 비교하여 교체해야 할 경우 교체한다.
+		if (m_CmpFunc(m_pHeap[iChildIndex], m_pHeap[iIndex]))
+		{
+			T	data = m_pHeap[iIndex];
+			m_pHeap[iIndex] = m_pHeap[iChildIndex];
+			m_pHeap[iChildIndex] = data;
+
+			HeapIfy(iChildIndex);
+		}
 	}
+
+private:
 	static bool Sort(const T& src, const T& dest)
 	{
 		return src < dest;

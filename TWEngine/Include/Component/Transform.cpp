@@ -536,6 +536,41 @@ void CTransform::LookAt(const Vector3 & vPos, AXIS eAxis)
 
 	UpdateTransform();
 }
+void CTransform::LookAtY(class CGameObject* pObj)
+{
+	CTransform*	pTr = pObj->GetTransform();
+
+	LookAtY(pTr->GetWorldPos());
+	SAFE_RELEASE(pTr);
+}
+void CTransform::LookAtY(class CComponent* pCom)
+{
+	CTransform*	pTr = pCom->GetTransform();
+
+	LookAtY(pTr->GetWorldPos());
+	SAFE_RELEASE(pTr);
+}
+void CTransform::LookAtY(const Vector3& vPos)
+{
+	// 바라보는 방향을 구한다.
+	Vector3	vView = vPos - m_vWorldPos;
+	vView.y = 0.f;
+	vView.Normalize();
+
+	Vector3	vAxis = Vector3::Axis[AXIS_Z];
+
+	// 각도를 구한다.
+	float	fAngle = vAxis.Angle(vView);
+
+	Vector3	vRotAxis = vAxis.Cross(vView);
+	vRotAxis.Normalize();
+
+	m_matWorldRot.RotationAxis(fAngle, vRotAxis);
+
+	ComputeWorldAxis();
+
+	UpdateTransform();
+}
 
 void CTransform::LookAt2D(const Vector3& vPos)
 {

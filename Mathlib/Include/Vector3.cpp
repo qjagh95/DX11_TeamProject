@@ -808,7 +808,7 @@ float Vector3::GetDistance(const Vector3 & Vec)
 
 float Vector3::Distance(const Vector3& Vec)
 {
-	return Vector3(*this - Vec).Length();
+	return /*Vector3*/(*this - Vec).Length();
 }
 
 /////////////////////////////////////////////////////////////////////////

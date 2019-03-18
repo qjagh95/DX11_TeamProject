@@ -11,16 +11,27 @@ PUN_USING
 
 DEFINITION_SINGLE(CCore)
 
+unordered_map<string, vector<float>*> CCore::m_ManagerMap;
+time_t CCore::m_iTime = 0;
+tm* CCore::m_pDateInfo = NULLPTR;
 bool CCore::m_bLoop = true;
 
 CCore::CCore()
 {
+	m_bGuiMode = true;
+	m_bHeader = false;
 	m_bEditorMode = false;
 	m_pTimer = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	//_CrtSetBreakAlloc(2843);
 
 	memset(m_fClearColor, 0, sizeof(float) * 4);
+
+	m_vecInput = NULLPTR;
+	m_vecUpdate = NULLPTR;
+	m_vecLateUpdate = NULLPTR;
+	m_vecCollsion = NULLPTR;
+	m_vecRender = NULLPTR;
 }
 
 CCore::~CCore()
@@ -34,12 +45,14 @@ CCore::~CCore()
 	DESTROY_SINGLE(CPathManager);
 	DESTROY_SINGLE(CRenderManager);
 	DESTROY_SINGLE(CResourcesManager);
-	DESTROY_SINGLE(CNavigationManager);
 	DESTROY_SINGLE(CNavigationManager3D);
 	DESTROY_SINGLE(CDevice);
 	GUIManager::Delete();
 	CSoundManager::Delete();
 	CoUninitialize();
+	
+	Safe_Delete_Map(m_ManagerMap);
+
 }
 
 HWND CCore::GetWindowHandle() const
@@ -50,6 +63,11 @@ HWND CCore::GetWindowHandle() const
 HINSTANCE CCore::GetWindowInstance() const
 {
 	return m_hInst;
+}
+
+void CCore::WriteLogText(ofstream & Stream, float Compute)
+{
+	Stream << Compute << '\t' << m_pDateInfo->tm_year + 1900 << "년 " << m_pDateInfo->tm_mon + 1 << "월 " << m_pDateInfo->tm_mday << "일 " << m_pDateInfo->tm_hour << "시 " << m_pDateInfo->tm_min << "분 " << m_pDateInfo->tm_sec << "초 " << endl;
 }
 
 void CCore::SetClearColor(unsigned char r,
@@ -68,11 +86,7 @@ void CCore::SetGameMode(GAME_MODE eMode)
 	GET_SINGLE(CRenderManager)->SetGameMode(eMode);
 }
 
-
-bool CCore::Init(HINSTANCE hInst, unsigned int iWidth,
-	unsigned int iHeight, const TCHAR * pTitle,
-	const TCHAR * pClass, int iIconID, int iSmallIconID,
-	bool bWindowMode)
+bool CCore::Init(HINSTANCE hInst, unsigned int iWidth, unsigned int iHeight, const TCHAR * pTitle, const TCHAR * pClass, int iIconID, int iSmallIconID, bool bWindowMode)
 {
 	m_hInst = hInst;
 	m_tRS = Resolution(iWidth, iHeight);
@@ -91,6 +105,7 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 	m_hWnd = hWnd;
 	m_tRS.iWidth = iWidth;
 	m_tRS.iHeight = iHeight;
+	m_bGuiMode = true;
 
 	CoInitializeEx(NULLPTR, COINIT_MULTITHREADED);
 
@@ -159,13 +174,6 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 		return false;
 	}
 
-	// 내비게이션 관리자 초기화
-	if (!GET_SINGLE(CNavigationManager)->Init())
-	{
-		TrueAssert(true);
-		return false;
-	}
-
 	// 3D 내비게이션 관리자 초기화
 	if (!GET_SINGLE(CNavigationManager3D)->Init())
 	{
@@ -180,8 +188,6 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 		return false;
 	}
 
-	
-
 	if (CSoundManager::Get()->Init() == false)
 	{
 		TrueAssert(true);
@@ -191,6 +197,28 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 	GUIManager::Get()->CreateImGui(m_hWnd, CDevice::GetInst()->GetDevice(), CDevice::GetInst()->GetContext());
 	m_fTimeScale = 1.0f;
 	m_pTimer = CTimerManager::GetInst()->FindTimer("MainTimer");
+
+	GET_SINGLE(CInput)->BindAction("GuiOnOff", KEY_PRESS, this, &CCore::GUIOnOff);
+	GET_SINGLE(CInput)->AddKeyAction("GuiOnOff", DIK_F1);
+
+	AddManagerVector("LogicInput");
+	AddManagerVector("LogicUpdate");
+	AddManagerVector("LogicLateUpdate");
+	AddManagerVector("LogicCollsion");
+	AddManagerVector("LogicRender");
+
+	m_vecInput = FindManagerMap("LogicInput");
+	m_vecUpdate = FindManagerMap("LogicUpdate");
+	m_vecLateUpdate = FindManagerMap("LogicLateUpdate");
+	m_vecCollsion = FindManagerMap("LogicCollsion");
+	m_vecRender = FindManagerMap("LogicRender");
+
+	wstring Path = CPathManager::GetInst()->FindPath(DATA_PATH);
+	m_LogText.Input.open(Path + L"LogicInput.txt");
+	m_LogText.Update.open(Path + L"LogicUpdate.txt");
+	m_LogText.LateUpdate.open(Path + L"LogicLateUpdate.txt");
+	m_LogText.Collsion.open(Path + L"LogicCollsion.txt");
+	m_LogText.Render.open(Path + L"LogicRender.txt");
 
 	return true;
 }
@@ -212,7 +240,9 @@ int CCore::Run()
 		}
 		else
 		{
-			// 실제 게임 구현부분은 여기에 들어와야 한다.
+			if (m_bGuiMode == true)
+				GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
+
 			Logic();
 		}
 	}
@@ -225,8 +255,6 @@ void CCore::Logic()
 	m_pTimer->Update();
 	float fTime = m_pTimer->GetTime();
 
-	GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
-
 	Input(fTime);
 	Update(fTime);
 	LateUpdate(fTime);
@@ -236,43 +264,135 @@ void CCore::Logic()
 
 int CCore::Input(float fTime)
 {
-	GET_SINGLE(CInput)->Update(fTime);
+	TimeInfo Info = {};
+	Info.Start = clock();
 
+	m_iTime = time(NULL);
+	m_pDateInfo = localtime(&m_iTime);
+
+	GET_SINGLE(CInput)->Update(fTime);
 	int iRet = GET_SINGLE(CSceneManager)->Input(fTime);
 
+	if (m_bGuiMode == false)
+		return iRet;
+
+	Info.End = clock();
+	float Compute = (float)(Info.End - Info.Start) * 0.01f;
+	m_vecInput->push_back(Compute);
+
+	WriteLogText(m_LogText.Input, Compute);
+
+	if (m_vecInput->size() >= 100)
+		m_vecInput->erase(m_vecInput->begin());
+	
 	return iRet;
 }
 
 int CCore::Update(float fTime)
 {
+	TimeInfo Info = {};
+	Info.Start = clock();
+
 	int iRet = GET_SINGLE(CSceneManager)->Update(fTime);
+
+	if (m_bGuiMode == false)
+		return iRet;
+
+	Info.End = clock();
+	float Compute = (float)(Info.End - Info.Start) * 0.01f;
+	m_vecUpdate->push_back(Compute);
+
+	WriteLogText(m_LogText.Update, Compute);
+
+	if (m_vecUpdate->size() >= 100)
+		m_vecUpdate->erase(m_vecUpdate->begin());
 
 	return iRet;
 }
 
 int CCore::LateUpdate(float fTime)
 {
+	TimeInfo Info = {};
+	Info.Start = clock();
+
 	int iRet = GET_SINGLE(CSceneManager)->LateUpdate(fTime);
+
+	if (m_bGuiMode == false)
+		return iRet;
+
+	Info.End = clock();
+	float Compute = (float)(Info.End - Info.Start) * 0.01f;
+	m_vecLateUpdate->push_back(Compute);
+
+	WriteLogText(m_LogText.LateUpdate, Compute);
+
+	if (m_vecLateUpdate->size() >= 100)
+		m_vecLateUpdate->erase(m_vecLateUpdate->begin());
 
 	return iRet;
 }
 
 int CCore::Collision(float fTime)
 {
-	return GET_SINGLE(CSceneManager)->Collision(fTime);
+	TimeInfo Info = {};
+	Info.Start = clock();
+
+	GET_SINGLE(CSceneManager)->Collision(fTime);
+
+	if (m_bGuiMode == false)
+		return 0;
+
+	Info.End = clock();
+	float Compute = (float)(Info.End - Info.Start) * 0.01f;
+	m_vecCollsion->push_back(Compute);
+
+	WriteLogText(m_LogText.Collsion, Compute);
+
+	if (m_vecCollsion->size() >= 100)
+		m_vecCollsion->erase(m_vecCollsion->begin());
+
+	return 0;
 }
 
 void CCore::Render(float fTime)
 {
+	TimeInfo Info = {};
+	Info.Start = clock();
+
 	// 타겟뷰와 깊이뷰 초기화
 	GET_SINGLE(CDevice)->Clear(m_fClearColor);
-	GET_SINGLE(CSceneManager)->Render(fTime);
-	GET_SINGLE(CRenderManager)->Render(fTime);
+	{
+		GET_SINGLE(CSceneManager)->Render(fTime);
+		GET_SINGLE(CRenderManager)->Render(fTime);
+		CInput::GetInst()->ClearWheel();
 
-	GUIManager::Get()->ImGuiEnd();
-	GET_SINGLE(CInput)->RenderMouse(fTime);
+		if (m_bGuiMode == true)
+		{
+			m_bHeader = ImGui::CollapsingHeader("Logic");
+
+			if (m_bHeader == true)
+			{
+				Info.End = clock();
+				float Compute = (float)(Info.End - Info.Start) * 0.01f;
+				m_vecRender->push_back(Compute);
+
+				WriteLogText(m_LogText.Render, Compute);
+
+				if (m_vecRender->size() >= 100)
+					m_vecRender->erase(m_vecRender->begin());
+
+				ImGui::PlotLines("Input", &m_vecInput->at(0), (int)m_vecInput->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
+				ImGui::PlotLines("Update", &m_vecUpdate->at(0), (int)m_vecUpdate->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
+				ImGui::PlotLines("LateUpdate", &m_vecLateUpdate->at(0), (int)m_vecLateUpdate->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
+				ImGui::PlotLines("Collsion", &m_vecCollsion->at(0), (int)m_vecCollsion->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
+				ImGui::PlotLines("Render", &m_vecRender->at(0), (int)m_vecRender->size(), 0, NULLPTR, 0.0f, 0.05f, ImVec2(0.0f, 50.0f));
+			}
+
+			GUIManager::Get()->ImGuiEnd();
+		}
+		GET_SINGLE(CInput)->RenderMouse(fTime);
+	}
 	GET_SINGLE(CDevice)->Present();
-	CInput::GetInst()->ClearWheel();
 }
 
 void CCore::Register(const TCHAR * pClass, int iIconID, int iSmallIconID)
@@ -289,7 +409,7 @@ void CCore::Register(const TCHAR * pClass, int iIconID, int iSmallIconID)
 	wcex.hIcon = LoadIcon(m_hInst, MAKEINTRESOURCE(iIconID));
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszMenuName = NULL;// MAKEINTRESOURCEW(IDC_MY180629);
+	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = pClass;
 	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(iSmallIconID));
 
@@ -337,11 +457,17 @@ LRESULT CCore::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+void CCore::GUIOnOff(float fTime)
+{
+	m_bGuiMode ^= true;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //TODO : Editor 전용
 bool CCore::EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth, unsigned int iHeight, bool bWindowMode)
 {
 	m_bEditorMode = true;
+	m_bGuiMode = false;
 	m_hInst = hInstance;
 	m_hWnd = hWnd;
 	m_tRS.iWidth = iWidth;
@@ -400,22 +526,8 @@ bool CCore::EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth, unsign
 		return false;
 	}
 
-	//// 폰트 관리자 초기화
-	//if (!CFontManager::GetInst()->Init())
-	//{
-	//	TrueAssert(true);
-	//	return false;
-	//}
-
 	// 오브젝트 관리자 초기화
 	if (!CObjectManager::GetInst()->Init())
-	{
-		TrueAssert(true);
-		return false;
-	}
-
-	// 내비게이션 관리자 초기화
-	if (!CNavigationManager::GetInst()->Init())
 	{
 		TrueAssert(true);
 		return false;
@@ -467,7 +579,6 @@ void CCore::EditDelete()
 	DESTROY_SINGLE(CPathManager);
 	DESTROY_SINGLE(CRenderManager);
 	DESTROY_SINGLE(CResourcesManager);
-	DESTROY_SINGLE(CNavigationManager);
 	CNavigationManager3D::DestroyInst();
 	DESTROY_SINGLE(CEditManager);
 	DESTROY_SINGLE(CDevice);
@@ -483,6 +594,30 @@ void CCore::EditCreateObject(const std::string & _strTag)
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pScene);
 	SAFE_RELEASE(pLayer);
+}
+
+void CCore::AddManagerVector(const string& KeyName)
+{
+	vector<float>* temp = FindManagerMap(KeyName);
+
+	if (temp != NULLPTR)
+		return;
+
+	temp = new vector<float>();
+	temp->reserve(100);
+	temp->clear();
+
+	m_ManagerMap.insert(make_pair(KeyName, temp));
+}
+
+vector<float>* CCore::FindManagerMap(const string& KeyName) const
+{
+	auto FindIter = m_ManagerMap.find(KeyName);
+
+	if (FindIter == m_ManagerMap.end())
+		return NULLPTR;
+
+	return FindIter->second;
 }
 
 void CCore::EditRender(float fTime)

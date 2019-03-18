@@ -22,6 +22,8 @@
 #include <memory>
 #include <memory.h>
 #include <time.h>
+#include <amp.h>
+#include <ppl.h>
 
 #include <d3d11.h>
 #include <d3dcompiler.h> // shader를 컴파일하는 기능을 제공한다
@@ -60,13 +62,10 @@ using namespace std;
 #include "Scene/SceneManager.h"
 #include "Rendering/RenderManager.h"
 #include "Rendering/ShaderManager.h"
-#include "NavigationManager.h"
 #include "TimerManager.h"
-#include "StageManager.h"
 #include "CollisionManager.h"
 #include "SoundManager.h"
 #include "ObjectManager.h"
-#include "NavigationManager.h"
 #include "FontManager.h"
 #include "GUIManager.h"
 #include "SoundManager.h"
@@ -85,5 +84,5 @@ using namespace std;
 
 #include "Resource/Mesh.h"
 
-#include "BineryWriter.h"
-#include "BineryReader.h"
+#include "BinaryWriter.h"
+#include "BinaryReader.h"

@@ -98,7 +98,7 @@ namespace EngineWrapper
 			PUN::CEditManager* pManager = PUN::CEditManager::GetInst();
 			vector<string>* vecMeshNameList = pManager->GetMeshNameList();
 			
-			// Marshal
+			// vector Marshal
 			cli::array<String^>^ arrStrMarshalList = gcnew cli::array<String^>((int)vecMeshNameList->size());
 			for (int i = 0; i < (int)vecMeshNameList->size(); ++i)
 			{

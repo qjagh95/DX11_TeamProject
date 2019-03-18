@@ -11,11 +11,16 @@ CNavigationMesh::CNavigationMesh()
 	m_iSectionZ = 1;
 	m_pSection = new NavSection[m_iSectionX * m_iSectionZ];
 
+	m_iCloseListSize = 0;
+	m_pCloseList = nullptr;
+
 	m_OpenList.SetSortFunc(this, &CNavigationMesh::OpenListSort);
 }
 
+
 CNavigationMesh::~CNavigationMesh()
 {
+	SAFE_DELETE_ARRAY(m_pCloseList);
 	SAFE_DELETE_ARRAY(m_pSection);
 	Safe_Delete_VecList(m_vecCell);
 }
@@ -33,6 +38,11 @@ Vector3 CNavigationMesh::GetMax() const
 Vector3 CNavigationMesh::GetOffset() const
 {
 	return m_vOffset;
+}
+
+list<Vector3> CNavigationMesh::GetPathList() const
+{
+	return m_PathList;
 }
 
 void CNavigationMesh::SetOffset(const Vector3 & vOffset)
@@ -133,17 +143,15 @@ void CNavigationMesh::CreateGridMapAdj(int iLineRectCount)
 	m_iLineRectCount = iLineRectCount;
 
 	size_t iSize = m_vecCell.size();
-	ADJINFO tInfo = {};
+	ADJINFO	tInfo = {};
 
-	for (int i = 0; i < iSize; i += 2)
+	for (size_t i = 0; i < iSize; i += 2)
 	{
-		/*
-		우상단 삼각형 인접정보 구성
-		위쪽 사각형, 오른쪽 사각형, 자기자신 사각형의
-		왼쪽 하단 삼각형이 인접정보 후보가 된다
-		*/
-		// 위쪽 사각형의 좌하단 삼각형 인덱스를 구한다
-		int	idx = i - iLineRectCount * 2 + 1;
+		// 우상단 삼각형 인접정보 구성.
+		// 위쪽 사각형, 오른쪽 사각형, 자기자신 사각형의 왼쪽 하단 삼각형이
+		// 인접정보 후보가 된다.
+		// 위쪽 사각형의 좌하단 삼각형 인덱스를 구한다.
+		int	idx = (int)(i - iLineRectCount * 2 + 1);
 		if (idx >= 0 && idx < m_vecCell.size())
 		{
 			tInfo.iIndex = idx;
@@ -152,46 +160,44 @@ void CNavigationMesh::CreateGridMapAdj(int iLineRectCount)
 		}
 
 		// 자기자신 사각형의 왼쪽 하단 삼각형 인덱스를 구한다.
-		idx = i + 1;
+		idx = (int)i + 1;
 		if (idx >= 0 && idx < m_vecCell.size())
 		{
 			tInfo.iIndex = idx;
-			tInfo.iEdgeIndex = 1;
+			tInfo.iEdgeIndex = 2;
 			m_vecCell[i]->vecAdj.push_back(tInfo);
 		}
 
 		// 오른쪽 사각형의 왼쪽 하단 삼각형 인덱스를 구한다.
 		if ((i / 2) % iLineRectCount != iLineRectCount - 1)
 		{
-			idx = i + 3;
+			idx = (int)i + 3;
 			tInfo.iIndex = idx;
-			tInfo.iEdgeIndex = 2;
+			tInfo.iEdgeIndex = 1;
 			m_vecCell[i]->vecAdj.push_back(tInfo);
 		}
 
-		/*
-		좌하단 삼각형 인접정보 구성
-		아래쪽 사각형, 왼쪽 사각형, 자기자신 사각형의
-		오른쪽 상단 삼각형이 인접정보 후보가 된다
-		*/
-		// 자기자신 사각형의 우상단 삼각형 인덱스를 구한다
-		tInfo.iIndex = i;
+		// 좌하단 삼각형 인접정보 구성.
+		// 아래쪽 사각형, 왼쪽 사각형, 자기자신 사각형의 오른쪽 상단 삼각형이
+		// 인접정보 후보가 된다.
+		// 자기자신 사각형의 우상단 삼각형 인덱스를 구한다.
+		tInfo.iIndex = (int)i;
 		tInfo.iEdgeIndex = 0;
 		m_vecCell[i + 1]->vecAdj.push_back(tInfo);
 
 		// 왼쪽 사각형의 우상단 삼각형 인덱스를 구한다.
 		if ((i / 2) % iLineRectCount != 0)
 		{
-			tInfo.iIndex = i - 2;
-			tInfo.iEdgeIndex = 1;
+			tInfo.iIndex = (int)i - 3;
+			tInfo.iEdgeIndex = 2;
 			m_vecCell[i + 1]->vecAdj.push_back(tInfo);
 		}
 
-		idx = i + (iLineRectCount * 2);
+		idx = (int)i + (iLineRectCount * 2);
 		if (idx < m_vecCell.size())
 		{
 			tInfo.iIndex = idx;
-			tInfo.iEdgeIndex = 2;
+			tInfo.iEdgeIndex = 1;
 			m_vecCell[i + 1]->vecAdj.push_back(tInfo);
 		}
 	}
@@ -211,7 +217,7 @@ void CNavigationMesh::CreateAdj()
 	Vector3	vEdgeDir[2][3];
 	float	fLength[2][3];
 
-	for (int i = 0; i < iSize; ++i)
+	for (size_t i = 0; i < iSize; ++i)
 	{
 		Vector3	vSrc[3];
 		Vector3	vSrcOrigin[3];
@@ -229,7 +235,7 @@ void CNavigationMesh::CreateAdj()
 		vOrigin[0][1] = m_vecCell[i]->vPos[1];
 		vOrigin[0][2] = m_vecCell[i]->vPos[2];
 
-		for (int j = i + 1; j < iSize; ++j)
+		for (size_t j = i + 1; j < iSize; ++j)
 		{
 			// 삼각형의 3개의 엣지들을 서로 내적하여 평행한지 비교한다.
 			Vector3	vDest[3];
@@ -244,7 +250,9 @@ void CNavigationMesh::CreateAdj()
 			for (int k = 0; k < 3; ++k)
 			{
 				vEdgeDir[1][k] = m_vecCell[j]->vEdge[k];
+
 				fLength[1][k] = vEdgeDir[1][k].Length();
+
 				vEdgeDir[1][k].Normalize();
 			}
 
@@ -263,31 +271,28 @@ void CNavigationMesh::CreateAdj()
 							vOrigin[0][iPosIdx[k][1]] == vOrigin[1][iPosIdx[l][1]]))
 					{
 						ADJINFO	tInfo = {};
-						tInfo.iIndex = j;
+						tInfo.iIndex = (int)j;
 						tInfo.iEdgeIndex = k;
 						m_vecCell[i]->vecAdj.push_back(tInfo);
 
-						tInfo.iIndex = i;
+						tInfo.iIndex = (int)i;
 						tInfo.iEdgeIndex = l;
 						m_vecCell[j]->vecAdj.push_back(tInfo);
 						bInsert = true;
 						break;
 					}
 
-					/*
-					두 엣지에 대해서 상대 엣지를 구성하는 2개의 점이 
-					대상 엣지 위에 둘 다 존재하는지를 판단한다
-					둘 다 존재한다면 무조건 붙어있는 것이다.
-					(B1 - A1, B2 - A1), (B1 - A2, B2 - A2)
-					내적을 통해서 빼준 벡터의 크기가 그대로 나온다면
-					직선 상에 존재하는 것이다. 단, 둘 다 크기가 나올 경우는
-					무조건 존재하는 것이다.
-					둘 중 하나만 나온다면 크기가 0이면 하나의 점만 직선 위에 존재하고
-					두 점 위치가 같다는 것이므로 해당 삼ㄱ가형은
-					인접 삼각형이 아니다
-					*/
+					// 두 엣지에 대해서 상대 엣지를 구성하는 2개의 점이 대상 엣지
+					// 위에 둘다 존재하는지를 판단한다. 둘다 존재한다면
+					// 무조건 붙어있는 것이다.
+					// (B1 - A1, B2 - A1), (B1 - A2, B2 - A2)
+					// 내적을 통해서 빼준 벡터의 크기가 그대로 나온다면
+					// 직선상에 존재하는 것이다. 단, 둘다 크기가 나올 경우는
+					// 무조건 존재하는 것이고 둘중 하나만 나온다면 크기가 0이라면
+					// 하나의 점만 직선위에 존재하고 두 점 위치가 같다는 것이므로
+					// 해당 삼각형은 인접 삼각형이 아니다.
 					// B1 - A1 처리
-					if (CheckOnEdge(i, j, vOrigin[1][iPosIdx[l][0]],
+					if (CheckOnEdge((int)i, (int)j, vOrigin[1][iPosIdx[l][0]],
 						vOrigin[0][iPosIdx[k][0]], vEdgeDir[0][k], fLength[0][k], k, l))
 					{
 						bInsert = true;
@@ -295,7 +300,7 @@ void CNavigationMesh::CreateAdj()
 					}
 
 					// B2 - A1 처리
-					else if (CheckOnEdge(i, j, vOrigin[1][iPosIdx[l][1]],
+					else if (CheckOnEdge((int)i, (int)j, vOrigin[1][iPosIdx[l][1]],
 						vOrigin[0][iPosIdx[k][0]], vEdgeDir[0][k], fLength[0][k], k, l))
 					{
 						bInsert = true;
@@ -303,7 +308,7 @@ void CNavigationMesh::CreateAdj()
 					}
 
 					// B1 - A2 처리
-					else if (CheckOnEdge(i, j, vOrigin[1][iPosIdx[l][0]],
+					else if (CheckOnEdge((int)i, (int)j, vOrigin[1][iPosIdx[l][0]],
 						vOrigin[0][iPosIdx[k][1]], vEdgeDir[0][k] * -1.f, fLength[0][k], k, l))
 					{
 						bInsert = true;
@@ -311,7 +316,7 @@ void CNavigationMesh::CreateAdj()
 					}
 
 					// B2 - A2 처리
-					else if (CheckOnEdge(i, j, vOrigin[1][iPosIdx[l][1]],
+					else if (CheckOnEdge((int)i, (int)j, vOrigin[1][iPosIdx[l][1]],
 						vOrigin[0][iPosIdx[k][1]], vEdgeDir[0][k] * -1.f, fLength[0][k], k, l))
 					{
 						bInsert = true;
@@ -324,7 +329,7 @@ void CNavigationMesh::CreateAdj()
 		string	strText;
 
 		char	strNumber[128] = {};
-		_itoa_s(i, strNumber, 10);
+		_itoa_s((int)i, strNumber, 10);
 		strText += strNumber;
 		strText += " Adj : ";
 
@@ -351,22 +356,20 @@ void CNavigationMesh::CreateAdj()
 	CreateSection();
 }
 
-bool CNavigationMesh::CheckOnEdge(int iSrc, int iDest, 
-	const Vector3 & vOrigin1, const Vector3 & vOrigin2, 
+bool CNavigationMesh::CheckOnEdge(int iSrc, int iDest,
+	const Vector3 & vOrigin1, const Vector3 & vOrigin2,
 	const Vector3 & vEdge, float fEdgeLength, int iEdge1, int iEdge2)
 {
-	// 소수점 두번째 자리 까지만 비교
-	if ((int)(vOrigin2.x * 100) == (int)(vOrigin1.x * 100) &&
-		(int)(vOrigin2.y * 100) == (int)(vOrigin1.y * 100) &&
+	if ((int)(vOrigin2.x * 100) == (int)(vOrigin1.x * 100) && (int)(vOrigin2.y * 100) == (int)(vOrigin1.y * 100) &&
 		(int)(vOrigin2.z * 100) == (int)(vOrigin1.z * 100))
 		return false;
 
-	Vector3 vResult = vOrigin1 - vOrigin2;
+	Vector3	vResult = vOrigin1 - vOrigin2;
 
 	float	fDist = vResult.Length();
 
-	// 위에서 구해준 거리를 이용해서 원점으로부터 엣지 방향으로 지정된
-	// 거리만큼 이동된 위치에 대상 점이 있는지를 판단한다
+	// 위에서 구해준 거리를 이용해서 원점으로부터 엣지 방향으로 지정된 거리만큼 이동된 위치에 대상 점이 있는지를
+	// 판단한다.
 	vResult = vOrigin2 + vEdge * fDist;
 
 	if ((int)(vResult.x * 100) == (int)(vOrigin1.x * 100) && (int)(vResult.y * 100) == (int)(vOrigin1.y * 100) &&
@@ -390,15 +393,18 @@ bool CNavigationMesh::CheckOnEdge(int iSrc, int iDest,
 	return false;
 }
 
-bool CNavigationMesh::CheckPathDir(const Vector3 & _vSrc1, const Vector3 & _vSrc2, 
-	const Vector3 & _vDest1, const Vector3 & _vDest2, Vector3 & _vIntersect)
+bool CNavigationMesh::CheckPathDir(const Vector3 & vSrc1,
+	const Vector3 & vSrc2, const Vector3 & vDest1,
+	const Vector3 & vDest2, Vector3 & vIntersect)
 {
 	double t;
 	double s;
+	double under = (vDest2.z - vDest1.z)*(vSrc2.x - vSrc1.x) - (vDest2.x - vDest1.x)*(vSrc2.z - vSrc1.z);
+	if (under == 0)
+		return false;
 
-	double under = (_vDest2.z - _vDest1.z)*( _vSrc2.x - _vSrc1.x) - (_vDest2.x - _vDest1.x)*(_vSrc2.z - _vSrc1.z);
-	double _t = (_vDest2.x - _vDest1.x)*(_vSrc1.z - _vDest1.z) - (_vDest2.z - _vDest1.z)*(_vSrc1.x - _vDest1.x);
-	double _s = (_vSrc2.x - _vSrc1.x)*(_vSrc1.z - _vDest1.z) - (_vSrc2.z - _vSrc1.z)*(_vSrc1.x - _vDest1.x);
+	double _t = (vDest2.x - vDest1.x)*(vSrc1.z - vDest1.z) - (vDest2.z - vDest1.z)*(vSrc1.x - vDest1.x);
+	double _s = (vSrc2.x - vSrc1.x)*(vSrc1.z - vDest1.z) - (vSrc2.z - vSrc1.z)*(vSrc1.x - vDest1.x);
 
 	t = _t / under;
 	s = _s / under;
@@ -409,13 +415,14 @@ bool CNavigationMesh::CheckPathDir(const Vector3 & _vSrc1, const Vector3 & _vSrc
 	if (_t == 0 && _s == 0)
 		return false;
 
-	_vIntersect.x = _vSrc1.x + t * (double)(_vSrc2.x - _vSrc1.x);
-	_vIntersect.z = _vSrc1.z + t * (double)(_vSrc2.z - _vSrc1.z);
+	vIntersect.x = (float)(vSrc1.x + t * (double)(vSrc2.x - vSrc1.x));
+	vIntersect.z = (float)(vSrc1.z + t * (double)(vSrc2.z - vSrc1.z));
 
 	return true;
 }
 
-void CNavigationMesh::FindPath(Vector3 & vStart, const Vector3 & vEnd)
+void CNavigationMesh::FindPath(const Vector3 & vStart,
+	const Vector3 & vEnd)
 {
 	PNavigationCell	pStart = FindCell(vStart);
 	PNavigationCell	pEnd = FindCell(vEnd);
@@ -426,11 +433,37 @@ void CNavigationMesh::FindPath(Vector3 & vStart, const Vector3 & vEnd)
 	else if (!pEnd->bEnable)
 		return;
 
-	m_OpenList.Clear();
-
-	for (size_t i = 0; i < m_vecCell.size(); ++i)
+	if (pStart == pEnd)
 	{
-		m_vecCell[i]->Clear();
+		m_PathList.clear();
+		m_PathList.push_back(vEnd);
+		return;
+	}
+
+	if (!m_pCloseList)
+		m_pCloseList = new PNavigationCell[m_vecCell.size()];
+
+	for (int i = 0; i < m_iCloseListSize; ++i)
+	{
+		m_pCloseList[i]->eType = NCLT_NONE;
+		m_pCloseList[i]->iParentIdx = -1;
+		m_pCloseList[i]->fG = -1.f;
+		m_pCloseList[i]->fH = -1.f;
+		m_pCloseList[i]->fTotal = -1.f;
+	}
+
+	m_iCloseListSize = 0;
+
+	while (!m_OpenList.empty())
+	{
+		PNavigationCell	pOpenCell = nullptr;
+		m_OpenList.pop(pOpenCell);
+
+		pOpenCell->eType = NCLT_NONE;
+		pOpenCell->iParentIdx = -1;
+		pOpenCell->fG = -1.f;
+		pOpenCell->fH = -1.f;
+		pOpenCell->fTotal = -1.f;
 	}
 
 	while (!m_FindStack.empty())
@@ -438,10 +471,13 @@ void CNavigationMesh::FindPath(Vector3 & vStart, const Vector3 & vEnd)
 		m_FindStack.pop();
 	}
 
-	// 시작 노드를 열린목록어 넣어준다.
+	m_PathList.clear();
+	
+	// 시작 노드를 열린목록에 넣어준다.
 	pStart->eType = NCLT_OPEN;
 	pStart->fG = 0.f;
-	pStart->fH = vStart.Distance(vEnd);
+	Vector3 Temp = vStart;
+	pStart->fH = Temp.Distance(vEnd);
 	pStart->fTotal = pStart->fH;
 
 	m_OpenList.Insert(pStart);
@@ -458,13 +494,16 @@ void CNavigationMesh::FindPath(Vector3 & vStart, const Vector3 & vEnd)
 		// 얻어온 셀은 닫힌목록으로 만들어준다.
 		pCell->eType = NCLT_CLOSE;
 
-		// 인접한 셀을 얻어온다. 열린목록에 포함시킬지 
-		// 판단해야 하기 때문이다.
+		m_pCloseList[m_iCloseListSize] = pCell;
+		++m_iCloseListSize;
+
+		// 인접한 셀을 얻어온다. 열린목록에 포함시킬지 판단해야 하기
+		// 때문이다.
 		AddOpenList(pCell, pEnd, vStart, vEnd);
 	}
 }
 
-float CNavigationMesh::GetY(const Vector3& vPos)
+float CNavigationMesh::GetY(const Vector3 & vPos)
 {
 	if (!m_bGrid)
 	{
@@ -493,30 +532,30 @@ float CNavigationMesh::GetY(const Vector3& vPos)
 		return 0.f;
 	}
 
-	Vector3 vCellSize = (m_vMax - m_vMin) / m_iLineRectCount;
-	Vector3 vConvertPos = vPos - m_vMin;
+	Vector3	vCellSize = (m_vMax - m_vMin) / m_iLineRectCount;
+	Vector3	vConvertPos = vPos - m_vMin;
 
-	// 가로, 세로를 1로 만들어준다
+	// 가로, 세로를 1로 만들어준다.
 	vConvertPos.x /= vCellSize.x;
 	vConvertPos.z /= vCellSize.z;
 
-	// 사각형 인덱스를 구한다
-	int idxX = (int)vConvertPos.x;
-	int idxZ = m_iLineRectCount - ((int)vConvertPos.z + 1);
+	// 사각형 인덱스를 구한다.
+	int	idxX = (int)vConvertPos.x;
+	int	idxZ = m_iLineRectCount - ((int)vConvertPos.z + 1);
 
-	if (idxX <0 || idxX > m_iLineRectCount)
+	if (idxX < 0 || idxX > m_iLineRectCount)
 		return 0.f;
 
-	else if (idxZ <0 || idxZ >m_iLineRectCount)
+	else if (idxZ < 0 || idxZ > m_iLineRectCount)
 		return 0.f;
 
-	int idx = (idxZ * m_iLineRectCount + idxX) * 2;
+	int	idx = (idxZ * m_iLineRectCount + idxX) * 2;
 
 	if (!m_vecCell[idx]->bEnable)
 		return 0;
 
-	// 구해준 사각형의 좌상단 점을 구한다
-	Vector3 vLTPos = m_vecCell[idx]->vPos[0];
+	// 구해준 사각형의 좌상단 점을 구한다.
+	Vector3	vLTPos = m_vecCell[idx]->vPos[0];
 	vLTPos.x /= vCellSize.x;
 	vLTPos.z /= vCellSize.z;
 
@@ -526,7 +565,7 @@ float CNavigationMesh::GetY(const Vector3& vPos)
 	// 우상단 삼각형일 경우
 	if (fX >= fZ)
 	{
-		// Cell을 구성하는 점의 Y값을 얻어온다
+		// Cell을 구성하는 점의 Y값을 얻어온다.
 		float	fY[3] = {};
 		for (int i = 0; i < 3; ++i)
 		{
@@ -544,8 +583,6 @@ float CNavigationMesh::GetY(const Vector3& vPos)
 	}
 
 	return fY[0] + (fY[1] - fY[2]) * fX + (fY[2] - fY[0]) * fZ;
-
-	return 0.0f;
 }
 
 bool CNavigationMesh::CheckCell(const Vector3 & vPos)
@@ -636,12 +673,12 @@ void CNavigationMesh::CreateSection()
 			int	idx = i * m_iSectionX + j;
 			m_pSection[idx].vSize = m_vSectionSize;
 			m_pSection[idx].vMin = m_vMin + m_vSectionSize * Vector3((float)j, 0, (float)i);
-			m_pSection[idx].vMax = m_vMin + m_vSectionSize * Vector3((float)(j + 1), (float)1, (float)(i + 1));
+			m_pSection[idx].vMax = m_vMin + m_vSectionSize * Vector3(((float)j + 1), 1, ((float)i + 1));
 		}
 	}
 
 	// 최대 4개의 영역에 포함될 수 있다.
-	// 어디 포함되어 있는지 판단해야 한다.
+	// 어디 포함되어 있는지 판단해야 한다. 제발.
 	for (size_t i = 0; i < m_vecCell.size(); ++i)
 	{
 		// 삼각형을 구성하는 3개의 점을 이용해서 인덱스를 구한다.
@@ -691,7 +728,9 @@ void CNavigationMesh::CreateSection()
 	}
 }
 
-void CNavigationMesh::AddOpenList(PNavigationCell pCell, PNavigationCell pEnd, const Vector3 & vStart, const Vector3 & vEnd)
+void CNavigationMesh::AddOpenList(PNavigationCell pCell,
+	PNavigationCell pEnd, const Vector3& vStart,
+	const Vector3& vEnd)
 {
 	for (size_t i = 0; i < pCell->vecAdj.size(); ++i)
 	{
@@ -746,12 +785,14 @@ void CNavigationMesh::AddOpenList(PNavigationCell pCell, PNavigationCell pEnd, c
 				// 위에서 어느 엣지를 기준으로 인접정보가 구성되었는지
 				// 찾았다면 여기서 센터정보를 구해준다.
 				vecCenter.push_back(iEdgeIndex);
+
+				m_PathList.push_back(pCell->vEdgeCenter[iEdgeIndex]);
 			}
 
 			// 정해진 경로의 인덱스 수만큼 반복하며 해당 삼각형을
 			// 관통하는지 판단한다.
-			Vector3	vStartPos = vStart;
-			std::vector<int> vecLastPath;
+			/*Vector3	vStartPos = vStart;
+			vector<int>	vecLastPath;
 			m_PathList.clear();
 
 			for (size_t j = 2; j < vecPathIndex.size() - 1; ++j)
@@ -763,7 +804,7 @@ void CNavigationMesh::AddOpenList(PNavigationCell pCell, PNavigationCell pEnd, c
 				vDir.Normalize();
 
 				Vector3	vEndPos = vStartPos + vDir * fDist;
-				int iEdgePathCount = 0;
+				int	iEdgePathCount = 0;
 
 				for (int k = 0; k < 3; ++k)
 				{
@@ -802,7 +843,7 @@ void CNavigationMesh::AddOpenList(PNavigationCell pCell, PNavigationCell pEnd, c
 					vStartPos = m_vecCell[vecPathIndex[j - 1]]->vEdgeCenter[vecCenter[j - 1]];
 					m_PathList.push_back(vStartPos);
 				}
-			}
+			}*/
 
 			m_PathList.push_back(vEnd);
 
@@ -813,13 +854,12 @@ void CNavigationMesh::AddOpenList(PNavigationCell pCell, PNavigationCell pEnd, c
 
 		float	fG = pAdj->vCenter.Distance(pCell->vCenter);
 		float	fH = pAdj->vCenter.Distance(vEnd);
-		float	fTotal = fG + fH;
 
 		if (pAdj->eType == NCLT_NONE)
 		{
 			pAdj->fG = fG + pCell->fG;
 			pAdj->fH = fH;
-			pAdj->fTotal = fTotal + pCell->fG;
+			pAdj->fTotal = pAdj->fG + pAdj->fH;
 			pAdj->iParentIdx = pCell->iIndex;
 			pAdj->eType = NCLT_OPEN;
 			m_OpenList.Insert(pAdj);
@@ -829,7 +869,7 @@ void CNavigationMesh::AddOpenList(PNavigationCell pCell, PNavigationCell pEnd, c
 		{
 			pAdj->fG = fG + pCell->fG;
 			pAdj->fH = fH;
-			pAdj->fTotal = fTotal + pCell->fG;
+			pAdj->fTotal = pAdj->fG + pAdj->fH;
 			pAdj->iParentIdx = pCell->iIndex;
 			m_OpenList.Sort();
 		}
@@ -895,46 +935,41 @@ int CNavigationMesh::GetCellIndex(const Vector3 & vPos)
 	return (idxZ * m_iLineRectCount + idxX) * 2;
 }
 
-bool CNavigationMesh::RayIntersectTriangle(Vector3 rayOrigin, Vector3 rayDir, 
-	Vector3 v0, Vector3 v1, Vector3 v2, 
-	float & fDist, Vector3 & vIntersect)
+bool CNavigationMesh::RayIntersectTriangle(Vector3 rayOrigin,
+	Vector3 rayDir, Vector3 v0, Vector3 v1, Vector3 v2,
+	float & t, Vector3 & vIntersect)
 {
-	Vector3 Edge1 = v1 - v0;
-	Vector3 Edge2 = v2 - v0;
+	Vector3 e1, e2, h, s, q;
+	float a, f, u, v;
 
-	// 광선과 Edge2의 수직인 벡터를 구한다
-	Vector3 vEgde2_Normal = rayDir.Cross(Edge2);
+	e1 = v1 - v0;
+	e2 = v2 - v0;
+	h = rayDir.Cross(e2);
+	a = e1.Dot(h);
 
-	// 수직인 벡터와 Edge1의 각도를 구해준다
-	float fAngle = Edge1.Dot(vEgde2_Normal);
-
-	// 각도가 0이면 즉, 수직이면 관통하지 않는다
-	if (fAngle > -0.00001 && fAngle < 0.00001)
+	if (a > -0.00001 && a < 0.00001)
 		return false;
 
-	float f = 1.f / fAngle;
+	f = 1.f / a;
+	s = rayOrigin - v0;
 
-	// 정점 v0에서 rayorigin으로의 방향을 구한다
-	Vector3 vDir_to_rayOrigin = rayOrigin - v0;
-
-
-	float u = f * vDir_to_rayOrigin.Dot(vEgde2_Normal);
+	u = f * s.Dot(h);
 
 	if (u < 0.f || u > 1.f)
 		return false;
 
-	Vector3 q = vDir_to_rayOrigin.Cross(Edge1);
+	q = s.Cross(e1);
 
-	float v = f * rayDir.Dot(q);
+	v = f * rayDir.Dot(q);
 
 	if (v < 0.f || u + v > 1.f)
 		return false;
 
-	fDist = f * Edge2.Dot(q);
+	t = f * e2.Dot(q);
 
-	if (fDist > 0.00001)
+	if (t > 0.00001)
 	{
-		vIntersect = rayOrigin + rayDir * fDist;
+		vIntersect = rayOrigin + rayDir * t;
 		return true;
 	}
 

@@ -289,4 +289,21 @@ namespace PUN
 		int		iSplatCount;
 		Vector2	vEmpty;
 	}LandScapeCBuffer, *PLandScapeCBuffer;
+
+	struct PUN_DLL TimeInfo
+	{
+		clock_t Start;
+		clock_t End;
+	};
+
+	struct PUN_DLL FileStream
+	{
+		ofstream Input;
+		ofstream Update;
+		ofstream LateUpdate;
+		ofstream Collsion;
+		ofstream Render;
+
+		~FileStream() { Input.close(); Update.close(); LateUpdate.close(); Collsion.close(); Render.close(); }
+	};
 }

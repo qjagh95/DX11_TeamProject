@@ -58,17 +58,11 @@
     <Filter Include="06. Component\08. UI">
       <UniqueIdentifier>{7d8219fd-11da-49ca-872e-5fed960210ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. Component\10. Stage2D">
-      <UniqueIdentifier>{db5fae1f-d4cc-4b6f-8703-01b407af6e29}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Rendering\02. RenderState">
       <UniqueIdentifier>{164da729-6849-458a-b34a-326d6ab03b15}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Rendering\03. RenderTarget">
       <UniqueIdentifier>{c0e3938a-ff31-44e9-90cd-98471f7c0f4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. Component\11. Navigation">
-      <UniqueIdentifier>{be952377-dfae-4799-9e78-806e26d71995}</UniqueIdentifier>
     </Filter>
     <Filter Include="06. Component\08. UI\01. Bar">
       <UniqueIdentifier>{699aad5c-eb1b-4c5d-8866-b64e908409b2}</UniqueIdentifier>
@@ -113,9 +107,6 @@
     <Filter Include="06. Component\13. LandScape">
       <UniqueIdentifier>{1fdec378-5aae-4707-ba50-6026f08b9586}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. Component\14.Arm">
-      <UniqueIdentifier>{460c8ac4-64b8-4ac8-b75a-c7577d5a23dd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Core\09. BineryFileIO">
       <UniqueIdentifier>{a71992b5-b86b-4121-af51-b7beb802b6b2}</UniqueIdentifier>
     </Filter>
@@ -128,6 +119,9 @@
     </Filter>
     <Filter Include="01. Core\12. DataStructure">
       <UniqueIdentifier>{59f3b2e6-15f6-43d1-9949-95cd0aa02395}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Component\14. Arm">
+      <UniqueIdentifier>{460c8ac4-64b8-4ac8-b75a-c7577d5a23dd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -251,18 +245,6 @@
     <ClCompile Include="Component\UI.cpp">
       <Filter>06. Component\08. UI</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Stage2D.cpp">
-      <Filter>06. Component\10. Stage2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Tile2D.cpp">
-      <Filter>06. Component\10. Stage2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Navigation2D.cpp">
-      <Filter>06. Component\11. Navigation</Filter>
-    </ClCompile>
-    <ClCompile Include="NavigationManager.cpp">
-      <Filter>01. Core\08. Navigation</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Text.cpp">
       <Filter>06. Component\08. UI</Filter>
     </ClCompile>
@@ -275,17 +257,8 @@
     <ClCompile Include="Component\UIButton.cpp">
       <Filter>06. Component\08. UI\03. Button</Filter>
     </ClCompile>
-    <ClCompile Include="StageManager.cpp">
-      <Filter>06. Component\10. Stage2D</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Light.cpp">
       <Filter>06. Component\12. Light</Filter>
-    </ClCompile>
-    <ClCompile Include="BineryReader.cpp">
-      <Filter>01. Core\09. BineryFileIO</Filter>
-    </ClCompile>
-    <ClCompile Include="BineryWriter.cpp">
-      <Filter>01. Core\09. BineryFileIO</Filter>
     </ClCompile>
     <ClCompile Include="GUIManager.cpp">
       <Filter>01. Core\10. GUIManager</Filter>
@@ -306,7 +279,7 @@
       <Filter>06. Component\13. LandScape</Filter>
     </ClCompile>
     <ClCompile Include="Component\Arm.cpp">
-      <Filter>06. Component\14.Arm</Filter>
+      <Filter>06. Component\14. Arm</Filter>
     </ClCompile>
     <ClCompile Include="EngineHeader.cpp">
       <Filter>헤더 파일</Filter>
@@ -325,6 +298,12 @@
     </ClCompile>
     <ClCompile Include="NavigationManager3D.cpp">
       <Filter>01. Core\08. Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryWriter.cpp">
+      <Filter>01. Core\09. BineryFileIO</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryReader.cpp">
+      <Filter>01. Core\09. BineryFileIO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -460,18 +439,6 @@
     <ClInclude Include="Component\UI.h">
       <Filter>06. Component\08. UI</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Stage2D.h">
-      <Filter>06. Component\10. Stage2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Tile2D.h">
-      <Filter>06. Component\10. Stage2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Navigation2D.h">
-      <Filter>06. Component\11. Navigation</Filter>
-    </ClInclude>
-    <ClInclude Include="NavigationManager.h">
-      <Filter>01. Core\08. Navigation</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Text.h">
       <Filter>06. Component\08. UI</Filter>
     </ClInclude>
@@ -484,17 +451,8 @@
     <ClInclude Include="Component\UIButton.h">
       <Filter>06. Component\08. UI\03. Button</Filter>
     </ClInclude>
-    <ClInclude Include="StageManager.h">
-      <Filter>06. Component\10. Stage2D</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Light.h">
       <Filter>06. Component\12. Light</Filter>
-    </ClInclude>
-    <ClInclude Include="BineryReader.h">
-      <Filter>01. Core\09. BineryFileIO</Filter>
-    </ClInclude>
-    <ClInclude Include="BineryWriter.h">
-      <Filter>01. Core\09. BineryFileIO</Filter>
     </ClInclude>
     <ClInclude Include="GUIManager.h">
       <Filter>01. Core\10. GUIManager</Filter>
@@ -518,7 +476,7 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Component\Arm.h">
-      <Filter>06. Component\14.Arm</Filter>
+      <Filter>06. Component\14. Arm</Filter>
     </ClInclude>
     <ClInclude Include="EngineHeader.h">
       <Filter>헤더 파일</Filter>
@@ -540,6 +498,12 @@
     </ClInclude>
     <ClInclude Include="Heap.h">
       <Filter>01. Core\12. DataStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryWriter.h">
+      <Filter>01. Core\09. BineryFileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryReader.h">
+      <Filter>01. Core\09. BineryFileIO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

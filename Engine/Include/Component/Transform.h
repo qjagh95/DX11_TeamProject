@@ -147,6 +147,10 @@ public:
 	void LookAt(class CGameObject* pObj, AXIS eAxis = AXIS_Z);
 	void LookAt(class CComponent* pCom, AXIS eAxis = AXIS_Z);
 	void LookAt(const Vector3& vPos, AXIS eAxis = AXIS_Z);
+	void LookAtY(class CGameObject* pObj);
+	void LookAtY(class CComponent* pCom);
+	void LookAtY(const Vector3& vPos);
+
 	void LookAt2D(const Vector3& vPos);
 	void UpdateTransform();
 

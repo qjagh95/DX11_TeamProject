@@ -173,6 +173,7 @@ bool CInput::Init()
 	memset(m_bMousePress, 0, sizeof(bool) * MS_END);
 	memset(m_bMousePush, 0, sizeof(bool) * MS_END);
 	memset(m_bMouseRelease, 0, sizeof(bool) * MS_END);
+
 	return true;
 }
 

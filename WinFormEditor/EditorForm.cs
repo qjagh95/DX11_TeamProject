@@ -130,11 +130,10 @@ namespace WinFormEditor
             string strTemp = m_strLayerTag;
 
             ObjList.Items.Clear();
-            strTemp += "Layer 에서";
             m_strLayerTag = (string)LayerList.SelectedItem;
 
             strTemp += m_strLayerTag;
-            strTemp += "Layer로 변경합니다.";
+            strTemp += " Layer가 선택되었습니다.";
 
             AddLogString(strTemp);
 
@@ -159,7 +158,7 @@ namespace WinFormEditor
             int iIndex = ObjList.SelectedIndex;
             coreWrapper.SetIndexFromActiveObj(iIndex, m_strLayerTag);
 
-            AddLogString("활성화된 Object가 " + ObjList.SelectedItem.ToString() + " 로 변경됩니다.");
+            AddLogString("선택된 Object가 " + ObjList.SelectedItem.ToString() + " 로 변경됩니다.");
         }
 
         private void PositionX_TextChanged(object sender, EventArgs e)
@@ -169,7 +168,7 @@ namespace WinFormEditor
 
             if (m_strPositionX.Length == 1 && m_strPositionX[0] == '-')
             {
-                AddLogString("PositionX Text Box에 잘못된 입력이 들어갔습니다.");
+                AddLogString("Error! 입력이 잘못 되었습니다.");
                 return;
             }
 
@@ -190,7 +189,7 @@ namespace WinFormEditor
 
             if (m_strPositionY.Length == 1 && m_strPositionY[0] == '-')
             {
-                AddLogString("Error! PositionY Text Box에 잘못된 입력이 들어갔습니다.");
+                AddLogString("Error! 입력이 잘못 되었습니다.");
                 return;
             }
 
@@ -212,7 +211,7 @@ namespace WinFormEditor
 
             if (m_strPositionZ.Length == 1 && m_strPositionZ[0] == '-')
             {
-                AddLogString("Error! PositionZ Text Box에 잘못된 입력이 들어갔습니다.");
+                AddLogString("Error! 입력이 잘못 되었습니다.");
                 return;
             }
 
@@ -246,7 +245,7 @@ namespace WinFormEditor
 
             if (m_strScaleX.Length == 1 && m_strScaleX[0] == '-')
             {
-                AddLogString("Error! ScaleX Text Box에 잘못된 입력이 들어갔습니다.");
+                AddLogString("Error! 입력이 잘못 되었습니다.");
                 return;
             }
 
@@ -267,7 +266,7 @@ namespace WinFormEditor
 
             if (m_strScaleY.Length == 1 && m_strScaleY[0] == '-')
             {
-                AddLogString("Error! ScaleY Text Box에 잘못된 입력이 들어갔습니다.");
+                AddLogString("Error! 입력이 잘못 되었습니다.");
                 return;
             }
 
@@ -289,7 +288,7 @@ namespace WinFormEditor
 
             if (m_strScaleZ.Length == 1 && m_strScaleZ[0] == '-')
             {
-                AddLogString("Error! ScaleZ Text Box에 잘못된 입력이 들어갔습니다.");
+                AddLogString("Error! 입력이 잘못 되었습니다.");
                 return;
             }
 
@@ -311,7 +310,7 @@ namespace WinFormEditor
 
             if (m_strRotX.Length == 1 && m_strRotX[0] == '-')
             {
-                AddLogString("Error! RotationX Text Box에 잘못된 입력이 들어갔습니다.");
+                AddLogString("Error! 입력이 잘못 되었습니다.");
                 return;
             }
 
@@ -334,7 +333,7 @@ namespace WinFormEditor
 
             if (m_strRotY.Length == 1 && m_strRotY[0] == '-')
             {
-                AddLogString("Error! RotationY Text Box에 잘못된 입력이 들어갔습니다.");
+                AddLogString("Error! 입력이 잘못 되었습니다.");
                 return;
             }
 
@@ -357,7 +356,7 @@ namespace WinFormEditor
 
             if (m_strRotZ.Length == 1 && m_strRotZ[0] == '-')
             {
-                AddLogString("Error! RotationZ Text Box에 잘못된 입력이 들어갔습니다.");
+                AddLogString("Error! 입력이 잘못 되었습니다.");
                 return;
             }
 
@@ -625,6 +624,10 @@ namespace WinFormEditor
         void AddLogString(string _strLog)
         {
             LogMessage.Items.Insert(0 , _strLog);
+        }
+
+        private void AnimationBtn_Click(object sender, EventArgs e)
+        {
         }
     }
 }

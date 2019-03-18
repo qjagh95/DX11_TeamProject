@@ -5,6 +5,7 @@
 #include "Component/LandScape.h"
 #include "Component/Arm.h"
 #include "../UserComponent/Player.h"
+#include "../UserComponent/Minion.h"
 #include "../UserComponent/Field.h"
 
 CFirTestScene::CFirTestScene()
@@ -49,7 +50,8 @@ bool CFirTestScene::Init()
 	pObject = CGameObject::CreateObject("TestObject", pDefaultLayer, true);
 	pTransform = pObject->GetTransform();
 
-	pTransform->SetWorldPos(0.f, 0.f, -300.f);
+	//pTransform->SetWorldPos(0.f, 0.f, 0.f);
+	pTransform->SetWorldPos(1.f, 1.f, 1.f);
 	pCamera->SetTarget(pObject);
 	m_pTr = pTransform;
 
@@ -66,8 +68,15 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pPlayer);
 	SAFE_RELEASE(pObject);
 
+	pObject = CGameObject::CreateObject("Minion", pDefaultLayer);
 
-	SAFE_RELEASE(pCamera);
+	CMinion3D*	pMinion = pObject->AddComponent<CMinion3D>("Minion");
+
+	pMinion->SetTargetTransform(m_pTr);
+
+	SAFE_RELEASE(pMinion);
+
+	SAFE_RELEASE(pObject);
 
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
 
@@ -91,6 +100,9 @@ bool CFirTestScene::Init()
 		TEXT("LandScape/Terrain_Cliff_11_NRM.bmp"),
 		TEXT("LandScape/Terrain_Cliff_11_SPEC.bmp"),
 		"LandScape/height2.bmp");
+
+	//GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene,
+	//	"Nav.nav");
 
 	vector<const TCHAR*> vecSplatName;
 
@@ -128,6 +140,8 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pLandScape);
 
 	SAFE_RELEASE(pLandScapeObj);
+
+	SAFE_RELEASE(pCamera);
 
 	SAFE_RELEASE(pDefaultLayer);
 	SAFE_RELEASE(pUILayer);

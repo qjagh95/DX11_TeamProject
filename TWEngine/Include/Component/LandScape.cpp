@@ -101,7 +101,7 @@ bool CLandScape::CreateLandScape(const string& strName,
 
 			float	y = 0.f;
 
-		//	if (pHeight)
+			if (pHeight)
 			{
 				y = pHeight[i * m_iNumX * iPixelSize + j * iPixelSize] * 0.05f;
 			}
@@ -208,9 +208,8 @@ bool CLandScape::CreateLandScape(const string& strName,
 
 	SAFE_RELEASE(pMaterial);
 
-	SAFE_DELETE_ARRAY(pHeight);
 
-	//if (pHeight)
+	if (pHeight)
 	{
 		m_pNavMesh = GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene);
 
@@ -239,6 +238,9 @@ bool CLandScape::CreateLandScape(const string& strName,
 
 		m_pNavMesh->Save("Nav.nav");
 	}
+
+	SAFE_DELETE_ARRAY(pHeight);
+
 
 	return true;
 }
@@ -347,8 +349,8 @@ int CLandScape::LateUpdate(float fTime)
 	}
 
 	// 내비메쉬에 이 지형의 트랜스폼에서 위치를 얻어와 지정해준다.
-	m_pNavMesh->SetOffset(m_pTransform->GetWorldPos());
-	m_pNavMesh->SetOffsetScale(m_pTransform->GetWorldScale());
+	//m_pNavMesh->SetOffset(m_pTransform->GetWorldPos());
+	//m_pNavMesh->SetOffsetScale(m_pTransform->GetWorldScale());
 
 	return 0;
 }
