@@ -44,6 +44,7 @@
 #pragma comment(lib, "dxguid")
 
 using namespace std;
+using namespace concurrency;
 
 #include <imgui.h>
 #include <imgui_impl_dx11.h>

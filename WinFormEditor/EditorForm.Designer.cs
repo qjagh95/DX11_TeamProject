@@ -35,8 +35,8 @@
             this.label11 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.ObjTagText = new System.Windows.Forms.TextBox();
             this.CreateObjectBtn = new System.Windows.Forms.Button();
+            this.ObjTagText = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.LayerList = new System.Windows.Forms.ListBox();
@@ -95,9 +95,9 @@
             this.FileSave = new System.Windows.Forms.Button();
             this.FileLoad = new System.Windows.Forms.Button();
             this.Renderer = new System.Windows.Forms.GroupBox();
+            this.MeshListText = new System.Windows.Forms.Label();
             this.AnimationBtn = new System.Windows.Forms.Button();
             this.LogMessage = new System.Windows.Forms.ListBox();
-            this.MeshListText = new System.Windows.Forms.Label();
             this.LogText = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DeviceWindow)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -187,6 +187,17 @@
             this.label10.TabIndex = 12;
             this.label10.Text = "Tag :";
             // 
+            // CreateObjectBtn
+            // 
+            this.CreateObjectBtn.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.CreateObjectBtn.Location = new System.Drawing.Point(3, 77);
+            this.CreateObjectBtn.Name = "CreateObjectBtn";
+            this.CreateObjectBtn.Size = new System.Drawing.Size(315, 29);
+            this.CreateObjectBtn.TabIndex = 5;
+            this.CreateObjectBtn.Text = "Create Object";
+            this.CreateObjectBtn.UseVisualStyleBackColor = true;
+            this.CreateObjectBtn.Click += new System.EventHandler(this.button1_Click);
+            // 
             // ObjTagText
             // 
             this.ObjTagText.BackColor = System.Drawing.SystemColors.Control;
@@ -198,17 +209,6 @@
             this.ObjTagText.Size = new System.Drawing.Size(134, 23);
             this.ObjTagText.TabIndex = 1;
             this.ObjTagText.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            // 
-            // CreateObjectBtn
-            // 
-            this.CreateObjectBtn.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.CreateObjectBtn.Location = new System.Drawing.Point(3, 77);
-            this.CreateObjectBtn.Name = "CreateObjectBtn";
-            this.CreateObjectBtn.Size = new System.Drawing.Size(315, 29);
-            this.CreateObjectBtn.TabIndex = 5;
-            this.CreateObjectBtn.Text = "Create Object";
-            this.CreateObjectBtn.UseVisualStyleBackColor = true;
-            this.CreateObjectBtn.Click += new System.EventHandler(this.button1_Click);
             // 
             // groupBox3
             // 
@@ -857,6 +857,15 @@
             this.Renderer.TabStop = false;
             this.Renderer.Text = "Renderer";
             // 
+            // MeshListText
+            // 
+            this.MeshListText.AutoSize = true;
+            this.MeshListText.Location = new System.Drawing.Point(7, 22);
+            this.MeshListText.Name = "MeshListText";
+            this.MeshListText.Size = new System.Drawing.Size(64, 17);
+            this.MeshListText.TabIndex = 5;
+            this.MeshListText.Text = "MeshList";
+            // 
             // AnimationBtn
             // 
             this.AnimationBtn.Location = new System.Drawing.Point(153, 220);
@@ -876,15 +885,6 @@
             this.LogMessage.Name = "LogMessage";
             this.LogMessage.Size = new System.Drawing.Size(684, 88);
             this.LogMessage.TabIndex = 12;
-            // 
-            // MeshListText
-            // 
-            this.MeshListText.AutoSize = true;
-            this.MeshListText.Location = new System.Drawing.Point(7, 22);
-            this.MeshListText.Name = "MeshListText";
-            this.MeshListText.Size = new System.Drawing.Size(64, 17);
-            this.MeshListText.TabIndex = 5;
-            this.MeshListText.Text = "MeshList";
             // 
             // LogText
             // 
@@ -914,7 +914,7 @@
             this.Controls.Add(this.Renderer);
             this.ForeColor = System.Drawing.SystemColors.WindowText;
             this.Name = "EditorForm";
-            this.Text = "MeshList";
+            this.Text = "MotherFatherChildren";
             this.TransparencyKey = System.Drawing.Color.Gray;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Delete);
             this.Load += new System.EventHandler(this.EditorForm_Load);

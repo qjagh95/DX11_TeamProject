@@ -3,6 +3,7 @@
 
 PUN_BEGIN
 
+class CAnimation2D;
 class PUN_DLL CUIButton :
 	public CUI
 {

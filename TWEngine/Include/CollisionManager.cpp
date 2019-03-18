@@ -331,7 +331,6 @@ void CCollisionManager::Collision(float fTime)
 							pCollSrc->OnCollisionLeave(pCollDest, fTime);
 							pCollDest->OnCollisionLeave(pCollSrc, fTime);
 						}
-
 						continue;
 					}
 
