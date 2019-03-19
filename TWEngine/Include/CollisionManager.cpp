@@ -24,13 +24,13 @@ CCollisionManager::~CCollisionManager()
 
 bool CCollisionManager::Init()
 {
-	CreateGroup("Default", Vector3(0.f, 0.f, 0.f), Vector3(10000.f, 10000.f, 0.f),
-		10, 10, 1, CGT_2D);
-	CreateGroup("BackGround", Vector3(0.f, 0.f, 0.f), Vector3(10000.f, 10000.f, 0.f),
-		10, 10, 1, CGT_2D);
+	CreateGroup("Default", Vector3(0.f, 0.f, 0.f), Vector3(500.0f, 500.0f, 500.0f),
+		5, 5, 1, CGT_3D);
+	CreateGroup("BackGround", Vector3(0.f, 0.f, 0.f), Vector3(500.0f, 500.0f, 500.0f),
+		5, 5, 1, CGT_3D);
 	CreateGroup("UI", Vector3(0.f, 0.f, 0.f),
 		Vector3((float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 0.f),
-		4, 4, 1, CGT_2D);
+		4, 4, 1, CGT_3D);
 
 	return true;
 }
@@ -138,23 +138,25 @@ void CCollisionManager::AddCollision(CGameObject * pObj)
 		}
 
 		vector<int>	vecIndex;
-		for (int i = zMin; i <= zMax; ++i)
+		parallel_for((int)zMin, zMax + 1, [&](int i)
 		{
+			zGoTo:
 			if (i < 0 || i >= pGroup->iCountZ)
-				continue;
+				goto zGoTo;
 
-			for (int j = yMin; j <= yMax; ++j)
+			parallel_for((int)yMin, yMax + 1, [&](int j)
 			{
+				yGoTo:
 				if (j < 0 || j >= pGroup->iCountY)
-					continue;
+					goto yGoTo;
 
-				for (int k = xMin; k <= xMax; ++k)
+				parallel_for((int)xMin, xMax + 1, [&](int k)
 				{
+				xGoTo:
 					if (k < 0 || k >= pGroup->iCountX)
-						continue;
+						goto xGoTo;
 
-					int idx = i * (pGroup->iCountX * pGroup->iCountY) +
-						j * pGroup->iCountX + k;
+					int idx = i * (pGroup->iCountX * pGroup->iCountY) +	j * pGroup->iCountX + k;
 
 					vecIndex.push_back(idx);
 
@@ -175,9 +177,49 @@ void CCollisionManager::AddCollision(CGameObject * pObj)
 
 					pSection->pList[pSection->iSize] = (CCollider*)*iter;
 					++pSection->iSize;
-				}
-			}
-		}
+				});
+			});
+		});
+
+		//for (int i = zMin; i <= zMax; ++i)
+		//{
+		//	if (i < 0 || i >= pGroup->iCountZ)
+		//		continue;
+
+		//	for (int j = yMin; j <= yMax; ++j)
+		//	{
+		//		if (j < 0 || j >= pGroup->iCountY)
+		//			continue;
+
+		//		for (int k = xMin; k <= xMax; ++k)
+		//		{
+		//			if (k < 0 || k >= pGroup->iCountX)
+		//				continue;
+
+		//			int idx = i * (pGroup->iCountX * pGroup->iCountY) +
+		//				j * pGroup->iCountX + k;
+
+		//			vecIndex.push_back(idx);
+
+		//			((CCollider*)*iter)->AddCollisionSection(idx);
+
+		//			PCollisionSection	pSection = &pGroup->pSectionList[idx];
+
+		//			if (pSection->iCapacity == pSection->iSize)
+		//			{
+		//				pSection->iCapacity *= 2;
+		//				CCollider** pArray = new CCollider*[pSection->iCapacity];
+
+		//				memcpy(pArray, pSection->pList, sizeof(CCollider*) * pSection->iSize);
+
+		//				SAFE_DELETE_ARRAY(pSection->pList);
+		//				pSection->pList = pArray;
+		//			}
+
+		//			pSection->pList[pSection->iSize] = (CCollider*)*iter;
+		//			++pSection->iSize;
+		//		}
+		//	}
 		//(*iter)->Release();
 	}
 }
@@ -331,6 +373,7 @@ void CCollisionManager::Collision(float fTime)
 							pCollSrc->OnCollisionLeave(pCollDest, fTime);
 							pCollDest->OnCollisionLeave(pCollSrc, fTime);
 						}
+
 						continue;
 					}
 
@@ -401,11 +444,11 @@ void CCollisionManager::Collision(float fTime)
 				pSection->pList[j]->CheckPrevCollisionInSection(fTime);
 			}
 
-			// 각 영역별 충돌체 수만큼 반복한다.
-			for (int j = 0; j < pSection->iSize - 1; ++j)
+			parallel_for((int)0, pSection->iSize - 1, [&](int j)
 			{
-				for (int k = j + 1; k < pSection->iSize; ++k)
+				parallel_for((int)j + 1, pSection->iSize, [&](int k)
 				{
+					count:
 					CGameObject*	pSrc = pSection->pList[j]->GetGameObject();
 					CGameObject*	pDest = pSection->pList[k]->GetGameObject();
 
@@ -413,7 +456,8 @@ void CCollisionManager::Collision(float fTime)
 					{
 						SAFE_RELEASE(pSrc);
 						SAFE_RELEASE(pDest);
-						continue;
+						k++;
+						goto count;
 					}
 
 					CCollider*	pCollSrc = pSection->pList[j];
@@ -454,8 +498,17 @@ void CCollisionManager::Collision(float fTime)
 
 					SAFE_RELEASE(pSrc);
 					SAFE_RELEASE(pDest);
-				}
-			}
+				});
+			});
+
+			//// 각 영역별 충돌체 수만큼 반복한다.
+			//for (int j = 0; j < pSection->iSize - 1; ++j)
+			//{
+			//	for (int k = j + 1; k < pSection->iSize; ++k)
+			//	{
+			//		
+			//	}
+			//}
 
 			pSection->iSize = 0;
 		}

@@ -20,6 +20,7 @@ CCollider::CCollider()
 	m_pLayout = GET_SINGLE(CShaderManager)->FindInputLayout(POS_LAYOUT);
 	m_pDepthDisable = nullptr;
 	m_vColor = Vector4::Green;
+	m_pWireFrame = nullptr;
 #endif // _DEBUG
 
 }
@@ -36,6 +37,7 @@ CCollider::CCollider(const CCollider & com) :
 	m_pShader = com.m_pShader;
 	m_pDepthDisable = com.m_pDepthDisable;
 	m_vColor = Vector4::Green;
+	m_pWireFrame = com.m_pWireFrame;
 
 	if (m_pShader)
 		m_pShader->AddRef();
@@ -45,6 +47,11 @@ CCollider::CCollider(const CCollider & com) :
 
 	if (m_pDepthDisable)
 		m_pDepthDisable->AddRef();
+
+	if (m_pWireFrame)
+		m_pWireFrame->AddRef();
+
+	
 #endif // _DEBUG
 }
 
@@ -61,6 +68,7 @@ CCollider::~CCollider()
 	}
 
 #ifdef _DEBUG
+	SAFE_RELEASE(m_pWireFrame);
 	SAFE_RELEASE(m_pDepthDisable);
 	SAFE_RELEASE(m_pShader);
 	SAFE_RELEASE(m_pMesh);
@@ -258,10 +266,17 @@ void CCollider::Render(float fTime)
 	if (m_pDepthDisable)
 		m_pDepthDisable->SetState();
 
+	if (m_pWireFrame)
+		m_pWireFrame->SetState();
+
 	m_pMesh->Render();
 
 	if (m_pDepthDisable)
 		m_pDepthDisable->ResetState();
+
+	if (m_pWireFrame)
+		m_pWireFrame->ResetState();
+
 #endif
 }
 
@@ -462,6 +477,209 @@ bool CCollider::CollisionRectToPixel(BoxInfo tSrc, const PixelInfo & tDest)
 	}
 
 	return false;
+}
+
+bool CCollider::CollisionSphereToSphere(SphereInfo tSrc, const SphereInfo & tDest)
+{
+	float fDist = tSrc.vCenter.Distance(tDest.vCenter);
+
+	return fDist <= tSrc.fRadius + tDest.fRadius;
+}
+
+bool CCollider::CollisionOBB3DToOBB3D(const OBB3DInfo & tSrc, const OBB3DInfo & tDest)
+{
+	Vector3	vDir = tDest.vCenter - tSrc.vCenter;
+
+	float	fAxisDot[3][3] = {};
+	float	fAbsAxisDot[3][3] = {};
+	float	fDirDot[3] = {};
+	float	r, r1, r2;
+	bool	bAxis = false;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		fAxisDot[AXIS_X][i] = tSrc.vAxis[AXIS_X].Dot(tDest.vAxis[i]);
+		fAbsAxisDot[AXIS_X][i] = abs(fAxisDot[AXIS_X][i]);
+
+		if (fAbsAxisDot[AXIS_X][i] > 0.99999f)
+			bAxis = true;
+	}
+
+	// Center Dir을 Src의 X축에 내적한다.
+	fDirDot[0] = vDir.Dot(tSrc.vAxis[AXIS_X]);
+	r = abs(fDirDot[0]);
+	r1 = tSrc.vLength.x;
+	r2 = tDest.vLength.x * fAbsAxisDot[AXIS_X][AXIS_X] +
+		tDest.vLength.y * fAbsAxisDot[AXIS_X][AXIS_Y] +
+		tDest.vLength.z * fAbsAxisDot[AXIS_X][AXIS_Z];
+
+	if (r > r1 + r2)
+		return false;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		fAxisDot[AXIS_Y][i] = tSrc.vAxis[AXIS_Y].Dot(tDest.vAxis[i]);
+		fAbsAxisDot[AXIS_Y][i] = abs(fAxisDot[AXIS_Y][i]);
+
+		if (fAbsAxisDot[AXIS_Y][i] > 0.99999f)
+			bAxis = true;
+	}
+
+	// Center Dir을 Src의 Y축에 내적한다.
+	fDirDot[1] = vDir.Dot(tSrc.vAxis[AXIS_Y]);
+	r = abs(fDirDot[1]);
+	r1 = tSrc.vLength.y;
+	r2 = tDest.vLength.x * fAbsAxisDot[AXIS_Y][AXIS_X] +
+		tDest.vLength.y * fAbsAxisDot[AXIS_Y][AXIS_Y] +
+		tDest.vLength.z * fAbsAxisDot[AXIS_Y][AXIS_Z];
+
+	if (r > r1 + r2)
+		return false;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		fAxisDot[AXIS_Z][i] = tSrc.vAxis[AXIS_Z].Dot(tDest.vAxis[i]);
+		fAbsAxisDot[AXIS_Z][i] = abs(fAxisDot[AXIS_Z][i]);
+
+		if (fAbsAxisDot[AXIS_Z][i] > 0.99999f)
+			bAxis = true;
+	}
+
+	// Center Dir을 Src의 Z축에 내적한다.
+	fDirDot[2] = vDir.Dot(tSrc.vAxis[AXIS_Z]);
+	r = abs(fDirDot[2]);
+	r1 = tSrc.vLength.z;
+	r2 = tDest.vLength.x * fAbsAxisDot[AXIS_Z][AXIS_X] +
+		tDest.vLength.y * fAbsAxisDot[AXIS_Z][AXIS_Y] +
+		tDest.vLength.z * fAbsAxisDot[AXIS_Z][AXIS_Z];
+
+	if (r > r1 + r2)
+		return false;
+
+	// Dest의 X축에 Center Dir을 내적한다.
+	r = abs(vDir.Dot(tDest.vAxis[AXIS_X]));
+	r1 = tSrc.vLength.x * fAbsAxisDot[AXIS_X][AXIS_X] +
+		tSrc.vLength.y * fAbsAxisDot[AXIS_Y][AXIS_X] +
+		tSrc.vLength.z * fAbsAxisDot[AXIS_Z][AXIS_X];
+	r2 = tDest.vLength.x;
+
+	if (r > r1 + r2)
+		return false;
+
+	// Dest의 Y축에 Center Dir을 내적한다.
+	r = abs(vDir.Dot(tDest.vAxis[AXIS_Y]));
+	r1 = tSrc.vLength.x * fAbsAxisDot[AXIS_X][AXIS_Y] +
+		tSrc.vLength.y * fAbsAxisDot[AXIS_Y][AXIS_Y] +
+		tSrc.vLength.z * fAbsAxisDot[AXIS_Z][AXIS_Y];
+	r2 = tDest.vLength.y;
+
+	if (r > r1 + r2)
+		return false;
+
+	// Dest의 Z축에 Center Dir을 내적한다.
+	r = abs(vDir.Dot(tDest.vAxis[AXIS_Z]));
+	r1 = tSrc.vLength.x * fAbsAxisDot[AXIS_X][AXIS_Z] +
+		tSrc.vLength.y * fAbsAxisDot[AXIS_Y][AXIS_Z] +
+		tSrc.vLength.z * fAbsAxisDot[AXIS_Z][AXIS_Z];
+	r2 = tDest.vLength.z;
+
+	if (r > r1 + r2)
+		return false;
+
+	if (bAxis)
+		return true;
+
+	r = abs(fDirDot[AXIS_Z] * fAxisDot[AXIS_Y][AXIS_X] -
+		fDirDot[AXIS_Y] * fAxisDot[AXIS_Z][AXIS_X]);
+	r1 = tSrc.vLength.y * fAbsAxisDot[AXIS_Z][AXIS_X] +
+		tSrc.vLength.z * fAbsAxisDot[AXIS_Y][AXIS_X];
+	r2 = tDest.vLength.y * fAbsAxisDot[AXIS_X][AXIS_Z] +
+		tDest.vLength.z * fAbsAxisDot[AXIS_X][AXIS_Y];
+
+	if (r > r1 + r2)
+		return false;
+
+	r = abs(fDirDot[AXIS_Z] * fAxisDot[AXIS_Y][AXIS_Y] -
+		fDirDot[AXIS_Y] * fAxisDot[AXIS_Z][AXIS_Y]);
+	r1 = tSrc.vLength.y * fAbsAxisDot[AXIS_Z][AXIS_Y] +
+		tSrc.vLength.z * fAbsAxisDot[AXIS_Y][AXIS_Y];
+	r2 = tDest.vLength.x * fAbsAxisDot[AXIS_X][AXIS_Z] +
+		tDest.vLength.z * fAbsAxisDot[AXIS_X][AXIS_X];
+
+	if (r > r1 + r2)
+		return false;
+
+	r = abs(fDirDot[AXIS_Z] * fAxisDot[AXIS_Y][AXIS_Z] -
+		fDirDot[AXIS_Y] * fAxisDot[AXIS_Z][AXIS_Z]);
+	r1 = tSrc.vLength.y * fAbsAxisDot[AXIS_Z][AXIS_Z] +
+		tSrc.vLength.z * fAbsAxisDot[AXIS_Y][AXIS_Z];
+	r2 = tDest.vLength.x * fAbsAxisDot[AXIS_X][AXIS_Y] +
+		tDest.vLength.y * fAbsAxisDot[AXIS_X][AXIS_X];
+
+	if (r > r1 + r2)
+		return false;
+
+	r = abs(fDirDot[AXIS_X] * fAxisDot[AXIS_Z][AXIS_X] -
+		fDirDot[AXIS_Y] * fAxisDot[AXIS_Z][AXIS_Z]);
+	r1 = tSrc.vLength.x * fAbsAxisDot[AXIS_Z][AXIS_X] +
+		tSrc.vLength.z * fAbsAxisDot[AXIS_X][AXIS_X];
+	r2 = tDest.vLength.y * fAbsAxisDot[AXIS_Y][AXIS_Z] +
+		tDest.vLength.z * fAbsAxisDot[AXIS_Y][AXIS_Y];
+
+	if (r > r1 + r2)
+		return false;
+
+	r = abs(fDirDot[AXIS_X] * fAxisDot[AXIS_Z][AXIS_Y] -
+		fDirDot[AXIS_Z] * fAxisDot[AXIS_X][AXIS_Y]);
+	r1 = tSrc.vLength.x * fAbsAxisDot[AXIS_Z][AXIS_Y] +
+		tSrc.vLength.z * fAbsAxisDot[AXIS_X][AXIS_Y];
+	r2 = tDest.vLength.x * fAbsAxisDot[AXIS_Y][AXIS_Z] +
+		tDest.vLength.z * fAbsAxisDot[AXIS_Y][AXIS_X];
+
+	if (r > r1 + r2)
+		return false;
+
+	r = abs(fDirDot[AXIS_X] * fAxisDot[AXIS_Z][AXIS_Z] -
+		fDirDot[AXIS_Z] * fAxisDot[AXIS_X][AXIS_Z]);
+	r1 = tSrc.vLength.x * fAbsAxisDot[AXIS_Z][AXIS_Z] +
+		tSrc.vLength.z * fAbsAxisDot[AXIS_X][AXIS_Z];
+	r2 = tDest.vLength.x * fAbsAxisDot[AXIS_Y][AXIS_Y] +
+		tDest.vLength.y * fAbsAxisDot[AXIS_Y][AXIS_X];
+
+	if (r > r1 + r2)
+		return false;
+
+	r = abs(fDirDot[AXIS_Y] * fAxisDot[AXIS_X][AXIS_X] -
+		fDirDot[AXIS_X] * fAxisDot[AXIS_Y][AXIS_X]);
+	r1 = tSrc.vLength.x * fAbsAxisDot[AXIS_Y][AXIS_X] +
+		tSrc.vLength.y * fAbsAxisDot[AXIS_X][AXIS_X];
+	r2 = tDest.vLength.y * fAbsAxisDot[AXIS_Z][AXIS_Z] +
+		tDest.vLength.z * fAbsAxisDot[AXIS_Z][AXIS_Y];
+
+	if (r > r1 + r2)
+		return false;
+
+	r = abs(fDirDot[AXIS_Y] * fAxisDot[AXIS_X][AXIS_Y] -
+		fDirDot[AXIS_X] * fAxisDot[AXIS_Y][AXIS_Y]);
+	r1 = tSrc.vLength.x * fAbsAxisDot[AXIS_Y][AXIS_Y] +
+		tSrc.vLength.y * fAbsAxisDot[AXIS_X][AXIS_Y];
+	r2 = tDest.vLength.x * fAbsAxisDot[AXIS_Z][AXIS_Z] +
+		tDest.vLength.z * fAbsAxisDot[AXIS_Z][AXIS_X];
+
+	if (r > r1 + r2)
+		return false;
+
+	r = abs(fDirDot[AXIS_Y] * fAxisDot[AXIS_X][AXIS_Z] -
+		fDirDot[AXIS_X] * fAxisDot[AXIS_Y][AXIS_Z]);
+	r1 = tSrc.vLength.x * fAbsAxisDot[AXIS_Y][AXIS_Z] +
+		tSrc.vLength.y * fAbsAxisDot[AXIS_X][AXIS_Z];
+	r2 = tDest.vLength.x * fAbsAxisDot[AXIS_Z][AXIS_Y] +
+		tDest.vLength.y * fAbsAxisDot[AXIS_Z][AXIS_X];
+
+	if (r > r1 + r2)
+		return false;
+
+	return true;
 }
 
 void CCollider::SetCollisionCallback(COLLISION_CALLBACK_TYPE eType,

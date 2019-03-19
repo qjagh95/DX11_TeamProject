@@ -42,7 +42,31 @@ CAnimation::CAnimation(const CAnimation & anim) :
 		++m_vecBones[i]->iRefCount;
 	}
 
+	/*for (size_t i = 0; i < anim.m_vecBones.size(); ++i)
+	{
+		PBONE	pBone = new BONE;
+
+		*pBone = *anim.m_vecBones[i];
+
+		pBone->matOffset = new Matrix;
+		pBone->matBone = new Matrix;
+
+		*pBone->matOffset = *anim.m_vecBones[i]->matOffset;
+		*pBone->matBone = *anim.m_vecBones[i]->matBone;
+
+		list<CBoneSocket*>::const_iterator	iterB;
+		list<CBoneSocket*>::const_iterator	iterBEnd = anim.m_vecBones[i]->SocketList.end();
+
+		for (iterB = anim.m_vecBones[i]->SocketList.begin(); iterB != iterBEnd; ++iterB)
+		{
+			pBone->SocketList.push_back((*iterB)->Clone());
+		}
+
+		m_vecBones.push_back(pBone);
+	}*/
+
 	m_pBoneTex = nullptr;
+
 	CreateBoneTexture();
 
 	unordered_map<string, PANIMATIONCLIP>::const_iterator	iter;
@@ -112,7 +136,9 @@ void CAnimation::GetClipTagList(std::vector<std::string>* _vecstrList)
 	unordered_map<string, PANIMATIONCLIP>::const_iterator	iterEnd = m_mapClip.end();
 
 	for (iter = m_mapClip.begin(); iter != iterEnd; ++iter)
+	{
 		_vecstrList->push_back(iter->second->strName);
+	}
 }
 
 void CAnimation::AddBone(PBONE pBone)
@@ -140,6 +166,24 @@ bool CAnimation::CreateBoneTexture()
 
 	if (FAILED(DEVICE->CreateShaderResourceView(m_pBoneTex, NULL, &m_pBoneRV)))
 		return false;
+
+	/*FILE*	pFile = NULL;
+
+	string	strFileName = m_strTag;
+	strFileName += "BoneName.txt";
+	fopen_s(&pFile, strFileName.c_str(), "wt");
+
+	if (!pFile)
+		return false;
+
+	for (size_t i = 0; i < m_vecBones.size(); ++i)
+	{
+		fwrite(m_vecBones[i]->strName.c_str(), 1, m_vecBones[i]->strName.length(),
+			pFile);
+		fwrite("\n", 1, 1, pFile);
+	}
+
+	fclose(pFile);*/
 
 	return true;
 }
@@ -177,6 +221,7 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 	pAnimClip->iStartFrame = 0; //영혁 수정 : Anm에서 매 클립 iStartFrame은 0
 	pAnimClip->iEndFrame = (int)(pClip->tEnd.GetFrameCount(pClip->eTimeMode) - pClip->tStart.GetFrameCount(pClip->eTimeMode));
 	pAnimClip->iFrameLength = (pAnimClip->iEndFrame) + 1; //영혁 수정 : 갯수는 iEndFrame + 1!
+
 
 	pAnimClip->fFrameTime = 1.f / (float)(pAnimClip->iFrameMode); //영혁 수정 : 우리 엔진용 프레임타임은 보통 30.f
 	// 시간 정보를 저장해준다.
@@ -346,9 +391,14 @@ void CAnimation::AddClipFromMultibyte(const char * pFullPath)
 	_strupr_s(strExt);
 
 	if (strcmp(strExt, ".FBX") == 0)
+	{
 		LoadFbxAnimation(pFullPath);
+	}
+
 	else
+	{
 		LoadFromFullPath(pFullPath);
+	}
 }
 
 PANIMATIONCLIP CAnimation::FindClip(const string & strName)
@@ -409,10 +459,14 @@ void CAnimation::ChangeClipKey(const string & strOrigin,
 	m_mapClip.insert(make_pair(strChange, pClip));
 
 	if (strOrigin == m_pCurClip->strName)
+	{
 		m_pCurClip->strName = pClip->strName;
+	}
 
 	if (strOrigin == m_pDefaultClip->strName)
+	{
 		m_pDefaultClip->strName = pClip->strName;
+	}
 }
 
 PBONE CAnimation::FindBone(const string & strBoneName)
@@ -455,7 +509,9 @@ bool CAnimation::ChangeClip(const string & strClip)
 	m_pNextClip = FindClip(strClip);
 
 	if (!m_pNextClip)
+	{
 		return false;
+	}
 
 	return true;
 }
@@ -470,7 +526,8 @@ bool CAnimation::Save(const TCHAR * pFileName, const string & strPathKey)
 	char	strFileName[MAX_PATH] = {};
 
 #ifdef UNICODE
-	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName), NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName),
+		NULL, NULL);
 #else
 	strcpy_s(strFileName, pFileName);
 #endif // UNICODE
@@ -497,7 +554,8 @@ bool CAnimation::SaveFromFullPath(const TCHAR * pFullPath)
 	char	strFileName[MAX_PATH] = {};
 
 #ifdef UNICODE
-	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath), NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath),
+		NULL, NULL);
 #else
 	strcpy_s(strFileName, pFileName);
 #endif // UNICODE
@@ -561,9 +619,11 @@ bool CAnimation::SaveFromFullPath(const char * pFullPath)
 
 		for (size_t i = 0; i < iCount; ++i)
 		{
-			fwrite(&pClip->vecKeyFrame[i]->iBoneIndex, sizeof(int), 1, pFile);
+			fwrite(&pClip->vecKeyFrame[i]->iBoneIndex, sizeof(int), 1,
+				pFile);
 
 			size_t	iFrameCount = pClip->vecKeyFrame[i]->vecKeyFrame.size();
+
 			fwrite(&iFrameCount, sizeof(size_t), 1, pFile);
 
 			for (size_t j = 0; j < iFrameCount; ++j)
@@ -586,7 +646,8 @@ bool CAnimation::Load(const TCHAR * pFileName, const string & strPathKey)
 	char	strFileName[MAX_PATH] = {};
 
 #ifdef UNICODE
-	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName), NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName),
+		NULL, NULL);
 #else
 	strcpy_s(strFileName, pFileName);
 #endif // UNICODE
@@ -613,7 +674,8 @@ bool CAnimation::LoadFromFullPath(const TCHAR * pFullPath)
 	char	strFileName[MAX_PATH] = {};
 
 #ifdef UNICODE
-	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath),	NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath),
+		NULL, NULL);
 #else
 	strcpy_s(strFileName, pFileName);
 #endif // UNICODE
@@ -639,7 +701,8 @@ bool CAnimation::LoadFromFullPath(const char * pFullPath)
 
 	char	strDefaultClip[256] = {};
 	fread(&iLength, sizeof(size_t), 1, pFile);
-	fread(strDefaultClip, sizeof(char), iLength, pFile);
+	fread(strDefaultClip, sizeof(char),
+		iLength, pFile);
 
 	char	strCurClip[256] = {};
 	fread(&iLength, sizeof(size_t), 1, pFile);
@@ -719,7 +782,8 @@ bool CAnimation::SaveBone(const TCHAR * pFileName, const string & strPathKey)
 	char	strFileName[MAX_PATH] = {};
 
 #ifdef UNICODE
-	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName), NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName),
+		NULL, NULL);
 #else
 	strcpy_s(strFileName, pFileName);
 #endif // UNICODE
@@ -746,7 +810,8 @@ bool CAnimation::SaveBoneFromFullPath(const TCHAR * pFullPath)
 	char	strFileName[MAX_PATH] = {};
 
 #ifdef UNICODE
-	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath), NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, pFullPath, -1, strFileName, lstrlen(pFullPath),
+		NULL, NULL);
 #else
 	strcpy_s(strFileName, pFileName);
 #endif // UNICODE
@@ -793,7 +858,8 @@ bool CAnimation::LoadBone(const TCHAR * pFileName, const string & strPathKey)
 	char	strFileName[MAX_PATH] = {};
 
 #ifdef UNICODE
-	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName), NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, pFileName, -1, strFileName, lstrlen(pFileName),
+		NULL, NULL);
 #else
 	strcpy_s(strFileName, pFileName);
 #endif // UNICODE
@@ -888,7 +954,10 @@ bool CAnimation::LoadBoneAndAnimationFullPath(const TCHAR * pFullPath)
 	return LoadFromFullPath(pFullPath);
 }
 
-bool CAnimation::ModifyClip(const string & strKey,const string & strChangeKey, ANIMATION_OPTION eOption, int iStartFrame, int iEndFrame, float fPlayTime, const vector<PBONEKEYFRAME>& vecFrame)
+bool CAnimation::ModifyClip(const string & strKey,
+	const string & strChangeKey, ANIMATION_OPTION eOption,
+	int iStartFrame, int iEndFrame, float fPlayTime, 
+	const vector<PBONEKEYFRAME>& vecFrame)
 {
 	PANIMATIONCLIP	pClip = FindClip(strKey);
 
@@ -957,6 +1026,7 @@ bool CAnimation::DeleteClip(const string & strKey)
 
 	m_mapClip.erase(iter);
 
+
 	if (!m_mapClip.empty())
 	{
 		m_pDefaultClip = FindClip(m_mapClip.begin()->first);
@@ -980,14 +1050,18 @@ bool CAnimation::ReturnDefaultClip()
 
 void CAnimation::SkipToNextClip()
 {
-	unordered_map<string, PANIMATIONCLIP>::iterator itr = m_mapClip.begin();
-	unordered_map<string, PANIMATIONCLIP>::iterator itrEnd = m_mapClip.end();
+	std::unordered_map<std::string, PUN::PANIMATIONCLIP>::iterator itr = m_mapClip.begin();
+
+	std::unordered_map<std::string, PUN::PANIMATIONCLIP>::iterator itrEnd = m_mapClip.end();
 
 	itr = m_mapClip.find(m_pCurClip->strName);
+
 	++itr;
 
 	if (itr != itrEnd)
+	{
 		ChangeClip(itr->second->strName);
+	}
 	else
 	{
 		itr = m_mapClip.begin();
@@ -1013,6 +1087,7 @@ void CAnimation::LoadFbxAnimation(const char * pFullPath)
 	for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
 	{
 		AddClip(AO_LOOP, *iterC);
+
 		m_strAddClipName.push_back((*iterC)->strName);
 	}
 }
@@ -1077,19 +1152,13 @@ int CAnimation::Update(float fTime)
 		int BoneSize = (int)m_vecBones.size();
 		parallel_for((int)0, BoneSize, [&](int i) 
 		{
-			if (bChange)
-			{
-				m_pCurClip = m_pNextClip;
-				m_pNextClip = nullptr;
-				m_fAnimationGlobalTime = 0.f;
-				m_fChangeTime = 0.f;
-			}
-
+YaMe:
 			// 키프레임이 없을 경우
 			if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 			{
 				*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-				return;
+				i++;
+				goto YaMe;
 			}
 
 			int	iFrameIndex = m_pCurClip->iChangeFrame;
@@ -1109,6 +1178,14 @@ int CAnimation::Update(float fTime)
 			*m_vecBones[i]->matBone = matBone;
 			matBone = *m_vecBones[i]->matOffset * matBone;
 			*m_vecBoneMatrix[i] = matBone;
+
+			if (bChange)
+			{
+				m_pCurClip = m_pNextClip;
+				m_pNextClip = nullptr;
+				m_fAnimationGlobalTime = 0.f;
+				m_fChangeTime = 0.f;
+			}
 		});
 
 		//// 본 수만큼 반복한다.
@@ -1190,11 +1267,13 @@ int CAnimation::Update(float fTime)
 			int BoneSize = (int)m_vecBones.size();
 			parallel_for((int)0, BoneSize, [&](int i)
 			{
+			YaMe1:
 				// 키프레임이 없을 경우
 				if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 				{
 					*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-					return;
+					i++;
+					goto YaMe1;
 				}
 
 				const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];

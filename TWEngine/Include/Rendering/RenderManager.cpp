@@ -10,6 +10,8 @@
 #include "../Resource/Sampler.h"
 #include "../Component/Light.h"
 #include "../Component/Camera.h"
+#include "ComputeShader.h"
+#include "PostEffect.h"
 
 PUN_USING
 
@@ -17,7 +19,19 @@ DEFINITION_SINGLE(CRenderManager)
 
 CRenderManager::CRenderManager() :
 	m_pCreateState(nullptr),
-	m_bDeferred(true)
+	m_bDeferred(true)/*
+	m_pHDRComputeShader(nullptr),
+	m_pHDRSecondComputeShader(nullptr),
+	m_pHDRShader(nullptr),
+	m_pAvgLumBuffer(nullptr),
+	m_pAvgLumSRV(nullptr),
+	m_pAvgLumUAV(nullptr),
+	m_pOldAvgLumBuffer(nullptr),
+	m_pOldAvgLumSRV(nullptr),
+	m_pOldAvgLumUAV(nullptr),
+	m_pDownScaleBuffer(nullptr),
+	m_pDownScaleSRV(nullptr),
+	m_pDownScaleUAV(nullptr),*/
 {
 	m_eGameMode = GM_3D;
 	m_pAlbedoTarget = NULLPTR;
@@ -42,11 +56,34 @@ CRenderManager::CRenderManager() :
 
 	m_bWireFrame = true;
 
+	/*m_fHeight = _RESOLUTION.iHeight;
+	m_fWidth = _RESOLUTION.iWidth;
+	m_fGroups = 0.f;
+
+	m_fMiddleGrey = 0.863f;
+	m_fLumWhite = 1.53f;*/
+
 	m_tCBuffer = {};
 }
 
 CRenderManager::~CRenderManager()
 {
+	/*SAFE_RELEASE(m_pOldAvgLumBuffer);
+	SAFE_RELEASE(m_pOldAvgLumSRV);
+	SAFE_RELEASE(m_pOldAvgLumUAV);
+	SAFE_RELEASE(m_pAvgLumBuffer);
+	SAFE_RELEASE(m_pAvgLumSRV);
+	SAFE_RELEASE(m_pAvgLumUAV);
+	SAFE_RELEASE(m_pDownScaleBuffer);
+	SAFE_RELEASE(m_pDownScaleSRV);
+	SAFE_RELEASE(m_pDownScaleUAV);
+	SAFE_RELEASE(m_pHDRSRV);
+	SAFE_RELEASE(m_pHDRShader);
+	SAFE_RELEASE(m_pHDRComputeShader);
+	SAFE_RELEASE(m_pHDRSecondComputeShader);
+	SAFE_RELEASE(m_pDownScaleSmp);
+	DESTROY_SINGLE(CPostEffect);*/
+
 	SAFE_RELEASE(m_pFullScreenShader);
 	SAFE_RELEASE(m_pLightBlendShader);
 	SAFE_RELEASE(m_pLightAccSpotShader);
@@ -248,6 +285,80 @@ bool CRenderManager::Init()
 	CreateDepthStencilState(DEPTH_LESSEQUAL, TRUE,
 		D3D11_DEPTH_WRITE_MASK_ALL,
 		D3D11_COMPARISON_LESS_EQUAL);
+
+
+	// HDR Resource
+	// HDR Rendering
+	//vPos.x = 300.f;
+	//vPos.y = 0.f;
+	//if (!CreateRenderTarget("HDRBlend", DXGI_FORMAT_R32G32B32A32_FLOAT,
+	//	vPos, Vector3(100.f, 100.f, 1.f), true))
+	//	return false;
+
+	//AddMRT("Post", "HDRBlend");
+
+	//m_pHDRComputeShader = GET_SINGLE(CShaderManager)->FindComputeShader(HDR_COMPUTE_SHADER);
+	//m_pHDRSecondComputeShader = GET_SINGLE(CShaderManager)->FindComputeShader(HDR_SECOND_COMPUTE_SHADER);
+	//m_pHDRShader = GET_SINGLE(CShaderManager)->FindShader(HDR_SHADER);
+	//m_pDownScaleSmp = GET_SINGLE(CResourcesManager)->FindSampler(SAMPLER_POINT);
+	//m_fGroups = ceil((m_fWidth * m_fHeight / 16) / 1024.f);
+
+	//// =============== Down Scale ===================
+	//// Down Scale 1D Buffer
+	//D3D11_BUFFER_DESC	tBufferDesc = {};
+	//ZeroMemory(&tBufferDesc, sizeof(tBufferDesc));
+
+	//tBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+	//tBufferDesc.StructureByteStride = sizeof(float);
+	//tBufferDesc.ByteWidth = m_fGroups * tBufferDesc.StructureByteStride;
+	//tBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+
+	//if (FAILED(DEVICE->CreateBuffer(&tBufferDesc, NULL, &m_pDownScaleBuffer)))
+	//	return false;
+
+	//// Luminance Down Scale 1D UAV
+	//D3D11_UNORDERED_ACCESS_VIEW_DESC	tUAVDesc = {};
+	//ZeroMemory(&tUAVDesc, sizeof(D3D11_UNORDERED_ACCESS_VIEW_DESC));
+
+	//tUAVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//tUAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	//tUAVDesc.Buffer.NumElements = m_fGroups;
+	//if (FAILED(DEVICE->CreateUnorderedAccessView(m_pDownScaleBuffer, &tUAVDesc,
+	//	&m_pDownScaleUAV)))
+	//	return false;
+
+	//// Down Scale 1D SRV
+	//D3D11_SHADER_RESOURCE_VIEW_DESC	tSRVDesc = {};
+	//ZeroMemory(&tSRVDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+
+	//tSRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	//tSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+	//tSRVDesc.Buffer.NumElements = m_fGroups;
+	//if (FAILED(DEVICE->CreateShaderResourceView(m_pDownScaleBuffer, &tSRVDesc,
+	//	&m_pDownScaleSRV)))
+	//	return false;
+
+	//// ================ Final Pass =======================
+
+	//// Average Luminance Buffer
+	//tBufferDesc.ByteWidth = sizeof(float);
+	//if (FAILED(DEVICE->CreateBuffer(&tBufferDesc, NULL, &m_pAvgLumBuffer)))
+	//	return false;
+
+	//// Average Luminance UAV
+	//tUAVDesc.Buffer.NumElements = 1;
+	//if (FAILED(DEVICE->CreateUnorderedAccessView(m_pAvgLumBuffer,
+	//	&tUAVDesc, &m_pAvgLumUAV)))
+	//	return false;
+
+	//// Average Luminance SRV
+	//tSRVDesc.Buffer.NumElements = 1;
+	//if (FAILED(DEVICE->CreateShaderResourceView(m_pAvgLumBuffer,
+	//	&tSRVDesc, &m_pAvgLumSRV)))
+	//	return false;
+
+	//ZeroMemory(&tBufferDesc, sizeof(tBufferDesc));
+
 	return true;
 }
 
@@ -555,6 +666,9 @@ void CRenderManager::RenderDeferred(float fTime)
 	RenderLightAcc(fTime);
 	// 조명타겟과 Albedo 를 합성한다.
 	RenderLightBlend(fTime);
+
+	// HDR
+	//RenderComputeProcess(fTime);
 	// 최종 합성된 타겟을 화면에 출력한다.
 	RenderLightFullScreen(fTime);
 
@@ -805,6 +919,11 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pLightAccDifTarget->SetShader(14);
 	m_pLightAccSpcTarget->SetShader(15);
 
+	/*
+	CRenderTarget*	pHDR = FindRenderTarget("HDRBlend");
+	pHDR->SetShader(9);
+	*/
+
 	m_pLightBlendShader->SetShader();
 
 	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
@@ -819,6 +938,7 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pAlbedoTarget->ResetShader(10);
 	m_pLightAccDifTarget->ResetShader(14);
 	m_pLightAccSpcTarget->ResetShader(15);
+	//pHDR->ResetShader(9);
 
 	m_pDepthDisable->ResetState();
 	m_pLightBlendTarget->ResetTarget();
@@ -831,6 +951,9 @@ void CRenderManager::RenderLightFullScreen(float _fTime)
 	m_pLightBlendTarget->SetShader(0);
 	m_pFullScreenShader->SetShader();
 	m_pGBufferSampler->SetShader(0);
+	
+	//CRenderTarget*	pHDR = FindRenderTarget("HDRBlend");
+	//pHDR->SetShader(0);
 
 	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
 	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
@@ -843,6 +966,122 @@ void CRenderManager::RenderLightFullScreen(float _fTime)
 
 	m_pDepthDisable->ResetState();
 	m_pLightBlendTarget->ResetShader(0);
+	//pHDR->ResetShader(0);
+}
+
+bool CRenderManager::DownScale(float fTime, ID3D11ShaderResourceView * pHDRSRV)
+{
+//	// Output
+//	ID3D11UnorderedAccessView* arrUAVs[1] = { m_pDownScaleUAV };
+//	CONTEXT->CSSetUnorderedAccessViews(0, 1, arrUAVs, (UINT*)(&m_pDownScaleUAV));
+//
+//	// Input
+//	ID3D11ShaderResourceView* arrViews[1] = { pHDRSRV };
+//	CONTEXT->CSSetShaderResources(9, 1, arrViews);
+//
+//	// Down Scale CB
+//	/*m_tDownScaleCB.iHeight = m_fHeight / 4;
+//	m_tDownScaleCB.iWidth = m_fWidth / 4;
+//	m_tDownScaleCB.iGroupSize = m_fGroups;
+//	m_tDownScaleCB.iTotalPixels = m_fHeight * m_fWidth;
+//
+//	GET_SINGLE(CShaderManager)->UpdateCBuffer("DownScaleFirstPass",
+//		&m_tDownScaleCB);*/
+//
+//	GET_SINGLE(CPostEffect)->SetDownScaleCB(_RESOLUTION.iHeight, _RESOLUTION.iWidth, fTime);
+//
+//	//m_pPostEffect->SetConstantBuffer(fTime);
+//	//GET_SINGLE(CPostEffect)->SetConstantBuffer(fTime);
+//
+//	m_pHDRComputeShader->SetComputeShader();
+//
+//	CONTEXT->Dispatch(m_fGroups, 1, 1);
+//	//CONTEXT->Dispatch(900, 1, 1);
+//
+//	// ============== Second Pass =================
+//	ZeroMemory(arrUAVs, sizeof(arrUAVs));
+//
+//	// Output
+//	arrUAVs[0] = m_pAvgLumUAV;
+//	CONTEXT->CSSetUnorderedAccessViews(0, 1, arrUAVs, (UINT*)(&arrUAVs));
+//
+//	// Input
+//	arrViews[0] = m_pDownScaleSRV;
+//	CONTEXT->CSSetShaderResources(9, 1, arrViews);
+//
+//	GET_SINGLE(CPostEffect)->SetDownScaleCB(_RESOLUTION.iHeight, _RESOLUTION.iWidth, fTime);
+//
+//	/*GET_SINGLE(CShaderManager)->UpdateCBuffer("DownScaleSecondPass",
+//		&m_tDownScaleCB);*/
+//
+//	m_pHDRSecondComputeShader->SetComputeShader();
+//
+//	CONTEXT->Dispatch(1, 1, 1);
+//
+//	// Cleanup
+//	CONTEXT->CSSetShader(NULL, NULL, 0);
+//	ZeroMemory(arrViews, sizeof(arrViews));
+//	CONTEXT->CSSetShaderResources(9, 1, arrViews);
+//	ZeroMemory(arrUAVs, sizeof(arrUAVs));
+//	CONTEXT->CSSetUnorderedAccessViews(0, 1, arrUAVs, (UINT*)(&arrUAVs));
+
+	return true;
+}
+
+bool CRenderManager::FinalPass(float fTime, ID3D11ShaderResourceView * pHDRSRV)
+{
+//	m_pDepthDisable->SetState();
+//
+//	ID3D11ShaderResourceView* arrViews[2] = { pHDRSRV, m_pAvgLumSRV };
+//	CONTEXT->PSSetShaderResources(9, 1, &arrViews[0]);
+//	CONTEXT->PSSetShaderResources(16, 1, &arrViews[1]);
+//
+//	// FinalPass CB
+//	/*m_tFinalPassCB.fMiddleGrey = m_fMiddleGrey;
+//	m_tFinalPassCB.fLumWhite =  m_fLumWhite;
+//	m_tFinalPassCB.fMiddleGrey *= m_tFinalPassCB.fMiddleGrey;
+//	m_tFinalPassCB.fLumWhite *= m_tFinalPassCB.fLumWhite;
+//
+//	GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass",
+//		&m_tFinalPassCB);	*/
+//
+//	GET_SINGLE(CPostEffect)->SetFinalPassCB(m_fMiddleGrey, m_fLumWhite, fTime);
+//
+//	CRenderTarget*	pHDRTarget = FindRenderTarget("HDRBlend");
+//
+//	pHDRTarget->ClearTarget();
+//	pHDRTarget->SetTarget();
+//	m_pDownScaleSmp->SetShader(9);
+//
+//	m_pHDRShader->SetShader();
+//
+//	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
+//	CONTEXT->IASetInputLayout(nullptr);
+//
+//	UINT iOffset = 0;
+//	CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+//	CONTEXT->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+//	CONTEXT->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+//	CONTEXT->Draw(4, 0);
+//
+//	m_pDepthDisable->ResetState();
+//	pHDRTarget->ResetTarget();
+//
+//	// Cleanup
+//	ZeroMemory(arrViews, sizeof(arrViews));
+//	CONTEXT->PSSetShaderResources(9, 1, &arrViews[0]);
+//	CONTEXT->PSSetShaderResources(16, 1, &arrViews[1]);
+//	CONTEXT->VSSetShader(NULL, NULL, 0);
+//	CONTEXT->PSSetShader(NULL, NULL, 0);
+
+	return true;
+}
+
+void CRenderManager::RenderComputeProcess(float fTime)
+{/*
+	DownScale(fTime, m_pHDRSRV);
+
+	FinalPass(fTime, m_pHDRSRV);*/
 }
 
 void CRenderManager::RenderForward(float fTime)

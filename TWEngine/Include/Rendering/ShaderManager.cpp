@@ -2,6 +2,7 @@
 #include "ShaderManager.h"
 #include "Shader.h"
 #include "../Device.h"
+#include "ComputeShader.h"
 
 PUN_USING
 
@@ -27,6 +28,7 @@ CShaderManager::~CShaderManager()
 
 	Safe_Release_Map(m_mapInputLayout);
 	Safe_Release_Map(m_mapShader);
+	Safe_Release_Map(m_mapComputeShader);
 }
 
 bool CShaderManager::Init()
@@ -156,6 +158,32 @@ bool CShaderManager::Init()
 	if (!LoadShader("Vertex3D", TEXT("Share.fx"), pEntry))
 		return false;
 
+	pEntry[ST_VERTEX] = (char*)"FullScreenQuadVS";
+	pEntry[ST_PIXEL] = (char*)"FinalPassPS";
+	if (!LoadShader(HDR_SHADER, TEXT("PostHDR.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"DownScaleFirstPass";
+	if (!LoadComputeShader(HDR_COMPUTE_SHADER, TEXT("ComputeProcess.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"DownScaleSecondPass";
+	if (!LoadComputeShader(HDR_SECOND_COMPUTE_SHADER, TEXT("ComputeProcess.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationFirstPass";
+	if (!LoadComputeShader(ADAPT_COMPUTE_SHADER, TEXT("AdaptProcess.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationSecondPass";
+	if (!LoadComputeShader(ADAPT_SECOND_COMPUTE_SHADER, TEXT("AdaptProcess.fx"), pEntry))
+		return false;
+
+	pEntry[ST_VERTEX] = (char*)"FullScreenAdaptQuadVS";
+	pEntry[ST_PIXEL] = (char*)"FinalPassAdaptPS";
+	if (!LoadShader(ADAPTATION_SHADER, TEXT("Adaptation.fx"), pEntry))
+		return false;
+
 	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement((char*)"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement((char*)"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 8);
@@ -183,6 +211,9 @@ bool CShaderManager::Init()
 	CreateCBuffer("Light", 3, sizeof(LightInfo), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("PublicCBuffer", 5, sizeof(PublicCBuffer), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("LandScape", 11, sizeof(LandScapeCBuffer), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("DownScale", 1, sizeof(DownScaleCB), CST_COMPUTE);
+	CreateCBuffer("FinalPass", 2, sizeof(FinalPassCB), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Adaptation", 3, sizeof(AdaptationCB), CST_COMPUTE);
 	
 	return true;
 }
@@ -212,6 +243,29 @@ bool CShaderManager::LoadShader(const string & strName,
 	return true;
 }
 
+bool CShaderManager::LoadComputeShader(const string & strName, const TCHAR * pFileName, char * pEntry[ST_END], const string & strPathKey)
+{
+	CComputeShader*	pComputeShader = FindComputeShader(strName);
+
+	if (pComputeShader)
+	{
+		SAFE_RELEASE(pComputeShader);
+		return true;
+	}
+
+	pComputeShader = new CComputeShader;
+
+	if (!pComputeShader->LoadCShader(strName, pFileName, pEntry, strPathKey))
+	{
+		SAFE_RELEASE(pComputeShader);
+		return false;
+	}
+
+	m_mapComputeShader.insert(make_pair(strName, pComputeShader));
+
+	return true;
+}
+
 CShader * CShaderManager::FindShader(const string & strName)
 {
 	unordered_map<string, CShader*>::iterator	iter = m_mapShader.find(strName);
@@ -234,6 +288,17 @@ CShader * CShaderManager::FindShaderNonCount(const string & strName)
 	return iter->second;
 }
 
+CComputeShader * CShaderManager::FindComputeShader(const string & strName)
+{
+	unordered_map<string, CComputeShader*>::iterator	iter = m_mapComputeShader.find(strName);
+
+	if (iter == m_mapComputeShader.end())
+		return nullptr;
+
+	iter->second->AddRef();
+
+	return iter->second;
+}
 
 void CShaderManager::AddInputElement(char * pSemantic, int iIdx,
 	DXGI_FORMAT eFmt, int iSize, int iInputSlot,
@@ -348,6 +413,9 @@ bool CShaderManager::UpdateCBuffer(const string & strName,
 
 	if (pBuffer->iShaderType & CST_PIXEL)
 		CONTEXT->PSSetConstantBuffers(pBuffer->iRegister, 1, &pBuffer->pBuffer);
+
+	if (pBuffer->iShaderType & CST_COMPUTE)
+		CONTEXT->CSSetConstantBuffers(pBuffer->iRegister, 1, &pBuffer->pBuffer);
 
 	return true;
 }

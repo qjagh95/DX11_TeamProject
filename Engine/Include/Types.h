@@ -306,4 +306,42 @@ namespace PUN
 
 		~FileStream() { Input.close(); Update.close(); LateUpdate.close(); Collsion.close(); Render.close(); }
 	};
+
+	typedef struct PUN_DLL _tagSphereInfo
+	{
+		Vector3	vCenter;
+		float	fRadius;
+
+		_tagSphereInfo() :
+			fRadius(1.f)
+		{
+		}
+	}SphereInfo, *PSphereInfo;
+
+	typedef struct PUN_DLL _tagOBB3DInfo
+	{
+		Vector3	vCenter;
+		Vector3	vAxis[3];
+		Vector3	vLength;
+	}OBB3DInfo, *POBB3DInfo;
+
+	typedef struct _tagDownScaleCBuffer
+	{
+		int		iWidth;
+		int		iHeight;
+		int		iTotalPixels;
+		int		iGroupSize;
+	}DownScaleCB, *PDownScaleCB;
+
+	typedef struct _tagFinalPassCB
+	{
+		float	fMiddleGrey;
+		float	fLumWhite;
+		Vector2	vEmpty;
+	}FinalPassCB, *PFinalPassCB;
+
+	typedef struct _tagAdaptationCB
+	{
+		Vector4	vAdaptation;
+	}AdaptationCB, *PAdaptationCB;
 }

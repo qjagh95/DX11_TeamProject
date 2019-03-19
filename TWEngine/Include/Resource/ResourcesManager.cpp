@@ -179,10 +179,33 @@ bool CResourcesManager::Init()
 	CreateSampler(SAMPLER_POINT, D3D11_FILTER_MIN_MAG_MIP_POINT);
 
 	CreateSphereVolum(SPHERE_VOLUME, 0.5f, 64, 128);
+	CreateSphereVolum("Sky", 1.0f, 32, 64, "Sky", POS_LAYOUT);
+
 	CreateCylinderVolum(CYLINDER_VOLUME, 0.5f, 3, 32);
 	CreateCapsulVolum(CAPSUL_VOLUME, 0.5f, 3, 64, 128);
 	CreateCornVolum(CORN_VOLUME, 0.5f, 0.5f, 64, 128);
-	CreateSphereVolum("Sky", 0.5f, 32, 64, "Sky", POS_LAYOUT);
+
+	Vector3	vBox[8] =
+	{
+		Vector3(-1.f, 1.f, -1.f),
+		Vector3(1.f, 1.f, -1.f),
+		Vector3(-1.f, -1.f, -1.f),
+		Vector3(1.f, -1.f, -1.f),
+		Vector3(-1.f, 1.f, 1.f),
+		Vector3(1.f, 1.f, 1.f),
+		Vector3(-1.f, -1.f, 1.f),
+		Vector3(1.f, -1.f, 1.f)
+	};
+
+	int	iBoxIdx[24] = { 0, 1, 0, 2, 1, 3, 2, 3, 0, 4, 1, 5, 2, 6, 3, 7, 4, 5, 5, 7, 7, 6, 6, 4 };
+
+	CreateMesh("ColliderBox", COLLIDER_SHADER, POS_LAYOUT,
+		vBox, 8, sizeof(Vector3),
+		D3D11_USAGE_DEFAULT,
+		D3D11_PRIMITIVE_TOPOLOGY_LINELIST, iBoxIdx,
+		24, 4, D3D11_USAGE_DEFAULT,
+		DXGI_FORMAT_R32_UINT);
+
 	return true;
 }
 

@@ -36,13 +36,22 @@ namespace PUN
 	{
 		ST_VERTEX,
 		ST_PIXEL,
+		ST_COMPUTE,
 		ST_END
 	};
 
 	enum CBUFFER_SHADER_TYPE
 	{
 		CST_VERTEX = 0X1,
-		CST_PIXEL = 0X2
+		CST_PIXEL = 0X2,
+		CST_COMPUTE = 0X4
+	};
+
+	enum BUFFER_TYPE
+	{
+		BT_BUFFER,
+		BT_TEXTURE2D,
+		BT_END
 	};
 
 	enum CAMERA_TYPE
@@ -85,7 +94,8 @@ namespace PUN
 		CT_POINT,
 		CT_OBB,
 		CT_PIXEL,
-		CT_SPHERE
+		CT_SPHERE,
+		CT_OBB3D
 	};
 
 	enum COLLISION_CALLBACK_TYPE

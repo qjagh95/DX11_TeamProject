@@ -123,6 +123,21 @@
     <Filter Include="06. Component\14. Arm">
       <UniqueIdentifier>{460c8ac4-64b8-4ac8-b75a-c7577d5a23dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Rendering\04. UAView">
+      <UniqueIdentifier>{726b70c9-e9d3-4950-94f9-dbc2a89d687d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Rendering\05. PostEffect">
+      <UniqueIdentifier>{9866cab0-184b-4669-b7bc-5c31dc83946e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Rendering\06. Filter">
+      <UniqueIdentifier>{b337e88e-5a59-494b-b150-93e025d05964}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Rendering\01. Shader\01. HLSL\01. Compute">
+      <UniqueIdentifier>{5ad55539-9fe8-40f3-9e9a-65c806a1b38c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Rendering\01. Shader\01. HLSL\02. Rendering">
+      <UniqueIdentifier>{7ff47f35-1118-4f09-aaa6-7d2ad8d1b428}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -304,6 +319,27 @@
     </ClCompile>
     <ClCompile Include="BinaryReader.cpp">
       <Filter>01. Core\09. BineryFileIO</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ColliderSphere.cpp">
+      <Filter>06. Component\07. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ColliderOBB3D.cpp">
+      <Filter>06. Component\07. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\UAV.cpp">
+      <Filter>03. Rendering\04. UAView</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\ViewManager.cpp">
+      <Filter>03. Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\PostEffect.cpp">
+      <Filter>03. Rendering\05. PostEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\CSFilter.cpp">
+      <Filter>03. Rendering\06. Filter</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\ComputeShader.cpp">
+      <Filter>03. Rendering\01. Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -505,6 +541,27 @@
     <ClInclude Include="BinaryReader.h">
       <Filter>01. Core\09. BineryFileIO</Filter>
     </ClInclude>
+    <ClInclude Include="Component\ColliderSphere.h">
+      <Filter>06. Component\07. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ColliderOBB3D.h">
+      <Filter>06. Component\07. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\UAV.h">
+      <Filter>03. Rendering\04. UAView</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\ViewManager.h">
+      <Filter>03. Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\PostEffect.h">
+      <Filter>03. Rendering\05. PostEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\CSFilter.h">
+      <Filter>03. Rendering\06. Filter</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\ComputeShader.h">
+      <Filter>03. Rendering\01. Shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\copy.bat">
@@ -515,29 +572,41 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\Shader\Collider.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
+    <FxCompile Include="..\Bin\Shader\AdaptProcess.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Share.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
+    <FxCompile Include="..\Bin\Shader\ComputeProcess.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Standard.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
+    <FxCompile Include="..\Bin\Shader\Adaptation.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\UI.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
+    <FxCompile Include="..\Bin\Shader\PostHDR.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\BackColorShader.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Light.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Sky.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
+    <FxCompile Include="..\Bin\Shader\Collider.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\LandScape.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL</Filter>
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Light.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Share.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Sky.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Standard.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\UI.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,6 @@
 #include <memory>
 #include <memory.h>
 #include <time.h>
-#include <amp.h>
 #include <ppl.h>
 
 #include <d3d11.h>

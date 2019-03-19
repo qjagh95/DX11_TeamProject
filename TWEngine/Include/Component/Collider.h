@@ -35,6 +35,7 @@ public:
 	ID3D11InputLayout*	m_pLayout;
 	class CRenderState*	m_pDepthDisable;
 	Vector4			m_vColor;
+	class CRenderState* m_pWireFrame;
 #endif // _DEBUG
 
 public:
@@ -80,6 +81,8 @@ public:
 	bool CollisionOBB2DToRect(const OBB2DInfo& tSrc, const BoxInfo& tDest);
 	bool CollisionOBB2DToPoint(const OBB2DInfo& tSrc, const Vector3& vDest);
 	bool CollisionRectToPixel(BoxInfo tSrc, const PixelInfo& tDest);
+	bool CollisionSphereToSphere(SphereInfo tSrc, const SphereInfo& tDest);
+	bool CollisionOBB3DToOBB3D(const OBB3DInfo& tSrc, const OBB3DInfo& tDest);
 
 public:
 	void SetCollisionCallback(COLLISION_CALLBACK_TYPE eType,

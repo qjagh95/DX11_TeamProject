@@ -67,6 +67,30 @@ private:
 
 	PublicCBuffer m_tCBuffer;
 
+	/*
+	ID3D11Buffer*				m_pDownScaleBuffer;
+	ID3D11UnorderedAccessView*	m_pDownScaleUAV;
+	ID3D11ShaderResourceView*	m_pDownScaleSRV;
+
+	ID3D11Buffer*				m_pAvgLumBuffer;
+	ID3D11UnorderedAccessView*	m_pAvgLumUAV;
+	ID3D11ShaderResourceView*	m_pAvgLumSRV;
+	ID3D11Buffer*				m_pOldAvgLumBuffer;
+	ID3D11UnorderedAccessView*	m_pOldAvgLumUAV;
+	ID3D11ShaderResourceView*	m_pOldAvgLumSRV;
+
+	DownScaleCB	m_tDownScaleCB;
+	FinalPassCB	m_tFinalPassCB;
+
+	class CRenderTarget*	m_pTarget;
+
+	float	m_fHeight;
+	float	m_fWidth;
+	float	m_fGroups;
+	float	m_fMiddleGrey;
+	float	m_fLumWhite;
+	*/
+
 public:
 	GAME_MODE GetGameMode()	const;
 	bool GetRenderingMode()	const;
@@ -132,6 +156,10 @@ private:
 	void RenderLightSpot(float fTime, class CLight* pLight);
 	void RenderLightBlend(float _fTime);
 	void RenderLightFullScreen(float _fTime);
+
+	bool DownScale(float fTime, ID3D11ShaderResourceView* pHDRSRV);
+	bool FinalPass(float fTime, ID3D11ShaderResourceView* pHDRSRV);
+	void RenderComputeProcess(float fTime);
 
 	DECLARE_SINGLE(CRenderManager)
 };

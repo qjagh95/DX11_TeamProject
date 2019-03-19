@@ -189,6 +189,17 @@ SamplerState	g_MultiSmp2		: register(s6);
 SamplerState	g_MultiSmp3		: register(s7);
 SamplerState	g_MultiSmp4		: register(s8);
 
+SamplerState PointSampler : register(s9);
+
+cbuffer FinalPassConstants : register(b2)
+{
+    float fMiddleGrey;
+    float fLumWhiteSqr;
+    float2 fEmpty;
+}
+
+static const float3 LUM_FACTOR = float3(0.299, 0.587, 0.114);
+
 struct _tagLightInfo
 {
 	float4	vDif;
