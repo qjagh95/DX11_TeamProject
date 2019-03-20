@@ -107,6 +107,14 @@ void CComponent::Load(FILE * pFile)
 	m_strTag = strTag;
 }
 
+void CComponent::Save(BinaryWrite* _pInstBW)
+{
+}
+
+void CComponent::Load(BinaryRead* _pInstBR)
+{
+}
+
 void CComponent::SaveFromPath(const char * pFileName, const string & strPathKey)
 {
 	const char*	pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);

@@ -33,6 +33,53 @@ LightInfo CLight::GetLightInfo() const
 	return m_tInfo;
 }
 
+void CLight::Save(BinaryWrite * _pInstBW)
+{
+	/* Function Create KDG */
+
+	_pInstBW->WriteData(m_tInfo.vDif);
+	_pInstBW->WriteData(m_tInfo.vAmb);
+	_pInstBW->WriteData(m_tInfo.vSpc);
+	_pInstBW->WriteData(m_tInfo.iLightType);
+	_pInstBW->WriteData(m_tInfo.vPos);
+	_pInstBW->WriteData(m_tInfo.vDir);
+	_pInstBW->WriteData(m_tInfo.fRange);
+	_pInstBW->WriteData(m_tInfo.fInAngle);
+	_pInstBW->WriteData(m_tInfo.fOutAngle);
+	_pInstBW->WriteData(m_tInfo.fFallOff);
+	_pInstBW->WriteData(m_tInfo.vEmpty);
+}
+
+void CLight::Load(BinaryRead * _pInstBR)
+{
+	/* Function Create KDG */
+
+	Vector4	vDif = _pInstBR->ReadVector4();
+	Vector4	vAmb = _pInstBR->ReadVector4();
+	Vector4	vSpc = _pInstBR->ReadVector4();
+	int	iLightType = _pInstBR->ReadInt();
+	Vector3	vPos = _pInstBR->ReadVector3();
+	Vector3	vDir = _pInstBR->ReadVector3();
+	float fRange = _pInstBR->ReadFloat();
+	float fInAngle = _pInstBR->ReadFloat();
+	float fOutAngle = _pInstBR->ReadFloat();
+	float fFallOff = _pInstBR->ReadFloat();
+	float vEmpty = _pInstBR->ReadFloat();
+
+	// 로드된 데이터를 이용하여 조명 정보를 세팅한다.
+	m_tInfo.vDif = vDif;
+	m_tInfo.vAmb = vAmb;
+	m_tInfo.vSpc = vSpc;
+	m_tInfo.iLightType = iLightType;
+	m_tInfo.vPos = vPos;
+	m_tInfo.vDir = vDir;
+	m_tInfo.fRange = fRange;
+	m_tInfo.fInAngle = fInAngle;
+	m_tInfo.fOutAngle = fOutAngle;
+	m_tInfo.fFallOff = fFallOff;
+	m_tInfo.vEmpty = vEmpty;
+}
+
 void CLight::SetLightType(LIGHT_TYPE eType)
 {
 	m_tInfo.iLightType = eType;

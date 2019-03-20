@@ -298,6 +298,40 @@ PRendererCBuffer CRenderer::FindRendererCBuffer(const string & strName)
 	return iter->second;
 }
 
+void CRenderer::Save(BinaryWrite* _pInstBW)
+{
+	/* Function Create KDG */
+
+	_pInstBW->WriteData(m_pMesh->GetTag());
+	_pInstBW->WriteData(m_pShader->GetTag());
+	_pInstBW->WriteData(m_strLayoutKey);
+}
+
+void CRenderer::Load(BinaryRead* _pInstBR)
+{
+	/* Function Create KDG */
+
+	string strMeshTag = _pInstBR->ReadString();
+	string strShaderTag = _pInstBR->ReadString();
+	m_strLayoutKey = _pInstBR->ReadString();
+	m_pMesh->SetTag(strMeshTag);
+	m_pShader->SetTag(strShaderTag);
+
+	// .msh 파일이 있는 경우에 메시를 세팅한다.
+	TCHAR* strMshFileName = CA2W((strMeshTag + ".msh").c_str());
+	ifstream* pIfs = _pInstBR->GetIfStream();
+	pIfs->open(strMeshTag + ".msh", ios::in);
+	pIfs->close();
+	if (pIfs->is_open() == true)
+	{
+		SetMesh(strMeshTag, strMshFileName);
+		return;
+	}
+
+	// 파일이 없다면 메시 태그명으로 설정하는 함수를 호출한다.
+	SetMesh(strMeshTag);
+}
+
 void CRenderer::AfterClone()
 {
 	SAFE_RELEASE(m_pMaterial);

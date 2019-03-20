@@ -3,6 +3,8 @@
 
 PUN_BEGIN
 
+class BinaryWrite;
+class BinaryRead;
 class PUN_DLL CGameObject :
 	public CRef
 {
@@ -13,6 +15,7 @@ private:
 
 private:
 	static unordered_map<class CScene*, unordered_map<string, CGameObject*>>	m_mapPrototype;
+	bool	m_isDontDestroy;
 
 public:
 	static CGameObject* CreateObject(const string& strTag = "GameObject",
@@ -101,6 +104,10 @@ public:
 public:
 	void Save(FILE* pFile);
 	void Load(FILE* pFile);
+
+public:
+	void Save(BinaryWrite* _pInstBW);
+	void Load(BinaryRead*  _pInstBR);
 
 public:
 	template <typename T>

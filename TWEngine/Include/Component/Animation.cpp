@@ -1152,13 +1152,19 @@ int CAnimation::Update(float fTime)
 		int BoneSize = (int)m_vecBones.size();
 		parallel_for((int)0, BoneSize, [&](int i) 
 		{
-YaMe:
+			if (bChange)
+			{
+				m_pCurClip = m_pNextClip;
+				m_pNextClip = nullptr;
+				m_fAnimationGlobalTime = 0.f;
+				m_fChangeTime = 0.f;
+			}
+
 			// 키프레임이 없을 경우
 			if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 			{
 				*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-				i++;
-				goto YaMe;
+				return;
 			}
 
 			int	iFrameIndex = m_pCurClip->iChangeFrame;
@@ -1178,14 +1184,6 @@ YaMe:
 			*m_vecBones[i]->matBone = matBone;
 			matBone = *m_vecBones[i]->matOffset * matBone;
 			*m_vecBoneMatrix[i] = matBone;
-
-			if (bChange)
-			{
-				m_pCurClip = m_pNextClip;
-				m_pNextClip = nullptr;
-				m_fAnimationGlobalTime = 0.f;
-				m_fChangeTime = 0.f;
-			}
 		});
 
 		//// 본 수만큼 반복한다.
@@ -1267,13 +1265,11 @@ YaMe:
 			int BoneSize = (int)m_vecBones.size();
 			parallel_for((int)0, BoneSize, [&](int i)
 			{
-			YaMe1:
 				// 키프레임이 없을 경우
 				if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 				{
 					*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-					i++;
-					goto YaMe1;
+					return;
 				}
 
 				const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];

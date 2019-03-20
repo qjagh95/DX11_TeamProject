@@ -16,7 +16,8 @@ unordered_map<class CScene*, unordered_map<string, CGameObject*>> CGameObject::m
 CGameObject::CGameObject() :
 	m_pTransform(nullptr),
 	m_pParent(nullptr),
-	m_iObjectListIdx(0)
+	m_iObjectListIdx(0),
+	m_isDontDestroy(false)
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;
@@ -792,3 +793,44 @@ void CGameObject::Load(FILE * pFile)
 {
 }
 
+void CGameObject::Save(BinaryWrite* _pInstBW)
+{
+	/* Function Create KDG */
+
+	_pInstBW->WriteData(GetTag().c_str());			// 태그
+	_pInstBW->WriteData(m_strLayerName.c_str());	// 오브젝트가 속해있는 레이어 태그
+	_pInstBW->WriteData(m_isDontDestroy);			// 오브젝트 삭제 여부
+	_pInstBW->WriteData(GetEnable());				// (비)활성화 상태
+
+	// Transform
+	m_pTransform->Save(_pInstBW);
+
+	// 컴포넌트 목록
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		(*iter)->Save(_pInstBW);
+	}
+}
+
+void CGameObject::Load(BinaryRead* _pInstBR)
+{
+	/* Function Create KDG */
+
+	string tag = _pInstBR->ReadString();			// 태그
+	string layerName = _pInstBR->ReadString();		// 오브젝트가 속해있는 레이어 태그
+	bool m_isDontDestroy = _pInstBR->ReadBool();	// 오브젝트 삭제 여부
+	bool isEnable = _pInstBR->ReadBool();			// (비)활성화 상태
+
+	// Transform
+	m_pTransform->Load(_pInstBR);
+
+	// 컴포넌트 목록
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		(*iter)->Load(_pInstBR);
+	}
+}

@@ -111,7 +111,7 @@ public:
 
 public:
 	void Save(string _fullPath);
-	void Load();
+	void Load(string _fullPath);
 
 public:
 	void Start();

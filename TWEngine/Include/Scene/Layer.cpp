@@ -43,6 +43,70 @@ void CLayer::SetZOrder(int iZOrder)
 	m_pScene->SortLayer();
 }
 
+void CLayer::Save(BinaryWrite* _pInstBW)
+{
+	/* Function Create KDG */
+
+	// 오브젝트 개수
+	// (툴이 아닌 클라이언트에서 바로 로드될 경우 개수를 알 수 없기때문이다.)
+	_pInstBW->WriteData((int)m_ObjList.size());
+
+	// 오브젝트 목록
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		_pInstBW->WriteData((*iter)->GetTag().c_str());
+
+		// Object Save 함수 호출
+		(*iter)->Save(_pInstBW);
+	}
+}
+
+void CLayer::Load(BinaryRead* _pInstBR)
+{
+	/* Function Create KDG */
+
+	// 오브젝트 목록 개수
+	int objListSize = _pInstBR->ReadInt();
+
+	// 오브젝트 목록
+	// Tag를 가지고 오브젝트가 존재하며, 리스트 목록에 없다면 추가한다.
+	for (int i = 0; i < objListSize; ++i)
+	{
+		string strData;
+		_pInstBR->ReadData(strData);
+
+		CGameObject* pObj = FindObject(strData);
+		if (pObj == nullptr)
+		{
+			TrueAssert(true);
+		}
+
+		bool isOverlapObj = false;
+		list<CGameObject*>::iterator iter;
+		list<CGameObject*>::iterator iterEnd = m_ObjList.end();
+		for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+		{
+			if ((*iter) == pObj)
+			{
+				isOverlapObj = true;
+				break;
+			}
+		}
+
+		// 추가
+		if (isOverlapObj == false)
+		{
+			AddObject(pObj);
+		}
+
+		// Object Load 함수 호출
+		pObj->Load(_pInstBR);
+		SAFE_RELEASE(pObj);
+	}
+}
+
 void CLayer::Start()
 {
 	list<CGameObject*>::iterator	iter;

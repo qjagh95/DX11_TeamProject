@@ -832,6 +832,7 @@
             this.FileSave.TabIndex = 10;
             this.FileSave.Text = "File Save";
             this.FileSave.UseVisualStyleBackColor = true;
+            this.FileSave.Click += new System.EventHandler(this.FileSave_Click);
             // 
             // FileLoad
             // 
@@ -841,6 +842,7 @@
             this.FileLoad.TabIndex = 11;
             this.FileLoad.Text = "File Load";
             this.FileLoad.UseVisualStyleBackColor = true;
+            this.FileLoad.Click += new System.EventHandler(this.FileLoad_Click);
             // 
             // Renderer
             // 
