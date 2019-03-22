@@ -21,6 +21,7 @@ CGameObject::CGameObject() :
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;
+	m_bSaveEnable = false;
 }
 
 CGameObject::CGameObject(const CGameObject & obj)
@@ -96,10 +97,16 @@ CGameObject::~CGameObject()
 	Safe_Release_VecList(m_ComList);
 }
 
+void CGameObject::SaveEnable()
+{
+	m_bSaveEnable = true;
+}
+
 CGameObject * CGameObject::CreateObject(const string & strTag, CLayer * pLayer,
 	bool bDontDestroy)
 {
 	CGameObject*	pObj = new CGameObject;
+	pObj->m_isDontDestroy = bDontDestroy;
 
 	pObj->SetTag(strTag);
 
@@ -797,11 +804,6 @@ void CGameObject::Save(BinaryWrite* _pInstBW)
 {
 	/* Function Create KDG */
 
-	_pInstBW->WriteData(GetTag().c_str());			// 태그
-	_pInstBW->WriteData(m_strLayerName.c_str());	// 오브젝트가 속해있는 레이어 태그
-	_pInstBW->WriteData(m_isDontDestroy);			// 오브젝트 삭제 여부
-	_pInstBW->WriteData(GetEnable());				// (비)활성화 상태
-
 	// Transform
 	m_pTransform->Save(_pInstBW);
 
@@ -818,19 +820,18 @@ void CGameObject::Load(BinaryRead* _pInstBR)
 {
 	/* Function Create KDG */
 
-	string tag = _pInstBR->ReadString();			// 태그
-	string layerName = _pInstBR->ReadString();		// 오브젝트가 속해있는 레이어 태그
-	bool m_isDontDestroy = _pInstBR->ReadBool();	// 오브젝트 삭제 여부
-	bool isEnable = _pInstBR->ReadBool();			// (비)활성화 상태
-
 	// Transform
 	m_pTransform->Load(_pInstBR);
 
-	// 컴포넌트 목록
+	// 컴포넌트 추가 및 컴포넌트 Load 함수 호출
 	list<CComponent*>::iterator	iter;
 	list<CComponent*>::iterator	iterEnd = m_ComList.end();
 	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
 	{
+		// 추가
+		this->AddComponent((*iter));
+
+		// Load 호출
 		(*iter)->Load(_pInstBR);
 	}
 }

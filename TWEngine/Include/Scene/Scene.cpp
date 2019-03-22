@@ -756,20 +756,6 @@ void CScene::Save(string _fullPath)
 		// Layer Save 함수 호출
 		(*iter)->Save(&instBW);
 	}
-
-	/*
-	// 카메라 목록 갯수
-	int cameraListSize = m_mapCamera.size();
-	instBW.WriteData(cameraListSize);
-
-	// 카메라 목록
-	unordered_map<string, CGameObject*>::iterator iterMap;
-	unordered_map<string, CGameObject*>::iterator iterEndMap = m_mapCamera.end();
-	for (iterMap = m_mapCamera.begin(); iterMap != iterEndMap; ++iterMap)
-	{
-		instBW.WriteData(iterMap->second->GetTag().c_str());
-	}
-	*/
 }
 
 void CScene::Load(string _fullPath)
@@ -784,27 +770,16 @@ void CScene::Load(string _fullPath)
 	list<CLayer*>::iterator iterEnd = m_LayerList.end();
 	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
 	{
-		string strData;
-		instBR.ReadData(strData);
+		string strLayerTag;
+		instBR.ReadData(strLayerTag);
 
-		// 목록을 읽어와서 m_LayerList 리스트에 저장해야한다.
-		// Tag(이름)을 가지고 레이어를 찾아서 없는 레이어라면 저장한다.
-		if (FindLayer(strData) == nullptr)
+		// 레이어를 찾아서 m_LayerList에 없다면 추가한다.
+		if (FindLayer(strLayerTag) == nullptr)
 		{
-			AddLayer(strData, 0); // Default ZOrder 0
+			AddLayer(strLayerTag, 0); // Default ZOrder 0
 		}
 
 		// Layer Load 함수 호출
 		(*iter)->Load(&instBR);
 	}
-
-	/*
-	// 카메라 목록 갯수
-	int cameraListSize = instBR.ReadInt();
-
-	// 카메라 목록
-	for (int i = 0; i < cameraListSize; ++i)
-	{
-	}
-	*/
 }

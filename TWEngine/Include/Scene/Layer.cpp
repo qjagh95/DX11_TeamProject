@@ -56,7 +56,11 @@ void CLayer::Save(BinaryWrite* _pInstBW)
 	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
 	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
 	{
-		_pInstBW->WriteData((*iter)->GetTag().c_str());
+		_pInstBW->WriteData((*iter)->GetTag().c_str());	// 태그
+		_pInstBW->WriteData(this->GetTag().c_str());	// 오브젝트가 속해있는 레이어 태그
+		bool isDontDestroy = (*iter)->GetDontDestroy();
+		_pInstBW->WriteData(isDontDestroy);				// 오브젝트 삭제 여부
+		_pInstBW->WriteData(GetEnable());				// (비)활성화 상태
 
 		// Object Save 함수 호출
 		(*iter)->Save(_pInstBW);
@@ -71,18 +75,18 @@ void CLayer::Load(BinaryRead* _pInstBR)
 	int objListSize = _pInstBR->ReadInt();
 
 	// 오브젝트 목록
-	// Tag를 가지고 오브젝트가 존재하며, 리스트 목록에 없다면 추가한다.
 	for (int i = 0; i < objListSize; ++i)
 	{
-		string strData;
-		_pInstBR->ReadData(strData);
+		string strObjTag	= _pInstBR->ReadString();
+		string strLayerTag	= _pInstBR->ReadString();
+		bool isDontDestroy	= _pInstBR->ReadBool();
+		bool isEnable = _pInstBR->ReadBool();
 
-		CGameObject* pObj = FindObject(strData);
-		if (pObj == nullptr)
-		{
-			TrueAssert(true);
-		}
-
+		// 오브젝트 생성
+		CGameObject* pObj = CGameObject::CreateObject(strObjTag , this, isDontDestroy);
+		pObj->SetEnable(isEnable);
+		
+		// 오브젝트 중복 검사
 		bool isOverlapObj = false;
 		list<CGameObject*>::iterator iter;
 		list<CGameObject*>::iterator iterEnd = m_ObjList.end();
