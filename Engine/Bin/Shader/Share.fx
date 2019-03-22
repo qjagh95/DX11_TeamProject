@@ -136,7 +136,7 @@ cbuffer Component	: register(b2)
 	int		g_iAnimation2DEnable;
 	int		g_iAnimationType;
     int     g_iDeferredEnable;
-    float   g_fCmpEmpty;
+    int     g_iFocus;
 }
 
 cbuffer Public : register(b5)
@@ -475,3 +475,4 @@ _tagSkinning Skinning(float3 vPos, float3 vNormal, float4 vWeights,
 
     return tSkinning;
 }
+

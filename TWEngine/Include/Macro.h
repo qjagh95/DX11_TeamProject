@@ -40,6 +40,12 @@
 #define HDR_SECOND_COMPUTE_SHADER	"HDRSecondComputeShader"
 #define ADAPT_COMPUTE_SHADER		"AdaptComputeShader"
 #define ADAPT_SECOND_COMPUTE_SHADER	"AdaptSecondComputeShader"
+
+#define MOTION_BLUR_SHADER		"MotionBlurShader"
+#define DOWNSCALE_SHADER		"DownScaleShader"
+#define HORIZONTAL_BLUR_SHADER	"HorizontalBlur"
+#define VERTICAL_BLUR_SHADER	"VerticalBlur"
+
 // ========== Input Layout Key =============
 #define	POS_COLOR_LAYOUT		"PosColorLayout"
 #define	POS_NORMAL_COLOR_LAYOUT		"PosNormalColorLayout"

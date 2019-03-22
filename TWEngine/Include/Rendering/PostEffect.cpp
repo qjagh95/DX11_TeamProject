@@ -5,16 +5,8 @@
 
 PUN_USING
 
-DEFINITION_SINGLE(CPostEffect)
-
 CPostEffect::CPostEffect()
 {
-	m_tAdaptInfo.vAdaptation = Vector4(1.f, 1.f, 1.f, 1.f);
-	m_fHeight = _RESOLUTION.iHeight;
-	m_fWidth = _RESOLUTION.iWidth;
-
-	m_fMiddleGrey = 0.863f;
-	m_fLumWhite = 1.53f;
 }
 
 CPostEffect::~CPostEffect()
@@ -48,9 +40,6 @@ void CPostEffect::SetDownScaleCB(int iWidth, int iHeight, float fTime)
 	m_tDownScaleCBInfo.iWidth = iWidth;
 	m_tDownScaleCBInfo.iTotalPixels = iHeight * iWidth;
 	m_tDownScaleCBInfo.iGroupSize = ceil((iWidth * iHeight / 16) / 1024.f);
-
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("DownScale",
-		&m_tDownScaleCBInfo);
 }
 
 void CPostEffect::SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime)
@@ -59,17 +48,27 @@ void CPostEffect::SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime
 	m_tFinalPassCBInfo.fLumWhite = fLumWhite;
 	m_tFinalPassCBInfo.fMiddleGrey *= m_tFinalPassCBInfo.fMiddleGrey;
 	m_tFinalPassCBInfo.fLumWhite *= m_tFinalPassCBInfo.fLumWhite;
-
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass",
-		&m_tFinalPassCBInfo);
 }
 
 void CPostEffect::SetAdaptationCB(Vector4 vAdaptation, float fTime)
 {
 	m_tAdaptInfo.vAdaptation = vAdaptation;
+}
 
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("Adaptation",
-		&m_tAdaptInfo);
+void CPostEffect::UpdateCBuffer(int iPass)
+{
+	switch (iPass)
+	{
+	case 0:
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("Adaptation", &m_tAdaptInfo);
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("DownScale", &m_tDownScaleCBInfo);
+
+		break;
+	case 1:
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass", &m_tFinalPassCBInfo);
+
+		break;
+	}
 }
 
 const Vector4& CPostEffect::GetAdaptation() const
@@ -79,6 +78,13 @@ const Vector4& CPostEffect::GetAdaptation() const
 
 bool CPostEffect::Init()
 {
+	m_tAdaptInfo.vAdaptation = Vector4(1.f, 1.f, 1.f, 1.f);
+	m_fHeight = _RESOLUTION.iHeight;
+	m_fWidth = _RESOLUTION.iWidth;
+
+	m_fMiddleGrey = 0.863f;
+	m_fLumWhite = 1.53f;
+
 	return true;
 }
 

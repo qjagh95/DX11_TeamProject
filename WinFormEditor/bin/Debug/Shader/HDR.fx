@@ -1,4 +1,4 @@
-#include "Share.fx"
+#include "ComputeShare.fx"
 
 Texture2D HDRTex : register(t9);
 
@@ -18,14 +18,12 @@ cbuffer DownScaleConstants : register(b1)
 
 groupshared float SharedPositions[1024];
 
-//static const float4 LUM_FACTOR = float4(0.299, 0.587, 0.114, 0);
-
 // 각 스레드에 대해 4x4 다운 스케일을 수행한다
 float4 DownScale4x4(uint2 CurPixel, uint groupThreadId)
 {
     float avgLum = 0.f;
 
-    if(CurPixel.y < g_Res.y)
+    if (CurPixel.y < g_Res.y)
     {
         int3 iFullResPos = int3(CurPixel * 4, 0);
         float4 vDownScaled = float4(0.f, 0.f, 0.f, 0.f);
@@ -64,7 +62,7 @@ float DownScale1024to4(uint dispachThreadId, uint groupThreadId,
         iGroupSize < 1024;
         iGroupSize *= 4, iStep1 *= 4, iStep2 *= 4, iStep3 *= 4)
     {
-        if(groupThreadId % iGroupSize == 0)
+        if (groupThreadId % iGroupSize == 0)
         {
             float fStepAvgLum = avgLum;
 
@@ -88,10 +86,10 @@ float DownScale1024to4(uint dispachThreadId, uint groupThreadId,
 }
 
 // 4개의 값을 하나의 평균값으로 다운스케일한 후 저장한다
-void DownScale4to1(uint dispatchThreadId, uint groupThreadId, 
+void DownScale4to1(uint dispatchThreadId, uint groupThreadId,
     uint groupId, float avgLum)
 {
-    if(groupThreadId == 0)
+    if (groupThreadId == 0)
     {
         //  스레드 그룹에 대한 평균 휘도 값 계산
         float fFinalAvgLum = avgLum;
@@ -143,7 +141,7 @@ void DownScaleFirstPass(uint3 groupId : SV_GroupID,
 groupshared float SharedAvgFinal[MAX_GROUPS];
 
 [numthreads(MAX_GROUPS, 1, 1)]
-void DownScaleSecondPass(uint3 groupId : SV_GroupID, 
+void DownScaleSecondPass(uint3 groupId : SV_GroupID,
         uint3 groupThreadId : SV_GroupThreadID,
         uint3 dispatchThreadId : SV_DispatchThreadID)
 {
@@ -160,7 +158,7 @@ void DownScaleSecondPass(uint3 groupId : SV_GroupID,
     GroupMemoryBarrierWithGroupSync(); // 동기화 후 다음 과정으로
 
     // 64에서 16으로 다운 스케일
-    if(dispatchThreadId.x % 4 == 0)
+    if (dispatchThreadId.x % 4 == 0)
     {
         // 휘도 값 합산
         float fstepAvgLum = favgLum;
@@ -182,7 +180,7 @@ void DownScaleSecondPass(uint3 groupId : SV_GroupID,
     GroupMemoryBarrierWithGroupSync(); // 동기화 후 다음 과정으로
 
     // 16에서 4로 다운스케일
-    if(dispatchThreadId.x % 16 == 0)
+    if (dispatchThreadId.x % 16 == 0)
     {
         // 휘도 값 합산
         float fstepAvgLum = favgLum;
@@ -204,7 +202,7 @@ void DownScaleSecondPass(uint3 groupId : SV_GroupID,
     GroupMemoryBarrierWithGroupSync(); // 동기화 후 다음 과정으로
 
     // 4에서 1로 다운스케일
-    if(dispatchThreadId.x == 0)
+    if (dispatchThreadId.x == 0)
     {
         // 휘도 값 합산
         float fFinalLumValue = favgLum;

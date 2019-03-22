@@ -67,12 +67,6 @@ public:
 	void AddCollision(class CGameObject* pObj);
 	void ClearCollisionGroup();
 	void Collision(float fTime);
-	void Render(float fTime);
-private:
-	void CollisionMouse2D(CGameObject* pMouseObj,
-		float fTime);
-	void CollisionMouse3D(CGameObject* pMouseObj,
-		float fTime);
 
 private:
 	PCollisionGroup FindGroup(const string& strGroup);

@@ -2,6 +2,7 @@
 #include "MultiRenderTarget.h"
 #include "RenderTarget.h"
 #include "RenderManager.h"
+#include "ViewManager.h"
 #include "../Device.h"
 
 PUN_USING
@@ -17,7 +18,7 @@ CMultiRenderTarget::~CMultiRenderTarget()
 
 void CMultiRenderTarget::AddRenderTargetView(const string& TargetName)
 {
-	CRenderTarget* getTarget = CRenderManager::GetInst()->FindRenderTarget(TargetName);
+	CRenderTarget* getTarget = CViewManager::GetInst()->FindRenderTarget(TargetName);
 
 	if (getTarget == NULLPTR)
 		return;
@@ -31,7 +32,7 @@ void CMultiRenderTarget::AddRenderTargetView(const string& TargetName)
 
 void CMultiRenderTarget::AddDepthView(const string & TargetName)
 {
-	CRenderTarget* getTarget = CRenderManager::GetInst()->FindRenderTarget(TargetName);
+	CRenderTarget* getTarget = CViewManager::GetInst()->FindRenderTarget(TargetName);
 
 	if (getTarget == NULLPTR)
 		return;

@@ -81,7 +81,7 @@ bool CUIButton::Init()
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
 	pMaterial->SetDiffuseTex(0, "Button", TEXT("StartScene/Start.png"));
-	pMaterial->SetSampler(0, SAMPLER_LINEAR);
+
 	SAFE_RELEASE(pMaterial);
 
 	m_pTransform->SetWorldScale(115.f, 24.f, 1.f);

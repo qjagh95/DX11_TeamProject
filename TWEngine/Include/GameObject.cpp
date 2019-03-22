@@ -16,12 +16,10 @@ unordered_map<class CScene*, unordered_map<string, CGameObject*>> CGameObject::m
 CGameObject::CGameObject() :
 	m_pTransform(nullptr),
 	m_pParent(nullptr),
-	m_iObjectListIdx(0),
-	m_isDontDestroy(false)
+	m_iObjectListIdx(0)
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;
-	m_bSaveEnable = false;
 }
 
 CGameObject::CGameObject(const CGameObject & obj)
@@ -97,16 +95,10 @@ CGameObject::~CGameObject()
 	Safe_Release_VecList(m_ComList);
 }
 
-void CGameObject::SaveEnable()
-{
-	m_bSaveEnable = true;
-}
-
 CGameObject * CGameObject::CreateObject(const string & strTag, CLayer * pLayer,
 	bool bDontDestroy)
 {
 	CGameObject*	pObj = new CGameObject;
-	pObj->m_isDontDestroy = bDontDestroy;
 
 	pObj->SetTag(strTag);
 
@@ -589,12 +581,6 @@ void CGameObject::Render(float fTime)
 			continue;
 		}
 
-		else if ((*iter)->GetComponentType() == CT_COLLIDER)
-		{
-			++iter;
-			continue;
-		}
-
 		else if (!(*iter)->GetActive())
 		{
 			CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
@@ -806,38 +792,3 @@ void CGameObject::Load(FILE * pFile)
 {
 }
 
-void CGameObject::Save(BinaryWrite* _pInstBW)
-{
-	/* Function Create KDG */
-
-	// Transform
-	m_pTransform->Save(_pInstBW);
-
-	// 컴포넌트 목록
-	list<CComponent*>::iterator	iter;
-	list<CComponent*>::iterator	iterEnd = m_ComList.end();
-	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
-	{
-		(*iter)->Save(_pInstBW);
-	}
-}
-
-void CGameObject::Load(BinaryRead* _pInstBR)
-{
-	/* Function Create KDG */
-
-	// Transform
-	m_pTransform->Load(_pInstBR);
-
-	// 컴포넌트 추가 및 컴포넌트 Load 함수 호출
-	list<CComponent*>::iterator	iter;
-	list<CComponent*>::iterator	iterEnd = m_ComList.end();
-	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
-	{
-		// 추가
-		this->AddComponent((*iter));
-
-		// Load 호출
-		(*iter)->Load(_pInstBR);
-	}
-}

@@ -6,10 +6,13 @@ PUN_BEGIN
 class PUN_DLL CDepthState :
 	public CRenderState
 {
+	friend class CViewManager;
 	friend class CRenderManager;
 
 private:
 	CDepthState();
+
+public:
 	~CDepthState();
 
 

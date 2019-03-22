@@ -164,20 +164,20 @@ bool CShaderManager::Init()
 		return false;
 
 	pEntry[ST_COMPUTE] = (char*)"DownScaleFirstPass";
-	if (!LoadComputeShader(HDR_COMPUTE_SHADER, TEXT("ComputeProcess.fx"), pEntry))
+	if (!LoadComputeShader(HDR_COMPUTE_SHADER, TEXT("HDR.fx"), pEntry))
 		return false;
 
 	pEntry[ST_COMPUTE] = (char*)"DownScaleSecondPass";
-	if (!LoadComputeShader(HDR_SECOND_COMPUTE_SHADER, TEXT("ComputeProcess.fx"), pEntry))
+	if (!LoadComputeShader(HDR_SECOND_COMPUTE_SHADER, TEXT("HDR.fx"), pEntry))
 		return false;
 
-	pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationFirstPass";
-	if (!LoadComputeShader(ADAPT_COMPUTE_SHADER, TEXT("AdaptProcess.fx"), pEntry))
-		return false;
+	//pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationFirstPass";
+	//if (!LoadComputeShader(ADAPT_COMPUTE_SHADER, TEXT("Adaption.fx"), pEntry))
+	//	return false;
 
-	pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationSecondPass";
-	if (!LoadComputeShader(ADAPT_SECOND_COMPUTE_SHADER, TEXT("AdaptProcess.fx"), pEntry))
-		return false;
+	//pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationSecondPass";
+	//if (!LoadComputeShader(ADAPT_SECOND_COMPUTE_SHADER, TEXT("Adaption.fx"), pEntry))
+	//	return false;
 
 	pEntry[ST_VERTEX] = (char*)"FullScreenAdaptQuadVS";
 	pEntry[ST_PIXEL] = (char*)"FinalPassAdaptPS";
@@ -193,6 +193,22 @@ bool CShaderManager::Init()
 	AddInputElement((char*)"BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
 
 	if (!CreateInputLayout(VERTEX3D_LAYOUT, "Vertex3D"))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"MotionBlur";
+	if (!LoadComputeShader(MOTION_BLUR_SHADER, TEXT("MotionBlur.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"DownScale";
+	if (!LoadComputeShader(DOWNSCALE_SHADER, TEXT("DownScale.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"HorizontalBlur";
+	if (!LoadComputeShader(HORIZONTAL_BLUR_SHADER, TEXT("Blur.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"VerticalBlur";
+	if (!LoadComputeShader(VERTICAL_BLUR_SHADER, TEXT("Blur.fx"), pEntry))
 		return false;
 
 	// 상수버퍼 만들기
@@ -211,9 +227,11 @@ bool CShaderManager::Init()
 	CreateCBuffer("Light", 3, sizeof(LightInfo), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("PublicCBuffer", 5, sizeof(PublicCBuffer), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("LandScape", 11, sizeof(LandScapeCBuffer), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("DownScale", 1, sizeof(DownScaleCB), CST_COMPUTE);
-	CreateCBuffer("FinalPass", 2, sizeof(FinalPassCB), CST_VERTEX | CST_PIXEL);
+
+	CreateCBuffer("HDRDownScale", 1, sizeof(DownScaleCB), CST_COMPUTE);
+	CreateCBuffer("HDRFinalPass", 2, sizeof(FinalPassCB), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Adaptation", 3, sizeof(AdaptationCB), CST_COMPUTE);
+	CreateCBuffer("Blur", 1, sizeof(BlurCBuffer), CST_COMPUTE);
 	
 	return true;
 }
@@ -296,6 +314,16 @@ CComputeShader * CShaderManager::FindComputeShader(const string & strName)
 		return nullptr;
 
 	iter->second->AddRef();
+
+	return iter->second;
+}
+
+CComputeShader * CShaderManager::FindComputeShaderNonCount(const string & strName)
+{
+	unordered_map<string, CComputeShader*>::iterator	iter = m_mapComputeShader.find(strName);
+
+	if (iter == m_mapComputeShader.end())
+		return nullptr;
 
 	return iter->second;
 }

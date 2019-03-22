@@ -32,6 +32,7 @@ private:
 	CMultiRenderTarget();
 
 public:
+	friend class CViewManager;
 	friend class CRenderManager;
 };
 

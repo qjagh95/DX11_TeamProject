@@ -21,6 +21,7 @@ public:
 	class CShader* FindShader(const string& strName);
 	class CShader * FindShaderNonCount(const string & strName);
 	class CComputeShader*	FindComputeShader(const string& strName);
+	class CComputeShader*	FindComputeShaderNonCount(const string& strName);
 	void AddInputElement(char* pSemantic, int iIdx, DXGI_FORMAT eFmt,
 		int iSize, int iInputSlot = 0, D3D11_INPUT_CLASSIFICATION eInputClass = D3D11_INPUT_PER_VERTEX_DATA,
 		int iInstanceStepRate = 0);

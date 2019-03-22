@@ -209,9 +209,5 @@ namespace EngineWrapper
 
 			PUN::CEditManager::GetInst()->ClipSaveFromFullPath(strFullPath);
 		}
-
-		public:
-			void FileSave(String^ _strFullPath);
-			void FileLoad(String^ _strFullPath);
 	};
 }

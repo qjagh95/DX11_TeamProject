@@ -138,6 +138,18 @@
     <Filter Include="03. Rendering\01. Shader\01. HLSL\02. Rendering">
       <UniqueIdentifier>{7ff47f35-1118-4f09-aaa6-7d2ad8d1b428}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Rendering\06. Filter\01. HDR">
+      <UniqueIdentifier>{9b8462f0-c350-496c-be01-228b5475e515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Rendering\06. Filter\02. DownScale">
+      <UniqueIdentifier>{4a2eefe2-8167-45b3-8fac-f35a54c57f87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Rendering\06. Filter\03. MotionBlur">
+      <UniqueIdentifier>{84afadf2-1d77-4d6c-8294-51262142512b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Rendering\06. Filter\04. Blur">
+      <UniqueIdentifier>{07576062-bc72-48cf-acd8-dd75c3dc08c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -341,8 +353,20 @@
     <ClCompile Include="Rendering\ComputeShader.cpp">
       <Filter>03. Rendering\01. Shader</Filter>
     </ClCompile>
-    <ClCompile Include="Component\ColliderRay.cpp">
-      <Filter>06. Component\07. Collider</Filter>
+    <ClCompile Include="Rendering\DownScale.cpp">
+      <Filter>03. Rendering\06. Filter\02. DownScale</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\MBTexture.cpp">
+      <Filter>03. Rendering\06. Filter\03. MotionBlur</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\CSHDRFilter.cpp">
+      <Filter>03. Rendering\06. Filter\01. HDR</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\MotionBlurFilter.cpp">
+      <Filter>03. Rendering\06. Filter\03. MotionBlur</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\CSBlur.cpp">
+      <Filter>03. Rendering\06. Filter\04. Blur</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -565,8 +589,20 @@
     <ClInclude Include="Rendering\ComputeShader.h">
       <Filter>03. Rendering\01. Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Component\ColliderRay.h">
-      <Filter>06. Component\07. Collider</Filter>
+    <ClInclude Include="Rendering\DownScale.h">
+      <Filter>03. Rendering\06. Filter\02. DownScale</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\MBTexture.h">
+      <Filter>03. Rendering\06. Filter\03. MotionBlur</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\CSHDRFilter.h">
+      <Filter>03. Rendering\06. Filter\01. HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\MotionBlurFilter.h">
+      <Filter>03. Rendering\06. Filter\03. MotionBlur</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\CSBlur.h">
+      <Filter>03. Rendering\06. Filter\04. Blur</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -578,12 +614,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\Shader\AdaptProcess.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\ComputeProcess.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\Shader\Adaptation.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
@@ -613,6 +643,24 @@
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\UI.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\ComputeShare.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\MotionBlur.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\Blur.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\DownScale.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\Adaption.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\HDR.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

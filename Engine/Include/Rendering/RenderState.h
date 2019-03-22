@@ -7,9 +7,12 @@ class PUN_DLL CRenderState :
 	public CRef
 {
 	friend class CRenderManager;
+	friend class CViewManager;
 
 protected:
 	CRenderState();
+
+public:
 	virtual ~CRenderState() = 0;
 
 protected:

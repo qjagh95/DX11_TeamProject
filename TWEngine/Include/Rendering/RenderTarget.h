@@ -5,6 +5,7 @@ PUN_BEGIN
 class PUN_DLL CRenderTarget
 {
 	friend class CRenderManager;
+	friend class CViewManager;
 
 private:
 	CRenderTarget();
@@ -32,9 +33,11 @@ private:
 	bool						m_bDrawDebug;
 
 public:
+
 	ID3D11RenderTargetView* GetRenderTargetView()	const;
 	ID3D11DepthStencilView* GetDepthView()	const;
 	ID3D11ShaderResourceView* GetShaderResourceView() const { return m_pTargetSRV; }
+	ID3D11Texture2D* GetTexture() const { return m_pTargetTex; }
 
 public:
 	bool CreateRenderTarget(DXGI_FORMAT eTargetFmt,

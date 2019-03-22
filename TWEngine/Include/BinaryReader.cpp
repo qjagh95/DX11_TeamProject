@@ -193,8 +193,3 @@ void BinaryRead::ReadData(wstring & Data)
 
 	Data = CA2W(getData);
 }
-
-ifstream* BinaryRead::GetIfStream()
-{
-	return &m_ReadFile;
-}

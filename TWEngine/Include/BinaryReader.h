@@ -25,8 +25,6 @@ public:
 	void ReadData(string& Data);
 	void ReadData(wstring& Data);
 
-	ifstream* BinaryRead::GetIfStream();
-
 private:
 	ifstream m_ReadFile;
 

@@ -629,50 +629,5 @@ namespace WinFormEditor
         private void AnimationBtn_Click(object sender, EventArgs e)
         {
         }
-
-        private void FileSave_Click(object sender, EventArgs e)
-        {
-            /* Function Create KDG */
-
-            // SaveFileDialog 창 설정
-            // Title  : Dialog 창 이름 설정
-            // Filter : 파일 형식 부분
-            // AddExtension : 확장명 추가 여부
-            SaveFileDialog saveFile = new SaveFileDialog();
-            string curDirectory = Directory.GetCurrentDirectory();
-            string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
-            path += "\\3DClient\\bin\\Data";
-            saveFile.InitialDirectory = path;
-            saveFile.Title = "다른 이름으로 저장";
-            saveFile.Filter = "텍스트 파일(*.txt)|*.txt|모든파일(*.*)|*.*";
-            saveFile.DefaultExt = "txt";
-            saveFile.AddExtension = true;
-
-            if (saveFile.ShowDialog() == DialogResult.OK)
-            {
-                // 저장
-                coreWrapper.FileSave(saveFile.FileName);
-            }
-        }
-
-        private void FileLoad_Click(object sender, EventArgs e)
-        {
-            /* Function Create KDG */
-
-            OpenFileDialog openFile = new OpenFileDialog();
-            string curDirectory = Directory.GetCurrentDirectory();
-            string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
-            path += "\\3DClient\\bin\\Data";
-            openFile.InitialDirectory = path;
-            openFile.Title = "파일 불러오기";
-            openFile.FileName = ".txt";
-            openFile.Filter = "텍스트 파일(*.txt) | *.txt; | 모든 파일(*.*) | *.*";
-
-            if (openFile.ShowDialog() == DialogResult.OK)
-            {
-                // 불러오기
-                coreWrapper.FileLoad(openFile.FileName);
-            }
-        }
     }
 }

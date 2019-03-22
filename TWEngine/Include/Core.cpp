@@ -23,7 +23,7 @@ CCore::CCore()
 	m_bEditorMode = false;
 	m_pTimer = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(2843);
+	//_CrtSetBreakAlloc(183);
 
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 
@@ -582,6 +582,7 @@ void CCore::EditDelete()
 	CNavigationManager3D::DestroyInst();
 	DESTROY_SINGLE(CEditManager);
 	DESTROY_SINGLE(CDevice);
+	Safe_Delete_Map(m_ManagerMap);
 	//CoUninitialize();
 }
 

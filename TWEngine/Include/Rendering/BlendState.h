@@ -6,10 +6,13 @@ PUN_BEGIN
 class PUN_DLL CBlendState :
 	public CRenderState
 {
+	friend class CViewManager;
 	friend class CRenderManager;
 
 private:
 	CBlendState();
+
+public:
 	~CBlendState();
 
 private:

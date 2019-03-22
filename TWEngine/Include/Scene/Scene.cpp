@@ -736,50 +736,46 @@ void CScene::Save(string _fullPath)
 	/* Function Create KDG */
 
 	// 파일 객체(ofstream) 생성
-	BinaryWrite instBW = BinaryWrite(_fullPath.c_str());
+	BinaryWrite instBW = BinaryWrite(_fullPath);
+
+	// 파일생성
+	ofstream ofs(_fullPath, ios_base::binary);
 
 	// 레이어 목록
 	list<CLayer*>::iterator iter;
 	list<CLayer*>::iterator iterEnd = m_LayerList.end();
 	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
 	{
-		/*
-		Read(읽기)를 위해서 문자열 길이를 저장 후 그 길이만큼 읽어오는 방식으로
-		저장하기 위해 문자열 길이를 먼저 저장한다.
-		instBW.WriteData((char*)&strLength, sizeof(CHAR_MAX));
-		instBW.WriteData(strLayerTag.c_str(), strLength);
-		*/
-
-		// BinaryWrite 클래스에선 위 작업을 함수화 시켜놨다.
-		instBW.WriteData((*iter)->GetTag().c_str());
-
-		// Layer Save 함수 호출
-		(*iter)->Save(&instBW);
+		string strLayerTag = (*iter)->GetTag();
+		size_t strLength = strlen(strLayerTag.c_str());
+		ofs.write((char*)&strLength, sizeof(CHAR_MAX));
+		ofs.write(strLayerTag.c_str(), strLength);
 	}
-}
 
-void CScene::Load(string _fullPath)
-{
-	/* Function Create KDG */
-
-	// 파일 객체(ifstream) 생성
-	BinaryRead instBR = BinaryRead(_fullPath.c_str());
-
-	// 레이어 목록
-	list<CLayer*>::iterator iter;
-	list<CLayer*>::iterator iterEnd = m_LayerList.end();
-	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
+	// 카메라 목록
+	unordered_map<string, CGameObject*>::iterator iterMap;
+	unordered_map<string, CGameObject*>::iterator iterEndMap = m_mapCamera.end();
+	for (iterMap = m_mapCamera.begin(); iterMap != iterEndMap; ++iterMap)
 	{
-		string strLayerTag;
-		instBR.ReadData(strLayerTag);
-
-		// 레이어를 찾아서 m_LayerList에 없다면 추가한다.
-		if (FindLayer(strLayerTag) == nullptr)
-		{
-			AddLayer(strLayerTag, 0); // Default ZOrder 0
-		}
-
-		// Layer Load 함수 호출
-		(*iter)->Load(&instBR);
+		string strCameraTag = iterMap->second->GetTag();
+		size_t strLength = strlen(strCameraTag.c_str());
+		ofs.write((char*)&strLength, sizeof(CHAR_MAX));
+		ofs.write(strCameraTag.c_str(), strLength);
 	}
+
+	ofs.close();
+
+	// 테스트 출력
+	/*
+	ifstream ifs(_fullPath, ios_base::binary);
+	char chData[CHAR_MAX] = {};
+	for (size_t i = 0; i < m_LayerList.size(); ++i)
+	{
+		size_t strLength = 0;
+		ifs.read((char*)&strLength, sizeof(CHAR_MAX));
+		ifs.read(chData, strLength);
+		memset(chData, 0, sizeof(CHAR_MAX));
+	}
+	ifs.close();
+	*/
 }

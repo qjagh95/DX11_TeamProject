@@ -7,7 +7,6 @@
 #include "ColliderPoint.h"
 #include "ColliderRect.h"
 #include "ColliderPixel.h"
-#include "ColliderRay.h"
 
 PUN_USING
 
@@ -184,8 +183,6 @@ bool CColliderOBB3D::Collision(CCollider * pDest, float fTime)
 	{
 	case CT_OBB3D:
 		return CollisionOBB3DToOBB3D(m_tInfo, ((CColliderOBB3D*)pDest)->GetInfo());
-	case CT_RAY:
-		return CollisionRayToOBB3D(((CColliderRay*)pDest)->GetInfo(), m_tInfo);
 	}
 
 	return false;

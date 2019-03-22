@@ -6,7 +6,11 @@ PUN_BEGIN
 
 class PUN_DLL CPostEffect
 {
-	friend class CViewManager;
+	friend class CCSHDRFilter;
+
+private:
+	CPostEffect();
+	~CPostEffect();
 
 private:
 	DownScaleCB			m_tDownScaleCBInfo;
@@ -29,14 +33,14 @@ public:
 	void SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime);
 	void SetAdaptationCB(Vector4 vAdaptation, float fTime);
 
+	void UpdateCBuffer(int iPass);
+
 public:
 	const Vector4& GetAdaptation()	const;
 
 public:
-	virtual bool Init();
-	virtual int Update(float fTime);
-
-DECLARE_SINGLE(CPostEffect)
+	bool Init();
+	int  Update(float fTime);
 };
 
 PUN_END

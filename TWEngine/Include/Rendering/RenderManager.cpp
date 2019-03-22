@@ -12,6 +12,8 @@
 #include "../Component/Camera.h"
 #include "ComputeShader.h"
 #include "PostEffect.h"
+#include "ViewManager.h"
+#include "DownScale.h"
 
 PUN_USING
 
@@ -19,99 +21,34 @@ DEFINITION_SINGLE(CRenderManager)
 
 CRenderManager::CRenderManager() :
 	m_pCreateState(nullptr),
-	m_bDeferred(true)/*
-	m_pHDRComputeShader(nullptr),
-	m_pHDRSecondComputeShader(nullptr),
-	m_pHDRShader(nullptr),
-	m_pAvgLumBuffer(nullptr),
-	m_pAvgLumSRV(nullptr),
-	m_pAvgLumUAV(nullptr),
-	m_pOldAvgLumBuffer(nullptr),
-	m_pOldAvgLumSRV(nullptr),
-	m_pOldAvgLumUAV(nullptr),
-	m_pDownScaleBuffer(nullptr),
-	m_pDownScaleSRV(nullptr),
-	m_pDownScaleUAV(nullptr),*/
+	m_bDeferred(true)
 {
 	m_eGameMode = GM_3D;
-	m_pAlbedoTarget = NULLPTR;
-	m_pLightBlendTarget = NULLPTR;
-	m_pLightAccDifTarget = NULLPTR;
-	m_pLightAccSpcTarget = NULLPTR;
-
-	m_pAddBlend = NULLPTR;
-	m_pDepthDisable = NULLPTR;
-	m_pDepthGrator = NULLPTR;
-	m_pDepthLess = NULLPTR;
-	m_pFrontCull = NULLPTR;
-	m_pBackCull = NULLPTR;
-	m_pWireFrame = NULLPTR;
-	m_pCullNone = NULLPTR;
-	m_pZeroBlend = NULLPTR;
-	m_pAllBlend = NULLPTR;
 	m_pSphereVolum = NULLPTR;
 	m_pCornVolum = NULLPTR;
 	m_pGBufferMultiTarget = NULLPTR;
 	m_pLightMultiTarget = NULLPTR;
 
+	memset(m_pState, 0, sizeof(CRenderState*) * STATE_END);
+	memset(m_pTarget, 0, sizeof(CRenderTarget*) * TARGET_END);
+	memset(m_pShader, 0, sizeof(CShader*) * SHADER_END);
+	memset(m_pFilter, 0, sizeof(CCSFilter*) * CFT_END);
+
 	m_bWireFrame = true;
-
-	/*m_fHeight = _RESOLUTION.iHeight;
-	m_fWidth = _RESOLUTION.iWidth;
-	m_fGroups = 0.f;
-
-	m_fMiddleGrey = 0.863f;
-	m_fLumWhite = 1.53f;*/
 
 	m_tCBuffer = {};
 }
 
 CRenderManager::~CRenderManager()
 {
-	/*SAFE_RELEASE(m_pOldAvgLumBuffer);
-	SAFE_RELEASE(m_pOldAvgLumSRV);
-	SAFE_RELEASE(m_pOldAvgLumUAV);
-	SAFE_RELEASE(m_pAvgLumBuffer);
-	SAFE_RELEASE(m_pAvgLumSRV);
-	SAFE_RELEASE(m_pAvgLumUAV);
-	SAFE_RELEASE(m_pDownScaleBuffer);
-	SAFE_RELEASE(m_pDownScaleSRV);
-	SAFE_RELEASE(m_pDownScaleUAV);
-	SAFE_RELEASE(m_pHDRSRV);
-	SAFE_RELEASE(m_pHDRShader);
-	SAFE_RELEASE(m_pHDRComputeShader);
-	SAFE_RELEASE(m_pHDRSecondComputeShader);
-	SAFE_RELEASE(m_pDownScaleSmp);
-	DESTROY_SINGLE(CPostEffect);*/
-
-	SAFE_RELEASE(m_pFullScreenShader);
-	SAFE_RELEASE(m_pLightBlendShader);
-	SAFE_RELEASE(m_pLightAccSpotShader);
-	SAFE_RELEASE(m_pLightAccPointShader);
-	SAFE_RELEASE(m_pLightAccDirShader);
 	SAFE_RELEASE(m_pGBufferSampler);
-
-	Safe_Delete_Map(m_mapMultiTarget);
-	Safe_Release_Map(m_mapRenderState);
-
-	unordered_map<string, CRenderTarget*>::iterator	iter;
-	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
-
-	for (iter = m_mapRenderTarget.begin(); iter != iterEnd; ++iter)
-		SAFE_DELETE(iter->second);
-
-	m_mapRenderTarget.clear();
-
-	for (int i = 0; i < RG_END; ++i)
-	{
-		for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
-			SAFE_RELEASE(m_tRenderObj[i].pList[j]);
-
-		m_tRenderObj[i].iSize = 0;
-	}
-
-
 	DESTROY_SINGLE(CShaderManager);
+	DESTROY_SINGLE(CViewManager);
+
+	//for (int i = CFT_DOWNSCALE; i < CFT_END; ++i)
+	//{
+	//	SAFE_DELETE(m_pFilter[(CS_FILTER_TYPE)i]);
+	//}
 }
 
 GAME_MODE CRenderManager::GetGameMode() const
@@ -139,352 +76,72 @@ bool CRenderManager::Init()
 	if (!GET_SINGLE(CShaderManager)->Init())
 		return false;
 
+	if (!GET_SINGLE(CViewManager)->Init())
+		return false;
+
 	m_tCBuffer.ViewPortSize.x = (float)CDevice::GetInst()->GetResolution().iWidth;
 	m_tCBuffer.ViewPortSize.y = (float)CDevice::GetInst()->GetResolution().iHeight;
 	m_tCBuffer.isDeferred = m_bDeferred;
 
-	D3D11_DEPTH_STENCILOP_DESC First = {};
-	First.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	First.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	First.StencilPassOp = D3D11_STENCIL_OP_ZERO;
-	First.StencilFunc = D3D11_COMPARISON_NEVER;
+	m_pGBufferSampler				= GET_SINGLE(CResourcesManager)->FindSampler(SAMPLER_POINT);
+	m_pSphereVolum					= GET_SINGLE(CResourcesManager)->FindMeshNonCount(SPHERE_VOLUME);
+	m_pCornVolum					= GET_SINGLE(CResourcesManager)->FindMeshNonCount(CORN_VOLUME);
+	m_pPointLightLayout				= GET_SINGLE(CShaderManager)->FindInputLayout(POS_LAYOUT);
 
-	D3D11_DEPTH_STENCILOP_DESC Second = {};
-	Second.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	Second.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	Second.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	Second.StencilFunc = D3D11_COMPARISON_ALWAYS; //무조건통과옵션
+	m_pShader[SHADER_ACC_DIR]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_DIR_ACC_SHADER);
+	m_pShader[SHADER_ACC_POINT]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_POINT_ACC_SHADER);
+	m_pShader[SHADER_ACC_SPOT]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_SPOT_ACC_SHADER);
+	m_pShader[SHADER_BLEND]			= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_BLEND_SHADER);
+	m_pShader[SHADER_FULL_SCREEN]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(FULLSCREEN_SHADER);
 
-	//뒷면만 통과하겠다.
-	CreateDepthStencilState(DEPTH_GRATOR, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_GREATER, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK, D3D11_DEFAULT_STENCIL_READ_MASK, First, Second);
+	m_pTarget[TARGET_ALBEDO]		= GET_SINGLE(CViewManager)->FindRenderTarget("Albedo");
+	m_pTarget[TARGET_BLEND]			= GET_SINGLE(CViewManager)->FindRenderTarget("LightBlend");
+	m_pTarget[TARGET_ACC_DIFF]		= GET_SINGLE(CViewManager)->FindRenderTarget("LightAccDif");
+	m_pTarget[TARGET_ACC_SPC]		= GET_SINGLE(CViewManager)->FindRenderTarget("LightAccSpc");
 
-	First.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	First.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	First.StencilPassOp = D3D11_STENCIL_OP_ZERO;
-	First.StencilFunc = D3D11_COMPARISON_EQUAL; //같을때만
+	m_pState[STATE_DEPTH_GRATOR]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_GRATOR);
+	m_pState[STATE_DEPTH_LESS]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_LESS);
+	m_pState[STATE_ACC_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ACC_BLEND);
+	m_pState[STATE_FRONT_CULL]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(FRONT_CULL);
+	m_pState[STATE_BACK_CULL]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(BACK_CULL);
+	m_pState[STATE_WIRE_FRAME]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(WIRE_FRAME);
+	m_pState[STATE_CULL_NONE]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(CULL_NONE);
+	m_pState[STATE_ZERO_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ZERO_BLEND);
+	m_pState[STATE_ALL_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ALL_BLEND);
+	m_pState[STATE_DEPTH_DISABLE]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_DISABLE);
 
-	Second.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	Second.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	Second.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	Second.StencilFunc = D3D11_COMPARISON_NEVER; //통과 X
+	((CDepthState*)m_pState[STATE_DEPTH_GRATOR])->SetStencilRef(1); //스텐실값을 1로 채운다.
 
-	//앞면만 통과시키겠다.
-	CreateDepthStencilState(DEPTH_LESS, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_LESS, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK, D3D11_DEFAULT_STENCIL_READ_MASK, First, Second);	
+	m_pGBufferMultiTarget	= GET_SINGLE(CViewManager)->FindMRT("GBuffer");
+	m_pLightMultiTarget		= GET_SINGLE(CViewManager)->FindMRT("LightAcc");
 
-	//////////////////////Blend//////////////////////////////
-	AddBlendTargetDesc(TRUE);
-	CreateBlendState(ALPHA_BLEND);
-	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
-	CreateBlendState(ACC_BLEND);
-
-	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ZERO, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, 0);
-	CreateBlendState(ZERO_BLEND);
-	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_COLOR_WRITE_ENABLE_ALL);
-	CreateBlendState(ALL_BLEND);
-	///////////////////////////////////////////////////////
-
-	//////////////////////Depth//////////////////////////
-	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
-	//////////////////////////////////////////////////////
-
-	CreateRasterizerState(CULL_NONE, D3D11_FILL_SOLID, D3D11_CULL_NONE);
-	CreateRasterizerState(FRONT_CULL, D3D11_FILL_SOLID, D3D11_CULL_FRONT);
-	CreateRasterizerState(BACK_CULL, D3D11_FILL_SOLID, D3D11_CULL_BACK);
-	CreateRasterizerState(WIRE_FRAME, D3D11_FILL_WIREFRAME);
-
-	// 포스트 이펙트용 렌더링타겟 생성
-	Vector3	vPos;
-	vPos.x = _RESOLUTION.iWidth - 100.f;
-
-	if (!CreateRenderTarget("PostEffect", DXGI_FORMAT_R8G8B8A8_UNORM, vPos, Vector3(100.f, 100.f, 1.f), true))
-		return false;
-
-	// Albedo
-	vPos.x = 0.f;
-	if (!CreateRenderTarget("Albedo", DXGI_FORMAT_R32G32B32A32_FLOAT, Vector3::Zero, Vector3(100.f, 100.f, 1.f), true))
-		return false;
-
-	// Normal
-	vPos.x = 0.f;
-	vPos.y = 100.f;
-	if (!CreateRenderTarget("Normal", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
-		return false;
-
-	// Depth
-	vPos.x = 0.f;
-	vPos.y = 200.f;
-	if (!CreateRenderTarget("Depth", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
-		return false;
-
-	// Material
-	vPos.x = 0.f;
-	vPos.y = 300.f;
-	if (!CreateRenderTarget("Material", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
-		return false;
-
-	CreateMultiTarget("GBuffer");
-	AddMultiRenderTarget("GBuffer", "Albedo");
-	AddMultiRenderTarget("GBuffer", "Normal");
-	AddMultiRenderTarget("GBuffer", "Depth");
-	AddMultiRenderTarget("GBuffer", "Material");
-
-	// Light Dif
-	vPos.x = 100.f;
-	vPos.y = 0.f;
-	if (!CreateRenderTarget("LightAccDif", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
-		return false;
-
-	// Light Spc
-	vPos.x = 100.f;
-	vPos.y = 100.f;
-	if (!CreateRenderTarget("LightAccSpc", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
-		return false;
-
-	CreateMultiTarget("LightAcc");
-	AddMultiRenderTarget("LightAcc", "LightAccDif");
-	AddMultiRenderTarget("LightAcc", "LightAccSpc");
-
-	// Light Blend
-	vPos.x = 200.f;
-	vPos.y = 0.f;
-	if (!CreateRenderTarget("LightBlend", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true , Vector4::LightCyan))
-		return false;
-
-	m_pGBufferSampler = CResourcesManager::GetInst()->FindSampler(SAMPLER_POINT);
-	m_pLightAccDirShader = CShaderManager::GetInst()->FindShader(LIGHT_DIR_ACC_SHADER);
-	m_pLightAccPointShader = CShaderManager::GetInst()->FindShader(LIGHT_POINT_ACC_SHADER);
-	m_pLightAccSpotShader = CShaderManager::GetInst()->FindShader(LIGHT_SPOT_ACC_SHADER);
-	m_pLightBlendShader = CShaderManager::GetInst()->FindShader(LIGHT_BLEND_SHADER);
-	m_pFullScreenShader = CShaderManager::GetInst()->FindShader(FULLSCREEN_SHADER);
-
-	m_pAlbedoTarget = FindRenderTarget("Albedo");
-	m_pLightBlendTarget = FindRenderTarget("LightBlend");
-	m_pLightAccDifTarget = FindRenderTarget("LightAccDif");
-	m_pLightAccSpcTarget = FindRenderTarget("LightAccSpc");
-
-	m_pPointLightLayout = GET_SINGLE(CShaderManager)->FindInputLayout(POS_LAYOUT);
-
-	m_pSphereVolum = CResourcesManager::GetInst()->FindMeshNonCount(SPHERE_VOLUME);
-	m_pCornVolum = CResourcesManager::GetInst()->FindMeshNonCount(CORN_VOLUME);
-
-	m_pDepthGrator = FindRenderStateNonCount(DEPTH_GRATOR);
-	m_pAddBlend = FindRenderStateNonCount(ACC_BLEND);
-	m_pDepthLess = FindRenderStateNonCount(DEPTH_LESS);
-	m_pFrontCull = FindRenderStateNonCount(FRONT_CULL);
-	((CDepthState*)m_pDepthGrator)->SetStencilRef(1); //스텐실값을 1로 채운다.
-	m_pBackCull = FindRenderStateNonCount(BACK_CULL);
-	m_pWireFrame = FindRenderStateNonCount(WIRE_FRAME);
-	m_pCullNone = FindRenderStateNonCount(CULL_NONE);
-	m_pZeroBlend = FindRenderStateNonCount(ZERO_BLEND);
-	m_pAllBlend = FindRenderStateNonCount(ALL_BLEND);
-	m_pDepthDisable = FindRenderStateNonCount(DEPTH_DISABLE);
-
-	m_pGBufferMultiTarget = FindMultiTarget("GBuffer");
-	m_pLightMultiTarget = FindMultiTarget("LightAcc");
-
-	CreateDepthStencilState(DEPTH_LESSEQUAL, TRUE,
-		D3D11_DEPTH_WRITE_MASK_ALL,
-		D3D11_COMPARISON_LESS_EQUAL);
-
-
-	// HDR Resource
-	// HDR Rendering
-	//vPos.x = 300.f;
-	//vPos.y = 0.f;
-	//if (!CreateRenderTarget("HDRBlend", DXGI_FORMAT_R32G32B32A32_FLOAT,
-	//	vPos, Vector3(100.f, 100.f, 1.f), true))
-	//	return false;
-
-	//AddMRT("Post", "HDRBlend");
-
-	//m_pHDRComputeShader = GET_SINGLE(CShaderManager)->FindComputeShader(HDR_COMPUTE_SHADER);
-	//m_pHDRSecondComputeShader = GET_SINGLE(CShaderManager)->FindComputeShader(HDR_SECOND_COMPUTE_SHADER);
-	//m_pHDRShader = GET_SINGLE(CShaderManager)->FindShader(HDR_SHADER);
-	//m_pDownScaleSmp = GET_SINGLE(CResourcesManager)->FindSampler(SAMPLER_POINT);
-	//m_fGroups = ceil((m_fWidth * m_fHeight / 16) / 1024.f);
-
-	//// =============== Down Scale ===================
-	//// Down Scale 1D Buffer
-	//D3D11_BUFFER_DESC	tBufferDesc = {};
-	//ZeroMemory(&tBufferDesc, sizeof(tBufferDesc));
-
-	//tBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
-	//tBufferDesc.StructureByteStride = sizeof(float);
-	//tBufferDesc.ByteWidth = m_fGroups * tBufferDesc.StructureByteStride;
-	//tBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-
-	//if (FAILED(DEVICE->CreateBuffer(&tBufferDesc, NULL, &m_pDownScaleBuffer)))
-	//	return false;
-
-	//// Luminance Down Scale 1D UAV
-	//D3D11_UNORDERED_ACCESS_VIEW_DESC	tUAVDesc = {};
-	//ZeroMemory(&tUAVDesc, sizeof(D3D11_UNORDERED_ACCESS_VIEW_DESC));
-
-	//tUAVDesc.Format = DXGI_FORMAT_UNKNOWN;
-	//tUAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-	//tUAVDesc.Buffer.NumElements = m_fGroups;
-	//if (FAILED(DEVICE->CreateUnorderedAccessView(m_pDownScaleBuffer, &tUAVDesc,
-	//	&m_pDownScaleUAV)))
-	//	return false;
-
-	//// Down Scale 1D SRV
-	//D3D11_SHADER_RESOURCE_VIEW_DESC	tSRVDesc = {};
-	//ZeroMemory(&tSRVDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-
-	//tSRVDesc.Format = DXGI_FORMAT_UNKNOWN;
-	//tSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-	//tSRVDesc.Buffer.NumElements = m_fGroups;
-	//if (FAILED(DEVICE->CreateShaderResourceView(m_pDownScaleBuffer, &tSRVDesc,
-	//	&m_pDownScaleSRV)))
-	//	return false;
-
-	//// ================ Final Pass =======================
-
-	//// Average Luminance Buffer
-	//tBufferDesc.ByteWidth = sizeof(float);
-	//if (FAILED(DEVICE->CreateBuffer(&tBufferDesc, NULL, &m_pAvgLumBuffer)))
-	//	return false;
-
-	//// Average Luminance UAV
-	//tUAVDesc.Buffer.NumElements = 1;
-	//if (FAILED(DEVICE->CreateUnorderedAccessView(m_pAvgLumBuffer,
-	//	&tUAVDesc, &m_pAvgLumUAV)))
-	//	return false;
-
-	//// Average Luminance SRV
-	//tSRVDesc.Buffer.NumElements = 1;
-	//if (FAILED(DEVICE->CreateShaderResourceView(m_pAvgLumBuffer,
-	//	&tSRVDesc, &m_pAvgLumSRV)))
-	//	return false;
-
-	//ZeroMemory(&tBufferDesc, sizeof(tBufferDesc));
-
-	return true;
-}
-
-void CRenderManager::AddBlendTargetDesc(BOOL bEnable,D3D11_BLEND srcBlend, D3D11_BLEND destBlend,D3D11_BLEND_OP blendOp, D3D11_BLEND srcAlphaBlend,D3D11_BLEND destAlphaBlend, D3D11_BLEND_OP blendAlphaOp,UINT8 iWriteMask)
-{
-	if (!m_pCreateState)
-		m_pCreateState = new CBlendState;
-
-	m_pCreateState->AddTargetDesc(bEnable, srcBlend, destBlend,	blendOp, srcAlphaBlend, destAlphaBlend, blendAlphaOp,	iWriteMask);
-}
-
-bool CRenderManager::CreateBlendState(const string & strName, BOOL bAlphaCoverage, BOOL bIndependent)
-{
-	if (!m_pCreateState)
-		return false;
-
-	if (!m_pCreateState->CreateState(bAlphaCoverage, bIndependent))
+	for (int i = CFT_DOWNSCALE; i < CFT_END; ++i)
 	{
-		SAFE_RELEASE(m_pCreateState);
-		return false;
+		m_pFilter[i] = GET_SINGLE(CViewManager)->FindCSFilter((CS_FILTER_TYPE)i);
 	}
 
-	m_mapRenderState.insert(make_pair(strName, m_pCreateState));
-	m_pCreateState = nullptr;
-
-	return true;
-}
-
-bool CRenderManager::CreateDepthStencilState(const string & strKey, BOOL bDepthEnable, D3D11_DEPTH_WRITE_MASK eMask,D3D11_COMPARISON_FUNC eDepthFunc, BOOL bStencilEnable,UINT8 iStencilReadMask, UINT8 iStencilWriteMask,D3D11_DEPTH_STENCILOP_DESC tFrontFace,D3D11_DEPTH_STENCILOP_DESC tBackFace)
-{
-	CDepthState*	pDepth = (CDepthState*)FindRenderState(strKey);
-
-	if (pDepth)
-		return false;
-
-	pDepth = new CDepthState;
-
-	if (!pDepth->CreateState(bDepthEnable, eMask,
-		eDepthFunc, bStencilEnable, iStencilReadMask, iStencilWriteMask,
-		tFrontFace, tBackFace))
-	{
-		SAFE_RELEASE(pDepth);
-		return false;
-	}
-
-	m_mapRenderState.insert(make_pair(strKey, pDepth));
-
-	return true;
-}
-
-bool CRenderManager::CreateRasterizerState(const string & strKey, D3D11_FILL_MODE eFill, D3D11_CULL_MODE eCull, BOOL bFrontCounterClockwise, int iDepthBias, float fDepthBiasClamp, float fSlopeScaledDepthBias, BOOL bDepthClipEnable, BOOL bScissorEnable, BOOL bMultisampleEnable, BOOL bAntialiasedLineEnable)
-{
-	CRasterizerState*	pState = (CRasterizerState*)FindRenderState(strKey);
-
-	if (pState)
-		return false;
-
-	pState = new CRasterizerState;
-
-	if (!pState->CreateState(eFill, eCull,
-		bFrontCounterClockwise, iDepthBias, fDepthBiasClamp, fSlopeScaledDepthBias,
-		bDepthClipEnable, bScissorEnable, bMultisampleEnable, bAntialiasedLineEnable))
-	{
-		SAFE_RELEASE(pState);
-		return false;
-	}
-
-	m_mapRenderState.insert(make_pair(strKey, pState));
+	m_pFilter[3]->Disable();
 
 	return true;
 }
 
 CRenderState * CRenderManager::FindRenderState(const string & strName)
 {
-	unordered_map<string, CRenderState*>::iterator	iter = m_mapRenderState.find(strName);
+	CRenderState* pState = GET_SINGLE(CViewManager)->FindRenderState(strName);
 
-	if (iter == m_mapRenderState.end())
-		return nullptr;
-
-	iter->second->AddRef();
-
-	return iter->second;
+	return pState;
 }
 
 CRenderState * CRenderManager::FindRenderStateNonCount(const string & strName)
 {
-	unordered_map<string, CRenderState*>::iterator	iter = m_mapRenderState.find(strName);
+	CRenderState* pState = GET_SINGLE(CViewManager)->FindRenderStateNonCount(strName);
 
-	if (iter == m_mapRenderState.end())
-		return nullptr;
-
-	return iter->second;
-}
-
-
-bool CRenderManager::CreateRenderTarget(const string & strName, DXGI_FORMAT eTargetFmt,const Vector3 & vPos, const Vector3 & vScale, bool bDrawDebug,const Vector4 & vClearColor, DXGI_FORMAT eDepthFmt)
-{
-	CRenderTarget*	pTarget = FindRenderTarget(strName);
-
-	if (pTarget)
-		return false;
-
-	pTarget = new CRenderTarget;
-
-	if (!pTarget->CreateRenderTarget(eTargetFmt, vPos, vScale, eDepthFmt))
-	{
-		SAFE_DELETE(pTarget);
-		return false;
-	}
-
-	pTarget->SetClearColor(vClearColor);
-	pTarget->ONDrawDebug(bDrawDebug);
-
-	m_mapRenderTarget.insert(make_pair(strName, pTarget));
-
-	return true;
+	return pState;
 }
 
 CRenderTarget * CRenderManager::FindRenderTarget(const string & strName)
 {
-	unordered_map<string, CRenderTarget*>::iterator	iter = m_mapRenderTarget.find(strName);
-
-	if (iter == m_mapRenderTarget.end())
-		return nullptr;
-
-	return iter->second;
+	return GET_SINGLE(CViewManager)->FindRenderTarget(strName);
 }
 
 void CRenderManager::AddRenderObj(CGameObject * pObj)
@@ -584,7 +241,7 @@ void CRenderManager::Render(float fTime)
 void CRenderManager::Render2D(float fTime)
 {
 	// 포스트 이펙트 처리용 타겟으로 교체한다.
-	CRenderTarget*	pTarget = FindRenderTarget("PostEffect");
+	CRenderTarget*	pTarget = GET_SINGLE(CViewManager)->FindRenderTarget("PostEffect");
 
 	pTarget->ClearTarget();
 	pTarget->SetTarget();
@@ -602,7 +259,7 @@ void CRenderManager::Render2D(float fTime)
 	pTarget->ResetTarget();
 
 	// 여기에서 포스트 이펙트를 처리한다.
-	CRenderState*	pAlphaBlend = FindRenderState(ALPHA_BLEND);
+	CRenderState*	pAlphaBlend = GET_SINGLE(CViewManager)->FindRenderState(ALPHA_BLEND);
 
 	// 여기에서 포스트이펙트 처리가 된 타겟을 전체 크기로 화면에 출력한다.
 	pTarget->RenderFullScreen();
@@ -620,13 +277,7 @@ void CRenderManager::Render2D(float fTime)
 
 	pAlphaBlend->SetState();
 
-	unordered_map<string, CRenderTarget*>::iterator	iter;
-	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
-
-	for (iter = m_mapRenderTarget.begin(); iter != iterEnd; ++iter)
-	{
-		iter->second->Render(fTime);
-	}
+	GET_SINGLE(CViewManager)->Render(fTime);
 
 	pAlphaBlend->ResetState();
 
@@ -649,13 +300,7 @@ void CRenderManager::Render3D(float fTime)
 	else
 		RenderDeferred(fTime);
 
-	unordered_map<string, CRenderTarget*>::iterator	iter;
-	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
-
-	for (iter = m_mapRenderTarget.begin(); iter != iterEnd; ++iter)
-	{
-		iter->second->Render(fTime);
-	}
+	GET_SINGLE(CViewManager)->Render(fTime);
 }
 
 void CRenderManager::RenderDeferred(float fTime)
@@ -667,13 +312,12 @@ void CRenderManager::RenderDeferred(float fTime)
 	// 조명타겟과 Albedo 를 합성한다.
 	RenderLightBlend(fTime);
 
-	// HDR
-	//RenderComputeProcess(fTime);
+	RenderComputeProcess(fTime);
 	// 최종 합성된 타겟을 화면에 출력한다.
-	RenderLightFullScreen(fTime);
-
-	// 충돌체 출력
-	GET_SINGLE(CCollisionManager)->Render(fTime);
+	RenderFinalPass(fTime);
+	
+	//GET_SINGLE(CCollisionManager)->Render(fTime);
+	
 
 	// UI출력
 	for (int i = RG_UI; i < RG_END; ++i)
@@ -716,11 +360,13 @@ void CRenderManager::RenderLightAcc(float fTime)
 	m_pLightMultiTarget->ClearRenderTarget(fClearColor);
 	m_pLightMultiTarget->SetTarget();
 
-	m_pLightAccDirShader->SetShader();
+	m_pShader[SHADER_ACC_DIR]->SetShader();
 
-	m_pAddBlend->SetState();
-	m_pDepthDisable->SetState();
+	m_pState[STATE_ACC_BLEND]->SetState();
+	m_pState[STATE_DEPTH_DISABLE];
+
 	m_pGBufferSampler->SetShader(10);
+
 	m_pGBufferMultiTarget->SetShaderResource(10);
 
 	for (int i = 0; i < m_tLightGroup.iSize; ++i)
@@ -743,8 +389,8 @@ void CRenderManager::RenderLightAcc(float fTime)
 		SAFE_RELEASE(pLight);
 	}
 
-	m_pDepthDisable->ResetState();
-	m_pAddBlend->ResetState();
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
+	m_pState[STATE_ACC_BLEND]->ResetState();
 	m_pGBufferMultiTarget->ResetShaderResource(10);
 
 	m_pLightMultiTarget->ResetTarget();
@@ -752,7 +398,7 @@ void CRenderManager::RenderLightAcc(float fTime)
 
 void CRenderManager::RenderLightDir(float fTime, CLight * pLight)
 {
-	m_pLightAccDirShader->SetShader();
+	m_pShader[SHADER_ACC_DIR]->SetShader();
 
 	// 조명 정보를 상수버퍼에 넘겨준다.
 	pLight->UpdateLightCBuffer();
@@ -769,7 +415,7 @@ void CRenderManager::RenderLightDir(float fTime, CLight * pLight)
 
 void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 {
-	m_pLightAccPointShader->SetShader();
+	m_pShader[SHADER_ACC_POINT]->SetShader();
 
 	pLight->UpdateLightCBuffer();
 
@@ -798,48 +444,48 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 
 	CShaderManager::GetInst()->UpdateCBuffer("Transform", &cBuffer);
 
-	m_pFrontCull->SetState();
+	m_pState[STATE_FRONT_CULL]->SetState();	
 	{
-		m_pDepthGrator->SetState();
+		m_pState[STATE_DEPTH_GRATOR]->SetState();		
 		{
-			m_pAllBlend->SetState();
+			m_pState[STATE_ALL_BLEND]->SetState();			
 			{
 				m_pSphereVolum->Render();
 			}
-			m_pAllBlend->ResetState();
+			m_pState[STATE_ALL_BLEND]->ResetState();
 		}
-		m_pDepthGrator->ResetState();
+		m_pState[STATE_DEPTH_GRATOR]->ResetState();
 	}
-	m_pFrontCull->ResetState();
+	m_pState[STATE_FRONT_CULL]->ResetState();
 
 
-	m_pBackCull->SetState();
+	m_pState[STATE_BACK_CULL]->SetState();
 	{
-		m_pZeroBlend->SetState();
+		m_pState[STATE_ZERO_BLEND]->SetState();
 		{
-			m_pDepthLess->SetState();
+			m_pState[STATE_DEPTH_LESS]->SetState();
 			{
 				m_pSphereVolum->Render();
 			}
-			m_pDepthLess->ResetState();
+			m_pState[STATE_DEPTH_LESS]->ResetState();
 		}
-		m_pZeroBlend->ResetState();
+		m_pState[STATE_ZERO_BLEND]->ResetState();
 	}
-	m_pBackCull->ResetState();
+	m_pState[STATE_BACK_CULL]->ResetState();
 
 	if (m_bWireFrame == false)
 		return;
 
-	m_pWireFrame->SetState();
+	m_pState[STATE_WIRE_FRAME]->SetState();
 	{
 		m_pSphereVolum->Render();
 	}
-	m_pWireFrame->ResetState();
+	m_pState[STATE_WIRE_FRAME]->ResetState();
 }
 
 void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 {
-	m_pLightAccSpotShader->SetShader();
+	m_pShader[SHADER_ACC_SPOT]->SetShader();
 
 	pLight->UpdateLightCBuffer();
 
@@ -871,63 +517,64 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 
 	CShaderManager::GetInst()->UpdateCBuffer("Transform", &cBuffer);
 
-	m_pFrontCull->SetState();
+	m_pState[STATE_FRONT_CULL]->SetState();
 	{
-		m_pDepthGrator->SetState();
+		m_pState[STATE_DEPTH_GRATOR]->SetState();
 		{
-			m_pAllBlend->SetState();
+			m_pState[STATE_ALL_BLEND]->SetState();
 			{
-				m_pCornVolum->Render();
+				m_pSphereVolum->Render();
 			}
-			m_pAllBlend->ResetState();
+			m_pState[STATE_ALL_BLEND]->ResetState();
 		}
-		m_pDepthGrator->ResetState();
+		m_pState[STATE_DEPTH_GRATOR]->ResetState();
 	}
-	m_pFrontCull->ResetState();
+	m_pState[STATE_FRONT_CULL]->ResetState();
 
-	m_pBackCull->SetState();
+
+	m_pState[STATE_BACK_CULL]->SetState();
 	{
-		m_pZeroBlend->SetState();
+		m_pState[STATE_ZERO_BLEND]->SetState();
 		{
-			m_pDepthLess->SetState();
+			m_pState[STATE_DEPTH_LESS]->SetState();
 			{
-				m_pCornVolum->Render();
+				m_pSphereVolum->Render();
 			}
-			m_pDepthLess->ResetState();
+			m_pState[STATE_DEPTH_LESS]->ResetState();
 		}
-		m_pZeroBlend->ResetState();
+		m_pState[STATE_ZERO_BLEND]->ResetState();
 	}
-	m_pBackCull->ResetState();
+	m_pState[STATE_BACK_CULL]->ResetState();
 
 	if (m_bWireFrame == false)
 		return;
 
-	m_pWireFrame->SetState();
+	m_pState[STATE_WIRE_FRAME]->SetState();
 	{
-		m_pCornVolum->Render();
+		m_pSphereVolum->Render();
 	}
-	m_pWireFrame->ResetState();
+	m_pState[STATE_WIRE_FRAME]->ResetState();
 }
 
 void CRenderManager::RenderLightBlend(float _fTime)
 {
-	m_pLightBlendTarget->ClearTarget();
-	m_pLightBlendTarget->SetTarget();
+	m_pTarget[TARGET_BLEND]->ClearTarget();
+	m_pTarget[TARGET_BLEND]->SetTarget();
 
-	m_pDepthDisable->SetState();
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
 	m_pGBufferSampler->SetShader(10);
-	m_pAlbedoTarget->SetShader(10);
+	m_pTarget[TARGET_ALBEDO]->SetShader(10);
 
-	m_pLightAccDifTarget->SetShader(14);
-	m_pLightAccSpcTarget->SetShader(15);
+	m_pTarget[TARGET_ACC_DIFF]->SetShader(14);
+	m_pTarget[TARGET_ACC_SPC]->SetShader(15);
 
 	/*
 	CRenderTarget*	pHDR = FindRenderTarget("HDRBlend");
 	pHDR->SetShader(9);
 	*/
 
-	m_pLightBlendShader->SetShader();
+	m_pShader[SHADER_BLEND]->SetShader();
 
 	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
 	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
@@ -938,21 +585,22 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
-	m_pAlbedoTarget->ResetShader(10);
-	m_pLightAccDifTarget->ResetShader(14);
-	m_pLightAccSpcTarget->ResetShader(15);
+	m_pTarget[TARGET_ALBEDO]->ResetShader(10);
+	m_pTarget[TARGET_ACC_DIFF]->ResetShader(14);
+	m_pTarget[TARGET_ACC_SPC]->ResetShader(15);
 	//pHDR->ResetShader(9);
 
-	m_pDepthDisable->ResetState();
-	m_pLightBlendTarget->ResetTarget();
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
+	m_pTarget[TARGET_BLEND]->ResetTarget();
 }
 
-void CRenderManager::RenderLightFullScreen(float _fTime)
+void CRenderManager::RenderFinalPass(float _fTime)
 {
-	m_pDepthDisable->SetState();
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
-	m_pLightBlendTarget->SetShader(0);
-	m_pFullScreenShader->SetShader();
+	m_pTarget[TARGET_BLEND]->SetShader(0);
+	//m_pFilter[CFT_BLUR]->SetShaderResourceTo(0, ST_PIXEL);
+	m_pShader[SHADER_FULL_SCREEN]->SetShader();
 	m_pGBufferSampler->SetShader(0);
 	
 	//CRenderTarget*	pHDR = FindRenderTarget("HDRBlend");
@@ -967,124 +615,22 @@ void CRenderManager::RenderLightFullScreen(float _fTime)
 	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
-	m_pDepthDisable->ResetState();
-	m_pLightBlendTarget->ResetShader(0);
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
+	m_pTarget[TARGET_BLEND]->ResetShader(0);
+	//m_pFilter[CFT_BLUR]->ResetShaderResourceFrom(0);
 	//pHDR->ResetShader(0);
 }
 
-bool CRenderManager::DownScale(float fTime, ID3D11ShaderResourceView * pHDRSRV)
-{
-//	// Output
-//	ID3D11UnorderedAccessView* arrUAVs[1] = { m_pDownScaleUAV };
-//	CONTEXT->CSSetUnorderedAccessViews(0, 1, arrUAVs, (UINT*)(&m_pDownScaleUAV));
-//
-//	// Input
-//	ID3D11ShaderResourceView* arrViews[1] = { pHDRSRV };
-//	CONTEXT->CSSetShaderResources(9, 1, arrViews);
-//
-//	// Down Scale CB
-//	/*m_tDownScaleCB.iHeight = m_fHeight / 4;
-//	m_tDownScaleCB.iWidth = m_fWidth / 4;
-//	m_tDownScaleCB.iGroupSize = m_fGroups;
-//	m_tDownScaleCB.iTotalPixels = m_fHeight * m_fWidth;
-//
-//	GET_SINGLE(CShaderManager)->UpdateCBuffer("DownScaleFirstPass",
-//		&m_tDownScaleCB);*/
-//
-//	GET_SINGLE(CPostEffect)->SetDownScaleCB(_RESOLUTION.iHeight, _RESOLUTION.iWidth, fTime);
-//
-//	//m_pPostEffect->SetConstantBuffer(fTime);
-//	//GET_SINGLE(CPostEffect)->SetConstantBuffer(fTime);
-//
-//	m_pHDRComputeShader->SetComputeShader();
-//
-//	CONTEXT->Dispatch(m_fGroups, 1, 1);
-//	//CONTEXT->Dispatch(900, 1, 1);
-//
-//	// ============== Second Pass =================
-//	ZeroMemory(arrUAVs, sizeof(arrUAVs));
-//
-//	// Output
-//	arrUAVs[0] = m_pAvgLumUAV;
-//	CONTEXT->CSSetUnorderedAccessViews(0, 1, arrUAVs, (UINT*)(&arrUAVs));
-//
-//	// Input
-//	arrViews[0] = m_pDownScaleSRV;
-//	CONTEXT->CSSetShaderResources(9, 1, arrViews);
-//
-//	GET_SINGLE(CPostEffect)->SetDownScaleCB(_RESOLUTION.iHeight, _RESOLUTION.iWidth, fTime);
-//
-//	/*GET_SINGLE(CShaderManager)->UpdateCBuffer("DownScaleSecondPass",
-//		&m_tDownScaleCB);*/
-//
-//	m_pHDRSecondComputeShader->SetComputeShader();
-//
-//	CONTEXT->Dispatch(1, 1, 1);
-//
-//	// Cleanup
-//	CONTEXT->CSSetShader(NULL, NULL, 0);
-//	ZeroMemory(arrViews, sizeof(arrViews));
-//	CONTEXT->CSSetShaderResources(9, 1, arrViews);
-//	ZeroMemory(arrUAVs, sizeof(arrUAVs));
-//	CONTEXT->CSSetUnorderedAccessViews(0, 1, arrUAVs, (UINT*)(&arrUAVs));
-
-	return true;
-}
-
-bool CRenderManager::FinalPass(float fTime, ID3D11ShaderResourceView * pHDRSRV)
-{
-//	m_pDepthDisable->SetState();
-//
-//	ID3D11ShaderResourceView* arrViews[2] = { pHDRSRV, m_pAvgLumSRV };
-//	CONTEXT->PSSetShaderResources(9, 1, &arrViews[0]);
-//	CONTEXT->PSSetShaderResources(16, 1, &arrViews[1]);
-//
-//	// FinalPass CB
-//	/*m_tFinalPassCB.fMiddleGrey = m_fMiddleGrey;
-//	m_tFinalPassCB.fLumWhite =  m_fLumWhite;
-//	m_tFinalPassCB.fMiddleGrey *= m_tFinalPassCB.fMiddleGrey;
-//	m_tFinalPassCB.fLumWhite *= m_tFinalPassCB.fLumWhite;
-//
-//	GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass",
-//		&m_tFinalPassCB);	*/
-//
-//	GET_SINGLE(CPostEffect)->SetFinalPassCB(m_fMiddleGrey, m_fLumWhite, fTime);
-//
-//	CRenderTarget*	pHDRTarget = FindRenderTarget("HDRBlend");
-//
-//	pHDRTarget->ClearTarget();
-//	pHDRTarget->SetTarget();
-//	m_pDownScaleSmp->SetShader(9);
-//
-//	m_pHDRShader->SetShader();
-//
-//	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
-//	CONTEXT->IASetInputLayout(nullptr);
-//
-//	UINT iOffset = 0;
-//	CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-//	CONTEXT->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
-//	CONTEXT->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
-//	CONTEXT->Draw(4, 0);
-//
-//	m_pDepthDisable->ResetState();
-//	pHDRTarget->ResetTarget();
-//
-//	// Cleanup
-//	ZeroMemory(arrViews, sizeof(arrViews));
-//	CONTEXT->PSSetShaderResources(9, 1, &arrViews[0]);
-//	CONTEXT->PSSetShaderResources(16, 1, &arrViews[1]);
-//	CONTEXT->VSSetShader(NULL, NULL, 0);
-//	CONTEXT->PSSetShader(NULL, NULL, 0);
-
-	return true;
-}
-
 void CRenderManager::RenderComputeProcess(float fTime)
-{/*
-	DownScale(fTime, m_pHDRSRV);
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		if (!m_pFilter[i]->GetEnable())
+			continue;
 
-	FinalPass(fTime, m_pHDRSRV);*/
+		m_pFilter[i]->Dispatch();
+	}
+
 }
 
 void CRenderManager::RenderForward(float fTime)
@@ -1129,58 +675,14 @@ void CRenderManager::RenderForward(float fTime)
 
 	pAlphaBlend->SetState();
 
-	unordered_map<string, CRenderTarget*>::iterator	iter;
-	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
-
-	for (iter = m_mapRenderTarget.begin(); iter != iterEnd; ++iter)
-		iter->second->Render(fTime);
+	GET_SINGLE(CViewManager)->Render(fTime);
 
 	pAlphaBlend->ResetState();
 
 	SAFE_RELEASE(pAlphaBlend);
 }
 
-bool CRenderManager::CreateMultiTarget(const string & MultiKey)
-{
-	CMultiRenderTarget* newTarget = FindMultiTarget(MultiKey);
-
-	if (newTarget != NULLPTR)
-		return false;
-
-	newTarget = new CMultiRenderTarget();
-
-	m_mapMultiTarget.insert(make_pair(MultiKey, newTarget));
-	return true;
-}
-
-bool CRenderManager::AddMultiRenderTarget(const string & MultiKey, const string & TargetKey)
-{
-	CMultiRenderTarget* getMulti = FindMultiTarget(MultiKey);
-
-	if (getMulti == NULLPTR)
-		return false;
-
-	getMulti->AddRenderTargetView(TargetKey);
-	return true;
-}
-
-bool CRenderManager::AddMultiRenderTargetDepthView(const string & MultiKey, const string & TargetKey)
-{
-	CMultiRenderTarget* getMulti = FindMultiTarget(MultiKey);
-
-	if (getMulti == NULLPTR)
-		return false;
-
-	getMulti->AddDepthView(TargetKey);
-	return true;
-}
-
 CMultiRenderTarget * CRenderManager::FindMultiTarget(const string & MultiKey)
 {
-	unordered_map<string, CMultiRenderTarget*>::iterator FindIter = m_mapMultiTarget.find(MultiKey);
-
-	if (FindIter == m_mapMultiTarget.end())
-		return NULLPTR;
-
-	return FindIter->second;
+	return GET_SINGLE(CViewManager)->FindMRT(MultiKey);
 }

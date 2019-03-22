@@ -28,6 +28,11 @@ private:
 	Vector3				m_vTargetPos;
 
 public:
+	float GetCameraFar() const { return m_fFar; }
+	float GetCameraNear() const { return m_fNear; }
+	float GetCameraViewAngle() const { return m_fViewAngle; }
+
+public:
 	void SetTarget(class CGameObject* pTarget);
 	void SetTarget(class CComponent* pTarget);
 	void SetTargetPivot(Vector3 vTargetPivot);

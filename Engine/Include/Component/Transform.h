@@ -3,8 +3,6 @@
 
 PUN_BEGIN
 
-class BinaryWrite;
-class BinaryRead;
 class PUN_DLL __declspec(align(16)) CTransform :
 	public CComponent
 {
@@ -159,10 +157,6 @@ public:
 private:
 	void ScaleParent();
 	void RotParent();
-
-public:
-	void Save(BinaryWrite* _pInstBW);
-	void Load(BinaryRead*  _pInstBR);
 
 public:
 	virtual bool Init();

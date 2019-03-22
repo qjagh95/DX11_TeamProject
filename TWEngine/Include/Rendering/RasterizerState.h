@@ -5,10 +5,13 @@ PUN_BEGIN
 
 class PUN_DLL CRasterizerState : public CRenderState
 {
+	friend class CViewManager;
 	friend class CRenderManager;
 
 private:
 	CRasterizerState();
+
+public:
 	~CRasterizerState();
 
 public:

@@ -4,8 +4,6 @@
 
 PUN_BEGIN
 
-class BinaryWrite;
-class BinaryRead;
 class PUN_DLL CLight :
 	public CComponent
 {
@@ -24,10 +22,6 @@ private:
 public:
 	LIGHT_TYPE  GetLightType()	const;
 	LightInfo	GetLightInfo()	const;
-
-public:
-	void Save(BinaryWrite* _pInstBW);
-	void Load(BinaryRead*  _pInstBR);
 
 public:
 	void SetLightType(LIGHT_TYPE eType);

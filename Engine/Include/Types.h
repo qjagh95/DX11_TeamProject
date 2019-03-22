@@ -148,7 +148,15 @@ namespace PUN
 	{
 		int		iTextureAnimation2D;
 		int		iAnimationType;
-		Vector2	fEmpty;
+		int		iDeffered;
+		int		iFocus;
+
+		_tagComponentCBuffer() :
+			iTextureAnimation2D(0),
+			iDeffered(1),
+			iFocus(0)
+		{
+		}
 	}ComponentCBuffer, *PComponentCBuffer;
 
 	typedef struct PUN_DLL _tagClip2DFrame
@@ -344,10 +352,23 @@ namespace PUN
 	{
 		Vector4	vAdaptation;
 	}AdaptationCB, *PAdaptationCB;
+
+	typedef struct PUN_DLL _tagBlurCBuffer
+	{
+		int			iSize;
+		int			iDepthOfField;
+		float		fCameraFar;
+		float		fEmpty;
+
+		_tagBlurCBuffer() :
+			iSize(0),
+			iDepthOfField(0),
+			fCameraFar(1000.0f)
+		{
+		}
+
+		~_tagBlurCBuffer()
+		{
+		}
+	}BlurCBuffer, *PBlurCBuffer;
 }
-typedef struct PUN_DLL _tagRayInfo
-{
-	Vector3	vPos;
-	Vector3	vDir;
-	float	fDist;
-}RayInfo, *PRayInfo;
