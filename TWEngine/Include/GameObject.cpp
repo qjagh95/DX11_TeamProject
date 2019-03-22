@@ -589,6 +589,12 @@ void CGameObject::Render(float fTime)
 			continue;
 		}
 
+		else if ((*iter)->GetComponentType() == CT_COLLIDER)
+		{
+			++iter;
+			continue;
+		}
+
 		else if (!(*iter)->GetActive())
 		{
 			CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);

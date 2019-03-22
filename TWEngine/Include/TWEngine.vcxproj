@@ -221,6 +221,7 @@
     <ClInclude Include="Component\ColliderOBB3D.h" />
     <ClInclude Include="Component\ColliderPixel.h" />
     <ClInclude Include="Component\ColliderPoint.h" />
+    <ClInclude Include="Component\ColliderRay.h" />
     <ClInclude Include="Component\ColliderRect.h" />
     <ClInclude Include="Component\ColliderSphere.h" />
     <ClInclude Include="Component\Component.h" />
@@ -331,6 +332,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Component\ColliderRay.cpp" />
     <ClCompile Include="Component\ColliderRect.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

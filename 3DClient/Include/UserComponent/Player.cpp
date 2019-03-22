@@ -88,6 +88,8 @@ bool CPlayer::Init()
 
 	SAFE_RELEASE(pBody);
 
+	m_pTransform->SetWorldRot(Vector3::Zero);
+
 	return true;
 }
 
@@ -182,9 +184,9 @@ void CPlayer::Fire1Release(float fTime)
 }
 
 void CPlayer::Rotation(float fScale, float fTime)
-{
+{/*
 	if (fScale == 0.f)
 		return;
 
-	m_pTransform->RotationY(180.f * fScale, fTime);
+	m_pTransform->RotationY(180.f * fScale, fTime);*/
 }

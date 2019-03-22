@@ -95,7 +95,8 @@ namespace PUN
 		CT_OBB,
 		CT_PIXEL,
 		CT_SPHERE,
-		CT_OBB3D
+		CT_OBB3D,
+		CT_RAY
 	};
 
 	enum COLLISION_CALLBACK_TYPE

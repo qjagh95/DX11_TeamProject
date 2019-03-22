@@ -8,6 +8,7 @@
 #include "ColliderPoint.h"
 #include "ColliderOBB.h"
 #include "ColliderPixel.h"
+#include "ColliderRay.h"
 
 PUN_USING
 
@@ -127,6 +128,8 @@ bool CColliderSphere::Collision(CCollider * pDest, float fTime)
 	{
 	case CT_SPHERE:
 		return CollisionSphereToSphere(m_tInfo, ((CColliderSphere*)pDest)->GetInfo());
+	case CT_RAY:
+		return CollisionRayToSphere(((CColliderRay*)pDest)->GetInfo(), m_tInfo);
 	}
 
 	return false;

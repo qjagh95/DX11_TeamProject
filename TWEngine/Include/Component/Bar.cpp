@@ -153,6 +153,7 @@ bool CBar::Init()
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
 	pMaterial->SetDiffuseTex(0, "Bar", TEXT("UI/HPMP/MP_Bar.png"));
+	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
 

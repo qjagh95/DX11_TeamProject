@@ -345,3 +345,9 @@ namespace PUN
 		Vector4	vAdaptation;
 	}AdaptationCB, *PAdaptationCB;
 }
+typedef struct PUN_DLL _tagRayInfo
+{
+	Vector3	vPos;
+	Vector3	vDir;
+	float	fDist;
+}RayInfo, *PRayInfo;

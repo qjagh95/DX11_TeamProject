@@ -4,6 +4,7 @@
 #include "../Device.h"
 #include "../Rendering/RenderState.h"
 #include "../Resource/Mesh.h"
+#include <DirectXCollision.h>
 
 PUN_USING
 
@@ -680,6 +681,138 @@ bool CCollider::CollisionOBB3DToOBB3D(const OBB3DInfo & tSrc, const OBB3DInfo & 
 		return false;
 
 	return true;
+}
+
+bool CCollider::CollisionRayToSphere(const RayInfo & tSrc, const SphereInfo & tDest)
+{
+	Vector3	vM = tSrc.vPos - tDest.vCenter;
+
+	float	b, c;
+
+	b = 2.f * vM.Dot(tSrc.vDir);
+	c = vM.Dot(vM) - tDest.fRadius * tDest.fRadius;
+
+	// 판별식
+	float	fDisc = b * b - 4.f * c;
+
+	if (fDisc < 0.f)
+		return false;
+
+	fDisc = sqrtf(fDisc);
+
+	float	t0, t1;
+
+	t0 = (-b + fDisc) / 2.f;
+	t1 = (-b - fDisc) / 2.f;
+
+	if (t0 < 0.f && t1 < 0.f)
+		return false;
+
+	return true;
+}
+
+bool CCollider::CollisionRayToOBB3D(const RayInfo & tSrc, const OBB3DInfo & tDest)
+{	
+	////o: 광선의 원점
+	////d: 광선의 방향벡터
+	////p: 첫번째 교차점
+	//
+	//float t_minX = 0;
+	//float t_maxX = (float)INT_MAX;
+	//Vector3 vP;
+
+	//if (abs(tSrc.vDir.x) < 0.f)
+	//{
+	//	if (tSrc.vPos.x < (tDest.vCenter.x - (tDest.vLength.x / 2.f)) ||
+	//		tSrc.vPos.x > (tDest.vCenter.x + (tDest.vLength.x / 2.f)))
+	//		return false;
+	//}
+	//else
+	//{
+	//	float denomX = 1.0f / tSrc.vDir.x;
+	//	float t1 = (-tSrc.vPos.x - (tDest.vCenter.x - tDest.vLength.x / 2.f) * denomX);
+	//	float t2 = (-tSrc.vPos.x - (tDest.vCenter.x + tDest.vLength.x / 2.f) * denomX);
+
+	//	if (t1 > t2)
+	//	{
+	//		swap(t1, t2);
+	//	}
+
+	//	t_minX = min(t_minX, t1);
+	//	t_maxX = max(t_maxX, t2);
+
+	//	if (t_minX > t_maxX)
+	//		return false;
+
+	//}
+
+	//vP.x = tSrc.vPos.x + t_minX * tSrc.vDir.x;
+	///////////////////////////////////////////////////////////////////////////////////
+
+	//float t_minY = 0;
+	//float t_maxY = (float)INT_MAX;
+
+	//if (abs(tSrc.vDir.y) < 0.f)
+	//{
+	//	if (tSrc.vPos.y < (tDest.vCenter.y - (tDest.vLength.y/ 2.f)) ||
+	//		tSrc.vPos.y >(tDest.vCenter.y + (tDest.vLength.y / 2.f)))
+	//		return false;
+	//}
+	//else
+	//{
+	//	float denomY = 1.0f / tSrc.vDir.y;
+	//	float t1 = (-tSrc.vPos.y - (tDest.vCenter.y - tDest.vLength.y / 2.f) * denomY);
+	//	float t2 = (-tSrc.vPos.y - (tDest.vCenter.y + tDest.vLength.y / 2.f) * denomY);
+
+	//	if (t1 > t2)
+	//	{
+	//		swap(t1, t2);
+	//	}
+
+	//	t_minY = min(t_minY, t1);
+	//	t_maxY = max(t_maxY, t2);
+
+	//	if (t_minY > t_maxY)
+	//		return false;
+
+	//}
+
+	//vP.y = tSrc.vPos.y + t_minY * tSrc.vDir.y;
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//float t_minZ = 0;
+	//float t_maxZ = (float)INT_MAX;
+
+	//if (abs(tSrc.vDir.z) < 0.f)
+	//{
+	//	if (tSrc.vPos.z < (tDest.vCenter.z - (tDest.vLength.z / 2.f)) ||
+	//		tSrc.vPos.z >(tDest.vCenter.z + (tDest.vLength.z / 2.f)))
+	//		return false;
+	//}
+	//else
+	//{
+	//	float denomZ = 1.0f / tSrc.vDir.z;
+	//	float t1 = (-tSrc.vPos.z - (tDest.vCenter.z - tDest.vLength.z / 2.f) * denomZ);
+	//	float t2 = (-tSrc.vPos.z - (tDest.vCenter.z + tDest.vLength.z / 2.f) * denomZ);
+
+	//	if (t1 > t2)
+	//	{
+	//		swap(t1, t2);
+	//	}
+
+	//	t_minZ = min(t_minZ, t1);
+	//	t_maxZ = max(t_maxZ, t2);
+
+	//	if (t_minZ > t_maxZ)
+	//		return false;
+
+	//}
+
+	//vP.z = tSrc.vPos.z + t_minZ * tSrc.vDir.z;
+
+	//return true;
+	
+
+	return false;
 }
 
 void CCollider::SetCollisionCallback(COLLISION_CALLBACK_TYPE eType,

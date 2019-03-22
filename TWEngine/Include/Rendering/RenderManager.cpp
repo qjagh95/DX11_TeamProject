@@ -672,6 +672,9 @@ void CRenderManager::RenderDeferred(float fTime)
 	// 최종 합성된 타겟을 화면에 출력한다.
 	RenderLightFullScreen(fTime);
 
+	// 충돌체 출력
+	GET_SINGLE(CCollisionManager)->Render(fTime);
+
 	// UI출력
 	for (int i = RG_UI; i < RG_END; ++i)
 	{

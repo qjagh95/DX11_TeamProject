@@ -341,6 +341,9 @@
     <ClCompile Include="Rendering\ComputeShader.cpp">
       <Filter>03. Rendering\01. Shader</Filter>
     </ClCompile>
+    <ClCompile Include="Component\ColliderRay.cpp">
+      <Filter>06. Component\07. Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Macro.h">
@@ -561,6 +564,9 @@
     </ClInclude>
     <ClInclude Include="Rendering\ComputeShader.h">
       <Filter>03. Rendering\01. Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ColliderRay.h">
+      <Filter>06. Component\07. Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

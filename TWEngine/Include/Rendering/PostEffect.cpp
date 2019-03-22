@@ -10,8 +10,8 @@ DEFINITION_SINGLE(CPostEffect)
 CPostEffect::CPostEffect()
 {
 	m_tAdaptInfo.vAdaptation = Vector4(1.f, 1.f, 1.f, 1.f);
-	m_fHeight = (float)_RESOLUTION.iHeight;
-	m_fWidth = (float)_RESOLUTION.iWidth;
+	m_fHeight = _RESOLUTION.iHeight;
+	m_fWidth = _RESOLUTION.iWidth;
 
 	m_fMiddleGrey = 0.863f;
 	m_fLumWhite = 1.53f;
@@ -47,7 +47,7 @@ void CPostEffect::SetDownScaleCB(int iWidth, int iHeight, float fTime)
 	m_tDownScaleCBInfo.iHeight = iHeight;
 	m_tDownScaleCBInfo.iWidth = iWidth;
 	m_tDownScaleCBInfo.iTotalPixels = iHeight * iWidth;
-	m_tDownScaleCBInfo.iGroupSize = (int)(ceil((iWidth * iHeight / 16) / 1024.f));
+	m_tDownScaleCBInfo.iGroupSize = ceil((iWidth * iHeight / 16) / 1024.f);
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("DownScale",
 		&m_tDownScaleCBInfo);
