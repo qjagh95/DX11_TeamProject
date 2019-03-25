@@ -463,6 +463,16 @@ bool CViewManager::CreateRenderTargetView()
 	if (!CreateRenderTarget("LightBlend", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
 		return false;
 
+	vPos.x = 300.f;
+	vPos.y = 0.f;
+	if (!CreateRenderTarget("Final", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
+		return false;
+
+	vPos.x = 400.f;
+	vPos.y = 0.f;
+	if (!CreateRenderTarget("SecondBackBuffer", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
+		return false;
+
 	return true;
 }
 

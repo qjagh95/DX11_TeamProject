@@ -29,6 +29,16 @@ BinaryRead::BinaryRead(const wstring& FileName)
 	m_ReadFile.open(Temp.c_str());
 }
 
+BinaryRead::BinaryRead(const wchar_t * FullPath)
+{
+	m_ReadFile.open(FullPath, ios::binary);
+}
+
+BinaryRead::BinaryRead(const char * FullPath)
+{
+	m_ReadFile.open(FullPath, ios::binary);
+}
+
 BinaryRead::~BinaryRead()
 {
 	m_ReadFile.close();
@@ -192,4 +202,9 @@ void BinaryRead::ReadData(wstring & Data)
 	m_ReadFile.read(getData, DataLen);
 
 	Data = CA2W(getData);
+}
+
+ifstream* BinaryRead::GetIfStream()
+{
+	return &m_ReadFile;
 }

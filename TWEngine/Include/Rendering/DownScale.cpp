@@ -27,7 +27,7 @@ bool CDownScale::Init()
 
 	m_pDepthSRV = pTarget->GetShaderResourceView();
 
-	pTarget = GET_SINGLE(CViewManager)->FindRenderTarget("LightBlend");
+	pTarget = GET_SINGLE(CViewManager)->FindRenderTarget("SecondBackBuffer");
 
 	if (!pTarget)
 		return false;
@@ -46,14 +46,14 @@ void CDownScale::Dispatch()
 	ResetShaderResource(0);
 }
 
-void CDownScale::SetShaderResourceTo(int iRegister, SHADER_TYPE eType)
+void CDownScale::SetShaderResourceTo()
 {
-	m_vecUAV[0]->SetSRV(iRegister, eType);
+	m_vecUAV[0]->SetSRV(m_iFinalPassRegister);
 }
 
-void CDownScale::ResetShaderResourceFrom(int iRegister, SHADER_TYPE eType)
+void CDownScale::ResetShaderResourceFrom()
 {
-	m_vecUAV[0]->SetSRV(iRegister, eType);
+	m_vecUAV[0]->SetSRV(m_iFinalPassRegister);
 }
 
 void CDownScale::SetShaderResource(int iPass)

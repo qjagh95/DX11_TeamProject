@@ -4,6 +4,8 @@
 
 PUN_BEGIN
 
+class BinaryWrite;
+class BinaryRead;
 class PUN_DLL CRenderer :
 	public CComponent
 {
@@ -18,6 +20,7 @@ private:
 	class CMesh*		m_pMesh;
 	class CShader*		m_pShader;
 	ID3D11InputLayout*	m_pLayout;
+	string				m_strLayoutKey;
 	class CMaterial*	m_pMaterial;
 	class CRenderState*	m_pRenderState[RS_END];
 	unordered_map<string, PRendererCBuffer>	m_mapCBuffer;
@@ -49,6 +52,10 @@ public:
 
 private:
 	PRendererCBuffer FindRendererCBuffer(const string& strName);
+
+public:
+	void Save(BinaryWrite* _pInstBW);
+	void Load(BinaryRead*  _pInstBR);
 
 public:
 	virtual void AfterClone();

@@ -4,6 +4,7 @@
 #include "../Resource/Sampler.h"
 #include "Animation2D.h"
 #include "../GameObject.h"
+#include "../Device.h"
 
 PUN_USING
 
@@ -737,6 +738,31 @@ void CMaterial::SetShader(int iContainer, int iSubset)
 	}
 
 	CShaderManager::GetInst()->UpdateCBuffer("Material", &pMaterial->tMaterial);
+}
+
+void CMaterial::ResetShader(int iContainer, int iSubset)
+{
+	PSubsetMaterial	pMaterial = m_vecMaterial[iContainer][iSubset];
+
+	if (pMaterial->pDiffuse)
+	{
+		pMaterial->pDiffuse->pTex->ResetShader(pMaterial->pDiffuse->iRegister);
+	}
+
+	if (pMaterial->pNormal)
+	{
+		pMaterial->pNormal->pTex->ResetShader(pMaterial->pNormal->iRegister);		
+	}
+
+	if (pMaterial->pSpecular)
+	{
+		pMaterial->pSpecular->pTex->ResetShader(pMaterial->pSpecular->iRegister);
+	}
+
+	for (size_t i = 0; i < pMaterial->vecMultiTex.size(); ++i)
+	{
+		pMaterial->vecMultiTex[i].pTex->ResetShader(pMaterial->vecMultiTex[i].iRegister);
+	}
 }
 
 PSubsetMaterial CMaterial::CreateSubset()

@@ -160,7 +160,7 @@ bool CShaderManager::Init()
 
 	pEntry[ST_VERTEX] = (char*)"FullScreenQuadVS";
 	pEntry[ST_PIXEL] = (char*)"FinalPassPS";
-	if (!LoadShader(HDR_SHADER, TEXT("PostHDR.fx"), pEntry))
+	if (!LoadShader(FINAL_PASS_SHADER, TEXT("PostHDR.fx"), pEntry))
 		return false;
 
 	pEntry[ST_COMPUTE] = (char*)"DownScaleFirstPass";
@@ -179,10 +179,10 @@ bool CShaderManager::Init()
 	//if (!LoadComputeShader(ADAPT_SECOND_COMPUTE_SHADER, TEXT("Adaption.fx"), pEntry))
 	//	return false;
 
-	pEntry[ST_VERTEX] = (char*)"FullScreenAdaptQuadVS";
-	pEntry[ST_PIXEL] = (char*)"FinalPassAdaptPS";
-	if (!LoadShader(ADAPTATION_SHADER, TEXT("Adaptation.fx"), pEntry))
-		return false;
+	//pEntry[ST_VERTEX] = (char*)"FullScreenAdaptQuadVS";
+	//pEntry[ST_PIXEL] = (char*)"FinalPassAdaptPS";
+	//if (!LoadShader(ADAPTATION_SHADER, TEXT("Adaptation.fx"), pEntry))
+	//	return false;
 
 	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement((char*)"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
@@ -228,10 +228,11 @@ bool CShaderManager::Init()
 	CreateCBuffer("PublicCBuffer", 5, sizeof(PublicCBuffer), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("LandScape", 11, sizeof(LandScapeCBuffer), CST_VERTEX | CST_PIXEL);
 
-	CreateCBuffer("HDRDownScale", 1, sizeof(DownScaleCB), CST_COMPUTE);
-	CreateCBuffer("HDRFinalPass", 2, sizeof(FinalPassCB), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("HDRFirst", 1, sizeof(HDR1stPassCB), CST_COMPUTE);
+	CreateCBuffer("HDRSecond", 10, sizeof(HDR2ndPassCB), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Adaptation", 3, sizeof(AdaptationCB), CST_COMPUTE);
 	CreateCBuffer("Blur", 1, sizeof(BlurCBuffer), CST_COMPUTE);
+	CreateCBuffer("FinalPass", 9, sizeof(FinalPassCB), CST_VERTEX | CST_PIXEL);
 	
 	return true;
 }

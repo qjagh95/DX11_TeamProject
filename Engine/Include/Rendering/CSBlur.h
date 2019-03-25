@@ -28,8 +28,8 @@ private:
 
 public:
 	virtual bool Init();
-	virtual void SetShaderResourceTo(int iRegister, SHADER_TYPE eType = ST_PIXEL);
-	virtual void ResetShaderResourceFrom(int iRegister, SHADER_TYPE eType = ST_PIXEL);
+	virtual void SetShaderResourceTo();
+	virtual void ResetShaderResourceFrom();
 
 private:
 	virtual void SetShaderResource(int iPass);

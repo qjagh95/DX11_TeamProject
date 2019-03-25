@@ -10,6 +10,7 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Component/Animation2D.h"
+#include "Component/ColliderRay.h"
 
 PUN_USING
 
@@ -114,6 +115,21 @@ short CInput::GetWheelDir() const
 	return m_sWheel;
 }
 
+bool CInput::GetMousePress(MOUSE_STATE eState)
+{
+	return m_bMousePress[eState];
+}
+
+bool CInput::GetMousePush(MOUSE_STATE eState)
+{
+	return m_bMousePush[eState];
+}
+
+bool CInput::GetMouseRelease(MOUSE_STATE eState)
+{
+	return m_bMouseRelease[eState];
+}
+
 bool CInput::Init()
 {
 	if (FAILED(DirectInput8Create(WINDOWINSTANCE, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_pInput, nullptr)))
@@ -138,6 +154,7 @@ bool CInput::Init()
 	pRenderer->SetMesh("TexRect");
 	pRenderer->SetShader(STANDARD_TEX_STATIC_SHADER);
 	pRenderer->SetRenderState(ALPHA_BLEND);
+	pRenderer->SetRenderState(DEPTH_DISABLE);
 	pRenderer->Enable2DRenderer();
 
 	SAFE_RELEASE(pRenderer);
@@ -161,8 +178,14 @@ bool CInput::Init()
 
 	SAFE_RELEASE(pPoint);
 
-	m_pWorldPoint = m_pMouse->AddComponent<CColliderPoint>("MouseWorld");
-
+	if(CRenderManager::GetInst()->GetGameMode() == GM_2D)
+		m_pWorldPoint = m_pMouse->AddComponent<CColliderPoint>("MouseWorld");
+	else
+	{
+		m_pWorldPoint = m_pMouse->AddComponent<CColliderRay>("MouseWorld");
+		((CColliderRay*)m_pWorldPoint)->MouseEnable();
+	}
+	
 	ShowCursor(FALSE);
 
 	memset(m_bPress, 0, sizeof(bool) * 256);
@@ -499,8 +522,9 @@ void CInput::AddMouseCollision()
 {
 	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
 	CTransform*	pCameraTr = pScene->GetMainCameraTransform();
-	Vector3	vWorldPos = m_pWorldPoint->GetInfo();
-	m_pWorldPoint->SetInfo(pCameraTr->GetWorldPos());
+
+	if(CRenderManager::GetInst()->GetGameMode() == GM_2D)
+	((CColliderPoint*)m_pWorldPoint)->SetInfo(pCameraTr->GetWorldPos());
 
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pScene);

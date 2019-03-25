@@ -45,22 +45,25 @@ bool CMBTexture::CreateMBTexture(int iCount, int iRegister, ID3D11Texture2D* pSr
 	m_iCapacity = iCount;
 	m_iMaxIndex = iCount - 1;
 	m_eFormat = eFormat;
+
 	m_pSrcTex = pSrcTex;
+
 
 	Resolution	tRS = _RESOLUTION;
 
 	// 鸥百侩 咆胶贸 积己
 	D3D11_TEXTURE2D_DESC	tDesc = {};
-	tDesc.Width = tRS.iWidth;
-	tDesc.Height = tRS.iHeight;
-	tDesc.ArraySize = 1;
-	tDesc.SampleDesc.Count = 1;
-	tDesc.SampleDesc.Quality = 0;
-	tDesc.MipLevels = 1;
-	tDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	tDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	tDesc.Format = eFormat;
-	tDesc.Usage = D3D11_USAGE_DEFAULT;
+	m_pSrcTex->GetDesc(&tDesc);
+	//tDesc.Width = tRS.iWidth;
+	//tDesc.Height = tRS.iHeight;
+	//tDesc.ArraySize = 1;
+	//tDesc.SampleDesc.Count = 1;
+	//tDesc.SampleDesc.Quality = 0;
+	//tDesc.MipLevels = 1;
+	//tDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//tDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	//tDesc.Format = eFormat;
+	//tDesc.Usage = D3D11_USAGE_DEFAULT;
 
 	m_tTestCBuffer.iSize = 0;
 
@@ -144,8 +147,8 @@ void CMBTexture::SetShaderResourceToCS(int iRegister)
 	int j = m_iCurIndex;
 
 	for (int i = 0; i < m_iSize; ++i)
-	{
-		pSRV[i] = m_vecSRV[j];
+	{		
+		CONTEXT->CSSetShaderResources(i, 1, &m_vecSRV[j]);
 
 		if (j == m_iMaxIndex)
 			j = 0;
@@ -153,7 +156,7 @@ void CMBTexture::SetShaderResourceToCS(int iRegister)
 			++j;
 	}
 	
-	CONTEXT->CSSetShaderResources(iRegister, m_iSize, pSRV);
+	
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("MotionBlur", &m_tTestCBuffer);
 }
@@ -176,7 +179,7 @@ void CMBTexture::SetShaderResourceToCS()
 			++j;
 	}
 
-	CONTEXT->CSSetShaderResources(m_iRegister, m_iSize, pSRV);
+	CONTEXT->CSSetShaderResources(0, m_iSize, pSRV);
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("MotionBlur", &m_tTestCBuffer);
 }

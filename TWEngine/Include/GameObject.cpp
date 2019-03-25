@@ -580,7 +580,11 @@ void CGameObject::Render(float fTime)
 			++iter;
 			continue;
 		}
-
+		else if ((*iter)->GetComponentType() == CT_COLLIDER)
+		{
+			++iter;
+			continue;
+		}
 		else if (!(*iter)->GetActive())
 		{
 			CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
@@ -595,6 +599,8 @@ void CGameObject::Render(float fTime)
 			iter = m_ComList.erase(iter);
 			continue;
 		}
+
+
 
 		else if (!(*iter)->GetEnable())
 		{
@@ -792,3 +798,34 @@ void CGameObject::Load(FILE * pFile)
 {
 }
 
+void CGameObject::Save(BinaryWrite* _pInstBW)
+{
+	// Transform
+	m_pTransform->Save(_pInstBW);
+
+	// 컴포넌트 목록
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		(*iter)->Save(_pInstBW);
+	}
+}
+
+void CGameObject::Load(BinaryRead* _pInstBR)
+{
+	// Transform
+	m_pTransform->Load(_pInstBR);
+
+	// 컴포넌트 추가 및 컴포넌트 Load 함수 호출
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		// 추가
+		this->AddComponent((*iter));
+
+		// Load 호출
+		(*iter)->Load(_pInstBR);
+	}
+}

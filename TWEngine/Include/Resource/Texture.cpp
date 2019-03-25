@@ -239,6 +239,12 @@ void CTexture::SetShader(int iRegister)
 	CONTEXT->PSSetShaderResources(iRegister, 1, &m_pSRV);
 }
 
+void CTexture::ResetShader(int iRegister)
+{
+	ID3D11ShaderResourceView* pSRV = nullptr;
+	CONTEXT->PSSetShaderResources(iRegister, 1, &pSRV);
+}
+
 bool CTexture::CreateShaderResource()
 {
 	if (FAILED(CreateShaderResourceView(DEVICE, m_vecImage[0]->GetImages(),

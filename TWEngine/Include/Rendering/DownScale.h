@@ -26,8 +26,8 @@ public:
 public:
 	virtual bool Init();
 	virtual void Dispatch();
-	virtual void SetShaderResourceTo(int iRegister, SHADER_TYPE eType);
-	virtual void ResetShaderResourceFrom(int iRegister, SHADER_TYPE eType);
+	virtual void SetShaderResourceTo();
+	virtual void ResetShaderResourceFrom();
 
 private:
 	virtual void SetShaderResource(int iPass);

@@ -30,6 +30,16 @@ BinaryWrite::BinaryWrite(const wstring& FileName)
 	m_WriteFile.open(Temp.c_str(), ios::binary);
 }
 
+BinaryWrite::BinaryWrite(const wchar_t * FullPath)
+{
+	m_WriteFile.open(FullPath, ios::binary);
+}
+
+BinaryWrite::BinaryWrite(const char * FullPath)
+{
+	m_WriteFile.open(FullPath, ios::binary);
+}
+
 BinaryWrite::~BinaryWrite()
 {
 	m_WriteFile.close();

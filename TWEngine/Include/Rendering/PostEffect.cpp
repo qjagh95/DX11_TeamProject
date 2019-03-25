@@ -60,12 +60,12 @@ void CPostEffect::UpdateCBuffer(int iPass)
 	switch (iPass)
 	{
 	case 0:
-		GET_SINGLE(CShaderManager)->UpdateCBuffer("Adaptation", &m_tAdaptInfo);
-		GET_SINGLE(CShaderManager)->UpdateCBuffer("DownScale", &m_tDownScaleCBInfo);
+		//GET_SINGLE(CShaderManager)->UpdateCBuffer("Adaptation", &m_tAdaptInfo);
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("HDRFirst", &m_tDownScaleCBInfo);
 
 		break;
 	case 1:
-		GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass", &m_tFinalPassCBInfo);
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("HDRSecond", &m_tFinalPassCBInfo);
 
 		break;
 	}
@@ -79,11 +79,19 @@ const Vector4& CPostEffect::GetAdaptation() const
 bool CPostEffect::Init()
 {
 	m_tAdaptInfo.vAdaptation = Vector4(1.f, 1.f, 1.f, 1.f);
-	m_fHeight = _RESOLUTION.iHeight;
-	m_fWidth = _RESOLUTION.iWidth;
+	m_fHeight = _RESOLUTION.iHeight / 4;
+	m_fWidth = _RESOLUTION.iWidth / 4;
 
 	m_fMiddleGrey = 0.863f;
 	m_fLumWhite = 1.53f;
+
+	m_tDownScaleCBInfo.iHeight = m_fHeight;
+	m_tDownScaleCBInfo.iWidth = m_fWidth;
+	m_tDownScaleCBInfo.iTotalPixels = m_fHeight * m_fWidth;
+	m_tDownScaleCBInfo.iGroupSize = ceil(m_fHeight * m_fWidth / 1024.0f);
+
+	m_tFinalPassCBInfo.fLumWhite = m_fLumWhite * m_fLumWhite;
+	m_tFinalPassCBInfo.fMiddleGrey = m_fMiddleGrey * m_fMiddleGrey;
 
 	return true;
 }

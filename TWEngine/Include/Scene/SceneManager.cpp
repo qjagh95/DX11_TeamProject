@@ -48,6 +48,7 @@ bool CSceneManager::Init()
 		return false;
 
 	GET_SINGLE(CInput)->ChangeMouseScene(m_pScene);
+	GET_SINGLE(CRenderManager)->SetSkyObject(m_pScene->GetSkyObjectNonCount());
 
 	return true;
 }

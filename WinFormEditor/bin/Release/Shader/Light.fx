@@ -71,11 +71,11 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_TEX input)
 
     vProjPos *= vDepth.a;
 
-    //if (g_iLightType == LIGHT_DIR)
-    //{
-    //    if (vDepth.w == 0.0f)
-    //        clip(-1);
-    //}
+    if (g_iLightType == LIGHT_DIR)
+    {
+        if (vDepth.w == 0.0f)
+            clip(-1);
+    }
 
 	// 뷰공간으로 변환한다.
     float3 vViewPos = mul(vProjPos, g_matInvProj).xyz;
@@ -107,9 +107,6 @@ PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_TEX input)
     float4 vSpc = g_LightSpcTex.Sample(g_GBufferSmp, UV);
 
     float4 vColor = vAlbedo * vDif + vSpc;
-
-    if (!isfinite(vColor.x) || !isfinite(vColor.y) || !isfinite(vColor.z))
-        vColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
     output.vTarget0 = vColor;
 

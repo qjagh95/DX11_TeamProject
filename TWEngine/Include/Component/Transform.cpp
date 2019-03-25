@@ -749,3 +749,41 @@ CTransform * CTransform::Clone()
 {
 	return new CTransform(*this);
 }
+
+void CTransform::Save(BinaryWrite* _pInstBW)
+{
+	/* Local */
+	Vector3 localS = GetLocalScale();
+	Vector3 localR = GetLocalRot();
+	Vector3 localP = GetLocalPos();
+	_pInstBW->WriteData(localS);
+	_pInstBW->WriteData(localR);
+	_pInstBW->WriteData(localP);
+
+	/* World */
+	Vector3 worldS = GetWorldScale();
+	Vector3 worldR = GetWorldRot();
+	Vector3 worldP = GetWorldPos();
+	_pInstBW->WriteData(worldS);
+	_pInstBW->WriteData(worldR);
+	_pInstBW->WriteData(worldP);
+}
+
+void CTransform::Load(BinaryRead* _pInstBR)
+{
+	/* Local */
+	Vector3 localS = _pInstBR->ReadVector3();
+	Vector3 localR = _pInstBR->ReadVector3();
+	Vector3 localP = _pInstBR->ReadVector3();
+	SetLocalScale(localS);
+	SetLocalRot(localR);
+	SetLocalPos(localP);
+
+	/* World */
+	Vector3 worldS = _pInstBR->ReadVector3();
+	Vector3 worldR = _pInstBR->ReadVector3();
+	Vector3 worldP = _pInstBR->ReadVector3();
+	SetWorldScale(worldS);
+	SetWorldRot(worldR);
+	SetWorldPos(worldP);
+}

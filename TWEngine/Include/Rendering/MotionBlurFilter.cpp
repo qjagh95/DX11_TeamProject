@@ -32,7 +32,9 @@ bool CMotionBlurFilter::Init()
 {
 	m_pMBTex = new CMBTexture;
 
-	CRenderTarget* pTarget = GET_SINGLE(CViewManager)->FindRenderTarget("LightBlend");
+	m_iFinalPassRegister = 2;
+
+	CRenderTarget* pTarget = GET_SINGLE(CViewManager)->FindRenderTarget("SecondBackBuffer");
 
 	if (!pTarget)
 		return false;
@@ -46,28 +48,27 @@ bool CMotionBlurFilter::Init()
 	return true;
 }
 
-void CMotionBlurFilter::SetShaderResourceTo(int iRegister, SHADER_TYPE eType)
+void CMotionBlurFilter::SetShaderResourceTo()
 {
-	m_vecUAV[0]->SetSRV(iRegister, eType);
+	m_vecUAV[0]->SetSRV(m_iFinalPassRegister);
 }
 
-void CMotionBlurFilter::ResetShaderResourceFrom(int iRegister, SHADER_TYPE eType)
+void CMotionBlurFilter::ResetShaderResourceFrom()
 {
-	m_vecUAV[0]->ResetSRV(iRegister, eType);
+	m_vecUAV[0]->ResetSRV(m_iFinalPassRegister);
 }
 
 void CMotionBlurFilter::SetShaderResource(int iPass)
 {
 	m_pMBTex->SetShaderResourceToCS();
-	m_vecUAV[iPass]->SetUAV(0);
+	m_vecUAV[0]->SetUAV(0);
 }
 
 void CMotionBlurFilter::ResetShaderResource(int iPass)
 {
 	m_pMBTex->ResetShaderResourceFromCS();
-	m_vecUAV[iPass]->ResetUAV(0);
+	m_vecUAV[0]->ResetUAV(0);
 }
-
 
 void CMotionBlurFilter::Resize(int iCapacity)
 {

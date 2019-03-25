@@ -36,8 +36,8 @@ public:
 
 	void SetUAV(int iRegister);
 	void ResetUAV(int iRegister);
-	void SetSRV(int iRegister, SHADER_TYPE eType);
-	void ResetSRV(int iRegister, SHADER_TYPE eType);
+	void SetSRV(int iRegister, SHADER_TYPE eType = ST_PIXEL);
+	void ResetSRV(int iRegister, SHADER_TYPE eType = ST_PIXEL);
 
 public:
 	void Dispatch();

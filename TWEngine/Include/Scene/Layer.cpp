@@ -43,6 +43,53 @@ void CLayer::SetZOrder(int iZOrder)
 	m_pScene->SortLayer();
 }
 
+void CLayer::Save(BinaryWrite* _pInstBW)
+{
+	// 오브젝트 개수
+	// (툴이 아닌 클라이언트에서 바로 로드될 경우 개수를 알 수 없기때문이다.)
+	_pInstBW->WriteData((int)m_ObjList.size());
+
+	// 오브젝트 목록
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		_pInstBW->WriteData((*iter)->GetTag().c_str());	// 태그
+		_pInstBW->WriteData(this->GetTag().c_str());	// 오브젝트가 속해있는 레이어 태그
+		bool isDontDestroy = (*iter)->GetDontDestroy();
+		_pInstBW->WriteData(isDontDestroy);				// 오브젝트 삭제 여부
+		_pInstBW->WriteData(GetEnable());				// (비)활성화 상태
+
+		// Object Save 함수 호출
+		(*iter)->Save(_pInstBW);
+	}
+}
+
+void CLayer::Load(BinaryRead* _pInstBR)
+{
+	// 오브젝트 목록 개수
+	int objListSize = _pInstBR->ReadInt();
+
+	// 오브젝트 목록
+	Safe_Release_VecList(m_ObjList);
+	m_ObjList.clear();
+	for (int i = 0; i < objListSize; ++i)
+	{
+		string strObjTag = _pInstBR->ReadString();
+		string strLayerTag = _pInstBR->ReadString();
+		bool isDontDestroy = _pInstBR->ReadBool();
+		bool isEnable = _pInstBR->ReadBool();
+
+		// 생성
+		CGameObject* pObj = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
+		pObj->SetEnable(isEnable);
+
+		// 오브젝트 Load 호출
+		pObj->Load(_pInstBR);
+		SAFE_RELEASE(pObj);
+	}
+}
+
 void CLayer::Start()
 {
 	list<CGameObject*>::iterator	iter;
@@ -344,6 +391,21 @@ CGameObject * CLayer::FindObjectNonCount(const string & strTag)
 	}
 
 	return nullptr;
+}
+
+void CLayer::EraseObject(CGameObject* pObj)
+{
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		if (*iter == pObj)
+		{
+			iter = m_ObjList.erase(iter);
+			SAFE_RELEASE(pObj);
+			return;
+		}
+	}
 }
 
 void CLayer::GetLayerListObjTag(std::vector<std::string>* _vec)

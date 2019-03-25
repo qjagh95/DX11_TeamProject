@@ -3,6 +3,8 @@
 
 PUN_BEGIN
 
+class BinaryWrite;
+class BinaryRead;
 class PUN_DLL CLayer :
 	public CRef
 {
@@ -34,6 +36,10 @@ public:
 
 public:
 	void SetZOrder(int iZOrder);
+
+public:
+	void Save(BinaryWrite* _pInstBW);
+	void Load(BinaryRead*  _pInstBR);
 
 public:
 	void Start();

@@ -33,7 +33,7 @@
 #define	STANDARD_TEX_NORMAL_ANIM_SHADER		"StandardTexNormalAnimShader"
 #define LANDSCAPE_SHADER					"LandScapeShader"
 
-#define HDR_SHADER				"HDRShader"
+#define FINAL_PASS_SHADER				"HDRShader"
 #define ADAPTATION_SHADER		"AdaptationShader"
 
 #define HDR_COMPUTE_SHADER			"HDRComputeShader"

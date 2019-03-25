@@ -21,6 +21,8 @@ private:
 public:
 	BinaryWrite(const string& FileName);
 	BinaryWrite(const wstring& FileName);
+	BinaryWrite(const wchar_t* FullPath);
+	BinaryWrite(const char* FullPath);
 	~BinaryWrite();
 };
 

@@ -329,6 +329,22 @@ int CCore::LateUpdate(float fTime)
 	if (m_vecLateUpdate->size() >= 100)
 		m_vecLateUpdate->erase(m_vecLateUpdate->begin());
 
+	//if (GUIManager::GetInst()->m_bHDR)
+	//	GET_SINGLE(CRenderManager)->EnableFilter(CFT_HDR);
+	//else
+	//	GET_SINGLE(CRenderManager)->DisableFilter(CFT_HDR);	
+
+	//if (GUIManager::GetInst()->m_bBlur)
+	//	GET_SINGLE(CRenderManager)->EnableFilter(CFT_BLUR);
+	//else
+	//	GET_SINGLE(CRenderManager)->DisableFilter(CFT_BLUR);
+
+	//if (GUIManager::GetInst()->m_bMotionBlur)
+	//	GET_SINGLE(CRenderManager)->EnableFilter(CFT_MOTIONBLUR);
+	//else
+	//	GET_SINGLE(CRenderManager)->DisableFilter(CFT_MOTIONBLUR);
+
+
 	return iRet;
 }
 
@@ -390,8 +406,10 @@ void CCore::Render(float fTime)
 
 			GUIManager::Get()->ImGuiEnd();
 		}
+
 		GET_SINGLE(CInput)->RenderMouse(fTime);
 	}
+
 	GET_SINGLE(CDevice)->Present();
 }
 
@@ -629,6 +647,7 @@ void CCore::EditRender(float fTime)
 	GET_SINGLE(CRenderManager)->Render(fTime);
 
 	GET_SINGLE(CInput)->RenderMouse(fTime);
+
 	GET_SINGLE(CDevice)->Present();
 	CInput::GetInst()->ClearWheel();
 }

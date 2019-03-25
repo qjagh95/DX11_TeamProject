@@ -25,12 +25,16 @@ public:
 	void ReadData(string& Data);
 	void ReadData(wstring& Data);
 
+	ifstream* BinaryRead::GetIfStream();
+
 private:
 	ifstream m_ReadFile;
 
 public:
 	BinaryRead(const string& FileName);
 	BinaryRead(const wstring& FileName);
+	BinaryRead(const wchar_t* FullPath);
+	BinaryRead(const char* FullPath);
 	~BinaryRead();
 };
 

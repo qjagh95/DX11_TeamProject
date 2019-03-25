@@ -18,7 +18,7 @@ CCollider::CCollider()
 	m_pShader = GET_SINGLE(CShaderManager)->FindShader(COLLIDER_SHADER);
 	m_pMesh = nullptr;
 	m_pLayout = GET_SINGLE(CShaderManager)->FindInputLayout(POS_LAYOUT);
-	m_pDepthDisable = nullptr;
+	m_pDepthDisable = GET_SINGLE(CRenderManager)->FindRenderState(DEPTH_DISABLE);
 	m_vColor = Vector4::Green;
 	m_pWireFrame = nullptr;
 #endif // _DEBUG
@@ -677,6 +677,34 @@ bool CCollider::CollisionOBB3DToOBB3D(const OBB3DInfo & tSrc, const OBB3DInfo & 
 		tDest.vLength.y * fAbsAxisDot[AXIS_Z][AXIS_X];
 
 	if (r > r1 + r2)
+		return false;
+
+	return true;
+}
+
+bool CCollider::CollisionRayToSphere(const RayInfo & tSrc, const SphereInfo & tDest)
+{
+	Vector3	vM = tSrc.vPos - tDest.vCenter;
+
+	float	b, c;
+
+	b = 2.f * vM.Dot(tSrc.vDir);
+	c = vM.Dot(vM) - tDest.fRadius * tDest.fRadius;
+
+	// ÆÇº°½Ä
+	float	fDisc = b * b - 4.f * c;
+
+	if (fDisc < 0.f)
+		return false;
+
+	fDisc = sqrtf(fDisc);
+
+	float	t0, t1;
+
+	t0 = (-b + fDisc) / 2.f;
+	t1 = (-b - fDisc) / 2.f;
+
+	if (t0 < 0.f && t1 < 0.f)
 		return false;
 
 	return true;

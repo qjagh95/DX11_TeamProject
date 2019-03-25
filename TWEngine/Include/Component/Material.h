@@ -129,6 +129,7 @@ public:
 	virtual void LoadFromPath(const char* pFileName, const string& strPathKey = DATA_PATH);
 public:
 	void SetShader(int iContainer = 0, int iSubset = 0);
+	void ResetShader(int iContainer = 0, int iSubset = 0);
 
 
 private:

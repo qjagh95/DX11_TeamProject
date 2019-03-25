@@ -3,6 +3,8 @@
 
 PUN_BEGIN
 
+class BinaryWrite;
+class BinaryRead;
 class PUN_DLL CComponent :
 	public CRef
 {
@@ -46,6 +48,8 @@ public:
 	virtual CComponent* Clone() = 0;
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);
+	virtual void Save(BinaryWrite* _pInstBW);
+	virtual void Load(BinaryRead*  _pInstBR);
 	virtual void SaveFromPath(const char* pFileName, const string& strPathKey = DATA_PATH);
 	virtual void LoadFromPath(const char* pFileName, const string& strPathKey = DATA_PATH);
 

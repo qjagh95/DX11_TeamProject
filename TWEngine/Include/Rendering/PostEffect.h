@@ -13,8 +13,8 @@ private:
 	~CPostEffect();
 
 private:
-	DownScaleCB			m_tDownScaleCBInfo;
-	FinalPassCB			m_tFinalPassCBInfo;
+	HDR1stPassCB		m_tDownScaleCBInfo;
+	HDR2ndPassCB		m_tFinalPassCBInfo;
 	AdaptationCB		m_tAdaptInfo;
 	float				m_fMiddleGrey;
 	float				m_fLumWhite;

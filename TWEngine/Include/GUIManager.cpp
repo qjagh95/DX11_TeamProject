@@ -9,6 +9,9 @@ using namespace ImGui;
 GUIManager::GUIManager()
 {
 	m_isShow = true;
+	m_bHDR = false;
+	m_bBlur = false;
+	m_bMotionBlur = false;
 }
 
 GUIManager::~GUIManager()
@@ -60,37 +63,12 @@ void GUIManager::Debug()
 	if (CCore::GetInst()->m_bEditorMode == true)
 		return;
 
-	//static float RotX;
-	//static float RotY;
-	//static float RotZ;
+	if (CCore::GetInst()->m_bGuiMode == false)
+		return;
 
-	//static Vector3 Pos = Vector3(0.0f, 1.0f, 1.0f);
 
-	//CScene* getScene = CSceneManager::GetInst()->GetSceneNonCount();
-	//CGameObject* getObject = getScene->FindObjectNonCount("Pyramid");
-	//CGameObject* GetLightObj = getScene->FindObjectNonCount("GlobalLight1");
-
-	//if (getObject == NULLPTR)
-	//	return;
-
-	//ImGui::Text("Pyramid");
-
-	//ImGui::SliderFloat("RotX", &RotX, 0.0f, 10.0f);
-	//ImGui::SliderFloat("RotY", &RotY, 0.0f, 10.0f);
-	//ImGui::SliderFloat("RotZ", &RotZ, 0.0f, 10.0f);
-
-	//ImGui::SliderFloat3("PyramidPos", (float*)&Pos, 0.0f, 10.0f);
-
-	//getObject->GetTransformNoneCount()->RotationX(RotX);
-	//getObject->GetTransformNoneCount()->RotationY(RotY);
-	//getObject->GetTransformNoneCount()->RotationZ(RotZ);
-	//getObject->GetTransformNoneCount()->SetWorldPos(Pos);
-
-	//ImGui::BeginTabBar("Pyramid");
-	//ImGui::EndTabBar();
-
-	//static float LightRotX;
-	//static float LightRotY;
-	//static float LightRotZ;
+	ImGui::Checkbox("HDR", &m_bHDR);
+	ImGui::Checkbox("Blur", &m_bBlur);
+	ImGui::Checkbox("MotionBlur", &m_bMotionBlur);
 
 }

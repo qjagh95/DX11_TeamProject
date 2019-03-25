@@ -32,23 +32,26 @@ bool CCSHDRFilter::Init()
 
 	m_pSrcSRV = pUAV->GetShaderResourceView();
 
+	m_iFinalPassRegister = 10;
+
 	return true;
 }
 
-void CCSHDRFilter::SetShaderResourceTo(int iRegister, SHADER_TYPE eType)
+void CCSHDRFilter::SetShaderResourceTo()
 {
-	m_vecUAV[HDR_SECOND]->SetSRV(iRegister, eType);
+	m_vecUAV[HDR_SECOND]->SetSRV(m_iFinalPassRegister);
+	m_pPostEffect->UpdateCBuffer(HDR_SECOND);
 }
 
-void CCSHDRFilter::ResetShaderResourceFrom(int iRegister, SHADER_TYPE eType)
+void CCSHDRFilter::ResetShaderResourceFrom()
 {
-	m_vecUAV[HDR_SECOND]->ResetSRV(iRegister, eType);
+	m_vecUAV[HDR_SECOND]->ResetSRV(m_iFinalPassRegister);
 }
 
 void CCSHDRFilter::SetShaderResource(int iPass)
 {
 	m_vecUAV[iPass]->SetUAV(0);
-	m_pPostEffect->UpdateCBuffer(iPass);
+	m_pPostEffect->UpdateCBuffer(HDR_FIRST);
 
 	switch (iPass)
 	{
@@ -57,7 +60,7 @@ void CCSHDRFilter::SetShaderResource(int iPass)
 		break;
 
 	case 1:
-		m_vecUAV[HDR_FIRST]->SetSRV(0, ST_COMPUTE);
+		m_vecUAV[HDR_FIRST]->SetSRV(1, ST_COMPUTE);
 		break;
 	}
 }
@@ -74,7 +77,7 @@ void CCSHDRFilter::ResetShaderResource(int iPass)
 		break;
 
 	case 1:
-		CONTEXT->CSSetShaderResources(0, 1, &pSRV);
+		CONTEXT->CSSetShaderResources(1, 1, &pSRV);
 		break;
 	}
 }

@@ -152,9 +152,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core.cpp">
-      <Filter>01. Core</Filter>
-    </ClCompile>
     <ClCompile Include="Device.cpp">
       <Filter>01. Core\01. Device</Filter>
     </ClCompile>
@@ -367,6 +364,12 @@
     </ClCompile>
     <ClCompile Include="Rendering\CSBlur.cpp">
       <Filter>03. Rendering\06. Filter\04. Blur</Filter>
+    </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>01. Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ColliderRay.cpp">
+      <Filter>06. Component\07. Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -603,6 +606,9 @@
     </ClInclude>
     <ClInclude Include="Rendering\CSBlur.h">
       <Filter>03. Rendering\06. Filter\04. Blur</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ColliderRay.h">
+      <Filter>06. Component\07. Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

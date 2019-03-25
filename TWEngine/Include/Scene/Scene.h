@@ -31,6 +31,7 @@ public:
 	void SortLayer();
 	void EnableLayer(const string& strTag, bool bEnable);
 	void ChangeLayerZOrder(const string& strTag, int iZOrder);
+	void GetLayerTagList(vector<string>* _pVec);
 	CLayer* FindLayer(const string& strTag);
 
 public:
@@ -73,6 +74,9 @@ public:
 	CTransform*		GetUICameraTransform()				const;
 	CTransform *	GetUICameraTransformNonCount()		const;
 
+	CGameObject*	GetSkyObject()						const;
+	CGameObject*	GetSkyObjectNonCount()				const;
+
 	CGameObject* CreateCamera(const string& strTag, const Vector3& vPos, CAMERA_TYPE eType,
 							  float fWidth, float fHeight, float fViewAngle, float fNear, float fFar);
 	void ChangeCamera(const string& strTag);
@@ -111,7 +115,7 @@ public:
 
 public:
 	void Save(string _fullPath);
-	void Load();
+	void Load(string _fullPath);
 
 public:
 	void Start();

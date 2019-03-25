@@ -32,16 +32,16 @@ VS_OUTPUT_TEX FullScreenAdaptQuadVS(uint iVertexID : SV_VertexID)
     return output;
 }
 
-float3 ToneMapping(float3 vHDRColor)
-{
-    // 현재 픽셀에 대한 휘도 스케일 계산
-    float fLScale = dot(vHDRColor, LUM_FACTOR);
-    fLScale *= fMiddleGrey / AvgLum[0];
-    fLScale = (fLScale + fLScale * fLScale / fLumWhiteSqr) / (1.f + fLScale);
+//float3 ToneMapping(float3 vHDRColor)
+//{
+//    // 현재 픽셀에 대한 휘도 스케일 계산
+//    float fLScale = dot(vHDRColor, LUM_FACTOR);
+//    fLScale *= g_fMiddleGrey / AvgLum[0];
+//    fLScale = (fLScale + fLScale * fLScale / fLumWhiteSqr) / (1.f + fLScale);
 
-    // 휘도 스케일을 픽셀 색상에 적용
-    return vHDRColor * fLScale;
-}
+//    // 휘도 스케일을 픽셀 색상에 적용
+//    return vHDRColor * fLScale;
+//}
 
 //float4 FinalPassAdaptPS(VS_OUTPUT_TEX Input) : SV_TARGET
 //{
@@ -55,18 +55,18 @@ float3 ToneMapping(float3 vHDRColor)
 //    return float4(vColor, 1.f);
 //}
 
-PS_OUTPUT_SINGLE FinalPassAdaptPS(VS_OUTPUT_TEX Input) : SV_TARGET
-{
-    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+//PS_OUTPUT_SINGLE FinalPassAdaptPS(VS_OUTPUT_TEX Input) : SV_TARGET
+//{
+//    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
 
-    // 색상 샘플 계산
-    float3 vColor = HDRTex.Sample(PointSampler, Input.vUV.xy).xyz;
+//    // 색상 샘플 계산
+//    float3 vColor = HDRTex.Sample(PointSampler, Input.vUV.xy).xyz;
 
-    // 톤 매핑
-    vColor = ToneMapping(vColor);
+//    // 톤 매핑
+//    vColor = ToneMapping(vColor);
 
-    output.vTarget0 = float4(vColor, 1.f);
+//    output.vTarget0 = float4(vColor, 1.f);
 
-    // LDR 값 출력
-    return output;
-}
+//    // LDR 값 출력
+//    return output;
+//}

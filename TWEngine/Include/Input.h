@@ -94,8 +94,7 @@ private:
 	class CGameObject*		m_pMouse;
 	class CTransform*		m_pMouseTr;
 	bool					m_bShowCursor;
-	class CColliderPoint*	m_pWorldPoint;
-
+	class CCollider*		m_pWorldPoint;
 public:
 	class CGameObject*	GetMouseObj()	const;
 	class CGameObject * GetMouseObjNonCount() const;
@@ -111,7 +110,9 @@ public:
 	void SetWheelDir(short _sWheel);
 	void ClearWheel();
 	short GetWheelDir() const;
-
+	bool GetMousePress(MOUSE_STATE eState);
+	bool GetMousePush(MOUSE_STATE eState);
+	bool GetMouseRelease(MOUSE_STATE eState);
 public:
 	bool Init();
 	void Update(float fTime);	

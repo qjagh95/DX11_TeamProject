@@ -333,20 +333,20 @@ namespace PUN
 		Vector3	vLength;
 	}OBB3DInfo, *POBB3DInfo;
 
-	typedef struct _tagDownScaleCBuffer
+	typedef struct _tagHDRFirstPassCBuffer
 	{
 		int		iWidth;
 		int		iHeight;
 		int		iTotalPixels;
 		int		iGroupSize;
-	}DownScaleCB, *PDownScaleCB;
+	}HDR1stPassCB, *PHDR1stPassCB;
 
-	typedef struct _tagFinalPassCB
+	typedef struct _tagHDRSecondPassCB
 	{
 		float	fMiddleGrey;
 		float	fLumWhite;
 		Vector2	vEmpty;
-	}FinalPassCB, *PFinalPassCB;
+	}HDR2ndPassCB, *PHDR2ndPassCB;
 
 	typedef struct _tagAdaptationCB
 	{
@@ -371,4 +371,25 @@ namespace PUN
 		{
 		}
 	}BlurCBuffer, *PBlurCBuffer;
+
+	typedef struct PUN_DLL _tagFinalPassCBuffer
+	{
+		int			iHDR;
+		int			iBlur;
+		Vector2		vEmpty;
+
+		_tagFinalPassCBuffer()	:
+			iHDR(0),
+			iBlur(0)		
+		{
+		}
+
+	}FinalPassCB, *PFinalPassCB;
+
+	typedef struct PUN_DLL _tagRayInfo
+	{
+		Vector3	vPos;
+		Vector3	vDir;
+		float	fDist;
+	}RayInfo, *PRayInfo;
 }

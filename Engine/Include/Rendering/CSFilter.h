@@ -20,6 +20,7 @@ protected:
 	vector<CUAV*>				m_vecUAV;
 	ID3D11ShaderResourceView*	m_pSrcSRV;
 	CS_FILTER_TYPE				m_eFilterType;
+	int							m_iFinalPassRegister;
 	bool						m_bFilterOn;
 
 public:
@@ -34,8 +35,8 @@ public:
 	virtual void Dispatch();
 	virtual void SetShaderResourceTo	(int iRegister, int iIndex,  SHADER_TYPE eType = ST_PIXEL);
 	virtual void ResetShaderResourceFrom(int iRegister, int iIndex,  SHADER_TYPE eType = ST_PIXEL);	
-	virtual void SetShaderResourceTo(int iRegister, SHADER_TYPE eType = ST_PIXEL) = 0;
-	virtual void ResetShaderResourceFrom(int iRegister, SHADER_TYPE eType = ST_PIXEL) = 0;
+	virtual void SetShaderResourceTo() = 0;
+	virtual void ResetShaderResourceFrom() = 0;
 
 protected:	
 	virtual void SetShaderResource(int iPass) {};

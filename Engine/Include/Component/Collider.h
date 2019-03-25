@@ -83,7 +83,7 @@ public:
 	bool CollisionRectToPixel(BoxInfo tSrc, const PixelInfo& tDest);
 	bool CollisionSphereToSphere(SphereInfo tSrc, const SphereInfo& tDest);
 	bool CollisionOBB3DToOBB3D(const OBB3DInfo& tSrc, const OBB3DInfo& tDest);
-
+	bool CollisionRayToSphere(const RayInfo& tSrc, const SphereInfo& tDest);
 public:
 	void SetCollisionCallback(COLLISION_CALLBACK_TYPE eType,
 		void(*pFunc)(CCollider*, CCollider*, float));

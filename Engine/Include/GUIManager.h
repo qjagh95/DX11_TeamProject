@@ -11,6 +11,10 @@ public:
 	void Debug();
 
 	bool m_isShow;
+	bool m_bHDR;
+	bool m_bBlur;
+	bool m_bMotionBlur;
+
 
 public:
 	CLASS_IN_SINGLE(GUIManager)

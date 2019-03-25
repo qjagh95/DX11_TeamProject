@@ -1,8 +1,8 @@
 #include "ComputeShare.fx"
 
-Texture2D HDRTex : register(t9);
+Texture2D HDRTex : register(t0);
 
-StructuredBuffer<float> AverageValues1D : register(t9);
+StructuredBuffer<float> AverageValues1D : register(t1);
 
 RWStructuredBuffer<float> AverageLum : register(u0);
 
@@ -10,7 +10,7 @@ cbuffer DownScaleConstants : register(b1)
 {
    // uint2   g_Res       : packoffset(c0); // 백 버퍼의 높이와 너비를 4로 나눈 값
    // uint    g_Domain    : packoffset(c0.z); // 백 버퍼의 높이와 너비를 곱한 후 16으로 나눈 값
-    //uint    g_GroupSize : packoffset(c0.w); // 백 버퍼의 높이와 너비를 곱한 후 16으로 나눈 다음 1024를 곱한 값
+    //uint    g_GroupSize : packoffset(c0.w); // 백 버퍼의 높이와 너비를 곱한 후 16으로 나눈 다음 1024를 나눈 값
     uint2 g_Res;
     uint g_Domain;
     uint g_GroupSize;
@@ -174,6 +174,7 @@ void DownScaleSecondPass(uint3 groupId : SV_GroupID,
 
         // 결과 값 저장
         favgLum = fstepAvgLum;
+
         SharedAvgFinal[dispatchThreadId.x] = fstepAvgLum;
     }
 

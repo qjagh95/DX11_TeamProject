@@ -5,8 +5,9 @@
 
 PUN_USING
 
-CCSFilter::CCSFilter()	:
+CCSFilter::CCSFilter() :
 	m_bFilterOn(true),
+	m_iFinalPassRegister(-1),
 	m_pSrcSRV(nullptr)
 {
 	m_vecUAV.clear();

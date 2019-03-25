@@ -11,8 +11,8 @@
 #include <cliext/vector>
 #include <Resource/ResourcesManager.h>
 
-using namespace System;
 using namespace std;
+using namespace System;
 using namespace msclr::interop;
 
 namespace EngineWrapper
@@ -24,10 +24,11 @@ namespace EngineWrapper
 		{
 			auto WinHandle = hWnd.ToInt64();
 			auto WinInstance = hInstance.ToInt64();
-
-			PUN::CCore::GetInst()->EditInit((HWND)WinHandle, (HINSTANCE)WinInstance, 1024, 600);
 			PUN::CCore::GetInst()->SetGameMode(PUN::GM_3D);
+			PUN::CCore::GetInst()->EditInit((HWND)WinHandle, (HINSTANCE)WinInstance, 1024, 600);
 
+			// EditScene 
+			// 툴에서 기본적으로 사용되는 객체 및 초기화 작업을 해주는 클래스
 			PUN::CSceneManager::GetInst()->AddSceneComponent<PUN::EditorScene>("EditScene");
 		}
 
@@ -41,173 +42,56 @@ namespace EngineWrapper
 			PUN::CCore::GetInst()->EditDelete();
 		}
 
-		void EditCreateObject(String ^ _str , String ^ _strLayerTag)
+	// 레이어
+	public:
+		cli::array<String^>^ GetLayerList();
+
+	// 오브젝트
+	public:
+		cli::array<String^>^ GetSelectLayerObjList(String^ _strLayerTag);
+		void SetActiveObject(String^ _strObjectTag, String^ _strLayerTag);
+		void CreateObject(String^ _strObjectTag, String^ _strLayerTag);
+		void DeleteObject(String^ _strObjectTag, String^ _strLayerTag);
+		void ChangeObjectTag(String^ _strObjectTag);
+		void ChangeObjectInLayer(String^ _strLayerTag);
+		void ActiveObjSetScale(double _dX, double _dY, double _dZ);
+		void ActiveObjSetRotate(double _dX, double _dY, double _dZ);
+		void ActiveObjSetPosition(double _dX, double _dY, double _dZ);
+		cli::array<float>^ GetWorldTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
+
+	// 메시
+	public:
+		cli::array<String^>^ GetMeshNameList();
+		void LoadMeshFromFullPath(String^ _strMeshKey, String^ _strFullPath);
+		void SetMesh(String^ _strMeshTag);
+		void AddRenderComponent();
+
+	// 애니메이션
+	public:
+		void LoadClipFromFullPath(String^ _strFullPath);
+		cli::array<String^>^ GetClipTagList();
+		void SetDivideClip();
+		void DeleteDivideClip();
+		void DeleteClip(String^ _strKey);
+		bool ModifyClip(String^ _strKey, String^ _strChangeKey, int _iOption,
+						int _iStartFrame, int _iEndFrame, double _dPlayTime);
+		bool AddClip(String^ _strKey, int _iOption, int _iStartFrame, int _iEndFrame, double _dPlayTime);
+		void ChangeClip(String^ _strKey);
+		void ClipSave(String^ _strFullPath);
+
+	// 파일 저장, 불러오기
+	public:
+		void FileSave(String^ _strFullPath);
+		void FileLoad(String^ _strFullPath);
+
+	public:
+		// MT : Marshal Type
+		// PT : Parameter Type
+		template<typename MT, typename PT>
+		MT ConvertMarshal(PT _data)
 		{
-			std::string str = marshal_as<std::string>(_str);
-			std::string strLayerTag = marshal_as<std::string>(_strLayerTag);
-			PUN::CEditManager::GetInst()->CreateObject(str , strLayerTag);
-		}
-
-		void ConvertString(String ^ _str)
-		{
-			std::string str = marshal_as<std::string>(_str);
-		}
-
-		void CurrentLayerGetObjTag(String ^ _strLayerTag)
-		{
-			std::string strLayerTag = marshal_as<std::string>(_strLayerTag);
-			PUN::CEditManager::GetInst()->GetLayerListObjTag(strLayerTag);
-		}
-		int GetVecListObjSize()
-		{
-			return PUN::CEditManager::GetInst()->GetVecListObjSize();
-		}
-
-		String ^ GetIndexFromObjListTag(int _idx)
-		{
-			std::string strTag = PUN::CEditManager::GetInst()->GetIndexFromObjTag(_idx);
-			String ^ strObjTag = marshal_as<String ^>(strTag);
-
-			return strObjTag;
-		}
-		void SetIndexFromActiveObj(int _idx , String ^ _strLayerTag)
-		{
-			std::string str = marshal_as<std::string>(_strLayerTag);
-
-			PUN::CEditManager::GetInst()->SetIndexFromSetObject(_idx , str);
-		}
-
-		void ActiveObjSetPos(double _dX, double _dY, double _dZ)
-		{
-			PUN::CEditManager::GetInst()->ActiveObjectSetPosition(_dX, _dY, _dZ);
-		}
-
-		void ActiveObjSetScale(double _dX, double _dY, double _dZ)
-		{
-			PUN::CEditManager::GetInst()->ActiveObjectSetScale(_dX, _dY, _dZ);
-		}
-
-		void ActiveObjSetRot(double _dX, double _dY, double _dZ)
-		{
-			PUN::CEditManager::GetInst()->ActiveObjectSetRotation(_dX, _dY, _dZ);
-		}
-
-		// Renderer
-		cli::array<String^>^ GetMeshNameList()
-		{
-			PUN::CEditManager* pManager = PUN::CEditManager::GetInst();
-			vector<string>* vecMeshNameList = pManager->GetMeshNameList();
-			
-			// vector Marshal
-			cli::array<String^>^ arrStrMarshalList = gcnew cli::array<String^>((int)vecMeshNameList->size());
-			for (int i = 0; i < (int)vecMeshNameList->size(); ++i)
-			{
-				String^ marshalStr = marshal_as<String^>((*vecMeshNameList)[i]);
-				arrStrMarshalList[i] = marshalStr;
-			}
-
-			return arrStrMarshalList;
-		}
-
-		void AddRenderComponent()
-		{
-			// Renderer 컴포넌트 추가
-			PUN::CEditManager* pManager = PUN::CEditManager::GetInst();
-			std::string strTag = "renderer";
-			pManager->ObjectAddComponent(strTag);
-		}
-
-		void SetMesh(String ^ _strMeshTag)
-		{
-			std::string str = marshal_as<std::string>(_strMeshTag);
-
-			PUN::CEditManager::GetInst()->ActiveObjectFromSetMesh(str);
-		}
-
-		void SelectObjChangeTag(String ^ _strObjTag)
-		{
-			std::string str = marshal_as<std::string>(_strObjTag);
-
-			PUN::CEditManager::GetInst()->ActiveObjectFromSetTag(str);
-		}
-
-		void LoadMeshFromFullPath(String ^ _strMeshKey , String ^ _strFullPath)
-		{
-			std::string strMeshKey = marshal_as<std::string>(_strMeshKey);
-			std::wstring strFullPath = marshal_as<std::wstring>(_strFullPath);
-
-			PUN::CResourcesManager::GetInst()->LoadMeshFromFullPath(strMeshKey, strFullPath.c_str());
-		}
-
-		void LoadClipFromFullPath(String ^ _strFullPath)
-		{
-			std::wstring strFullPath = marshal_as<std::wstring>(_strFullPath);
-			PUN::CEditManager::GetInst()->LoadClipFromFullPath(strFullPath);
-		}
-
-		cli::array<String^>^ GetClipTagList()
-		{
-			vector<string> vecstrClip;
-			PUN::CEditManager::GetInst()->GetClipNameList(&vecstrClip);
-
-			cli::array<String^>^ arrStrMarshalList = gcnew cli::array<String^>((int)vecstrClip.size());
-			for (int i = 0; i < (int)vecstrClip.size(); ++i)
-			{
-				String^ marshalStr = marshal_as<String^>(vecstrClip[i]);
-				arrStrMarshalList[i] = marshalStr;
-			}
-
-			return arrStrMarshalList;
-		}
-
-		void SetDivideClip()
-		{
-			PUN::CEditManager::GetInst()->SetDivideKeyFrame();
-		}
-
-		void DeleteDivideClip()
-		{
-			PUN::CEditManager::GetInst()->DeleteDivideKeyFrame();
-		}
-		void DeleteClip(String ^ _strKey)
-		{
-			std::string strOriginKey = marshal_as<std::string>(_strKey);
-
-			PUN::CEditManager::GetInst()->DeleteClip(strOriginKey);
-		}
-
-		bool ModifyClip(String ^ _strKey,
-			String ^ _strChangeKey, int _iOption,
-			int _iStartFrame, int _iEndFrame, double _dPlayTime)
-		{
-			std::string strOriginKey = marshal_as<std::string>(_strKey);
-
-			std::string strChangeKey = marshal_as<std::string>(_strChangeKey);
-
-			return PUN::CEditManager::GetInst()->ModifyClip(strOriginKey, strChangeKey, _iOption, _iStartFrame, _iEndFrame, (float)_dPlayTime);
-		}
-
-		bool AddClip(String ^ _strKey, int _iOption,
-			int _iStartFrame, int _iEndFrame, double _dPlayTime)
-		{
-			std::string strOriginKey = marshal_as<std::string>(_strKey);
-
-			return PUN::CEditManager::GetInst()->AddClip(strOriginKey, _iOption, _iStartFrame, _iEndFrame, (float)_dPlayTime);
-
-			return true;
-		}
-
-		void ChangeClip(String ^ _strKey)
-		{
-			std::string strOriginKey = marshal_as<std::string>(_strKey);
-			
-			PUN::CEditManager::GetInst()->ChangeClip(strOriginKey);
-		}
-		void ClipSave(String ^ _strFullPath)
-		{
-			std::string strFullPath = marshal_as<std::string>(_strFullPath);
-
-			PUN::CEditManager::GetInst()->ClipSaveFromFullPath(strFullPath);
+			MT marshal = marshal_as<MT>(_data);
+			return marshal;
 		}
 	};
 }

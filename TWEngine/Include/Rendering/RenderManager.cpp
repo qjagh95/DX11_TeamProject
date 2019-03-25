@@ -21,7 +21,8 @@ DEFINITION_SINGLE(CRenderManager)
 
 CRenderManager::CRenderManager() :
 	m_pCreateState(nullptr),
-	m_bDeferred(true)
+	m_bDeferred(true),
+	m_pSkyObj(nullptr)
 {
 	m_eGameMode = GM_3D;
 	m_pSphereVolum = NULLPTR;
@@ -44,11 +45,6 @@ CRenderManager::~CRenderManager()
 	SAFE_RELEASE(m_pGBufferSampler);
 	DESTROY_SINGLE(CShaderManager);
 	DESTROY_SINGLE(CViewManager);
-
-	//for (int i = CFT_DOWNSCALE; i < CFT_END; ++i)
-	//{
-	//	SAFE_DELETE(m_pFilter[(CS_FILTER_TYPE)i]);
-	//}
 }
 
 GAME_MODE CRenderManager::GetGameMode() const
@@ -69,6 +65,13 @@ void CRenderManager::SetGameMode(GAME_MODE eMode)
 void CRenderManager::EnableDeferredRendering()
 {
 	m_bDeferred = true;
+}
+
+bool CRenderManager::SetSkyObject(CGameObject* pObj)
+{
+	m_pSkyObj = pObj;
+
+	return true;
 }
 
 bool CRenderManager::Init()
@@ -93,11 +96,15 @@ bool CRenderManager::Init()
 	m_pShader[SHADER_ACC_SPOT]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_SPOT_ACC_SHADER);
 	m_pShader[SHADER_BLEND]			= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_BLEND_SHADER);
 	m_pShader[SHADER_FULL_SCREEN]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(FULLSCREEN_SHADER);
+	m_pShader[SHADER_FINAL_PASS]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(FINAL_PASS_SHADER);
 
 	m_pTarget[TARGET_ALBEDO]		= GET_SINGLE(CViewManager)->FindRenderTarget("Albedo");
-	m_pTarget[TARGET_BLEND]			= GET_SINGLE(CViewManager)->FindRenderTarget("LightBlend");
+	m_pTarget[TARGET_DEPTH]			= GET_SINGLE(CViewManager)->FindRenderTarget("Depth");
+	m_pTarget[TARGET_BACK]			= GET_SINGLE(CViewManager)->FindRenderTarget("SecondBackBuffer");
 	m_pTarget[TARGET_ACC_DIFF]		= GET_SINGLE(CViewManager)->FindRenderTarget("LightAccDif");
 	m_pTarget[TARGET_ACC_SPC]		= GET_SINGLE(CViewManager)->FindRenderTarget("LightAccSpc");
+	m_pTarget[TARGET_BLEND]			= GET_SINGLE(CViewManager)->FindRenderTarget("LightBlend");
+	m_pTarget[TARGET_FINAL]			= GET_SINGLE(CViewManager)->FindRenderTarget("Final");
 
 	m_pState[STATE_DEPTH_GRATOR]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_GRATOR);
 	m_pState[STATE_DEPTH_LESS]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_LESS);
@@ -118,9 +125,14 @@ bool CRenderManager::Init()
 	for (int i = CFT_DOWNSCALE; i < CFT_END; ++i)
 	{
 		m_pFilter[i] = GET_SINGLE(CViewManager)->FindCSFilter((CS_FILTER_TYPE)i);
+		
 	}
 
-	m_pFilter[3]->Disable();
+	m_pFilter[1]->Disable();
+	m_pFilter[2]->Disable();
+	//m_pFilter[3]->Disable();
+	//m_tFinalCBuffer.iHDR = 1;
+	m_tFinalCBuffer.iBlur = 1;
 
 	return true;
 }
@@ -197,26 +209,6 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 	}
 	m_tRenderObj[rg].pList[m_tRenderObj[rg].iSize] = pObj;
 	++m_tRenderObj[rg].iSize;
-	
-	//else
-	//{
-	//	RENDER_GROUP rg = pObj->GetRenderGroup();
-
-	//	if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)
-	//	{
-	//		m_tRenderObj[rg].iCapacity *= 2;
-
-	//		CGameObject**	pList = new CGameObject*[m_tRenderObj[rg].iCapacity];
-
-	//		memcpy(pList, m_tRenderObj[rg].pList, sizeof(CGameObject*) * m_tRenderObj[rg].iSize);
-
-	//		SAFE_DELETE_ARRAY(m_tRenderObj[rg].pList);
-
-	//		m_tRenderObj[rg].pList = pList;
-	//	}
-	//	m_tRenderObj[rg].pList[m_tRenderObj[rg].iSize] = pObj;
-	//	++m_tRenderObj[rg].iSize;
-	//}
 }
 
 void CRenderManager::Render(float fTime)
@@ -232,6 +224,7 @@ void CRenderManager::Render(float fTime)
 	case GM_2D:
 		Render2D(fTime);
 		break;
+
 	case GM_3D:
 		Render3D(fTime);
 		break;
@@ -286,14 +279,6 @@ void CRenderManager::Render2D(float fTime)
 
 void CRenderManager::Render3D(float fTime)
 {
-	 //Sky 출력
-	CScene*	pScene = GET_SINGLE(CSceneManager)->GetSceneNonCount();
-
-	CGameObject* pSkyObj = pScene->GetSkyObj();
-	pSkyObj->Render(fTime);
-
-	SAFE_RELEASE(pSkyObj);
-
 	// Forward Rendering 처리
 	if (!m_bDeferred)
 		RenderForward(fTime);
@@ -311,13 +296,18 @@ void CRenderManager::RenderDeferred(float fTime)
 	RenderLightAcc(fTime);
 	// 조명타겟과 Albedo 를 합성한다.
 	RenderLightBlend(fTime);
-
+	// 스카이 오브젝트와 조명 처리된 타겟을 합쳐 그린다.
+	RenderSkyObj(fTime);
+	// HDR 등 다양한 화면 효과를 계산한다.
 	RenderComputeProcess(fTime);
 	// 최종 합성된 타겟을 화면에 출력한다.
+#ifdef _DEBUG
+	RenderFinalPassDebug(fTime);
+#else
 	RenderFinalPass(fTime);
+#endif
 	
-	//GET_SINGLE(CCollisionManager)->Render(fTime);
-	
+	GET_SINGLE(CCollisionManager)->Render(fTime);
 
 	// UI출력
 	for (int i = RG_UI; i < RG_END; ++i)
@@ -569,11 +559,6 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pTarget[TARGET_ACC_DIFF]->SetShader(14);
 	m_pTarget[TARGET_ACC_SPC]->SetShader(15);
 
-	/*
-	CRenderTarget*	pHDR = FindRenderTarget("HDRBlend");
-	pHDR->SetShader(9);
-	*/
-
 	m_pShader[SHADER_BLEND]->SetShader();
 
 	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
@@ -588,23 +573,57 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pTarget[TARGET_ALBEDO]->ResetShader(10);
 	m_pTarget[TARGET_ACC_DIFF]->ResetShader(14);
 	m_pTarget[TARGET_ACC_SPC]->ResetShader(15);
-	//pHDR->ResetShader(9);
 
 	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 	m_pTarget[TARGET_BLEND]->ResetTarget();
+}
+
+void CRenderManager::RenderSkyObj(float _fTime)
+{
+	m_pTarget[TARGET_BACK]->ClearTarget();
+	m_pTarget[TARGET_BACK]->SetTarget();
+
+	m_pSkyObj->Render(_fTime);
+
+	m_pTarget[TARGET_BLEND]->SetShader(0);
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
+
+	m_pShader[SHADER_FULL_SCREEN]->SetShader();
+
+	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
+
+	UINT iOffset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
+
+	m_pTarget[TARGET_BLEND]->ResetShader(0);
+
+
+	m_pTarget[TARGET_BACK]->ResetTarget();
 }
 
 void CRenderManager::RenderFinalPass(float _fTime)
 {
 	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
-	m_pTarget[TARGET_BLEND]->SetShader(0);
-	//m_pFilter[CFT_BLUR]->SetShaderResourceTo(0, ST_PIXEL);
-	m_pShader[SHADER_FULL_SCREEN]->SetShader();
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass", &m_tFinalCBuffer);
+
+	m_pTarget[TARGET_BACK]->SetShader(0);
+	m_pTarget[TARGET_DEPTH]->SetShader(1);
+	for (int i = CFT_HDR; i < CFT_END; ++i)
+	{
+		if (!m_pFilter[i]->GetEnable())
+			continue;
+
+		m_pFilter[i]->SetShaderResourceTo();
+	}
+
+	m_pShader[SHADER_FINAL_PASS]->SetShader();
 	m_pGBufferSampler->SetShader(0);
-	
-	//CRenderTarget*	pHDR = FindRenderTarget("HDRBlend");
-	//pHDR->SetShader(0);
 
 	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
 	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
@@ -616,9 +635,77 @@ void CRenderManager::RenderFinalPass(float _fTime)
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
 	m_pState[STATE_DEPTH_DISABLE]->ResetState();
-	m_pTarget[TARGET_BLEND]->ResetShader(0);
-	//m_pFilter[CFT_BLUR]->ResetShaderResourceFrom(0);
-	//pHDR->ResetShader(0);
+	m_pTarget[TARGET_BACK]->ResetShader(0);
+	m_pTarget[TARGET_DEPTH]->ResetShader(1);
+
+	for (int i = CFT_HDR; i < CFT_END; ++i)
+	{
+		if (!m_pFilter[i]->GetEnable())
+			continue;
+
+		m_pFilter[i]->ResetShaderResourceFrom();
+	}
+}
+
+void CRenderManager::RenderFinalPassDebug(float _fTime)
+{
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass", &m_tFinalCBuffer);
+
+	m_pTarget[TARGET_BACK]->SetShader(0);
+
+	m_pTarget[TARGET_DEPTH]->SetShader(1);
+	for (int i = CFT_HDR; i < CFT_END; ++i)
+	{
+		if (!m_pFilter[i]->GetEnable())
+			continue;
+
+		m_pFilter[i]->SetShaderResourceTo();
+	}
+
+	m_pShader[SHADER_FINAL_PASS]->SetShader();
+	m_pGBufferSampler->SetShader(9);
+
+	m_pTarget[TARGET_FINAL]->ClearTarget();
+	m_pTarget[TARGET_FINAL]->SetTarget();
+
+	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
+
+	UINT iOffset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_pTarget[TARGET_DEPTH]->ResetShader(1);
+	m_pTarget[TARGET_BACK]->ResetShader(0);
+
+	for (int i = CFT_HDR; i < CFT_END; ++i)
+	{
+		if (!m_pFilter[i]->GetEnable())
+			continue;
+
+		m_pFilter[i]->ResetShaderResourceFrom();
+	}
+
+	m_pTarget[TARGET_FINAL]->ResetTarget();
+
+	// 풀 스크린 출력
+
+	m_pShader[SHADER_FULL_SCREEN]->SetShader();
+	m_pTarget[TARGET_FINAL]->SetShader(0);
+
+	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
+
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
+
+	m_pTarget[TARGET_FINAL]->ResetShader(0);
 }
 
 void CRenderManager::RenderComputeProcess(float fTime)
@@ -630,7 +717,6 @@ void CRenderManager::RenderComputeProcess(float fTime)
 
 		m_pFilter[i]->Dispatch();
 	}
-
 }
 
 void CRenderManager::RenderForward(float fTime)
@@ -685,4 +771,40 @@ void CRenderManager::RenderForward(float fTime)
 CMultiRenderTarget * CRenderManager::FindMultiTarget(const string & MultiKey)
 {
 	return GET_SINGLE(CViewManager)->FindMRT(MultiKey);
+}
+
+void CRenderManager::EnableFilter(CS_FILTER_TYPE eType)
+{
+	m_pFilter[eType]->Enable();
+
+	switch (eType)
+	{
+	case CFT_HDR:
+		m_tFinalCBuffer.iHDR = 1;
+		break;
+
+	case CFT_BLUR:
+	case CFT_MOTIONBLUR:
+		m_tFinalCBuffer.iBlur = 1;
+
+		break;
+	}
+}
+
+void CRenderManager::DisableFilter(CS_FILTER_TYPE eType)
+{
+	m_pFilter[eType]->Disable();
+
+	switch (eType)
+	{
+	case CFT_HDR:
+		m_tFinalCBuffer.iHDR = 0;
+		break;
+
+	case CFT_BLUR:
+	case CFT_MOTIONBLUR:
+		m_tFinalCBuffer.iBlur = 0;
+
+		break;
+	}
 }

@@ -26,6 +26,8 @@ bool CCSBlur::Init()
 {
 	CUAV* pUAV = GET_SINGLE(CViewManager)->FindUAV("DownScale2x2");
 
+	m_iFinalPassRegister = 2;
+
 	if (!pUAV)
 		return false;
 
@@ -38,14 +40,14 @@ bool CCSBlur::Init()
 	return true;
 }
 
-void CCSBlur::SetShaderResourceTo(int iRegister, SHADER_TYPE eType)
+void CCSBlur::SetShaderResourceTo()
 {
-	m_vecUAV[BLUR_VERTICAL]->SetSRV(iRegister, eType);
+	m_vecUAV[BLUR_VERTICAL]->SetSRV(m_iFinalPassRegister);
 }
 
-void CCSBlur::ResetShaderResourceFrom(int iRegister, SHADER_TYPE eType)
+void CCSBlur::ResetShaderResourceFrom()
 {
-	m_vecUAV[BLUR_VERTICAL]->ResetSRV(iRegister, eType);
+	m_vecUAV[BLUR_VERTICAL]->ResetSRV(m_iFinalPassRegister);
 }
 
 void CCSBlur::SetShaderResource(int iPass)

@@ -37,6 +37,7 @@ public:
 		const string& strPathKey = TEXTURE_PATH);
 	bool LoadTextureFromFullPath(const string& strName, const vector<const TCHAR*>& vecFullPath);
 	void SetShader(int iRegister);
+	void ResetShader(int iRegister);
 
 private:
 	bool CreateShaderResource();
