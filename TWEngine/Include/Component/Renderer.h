@@ -37,6 +37,7 @@ public:
 	void SetMesh(const string& strKey);
 	void SetMesh(const string& strKey, const TCHAR* pFileName,
 		const string& strPathKey = MESH_DATA_PATH);
+	class CMesh* GetMesh() const;
 
 	void SetMeshFromFullPath(const string& strKey, const TCHAR* pFullPath);
 	void SetShader(class CShader* pShader);

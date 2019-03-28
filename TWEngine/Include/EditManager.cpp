@@ -101,6 +101,18 @@ void CEditManager::DeleteObject(const string _strObjectTag, const string _strLay
 	SAFE_RELEASE(pLayer);
 }
 
+void CEditManager::DeleteAllObject()
+{
+	vector<string> vecLayerTag;
+	m_pScene->GetLayerTagList(&vecLayerTag);
+	for (size_t i = 0; i < vecLayerTag.size(); ++i)
+	{
+		CLayer* pLayer = m_pScene->FindLayer(vecLayerTag[i]);
+		pLayer->EraseObjectAll();
+		SAFE_RELEASE(pLayer);
+	}
+}
+
 void CEditManager::ChangeObjectTag(const string _strObjectTag)
 {
 	if (m_pObject == nullptr)
@@ -250,10 +262,9 @@ vector<Vector3> CEditManager::GetWorldTransform(const string _strObjectTag, cons
 	return pVecTranform;
 }
 
-vector<string>* CEditManager::GetMeshNameList()
+void CEditManager::GetMeshNameList(vector<string>* _pVec)
 {
-	vector<string>* vecMeshNameList = CResourcesManager::GetInst()->GetMeshNameList();
-	return vecMeshNameList;
+	CResourcesManager::GetInst()->GetMeshNameList(_pVec);
 }
 
 void CEditManager::SetMesh(const string& _strMeshTag)

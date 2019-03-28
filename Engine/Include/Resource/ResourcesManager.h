@@ -35,6 +35,8 @@ public:
 	bool LoadMeshFromFullPath(const string& strName, const TCHAR* pFullPath);
 	class CMesh*	FindMesh(const string& strName);
 	vector<string>* GetMeshNameList();
+	void GetMeshNameList(vector<string>* _pVec);
+
 
 	class CMesh * FindMeshNonCount(const string & strName);
 	class CTexture* FindTexture(const string& strName);

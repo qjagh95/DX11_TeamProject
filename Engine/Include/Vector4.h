@@ -127,7 +127,7 @@ union MATH_DLL Vector4
 	float Dot(float Val[4]) const;
 	float Dot(int Val[4]) const;
 
-	XMVECTOR Convert();
+	XMVECTOR Convert() const;
 	void Convert(const XMVECTOR & Xmvec);
 
 	static Vector4 Normalize(const Vector4& vec);

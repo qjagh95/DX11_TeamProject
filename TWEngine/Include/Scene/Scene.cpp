@@ -159,7 +159,7 @@ bool CScene::Init()
 
 	ProfileInit();
 
-	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 45.f, 0.03f, 1000.f);	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
+	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 45.f, 0.001f, 1000.f);	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
 	m_pMainCamera = m_pMainCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
 	m_pUICameraObj = CreateCamera("UICamera", Vector3(0.f, 0.f, 0.f), CT_ORTHO, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 60.f, 0.f, 1000.f);
 

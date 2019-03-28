@@ -55,6 +55,7 @@ public:
 	class CGameObject* FindObject(const string & strTag);
 	class CGameObject * FindObjectNonCount(const string & strTag);
 	void EraseObject(class CGameObject* pObj);
+	void EraseObjectAll();
 	void GetLayerListObjTag(std::vector<std::string>* _vec);
 	class CGameObject* FindObjectFromIndex(int _idx);
 	bool ListEmpty()

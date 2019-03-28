@@ -59,6 +59,7 @@ public:
 	void SetActiveObject(const string _strObjectTag, const string _strLayerTag);
 	void CreateObject(const string _strObjectTag, const string _strLayerTag);
 	void DeleteObject(const string _strObjectTag, const string _strLayerTag);
+	void DeleteAllObject();
 	void ChangeObjectTag(const string _strObjectTag);
 	void ChangeObjectInLayer(const string _strLayerTag);
 	void AddComponent(string& _strCompTag);
@@ -69,7 +70,7 @@ public:
 
 // 메시
 public:
-	vector<string>* GetMeshNameList();
+	void GetMeshNameList(vector<string>* _pVec);
 	void SetMesh(const string& _strMeshTag);
 
 // 애니메이션

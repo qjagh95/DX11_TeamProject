@@ -23,7 +23,7 @@ CCore::CCore()
 	m_bEditorMode = false;
 	m_pTimer = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(183);
+	//_CrtSetBreakAlloc(4111);
 
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 
@@ -200,6 +200,9 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 
 	GET_SINGLE(CInput)->BindAction("GuiOnOff", KEY_PRESS, this, &CCore::GUIOnOff);
 	GET_SINGLE(CInput)->AddKeyAction("GuiOnOff", DIK_F1);
+
+	GET_SINGLE(CInput)->BindAction("ShaderOptionOnOff", KEY_PRESS, this, &CCore::GUIOnOff);
+	GET_SINGLE(CInput)->AddKeyAction("ShaderOptionOnOff", DIK_F2);
 
 	AddManagerVector("LogicInput");
 	AddManagerVector("LogicUpdate");
@@ -478,6 +481,11 @@ LRESULT CCore::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void CCore::GUIOnOff(float fTime)
 {
 	m_bGuiMode ^= true;
+}
+
+void CCore::ShaderOptionOnOff(float fTime)
+{
+	GUIManager::Get()->m_bShaderOption ^= true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -156,6 +156,12 @@ void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName,
 	}
 }
 
+CMesh * CRenderer::GetMesh() const
+{
+	m_pMesh->AddRef();
+	return m_pMesh;
+}
+
 void CRenderer::SetMeshFromFullPath(const string & strKey, const TCHAR * pFullPath)
 {
 	SAFE_RELEASE(m_pMesh);

@@ -26,6 +26,7 @@ private:
 	Vector3				m_vTargetPivot;
 	Vector3				m_vWorldSize;
 	Vector3				m_vTargetPos;
+	class CFrustum*		m_pFrustum;
 
 public:
 	float GetCameraFar() const { return m_fFar; }
@@ -51,6 +52,8 @@ public:
 	void SetViewAngle(float fAngle);
 	void SetNear(float fNear);
 	void SetFar(float fFar);
+	bool FrustumInPoint(Vector3& vPos);
+	bool FrustumInSphere(Vector3& vCenter, float fRadius);
 
 public:
 	virtual bool Init();

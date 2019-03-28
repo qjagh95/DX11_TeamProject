@@ -160,6 +160,7 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 {
 	RENDER_GROUP	rg = pObj->GetRenderGroup();
 
+	
 	if (rg == RG_LIGHT)
 	{
 		if (m_tLightGroup.iSize == m_tLightGroup.iCapacity)
@@ -193,6 +194,14 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 			return;
 		else
 			rg = RG_NORMAL;
+	}
+
+	else if (rg != RG_UI)
+	{
+		if (pObj->FrustumCull())
+		{
+			return;
+		}
 	}
 
 	if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)

@@ -371,6 +371,9 @@
     <ClCompile Include="Component\ColliderRay.cpp">
       <Filter>06. Component\07. Collider</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Frustum.cpp">
+      <Filter>06. Component\04. Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Macro.h">
@@ -609,6 +612,9 @@
     </ClInclude>
     <ClInclude Include="Component\ColliderRay.h">
       <Filter>06. Component\07. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Frustum.h">
+      <Filter>06. Component\04. Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -72,7 +72,8 @@ private:
 	void CreateWnd(const TCHAR* pTitle, const TCHAR* pClass);
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	void GUIOnOff(float fTime);
-	
+	void ShaderOptionOnOff(float fTime);
+
 	DECLARE_SINGLE(CCore)
 };
 

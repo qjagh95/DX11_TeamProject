@@ -55,6 +55,11 @@ void CoreWrapper::DeleteObject(String^ _strObjectTag, String^ _strLayerTag)
 	PUN::CEditManager::GetInst()->DeleteObject(strObjectTag, strLayerTag);
 }
 
+void CoreWrapper::DeleteAllObject()
+{
+	PUN::CEditManager::GetInst()->DeleteAllObject();
+}
+
 void CoreWrapper::ChangeObjectTag(String^ _strObjectTag)
 {
 	string strObjectTag = ConvertMarshal<string, String^>(_strObjectTag);
@@ -99,14 +104,14 @@ cli::array<float>^ CoreWrapper::GetWorldTransform(String^ _strObjectTag, String^
 
 cli::array<String^>^ CoreWrapper::GetMeshNameList()
 {
-	vector<string>* vecMeshNameList = PUN::CEditManager::GetInst()->GetMeshNameList();
-	cli::array<String^>^ arrStrMarshalList = gcnew cli::array<String^>((int)vecMeshNameList->size());
-	for (int i = 0; i < (int)vecMeshNameList->size(); ++i)
+	vector<string> vecMeshNameList;
+	PUN::CEditManager::GetInst()->GetMeshNameList(&vecMeshNameList);
+	cli::array<String^>^ arrStrMarshalList = gcnew cli::array<String^>((int)vecMeshNameList.size());
+	for (int i = 0; i < (int)vecMeshNameList.size(); ++i)
 	{
-		String^ strMeshTag = ConvertMarshal<String^, string>((*vecMeshNameList)[i]);
+		String^ strMeshTag = ConvertMarshal<String^, string>(vecMeshNameList[i]);
 		arrStrMarshalList[i] = strMeshTag;
 	}
-
 	return arrStrMarshalList;
 }
 

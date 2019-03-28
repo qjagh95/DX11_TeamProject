@@ -20,20 +20,21 @@ namespace WinFormEditor
         public CoreWrapper coreWrapper = new CoreWrapper();
 
         enum eTransformType { TT_SCALE, TT_ROTATE, TT_POSITION, TT_MAX, };
+        
+        // Form
+        Form m_dataRemoveForm = new Form();
 
         // Unique Key
         Dictionary<string, ObjectInfo> m_objInfo;
 
         // Member
         private int    m_createObjCnt       = 0;
-        private int    m_deleteCnt          = 0;
         private bool   m_isChangeText       = false;
         private string m_strClipName        = "";
         private string m_strStartFrame      = "";
         private string m_strEndFrame        = "";
         private string m_strAniTime         = "";
         private string m_strDeleteClip      = "";
-
 
         private void Run(object sender, EventArgs e)
         {
@@ -86,15 +87,66 @@ namespace WinFormEditor
 
         private void ObjectAllClear(object sender, MouseEventArgs e)
         {
-            m_deleteCnt++;
-            ClearCount.Text = m_deleteCnt + "";
-            if (m_deleteCnt >= 3)
-            {
-                MessageBox.Show("오브젝트를 전부 삭제합니다.");
-                LB_ObjectList.Items.Clear();
-                m_deleteCnt = 0;
-                ClearCount.Text = "0";
-            }
+            Point parentPoint = Location;
+
+            // Form
+            m_dataRemoveForm                = new Form();
+            m_dataRemoveForm.Owner         = this;
+            m_dataRemoveForm.StartPosition = FormStartPosition.Manual;
+            m_dataRemoveForm.Size          = new Size(218, 120);
+            m_dataRemoveForm.Location      = new Point(parentPoint.X + 13, parentPoint.Y + 125);
+            m_dataRemoveForm.Show();
+
+            // Label
+            Label labelRemoveInfo     = new Label();
+            labelRemoveInfo.AutoSize  = true;
+            labelRemoveInfo.Font      = new Font("맑은 고딕", 10, FontStyle.Bold);
+            labelRemoveInfo.Text      = "데이터를 삭제하시겠습니까?";
+            labelRemoveInfo.TextAlign = ContentAlignment.MiddleCenter;
+            labelRemoveInfo.Left      = 8;
+            labelRemoveInfo.Top       = 11;
+            m_dataRemoveForm.Controls.Add(labelRemoveInfo);
+
+            // Button (예)
+            Button btnRemove    = new Button();
+            btnRemove.Location  = new Point(20, 38);
+            btnRemove.Size      = new Size(75, 35);
+            btnRemove.Font      = new Font("맑은 고딕", 10, FontStyle.Bold);
+            btnRemove.Text      = "Remove";
+            btnRemove.ForeColor = Color.Red;
+            btnRemove.TabStop   = false;
+            btnRemove.FlatAppearance.BorderSize = 1;
+            btnRemove.Click += new System.EventHandler(BtnRemove);
+            m_dataRemoveForm.Controls.Add(btnRemove);
+
+            // Button (아니오)
+            Button btnCancel    = new Button();
+            btnCancel.Location  = new Point(105, 38);
+            btnCancel.Size      = new Size(75, 35);
+            btnCancel.Font      = new Font("맑은 고딕", 10, FontStyle.Bold);
+            btnCancel.Text      = "Cancel";
+            btnCancel.ForeColor = Color.Blue;
+            btnCancel.TabStop   = false;
+            btnCancel.FlatAppearance.BorderSize = 1;
+            btnCancel.Click += new EventHandler(BtnCancel);
+            m_dataRemoveForm.Controls.Add(btnCancel);
+        }
+
+        private void BtnRemove(object sender, EventArgs e)
+        {
+            // 오브젝트 전부 삭제
+            coreWrapper.DeleteAllObject();
+
+            // 아이템 전부 삭제
+            m_createObjCnt = 0;
+            LB_ObjectList.Items.Clear();
+            m_dataRemoveForm.Close();
+            MessageBox.Show("데이터를 전부 삭제했습니다.");
+        }
+
+        private void BtnCancel(object sender, EventArgs e)
+        {
+            m_dataRemoveForm.Close();
         }
 
         private void LoadObjectList()
@@ -582,6 +634,7 @@ namespace WinFormEditor
                 // 로드
                 ClearData();
                 LoadObjectList();
+                LoadMeshList();
             }
         }
 

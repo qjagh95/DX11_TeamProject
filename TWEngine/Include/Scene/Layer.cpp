@@ -408,11 +408,22 @@ void CLayer::EraseObject(CGameObject* pObj)
 	}
 }
 
+void CLayer::EraseObjectAll()
+{
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
+	for (iter = m_ObjList.begin(); iter != iterEnd; )
+	{
+		CGameObject* pObj = *iter;
+		iter = m_ObjList.erase(iter);
+		SAFE_RELEASE(pObj);
+	}
+}
+
 void CLayer::GetLayerListObjTag(std::vector<std::string>* _vec)
 {
 	list<CGameObject*>::iterator	iter;
 	list<CGameObject*>::iterator	iterEnd = m_ObjList.end();
-
 	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
 	{
 		_vec->push_back((*iter)->GetTag());

@@ -391,7 +391,6 @@ bool CResourcesManager::LoadMesh(const string & strName, const TCHAR * pFileName
 bool CResourcesManager::LoadMeshFromFullPath(const string & strName, const TCHAR * pFullPath)
 {
 	CMesh*	pMesh = FindMesh(strName);
-
 	if (pMesh)
 	{
 		SAFE_RELEASE(pMesh);
@@ -399,13 +398,11 @@ bool CResourcesManager::LoadMeshFromFullPath(const string & strName, const TCHAR
 	}
 
 	pMesh = new CMesh;
-
 	if (!pMesh->LoadMeshFromFullPath(strName, pFullPath))
 	{
 		SAFE_RELEASE(pMesh);
 		return false;
 	}
-
 	m_mapMesh.insert(make_pair(strName, pMesh));
 
 	return true;
@@ -433,6 +430,16 @@ vector<string>* CResourcesManager::GetMeshNameList()
 	}
 
 	return &m_vecMeshName;
+}
+
+void CResourcesManager::GetMeshNameList(vector<string>* _pVec)
+{
+	unordered_map<string, CMesh*>::iterator iter;
+	unordered_map<string, CMesh*>::iterator iterEnd = m_mapMesh.end();
+	for (iter = m_mapMesh.begin(); iter != iterEnd; ++iter)
+	{
+		_pVec->push_back(iter->first);
+	}
 }
 
 CMesh * CResourcesManager::FindMeshNonCount(const string & strName)

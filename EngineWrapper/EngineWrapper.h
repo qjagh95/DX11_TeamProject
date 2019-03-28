@@ -52,6 +52,7 @@ namespace EngineWrapper
 		void SetActiveObject(String^ _strObjectTag, String^ _strLayerTag);
 		void CreateObject(String^ _strObjectTag, String^ _strLayerTag);
 		void DeleteObject(String^ _strObjectTag, String^ _strLayerTag);
+		void DeleteAllObject();
 		void ChangeObjectTag(String^ _strObjectTag);
 		void ChangeObjectInLayer(String^ _strLayerTag);
 		void ActiveObjSetScale(double _dX, double _dY, double _dZ);

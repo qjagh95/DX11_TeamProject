@@ -923,9 +923,9 @@ Vector4 Vector4::Normalize(const Vector4 & vec)
 	return Vector4(XMVector4Normalize(Src));
 }
 /////////////////////////////////////////////////////////////////////////
-XMVECTOR Vector4::Convert()
+XMVECTOR Vector4::Convert() const
 {
-	return XMLoadFloat4((XMFLOAT4*)this);;
+	return XMLoadFloat4((XMFLOAT4*)this);
 }
 
 void Vector4::Convert(const XMVECTOR & Xmvec)

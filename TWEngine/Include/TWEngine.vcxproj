@@ -226,6 +226,7 @@
     <ClInclude Include="Component\ColliderSphere.h" />
     <ClInclude Include="Component\Component.h" />
     <ClInclude Include="Component\FreeCamera.h" />
+    <ClInclude Include="Component\Frustum.h" />
     <ClInclude Include="Component\LandScape.h" />
     <ClInclude Include="Component\Light.h" />
     <ClInclude Include="Component\Material.h" />
@@ -357,6 +358,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Component\Frustum.cpp" />
     <ClCompile Include="Component\LandScape.cpp" />
     <ClCompile Include="Component\Light.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

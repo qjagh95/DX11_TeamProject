@@ -3,6 +3,7 @@
 #include "Transform.h"
 #include "../GameObject.h"
 #include "Device.h"
+#include "Frustum.h"
 
 PUN_USING
 
@@ -11,6 +12,7 @@ CCamera::CCamera()
 	m_eComType = CT_CAMERA;
 	m_eCameraType = CT_PERSPECTIVE;
 	m_pTarget = nullptr;
+	m_pFrustum = new CFrustum;
 }
 
 
@@ -21,10 +23,12 @@ CCamera::CCamera(const CCamera & camera) :
 	m_matView = camera.m_matView;
 	m_matProj = camera.m_matProj;
 	m_pTarget = nullptr;
+	m_pFrustum = new CFrustum;
 }
 
 CCamera::~CCamera()
 {
+	SAFE_DELETE(m_pFrustum);
 	SAFE_RELEASE(m_pTarget);
 }
 
@@ -162,8 +166,7 @@ int CCamera::Update(float fTime)
 	*/
 	for (int i = 0; i < AXIS_END; ++i)
 	{
-		memcpy(&m_matView[i][0], &m_pTransform->GetWorldAxis((AXIS)i),
-			sizeof(Vector3));
+		memcpy(&m_matView[i][0], &m_pTransform->GetWorldAxis((AXIS)i), sizeof(Vector3));
 	}
 
 	/*
@@ -181,6 +184,7 @@ int CCamera::Update(float fTime)
 		m_matView[3][i] = vPos.Dot(m_pTransform->GetWorldAxis((AXIS)i));
 	}
 
+	m_pFrustum->Update(m_matView * m_matProj);
 
 	return 0;
 }
@@ -201,4 +205,14 @@ void CCamera::Render(float fTime)
 CCamera * CCamera::Clone()
 {
 	return new CCamera(*this);
+}
+
+bool CCamera::FrustumInPoint(Vector3 & vPos)
+{
+	return m_pFrustum->FrustumInPoint(vPos);
+}
+
+bool CCamera::FrustumInSphere(Vector3 & vCenter, float fRadius)
+{
+	return m_pFrustum->FrustumInSphere(vCenter, fRadius);
 }

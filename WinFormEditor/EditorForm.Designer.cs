@@ -85,7 +85,6 @@
             this.Label_PosY = new System.Windows.Forms.Label();
             this.PositionX = new System.Windows.Forms.TextBox();
             this.GB_Hierachy = new System.Windows.Forms.GroupBox();
-            this.CheckBox_Gizmos = new System.Windows.Forms.CheckBox();
             this.Btn_ObjectDelete = new System.Windows.Forms.Button();
             this.LB_ObjectList = new System.Windows.Forms.ListBox();
             this.Btn_FileSave = new System.Windows.Forms.Button();
@@ -99,7 +98,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.LB_AniList = new System.Windows.Forms.ListBox();
             this.Btn_AllClear = new System.Windows.Forms.Button();
-            this.ClearCount = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -124,7 +122,7 @@
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label11.ForeColor = System.Drawing.Color.Black;
-            this.label11.Location = new System.Drawing.Point(6, 581);
+            this.label11.Location = new System.Drawing.Point(6, 604);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(49, 17);
             this.label11.TabIndex = 14;
@@ -136,7 +134,7 @@
             this.CB_LayerList.Cursor = System.Windows.Forms.Cursors.Default;
             this.CB_LayerList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CB_LayerList.FormattingEnabled = true;
-            this.CB_LayerList.Location = new System.Drawing.Point(57, 578);
+            this.CB_LayerList.Location = new System.Drawing.Point(57, 601);
             this.CB_LayerList.Name = "CB_LayerList";
             this.CB_LayerList.Size = new System.Drawing.Size(143, 25);
             this.CB_LayerList.TabIndex = 13;
@@ -147,7 +145,7 @@
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label10.ForeColor = System.Drawing.Color.Black;
-            this.label10.Location = new System.Drawing.Point(16, 548);
+            this.label10.Location = new System.Drawing.Point(16, 571);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(39, 17);
             this.label10.TabIndex = 12;
@@ -159,7 +157,7 @@
             this.TB_ObjectTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_ObjectTag.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.TB_ObjectTag.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.TB_ObjectTag.Location = new System.Drawing.Point(57, 545);
+            this.TB_ObjectTag.Location = new System.Drawing.Point(57, 568);
             this.TB_ObjectTag.Name = "TB_ObjectTag";
             this.TB_ObjectTag.Size = new System.Drawing.Size(143, 23);
             this.TB_ObjectTag.TabIndex = 1;
@@ -747,7 +745,6 @@
             // GB_Hierachy
             // 
             this.GB_Hierachy.Controls.Add(this.label11);
-            this.GB_Hierachy.Controls.Add(this.CheckBox_Gizmos);
             this.GB_Hierachy.Controls.Add(this.CB_LayerList);
             this.GB_Hierachy.Controls.Add(this.label10);
             this.GB_Hierachy.Controls.Add(this.TB_ObjectTag);
@@ -762,17 +759,6 @@
             this.GB_Hierachy.TabIndex = 9;
             this.GB_Hierachy.TabStop = false;
             this.GB_Hierachy.Text = "Hierachy";
-            // 
-            // CheckBox_Gizmos
-            // 
-            this.CheckBox_Gizmos.AutoSize = true;
-            this.CheckBox_Gizmos.ForeColor = System.Drawing.Color.Black;
-            this.CheckBox_Gizmos.Location = new System.Drawing.Point(9, 612);
-            this.CheckBox_Gizmos.Name = "CheckBox_Gizmos";
-            this.CheckBox_Gizmos.Size = new System.Drawing.Size(113, 21);
-            this.CheckBox_Gizmos.TabIndex = 8;
-            this.CheckBox_Gizmos.Text = "Add Gizmos ?";
-            this.CheckBox_Gizmos.UseVisualStyleBackColor = true;
             // 
             // Btn_ObjectDelete
             // 
@@ -795,7 +781,7 @@
             this.LB_ObjectList.ItemHeight = 17;
             this.LB_ObjectList.Location = new System.Drawing.Point(5, 24);
             this.LB_ObjectList.Name = "LB_ObjectList";
-            this.LB_ObjectList.Size = new System.Drawing.Size(195, 514);
+            this.LB_ObjectList.Size = new System.Drawing.Size(195, 531);
             this.LB_ObjectList.TabIndex = 0;
             this.LB_ObjectList.SelectedIndexChanged += new System.EventHandler(this.ObjectList_ChangeSelectedItem);
             this.LB_ObjectList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDown_DeleteObject);
@@ -927,25 +913,12 @@
             this.Btn_AllClear.UseVisualStyleBackColor = true;
             this.Btn_AllClear.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ObjectAllClear);
             // 
-            // ClearCount
-            // 
-            this.ClearCount.AutoSize = true;
-            this.ClearCount.BackColor = System.Drawing.SystemColors.Window;
-            this.ClearCount.Font = new System.Drawing.Font("맑은 고딕", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.ClearCount.ForeColor = System.Drawing.Color.Red;
-            this.ClearCount.Location = new System.Drawing.Point(123, 18);
-            this.ClearCount.Name = "ClearCount";
-            this.ClearCount.Size = new System.Drawing.Size(23, 25);
-            this.ClearCount.TabIndex = 14;
-            this.ClearCount.Text = "0";
-            // 
             // EditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1694, 779);
-            this.Controls.Add(this.ClearCount);
             this.Controls.Add(this.Btn_AllClear);
             this.Controls.Add(this.GB_Hierachy);
             this.Controls.Add(this.LB_LogMessage);
@@ -974,7 +947,6 @@
             this.GB_Renderer.ResumeLayout(false);
             this.GB_Renderer.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -1048,9 +1020,7 @@
         private System.Windows.Forms.Button Btn_ObjectDelete;
         private System.Windows.Forms.ListBox LB_AniList;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox CheckBox_Gizmos;
         private System.Windows.Forms.Button Btn_AllClear;
-        private System.Windows.Forms.Label ClearCount;
     }
 }
 

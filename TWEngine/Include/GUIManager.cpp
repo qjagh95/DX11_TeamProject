@@ -12,6 +12,7 @@ GUIManager::GUIManager()
 	m_bHDR = false;
 	m_bBlur = false;
 	m_bMotionBlur = false;
+	m_bShaderOption = true;
 }
 
 GUIManager::~GUIManager()
@@ -67,8 +68,23 @@ void GUIManager::Debug()
 		return;
 
 
-	ImGui::Checkbox("HDR", &m_bHDR);
-	ImGui::Checkbox("Blur", &m_bBlur);
-	ImGui::Checkbox("MotionBlur", &m_bMotionBlur);
+	if (m_bShaderOption == true)
+	{
+		ImGui::Begin("ShaderOption");
 
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::Text("ShaderOption");
+			ImGui::EndTooltip();
+		}
+
+		ImGui::Checkbox("HDR", &m_bHDR);
+		ImGui::Checkbox("Blur", &m_bBlur);
+		ImGui::Checkbox("MotionBlur", &m_bMotionBlur);
+
+		ImGui::End();
+	}
+
+	
 }

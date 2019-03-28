@@ -4,10 +4,12 @@
 #include "Component/Transform.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
+#include "Component/Camera.h"
 #include "Component/Renderer.h"
 #include "CollisionManager.h"
 #include "ObjectManager.h"
 #include "Component/Animation.h"
+#include "Resource/Mesh.h"
 
 PUN_USING
 
@@ -16,7 +18,8 @@ unordered_map<class CScene*, unordered_map<string, CGameObject*>> CGameObject::m
 CGameObject::CGameObject() :
 	m_pTransform(nullptr),
 	m_pParent(nullptr),
-	m_iObjectListIdx(0)
+	m_iObjectListIdx(0),
+	m_isFrustumCull(false)
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;
@@ -85,6 +88,8 @@ CGameObject::CGameObject(const CGameObject & obj)
 
 		m_ChildList.push_back(pChild);
 	}
+
+	m_isFrustumCull = false; 
 }
 
 CGameObject::~CGameObject()
@@ -368,6 +373,35 @@ RENDER_GROUP CGameObject::GetRenderGroup() const
 bool CGameObject::EmptyComponent() const
 {
 	return m_ComList.empty();
+}
+
+bool CGameObject::FrustumCull()
+{
+	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
+	CRenderer* pRenderer = FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
+	if (pRenderer == nullptr)
+	{
+		return false;
+	}
+	CMesh* pMesh = pRenderer->GetMesh();
+	Vector3	vCenter = pMesh->GetCenter().TransformCoord(m_pTransform->GetWorldMatrix());
+	Vector3	vScale = m_pTransform->GetWorldScale();
+
+	float	fScale = vScale.x;
+	fScale = fScale < vScale.y ? vScale.y : fScale;
+	fScale = fScale < vScale.z ? vScale.z : fScale;
+
+	float fRadius = pMesh->GetRadius() * fScale;
+	m_isFrustumCull = pCamera->FrustumInSphere(vCenter, fRadius);
+
+	SAFE_RELEASE(pMesh);
+
+	return m_isFrustumCull;
+}
+
+bool CGameObject::IsFrustumCull() const
+{
+	return m_isFrustumCull;
 }
 
 void CGameObject::Start()

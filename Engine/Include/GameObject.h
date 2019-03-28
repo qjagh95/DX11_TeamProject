@@ -49,6 +49,8 @@ private:
 	RENDER_GROUP	m_eRenderGroup;
 	int				m_iLayerZOrder;
 	int				m_iObjectListIdx;
+	bool			m_isFrustumCull;
+
 public:
 	void SetObjectListIndex(int _idx)
 	{
@@ -84,6 +86,8 @@ public:
 	const list<class CComponent*>* GetComponentList()	const;
 	RENDER_GROUP	 GetRenderGroup() const;
 	bool EmptyComponent()	const;
+	bool FrustumCull();
+	bool IsFrustumCull() const;
 
 public:
 	void Start();

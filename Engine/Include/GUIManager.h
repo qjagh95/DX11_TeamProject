@@ -15,6 +15,7 @@ public:
 	bool m_bBlur;
 	bool m_bMotionBlur;
 
+	bool m_bShaderOption;
 
 public:
 	CLASS_IN_SINGLE(GUIManager)
