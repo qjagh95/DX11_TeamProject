@@ -32,7 +32,15 @@ public:
 
 private:
 	CScene*			m_pScene;
-	CGameObject*	m_pObject;
+	CGameObject*	 m_pObject;
+	class CGizmo*	 m_pXGizmo;
+	class CGizmo*	 m_pYGizmo;
+	class CGizmo*	 m_pZGizmo;
+	CGameObject*	 m_pXGizmoObj;
+	CGameObject*	 m_pYGizmoObj;
+	CGameObject*	 m_pZGizmoObj;
+
+	class CEditTest* m_pEditTest;
 	vector<string>	m_vecstrObjList;
 	CAnimation*		m_pAnimation;
 	vector<struct _tagBoneKeyFrame*> m_vecDivideFrame;

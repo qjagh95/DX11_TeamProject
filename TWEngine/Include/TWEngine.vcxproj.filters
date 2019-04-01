@@ -165,6 +165,9 @@
     <Filter Include="06. Component\17.SoundSource">
       <UniqueIdentifier>{608ef157-12f6-44c1-a9bd-9f7d5311c900}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Component\18.PrivateEditor">
+      <UniqueIdentifier>{c4ed15b5-4edc-46cf-86bc-c6142a1201c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -400,6 +403,15 @@
     </ClCompile>
     <ClCompile Include="Component\SoundSource.cpp">
       <Filter>06. Component\17.SoundSource</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\EditTest.cpp">
+      <Filter>06. Component\18.PrivateEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Gizmo.cpp">
+      <Filter>06. Component\18.PrivateEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="GizmoManager.cpp">
+      <Filter>EditScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -654,6 +666,15 @@
     </ClInclude>
     <ClInclude Include="Component\SoundSource.h">
       <Filter>06. Component\17.SoundSource</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\EditTest.h">
+      <Filter>06. Component\18.PrivateEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Gizmo.h">
+      <Filter>06. Component\18.PrivateEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="GizmoManager.h">
+      <Filter>EditScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

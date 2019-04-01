@@ -76,11 +76,11 @@ bool CPlayer::Init()
 	SAFE_RELEASE(pAnimation);
 	SAFE_RELEASE(pRenderer);
 
-	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("PlayerBody");
+	//CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("PlayerBody");
 
-	pBody->SetInfo(Vector3::Zero, 3.f);
+	//pBody->SetInfo(Vector3::Zero, 3.f);
 
-	SAFE_RELEASE(pBody);
+	//SAFE_RELEASE(pBody);
 
 	//CColliderOBB3D * pBody = m_pObject->AddComponent<CColliderOBB3D>("PlayerBody");
 

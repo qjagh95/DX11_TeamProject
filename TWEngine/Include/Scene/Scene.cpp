@@ -155,6 +155,7 @@ bool CScene::Init()
 {
 	AddLayer("Stage", INT_MIN + 1);
 	AddLayer("Default", 0);
+	AddLayer("Gimzo", 50);
 	AddLayer("UI", INT_MAX - 1);
 
 	ProfileInit();

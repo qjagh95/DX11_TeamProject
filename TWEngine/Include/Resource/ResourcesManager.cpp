@@ -183,6 +183,9 @@ bool CResourcesManager::Init()
 
 
 	CreateCylinderVolum(CYLINDER_VOLUME, 0.5f, 3, 32);
+	CreateCylinderVolumColor("XGizmoCylinder", Vector4(Vector4::Red), 0.5f, 3, 32);
+	CreateCylinderVolumColor("YGizmoCylinder", Vector4(Vector4::Green), 0.5f, 3, 32);
+	CreateCylinderVolumColor("ZGizmoCylinder", Vector4(Vector4::Blue), 0.5f, 3, 32);
 	CreateCapsulVolum(CAPSUL_VOLUME, 0.5f, 3, 64, 128);
 	CreateCornVolum(CORN_VOLUME, 0.5f, 0.5f, 64, 128);
 
@@ -923,3 +926,104 @@ void CResourcesManager::CreateCornVolum(const string & KeyName, float Radius, fl
 //		//XMStoreFloat3(&meshData.Vertices[i].TangentU, XMVector3Normalize(T));
 //	}
 //}
+
+void CResourcesManager::CreateCylinderVolumColor(const string & KeyName, Vector4 _vColor, float Radius, int Height, int SliceCount)
+{
+	vector<VertexColor> vecVertex;
+
+	//돌려야 되니 360도
+	auto theta = PUN_PI * 2.0f / SliceCount;
+
+	//윗면 아랫면 2개
+	for (auto i = 0; i < 2; ++i)
+	{
+		for (auto j = 0; j < SliceCount; ++j)
+		{
+			VertexColor vertex;
+
+			//구면좌표계를 보면 x = Radius * cos(세타), z는 Radius * sin(세타)
+			if (j < SliceCount / 2)
+				vertex.vPos = Vector3{ Radius * cos(theta * j), (0.5f - i) * Height, Radius * sin(theta * j) };
+			else
+				vertex.vPos = Vector3{ Radius * -cos(theta * j - PUN_PI), (0.5f - i) * Height, Radius * -sin(theta * j - PUN_PI) };
+
+			////X, Z의 Normal을 들고있는 정점
+			//vertex.vNormal = vertex.vPos;
+			//vertex.vNormal.y = 0.0f;
+			//vertex.vNormal.Normalize();
+			vertex.vColor = _vColor;
+
+			vecVertex.push_back(vertex);
+
+			//윗, 아랫면의 Y의 Normal을 들고 있는 정점
+			//이놈때문에 밑에 인덱스 코드 복잡함.
+			//if (0 == i)
+			//	vertex.vNormal = Vector3(0.0f, 1.0f, 0.0f);
+			//else if (1 == i)
+			//	vertex.vNormal = Vector3(0.0f, -1.0f, 0.0f);
+
+			//정점을 2개추가한다.
+			vecVertex.push_back(vertex);
+		}
+	}
+
+	vector<unsigned int> vecIndex{};
+
+	// 윗면
+	for (auto i = 0; i < SliceCount - 2; ++i)
+	{
+		unsigned int index[3];
+
+		index[0] = 1;
+		index[1] = 1 + (i + 2) * 2; //* 2 = 위 아래 두개.
+		index[2] = 1 + (i + 1) * 2;
+
+		vecIndex.push_back(index[0]);
+		vecIndex.push_back(index[1]);
+		vecIndex.push_back(index[2]);
+	}
+
+	// 옆면
+	for (auto i = 0; i < SliceCount; ++i)
+	{
+		unsigned int index[6];
+
+		index[0] = i * 2;
+		index[1] = (i + SliceCount + 1) * 2;
+		index[2] = (i + SliceCount) * 2;
+		index[3] = i * 2;
+		index[4] = (i + 1) * 2;
+		index[5] = (i + SliceCount + 1) * 2;
+
+		if (i == SliceCount - 1)
+		{
+			index[1] = (i + 1) * 2;
+			index[4] = (i - SliceCount + 1) * 2;
+			index[5] = (i + 1) * 2;
+		}
+
+		vecIndex.push_back(index[0]);
+		vecIndex.push_back(index[1]);
+		vecIndex.push_back(index[2]);
+		vecIndex.push_back(index[3]);
+		vecIndex.push_back(index[4]);
+		vecIndex.push_back(index[5]);
+	}
+
+	// 아랫면
+	for (auto i = 0; i < SliceCount - 2; ++i)
+	{
+		unsigned int index[3];
+
+		index[0] = 1 + SliceCount * 2;
+		index[1] = 1 + SliceCount * 2 + (i + 1) * 2;
+		index[2] = 1 + SliceCount * 2 + (i + 2) * 2;
+
+		vecIndex.push_back(index[0]);
+		vecIndex.push_back(index[1]);
+		vecIndex.push_back(index[2]);
+	}
+
+	CreateMesh(KeyName, STANDARD_COLOR_SHADER, POS_LAYOUT, &vecVertex[0], (int)vecVertex.size(), sizeof(VertexColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+
+}

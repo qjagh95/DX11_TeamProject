@@ -24,7 +24,7 @@ bool EditorScene::Init()
 	CTransform* pCameraTr = pCamera->GetTransform();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
-	pCameraTr->SetWorldPos(Vector3(0.f, 0.0f, -200.0f));
+	pCameraTr->SetWorldPos(Vector3(0.f, 0.0f, -50.f));
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pCamera);
 

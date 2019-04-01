@@ -628,6 +628,11 @@ void CGameObject::Render(float fTime)
 			++iter;
 			continue;
 		}
+		//else if ((*iter)->GetComponentType() == CT_GIZMO)
+		//{
+		//	++iter;
+		//	continue;
+		//}
 		else if (!(*iter)->GetActive())
 		{
 			CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
@@ -825,6 +830,22 @@ void CGameObject::RemoveComponentFromType(COMPONENT_TYPE eType)
 	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
 	{
 		if ((*iter)->GetComponentType() == eType)
+		{
+			SAFE_RELEASE((*iter));
+			m_ComList.erase(iter);
+			return;
+		}
+	}
+}
+
+void CGameObject::RemoveComponent(CComponent * _pCom)
+{
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter) == _pCom)
 		{
 			SAFE_RELEASE((*iter));
 			m_ComList.erase(iter);

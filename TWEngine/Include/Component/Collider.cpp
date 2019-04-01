@@ -710,6 +710,70 @@ bool CCollider::CollisionRayToSphere(const RayInfo & tSrc, const SphereInfo & tD
 	return true;
 }
 
+bool CCollider::CollisionRayToOBB3D(const OBB3DInfo & tDest, const RayInfo & tSrc, CTransform * pOBBTr)
+{
+	Matrix OBBRotInv;
+	Vector3 vOBBRot = m_pTransform->GetWorldRot();
+	OBBRotInv.Rotation(-vOBBRot.x, -vOBBRot.y, -vOBBRot.z);
+	_tagAABBInfo ABInfo;
+	ABInfo.vCenter = tDest.vCenter;
+	ABInfo.vLength = tDest.vLength;
+
+	Vector3 vRayDir;
+	RayInfo tRay = tSrc;
+	vRayDir = tSrc.vDir;
+	vRayDir.TransformNormal(OBBRotInv);
+	tRay.vDir = vRayDir;
+
+	return CollisionRayToAABB(tRay, ABInfo);
+}
+
+bool CCollider::CollisionRayToAABB(const RayInfo & _tSrc, const _tagAABBInfo & _tDest)
+{
+	float t;
+	Vector3 dirfrac;
+	// r.dir is unit direction vector of ray
+	dirfrac.x = 1.0f / _tSrc.vDir.x;
+	dirfrac.y = 1.0f / _tSrc.vDir.y;
+	dirfrac.z = 1.0f / _tSrc.vDir.z;
+
+	Vector3 vBoxLB;
+	vBoxLB = _tDest.vCenter - (_tDest.vLength);
+	Vector3 vBoxRT;
+	vBoxRT = _tDest.vCenter + (_tDest.vLength);
+	Vector3 vOriginPos = _tSrc.vPos;
+
+	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+	// r.org is origin of ray
+	float t1 = (vBoxLB.x - vOriginPos.x)*dirfrac.x;
+	float t2 = (vBoxRT.x - vOriginPos.x)*dirfrac.x;
+	float t3 = (vBoxLB.y - vOriginPos.y)*dirfrac.y;
+	float t4 = (vBoxRT.y - vOriginPos.y)*dirfrac.y;
+	float t5 = (vBoxLB.z - vOriginPos.z)*dirfrac.z;
+	float t6 = (vBoxRT.z - vOriginPos.z)*dirfrac.z;
+
+	float tmin = max(max(min(t1, t2), min(t3, t4)), min(t5, t6));
+	float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
+
+	// if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+	if (tmax < 0)
+	{
+		t = tmax;
+		return false;
+	}
+
+	// if tmin > tmax, ray doesn't intersect AABB
+	if (tmin > tmax)
+	{
+		t = tmax;
+		return false;
+	}
+
+	t = tmin;
+
+	return true;
+}
+
 void CCollider::SetCollisionCallback(COLLISION_CALLBACK_TYPE eType,
 	void(*pFunc)(CCollider *, CCollider *, float))
 {

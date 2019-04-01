@@ -410,6 +410,12 @@ namespace PUN
 		Vector3	vLength;
 	}OBB3DInfo, *POBB3DInfo;
 
+	typedef struct PUN_DLL _tagAABBInfo
+	{
+		Vector3	vCenter;
+		Vector3	vLength;
+	};
+
 	typedef struct PUN_DLL _tagRayInfo
 	{
 		Vector3	vPos;

@@ -70,7 +70,7 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
         output.vMaterial.g = ConvertColor(g_vMtrlAmb);
         output.vMaterial.b = ConvertColor(g_vMtrlSpc);
         output.vMaterial.a = ConvertColor(g_vMtrlEmv);
-   }
+    }
 
     return output;
 }

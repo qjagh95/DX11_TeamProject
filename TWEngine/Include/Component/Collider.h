@@ -84,6 +84,9 @@ public:
 	bool CollisionSphereToSphere(SphereInfo tSrc, const SphereInfo& tDest);
 	bool CollisionOBB3DToOBB3D(const OBB3DInfo& tSrc, const OBB3DInfo& tDest);
 	bool CollisionRayToSphere(const RayInfo& tSrc, const SphereInfo& tDest);
+	bool CollisionRayToOBB3D(const OBB3DInfo& tDest, const RayInfo& tSrc, CTransform* pOBBTr);
+	bool CollisionRayToAABB(const RayInfo& _tSrc, const _tagAABBInfo& _tDest);
+	
 public:
 	void SetCollisionCallback(COLLISION_CALLBACK_TYPE eType,
 		void(*pFunc)(CCollider*, CCollider*, float));

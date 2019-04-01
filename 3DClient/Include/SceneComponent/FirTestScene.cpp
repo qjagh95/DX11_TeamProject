@@ -17,7 +17,7 @@
 #include <Component/Material.h>
 #include <Component/SoundSource.h>
 #include <Component/Animation.h>
-
+#include "Component/Gizmo.h"
 CFirTestScene::CFirTestScene()
 {
 }
@@ -92,11 +92,33 @@ bool CFirTestScene::Init()
 	pArm->SetTarget(pTransform);
 
 	SAFE_RELEASE(pArm);
-	SAFE_RELEASE(pTransform);
 
 	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
 
+	//CGameObject* pGizmoObject = CGameObject::CreateObject("GizmoObj", pDefaultLayer);
+	//CGizmo*     pGizmo = pGizmoObject->AddComponent<CGizmo>("Gizmo");
+	//pGizmo->SetTargetTr(pTransform);
+	//pGizmo->SetGizmoType(GT_X);
+	//SAFE_RELEASE(pGizmo);
+	//SAFE_RELEASE(pGizmoObject);
+
+	//pGizmoObject = CGameObject::CreateObject("GizmoObj", pDefaultLayer);
+	//pGizmo = pGizmoObject->AddComponent<CGizmo>("Gizmo");
+	//pGizmo->SetTargetTr(pTransform);
+	//pGizmo->SetGizmoType(GT_Y);
+	//SAFE_RELEASE(pGizmo);
+	//SAFE_RELEASE(pGizmoObject);
+
+	//pGizmoObject = CGameObject::CreateObject("GizmoObj", pDefaultLayer);
+	//pGizmo = pGizmoObject->AddComponent<CGizmo>("Gizmo");
+	//pGizmo->SetTargetTr(pTransform);
+	//pGizmo->SetGizmoType(GT_Z);
+	//SAFE_RELEASE(pGizmo);
+	//SAFE_RELEASE(pGizmoObject);
+
+	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pPlayer);
+	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pObject);
 
 	pObject = CGameObject::CreateObject("Minion", pDefaultLayer);

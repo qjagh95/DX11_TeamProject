@@ -111,6 +111,7 @@ public:
 	const list<CComponent*>* FindComponentsFromTypeNonCount(COMPONENT_TYPE eType);
 	bool CheckComponentFromType(COMPONENT_TYPE eType);
 	void RemoveComponentFromType(COMPONENT_TYPE eType);
+	void RemoveComponent(CComponent* _pCom);
 
 public:
 	void Save(FILE* pFile);

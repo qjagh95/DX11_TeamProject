@@ -48,6 +48,7 @@ public:
 	void CreateSphereVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount, const string& ShaderKey = STANDARD_NORMAL_COLOR_SHADER, const string& LayoutKey = POS_NORMAL_COLOR_LAYOUT);
 	void CreateCapsulVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
 	void CreateCornVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
+	void CreateCylinderVolumColor(const string & KeyName, Vector4 _vColor, float Radius, int Height, int SliceCount);
 	void CreateCylinderVolum(const string& KeyName, float Radius, int Height, int SliceCount);
 
 private:

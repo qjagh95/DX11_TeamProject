@@ -333,7 +333,6 @@ void CRenderManager::RenderDeferred(float fTime)
 	GET_SINGLE(CCollisionManager)->Render(fTime);
 
 
-
 	// UIÃâ·Â
 	for (int i = RG_UI; i < RG_END; ++i)
 	{

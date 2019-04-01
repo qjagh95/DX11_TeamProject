@@ -24,6 +24,7 @@ namespace PUN
 		CT_VOLUMEFOG,
 		CT_DECAL,
 		CT_PARTICLE,
+		CT_GIZMO,
 		CT_END
 	};
 
@@ -391,5 +392,13 @@ namespace PUN
 		SHADER_FULL_SCREEN,
 		SHADER_FINAL_PASS,
 		SHADER_END
+	};
+
+	enum GIZMO_TYPE
+	{
+		GT_X,
+		GT_Y,
+		GT_Z,
+		GT_END
 	};
 }

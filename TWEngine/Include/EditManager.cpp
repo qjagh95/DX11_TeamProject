@@ -8,6 +8,8 @@
 #include "Component/Renderer.h"
 #include "Component/Animation.h"
 #include "Resource/ResourcesManager.h"
+#include "Component/Gizmo.h"
+#include "Component/EditTest.h"
 
 PUN_USING
 
@@ -16,7 +18,14 @@ CEditManager* CEditManager::m_pInst = nullptr;
 CEditManager::CEditManager()
 	:m_pScene(nullptr),
 	m_pObject(nullptr),
-	m_pAnimation(nullptr)
+	m_pAnimation(nullptr),
+	m_pXGizmo(nullptr),
+	m_pYGizmo(nullptr),
+	m_pZGizmo(nullptr),
+	m_pEditTest(nullptr),
+	m_pXGizmoObj(nullptr),
+	m_pYGizmoObj(nullptr),
+	m_pZGizmoObj(nullptr)
 {
 }
 
@@ -26,6 +35,13 @@ CEditManager::~CEditManager()
 	SAFE_RELEASE(m_pScene);
 	SAFE_RELEASE(m_pAnimation);
 	Safe_Delete_VecList(m_vecDivideFrame);
+	SAFE_RELEASE(m_pXGizmo);
+	SAFE_RELEASE(m_pYGizmo);
+	SAFE_RELEASE(m_pZGizmo);
+	SAFE_RELEASE(m_pEditTest);
+	SAFE_RELEASE(m_pXGizmoObj);
+	SAFE_RELEASE(m_pYGizmoObj);
+	SAFE_RELEASE(m_pZGizmoObj);
 }
 
 bool CEditManager::Init()
@@ -36,6 +52,25 @@ bool CEditManager::Init()
 		TrueAssert(true);
 		return false;
 	}
+	CLayer* pLayer = m_pScene->FindLayer("Gimzo");
+
+	m_pXGizmoObj = CGameObject::CreateObject("XGizmo", pLayer);
+	m_pXGizmo = m_pXGizmoObj->AddComponent<CGizmo>("XGizmo");
+	m_pXGizmo->SetGizmoType(GT_X);
+
+	m_pYGizmoObj = CGameObject::CreateObject("YGizmo", pLayer);
+	m_pYGizmo = m_pXGizmoObj->AddComponent<CGizmo>("YGizmo");
+	m_pYGizmo->SetGizmoType(GT_Y);
+
+	m_pZGizmoObj = CGameObject::CreateObject("ZGizmo", pLayer);
+	m_pZGizmo = m_pXGizmoObj->AddComponent<CGizmo>("ZGizmo");
+	m_pZGizmo->SetGizmoType(GT_Z);
+
+	m_pEditTest = new CEditTest;
+	m_pEditTest->Init();
+
+	SAFE_RELEASE(pLayer);
+
 	return true;
 }
 
@@ -61,6 +96,7 @@ void CEditManager::SetActiveObject(const string _strObjectTag, const string _str
 	// 기존 선택 오브젝트 해제
 	if (m_pObject != nullptr)
 	{
+		m_pObject->RemoveComponent(m_pEditTest);
 		SAFE_RELEASE(m_pObject);
 	}
 	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
@@ -70,6 +106,11 @@ void CEditManager::SetActiveObject(const string _strObjectTag, const string _str
 		TrueAssert(true);
 	}
 	m_pObject = pLayer->FindObject(_strObjectTag);
+	m_pXGizmo->SetTarget(m_pObject);
+	m_pYGizmo->SetTarget(m_pObject);
+	m_pZGizmo->SetTarget(m_pObject);
+	m_pObject->AddComponent(m_pEditTest);
+
 	SAFE_RELEASE(pLayer);
 }
 

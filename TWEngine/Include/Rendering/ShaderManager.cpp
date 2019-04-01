@@ -190,7 +190,6 @@ bool CShaderManager::Init()
 	if (!LoadShader(PARTICLE_SHADER, TEXT("Particle.fx"), pEntry))
 		return false;
 
-
 	//pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationFirstPass";
 	//if (!LoadComputeShader(ADAPT_COMPUTE_SHADER, TEXT("Adaption.fx"), pEntry))
 	//	return false;
