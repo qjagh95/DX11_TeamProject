@@ -27,7 +27,8 @@ cbuffer FinalPass : register(b9)
 {
     int     g_iHDR;
     int     g_iBlur;
-    float2  g_FinalEmpty;
+    int     g_iDepthFog;
+    float   g_fFinalEmpty;
 }
 
 cbuffer HDRFinal : register(b10)
@@ -64,14 +65,28 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
     
-    float Focus = DepthTex.Sample(PointSampler, Input.vUV.xy).y;
+    float4 vDepth = DepthTex.Sample(PointSampler, Input.vUV.xy);
     float3 vColor = OriginTex.Sample(PointSampler, Input.vUV.xy).xyz;
+
+    float Focus = vDepth.y;
+    float fDepth = vDepth.w;
 
     if(g_iBlur == 1)
     {
         //if (Focus < 0.5f)
         vColor = BlurTex.Sample(PointSampler, Input.vUV.xy).xyz;
     }
+
+    if (g_iDepthFog == 1)
+    {
+        //카메라 필터 상수버퍼에 색깔, 시작, 끝 값 넣어서 쓰기.
+        float3 vFogColor = float3(0.4f, 0.4f, 0.1f);
+
+        float fDensity = max(0, (100.f - fDepth) / 100.0f);
+
+        vColor = (vColor * fDensity) + (vFogColor * (1.0f - fDensity));
+    }
+
 
     // 톤 매핑(HDR 색을 LDR색으로 변환)
     if (g_iHDR == 1)

@@ -1,14 +1,14 @@
 #include "../ClientHeader.h"
 #include "Minion.h"
 #include "Input.h"
-#include "Component/Transform.h"
+#include "GameObject.h"
+#include "NavigationMesh.h"
+#include "NavigationManager3D.h"
 #include "Component/Renderer.h"
 #include "Component/Material.h"
-#include "GameObject.h"
-#include "NavigationManager3D.h"
-#include "NavigationMesh.h"
-#include "Component/ColliderSphere.h"
+#include "Component/Transform.h"
 #include "Component/ColliderOBB3D.h"
+#include "Component/ColliderSphere.h"
 CMinion3D::CMinion3D() :
 	m_pAnimation(nullptr),
 	m_pTargetTr(nullptr),

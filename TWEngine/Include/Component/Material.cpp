@@ -1,10 +1,10 @@
 #include "EngineHeader.h"
 #include "Material.h"
+#include "Animation2D.h"
+#include "../Device.h"
+#include "../GameObject.h"
 #include "../Resource/Texture.h"
 #include "../Resource/Sampler.h"
-#include "Animation2D.h"
-#include "../GameObject.h"
-#include "../Device.h"
 
 PUN_USING
 

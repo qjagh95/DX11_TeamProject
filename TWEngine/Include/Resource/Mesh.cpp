@@ -1,10 +1,10 @@
 #include "../EngineHeader.h"
 #include "Mesh.h"
-#include "../Device.h"
 #include "FbxLoader.h"
+#include "BinaryWriter.h"
+#include "../Device.h"
 #include "../Component/Material.h"
 #include "../Component/Animation.h"
-#include "BinaryWriter.h"
 
 PUN_USING
 
@@ -59,6 +59,11 @@ Vector3 CMesh::GetLength() const
 float CMesh::GetRadius() const
 {
 	return m_fRadius;
+}
+
+bool CMesh::IsSubset(int iContainer) const
+{
+	return !m_vecMeshContainer[iContainer]->vecIB.empty();
 }
 
 string CMesh::GetShaderKey() const

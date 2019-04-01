@@ -150,6 +150,18 @@
     <Filter Include="03. Rendering\06. Filter\04. Blur">
       <UniqueIdentifier>{07576062-bc72-48cf-acd8-dd75c3dc08c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Component\15. Effect">
+      <UniqueIdentifier>{8994d2ad-80fb-41c4-b25a-518ce01427f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Component\15. Effect\01. Decal">
+      <UniqueIdentifier>{a053ce09-0312-464e-9247-b44ec199f397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Component\15. Effect\02. Particle">
+      <UniqueIdentifier>{c234922b-6eef-4940-b284-8b15f2c099a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. Component\16. Volume Fog">
+      <UniqueIdentifier>{2b533f18-5d35-441c-ba28-f787ae103342}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -373,6 +385,15 @@
     </ClCompile>
     <ClCompile Include="Component\Frustum.cpp">
       <Filter>06. Component\04. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Decal.cpp">
+      <Filter>06. Component\15. Effect\01. Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Particle.cpp">
+      <Filter>06. Component\15. Effect\02. Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\VolumeFog.cpp">
+      <Filter>06. Component\16. Volume Fog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -616,6 +637,15 @@
     <ClInclude Include="Component\Frustum.h">
       <Filter>06. Component\04. Camera</Filter>
     </ClInclude>
+    <ClInclude Include="Component\Decal.h">
+      <Filter>06. Component\15. Effect\01. Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Particle.h">
+      <Filter>06. Component\15. Effect\02. Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\VolumeFog.h">
+      <Filter>06. Component\16. Volume Fog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\copy.bat">
@@ -673,6 +703,15 @@
     </FxCompile>
     <FxCompile Include="..\..\3DClient\bin\Shader\HDR.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\Decal.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\Particle.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\VolumeFog.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

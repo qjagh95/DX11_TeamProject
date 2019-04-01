@@ -2,9 +2,9 @@
 #include "Bar.h"
 #include "Renderer.h"
 #include "Material.h"
-#include "ColliderRect.h"
-#include "Animation2D.h"
 #include "Transform.h"
+#include "Animation2D.h"
+#include "ColliderRect.h"
 #include "../GameObject.h"
 
 PUN_USING

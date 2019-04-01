@@ -58,13 +58,13 @@ struct VS_OUTPUT_TEX
 
 struct VS_INPUT_3D
 {
-    float3 vPos : POSITION;
-    float3 vNormal : NORMAL;
-    float2 vUV : TEXCOORD;
-    float3 vTangent : TANGENT;
-    float3 vBinormal : BINORMAL;
+    float3 vPos         : POSITION;
+    float3 vNormal      : NORMAL;
+    float2 vUV          : TEXCOORD;
+    float3 vTangent     : TANGENT;
+    float3 vBinormal    : BINORMAL;
     float4 vBlendWeight : BLENDWEIGHTS;
-    float4 vBlendIndex : BLENDINDICES;
+    float4 vBlendIndex  : BLENDINDICES;
 };
 
 struct VS_OUTPUT_3D
@@ -86,10 +86,12 @@ struct PS_OUTPUT_SINGLE
 };
 struct PS_OUTPUT_GBUFFER
 {
-    float4 vAlbedo : SV_TARGET;
-    float4 vNormal : SV_TARGET1;
-    float4 vDepth : SV_TARGET2;
-    float4 vMaterial : SV_TARGET3;
+    float4 vAlbedo      : SV_TARGET;
+    float4 vNormal      : SV_TARGET1;
+    float4 vDepth       : SV_TARGET2;
+    float4 vMaterial    : SV_TARGET3;
+    float4 vTangent     : SV_Target4;
+    float4 vBinormal    : SV_Target5;
 };
 // 16바이트 패딩을 맞춰 주어야한다
 
@@ -116,7 +118,9 @@ cbuffer Transform	: register(b0)
 	matrix	g_matProj;
 	matrix	g_matWV;
 	matrix	g_matWVP;
+    matrix  g_matInvWVP;
     matrix  g_matInvProj;
+    matrix  g_matVP;
 	float3	g_vPivot;
 	float	g_fEmptyTr;
 	float3	g_vLength;
@@ -137,6 +141,8 @@ cbuffer Component	: register(b2)
 	int		g_iAnimationType;
     int     g_iDeferredEnable;
     int     g_iFocus;
+    int     g_iDecalEnable;
+    float3  g_ComponentEmpty;
 }
 
 cbuffer Public : register(b5)
@@ -171,27 +177,26 @@ cbuffer Light	: register(b3)
 #define	A2D_ATLAS	0
 #define	A2D_FRAME	1
 
-Texture2D		g_DiffuseTex	: register(t0);
-Texture2D		g_NormalTex		: register(t1);
-Texture2D		g_SpecularTex	: register(t2);
-Texture2D       g_BoneTex : register(t3);
+Texture2D		g_DiffuseTex	    : register(t0);
+Texture2D		g_NormalTex		    : register(t1);
+Texture2D		g_SpecularTex	    : register(t2);
+Texture2D       g_BoneTex           : register(t3);
+
 Texture2DArray	g_DiffuseTexArray	: register(t4);
 
-Texture2D		g_MultiTex1		: register(t5);
-Texture2D		g_MultiTex2		: register(t6);
-Texture2D		g_MultiTex3		: register(t7);
-Texture2D		g_MultiTex4		: register(t8);
+Texture2D		g_MultiTex1		    : register(t5);
+Texture2D		g_MultiTex2		    : register(t6);
+Texture2D		g_MultiTex3		    : register(t7);
+Texture2D		g_MultiTex4		    : register(t8);
 
-SamplerState	g_DiffuseSmp	: register(s0);
+SamplerState	g_DiffuseSmp	    : register(s0);
 
-SamplerState	g_MultiSmp1		: register(s5);
-SamplerState	g_MultiSmp2		: register(s6);
-SamplerState	g_MultiSmp3		: register(s7);
-SamplerState	g_MultiSmp4		: register(s8);
+SamplerState	g_MultiSmp1		    : register(s5);
+SamplerState	g_MultiSmp2		    : register(s6);
+SamplerState	g_MultiSmp3		    : register(s7);
+SamplerState	g_MultiSmp4		    : register(s8);
 
 SamplerState PointSampler : register(s9);
-
-
 
 static const float3 LUM_FACTOR = float3(0.299, 0.587, 0.114);
 
@@ -301,30 +306,81 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal , float2 vUV)
 
 float ConvertColor(float4 vColor)
 {
+	/*
+	참고 : https://www.h-schmidt.net/FloatConverter/IEEE754.html
+	AMD 및 Intel의 그래픽스에서는 asuint와 asfloat를 통한 강제 형변환이 원활하게 이뤄지지 않고 있음
+	특정 장치들이 ConvertColor로 나온 값들을 저장하는 과정에서 변형이 생기는 것으로 파악됨
+
+	asfloat 이후의 float값 비트는 정상적으로 압축되나,
+	이를 저장하고 다시 불러오는 과정에서 Nan 또는 infinity에 포함되는 비트가 잘려서
+	빨간 맛, 노랑 맛, 혹은 퍼렁맛의 에러가 발생했던 것으로 보입니다
+
+	4바이트 - 4바이트 사이의 형변환이지만, 와중에 부동 소수점(IEEE 754) 무결성 검사나 IsNan /Infinity 등등이
+	걸릴 수 있으니 신중히 할 것
+	*/
+
     uint4 vColor1 = (uint4) 0;
-    vColor1.r = uint(vColor.r * 255);
-    vColor1.g = uint(vColor.g * 255);
-    vColor1.b = uint(vColor.b * 255);
-    vColor1.a = uint(vColor.a * 255);
+    vColor1.r = uint(floor(vColor.r * 255.f));
+    vColor1.g = uint(floor(vColor.g * 255.f));
+    vColor1.b = uint(floor(vColor.b * 255.f));
+    vColor1.a = uint(floor(vColor.a * 255.f));
 
     uint iColor = 0;
-    iColor = (uint) (vColor1.a);
-    iColor = (iColor << 8) | vColor1.r;
-    iColor = (iColor << 8) | vColor1.g;
-    iColor = (iColor << 8) | vColor1.b;
+    iColor = vColor1.a;
+    iColor = (iColor << 8);
+    iColor += vColor1.r;
+    iColor = (iColor << 8);
+    iColor += vColor1.g;
+    iColor = (iColor << 8);
+    iColor += vColor1.b;
 
-    return asfloat(iColor);
+    float fColor = asfloat(iColor);
+
+    if (isnan(fColor))
+    {
+		//nan : 지수부분(Exponent)의 모든 비트가 1이면서(여기까진 infinity) 가수부분(Mantissa)의 비트가 0이 아님
+		//비 Nvidia를 위한 뼈를 주고 살을 깎는 대책 : Alpha 값을 줄여(가장 끝부분만 줄이자) Nan 막기
+		//Alpha의 값 1만 바뀌어 255 -> 254가 되므로, 피해를 최소화할 수 있다.
+		//이게 아깝다면 비 Nvidia용 셰이더를 따로 만들어 두고,
+		//IDXGIAdapter2::GetDesc2 함수를 이용해 가져오는 DXGI_ADAPTER_DESC2 구조체에서
+		//UINT VendorId 를 가져오면 파악 가능하다 >> 0x10DE , 즉 4318이 Nvidia ID라고 함
+        iColor = iColor & 0xfeffffff;
+        fColor = asfloat(iColor);
+    }
+	
+	
+    if (isinf(fColor))
+    {
+        if (vColor1.a & 0x00000080)
+        {
+            fColor = -8.507059E37;
+        }
+        else
+        {
+            fColor = 8.507059E37;
+        }
+    }
+
+    return fColor;
 }
 
 float4 ConvertColor(float fColor)
 {
+	
     float4 vColor;
     uint iColor = asuint(fColor);
+	
     vColor.b = (iColor & 0x000000ff) / 255.f;
     vColor.g = ((iColor >> 8) & 0x000000ff) / 255.f;
     vColor.r = ((iColor >> 16) & 0x000000ff) / 255.f;
     vColor.a = ((iColor >> 24) & 0x000000ff) / 255.f;
 
+	//보통 불투명도가 확실할 때 처리되는 절차가 많을 수 있으므로, 알파값 254값은 오차범위 내 255로 쳐주자
+    if (((iColor >> 24) & 0x000000ff) == 0x000000fe)
+    {
+        vColor.a = 1.f;
+    }	
+	
     return vColor;
 }
 

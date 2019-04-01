@@ -1,12 +1,12 @@
 #include "../EngineHeader.h"
 #include "Renderer.h"
-#include "../Rendering/Shader.h"
-#include "../Device.h"
-#include "Transform.h"
 #include "Camera.h"
-#include "../Rendering/RenderState.h"
-#include "Animation2D.h"
+#include "Transform.h"
 #include "Animation.h"
+#include "Animation2D.h"
+#include "../Device.h"
+#include "../Rendering/Shader.h"
+#include "../Rendering/RenderState.h"
 
 PUN_USING
 
@@ -16,7 +16,8 @@ CRenderer::CRenderer() :
 	m_pLayout(nullptr),
 	m_pMaterial(nullptr),
 	m_pBoneTex(nullptr),
-	m_b2DRenderer(false)
+	m_b2DRenderer(false),
+	m_bDecalEnable(false)
 {
 	m_eComType = CT_RENDERER;
 	memset(m_pRenderState, 0, sizeof(CRenderState*) * RS_END);
@@ -24,6 +25,7 @@ CRenderer::CRenderer() :
 		SetRenderState(DEPTH_DISABLE);
 
 	memset(&m_tComponentCBuffer, 0, sizeof(m_tComponentCBuffer));
+	m_tComponentCBuffer.iDecalEnable = 0;
 }
 
 
@@ -226,6 +228,16 @@ void CRenderer::SetRenderState(const string & strName)
 	m_pRenderState[pState->GetRenderState()] = pState;
 }
 
+void CRenderer::SetDecalEnable(bool bEnable)
+{
+	m_bDecalEnable = bEnable;
+
+	if (!bEnable)
+		m_tComponentCBuffer.iDecalEnable = 0;
+	else
+		m_tComponentCBuffer.iDecalEnable = 1;
+}
+
 bool CRenderer::CreateRendererCBuffer(const string & strName, int iSize)
 {
 	PRendererCBuffer	pBuffer = FindRendererCBuffer(strName);
@@ -403,13 +415,24 @@ void CRenderer::Render(float fTime)
 	{
 		for (size_t i = 0; i < m_pMesh->GetContainCount(); ++i)
 		{
-			for (size_t j = 0; j < m_pMesh->GetSubsetCount((int)i); ++j)
+			if (m_pMesh->IsSubset(i))
 			{
-				m_pMaterial->SetShader((int)i, (int)j);
+				for (size_t j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
+				{
+					m_pMaterial->SetShader(i, j);
 
-				m_pMesh->Render((int)i, (int)j);
+					m_pMesh->Render(i, j);
 
-				m_pMaterial->ResetShader((int)i, (int)j);
+					m_pMaterial->ResetShader((int)i, (int)j);
+				}
+			}
+			else
+			{
+				m_pMaterial->SetShader(i, 0);
+
+				m_pMesh->Render(i, 0);
+
+				m_pMaterial->ResetShader((int)i, 0);
 			}
 		}
 	}
@@ -443,8 +466,11 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matProj = pMainCamera->GetProjMatrix();
 	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
 	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
+	tCBuffer.matInvWVP = tCBuffer.matWVP;
+	tCBuffer.matInvWVP.Inverse();
 	tCBuffer.matInvProj = tCBuffer.matProj;
 	tCBuffer.matInvProj.Inverse();
+	tCBuffer.matVP = tCBuffer.matView * tCBuffer.matProj;
 	tCBuffer.vPivot = m_pTransform->GetPivot();
 	if (m_pMesh)
 	{
@@ -456,7 +482,9 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matProj.Transpose();
 	tCBuffer.matWV.Transpose();
 	tCBuffer.matWVP.Transpose();
+	tCBuffer.matInvWVP.Transpose();
 	tCBuffer.matInvProj.Transpose();
+	tCBuffer.matVP.Transpose();
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform",
 		&tCBuffer);

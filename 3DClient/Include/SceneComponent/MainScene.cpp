@@ -1,12 +1,10 @@
 #include "../ClientHeader.h"
 #include "MainScene.h"
-
-#include "Component/Camera.h"
-#include "Component/Light.h"
-#include "Component/LandScape.h"
-
-#include "../UserComponent/Player.h"
 #include "Component/Arm.h"
+#include "Component/Light.h"
+#include "Component/Camera.h"
+#include "Component/LandScape.h"
+#include "../UserComponent/Player.h"
 
 CMainScene::CMainScene()
 {

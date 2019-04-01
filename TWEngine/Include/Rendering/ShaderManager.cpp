@@ -1,8 +1,8 @@
 #include "EngineHeader.h"
 #include "ShaderManager.h"
 #include "Shader.h"
-#include "../Device.h"
 #include "ComputeShader.h"
+#include "../Device.h"
 
 PUN_USING
 
@@ -34,6 +34,8 @@ CShaderManager::~CShaderManager()
 bool CShaderManager::Init()
 {
 	char*	pEntry[ST_END] = {};	
+
+	pEntry[ST_GEOMETRY] = nullptr;
 
 	pEntry[ST_VERTEX] = (char*)"StandardColorVS";
 	pEntry[ST_PIXEL] = (char*)"StandardColorPS";
@@ -158,18 +160,36 @@ bool CShaderManager::Init()
 	if (!LoadShader("Vertex3D", TEXT("Share.fx"), pEntry))
 		return false;
 
+	pEntry[ST_VERTEX] = "SSDVS";
+	pEntry[ST_PIXEL] = "SSDPS";
+
+	if (!LoadShader(DECAL_SHADER, TEXT("Decal.fx"), pEntry))
+		return false;
+
+
+	pEntry[ST_VERTEX] = (char*)"VolumeFogDepthVS";
+	pEntry[ST_PIXEL] = (char*)"VolumeFogDepthPS";
+	if (!LoadShader(VOLUME_FOG_FIRST_SHADER, TEXT("VolumeFog.fx"), pEntry))
+		return false;
+
+	pEntry[ST_VERTEX] = (char*)"VolumeFogDepthVS";
+	pEntry[ST_PIXEL] = (char*)"VolumeFogColorPS";
+	if (!LoadShader(VOLUME_FOG_SECOND_SHADER, TEXT("VolumeFog.fx"), pEntry))
+		return false;
+
 	pEntry[ST_VERTEX] = (char*)"FullScreenQuadVS";
 	pEntry[ST_PIXEL] = (char*)"FinalPassPS";
 	if (!LoadShader(FINAL_PASS_SHADER, TEXT("PostHDR.fx"), pEntry))
 		return false;
 
-	pEntry[ST_COMPUTE] = (char*)"DownScaleFirstPass";
-	if (!LoadComputeShader(HDR_COMPUTE_SHADER, TEXT("HDR.fx"), pEntry))
+	//Geometry 쉐이더를 쓰는 파이프라인
+
+	pEntry[ST_VERTEX] = "ParticleVS";
+	pEntry[ST_PIXEL] = "ParticlePS";
+	pEntry[ST_GEOMETRY] = "ParticleGS";
+	if (!LoadShader(PARTICLE_SHADER, TEXT("Particle.fx"), pEntry))
 		return false;
 
-	pEntry[ST_COMPUTE] = (char*)"DownScaleSecondPass";
-	if (!LoadComputeShader(HDR_SECOND_COMPUTE_SHADER, TEXT("HDR.fx"), pEntry))
-		return false;
 
 	//pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationFirstPass";
 	//if (!LoadComputeShader(ADAPT_COMPUTE_SHADER, TEXT("Adaption.fx"), pEntry))
@@ -195,6 +215,15 @@ bool CShaderManager::Init()
 	if (!CreateInputLayout(VERTEX3D_LAYOUT, "Vertex3D"))
 		return false;
 
+	pEntry[ST_COMPUTE] = (char*)"DownScaleFirstPass";
+	if (!LoadComputeShader(HDR_COMPUTE_SHADER, TEXT("HDR.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"DownScaleSecondPass";
+	if (!LoadComputeShader(HDR_SECOND_COMPUTE_SHADER, TEXT("HDR.fx"), pEntry))
+		return false;
+
+
 	pEntry[ST_COMPUTE] = (char*)"MotionBlur";
 	if (!LoadComputeShader(MOTION_BLUR_SHADER, TEXT("MotionBlur.fx"), pEntry))
 		return false;
@@ -212,27 +241,23 @@ bool CShaderManager::Init()
 		return false;
 
 	// 상수버퍼 만들기
-	CreateCBuffer("Transform", 0, sizeof(TransformCBuffer),
-		CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Material", 1, sizeof(Material), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Component", 2, sizeof(ComponentCBuffer),
-		CST_VERTEX | CST_PIXEL);
-
-	CreateCBuffer("Collider", 8, sizeof(Vector4),
-		CST_VERTEX | CST_PIXEL);
-	//CreateCBuffer("Animation2D", 8, sizeof(Animation2DCBuffer),
-	//	CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Button", 9, sizeof(ButtonCBuffer), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Bar", 9, sizeof(BarCBuffer), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Light", 3, sizeof(LightInfo), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("PublicCBuffer", 5, sizeof(PublicCBuffer), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("LandScape", 11, sizeof(LandScapeCBuffer), CST_VERTEX | CST_PIXEL);
-
-	CreateCBuffer("HDRFirst", 1, sizeof(HDR1stPassCB), CST_COMPUTE);
-	CreateCBuffer("HDRSecond", 10, sizeof(HDR2ndPassCB), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Adaptation", 3, sizeof(AdaptationCB), CST_COMPUTE);
-	CreateCBuffer("Blur", 1, sizeof(BlurCBuffer), CST_COMPUTE);
-	CreateCBuffer("FinalPass", 9, sizeof(FinalPassCB), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Transform",		0,	sizeof(TransformCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Material",		1,	sizeof(Material),			CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Component",		2,	sizeof(ComponentCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Light",			3,	sizeof(LightInfo),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("PublicCBuffer",	5,	sizeof(PublicCBuffer),		CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Collider",		8,	sizeof(Vector4),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Animation2D",	8,	sizeof(Animation2DCBuffer), CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Button",			9,	sizeof(ButtonCBuffer),		CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Bar",			9,	sizeof(BarCBuffer),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Fog",			9,	sizeof(FogCBuffer),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("FinalPass",		9,	sizeof(FinalPassCB),		CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Particle",		10, sizeof(ParticleCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("HDRSecond",		10, sizeof(HDR2ndPassCB),		CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("LandScape",		11, sizeof(LandScapeCBuffer),	CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("HDRFirst",		1,	sizeof(HDR1stPassCB),		CST_COMPUTE);
+	CreateCBuffer("Blur",			1,	sizeof(BlurCBuffer),		CST_COMPUTE);
+	CreateCBuffer("Adaptation",		3,	sizeof(AdaptationCB),		CST_COMPUTE);
 	
 	return true;
 }
@@ -423,9 +448,7 @@ bool CShaderManager::UpdateCBuffer(const string & strName,
 	PCBuffer	pBuffer = FindCBuffer(strName);
 
 	if (!pBuffer)
-		return false;
-
-	
+		return false;	
 
 	D3D11_MAPPED_SUBRESOURCE	tMap = {};
 	CONTEXT->Map(pBuffer->pBuffer, 0, D3D11_MAP_WRITE_DISCARD,
@@ -433,15 +456,16 @@ bool CShaderManager::UpdateCBuffer(const string & strName,
 
 	memcpy(tMap.pData, pData, pBuffer->iSize);
 
-	CONTEXT->Unmap(pBuffer->pBuffer, 0);
-
-	
+	CONTEXT->Unmap(pBuffer->pBuffer, 0);	
 
 	if (pBuffer->iShaderType & CST_VERTEX)
 		CONTEXT->VSSetConstantBuffers(pBuffer->iRegister, 1, &pBuffer->pBuffer);
 
 	if (pBuffer->iShaderType & CST_PIXEL)
 		CONTEXT->PSSetConstantBuffers(pBuffer->iRegister, 1, &pBuffer->pBuffer);
+
+	if (pBuffer->iShaderType & CST_GEOMETRY)
+		CONTEXT->GSSetConstantBuffers(pBuffer->iRegister, 1, &pBuffer->pBuffer);
 
 	if (pBuffer->iShaderType & CST_COMPUTE)
 		CONTEXT->CSSetConstantBuffers(pBuffer->iRegister, 1, &pBuffer->pBuffer);

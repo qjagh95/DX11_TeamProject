@@ -1,7 +1,7 @@
 #include "../ClientHeader.h"
 #include "SecTestScene.h"
-#include "Component/Camera.h"
 #include "Component/Light.h"
+#include "Component/Camera.h"
 #include "Component/Animation.h"
 
 

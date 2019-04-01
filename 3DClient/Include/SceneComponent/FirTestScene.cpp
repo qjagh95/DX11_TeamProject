@@ -1,12 +1,17 @@
 #include "../ClientHeader.h"
 #include "FirTestScene.h"
-#include "Component/Camera.h"
-#include "Component/Light.h"
-#include "Component/LandScape.h"
 #include "Component/Arm.h"
+#include "Component/Light.h"
+#include "Component/Decal.h"
+#include "Component/Camera.h"
+#include "Component/Particle.h"
+#include "Component/VolumeFog.h"
+#include "Component/LandScape.h"
+#include "Component/Animation2D.h"
+#include "Component/ColliderOBB3D.h"
+#include "../UserComponent/Field.h"
 #include "../UserComponent/Player.h"
 #include "../UserComponent/Minion.h"
-#include "../UserComponent/Field.h"
 
 CFirTestScene::CFirTestScene()
 {
@@ -35,9 +40,24 @@ bool CFirTestScene::Init()
 	pTransform->SetWorldScale(0.3f, 0.3f, 0.1f);
 	pTransform->SetWorldPos(0.f, 0.f, 0.f);
 
-	SAFE_RELEASE(pTransform);	
+	SAFE_RELEASE(pTransform);
 
 	SAFE_RELEASE(pObject);
+
+	//CGameObject* pFogObj = CGameObject::CreateObject("FogObj", pDefaultLayer);
+	//pTransform = pFogObj->GetTransform();
+
+	//pTransform->SetWorldScale(50, 50, 50);
+	//pTransform->SetWorldPos(3, 4, 3);
+
+	//SAFE_RELEASE(pTransform);
+
+	//CVolumeFog* pFog = pFogObj->AddComponent<CVolumeFog>("Fog");
+	//pFog->SetFogColor(Vector4(0.2f, 0.2f, 0.2f, 1.0f));
+
+	//SAFE_RELEASE(pFog);
+	//SAFE_RELEASE(pFogObj);
+
 
 	pObject = CGameObject::CreateObject("Field", pDefaultLayer, true);
 
@@ -77,6 +97,83 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pMinion);
 
 	SAFE_RELEASE(pObject);
+
+	CGameObject*	pDecalObj = CGameObject::CreatePrototype("Decal");
+
+	CDecal*	pDecal = pDecalObj->AddComponent<CDecal>("Decal");
+
+	SAFE_RELEASE(pDecal);
+
+	CColliderOBB3D*	pDecalSphere = pDecalObj->AddComponent<CColliderOBB3D>("DecalSphere");
+
+	pDecalSphere->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(2.5f, 1.5f, 2.5f));
+
+	SAFE_RELEASE(pDecalSphere);
+
+	CMaterial*	pDecalMtrl = pDecalObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pDecalMtrl->SetDiffuseTex(0, "DecalDif", TEXT("Decal/Shout24674-perfil3_COLOR.png"));
+	pDecalMtrl->SetNormalTex(1, "DecalNrm", TEXT("Decal/Shout24674-perfil3_NRM.png"));
+	pDecalMtrl->SetSpecularTex(2, "DecalSpc", TEXT("Decal/Shout24674-perfil3_SPEC.png"));
+
+	pDecalMtrl->SetSampler(0, SAMPLER_LINEAR);
+	pDecalMtrl->SetNormalSampler(0, SAMPLER_LINEAR);
+	pDecalMtrl->SetSpecularSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pDecalMtrl);
+
+	SAFE_RELEASE(pDecalObj);
+
+	pDecalObj = CGameObject::CreatePrototype("DecalCannon");
+
+	pDecal = pDecalObj->AddComponent<CDecal>("Decal");
+
+	SAFE_RELEASE(pDecal);
+
+	pDecalSphere = pDecalObj->AddComponent<CColliderOBB3D>("DecalSphere");
+
+	pDecalSphere->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(4.f, 0.75f, 4.f));
+
+	SAFE_RELEASE(pDecalSphere);
+
+	pDecalMtrl = pDecalObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pDecalMtrl->SetDiffuseTex(0, "DecalCannonDif", TEXT("Decal/Decal.png"));
+	pDecalMtrl->SetNormalTex(1, "DecalCannonNrm", TEXT("Decal/Decal_NRM.png"));
+	pDecalMtrl->SetSpecularTex(2, "DecalCannonSpc", TEXT("Decal/Decal_SPEC.png"));
+
+	pDecalMtrl->SetSampler(0, SAMPLER_LINEAR);
+	pDecalMtrl->SetNormalSampler(0, SAMPLER_LINEAR);
+	pDecalMtrl->SetSpecularSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pDecalMtrl);
+
+	SAFE_RELEASE(pDecalObj);
+
+	pDecalObj = CGameObject::CreateClone("Decal", "Decal",
+		pDefaultLayer);
+
+	CTransform*	pDecalTr = pDecalObj->GetTransform();
+
+	pDecalTr->SetWorldPos(3.f, 2.f, 3.f);
+	pDecalTr->SetWorldScale(5.f, 3.f, 5.f);
+
+	SAFE_RELEASE(pDecalTr);
+
+	SAFE_RELEASE(pDecalObj);
+
+	pDecalObj = CGameObject::CreateClone("DecalCannon", "DecalCannon",
+		pDefaultLayer);
+
+	pDecalTr = pDecalObj->GetTransform();
+
+	pDecalTr->SetWorldPos(10.f, 1.5f, 3.f);
+	pDecalTr->SetWorldScale(8.f, 1.5f, 8.f);
+
+	SAFE_RELEASE(pDecalTr);
+
+	SAFE_RELEASE(pDecalObj);
+
 
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
 
@@ -140,6 +237,73 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pLandScape);
 
 	SAFE_RELEASE(pLandScapeObj);
+
+	CGameObject*	pParticleObj = CGameObject::CreatePrototype("ExplosionParticle");
+
+	CParticle*	pParticle = pParticleObj->AddComponent<CParticle>("Particle");
+
+	SAFE_RELEASE(pParticle);
+
+	CColliderOBB3D*	pParticleSphere = pParticleObj->AddComponent<CColliderOBB3D>("DecalSphere");
+
+	pParticleSphere->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(1.f, 1.f, 1.f));
+
+	SAFE_RELEASE(pParticleSphere);
+
+	CMaterial*	pParticleMtrl = pParticleObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	vector<const TCHAR*>	vecExplosionName;
+	for (int i = 1; i <= 89; ++i)
+	{
+		TCHAR*	pFileName = new TCHAR[MAX_PATH];
+		memset(pFileName, 0, sizeof(TCHAR) * MAX_PATH);
+
+		wsprintf(pFileName, TEXT("Explosion/Explosion%d.png"), i);
+		vecExplosionName.push_back(pFileName);
+	}
+	pParticleMtrl->SetDiffuseTex(4, "Explosion", vecExplosionName);
+
+	pParticleMtrl->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pParticleMtrl);
+
+	CAnimation2D*	pParticleAnimation = pParticleObj->AddComponent<CAnimation2D>("ParticleAnimation");
+
+	vector<Clip2DFrame>	vecFrame;
+	for (int i = 1; i <= 89; ++i)
+	{
+		Clip2DFrame	tFrame = {};
+		tFrame.vLT = Vector2(0.f, 0.f);
+		tFrame.vRB = Vector2(1.f, 1.f);
+		vecFrame.push_back(tFrame);
+	}
+
+	pParticleAnimation->AddClip("Idle", A2D_FRAME, AO_LOOP,
+		1.f, vecFrame, "Explosion", vecExplosionName);
+
+	SAFE_RELEASE(pParticleAnimation);
+
+	for (size_t i = 0; i < vecExplosionName.size(); ++i)
+	{
+		SAFE_DELETE_ARRAY(vecExplosionName[i]);
+	}
+
+	vecExplosionName.clear();
+
+	SAFE_RELEASE(pParticleObj);
+
+	pParticleObj = CGameObject::CreateClone("ExplosionParticle",
+		"ExplosionParticle", pDefaultLayer);
+
+	pTransform = pParticleObj->GetTransform();
+
+	pTransform->SetWorldPos(5.f, 2.f, 5.f);
+	pTransform->SetWorldScale(6.f, 6.f, 1.f);
+
+	SAFE_RELEASE(pTransform);
+
+	SAFE_RELEASE(pParticleObj);
+
 
 	SAFE_RELEASE(pCamera);
 

@@ -75,7 +75,7 @@ bool CFrustum::FrustumInSphere(Vector3& vCenter, float fRadius)
 	for (int i = 0; i < PD_END; ++i)
 	{
 		float fDist = XMVectorGetX(XMPlaneDotCoord(m_vPlane[i].Convert(), vCenter.Convert()));
-		if (fDist > fRadius - 3.f)
+		if (fDist > fRadius)
 			return true;
 	}
 

@@ -1,80 +1,85 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 
-#define	ROOT_PATH	"RootPath"
-#define	SHADER_PATH	"ShaderPath"
-#define	TEXTURE_PATH	"TexturePath"
-#define	SOUND_PATH	"SoundPath"
-#define	DATA_PATH	"DataPath"
-#define	MESH_PATH	"MeshPath"
-#define	MESH_DATA_PATH "MeshDataPath"
+#define	ROOT_PATH							"RootPath"
+#define	SHADER_PATH							"ShaderPath"
+#define	TEXTURE_PATH						"TexturePath"
+#define	SOUND_PATH							"SoundPath"
+#define	DATA_PATH							"DataPath"
+#define	MESH_PATH							"MeshPath"
+#define	MESH_DATA_PATH						"MeshDataPath"
 
 // ========== Default Sampler Key ==========
-#define	SAMPLER_LINEAR	"Linear"
-#define SAMPLER_POINT   "Point"
+#define	SAMPLER_LINEAR						"Linear"
+#define SAMPLER_POINT						"Point"
 
 // ========== Shader Key ========
-#define	STANDARD_COLOR_SHADER	"StandardColorShader"
-#define	STANDARD_TEX_SHADER	"StandardTexShader"
-#define	STANDARD_TEX_STATIC_SHADER	"StandardTexStaticShader"
-#define	COLLIDER_SHADER	"ColliderShader"
-#define	BUTTON_SHADER	"ButtonShader"
-#define	BAR_SHADER		"BarShader"
-#define	FULLSCREEN_SHADER	"FullScreenShader"
-#define LIGHT_DIR_ACC_SHADER "LightDirAccShader"
-#define LIGHT_POINT_ACC_SHADER "LightPointAccShader"
-#define LIGHT_SPOT_ACC_SHADER "LightSpotAccShader"
-#define	LIGHT_BLEND_SHADER  "LightBlendShader"
-#define SHADOW_SHADER	"ShadowShader"
-#define	STANDARD_NORMAL_COLOR_SHADER	"StandardNormalColorShader"
-#define	STANDARD_BUMP_SHADER		"StandardBumpShader"
-#define	STANDARD_BUMP_ANIM_SHADER		"StandardBumpAnimShader"
-#define	STANDARD_TEX_NORMAL_SHADER		"StandardTexNormalShader"
+#define	BAR_SHADER							"BarShader"
+#define SHADOW_SHADER						"ShadowShader"
+#define	BUTTON_SHADER						"ButtonShader"
+#define	COLLIDER_SHADER						"ColliderShader"
+#define	FULLSCREEN_SHADER					"FullScreenShader"
+#define	LIGHT_BLEND_SHADER					"LightBlendShader"
+#define	STANDARD_TEX_SHADER					"StandardTexShader"
+#define	STANDARD_BUMP_SHADER				"StandardBumpShader"
+#define LIGHT_DIR_ACC_SHADER				"LightDirAccShader"
+#define	STANDARD_COLOR_SHADER				"StandardColorShader"
+#define LIGHT_SPOT_ACC_SHADER				"LightSpotAccShader"
+#define LIGHT_POINT_ACC_SHADER				"LightPointAccShader"
+#define	STANDARD_TEX_STATIC_SHADER			"StandardTexStaticShader"
+#define	STANDARD_NORMAL_COLOR_SHADER		"StandardNormalColorShader"
+#define	STANDARD_BUMP_ANIM_SHADER			"StandardBumpAnimShader"
+#define	STANDARD_TEX_NORMAL_SHADER			"StandardTexNormalShader"
 #define	STANDARD_TEX_NORMAL_ANIM_SHADER		"StandardTexNormalAnimShader"
 #define LANDSCAPE_SHADER					"LandScapeShader"
+#define DECAL_SHADER						"DecalShader"
+#define PARTICLE_SHADER						"ParticleShader"
 
-#define FINAL_PASS_SHADER				"HDRShader"
-#define ADAPTATION_SHADER		"AdaptationShader"
+#define VOLUME_FOG_FIRST_SHADER				"VolumeFogFirstShader"
+#define VOLUME_FOG_SECOND_SHADER			"VolumeFogSecondShader"
 
-#define HDR_COMPUTE_SHADER			"HDRComputeShader"
-#define HDR_SECOND_COMPUTE_SHADER	"HDRSecondComputeShader"
-#define ADAPT_COMPUTE_SHADER		"AdaptComputeShader"
-#define ADAPT_SECOND_COMPUTE_SHADER	"AdaptSecondComputeShader"
+#define FINAL_PASS_SHADER					"HDRShader"
+#define ADAPTATION_SHADER					"AdaptationShader"
 
-#define MOTION_BLUR_SHADER		"MotionBlurShader"
-#define DOWNSCALE_SHADER		"DownScaleShader"
-#define HORIZONTAL_BLUR_SHADER	"HorizontalBlur"
-#define VERTICAL_BLUR_SHADER	"VerticalBlur"
+#define HDR_COMPUTE_SHADER					"HDRComputeShader"
+#define HDR_SECOND_COMPUTE_SHADER			"HDRSecondComputeShader"
+#define ADAPT_COMPUTE_SHADER				"AdaptComputeShader"
+#define ADAPT_SECOND_COMPUTE_SHADER			"AdaptSecondComputeShader"
+
+#define MOTION_BLUR_SHADER					"MotionBlurShader"
+#define DOWNSCALE_SHADER					"DownScaleShader"
+#define HORIZONTAL_BLUR_SHADER				"HorizontalBlur"
+#define VERTICAL_BLUR_SHADER				"VerticalBlur"
 
 // ========== Input Layout Key =============
-#define	POS_COLOR_LAYOUT		"PosColorLayout"
-#define	POS_NORMAL_COLOR_LAYOUT		"PosNormalColorLayout"
-#define	POS_UV_LAYOUT		"PosUVLayout"
-#define	POS_LAYOUT		"PosLayout"
-#define	VERTEX3D_LAYOUT	"Vertex3DLayout"
+#define	POS_COLOR_LAYOUT					"PosColorLayout"
+#define	POS_NORMAL_COLOR_LAYOUT				"PosNormalColorLayout"
+#define	POS_UV_LAYOUT						"PosUVLayout"
+#define	POS_LAYOUT							"PosLayout"
+#define	VERTEX3D_LAYOUT						"Vertex3DLayout"
 
 // ========== RenderState Key =============
-#define	ALPHA_BLEND			"AlphaBlend"
-#define ACC_BLEND			"AccBlend"
-#define	DEPTH_DISABLE		"DepthDisable"
-#define CULL_NONE			"CullNone"
-#define ZERO_BLEND "ZeroBlend"
-#define ALL_BLEND "AllBlend"
-#define WIRE_FRAME "WireFrame"
-#define DEPTH_GRATOR "DepthGrator"
-#define DEPTH_LESS "DepthLess"
-#define FRONT_CULL "FrontCull"
-#define BACK_CULL "BackCull"
-#define	DEPTH_LESSEQUAL		"DepthLessEqual"
+#define	ALPHA_BLEND							"AlphaBlend"
+#define ACC_BLEND							"AccBlend"
+#define	DEPTH_DISABLE						"DepthDisable"
+#define CULL_NONE							"CullNone"
+#define ZERO_BLEND							"ZeroBlend"
+#define ALL_BLEND							"AllBlend"
+#define WIRE_FRAME							"WireFrame"
+#define DEPTH_GRATOR						"DepthGrator"
+#define DEPTH_LESS							"DepthLess"
+#define FRONT_CULL							"FrontCull"
+#define BACK_CULL							"BackCull"
+#define	DEPTH_LESSEQUAL						"DepthLessEqual"
 
 // ========== Volume Mesh Key=============
-#define SPHERE_VOLUME "SphereVolum"
-#define CAPSUL_VOLUME "CapsulVolum"
-#define CORN_VOLUME "CornVolum"
-#define CYLINDER_VOLUME "CylinderVolum"
+#define SPHERE_VOLUME						"SphereVolum"
+#define CAPSUL_VOLUME						"CapsulVolum"
+#define CORN_VOLUME							"CornVolum"
+#define CYLINDER_VOLUME						"CylinderVolum"
 
-#define	SAFE_DELETE(p)	if(p)	{ delete p; p = nullptr; }
-#define	SAFE_RELEASE(p)	if(p)	{ p->Release(); p = nullptr; }
+#define	SAFE_DELETE(p)			if(p)	{ delete p; p = nullptr; }
+#define	SAFE_RELEASE(p)			if(p)	{ p->Release(); p = nullptr; }
 #define	SAFE_DELETE_ARRAY(p)	if(p)	{ delete[] p; p = nullptr; }
 
 template <typename T>
@@ -157,20 +162,20 @@ void Safe_Release_Map(T& p)
 		SAFE_DELETE(m_pInst);\
 	}
 
-#define GET_SINGLE(Type)	Type::GetInst()
+#define GET_SINGLE(Type)		Type::GetInst()
 #define DESTROY_SINGLE(Type)	Type::DestroyInst()
 
-#define DEVICE	CDevice::GetInst()->GetDevice()
-#define CONTEXT	CDevice::GetInst()->GetContext()
-#define SWAPCHAIN	CDevice::GetInst()->GetSwapChain()
-#define _RESOLUTION	CDevice::GetInst()->GetResolution()
+#define DEVICE					CDevice::GetInst()->GetDevice()
+#define CONTEXT					CDevice::GetInst()->GetContext()
+#define SWAPCHAIN				CDevice::GetInst()->GetSwapChain()
+#define _RESOLUTION				CDevice::GetInst()->GetResolution()
 
-#define WINDOWHANDLE	CCore::GetInst()->GetWindowHandle()
-#define WINDOWINSTANCE	CCore::GetInst()->GetWindowInstance()
+#define WINDOWHANDLE			CCore::GetInst()->GetWindowHandle()
+#define WINDOWINSTANCE			CCore::GetInst()->GetWindowInstance()
 
-#define	KEYPRESS(key)	CInput::GetInst()->KeyPress(key)
-#define	KEYPUSH(key)	CInput::GetInst()->KeyPush(key)
-#define	KEYUP(key)		CInput::GetInst()->KeyUp(key)
+#define	KEYPRESS(key)			CInput::GetInst()->KeyPress(key)
+#define	KEYPUSH(key)			CInput::GetInst()->KeyPush(key)
+#define	KEYUP(key)				CInput::GetInst()->KeyUp(key)
 
 #define NULLPTR nullptr
 

@@ -1,7 +1,7 @@
 #include "NavigationManager3D.h"
+#include "NavigationMesh.h"
 #include "Component/LandScape.h"
 #include "Component/Transform.h"
-#include "NavigationMesh.h"
 
 PUN_USING
 

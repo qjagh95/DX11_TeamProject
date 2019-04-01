@@ -1,10 +1,10 @@
 #include "EngineHeader.h"
 #include "Animation2D.h"
-#include "../Resource/Texture.h"
-#include "../PathManager.h"
-#include "../GameObject.h"
 #include "Renderer.h"
 #include "Material.h"
+#include "../GameObject.h"
+#include "../PathManager.h"
+#include "../Resource/Texture.h"
 
 PUN_USING
 
@@ -75,7 +75,6 @@ void CAnimation2D::AddClip(const string & strName,
 	pClip->fPlayLimitTime = fPlayLimitTime;
 	pClip->vecFrame = vecFrame;
 	pClip->eType = eType;
-	pClip->eType = eType;
 	pClip->iFrame = 0;
 	pClip->fPlayTime = 0.f;
 
@@ -115,10 +114,9 @@ void CAnimation2D::AddClip(const string & strName, ANIMATION2D_TYPE eType,
 	pClip->fPlayLimitTime = fPlayLimitTime;
 	pClip->vecFrame = vecFrame;
 	pClip->eType = eType;
-	pClip->eType = eType;
 	pClip->iFrame = 0;
 	pClip->fPlayTime = 0.f;
-	pClip->iTexRegister = 1;
+	pClip->iTexRegister = 4;
 
 	GET_SINGLE(CResourcesManager)->CreateTexture(strTexKey,
 		vecFileName, strPathKey);

@@ -3,6 +3,8 @@
 ################################################################################
 
 /.vs/3DGame/v15
+/3DClient/bin/Texture
+/3DClient/bin/VolumeFog.cso
 /3DClient/bin/UI.cso
 /3DClient/bin/TWEngine_Debug.lib
 /3DClient/bin/TWEngine64_Debug.lib.r15
@@ -19,6 +21,7 @@
 /3DClient/bin/Sky.cso
 /3DClient/bin/Share.cso
 /3DClient/bin/PostHDR.cso
+/3DClient/bin/Particle.cso
 /3DClient/bin/MotionBlur.cso
 /3DClient/bin/Mathlib_Debug.dll
 /3DClient/bin/Mathlib64_Debug.lib
@@ -47,6 +50,7 @@
 /3DClient/bin/DirectXTex64_Debug.lib
 /3DClient/bin/DirectXTex64.lib
 /3DClient/bin/DirectXTex.lib
+/3DClient/bin/Decal.cso
 /3DClient/bin/ComputeShare.cso
 /3DClient/bin/Collider.cso
 /3DClient/bin/Blur.cso
@@ -66,6 +70,7 @@
 /3DClient/bin/3DClient64.ipdb
 /3DClient/bin/3DClient64.iobj
 /3DClient/bin/3DClient64.exe
+/Engine/Bin/VolumeFog.cso
 /Engine/Bin/UI.cso
 /Engine/Bin/TWEngine_Debug.lib
 /Engine/Bin/TWEngine64_Debug.lib.r15
@@ -82,6 +87,7 @@
 /Engine/Bin/Sky.cso
 /Engine/Bin/Share.cso
 /Engine/Bin/PostHDR.cso
+/Engine/Bin/Particle.cso
 /Engine/Bin/MotionBlur.cso
 /Engine/Bin/Mathlib_Debug.dll
 /Engine/Bin/Mathlib64_Debug.lib
@@ -108,6 +114,7 @@
 /Engine/Bin/DirectXTex64_Debug.lib
 /Engine/Bin/DirectXTex64.lib
 /Engine/Bin/DirectXTex.lib
+/Engine/Bin/Decal.cso
 /Engine/Bin/ComputeShare.cso
 /Engine/Bin/Collider.cso
 /Engine/Bin/Blur.cso
@@ -167,9 +174,11 @@
 /EngineWrapper/Bin/DirectXTex.lib
 /EngineWrapper/Bin/Collider.cso
 /EngineWrapper/Bin/BackColorShader.cso
+/WinFormEditor/bin/Debug/Texture
 /WinFormEditor/bin/Debug/WinFormEditor.pdb
 /WinFormEditor/bin/Debug/WinFormEditor.exe.config
 /WinFormEditor/bin/Debug/WinFormEditor.exe
+/WinFormEditor/bin/Debug/VolumeFog.cso
 /WinFormEditor/bin/Debug/UI.cso
 /WinFormEditor/bin/Debug/TWEngine_Debug.lib
 /WinFormEditor/bin/Debug/TWEngine64_Debug.lib.r15
@@ -186,6 +195,7 @@
 /WinFormEditor/bin/Debug/Sky.cso
 /WinFormEditor/bin/Debug/Share.cso
 /WinFormEditor/bin/Debug/PostHDR.cso
+/WinFormEditor/bin/Debug/Particle.cso
 /WinFormEditor/bin/Debug/MotionBlur.cso
 /WinFormEditor/bin/Debug/Mathlib_Debug.dll
 /WinFormEditor/bin/Debug/Mathlib64_Debug.lib
@@ -219,6 +229,7 @@
 /WinFormEditor/bin/Debug/DirectXTex64_Debug.lib
 /WinFormEditor/bin/Debug/DirectXTex64.lib
 /WinFormEditor/bin/Debug/DirectXTex.lib
+/WinFormEditor/bin/Debug/Decal.cso
 /WinFormEditor/bin/Debug/ComputeShare.cso
 /WinFormEditor/bin/Debug/Collider.cso
 /WinFormEditor/bin/Debug/Blur.cso
@@ -231,9 +242,11 @@
 /WinFormEditor/bin/Debug/3DClient64.ipdb
 /WinFormEditor/bin/Debug/3DClient64.iobj
 /WinFormEditor/bin/Debug/3DClient64.exe
+/WinFormEditor/bin/Release/Texture
 /WinFormEditor/bin/Release/WinFormEditor.pdb
 /WinFormEditor/bin/Release/WinFormEditor.exe.config
 /WinFormEditor/bin/Release/WinFormEditor.exe
+/WinFormEditor/bin/Release/VolumeFog.cso
 /WinFormEditor/bin/Release/UI.cso
 /WinFormEditor/bin/Release/TWEngine_Debug.lib
 /WinFormEditor/bin/Release/TWEngine64_Debug.lib.r15
@@ -250,6 +263,7 @@
 /WinFormEditor/bin/Release/Sky.cso
 /WinFormEditor/bin/Release/Share.cso
 /WinFormEditor/bin/Release/PostHDR.cso
+/WinFormEditor/bin/Release/Particle.cso
 /WinFormEditor/bin/Release/MotionBlur.cso
 /WinFormEditor/bin/Release/Mathlib_Debug.dll
 /WinFormEditor/bin/Release/Mathlib64_Debug.lib
@@ -283,6 +297,7 @@
 /WinFormEditor/bin/Release/DirectXTex64_Debug.lib
 /WinFormEditor/bin/Release/DirectXTex64.lib
 /WinFormEditor/bin/Release/DirectXTex.lib
+/WinFormEditor/bin/Release/Decal.cso
 /WinFormEditor/bin/Release/ComputeShare.cso
 /WinFormEditor/bin/Release/Collider.cso
 /WinFormEditor/bin/Release/Blur.cso
@@ -295,6 +310,7 @@
 /WinFormEditor/bin/Release/3DClient64.ipdb
 /WinFormEditor/bin/Release/3DClient64.iobj
 /WinFormEditor/bin/Release/3DClient64.exe
+/TWEngine/Bin/VolumeFog.cso
 /TWEngine/Bin/UI.cso
 /TWEngine/Bin/TWEngine_Debug.lib
 /TWEngine/Bin/TWEngine64_Debug.pdb.r15
@@ -322,6 +338,7 @@
 /TWEngine/Bin/Sky.cso
 /TWEngine/Bin/Share.cso
 /TWEngine/Bin/PostHDR.cso
+/TWEngine/Bin/Particle.cso
 /TWEngine/Bin/MotionBlur.cso
 /TWEngine/Bin/Mathlib_Debug.dll
 /TWEngine/Bin/Mathlib64_Debug.lib
@@ -343,6 +360,7 @@
 /TWEngine/Bin/DirectXTex64_Debug.lib
 /TWEngine/Bin/DirectXTex64.lib
 /TWEngine/Bin/DirectXTex.lib
+/TWEngine/Bin/Decal.cso
 /TWEngine/Bin/ComputeShare.cso
 /TWEngine/Bin/Collider.cso
 /TWEngine/Bin/Blur.cso

@@ -2,8 +2,8 @@
 #include "EngineHeader.h"
 #include "Transform.h"
 #include "../GameObject.h"
-#include "../NavigationManager3D.h"
 #include "../NavigationMesh.h"
+#include "../NavigationManager3D.h"
 
 PUN_USING
 
@@ -642,6 +642,9 @@ bool CTransform::Init()
 		m_vLocalAxis[i] = Vector3::Axis[i];
 		m_vWorldAxis[i] = Vector3::Axis[i];
 	}
+
+	m_vLocalScale = Vector3::One;
+	m_vWorldScale = Vector3::One;
 
 	return true;
 }

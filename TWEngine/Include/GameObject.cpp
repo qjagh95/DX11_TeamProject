@@ -1,15 +1,15 @@
 #include "EngineHeader.h"
 #include "GameObject.h"
+#include "ObjectManager.h"
+#include "CollisionManager.h"
 #include "Scene/Layer.h"
-#include "Component/Transform.h"
-#include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
+#include "Scene/SceneManager.h"
+#include "Resource/Mesh.h"
 #include "Component/Camera.h"
 #include "Component/Renderer.h"
-#include "CollisionManager.h"
-#include "ObjectManager.h"
+#include "Component/Transform.h"
 #include "Component/Animation.h"
-#include "Resource/Mesh.h"
 
 PUN_USING
 
@@ -300,6 +300,11 @@ int CGameObject::GetLayerZOrder() const
 	return m_iLayerZOrder;
 }
 
+void CGameObject::SetRenderGroup(RENDER_GROUP eGroup)
+{
+	m_eRenderGroup = eGroup;
+}
+
 void CGameObject::SetScene(CScene * pScene)
 {
 	m_pScene = pScene;
@@ -379,12 +384,16 @@ bool CGameObject::FrustumCull()
 {
 	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
 	CRenderer* pRenderer = FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
+	
 	if (pRenderer == nullptr)
 	{
 		return false;
 	}
+
 	CMesh* pMesh = pRenderer->GetMesh();
-	Vector3	vCenter = pMesh->GetCenter().TransformCoord(m_pTransform->GetWorldMatrix());
+
+	Vector3	vCenter = pMesh->GetCenter().TransformCoord(m_pTransform->GetLocalMatrix() * m_pTransform->GetWorldMatrix());
+
 	Vector3	vScale = m_pTransform->GetWorldScale();
 
 	float	fScale = vScale.x;

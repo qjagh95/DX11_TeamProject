@@ -1,9 +1,9 @@
 #include "../EngineHeader.h"
 #include "Animation.h"
 #include "../Device.h"
-#include "../Resource/FbxLoader.h"
 #include "../GameObject.h"
 #include "../PathManager.h"
+#include "../Resource/FbxLoader.h"
 
 PUN_USING
 

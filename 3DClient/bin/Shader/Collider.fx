@@ -11,7 +11,7 @@ VS_OUTPUT_POS ColliderVS(VS_INPUT_POS input)
 
 	float3	vPos = input.vPos - g_vPivot * g_vLength;
 
-	output.vPos = mul(float4(vPos, 1.f), g_matWVP);
+	output.vPos = mul(float4(vPos, 1.f), g_matWVP);    
 
 	return output;
 }

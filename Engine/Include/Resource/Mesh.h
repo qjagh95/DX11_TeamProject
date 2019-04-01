@@ -75,6 +75,7 @@ public:
 	Vector3	GetMax()	const;
 	Vector3	GetLength()	const;
 	float	GetRadius()	const;
+	bool	IsSubset(int iContainer)	const;
 
 public:
 	string GetShaderKey()	const;

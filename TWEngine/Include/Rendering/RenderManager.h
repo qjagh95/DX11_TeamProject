@@ -37,6 +37,7 @@ private:
 
 	GAME_MODE m_eGameMode;
 	bool m_bDeferred;
+	bool m_bFogEnable;
 	ID3D11InputLayout* m_pPointLightLayout;
 	CBlendState* m_pCreateState;
 	
@@ -49,6 +50,7 @@ private:
 
 	CMultiRenderTarget* m_pGBufferMultiTarget;
 	CMultiRenderTarget* m_pLightMultiTarget;
+	CMultiRenderTarget* m_pDecalMultiTarget;
 
 	CMesh*				m_pSphereVolum;
 	CMesh*				m_pCornVolum;
@@ -90,12 +92,15 @@ private:
 	void RenderDeferred(float fTime);
 
 	void RenderGBuffer(float fTime);
+	void RenderDecal(float fTime);
 	void RenderLightAcc(float fTime);
 	void RenderLightDir(float fTime, class CLight* pLight);
 	void RenderLightPoint(float fTime, class CLight* pLight);
 	void RenderLightSpot(float fTime, class CLight* pLight);
 	void RenderLightBlend(float _fTime);
 	void RenderSkyObj(float _fTime);
+	void RenderSkyObj(FAVORITE_TARGET eTarget, float fTime);
+	void RenderFog(float _fTime);
 	void RenderComputeProcess(float fTime);
 	void RenderFinalPass(float _fTime);
 	void RenderFinalPassDebug(float _fTime);

@@ -1,17 +1,17 @@
 #include "../EngineHeader.h"
 #include "ViewManager.h"
 #include "UAV.h"
-#include "RenderState.h"
+#include "CSBlur.h"
+#include "DownScale.h"
 #include "BlendState.h"
 #include "DepthState.h"
-#include "RasterizerState.h"
+#include "RenderState.h"
+#include "CSHDRFilter.h"
 #include "RenderTarget.h"
+#include "RasterizerState.h"
+#include "MotionBlurFilter.h"
 #include "MultiRenderTarget.h"
 #include "../Device.h"
-#include "DownScale.h"
-#include "MotionBlurFilter.h"
-#include "CSBlur.h"
-#include "CSHDRFilter.h"
 
 PUN_USING
 
@@ -36,6 +36,7 @@ CViewManager::~CViewManager()
 		SAFE_DELETE(iter2->second);
 	}
 
+	m_mapRenderState.clear();
 
 	unordered_map<string, CRenderTarget*>::iterator	iter;
 	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
@@ -407,8 +408,8 @@ bool CViewManager::CreateRenderTargetView()
 	Vector3	vPos;
 	vPos.x = _RESOLUTION.iWidth - 100.f;
 
-	if (!CreateRenderTarget("PostEffect", DXGI_FORMAT_R8G8B8A8_UNORM, vPos, Vector3(100.f, 100.f, 1.f), true))
-		return false;
+	//if (!CreateRenderTarget("PostEffect", DXGI_FORMAT_R8G8B8A8_UNORM, vPos, Vector3(100.f, 100.f, 1.f), true))
+	//	return false;
 
 	// Albedo
 	vPos.x = 0.f;
@@ -433,11 +434,32 @@ bool CViewManager::CreateRenderTargetView()
 	if (!CreateRenderTarget("Material", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
 		return false;
 
+	// Tangent
+	vPos.x = 0.f;
+	vPos.y = 400.f;
+	if (!CreateRenderTarget("Tangent", DXGI_FORMAT_R32G32B32A32_FLOAT,
+		vPos, Vector3(100.f, 100.f, 1.f), true))
+		return false;
+
+	// Binormal
+	vPos.x = 0.f;
+	vPos.y = 500.f;
+	if (!CreateRenderTarget("Binormal", DXGI_FORMAT_R32G32B32A32_FLOAT,
+		vPos, Vector3(100.f, 100.f, 1.f), true))
+		return false;
+
 	CreateMultiTarget("GBuffer");
 	AddMultiRenderTarget("GBuffer", "Albedo");
 	AddMultiRenderTarget("GBuffer", "Normal");
 	AddMultiRenderTarget("GBuffer", "Depth");
 	AddMultiRenderTarget("GBuffer", "Material");
+	AddMultiRenderTarget("GBuffer", "Tangent");
+	AddMultiRenderTarget("GBuffer", "Binormal");
+
+	CreateMultiTarget("SSDBuffer");
+	AddMultiRenderTarget("SSDBuffer", "Albedo");
+	AddMultiRenderTarget("SSDBuffer", "Normal");
+	AddMultiRenderTarget("SSDBuffer", "Material");
 
 	// Light Dif
 	vPos.x = 100.f;
@@ -457,6 +479,11 @@ bool CViewManager::CreateRenderTargetView()
 	AddMultiRenderTarget("LightAcc", "LightAccDif");
 	AddMultiRenderTarget("LightAcc", "LightAccSpc");
 
+	vPos.x = 100.f;
+	vPos.y = 200.f;
+	if (!CreateRenderTarget("VolumeFogDepth", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
+		return false;
+
 	// Light Blend
 	vPos.x = 200.f;
 	vPos.y = 0.f;
@@ -466,6 +493,11 @@ bool CViewManager::CreateRenderTargetView()
 	vPos.x = 300.f;
 	vPos.y = 0.f;
 	if (!CreateRenderTarget("Final", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
+		return false;
+
+	vPos.x = 300.f;
+	vPos.y = 100.f;
+	if (!CreateRenderTarget("Sky", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
 		return false;
 
 	vPos.x = 400.f;

@@ -66,6 +66,7 @@ public:
 	int GetLayerZOrder()	const;
 
 public:
+	void SetRenderGroup(RENDER_GROUP eGroup);
 	void SetScene(class CScene* pScene);
 	void SetLayer(class CLayer* pLayer);
 	void AfterClone();

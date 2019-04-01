@@ -1,17 +1,18 @@
 #include "../ClientHeader.h"
 #include "Player.h"
 #include "Input.h"
-#include "Component/Transform.h"
-#include "Component/Material.h"
+#include "Input.h"
+#include "NavigationMesh.h"
+#include "NavigationManager3D.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "Component/Material.h"
+#include "Component/Transform.h"
+#include "Component/ColliderOBB3D.h"
+#include "Component/ColliderSphere.h"
 #include "../SceneComponent/SecTestScene.h"
 #include "../SceneComponent/TrdTestScene.h"
-#include "Input.h"
-#include "NavigationManager3D.h"
-#include "NavigationMesh.h"
-#include "Component/ColliderSphere.h"
-#include "Component/ColliderOBB3D.h"
+
 CPlayer::CPlayer()
 	: m_pAnimation(nullptr)
 {

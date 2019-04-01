@@ -181,6 +181,7 @@ bool CResourcesManager::Init()
 	CreateSphereVolum(SPHERE_VOLUME, 0.5f, 64, 128);
 	CreateSphereVolum("Sky", 1.0f, 32, 64, "Sky", POS_LAYOUT);
 
+
 	CreateCylinderVolum(CYLINDER_VOLUME, 0.5f, 3, 32);
 	CreateCapsulVolum(CAPSUL_VOLUME, 0.5f, 3, 64, 128);
 	CreateCornVolum(CORN_VOLUME, 0.5f, 0.5f, 64, 128);
@@ -205,6 +206,37 @@ bool CResourcesManager::Init()
 		D3D11_PRIMITIVE_TOPOLOGY_LINELIST, iBoxIdx,
 		24, 4, D3D11_USAGE_DEFAULT,
 		DXGI_FORMAT_R32_UINT);
+
+	Vector3	vDecalBox[8] =
+	{
+		Vector3(-0.5f, 0.5f, -0.5f),
+		Vector3(0.5f, 0.5f, -0.5f),
+		Vector3(-0.5f, -0.5f, -0.5f),
+		Vector3(0.5f, -0.5f, -0.5f),
+		Vector3(-0.5f, 0.5f, 0.5f),
+		Vector3(0.5f, 0.5f, 0.5f),
+		Vector3(-0.5f, -0.5f, 0.5f),
+		Vector3(0.5f, -0.5f, 0.5f)
+	};
+
+	int	iSSDBoxIdx[36] =
+	{
+		0, 1, 3, 0, 3, 2, 1, 5, 7, 1, 7, 3, 4, 0, 2, 4, 2, 6, 5, 4, 6, 5, 6, 7,
+		2, 3, 7, 2, 7, 6, 4, 5, 1, 4, 1, 0
+	};
+
+	CreateMesh("VolumeBox", DECAL_SHADER, POS_LAYOUT,
+		vDecalBox, 8, sizeof(Vector3),
+		D3D11_USAGE_DEFAULT,
+		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, iSSDBoxIdx,
+		36, 4, D3D11_USAGE_DEFAULT,
+		DXGI_FORMAT_R32_UINT);
+
+	Vector3	vParticle;
+	CreateMesh("Particle", PARTICLE_SHADER, POS_LAYOUT,
+		&vParticle, 1, sizeof(Vector3), D3D11_USAGE_DEFAULT,
+		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
 
 	return true;
 }

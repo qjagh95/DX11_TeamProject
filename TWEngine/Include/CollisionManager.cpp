@@ -1,15 +1,14 @@
 #include "../EngineHeader.h"
 #include "CollisionManager.h"
+#include "Input.h"
+#include "Device.h"
 #include "GameObject.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Component/Transform.h"
-#include "Device.h"
-#include "Input.h"
-#include "Component/ColliderPoint.h"
 #include "Component/ColliderRay.h"
+#include "Component/ColliderPoint.h"
 #include "Rendering/RenderManager.h"
-#include <algorithm>
 
 using namespace std;
 

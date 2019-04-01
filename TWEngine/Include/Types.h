@@ -38,6 +38,10 @@ namespace PUN
 		}
 	}Resolution, *PResolution;
 
+	//////////////////////////////// VERTEX INPUT LAYOUT INFO /////////////////////////////
+
+	// USE AT RESOURCES MANAGER CLASS
+
 	// Vertex Color
 	typedef struct _tagVertexColor
 	{
@@ -106,6 +110,29 @@ namespace PUN
 		}
 	}VertexTex, *PVertexTex;
 
+	typedef struct PUN_DLL _tagVertexNormalTex
+	{
+		Vector3		vPos;
+		Vector3		vNormal;
+		Vector2		vUV;
+	}VertexNormalTex, *PVertexNormalTex;
+
+	typedef struct PUN_DLL _tagVertex3D
+	{
+		Vector3		vPos;
+		Vector3		vNormal;
+		Vector2		vUV;
+		Vector3		vTangent;
+		Vector3		vBinormal;
+		Vector4		vWeight;
+		Vector4		vIndex;
+	}Vertex3D, *PVertex3D;
+
+	/////////////////////////////// VERTEX INPUT LAYOUT INFO END //////////////////////////
+
+
+	////////////////////////////////// CONSTANT BUFFER ////////////////////////////////////
+
 	typedef struct PUN_DLL _tagCBuffer
 	{
 		ID3D11Buffer*	pBuffer;
@@ -121,7 +148,9 @@ namespace PUN
 		Matrix	matProj;
 		Matrix	matWV;
 		Matrix	matWVP;
+		Matrix	matInvWVP;
 		Matrix  matInvProj;
+		Matrix	matVP;
 		Vector3	vPivot;
 		float	fEmpty;
 		Vector3	vLength;
@@ -150,11 +179,14 @@ namespace PUN
 		int		iAnimationType;
 		int		iDeffered;
 		int		iFocus;
+		int		iDecalEnable;
+		Vector3 vEmpty;
 
 		_tagComponentCBuffer() :
 			iTextureAnimation2D(0),
 			iDeffered(1),
-			iFocus(0)
+			iFocus(0),
+			iDecalEnable(1)
 		{
 		}
 	}ComponentCBuffer, *PComponentCBuffer;
@@ -195,49 +227,10 @@ namespace PUN
 		int		iSize;
 	}RendererCBuffer, *PRendererCBuffer;
 
-	typedef struct PUN_DLL _tagBoxInfo
-	{
-		Vector3	vMin;
-		Vector3	vMax;
-		Vector3	vLength;
-	}BoxInfo, *PBoxInfo;
-
-	typedef struct PUN_DLL _tagOBB2DInfo
-	{
-		Vector3	vCenter;
-		Vector3	vAxis[2];
-		float	fLength[2];
-	}OBB2DInfo, *POBB2DInfo;
-
-	typedef struct PUN_DLL _tagPixel24
-	{
-		unsigned char	r;
-		unsigned char	g;
-		unsigned char	b;
-	}Pixel24, *PPixel24;
-
-	typedef struct PUN_DLL _tagPixel32
-	{
-		unsigned char	r;
-		unsigned char	g;
-		unsigned char	b;
-		unsigned char	a;
-	}Pixel32, *PPixel32;
-
-	typedef struct PUN_DLL _tagPixelInfo
-	{
-		BoxInfo			tBox;
-		Pixel24*		pPixel;
-		int				iWidth;
-		int				iHeight;
-		Pixel24			tYasuoPixel;
-	}PixelInfo, *PPixelInfo;
-
 	typedef struct PUN_DLL _tagButtonCBuffer
 	{
 		Vector4		vColor;
 	}ButtonCBuffer, *PButtonCBuffer;
-
 
 	typedef struct PUN_DLL _tagBarCBuffer
 	{
@@ -262,24 +255,6 @@ namespace PUN
 		float	vEmpty;
 	}LightInfo, *PLightInfo;
 
-	typedef struct PUN_DLL _tagVertexNormalTex
-	{
-		Vector3		vPos;
-		Vector3		vNormal;
-		Vector2		vUV;
-	}VertexNormalTex, *PVertexNormalTex;
-
-	typedef struct PUN_DLL _tagVertex3D
-	{
-		Vector3		vPos;
-		Vector3		vNormal;
-		Vector2		vUV;
-		Vector3		vTangent;
-		Vector3		vBinormal;
-		Vector4		vWeight;
-		Vector4		vIndex;
-	}Vertex3D, *PVertex3D;
-
 	struct PUN_DLL PublicCBuffer
 	{
 		float DeltaTime;
@@ -297,41 +272,6 @@ namespace PUN
 		int		iSplatCount;
 		Vector2	vEmpty;
 	}LandScapeCBuffer, *PLandScapeCBuffer;
-
-	struct PUN_DLL TimeInfo
-	{
-		clock_t Start;
-		clock_t End;
-	};
-
-	struct PUN_DLL FileStream
-	{
-		ofstream Input;
-		ofstream Update;
-		ofstream LateUpdate;
-		ofstream Collsion;
-		ofstream Render;
-
-		~FileStream() { Input.close(); Update.close(); LateUpdate.close(); Collsion.close(); Render.close(); }
-	};
-
-	typedef struct PUN_DLL _tagSphereInfo
-	{
-		Vector3	vCenter;
-		float	fRadius;
-
-		_tagSphereInfo() :
-			fRadius(1.f)
-		{
-		}
-	}SphereInfo, *PSphereInfo;
-
-	typedef struct PUN_DLL _tagOBB3DInfo
-	{
-		Vector3	vCenter;
-		Vector3	vAxis[3];
-		Vector3	vLength;
-	}OBB3DInfo, *POBB3DInfo;
 
 	typedef struct _tagHDRFirstPassCBuffer
 	{
@@ -376,15 +316,99 @@ namespace PUN
 	{
 		int			iHDR;
 		int			iBlur;
-		Vector2		vEmpty;
+		int			iDepthFog;
+		float		fEmpty;
 
-		_tagFinalPassCBuffer()	:
+		_tagFinalPassCBuffer() :
 			iHDR(0),
-			iBlur(0)		
+			iBlur(0),
+			iDepthFog(0)
 		{
 		}
 
 	}FinalPassCB, *PFinalPassCB;
+
+	typedef struct PUN_DLL _tagParticleCBuffer
+	{
+		Vector3		vCenter;
+		float		fSizeX;
+		Vector3		vAxisX;
+		float		fSizeY;
+		Vector3		vAxisY;
+		float		fEmpty;
+	}ParticleCBuffer, *PParticleCBuffer;
+
+	typedef struct PUN_DLL _tagFogCBuffer
+	{
+		Vector4 vFogColor;
+		float	fDensity;
+		Vector3 vEmpty;
+
+		_tagFogCBuffer()
+		{
+			vFogColor = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+		}
+	}FogCBuffer, *PFogCBuffer;
+
+	///////////////////////////////// CONSTANT BUFFER END /////////////////////////////////
+
+
+	///////////////////////////////// COLLIDER INFO ///////////////////////////////////////
+	typedef struct PUN_DLL _tagBoxInfo
+	{
+		Vector3	vMin;
+		Vector3	vMax;
+		Vector3	vLength;
+	}BoxInfo, *PBoxInfo;
+
+	typedef struct PUN_DLL _tagOBB2DInfo
+	{
+		Vector3	vCenter;
+		Vector3	vAxis[2];
+		float	fLength[2];
+	}OBB2DInfo, *POBB2DInfo;
+
+	typedef struct PUN_DLL _tagPixel24
+	{
+		unsigned char	r;
+		unsigned char	g;
+		unsigned char	b;
+	}Pixel24, *PPixel24;
+
+	typedef struct PUN_DLL _tagPixel32
+	{
+		unsigned char	r;
+		unsigned char	g;
+		unsigned char	b;
+		unsigned char	a;
+	}Pixel32, *PPixel32;
+
+	typedef struct PUN_DLL _tagPixelInfo
+	{
+		BoxInfo			tBox;
+		Pixel24*		pPixel;
+		int				iWidth;
+		int				iHeight;
+		Pixel24			tYasuoPixel;
+	}PixelInfo, *PPixelInfo;
+
+	typedef struct PUN_DLL _tagSphereInfo
+	{
+		Vector3	vCenter;
+		float	fRadius;
+
+		_tagSphereInfo() :
+			fRadius(1.f)
+		{
+		}
+	}SphereInfo, *PSphereInfo;
+
+	typedef struct PUN_DLL _tagOBB3DInfo
+	{
+		Vector3	vCenter;
+		Vector3	vAxis[3];
+		Vector3	vLength;
+	}OBB3DInfo, *POBB3DInfo;
 
 	typedef struct PUN_DLL _tagRayInfo
 	{
@@ -392,4 +416,23 @@ namespace PUN
 		Vector3	vDir;
 		float	fDist;
 	}RayInfo, *PRayInfo;
+
+	////////////////////////////////////// COLLIDER INFO END //////////////////////////////
+
+	struct PUN_DLL TimeInfo
+	{
+		clock_t Start;
+		clock_t End;
+	};
+
+	struct PUN_DLL FileStream
+	{
+		ofstream Input;
+		ofstream Update;
+		ofstream LateUpdate;
+		ofstream Collsion;
+		ofstream Render;
+
+		~FileStream() { Input.close(); Update.close(); LateUpdate.close(); Collsion.close(); Render.close(); }
+	};
 }

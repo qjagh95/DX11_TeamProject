@@ -26,6 +26,7 @@ private:
 	unordered_map<string, PRendererCBuffer>	m_mapCBuffer;
 	ComponentCBuffer	m_tComponentCBuffer;
 	bool				m_b2DRenderer;
+	bool				m_bDecalEnable;
 	ID3D11ShaderResourceView**  m_pBoneTex;
 
 public:
@@ -37,6 +38,7 @@ public:
 	void SetMesh(const string& strKey);
 	void SetMesh(const string& strKey, const TCHAR* pFileName,
 		const string& strPathKey = MESH_DATA_PATH);
+
 	class CMesh* GetMesh() const;
 
 	void SetMeshFromFullPath(const string& strKey, const TCHAR* pFullPath);
@@ -44,6 +46,7 @@ public:
 	void SetShader(const string& strKey);
 	void SetInputLayout(const string& strKey);
 	void SetRenderState(const string& strName);
+	void SetDecalEnable(bool bEnable);
 	bool CreateRendererCBuffer(const string& strName, int iSize);
 	void UpdateRendererCBuffer(const string& strName, void* pData,
 		int iSize);

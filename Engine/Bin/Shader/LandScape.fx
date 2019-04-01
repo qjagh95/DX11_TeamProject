@@ -98,10 +98,21 @@ PS_OUTPUT_GBUFFER LandScapePS(VS_OUTPUT_3D input)
 
 	else
 	{
+        if (g_vMtrlDif.w == 1.f)
+        {
+            output.vTangent.xyz = input.vTangent;
+            output.vTangent.w = 1.f;
+
+            output.vBinormal.xyz = input.vBinormal;
+            output.vBinormal.w = 1.f;
+        }
+
 		output.vAlbedo = vColor;
 		output.vNormal.xyz = vNormal;
 		output.vNormal.w = g_vMtrlSpc.w;
-		output.vDepth.rgb = (float3)(input.vProjPos.z / input.vProjPos.w);
+		output.vDepth.r = (float3)(input.vProjPos.z / input.vProjPos.w);
+        output.vDepth.g = g_iFocus;
+        output.vDepth.b = g_iDecalEnable;
 		output.vDepth.a = input.vProjPos.w;
 
 		if (g_vMtrlAmb.w == 0.f)

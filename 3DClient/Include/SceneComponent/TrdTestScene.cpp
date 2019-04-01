@@ -1,7 +1,7 @@
 #include "../ClientHeader.h"
 #include "TrdTestScene.h"
-#include "Component/Camera.h"
 #include "Component/Light.h"
+#include "Component/Camera.h"
 #include "Component/Animation.h"
 
 CTrdTestScene::CTrdTestScene()
