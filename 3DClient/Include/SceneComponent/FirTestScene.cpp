@@ -12,6 +12,11 @@
 #include "../UserComponent/Field.h"
 #include "../UserComponent/Player.h"
 #include "../UserComponent/Minion.h"
+#include "../UserComponent/Field.h"
+#include <Component/Renderer.h>
+#include <Component/Material.h>
+#include <Component/SoundSource.h>
+#include <Component/Animation.h>
 
 CFirTestScene::CFirTestScene()
 {
@@ -23,6 +28,12 @@ CFirTestScene::~CFirTestScene()
 
 bool CFirTestScene::Init()
 {
+	PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
+
+	_SMgr->CreateSoundEffect("bgm1", TEXT("SurgeonAttack.wav"));
+	_SMgr->SoundPlay("bgm1", ST_BGM);
+
+
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 
@@ -90,6 +101,17 @@ bool CFirTestScene::Init()
 
 	pObject = CGameObject::CreateObject("Minion", pDefaultLayer);
 
+
+	PUN::CSoundSource *pSoundSrc = pObject->AddComponent<PUN::CSoundSource>("Ssource");
+	const char *pStrName = "heeeeeik";
+	const TCHAR *pFileName = TEXT("evillaugh.wav");
+	pSoundSrc->LoadSounds(&pStrName, &pFileName, 1);
+	//pSoundSrc->SetRadius(1500.f);
+	pSoundSrc->SetPitch(0, -0.2f);
+	pSoundSrc->Play(0, true);
+
+	SAFE_RELEASE(pSoundSrc);
+
 	CMinion3D*	pMinion = pObject->AddComponent<CMinion3D>("Minion");
 
 	pMinion->SetTargetTransform(m_pTr);
@@ -97,6 +119,20 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pMinion);
 
 	SAFE_RELEASE(pObject);
+	
+	pObject = CGameObject::CreateObject("HandGun", pDefaultLayer, true);
+	PUN::CRenderer* renderer = pObject->AddComponent<PUN::CRenderer>("renderer");
+	pTransform = pObject->GetTransform();
+	pTransform->SetWorldScale(1.f, 1.f, 1.f);
+	pTransform->SetWorldPos(0.f, 0.f, 15.f);
+	pTransform->SetWorldRotX(-90.f);
+	renderer->SetMesh("gun", TEXT("glock_OnlyFire.FBX"), MESH_PATH);
+
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(renderer);
+	SAFE_RELEASE(pObject);
+	
+	
 
 	CGameObject*	pDecalObj = CGameObject::CreatePrototype("Decal");
 

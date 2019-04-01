@@ -86,6 +86,11 @@ void CCore::SetGameMode(GAME_MODE eMode)
 	GET_SINGLE(CRenderManager)->SetGameMode(eMode);
 }
 
+void CCore::UpdateSoundManager()
+{
+	PUN::CSoundManager::GetInst()->Update();
+}
+
 bool CCore::Init(HINSTANCE hInst, unsigned int iWidth, unsigned int iHeight, const TCHAR * pTitle, const TCHAR * pClass, int iIconID, int iSmallIconID, bool bWindowMode)
 {
 	m_hInst = hInst;
@@ -260,6 +265,7 @@ void CCore::Logic()
 
 	Input(fTime);
 	Update(fTime);
+	UpdateSoundManager();
 	LateUpdate(fTime);
 	Collision(fTime);
 	Render(fTime);

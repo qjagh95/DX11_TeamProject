@@ -1,4 +1,4 @@
-#include "EngineHeader.h"
+#include "../EngineHeader.h"
 #include "Component.h"
 
 PUN_USING

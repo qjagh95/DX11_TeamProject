@@ -5,6 +5,7 @@
 #include "../PathManager.h"
 #include "../Resource/FbxLoader.h"
 
+//#define DDONGCOM 1 //
 PUN_USING
 
 CAnimation::CAnimation() :
@@ -1150,7 +1151,14 @@ int CAnimation::Update(float fTime)
 		float	fAnimationTime = m_fAnimationGlobalTime + m_pCurClip->fStartTime;
 
 		int BoneSize = (int)m_vecBones.size();
-		parallel_for((int)0, BoneSize, [&](int i) 
+
+		//Note : Haswell 이전 CPU는 SIMD를 다중 스레드로 표현하지 않으므로,
+		//이 구형 CPU들에서 XMVECTOR나 XMMATRIX를 이용한 concurrency 이용은
+		//CPU에 아예 명령어가 없어서 사용이 불가능한듯 싶다...
+		//그래서 그대로 parallel_for를 사용하면 Instruction Error 발생
+
+#ifdef DDONGCOM
+		for (int i = 0; i < BoneSize; ++i)
 		{
 			if (bChange)
 			{
@@ -1164,7 +1172,7 @@ int CAnimation::Update(float fTime)
 			if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 			{
 				*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-				return;
+				continue;
 			}
 
 			int	iFrameIndex = m_pCurClip->iChangeFrame;
@@ -1175,16 +1183,54 @@ int CAnimation::Update(float fTime)
 
 			float	fPercent = m_fChangeTime / m_fChangeLimitTime;
 
-			XMVECTOR vS = XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
-			XMVECTOR vT = XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
-			XMVECTOR vR = XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
-			XMVECTOR vZero = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+			XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+			XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
+			XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
+			XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+			Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+
+			*m_vecBones[i]->matBone = matBone;
+			matBone = *m_vecBones[i]->matOffset * matBone;
+			*m_vecBoneMatrix[i] = matBone;
+		}
+#else
+		concurrency::parallel_for((int)0, BoneSize, [&](int i)
+		{
+			if (bChange)
+			{
+				m_pCurClip = m_pNextClip;
+				m_pNextClip = nullptr;
+				m_fAnimationGlobalTime = 0.f;
+				m_fChangeTime = 0.f;
+			}
+
+			// 키프레임이 없을 경우
+			if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
+			{
+				*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
+				return 0;
+			}
+
+			int	iFrameIndex = m_pCurClip->iChangeFrame;
+			int	iNextFrameIndex = m_pNextClip->iStartFrame;
+
+			const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
+			const PKEYFRAME pNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+
+			float	fPercent = m_fChangeTime / m_fChangeLimitTime;
+
+			XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+			XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
+			XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
+			XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 			Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 
 			*m_vecBones[i]->matBone = matBone;
 			matBone = *m_vecBones[i]->matOffset * matBone;
 			*m_vecBoneMatrix[i] = matBone;
 		});
+#endif
+		
 
 		//// 본 수만큼 반복한다.
 		//for (size_t i = 0; i < m_vecBones.size(); ++i)
@@ -1263,13 +1309,15 @@ int CAnimation::Update(float fTime)
 				iNextFrameIndex = iStartFrame;
 
 			int BoneSize = (int)m_vecBones.size();
-			parallel_for((int)0, BoneSize, [&](int i)
+
+#ifdef DDONGCOM
+			for (int i = 0; i < BoneSize; ++i)
 			{
 				// 키프레임이 없을 경우
 				if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 				{
 					*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-					return;
+					continue;
 				}
 
 				const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
@@ -1284,16 +1332,50 @@ int CAnimation::Update(float fTime)
 
 				float	fPercent = (float)((fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime);
 
-				XMVECTOR vS = XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
-				XMVECTOR vT = XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
-				XMVECTOR vR = XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
-				XMVECTOR vZero = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+				XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+				XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
+				XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
+				XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+				Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+
+				*m_vecBones[i]->matBone = matBone;
+				matBone = *m_vecBones[i]->matOffset * matBone;
+				*m_vecBoneMatrix[i] = matBone;
+			}
+#else
+			concurrency::parallel_for((int)0, BoneSize, [&](int i)
+			{
+				// 키프레임이 없을 경우
+				if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
+				{
+					*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
+					return 0;
+				}
+
+				const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
+				const PKEYFRAME pNextKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+
+				m_vBlendPos = pCurKey->vPos;
+				m_vBlendScale = pCurKey->vScale;
+				m_vBlendRot = pCurKey->vRot;
+
+				// 현재 프레임의 시간을 얻어온다.
+				double	 dFrameTime = pCurKey->dTime;
+
+				float	fPercent = (float)((fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime);
+
+				XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+				XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
+				XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
+				XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 				Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 
 				*m_vecBones[i]->matBone = matBone;
 				matBone = *m_vecBones[i]->matOffset * matBone;
 				*m_vecBoneMatrix[i] = matBone;
 			});
+#endif
+			
 
 			// 본 수만큼 반복한다.
 			//for (size_t i = 0; i < m_vecBones.size(); ++i)

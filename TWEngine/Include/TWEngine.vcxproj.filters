@@ -162,6 +162,9 @@
     <Filter Include="06. Component\16. Volume Fog">
       <UniqueIdentifier>{2b533f18-5d35-441c-ba28-f787ae103342}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Component\17.SoundSource">
+      <UniqueIdentifier>{608ef157-12f6-44c1-a9bd-9f7d5311c900}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -394,6 +397,9 @@
     </ClCompile>
     <ClCompile Include="Component\VolumeFog.cpp">
       <Filter>06. Component\16. Volume Fog</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\SoundSource.cpp">
+      <Filter>06. Component\17.SoundSource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -645,6 +651,9 @@
     </ClInclude>
     <ClInclude Include="Component\VolumeFog.h">
       <Filter>06. Component\16. Volume Fog</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\SoundSource.h">
+      <Filter>06. Component\17.SoundSource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
