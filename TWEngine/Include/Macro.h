@@ -40,11 +40,13 @@
 
 #define FINAL_PASS_SHADER					"HDRShader"
 #define ADAPTATION_SHADER					"AdaptationShader"
+#define BLOOM_SHADER						"BloomShader"
 
 #define HDR_COMPUTE_SHADER					"HDRComputeShader"
 #define HDR_SECOND_COMPUTE_SHADER			"HDRSecondComputeShader"
 #define ADAPT_COMPUTE_SHADER				"AdaptComputeShader"
 #define ADAPT_SECOND_COMPUTE_SHADER			"AdaptSecondComputeShader"
+#define BLOOM_COMPUTE_SHADER				"BloomComputeShdader"
 
 #define MOTION_BLUR_SHADER					"MotionBlurShader"
 #define DOWNSCALE_SHADER					"DownScaleShader"

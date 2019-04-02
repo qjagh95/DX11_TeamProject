@@ -32,7 +32,7 @@ public:
 	virtual bool Init() = 0;
 	virtual bool AddUAV(const string& strUAVKey);
 	virtual void SetSourceSRV(ID3D11ShaderResourceView* pSrcSRV);
-	virtual void Dispatch();
+	virtual void Dispatch(float fTime);
 	virtual void SetShaderResourceTo	(int iRegister, int iIndex,  SHADER_TYPE eType = ST_PIXEL);
 	virtual void ResetShaderResourceFrom(int iRegister, int iIndex,  SHADER_TYPE eType = ST_PIXEL);	
 	virtual void SetShaderResourceTo() = 0;
@@ -41,6 +41,8 @@ public:
 protected:	
 	virtual void SetShaderResource(int iPass) {};
 	virtual void ResetShaderResource(int iPass) {};
+	virtual void SetShaderResource(int iPass, float fTime) {};
+	virtual void ResetShaderResource(int iPass, float fTime) {};
 };
 
 PUN_END

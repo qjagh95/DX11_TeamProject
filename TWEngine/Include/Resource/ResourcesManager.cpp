@@ -183,9 +183,9 @@ bool CResourcesManager::Init()
 
 
 	CreateCylinderVolum(CYLINDER_VOLUME, 0.5f, 3, 32);
-	CreateCylinderVolumColor("XGizmoCylinder", Vector4(Vector4::Red), 0.5f, 3, 32);
-	CreateCylinderVolumColor("YGizmoCylinder", Vector4(Vector4::Green), 0.5f, 3, 32);
-	CreateCylinderVolumColor("ZGizmoCylinder", Vector4(Vector4::Blue), 0.5f, 3, 32);
+	CreateCylinderVolumColor("XGizmoCylinder", Vector4(Vector4::Red.x, Vector4::Red.y, Vector4::Red.z, 2.f), 0.5f, 3, 32);
+	CreateCylinderVolumColor("YGizmoCylinder", Vector4(Vector4::Green.x, Vector4::Green.y, Vector4::Green.z, 2.f), 0.5f, 3, 32);
+	CreateCylinderVolumColor("ZGizmoCylinder", Vector4(Vector4::Blue.x, Vector4::Blue.y, Vector4::Blue.z, 2.f), 0.5f, 3, 32);
 	CreateCapsulVolum(CAPSUL_VOLUME, 0.5f, 3, 64, 128);
 	CreateCornVolum(CORN_VOLUME, 0.5f, 0.5f, 64, 128);
 
@@ -929,7 +929,7 @@ void CResourcesManager::CreateCornVolum(const string & KeyName, float Radius, fl
 
 void CResourcesManager::CreateCylinderVolumColor(const string & KeyName, Vector4 _vColor, float Radius, int Height, int SliceCount)
 {
-	vector<VertexColor> vecVertex;
+	vector<VertexNormalColor> vecVertex;
 
 	//돌려야 되니 360도
 	auto theta = PUN_PI * 2.0f / SliceCount;
@@ -939,7 +939,7 @@ void CResourcesManager::CreateCylinderVolumColor(const string & KeyName, Vector4
 	{
 		for (auto j = 0; j < SliceCount; ++j)
 		{
-			VertexColor vertex;
+			VertexNormalColor vertex;
 
 			//구면좌표계를 보면 x = Radius * cos(세타), z는 Radius * sin(세타)
 			if (j < SliceCount / 2)
@@ -947,20 +947,20 @@ void CResourcesManager::CreateCylinderVolumColor(const string & KeyName, Vector4
 			else
 				vertex.vPos = Vector3{ Radius * -cos(theta * j - PUN_PI), (0.5f - i) * Height, Radius * -sin(theta * j - PUN_PI) };
 
-			////X, Z의 Normal을 들고있는 정점
-			//vertex.vNormal = vertex.vPos;
-			//vertex.vNormal.y = 0.0f;
-			//vertex.vNormal.Normalize();
+			//X, Z의 Normal을 들고있는 정점
+			vertex.vNormal = vertex.vPos;
+			vertex.vNormal.y = 0.0f;
+			vertex.vNormal.Normalize();
 			vertex.vColor = _vColor;
 
 			vecVertex.push_back(vertex);
 
 			//윗, 아랫면의 Y의 Normal을 들고 있는 정점
 			//이놈때문에 밑에 인덱스 코드 복잡함.
-			//if (0 == i)
-			//	vertex.vNormal = Vector3(0.0f, 1.0f, 0.0f);
-			//else if (1 == i)
-			//	vertex.vNormal = Vector3(0.0f, -1.0f, 0.0f);
+			if (0 == i)
+				vertex.vNormal = Vector3(0.0f, 1.0f, 0.0f);
+			else if (1 == i)
+				vertex.vNormal = Vector3(0.0f, -1.0f, 0.0f);
 
 			//정점을 2개추가한다.
 			vecVertex.push_back(vertex);
@@ -1024,6 +1024,6 @@ void CResourcesManager::CreateCylinderVolumColor(const string & KeyName, Vector4
 		vecIndex.push_back(index[2]);
 	}
 
-	CreateMesh(KeyName, STANDARD_COLOR_SHADER, POS_LAYOUT, &vecVertex[0], (int)vecVertex.size(), sizeof(VertexColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertex[0], (int)vecVertex.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
 }

@@ -10,6 +10,13 @@ RWTexture2D<float4> g_RWOutputTex : register(u0);
 
 static const float4 LUM_FACTOR = float4(0.299, 0.587, 0.114, 0);
 
+cbuffer DownScaleConstants : register(b2)
+{
+    uint2 g_Res;
+    uint g_Domain;
+    uint g_GroupSize;
+}
+
 #define COM_PI 3.145692
 #define MAX_SAMPLE 7
 

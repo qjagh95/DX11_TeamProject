@@ -50,7 +50,9 @@ CCore::~CCore()
 	GUIManager::Delete();
 	CSoundManager::Delete();
 	CoUninitialize();
+	
 	Safe_Delete_Map(m_ManagerMap);
+
 }
 
 HWND CCore::GetWindowHandle() const

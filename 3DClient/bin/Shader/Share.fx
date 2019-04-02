@@ -197,8 +197,16 @@ SamplerState	g_MultiSmp3		    : register(s7);
 SamplerState	g_MultiSmp4		    : register(s8);
 
 SamplerState PointSampler : register(s9);
+//SamplerState LinearSampler : register(s1);
 
 static const float3 LUM_FACTOR = float3(0.299, 0.587, 0.114);
+
+cbuffer FinalPassConstants : register(b10)
+{
+    float g_fMiddleGrey;
+    float g_fLumWhiteSqr;
+    float2 fEmpty;
+}
 
 struct _tagLightInfo
 {

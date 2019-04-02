@@ -168,6 +168,12 @@
     <Filter Include="06. Component\18.PrivateEditor">
       <UniqueIdentifier>{c4ed15b5-4edc-46cf-86bc-c6142a1201c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Rendering\06. Filter\06. Bloom">
+      <UniqueIdentifier>{dd42b6aa-9e3c-4199-9f2e-74d755ef18a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Rendering\06. Filter\05. Adaptation">
+      <UniqueIdentifier>{db5b40b4-9811-4187-9d51-7d192ea4f16c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -401,17 +407,20 @@
     <ClCompile Include="Component\VolumeFog.cpp">
       <Filter>06. Component\16. Volume Fog</Filter>
     </ClCompile>
-    <ClCompile Include="Component\SoundSource.cpp">
-      <Filter>06. Component\17.SoundSource</Filter>
-    </ClCompile>
     <ClCompile Include="Component\EditTest.cpp">
       <Filter>06. Component\18.PrivateEditor</Filter>
     </ClCompile>
     <ClCompile Include="Component\Gizmo.cpp">
       <Filter>06. Component\18.PrivateEditor</Filter>
     </ClCompile>
-    <ClCompile Include="GizmoManager.cpp">
-      <Filter>EditScene</Filter>
+    <ClCompile Include="Component\SoundSource.cpp">
+      <Filter>06. Component\17.SoundSource</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\CSBloomFilter.cpp">
+      <Filter>03. Rendering\06. Filter\06. Bloom</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering\CSAdaptFilter.cpp">
+      <Filter>03. Rendering\06. Filter\05. Adaptation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -664,17 +673,20 @@
     <ClInclude Include="Component\VolumeFog.h">
       <Filter>06. Component\16. Volume Fog</Filter>
     </ClInclude>
-    <ClInclude Include="Component\SoundSource.h">
-      <Filter>06. Component\17.SoundSource</Filter>
-    </ClInclude>
     <ClInclude Include="Component\EditTest.h">
       <Filter>06. Component\18.PrivateEditor</Filter>
     </ClInclude>
     <ClInclude Include="Component\Gizmo.h">
       <Filter>06. Component\18.PrivateEditor</Filter>
     </ClInclude>
-    <ClInclude Include="GizmoManager.h">
-      <Filter>EditScene</Filter>
+    <ClInclude Include="Component\SoundSource.h">
+      <Filter>06. Component\17.SoundSource</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\CSBloomFilter.h">
+      <Filter>03. Rendering\06. Filter\06. Bloom</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering\CSAdaptFilter.h">
+      <Filter>03. Rendering\06. Filter\05. Adaptation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -686,12 +698,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\Shader\Adaptation.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\PostHDR.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\Shader\BackColorShader.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
@@ -728,12 +734,6 @@
     <FxCompile Include="..\..\3DClient\bin\Shader\DownScale.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\3DClient\bin\Shader\Adaption.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\3DClient\bin\Shader\HDR.fx">
-      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\3DClient\bin\Shader\Decal.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
@@ -741,6 +741,15 @@
       <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
     <FxCompile Include="..\..\3DClient\bin\Shader\VolumeFog.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\Adapt_Bloom.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\3DClient\bin\Shader\HDR.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\01. Compute</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\PostHDR.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
   </ItemGroup>

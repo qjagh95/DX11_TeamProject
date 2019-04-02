@@ -13,15 +13,9 @@ CPostEffect::~CPostEffect()
 {
 }
 
-void CPostEffect::SetAdaptation(Vector4 vAdaptation)
+void CPostEffect::SetAdaptation(float fAdaptation)
 {
-	m_tAdaptInfo.vAdaptation = vAdaptation;
-}
-
-void CPostEffect::SetAdaptation(float x, float y, float z, float w)
-{
-	Vector4 vAdaptation = Vector4(x, y, z, w);
-	m_tAdaptInfo.vAdaptation = vAdaptation;
+	m_tAdaptInfo.fAdaptation = fAdaptation;
 }
 
 float CPostEffect::SetMiddleGrey(float fMiddleGrey)
@@ -50,9 +44,25 @@ void CPostEffect::SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime
 	m_tFinalPassCBInfo.fLumWhite *= m_tFinalPassCBInfo.fLumWhite;
 }
 
-void CPostEffect::SetAdaptationCB(Vector4 vAdaptation, float fTime)
+void CPostEffect::SetAdaptationCB(float fAdaptation, float fTime)
 {
-	m_tAdaptInfo.vAdaptation = vAdaptation;
+	m_tAdaptInfo.fAdaptation = fAdaptation;
+	//GET_SINGLE(CShaderManager)->UpdateCBuffer("Adaptation", &m_tAdaptInfo);
+}
+
+void CPostEffect::SetAdaptationCB(float fAdaptation, float fBloomThreshold, float fTime)
+{
+	m_tAdaptInfo.fAdaptation = fAdaptation;
+}
+
+void CPostEffect::SetBloomThresholdCB(float fThreshold, float fTime)
+{
+	m_tBloomThresholdInfo.fBloomThreshold = fThreshold;
+}
+
+void CPostEffect::SetBloomCB(float fBloomScale, float fTime)
+{
+	m_tBloomInfo.fBloomScale = fBloomScale;
 }
 
 void CPostEffect::UpdateCBuffer(int iPass)
@@ -60,7 +70,6 @@ void CPostEffect::UpdateCBuffer(int iPass)
 	switch (iPass)
 	{
 	case 0:
-		//GET_SINGLE(CShaderManager)->UpdateCBuffer("Adaptation", &m_tAdaptInfo);
 		GET_SINGLE(CShaderManager)->UpdateCBuffer("HDRFirst", &m_tDownScaleCBInfo);
 
 		break;
@@ -68,17 +77,21 @@ void CPostEffect::UpdateCBuffer(int iPass)
 		GET_SINGLE(CShaderManager)->UpdateCBuffer("HDRSecond", &m_tFinalPassCBInfo);
 
 		break;
+	case 2:
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("Adaptation",	&m_tAdaptInfo);
+		break;
+	case 3:
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("BloomThreshold", &m_tBloomThresholdInfo);
+		break;
+	case 4:
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("Bloom", &m_tBloomInfo);
+		break;
 	}
-}
-
-const Vector4& CPostEffect::GetAdaptation() const
-{
-	return m_tAdaptInfo.vAdaptation;
 }
 
 bool CPostEffect::Init()
 {
-	m_tAdaptInfo.vAdaptation = Vector4(1.f, 1.f, 1.f, 1.f);
+	m_tAdaptInfo.fAdaptation = 1.f;
 	m_fHeight = _RESOLUTION.iHeight / 4;
 	m_fWidth = _RESOLUTION.iWidth / 4;
 
@@ -92,6 +105,8 @@ bool CPostEffect::Init()
 
 	m_tFinalPassCBInfo.fLumWhite = m_fLumWhite * m_fLumWhite;
 	m_tFinalPassCBInfo.fMiddleGrey = m_fMiddleGrey * m_fMiddleGrey;
+
+	m_tBloomThresholdInfo.fBloomThreshold = 1.1f;
 
 	return true;
 }

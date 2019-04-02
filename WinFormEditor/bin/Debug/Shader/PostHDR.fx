@@ -1,8 +1,9 @@
 #include "Share.fx"
 
-Texture2D<float4> OriginTex       : register(t0);
-Texture2D<float4> DepthTex        : register(t1);
-Texture2D<float4> BlurTex         : register(t2);//모션블러와 동시에 켜지지 않게?
+Texture2D<float4> OriginTex         : register(t0);
+Texture2D<float4> DepthTex          : register(t1);
+Texture2D<float4> BlurTex           : register(t2); //모션블러와 동시에 켜지지 않게?
+Texture2D<float4> BloomTex          : register(t3);
 
 StructuredBuffer<float> AvgLum    : register(t10);
 
@@ -23,19 +24,18 @@ static const float2 varrNullUV[4] =
     float2(1.f, 1.f)
 };
 
+cbuffer BloomConstants : register(b8)
+{
+    float fBloomScale;
+    float3 vEmpty;
+}
+
 cbuffer FinalPass : register(b9)
 {
     int     g_iHDR;
     int     g_iBlur;
     int     g_iDepthFog;
-    float   g_fFinalEmpty;
-}
-
-cbuffer HDRFinal : register(b10)
-{
-    float   g_fMiddleGrey;
-    float   g_fLumWhiteSqr;
-    float2  g_vHDRFinalEmpty;
+    int     g_iBloom;
 }
 
 float3 ToneMapping(float3 vHDRColor)
@@ -92,9 +92,18 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
     if (g_iHDR == 1)
         vColor = ToneMapping(vColor);
 
+    // Bloom 을 적용할 건지
+    if(g_iBloom == 1)
+    {        
+    // Bloom Contribution 을 추가한다
+        vColor += fBloomScale * BloomTex.Sample(g_DiffuseSmp, Input.vUV.xy).xyz;
+
+    // 톤 매핑
+        vColor = ToneMapping(vColor);
+    }
+
     output.vTarget0 = float4(vColor, 1.f);
 
     // LDR 값 출력
     return output;
 }
-

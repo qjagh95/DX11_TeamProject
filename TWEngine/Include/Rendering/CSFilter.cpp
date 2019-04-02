@@ -45,13 +45,29 @@ void CCSFilter::SetSourceSRV(ID3D11ShaderResourceView * pSrcSRV)
 	m_pSrcSRV = pSrcSRV;
 }
 
-void CCSFilter::Dispatch()
+void CCSFilter::Dispatch(float fTime)
 {
 	for (int i = 0;i < m_vecUAV.size(); ++i)
 	{
-		SetShaderResource(i);
-		m_vecUAV[i]->Dispatch();
-		ResetShaderResource(i);
+		if (m_eFilterType == CFT_ADAPTATION)
+		{
+			SetShaderResource(i, fTime);
+			m_vecUAV[i]->Dispatch();
+			ResetShaderResource(i, fTime);
+		}
+		else if (m_eFilterType == CFT_BLOOM)
+		{
+			SetShaderResource(i, fTime);
+			m_vecUAV[i]->Dispatch();
+			ResetShaderResource(i, fTime);
+		}
+
+		else
+		{
+			SetShaderResource(i);
+			m_vecUAV[i]->Dispatch();
+			ResetShaderResource(i);
+		}
 	}
 }
 

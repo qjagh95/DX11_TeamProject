@@ -140,7 +140,9 @@ bool CRenderManager::Init()
 	m_pFilter[1]->Disable();
 	m_pFilter[2]->Disable();
 	m_pFilter[3]->Disable();
-	//m_tFinalCBuffer.iHDR = 1;
+	m_tFinalCBuffer.iHDR = 1;
+	//m_pFilter[5]->Disable();
+	m_tFinalCBuffer.iBloom = 1;
 	//m_tFinalCBuffer.iBlur = 1;
 
 	return true;
@@ -331,6 +333,7 @@ void CRenderManager::RenderDeferred(float fTime)
 #endif
 	
 	GET_SINGLE(CCollisionManager)->Render(fTime);
+
 
 
 	// UIÃâ·Â
@@ -818,12 +821,12 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 
 void CRenderManager::RenderComputeProcess(float fTime)
 {
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 6; ++i)
 	{
 		if (!m_pFilter[i]->GetEnable())
 			continue;
 
-		m_pFilter[i]->Dispatch();
+		m_pFilter[i]->Dispatch(fTime);
 	}
 }
 

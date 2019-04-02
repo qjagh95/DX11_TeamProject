@@ -7,6 +7,8 @@
 #include "DepthState.h"
 #include "RenderState.h"
 #include "CSHDRFilter.h"
+#include "CSAdaptFilter.h"
+#include "CSBloomFilter.h"
 #include "RenderTarget.h"
 #include "RasterizerState.h"
 #include "MotionBlurFilter.h"
@@ -317,12 +319,39 @@ bool CViewManager::CreateUAV()
 	if (!CreateUAV("MotionBlur", MOTION_BLUR_SHADER, tRS.iWidth / 10, tRS.iHeight / 10, 1, tRS.iWidth, tRS.iHeight))
 		return false;
 
-	if (!CreateUAV("HDRFirstPass", HDR_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32_FLOAT, GRT_BUFFER))
+	if (!CreateUAV("HDRFirstPass", HDR_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
 		return false;
 	
-	if (!CreateUAV("HDRSecondPass", HDR_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32_FLOAT, GRT_BUFFER))
+	if (!CreateUAV("HDRSecondPass", HDR_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
 	return false;
 
+	if (!CreateUAV("AdaptationFirst", ADAPT_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
+		return false;
+
+	if (!CreateUAV("AdaptationOld", ADAPT_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
+		return false;
+
+	if (!CreateUAV("AdaptationSecond", ADAPT_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
+		return false;
+
+	if (!CreateUAV("BloomFirst", ADAPT_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32G32B32A32_FLOAT, GRT_BUFFER))
+		return false;
+
+	if (!CreateUAV("BloomOld", ADAPT_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32B32A32_FLOAT, GRT_BUFFER2))
+		return false;
+
+	if (!CreateUAV("BloomSecond", ADAPT_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32B32A32_FLOAT, GRT_BUFFER2))
+		return false;
+
+	if (!CreateUAV("Temp0", BLOOM_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+		return false;
+
+	if (!CreateUAV("Temp1", VERTICAL_BLUR_SHADER, 180, 3, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+		return false;
+
+	if (!CreateUAV("BloomFinal", HORIZONTAL_BLUR_SHADER, 3, 180, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+		return false;
+	
 	return true;
 }
 
@@ -542,6 +571,26 @@ bool CViewManager::CreateFilter()
 	pHDR->AddUAV("HDRFirstPass");
 	pHDR->AddUAV("HDRSecondPass");
 
+	CCSAdaptFilter*	pAdapt = CreateFilter<CCSAdaptFilter>(CFT_ADAPTATION);
+
+	if (!pAdapt)
+		return false;
+
+	pAdapt->AddUAV("AdaptationFirst");
+	pAdapt->AddUAV("AdaptationSecond");
+	pAdapt->AddUAV("AdaptationOld");
+
+	CCSBloomFilter*	pBloom = CreateFilter<CCSBloomFilter>(CFT_BLOOM);
+
+	if (!pBloom)
+		return false;
+
+	pBloom->AddUAV("BloomFirst");
+	pBloom->AddUAV("BloomSecond");
+	pBloom->AddUAV("Temp0");
+	pBloom->AddUAV("Temp1");
+	pBloom->AddUAV("BloomFinal");
+	pBloom->AddUAV("BloomOld");
 
 	return true;
 }

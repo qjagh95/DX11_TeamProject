@@ -188,20 +188,7 @@ bool CShaderManager::Init()
 	pEntry[ST_PIXEL] = "ParticlePS";
 	pEntry[ST_GEOMETRY] = "ParticleGS";
 	if (!LoadShader(PARTICLE_SHADER, TEXT("Particle.fx"), pEntry))
-		return false;
-
-	//pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationFirstPass";
-	//if (!LoadComputeShader(ADAPT_COMPUTE_SHADER, TEXT("Adaption.fx"), pEntry))
-	//	return false;
-
-	//pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationSecondPass";
-	//if (!LoadComputeShader(ADAPT_SECOND_COMPUTE_SHADER, TEXT("Adaption.fx"), pEntry))
-	//	return false;
-
-	//pEntry[ST_VERTEX] = (char*)"FullScreenAdaptQuadVS";
-	//pEntry[ST_PIXEL] = (char*)"FinalPassAdaptPS";
-	//if (!LoadShader(ADAPTATION_SHADER, TEXT("Adaptation.fx"), pEntry))
-	//	return false;
+		return false;	
 
 	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement((char*)"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
@@ -222,6 +209,19 @@ bool CShaderManager::Init()
 	if (!LoadComputeShader(HDR_SECOND_COMPUTE_SHADER, TEXT("HDR.fx"), pEntry))
 		return false;
 
+	// Adaptation
+	pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationFirstPass";
+	if (!LoadComputeShader(ADAPT_COMPUTE_SHADER, TEXT("Adapt_Bloom.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"DownScaleAdaptationSecondPass";
+	if (!LoadComputeShader(ADAPT_SECOND_COMPUTE_SHADER, TEXT("Adapt_Bloom.fx"), pEntry))
+		return false;
+
+	// Bloom
+	pEntry[ST_COMPUTE] = (char*)"BloomReveal";
+	if (!LoadComputeShader(BLOOM_COMPUTE_SHADER, TEXT("Adapt_Bloom.fx"), pEntry))
+		return false;
 
 	pEntry[ST_COMPUTE] = (char*)"MotionBlur";
 	if (!LoadComputeShader(MOTION_BLUR_SHADER, TEXT("MotionBlur.fx"), pEntry))
@@ -231,12 +231,12 @@ bool CShaderManager::Init()
 	if (!LoadComputeShader(DOWNSCALE_SHADER, TEXT("DownScale.fx"), pEntry))
 		return false;
 
-	pEntry[ST_COMPUTE] = (char*)"HorizontalBlur";
-	if (!LoadComputeShader(HORIZONTAL_BLUR_SHADER, TEXT("Blur.fx"), pEntry))
+	pEntry[ST_COMPUTE] = (char*)"HorizFilter";
+	if (!LoadComputeShader(HORIZONTAL_BLUR_SHADER, TEXT("Adapt_Bloom.fx"), pEntry))
 		return false;
 
-	pEntry[ST_COMPUTE] = (char*)"VerticalBlur";
-	if (!LoadComputeShader(VERTICAL_BLUR_SHADER, TEXT("Blur.fx"), pEntry))
+	pEntry[ST_COMPUTE] = (char*)"VerticalFilter";
+	if (!LoadComputeShader(VERTICAL_BLUR_SHADER, TEXT("Adapt_Bloom.fx"), pEntry))
 		return false;
 
 	// 상수버퍼 만들기
@@ -247,6 +247,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("PublicCBuffer",	5,	sizeof(PublicCBuffer),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Collider",		8,	sizeof(Vector4),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Animation2D",	8,	sizeof(Animation2DCBuffer), CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Bloom",			8,	sizeof(BloomCB),			CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("Button",			9,	sizeof(ButtonCBuffer),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Bar",			9,	sizeof(BarCBuffer),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Fog",			9,	sizeof(FogCBuffer),			CST_VERTEX | CST_PIXEL);
@@ -254,9 +255,10 @@ bool CShaderManager::Init()
 	CreateCBuffer("Particle",		10, sizeof(ParticleCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("HDRSecond",		10, sizeof(HDR2ndPassCB),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("LandScape",		11, sizeof(LandScapeCBuffer),	CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("HDRFirst",		1,	sizeof(HDR1stPassCB),		CST_COMPUTE);
 	CreateCBuffer("Blur",			1,	sizeof(BlurCBuffer),		CST_COMPUTE);
+	CreateCBuffer("HDRFirst",		2,	sizeof(HDR1stPassCB),		CST_COMPUTE);
 	CreateCBuffer("Adaptation",		3,	sizeof(AdaptationCB),		CST_COMPUTE);
+	CreateCBuffer("BloomThreshold", 4,	sizeof(BloomThresholdCB),	CST_COMPUTE);
 	
 	return true;
 }
