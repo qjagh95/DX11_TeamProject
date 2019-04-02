@@ -55,6 +55,7 @@ namespace PUN
 		float m_fVolume;
 		float m_fPitch;
 		std::vector<shared_ptr<DirectX::SoundEffectInstance>> m_vecsPtrSound;
+		std::vector<shared_ptr<DirectX::SoundEffect>> m_vecsPtrSound_Data; //이게 있어야 Forget이 실행되어도 컴포넌트에 사운드가 남아있게 됨
 		DirectX::AudioEmitter m_tAudioEmitter;
 	};
 

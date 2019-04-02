@@ -146,6 +146,7 @@ bool PUN::CSoundSource::LoadSounds(const vector<std::string>& vecStr)
 		m_vecsPtrSound.push_back(sPtrSoundInst);
 		m_mapSndInstKey.insert(std::make_pair(vecStr[i], i));
 		m_vecSndStr.push_back(vecStr[i]);
+		m_vecsPtrSound_Data.push_back(sPtrSound);
 	}
 
 	return true;
@@ -168,6 +169,7 @@ bool PUN::CSoundSource::LoadSounds(const char ** arrStr, int iCnt)
 		m_vecsPtrSound.push_back(sPtrSoundInst);
 		m_mapSndInstKey.insert(std::make_pair(arrStr[i], i));
 		m_vecSndStr.push_back(arrStr[i]);
+		m_vecsPtrSound_Data.push_back(sPtrSound);
 	}
 
 	return true;
@@ -192,6 +194,7 @@ bool PUN::CSoundSource::LoadSounds(const char ** arrStrName, const TCHAR ** arrF
 		m_vecsPtrSound.push_back(sPtrSoundInst);
 		m_mapSndInstKey.insert(std::make_pair(arrStrName[i], i));
 		m_vecSndStr.push_back(arrStrName[i]);
+		m_vecsPtrSound_Data.push_back(sPtrSound);
 	}
 	return true;
 }
@@ -215,6 +218,7 @@ bool PUN::CSoundSource::LoadSounds(const vector<std::string>& vecStrName, const 
 		m_vecsPtrSound.push_back(sPtrSoundInst);
 		m_mapSndInstKey.insert(std::make_pair(vecStrName[i], i));
 		m_vecSndStr.push_back(vecStrName[i]);
+		m_vecsPtrSound_Data.push_back(sPtrSound);
 	}
 
 	return true;

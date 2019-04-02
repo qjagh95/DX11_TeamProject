@@ -13,6 +13,8 @@
 #include "../SceneComponent/SecTestScene.h"
 #include "../SceneComponent/TrdTestScene.h"
 
+#include <SoundManager.h>
+
 CPlayer::CPlayer()
 	: m_pAnimation(nullptr)
 {
@@ -57,6 +59,13 @@ bool CPlayer::Init()
 	GET_SINGLE(CInput)->BindAction("Fire1", KEY_PRESS, this, &CPlayer::Fire1);
 	GET_SINGLE(CInput)->BindAction("Fire1", KEY_RELEASE, this, &CPlayer::Fire1Release);
 	GET_SINGLE(CInput)->AddKeyAction("Fire1", DIK_SPACE, bSKey);
+
+	PUN::CInput* _input = GET_SINGLE(CInput);
+	_input->BindAction("YODJPUMPTHISPARTY", KEY_PRESS, this, &CPlayer::YoDjPumpThisParty);
+	_input->AddKeyAction("YODJPUMPTHISPARTY", DIK_J);
+
+	_input->BindAction("KingHasCome", KEY_PRESS, this, &CPlayer::KingDdenGodTtack);
+	_input->AddKeyAction("KingHasCome", DIK_K);
 
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
 
@@ -188,4 +197,14 @@ void CPlayer::Rotation(float fScale, float fTime)
 		return;
 
 	m_pTransform->RotationY(180.f * fScale, fTime);
+}
+
+void CPlayer::YoDjPumpThisParty(float fTime)
+{
+	PUN::CSoundManager::GetInst()->PlayBgm("bgm2", TEXT("room-2010.wav"),true, true, false);
+}
+
+void CPlayer::KingDdenGodTtack(float fTime)
+{
+	PUN::CSoundManager::GetInst()->PlayBgm(TEXT("orig_sudden.wav"), true, true, true);
 }

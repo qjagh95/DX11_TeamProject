@@ -32,5 +32,9 @@ public:
 	void Fire1(float fTime);
 	void Fire1Release(float fTime);
 	void Rotation(float fScale, float fTime);
+
+	//Sound Test
+	void YoDjPumpThisParty(float fTime);
+	void KingDdenGodTtack(float fTime);
 };
 

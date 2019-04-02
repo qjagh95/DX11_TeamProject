@@ -30,8 +30,8 @@ bool CFirTestScene::Init()
 {
 	PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
 
-	_SMgr->CreateSoundEffect("bgm1", TEXT("SurgeonAttack.wav"));
-	_SMgr->SoundPlay("bgm1", ST_BGM);
+	_SMgr->CreateSoundEffect("bgm1", TEXT("APINK.wav"));
+	_SMgr->PlayBgm("bgm1");
 
 
 	CCamera* pCamera = m_pScene->GetMainCamera();

@@ -290,8 +290,21 @@ namespace PUN
 
 	typedef struct _tagAdaptationCB
 	{
-		Vector4	vAdaptation;
+		float	fAdaptation;
+		Vector3 vEmpty;
 	}AdaptationCB, *PAdaptationCB;
+
+	typedef struct _tagBloomThresholdCB
+	{
+		float	fBloomThreshold;
+		Vector3 vEmpty;
+	}BloomThresholdCB, *PBloomThresholdCB;
+
+	typedef struct _tagBloomCB
+	{
+		float	fBloomScale;
+		Vector3 vEmpty;
+	}BloomCB, *PBloomCB;
 
 	typedef struct PUN_DLL _tagBlurCBuffer
 	{
@@ -317,12 +330,13 @@ namespace PUN
 		int			iHDR;
 		int			iBlur;
 		int			iDepthFog;
-		float		fEmpty;
+		int			iBloom;
 
 		_tagFinalPassCBuffer() :
 			iHDR(0),
 			iBlur(0),
-			iDepthFog(0)
+			iDepthFog(0),
+			iBloom(0)
 		{
 		}
 

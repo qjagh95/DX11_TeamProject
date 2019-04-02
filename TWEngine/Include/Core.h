@@ -41,7 +41,7 @@ public:
 	void SetGameMode(GAME_MODE eMode);
 
 private:
-	void UpdateSoundManager(); //에디터에서 사운드매니저를 불러올 수 없으므로 따로 처리했음
+	void UpdateSoundManager(float fTime); //에디터에서 사운드매니저를 불러올 수 없으므로 따로 처리했음
 
 public:
 	bool Init(HINSTANCE hInst, unsigned int iWidth,

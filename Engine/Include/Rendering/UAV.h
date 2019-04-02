@@ -12,21 +12,29 @@ public:
 	~CUAV();
 
 private:
+	ID3D11Buffer*				m_pBuffer;
 	ID3D11UnorderedAccessView*	m_pUAV;
 	ID3D11UnorderedAccessView*	m_pOldUAV;
 	ID3D11Resource*				m_pResource;
+	ID3D11Texture2D*			m_pTargetTex;
 	ID3D11ShaderResourceView*	m_pSRV;
 	GPU_RESOURCE_TYPE			m_eType;
 	string						m_strName;
 	int							m_iNumThreadGroupX;
 	int							m_iNumThreadGroupY;
 	int							m_iNumThreadGroupZ;
+	CS_FILTER_TYPE				m_FilterType;
 
 private:
 	class CComputeShader*	m_pCShader;
 
 public:
+	void BakeBufferToResource(ID3D11Buffer* pBuffer);
+
+public:
 	ID3D11ShaderResourceView* GetShaderResourceView() const { return m_pSRV; }
+	ID3D11UnorderedAccessView* GetUnorderedAccessView() const { return m_pUAV; }
+	CS_FILTER_TYPE	GetFilterType()	const { return m_FilterType; }
 
 public:
 	bool CreateView(const string& strName, const string& strShaderName, 

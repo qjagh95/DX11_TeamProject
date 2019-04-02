@@ -3,20 +3,24 @@
 Texture2D HDRTex : register(t0);
 
 StructuredBuffer<float> AverageValues1D : register(t1);
+StructuredBuffer<float> PrevAvgLum : register(t2);
 
-RWStructuredBuffer<float> AverageLum : register(u0);
-
-cbuffer DownScaleConstants : register(b1)
-{
-   // uint2   g_Res       : packoffset(c0); // 백 버퍼의 높이와 너비를 4로 나눈 값
-   // uint    g_Domain    : packoffset(c0.z); // 백 버퍼의 높이와 너비를 곱한 후 16으로 나눈 값
-    //uint    g_GroupSize : packoffset(c0.w); // 백 버퍼의 높이와 너비를 곱한 후 16으로 나눈 다음 1024를 나눈 값
-    uint2 g_Res;
-    uint g_Domain;
-    uint g_GroupSize;
-}
+//RWStructuredBuffer<float> AverageLum : register(u0);
+RWStructuredBuffer<float> AverageLumFinal : register(u0);
 
 groupshared float SharedPositions[1024];
+
+cbuffer Adapt_Bloom_CB : register(b3)
+{
+    float   g_fAdaptation;
+    float3  vEmpty;
+}
+
+cbuffer BloomThresholdCB : register(b4)
+{
+    float g_fBloomThreshold;
+    float3 g_vEmpty;
+}
 
 // 각 스레드에 대해 4x4 다운 스케일을 수행한다
 float4 DownScale4x4(uint2 CurPixel, uint groupThreadId)
@@ -39,7 +43,7 @@ float4 DownScale4x4(uint2 CurPixel, uint groupThreadId)
             }
         }
         vDownScaled /= 16;
-
+        
         // 픽셀별 휘도 값 계산
         avgLum = dot(vDownScaled, LUM_FACTOR);
 
@@ -106,7 +110,7 @@ void DownScale4to1(uint dispatchThreadId, uint groupThreadId,
         fFinalAvgLum /= 1024.f;
 
         // 최종 값을 ID UAV에 기록 후 다음 과정으로
-        AverageLum[groupId] = fFinalAvgLum;
+        AverageLumFinal[groupId] = fFinalAvgLum;
     }
 }
 
@@ -219,6 +223,34 @@ void DownScaleSecondPass(uint3 groupId : SV_GroupID,
 
         fFinalLumValue /= 64.f;
 
-        AverageLum[0] = max(fFinalLumValue, 0.0001);
+        float fApaptedAverageLum = lerp(PrevAvgLum[1], fFinalLumValue, g_fAdaptation);
+
+        AverageLumFinal[0] = max(fFinalLumValue, 0.0001);
+       // AverageLumFinal[1] = max(fApaptedAverageLum, 0.0001);
+
+    }
+}
+
+// Bloom Compute Shader
+Texture2D<float4> HDRDownScaleTex : register(t0);
+StructuredBuffer<float> AvgLum : register(t1);
+
+RWTexture2D<float4> Bloom : register(u0);
+
+[numthreads(1024, 1, 1)]
+void BloomReveal(uint3 dispatchThreadID : SV_DispatchThreadID)
+{
+    uint2 vCurPixel = uint2(dispatchThreadID.x % g_Res.x,
+    dispatchThreadID.x / g_Res.x);
+
+    if (vCurPixel.y < g_Res.y)
+    {
+        float4 vColor = HDRDownScaleTex.Load(int3(vCurPixel, 0));
+        float fLum = dot(vColor, LUM_FACTOR);
+        float fAvgLum = AvgLum[0];
+
+        float fColorScale = saturate(fLum - fAvgLum * g_fBloomThreshold);
+
+        Bloom[vCurPixel.xy] = vColor * fColorScale;
     }
 }

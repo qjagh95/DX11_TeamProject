@@ -7,6 +7,8 @@ PUN_BEGIN
 class PUN_DLL CPostEffect
 {
 	friend class CCSHDRFilter;
+	friend class CCSAdaptFilter;
+	friend class CCSBloomFilter;
 
 private:
 	CPostEffect();
@@ -16,6 +18,8 @@ private:
 	HDR1stPassCB		m_tDownScaleCBInfo;
 	HDR2ndPassCB		m_tFinalPassCBInfo;
 	AdaptationCB		m_tAdaptInfo;
+	BloomThresholdCB	m_tBloomThresholdInfo;
+	BloomCB				m_tBloomInfo;
 	float				m_fMiddleGrey;
 	float				m_fLumWhite;
 	float				m_fHeight;
@@ -23,20 +27,19 @@ private:
 	float				m_fGroups;
 
 public:
-	void SetAdaptation(Vector4 vAdaptation);
-	void SetAdaptation(float x, float y, float z, float w);
+	void	SetAdaptation(float fAdaptation);
 	float SetMiddleGrey(float fMiddleGrey);
 	float SetLumWhite(float fLumWhite);
 
 public:
 	void SetDownScaleCB(int iWidth, int iHeight, float fTime);
 	void SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime);
-	void SetAdaptationCB(Vector4 vAdaptation, float fTime);
+	void SetAdaptationCB(float fAdaptation, float fTime);
+	void SetAdaptationCB(float fAdaptation, float fBloomThreshold, float fTime);
+	void SetBloomThresholdCB(float fThreshold, float fTime);
+	void SetBloomCB(float fBloomScale, float fTime);
 
 	void UpdateCBuffer(int iPass);
-
-public:
-	const Vector4& GetAdaptation()	const;
 
 public:
 	bool Init();

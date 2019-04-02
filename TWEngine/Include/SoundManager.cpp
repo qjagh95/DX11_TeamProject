@@ -13,8 +13,22 @@ SINGLETON_VAR_INIT(CSoundManager)
 shared_ptr<SoundEffect> CSoundManager::m_NULLPTR1;
 shared_ptr<SoundEffectInstance> CSoundManager::m_NULLPTR2;
 
-CSoundManager::CSoundManager()
+CSoundManager::CSoundManager() :
+	m_fBgmPan(0.f),
+	m_fBgmPitch(0.f),
+	m_fBgmVolume(1.f),
+	m_fBgmTransitionTime(1.2f),
+	m_fCurrTransitionTimer(0.f),
+	m_bOnTransition(false),
+	m_iFlushFlag((int)FBB_NO_BUF),
+	m_fUIVolume(1.f),
+	m_fUIPan(0.f),
+	m_fUIPitch(0.f)
 {
+	m_sPtrCurrentBgmTrack = m_NULLPTR2;
+	m_sPtrPrevBgmTrack = m_NULLPTR2;
+	m_NoKeyBgmBuf = m_NULLPTR1;
+	m_NoKeyBgmBuf2 = m_NULLPTR1;
 }
 
 CSoundManager::~CSoundManager()
@@ -36,11 +50,95 @@ bool CSoundManager::Init()
 	return true;
 }
 
-void CSoundManager::Update()
+void CSoundManager::Update(float fTime)
 {
 	//Camera 찾아 업데이트 : 원래 Listener는 여러개일 수 있고,
 	//프레임워크에서 제공하는 것이 맞는데 에디터랑 꼬이고 하는 등의 문제로 다른데서 언급 불가
 	//어쩔수 없이 여기서 SceneManager를 불러서 MainCamera를 Listener로서 업데이트해준다
+		
+	if (m_bOnTransition)
+	{
+		if (m_fBgmTransitionTime > 0.f)
+		{
+			if (m_fBgmTransitionTime >= m_fCurrTransitionTimer)
+			{
+				
+				float fTransitVolInv = m_fCurrTransitionTimer / m_fBgmTransitionTime;
+				if (m_sPtrPrevBgmTrack != m_NULLPTR2)
+				{
+					float fTransitVol = 1.f - fTransitVolInv;
+					if (fTransitVol >= 0.f)
+					{
+						m_sPtrPrevBgmTrack->SetVolume(fTransitVol * m_fBgmVolume);
+					}
+					
+				}
+
+				if (m_sPtrCurrentBgmTrack != m_NULLPTR2)
+				{
+					
+					if (fTransitVolInv >= 0.f)
+					{
+						m_sPtrCurrentBgmTrack->SetVolume(fTransitVolInv * m_fBgmVolume);
+					}
+										
+				}
+
+				m_fCurrTransitionTimer += fTime;
+			}
+			else
+			{
+				if (m_sPtrPrevBgmTrack != m_NULLPTR2)
+				{
+					m_sPtrPrevBgmTrack->Stop();
+					m_sPtrPrevBgmTrack = m_NULLPTR2;
+					if(m_strPrevBGMName.size() > 0)
+						ForgetSound(m_strPrevBGMName);
+					m_strPrevBGMName.clear();
+				}
+
+				//Flush Buffer
+				if (!(m_iFlushFlag &= 0x111))
+				{
+					m_NoKeyBgmBuf = m_NULLPTR1;
+				}
+				if (!(m_iFlushFlag &= 0x110))
+				{
+					m_NoKeyBgmBuf2 = m_NULLPTR1;
+				}
+
+				m_fCurrTransitionTimer = 0.f;
+				m_sPtrCurrentBgmTrack->SetVolume(m_fBgmVolume);
+				m_bOnTransition = false;
+			}
+		}
+		else
+		{
+			if (m_sPtrPrevBgmTrack != m_NULLPTR2)
+			{
+				m_sPtrPrevBgmTrack->Stop();
+				m_sPtrPrevBgmTrack = m_NULLPTR2;
+				if (m_strPrevBGMName.size() > 0)
+					ForgetSound(m_strPrevBGMName);
+				
+				m_strPrevBGMName.clear();
+			}
+
+			//Flush Buffer
+			if (!(m_iFlushFlag &= 0x111))
+			{
+				m_NoKeyBgmBuf = m_NULLPTR1;
+			}
+			if (!(m_iFlushFlag &= 0x110))
+			{
+				m_NoKeyBgmBuf2 = m_NULLPTR1;
+			}
+
+			m_sPtrCurrentBgmTrack->SetVolume(m_fBgmVolume);
+			m_bOnTransition = false;
+		}
+		
+	}
 
 	PUN::CScene* pScene = PUN::CSceneManager::GetInst()->GetScene();
 
@@ -98,8 +196,10 @@ void CSoundManager::CreateSoundEffect(const string & KeyName, const wstring & Fi
 	m_SoundEffectMap.insert(make_pair(KeyName, move(newSoundEffect)));
 }
 
-void CSoundManager::SoundPlay(const string & KeyName, SOUND_TYPE type, const Vector3& EmitterPos)
+void CSoundManager::SoundPlay(const string & KeyName
+,float fVolume , float fPitch , float fPan)
 {
+	/*
 	switch (type)
 	{
 	case ST_EFFECT:
@@ -124,6 +224,15 @@ void CSoundManager::SoundPlay(const string & KeyName, SOUND_TYPE type, const Vec
 	break;
 
 	}
+	*/
+	auto Sound = FindSoundEffect(KeyName);
+	Sound->Play(fVolume, fPitch, fPan);
+}
+
+void CSoundManager::SoundPlayAsUISound(const string & KeyName)
+{
+	auto Sound = FindSoundEffect(KeyName);
+	Sound->Play(m_fUIVolume, m_fUIPitch, m_fUIPan);
 }
 
 const AudioListener & CSoundManager::GetMainListener() const
@@ -140,6 +249,18 @@ shared_ptr<SoundEffect> const & CSoundManager::FindSoundEffect(const string & Ke
 		return m_NULLPTR1;
 
 	return FindIter->second;
+}
+
+bool CSoundManager::ForgetSound(const std::string strKey)
+{
+	auto _snd = m_SoundEffectMap.find(strKey);
+
+	if (_snd == m_SoundEffectMap.end())
+		return false;
+
+	m_SoundEffectMap.erase(_snd);
+
+	return true;
 }
 
 Vector3 CSoundManager::GetListenerPos() const
@@ -184,57 +305,344 @@ void CSoundManager::SetListenerQuat(const XMVECTOR & quat)
 	m_vRot = Vector3(m_Listener.OrientFront.x, m_Listener.OrientFront.y, m_Listener.OrientFront.z);
 }
 
-
-
-
-void CSoundManager::SetBgmVolume(const std::string & strKey, float volume)
+void CSoundManager::PlayBgm(const std::string & strKey, const wstring & wstrFileName,
+	bool bEnableTransition, bool bDeleteFormerBgmFromMem,
+	bool bLoop,
+	const string& PathKey)
 {
-	std::unordered_map<std::string, std::shared_ptr<DirectX::SoundEffectInstance>>::iterator itr;
-	itr = m_SoundEffectInstanceMap.find(strKey);
-	if (itr != m_SoundEffectInstanceMap.end())
+	if (strKey == m_strCurrBGMName)
 	{
-		itr->second->SetVolume(volume);
+		if(m_sPtrCurrentBgmTrack->GetState() == PLAYING)
+			return;
+		m_sPtrCurrentBgmTrack->Play(bLoop);
+		return;
+	}
+		
+
+	m_iFlushFlag = 0x000;
+	auto _bgm = FindSoundEffect(strKey);
+	if (_bgm == m_NULLPTR1)
+	{
+		const TCHAR* pPath = CPathManager::GetInst()->FindPath(PathKey);
+		wstring	FullPath;
+
+		if (pPath != NULLPTR)
+			FullPath = pPath;
+
+		FullPath += wstrFileName;
+
+		std::unique_ptr<SoundEffect> _newSound = make_unique<SoundEffect>(m_AudioEngine.get(), FullPath.c_str());
+		_bgm = move(_newSound);
+		m_SoundEffectMap.insert(make_pair(strKey, _bgm));
+	}
+		
+	m_sPtrPrevBgmTrack = m_sPtrCurrentBgmTrack;
+
+	m_sPtrCurrentBgmTrack = _bgm->CreateInstance();
+	
+
+	if (bEnableTransition)
+	{
+		m_sPtrCurrentBgmTrack->SetVolume(0.f);
+		m_strPrevBGMName = m_strCurrBGMName;
+		m_bOnTransition = bEnableTransition;
 	}
 	else
 	{
-		std::shared_ptr<DirectX::SoundEffectInstance> Sound = FindSoundEffect(strKey)->CreateInstance();
-		m_SoundEffectInstanceMap.insert(std::make_pair(strKey, Sound));
-		Sound->SetVolume(volume);
+		m_sPtrCurrentBgmTrack->SetVolume(m_fBgmVolume);
+		if (bDeleteFormerBgmFromMem)
+		{
+			if (m_strPrevBGMName.size() > 0)
+				ForgetSound(m_strPrevBGMName);
+
+		}
+	}
+	
+	
+	m_sPtrCurrentBgmTrack->SetPitch(m_fBgmPitch);
+	m_sPtrCurrentBgmTrack->SetPan(m_fBgmPan);
+	m_sPtrCurrentBgmTrack->Play(bLoop);
+	m_strCurrBGMName = strKey;
+	
+}
+
+void CSoundManager::PlayBgm(const std::string & strKey, bool bEnableTransition, bool bDeleteFormerBgmFromMem
+	, bool bLoop)
+{
+	m_iFlushFlag = 0x000;
+	if (strKey == m_strCurrBGMName)
+		return;
+	auto _bgm = FindSoundEffect(strKey);
+	if (_bgm == m_NULLPTR1)
+	{
+		StopBgm(bEnableTransition);
+	}
+
+
+	m_sPtrPrevBgmTrack = m_sPtrCurrentBgmTrack;
+
+	m_sPtrCurrentBgmTrack = _bgm->CreateInstance();
+	
+
+	if (bEnableTransition)
+	{
+		m_sPtrCurrentBgmTrack->SetVolume(0.f);
+		if (m_sPtrPrevBgmTrack != m_NULLPTR2)
+		{
+			m_strPrevBGMName = m_strCurrBGMName;
+
+		}
+		m_bOnTransition = bEnableTransition;
+	}
+	else
+	{
+		m_sPtrCurrentBgmTrack->SetVolume(m_fBgmVolume);
+		if (bDeleteFormerBgmFromMem)
+		{
+			if (m_strPrevBGMName.size() > 0)
+				ForgetSound(m_strPrevBGMName);
+		}
+	}
+
+	m_sPtrCurrentBgmTrack->SetPitch(m_fBgmPitch);
+	m_sPtrCurrentBgmTrack->SetPan(m_fBgmPan);
+	m_sPtrCurrentBgmTrack->Play(bLoop);
+
+	m_strCurrBGMName = strKey;
+
+}
+
+void CSoundManager::PlayBgm(const wstring & wstrFileName, bool bEnableTransition,
+	bool bDeleteFormerBgmFromMem, bool bLoop, const string& PathKey)
+{
+	const TCHAR* pPath = CPathManager::GetInst()->FindPath(PathKey);
+	wstring	FullPath;
+
+	if (pPath != NULLPTR)
+		FullPath = pPath;
+
+	FullPath += wstrFileName;
+	auto _bgm = make_unique<SoundEffect>(m_AudioEngine.get(), FullPath.c_str());
+	//만약 m_NoKeyBgmBuf 가 이미 차 있으면 스마트 포인터는 원래 있던 버퍼의 음악을 지워버린다.
+	//이것은 종료할 때 에러를 남기며 트랜지션이 적용될 경우 이전 음악이 삭제되는 듯한 느낌을 주게 하므로
+	//m_NoKeyBuf2를 맨들어 해결했다.
+	if (m_NoKeyBgmBuf != m_NULLPTR1)
+	{
+		m_NoKeyBgmBuf2 = m_NoKeyBgmBuf;
+		m_iFlushFlag = (int)FBB_BUF_1 | FBB_BUF_2;
+	}
+	else
+		m_iFlushFlag = (int)FBB_BUF_1;
+	m_NoKeyBgmBuf = move(_bgm);
+	m_sPtrPrevBgmTrack = m_sPtrCurrentBgmTrack;
+
+	m_sPtrCurrentBgmTrack = m_NoKeyBgmBuf->CreateInstance();
+	
+	if (bEnableTransition)
+	{
+		m_sPtrCurrentBgmTrack->SetVolume(0.f);
+		if (m_sPtrPrevBgmTrack != m_NULLPTR2)
+		{
+			m_strPrevBGMName = m_strCurrBGMName;
+
+		}
+		m_bOnTransition = bEnableTransition;
+	}
+	else
+	{
+		m_sPtrCurrentBgmTrack->SetVolume(m_fBgmVolume);
+		if (bDeleteFormerBgmFromMem)
+		{
+			if (m_strPrevBGMName.size() > 0)
+				ForgetSound(m_strPrevBGMName);
+		}
+	}
+		
+	m_sPtrCurrentBgmTrack->SetPitch(m_fBgmPitch);
+	m_sPtrCurrentBgmTrack->SetPan(m_fBgmPan);
+
+	m_sPtrCurrentBgmTrack->Play(bLoop);
+
+	m_strCurrBGMName.clear();
+
+}
+
+void CSoundManager::PauseBgm()
+{
+	if (m_sPtrCurrentBgmTrack != m_NULLPTR2)
+	{
+		m_sPtrCurrentBgmTrack->Pause();
+	}
+
+	if (m_sPtrPrevBgmTrack != m_NULLPTR2)
+	{
+		m_sPtrPrevBgmTrack->Pause();
 	}
 }
 
-void CSoundManager::SetBgmPitch(const std::string & strKey, float pitch)
+void CSoundManager::ResumeBgm()
 {
-	std::unordered_map<std::string, std::shared_ptr<DirectX::SoundEffectInstance>>::iterator itr;
-	itr = m_SoundEffectInstanceMap.find(strKey);
-
-
-	if (itr != m_SoundEffectInstanceMap.end())
+	if (m_sPtrCurrentBgmTrack != m_NULLPTR2)
 	{
-		itr->second->SetPitch(pitch);
+		m_sPtrCurrentBgmTrack->Resume();
 	}
-	else
+
+	if (m_sPtrPrevBgmTrack != m_NULLPTR2)
 	{
-		std::shared_ptr<DirectX::SoundEffectInstance>  Sound = FindSoundEffect(strKey)->CreateInstance();
-		m_SoundEffectInstanceMap.insert(std::make_pair(strKey, Sound));
-		Sound->SetPitch(pitch);
+		m_sPtrPrevBgmTrack->Resume();
 	}
 }
 
-void CSoundManager::SetBgmPan(const std::string & strKey, float panRatio)
+void CSoundManager::StopBgm(bool bEnbleTrasition)
 {
-	std::unordered_map<std::string, std::shared_ptr<DirectX::SoundEffectInstance>>::iterator itr;
-		itr = m_SoundEffectInstanceMap.find(strKey);
-	if (itr != m_SoundEffectInstanceMap.end())
+	if (bEnbleTrasition)
 	{
-		itr->second->SetPan(panRatio);
+		m_sPtrPrevBgmTrack = m_sPtrCurrentBgmTrack;
+		m_sPtrCurrentBgmTrack = m_NULLPTR2;
+		m_strPrevBGMName = m_strCurrBGMName;
+		m_strCurrBGMName.clear();
 	}
 	else
 	{
-		std::shared_ptr<DirectX::SoundEffectInstance> Sound = FindSoundEffect(strKey)->CreateInstance();
-		m_SoundEffectInstanceMap.insert(std::make_pair(strKey, Sound));
-		Sound->SetPan(panRatio);
+		if (m_sPtrCurrentBgmTrack != m_NULLPTR2)
+		{
+			m_sPtrCurrentBgmTrack->Stop(false);
+		}
+
+		if (m_sPtrPrevBgmTrack != m_NULLPTR2)
+		{
+			m_sPtrPrevBgmTrack->Stop(true);
+			m_sPtrPrevBgmTrack = m_NULLPTR2;
+		}
 	}
+	
+}
+
+
+void CSoundManager::SetBgmVolume(float volume)
+{
+	float fVal = volume;
+
+	//clamp value
+	if (fVal > 0.99999988f)
+	{
+		fVal = 1.f;
+	}
+	else if (fVal < 1.1754945E-38)
+	{
+		fVal = 0.f;
+	}
+
+	m_fBgmVolume = fVal;
+
+	if (m_sPtrCurrentBgmTrack != m_NULLPTR2)
+	{
+		m_sPtrCurrentBgmTrack->SetVolume(fVal);
+	}
+
+	if (m_sPtrPrevBgmTrack != m_NULLPTR2)
+	{
+		m_sPtrPrevBgmTrack->SetVolume(fVal);
+	}
+}
+
+void CSoundManager::SetBgmPitch(float pitch)
+{
+	float fVal = pitch;
+	//clamp value
+	if (fVal > 0.99999988f)
+	{
+		fVal = 1.f;
+	}
+	else if (fVal < -0.99999988f)
+	{
+		fVal = -1.f;
+	}
+
+	m_fBgmPitch = fVal;
+
+	if (m_sPtrCurrentBgmTrack != m_NULLPTR2)
+	{
+		m_sPtrCurrentBgmTrack->SetPitch(pitch);
+	}
+}
+
+void CSoundManager::SetBgmPan(float panRatio)
+{
+	float fVal = panRatio;
+	//clamp value
+	if (fVal > 0.99999988f)
+	{
+		fVal = 1.f;
+	}
+	else if (fVal < -0.99999988f)
+	{
+		fVal = -1.f;
+	}
+
+	m_fBgmPan = panRatio;
+}
+
+float CSoundManager::GetBgmVolume() const
+{
+	return  m_fBgmVolume;
+}
+
+float CSoundManager::GetBgmPitch() const
+{
+	return m_fBgmPitch;
+}
+
+float CSoundManager::GetBgmPan() const
+{
+	return m_fBgmPan;
+}
+
+float CSoundManager::GetUIVolume() const
+{
+	return m_fUIVolume;
+}
+
+float CSoundManager::GetUIPitch() const
+{
+	return m_fUIPitch;
+}
+
+float CSoundManager::GetUIPan() const
+{
+	return m_fUIPan;
+}
+
+void CSoundManager::SetUIVolume(float vol)
+{
+	m_fUIVolume = vol;
+}
+
+void CSoundManager::SetUIPitch(float pitch)
+{
+	m_fUIPitch = pitch;
+}
+
+void CSoundManager::SetUIPan(float pan)
+{
+	m_fUIPan = pan;
+}
+
+void CSoundManager::SetTransitionTime(float fTransitionTime)
+{
+	m_fBgmTransitionTime = fTransitionTime;
+}
+
+float CSoundManager::GetTransitionTime() const
+{
+	return m_fBgmTransitionTime;
+}
+
+float CSoundManager::GetCurrentTransitionRate() const
+{
+	if (m_fBgmTransitionTime > 0.f)
+		return m_fCurrTransitionTimer / m_fBgmTransitionTime;
+	return 1.f;
 }
 
 
