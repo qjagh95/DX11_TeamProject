@@ -87,14 +87,11 @@ void CCSAdaptFilter::SetShaderResource(int iPass, float fTime)
 		}
 
 		fAdaptNorm = min(m_fAdapt < 0.0001f ? m_fAdapt : m_fElapsedTime / m_fAdapt, m_fAdapt - 0.0001f);
-		cout << fAdaptNorm << endl;
-
 	}
 
 	m_fAdaptation = fAdaptNorm;
 	m_pPostEffect->SetAdaptationCB(fAdaptNorm, fTime);
 
-	//m_vecUAV[iPass]->SetUAV(0);
 	m_pPostEffect->UpdateCBuffer(0);
 	m_pPostEffect->UpdateCBuffer(2);
 
@@ -135,7 +132,7 @@ void CCSAdaptFilter::ResetShaderResource(int iPass, float fTime)
 		CONTEXT->CSSetShaderResources(1, 1, &pSRV);
 		CONTEXT->CSSetShaderResources(2, 1, &pSRV);	
 
-		ID3D11Buffer*				pTempBuffer;
+		//ID3D11Buffer*				pTempBuffer;
 		ID3D11UnorderedAccessView*	pTempUAV;
 		ID3D11ShaderResourceView*	pTempSRV;
 		

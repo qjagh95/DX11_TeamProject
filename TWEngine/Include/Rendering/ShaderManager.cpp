@@ -160,8 +160,8 @@ bool CShaderManager::Init()
 	if (!LoadShader("Vertex3D", TEXT("Share.fx"), pEntry))
 		return false;
 
-	pEntry[ST_VERTEX] = "SSDVS";
-	pEntry[ST_PIXEL] = "SSDPS";
+	pEntry[ST_VERTEX] = (char*)"SSDVS";
+	pEntry[ST_PIXEL] = (char*)"SSDPS";
 
 	if (!LoadShader(DECAL_SHADER, TEXT("Decal.fx"), pEntry))
 		return false;
@@ -184,11 +184,17 @@ bool CShaderManager::Init()
 
 	//Geometry 쉐이더를 쓰는 파이프라인
 
-	pEntry[ST_VERTEX] = "ParticleVS";
-	pEntry[ST_PIXEL] = "ParticlePS";
-	pEntry[ST_GEOMETRY] = "ParticleGS";
+	pEntry[ST_VERTEX] = (char*)"ParticleVS";
+	pEntry[ST_PIXEL] = (char*)"ParticlePS";
+	pEntry[ST_GEOMETRY] = (char*)"ParticleGS";
 	if (!LoadShader(PARTICLE_SHADER, TEXT("Particle.fx"), pEntry))
 		return false;	
+
+	pEntry[ST_VERTEX] = (char*)"ShadowMapVS";
+	pEntry[ST_PIXEL] = (char*)"ShadowMapPS";
+	pEntry[ST_GEOMETRY] = nullptr;
+	if (!LoadShader(SHADOWMAP_SHADER, TEXT("Shadow.fx"), pEntry))
+		return false;
 
 	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement((char*)"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);

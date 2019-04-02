@@ -42,6 +42,7 @@ public:
 public:
 	bool CreateRenderTarget(DXGI_FORMAT eTargetFmt,
 		const Vector3& vPos, const Vector3& vScale,
+		const Resolution& tRS,
 		DXGI_FORMAT eDepthFmt = DXGI_FORMAT_UNKNOWN);
 	void SetClearColor(float fClearColor[4]);
 	void SetClearColor(const Vector4& vColor);

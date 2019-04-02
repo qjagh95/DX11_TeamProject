@@ -2,8 +2,6 @@
 
 PUN_BEGIN
 
-
-
 typedef struct _tagRenderGroup
 {
 	class CGameObject**	pList;
@@ -60,7 +58,6 @@ private:
 	PublicCBuffer		m_tCBuffer;
 	FinalPassCB			m_tFinalCBuffer;
 
-
 public:
 	GAME_MODE GetGameMode()	const;
 	bool GetRenderingMode()	const;
@@ -104,6 +101,7 @@ private:
 	void RenderComputeProcess(float fTime);
 	void RenderFinalPass(float _fTime);
 	void RenderFinalPassDebug(float _fTime);
+	void RenderShadowMap(float fTime);
 
 	DECLARE_SINGLE(CRenderManager)
 };

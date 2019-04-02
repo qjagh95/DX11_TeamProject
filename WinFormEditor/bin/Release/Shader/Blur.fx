@@ -20,7 +20,7 @@ void HorizontalBlur(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThread
 {
     float4 vColor = (float4) 0;
     int iMaxCount = g_iNumPixel;
-    int iMaxOffset = iMaxCount / 2;
+    int iMaxOffset = iMaxCount * 0.5f;
     int3 vUV;
 
     vUV.xy = vDispatchThreadID.xy;

@@ -59,11 +59,10 @@ ID3D11DepthStencilView * CRenderTarget::GetDepthView() const
 }
 
 bool CRenderTarget::CreateRenderTarget(DXGI_FORMAT eTargetFmt, const Vector3 & vPos,
-	const Vector3 & vScale, DXGI_FORMAT eDepthFmt)
+	const Vector3 & vScale, const Resolution& tRS, DXGI_FORMAT eDepthFmt)
 {
 	m_vPos = vPos;
 	m_vScale = vScale;
-	Resolution	tRS = _RESOLUTION;
 
 	// 鸥百侩 咆胶贸 积己
 	D3D11_TEXTURE2D_DESC	tDesc = {};

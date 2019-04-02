@@ -16,6 +16,9 @@ protected:
 private:
 	Matrix		m_matView;
 	Matrix		m_matProj;
+	Matrix	m_matShadowView;
+	Matrix	m_matShadowProj;
+
 	CAMERA_TYPE	m_eCameraType;
 	float		m_fWidth;
 	float		m_fHeight;
@@ -28,10 +31,18 @@ private:
 	Vector3				m_vTargetPos;
 	class CFrustum*		m_pFrustum;
 
+	bool	m_bShadow;
+	class CTransform*	m_pShadowLight;
+
 public:
 	float GetCameraFar() const { return m_fFar; }
 	float GetCameraNear() const { return m_fNear; }
 	float GetCameraViewAngle() const { return m_fViewAngle; }
+	void SetShadowLight(class CTransform* pShadowLight);
+	void Shadow(bool bEnable);
+	Matrix GetShadowViewMatrix()	const;
+	Matrix GetShadowProjMatrix()	const;
+	bool IsShadow()	const;
 
 public:
 	void SetTarget(class CGameObject* pTarget);

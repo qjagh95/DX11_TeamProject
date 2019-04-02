@@ -10,7 +10,6 @@ RWTexture2D<float4> g_RWOutputTex4 : register(u0);
 RWTexture2D<float4> g_RWOutputTex16 : register(u1);
 RWTexture2D<float4> g_RWOutputTex64 : register(u2);
 
-
 [numthreads(8, 8, 1)]
 void DownScale(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : SV_DispatchThreadID)
 {
@@ -27,7 +26,7 @@ void DownScale(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : 
     float4 vColor = (float4) 0;
 
     int2 iIdxCheck = vGroupIdx.xy % 2;
-    int2 iIdx = vGroupIdx.xy / 2;
+    int2 iIdx = vGroupIdx.xy * 0.5f;
 
     if (iIdxCheck.x == 0 && iIdxCheck.y == 0)
     {
@@ -38,9 +37,9 @@ void DownScale(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : 
                 vColor += SharedColor64[vGroupIdx.x + i][vGroupIdx.y + j];
             }
         }
-        vColor /= 4.0f;
+        vColor *= 0.25f;
 
-        vUV = vDispatchThreadID / 2;
+        vUV = vDispatchThreadID * 0.5f;
 
         SharedColor16[iIdx.x][iIdx.y] = vColor;
         g_RWOutputTex4[vUV.xy] = vColor;
@@ -63,8 +62,8 @@ void DownScale(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : 
         }
         vColor /= 4.0f;
 
-        iIdx = vGroupIdx.xy / 4;
-        vUV = vDispatchThreadID / 4;
+        iIdx = vGroupIdx.xy * 0.25f;
+        vUV = vDispatchThreadID * 0.25f;
 
         SharedColor4[iIdx.x][iIdx.y] = vColor;
         g_RWOutputTex16[vUV.xy] = vColor;
@@ -85,7 +84,7 @@ void DownScale(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : 
         }
         vColor /= 4.0f;
 
-        vUV = vDispatchThreadID / 8;
+        vUV = vDispatchThreadID *0.125f;
 
         g_RWOutputTex64[vUV.xy] = vColor;
     }

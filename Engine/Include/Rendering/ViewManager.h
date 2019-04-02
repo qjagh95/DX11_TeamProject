@@ -49,6 +49,7 @@ public:
 
 	bool CreateRenderTarget(const string& strName, DXGI_FORMAT eTargetFmt,
 		const Vector3& vPos, const Vector3& vScale,
+		const Resolution& tRS,
 		bool bDrawDebug = true, const Vector4& vClearColor = Vector4(0.f, 0.f, 0.f, 0.f),
 		DXGI_FORMAT eDepthFmt = DXGI_FORMAT_UNKNOWN);
 

@@ -1194,7 +1194,7 @@ int CAnimation::Update(float fTime)
 			*m_vecBoneMatrix[i] = matBone;
 		}
 #else
-		concurrency::parallel_for((int)0, BoneSize, [&](int i)
+		parallel_for((int)0, BoneSize, [&](int i)
 		{
 			if (bChange)
 			{
@@ -1343,7 +1343,7 @@ int CAnimation::Update(float fTime)
 				*m_vecBoneMatrix[i] = matBone;
 			}
 #else
-			concurrency::parallel_for((int)0, BoneSize, [&](int i)
+			parallel_for((int)0, BoneSize, [&](int i)
 			{
 				// 키프레임이 없을 경우
 				if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
@@ -1375,8 +1375,6 @@ int CAnimation::Update(float fTime)
 				*m_vecBoneMatrix[i] = matBone;
 			});
 #endif
-			
-
 			// 본 수만큼 반복한다.
 			//for (size_t i = 0; i < m_vecBones.size(); ++i)
 			//{

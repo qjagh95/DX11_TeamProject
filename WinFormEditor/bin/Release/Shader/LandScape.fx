@@ -20,7 +20,7 @@ VS_OUTPUT_3D LandScapeVS(VS_INPUT_3D input)
 
 	float3	vPos = input.vPos - g_vPivot * g_vLength;
 
-	output.vViewPos = mul(float4(vPos, 1.f), g_matWV);
+	output.vViewPos = mul(float4(vPos, 1.f), g_matWV).xyz;
 	output.vProjPos = mul(float4(vPos, 1.f), g_matWVP);
 	//output.vPos = output.vProjPos;
 	output.vPos = mul(float4(vPos, 1.f), g_matWVP);
@@ -110,7 +110,7 @@ PS_OUTPUT_GBUFFER LandScapePS(VS_OUTPUT_3D input)
 		output.vAlbedo = vColor;
 		output.vNormal.xyz = vNormal;
 		output.vNormal.w = g_vMtrlSpc.w;
-		output.vDepth.r = (float3)(input.vProjPos.z / input.vProjPos.w);
+		output.vDepth.r = (input.vProjPos.z / input.vProjPos.w);
         output.vDepth.g = g_iFocus;
         output.vDepth.b = g_iDecalEnable;
 		output.vDepth.a = input.vProjPos.w;

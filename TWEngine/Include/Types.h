@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+
 #define PUN_BEGIN	namespace PUN{
 #define PUN_END		}
 #define PUN_USING	using namespace PUN;
@@ -148,6 +150,7 @@ namespace PUN
 		Matrix	matProj;
 		Matrix	matWV;
 		Matrix	matWVP;
+		Matrix	matWLP;
 		Matrix	matInvWVP;
 		Matrix  matInvProj;
 		Matrix	matVP;
@@ -180,7 +183,9 @@ namespace PUN
 		int		iDeffered;
 		int		iFocus;
 		int		iDecalEnable;
-		Vector3 vEmpty;
+		int		i3DAnimation;
+
+		Vector2 vEmpty;
 
 		_tagComponentCBuffer() :
 			iTextureAnimation2D(0),
@@ -428,7 +433,7 @@ namespace PUN
 	{
 		Vector3	vCenter;
 		Vector3	vLength;
-	};
+	}AABBInfo, *PAABBInfo;
 
 	typedef struct PUN_DLL _tagRayInfo
 	{
@@ -447,11 +452,11 @@ namespace PUN
 
 	struct PUN_DLL FileStream
 	{
-		ofstream Input;
-		ofstream Update;
-		ofstream LateUpdate;
-		ofstream Collsion;
-		ofstream Render;
+		std::ofstream Input;
+		std::ofstream Update;
+		std::ofstream LateUpdate;
+		std::ofstream Collsion;
+		std::ofstream Render;
 
 		~FileStream() { Input.close(); Update.close(); LateUpdate.close(); Collsion.close(); Render.close(); }
 	};

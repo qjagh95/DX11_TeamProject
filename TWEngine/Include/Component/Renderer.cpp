@@ -26,6 +26,7 @@ CRenderer::CRenderer() :
 
 	memset(&m_tComponentCBuffer, 0, sizeof(m_tComponentCBuffer));
 	m_tComponentCBuffer.iDecalEnable = 0;
+	m_tComponentCBuffer.i3DAnimation = 0;
 }
 
 
@@ -413,11 +414,11 @@ void CRenderer::Render(float fTime)
 
 	if (m_pMesh)
 	{
-		for (size_t i = 0; i < m_pMesh->GetContainCount(); ++i)
+		for (int i = 0; i < m_pMesh->GetContainCount(); ++i)
 		{
 			if (m_pMesh->IsSubset(i))
 			{
-				for (size_t j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
+				for (int j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
 				{
 					m_pMaterial->SetShader(i, j);
 
@@ -444,6 +445,39 @@ void CRenderer::Render(float fTime)
 	}
 }
 
+void CRenderer::RenderShadow(float fTime)
+{
+	UpdateShadowTransform();
+
+	if (m_pBoneTex)
+	{
+		m_tComponentCBuffer.i3DAnimation = 1;
+		CONTEXT->VSSetShaderResources(3, 1, m_pBoneTex);
+	}
+
+	unordered_map<string, PRendererCBuffer>::iterator	iter;
+	unordered_map<string, PRendererCBuffer>::iterator	iterEnd = m_mapCBuffer.end();
+
+	for (iter = m_mapCBuffer.begin(); iter != iterEnd; ++iter)
+		GET_SINGLE(CShaderManager)->UpdateCBuffer(iter->first, iter->second->pBuffer);
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Component", &m_tComponentCBuffer);
+
+	CONTEXT->IASetInputLayout(m_pLayout);
+	//m_pShader->SetShader();
+
+	for (int i = 0; i < m_pMesh->GetContainCount(); ++i)
+	{
+		if (m_pMesh->IsSubset(i))
+		{
+			for (int j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
+				m_pMesh->Render(i, j);
+		}
+		else
+			m_pMesh->Render(i, 0);
+	}
+}
+
 CRenderer * CRenderer::Clone()
 {
 	return new CRenderer(*this);
@@ -466,12 +500,14 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matProj = pMainCamera->GetProjMatrix();
 	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
 	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
+	tCBuffer.matWLP = tCBuffer.matWorld * pMainCamera->GetShadowViewMatrix() * pMainCamera->GetShadowProjMatrix();
 	tCBuffer.matInvWVP = tCBuffer.matWVP;
 	tCBuffer.matInvWVP.Inverse();
 	tCBuffer.matInvProj = tCBuffer.matProj;
 	tCBuffer.matInvProj.Inverse();
 	tCBuffer.matVP = tCBuffer.matView * tCBuffer.matProj;
 	tCBuffer.vPivot = m_pTransform->GetPivot();
+
 	if (m_pMesh)
 	{
 		tCBuffer.vLength = m_pMesh->GetLength();
@@ -483,11 +519,47 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matWV.Transpose();
 	tCBuffer.matWVP.Transpose();
 	tCBuffer.matInvWVP.Transpose();
+	tCBuffer.matWLP.Transpose();
 	tCBuffer.matInvProj.Transpose();
 	tCBuffer.matVP.Transpose();
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform",
 		&tCBuffer);
+
+	SAFE_RELEASE(pMainCamera);
+}
+
+void CRenderer::UpdateShadowTransform()
+{
+	TransformCBuffer	tCBuffer = {};
+
+	CCamera*	pMainCamera = m_pScene->GetMainCamera();
+
+	tCBuffer.matWorld = m_pTransform->GetLocalMatrix() * m_pTransform->GetWorldMatrix();
+	tCBuffer.matView = pMainCamera->GetShadowViewMatrix();
+	tCBuffer.matProj = pMainCamera->GetShadowProjMatrix();
+	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
+	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
+	tCBuffer.matWLP = tCBuffer.matWorld * pMainCamera->GetShadowViewMatrix() *	pMainCamera->GetShadowProjMatrix();
+	tCBuffer.matInvWVP = tCBuffer.matWVP;
+	tCBuffer.matInvWVP.Inverse();
+	tCBuffer.matInvProj = tCBuffer.matProj;
+	tCBuffer.matInvProj.Inverse();
+	tCBuffer.matVP = tCBuffer.matView * tCBuffer.matProj;
+	tCBuffer.vPivot = m_pTransform->GetPivot();
+	tCBuffer.vLength = m_pMesh->GetLength();
+
+	tCBuffer.matWorld.Transpose();
+	tCBuffer.matView.Transpose();
+	tCBuffer.matProj.Transpose();
+	tCBuffer.matWV.Transpose();
+	tCBuffer.matWVP.Transpose();
+	tCBuffer.matWLP.Transpose();
+	tCBuffer.matInvWVP.Transpose();
+	tCBuffer.matInvProj.Transpose();
+	tCBuffer.matVP.Transpose();
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform", &tCBuffer);
 
 	SAFE_RELEASE(pMainCamera);
 }

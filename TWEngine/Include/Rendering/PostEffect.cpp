@@ -33,7 +33,7 @@ void CPostEffect::SetDownScaleCB(int iWidth, int iHeight, float fTime)
 	m_tDownScaleCBInfo.iHeight = iHeight;
 	m_tDownScaleCBInfo.iWidth = iWidth;
 	m_tDownScaleCBInfo.iTotalPixels = iHeight * iWidth;
-	m_tDownScaleCBInfo.iGroupSize = ceil((iWidth * iHeight / 16) / 1024.f);
+	m_tDownScaleCBInfo.iGroupSize = (int)ceil((iWidth * iHeight / 16) / 1024.f);
 }
 
 void CPostEffect::SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime)
@@ -92,16 +92,16 @@ void CPostEffect::UpdateCBuffer(int iPass)
 bool CPostEffect::Init()
 {
 	m_tAdaptInfo.fAdaptation = 1.f;
-	m_fHeight = _RESOLUTION.iHeight / 4;
-	m_fWidth = _RESOLUTION.iWidth / 4;
+	m_fHeight = (float)(_RESOLUTION.iHeight / 4);
+	m_fWidth = (float)(_RESOLUTION.iWidth / 4);
 
 	m_fMiddleGrey = 0.863f;
 	m_fLumWhite = 1.53f;
 
-	m_tDownScaleCBInfo.iHeight = m_fHeight;
-	m_tDownScaleCBInfo.iWidth = m_fWidth;
-	m_tDownScaleCBInfo.iTotalPixels = m_fHeight * m_fWidth;
-	m_tDownScaleCBInfo.iGroupSize = ceil(m_fHeight * m_fWidth / 1024.0f);
+	m_tDownScaleCBInfo.iHeight = (int)m_fHeight;
+	m_tDownScaleCBInfo.iWidth = (int)m_fWidth;
+	m_tDownScaleCBInfo.iTotalPixels = (int)(m_fHeight * m_fWidth);
+	m_tDownScaleCBInfo.iGroupSize = (int)ceil(m_fHeight * m_fWidth / 1024.0f);
 
 	m_tFinalPassCBInfo.fLumWhite = m_fLumWhite * m_fLumWhite;
 	m_tFinalPassCBInfo.fMiddleGrey = m_fMiddleGrey * m_fMiddleGrey;

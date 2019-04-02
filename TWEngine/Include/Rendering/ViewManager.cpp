@@ -151,9 +151,10 @@ bool CViewManager::CreateRasterizerState(const string & strKey, D3D11_FILL_MODE 
 	return true;
 }
 
-bool CViewManager::CreateRenderTarget(const string & strName, DXGI_FORMAT eTargetFmt, 
-	const Vector3 & vPos, const Vector3 & vScale, bool bDrawDebug, 
-	const Vector4 & vClearColor, DXGI_FORMAT eDepthFmt)
+bool CViewManager::CreateRenderTarget(const string& strName, DXGI_FORMAT eTargetFmt,
+	const Vector3& vPos, const Vector3& vScale,
+	const Resolution& tRS,
+	bool bDrawDebug, const Vector4& vClearColor, DXGI_FORMAT eDepthFmt)
 {
 	CRenderTarget*	pTarget = FindRenderTarget(strName);
 
@@ -162,7 +163,7 @@ bool CViewManager::CreateRenderTarget(const string & strName, DXGI_FORMAT eTarge
 
 	pTarget = new CRenderTarget;
 
-	if (!pTarget->CreateRenderTarget(eTargetFmt, vPos, vScale, eDepthFmt))
+	if (!pTarget->CreateRenderTarget(eTargetFmt, vPos, vScale, tRS, eDepthFmt))
 	{
 		SAFE_DELETE(pTarget);
 		return false;
@@ -302,56 +303,106 @@ bool CViewManager::CreateUAV()
 	Resolution tRS = _RESOLUTION;
 
 	if (!CreateUAV("DownScale2x2", DOWNSCALE_SHADER, tRS.iWidth / 8, tRS.iHeight / 8, 1, 640, 360))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("DownScale4x4", DOWNSCALE_SHADER, tRS.iWidth / 8, tRS.iHeight / 8, 1, 320, 180))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("DownScale8x8", DOWNSCALE_SHADER, tRS.iWidth / 8, tRS.iHeight / 8, 1, 160, 90))
-		return false;	
+	{
+		TrueAssert(true);
+		return false;
+	}
 
 	if (!CreateUAV("HorizontalBlur", HORIZONTAL_BLUR_SHADER, 1, tRS.iHeight / 2, 1, tRS.iWidth / 2, tRS.iHeight / 2))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("VerticalBlur", VERTICAL_BLUR_SHADER, tRS.iWidth / 2, 1, 1, tRS.iWidth / 2, tRS.iHeight / 2))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("MotionBlur", MOTION_BLUR_SHADER, tRS.iWidth / 10, tRS.iHeight / 10, 1, tRS.iWidth, tRS.iHeight))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("HDRFirstPass", HDR_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
+	{
+		TrueAssert(true);
 		return false;
+	}
 	
 	if (!CreateUAV("HDRSecondPass", HDR_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
-	return false;
+	{
+		TrueAssert(true);
+		return false;
+	}
 
 	if (!CreateUAV("AdaptationFirst", ADAPT_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("AdaptationOld", ADAPT_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("AdaptationSecond", ADAPT_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("BloomFirst", ADAPT_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32G32B32A32_FLOAT, GRT_BUFFER))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("BloomOld", ADAPT_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32B32A32_FLOAT, GRT_BUFFER2))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("BloomSecond", ADAPT_SECOND_COMPUTE_SHADER, 1, 1, 1, 1, 1, DXGI_FORMAT_R32G32B32A32_FLOAT, GRT_BUFFER2))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("Temp0", BLOOM_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("Temp1", VERTICAL_BLUR_SHADER, 180, 3, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateUAV("BloomFinal", HORIZONTAL_BLUR_SHADER, 3, 180, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	{
+		TrueAssert(true);
 		return false;
-	
+	}
 	return true;
 }
 
@@ -373,7 +424,10 @@ bool CViewManager::CreateState()
 	if (!CreateDepthStencilState(DEPTH_GRATOR, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO,
 		D3D11_COMPARISON_GREATER, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK,
 		D3D11_DEFAULT_STENCIL_READ_MASK, First, Second))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	First.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	First.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
@@ -385,48 +439,83 @@ bool CViewManager::CreateState()
 	Second.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	Second.StencilFunc = D3D11_COMPARISON_NEVER; //Åë°ú X
 
-	if (!CreateDepthStencilState(DEPTH_LESS, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, 
-		D3D11_COMPARISON_LESS, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK, 
+	if (!CreateDepthStencilState(DEPTH_LESS, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO,
+		D3D11_COMPARISON_LESS, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK,
 		D3D11_DEFAULT_STENCIL_READ_MASK, First, Second))
 		return false;
 
 	if (!CreateDepthStencilState(DEPTH_LESSEQUAL, TRUE,
 		D3D11_DEPTH_WRITE_MASK_ALL,
 		D3D11_COMPARISON_LESS_EQUAL))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	//////////////////////Blend//////////////////////////////
 	AddBlendTargetDesc(TRUE);
 	if (!CreateBlendState(ALPHA_BLEND))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 	if (!CreateBlendState(ACC_BLEND))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ZERO, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, 0);
 	if (!CreateBlendState(ZERO_BLEND))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_COLOR_WRITE_ENABLE_ALL);
 	if (!CreateBlendState(ALL_BLEND))
+	{
+		TrueAssert(true);
 		return false;
+	}
 	///////////////////////////////////////////////////////
 
 	//////////////////////Depth//////////////////////////
 	if (!CreateDepthStencilState(DEPTH_DISABLE, FALSE))
+	{
+		TrueAssert(true);
 		return false;
+	}
 	//////////////////////////////////////////////////////
 
-	if(!CreateRasterizerState(CULL_NONE, D3D11_FILL_SOLID, D3D11_CULL_NONE))
+	if (!CreateRasterizerState(CULL_NONE, D3D11_FILL_SOLID, D3D11_CULL_NONE))
+	{
+		TrueAssert(true);
 		return false;
-	if(!CreateRasterizerState(FRONT_CULL, D3D11_FILL_SOLID, D3D11_CULL_FRONT))
+	}
+	if (!CreateRasterizerState(FRONT_CULL, D3D11_FILL_SOLID, D3D11_CULL_FRONT))
+	{
+		TrueAssert(true);
 		return false;
-	if(!CreateRasterizerState(BACK_CULL, D3D11_FILL_SOLID, D3D11_CULL_BACK))
+	}
+	if (!CreateRasterizerState(BACK_CULL, D3D11_FILL_SOLID, D3D11_CULL_BACK))
+	{
+		TrueAssert(true);
 		return false;
-	if(!CreateRasterizerState(WIRE_FRAME, D3D11_FILL_WIREFRAME))
+	}
+	if (!CreateRasterizerState(WIRE_FRAME, D3D11_FILL_WIREFRAME))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
+	if (CreateDepthStencilState("DepthReadOnly", TRUE, D3D11_DEPTH_WRITE_MASK_ZERO) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
 	
 
 	return true;
@@ -442,40 +531,58 @@ bool CViewManager::CreateRenderTargetView()
 
 	// Albedo
 	vPos.x = 0.f;
-	if (!CreateRenderTarget("Albedo", DXGI_FORMAT_R32G32B32A32_FLOAT, Vector3::Zero, Vector3(100.f, 100.f, 1.f), true))
+	if (!CreateRenderTarget("Albedo", DXGI_FORMAT_R32G32B32A32_FLOAT, Vector3::Zero, Vector3(100.f, 100.f, 1.f), _RESOLUTION,  true))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// Normal
 	vPos.x = 0.f;
 	vPos.y = 100.f;
-	if (!CreateRenderTarget("Normal", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
+	if (!CreateRenderTarget("Normal", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// Depth
 	vPos.x = 0.f;
 	vPos.y = 200.f;
-	if (!CreateRenderTarget("Depth", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
+	if (!CreateRenderTarget("Depth", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// Material
 	vPos.x = 0.f;
 	vPos.y = 300.f;
-	if (!CreateRenderTarget("Material", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
+	if (!CreateRenderTarget("Material", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// Tangent
 	vPos.x = 0.f;
 	vPos.y = 400.f;
 	if (!CreateRenderTarget("Tangent", DXGI_FORMAT_R32G32B32A32_FLOAT,
-		vPos, Vector3(100.f, 100.f, 1.f), true))
+		vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION,true))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// Binormal
 	vPos.x = 0.f;
 	vPos.y = 500.f;
 	if (!CreateRenderTarget("Binormal", DXGI_FORMAT_R32G32B32A32_FLOAT,
-		vPos, Vector3(100.f, 100.f, 1.f), true))
+		vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	CreateMultiTarget("GBuffer");
 	AddMultiRenderTarget("GBuffer", "Albedo");
@@ -493,46 +600,80 @@ bool CViewManager::CreateRenderTargetView()
 	// Light Dif
 	vPos.x = 100.f;
 	vPos.y = 0.f;
-	if (!CreateRenderTarget("LightAccDif", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
+	if (!CreateRenderTarget("LightAccDif", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION,true))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// Light Spc
 	vPos.x = 100.f;
 	vPos.y = 100.f;
-	if (!CreateRenderTarget("LightAccSpc", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true))
+	if (!CreateRenderTarget("LightAccSpc", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	if (!CreateMultiTarget("LightAcc"))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	AddMultiRenderTarget("LightAcc", "LightAccDif");
 	AddMultiRenderTarget("LightAcc", "LightAccSpc");
 
 	vPos.x = 100.f;
 	vPos.y = 200.f;
-	if (!CreateRenderTarget("VolumeFogDepth", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
+	if (!CreateRenderTarget("VolumeFogDepth", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true, Vector4::LightCyan))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	// Light Blend
 	vPos.x = 200.f;
 	vPos.y = 0.f;
-	if (!CreateRenderTarget("LightBlend", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
+	if (!CreateRenderTarget("LightBlend", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true, Vector4::LightCyan))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	vPos.x = 300.f;
 	vPos.y = 0.f;
-	if (!CreateRenderTarget("Final", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
+	if (!CreateRenderTarget("Final", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION,true, Vector4::LightCyan))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	vPos.x = 300.f;
 	vPos.y = 100.f;
-	if (!CreateRenderTarget("Sky", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
+	if (!CreateRenderTarget("Sky", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true, Vector4::LightCyan))
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	vPos.x = 400.f;
 	vPos.y = 0.f;
-	if (!CreateRenderTarget("SecondBackBuffer", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), true, Vector4::LightCyan))
+	if (!CreateRenderTarget("SecondBackBuffer", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true, Vector4::LightCyan))
+	{
+		TrueAssert(true);
 		return false;
+	}
+
+	// ShadowMap
+	vPos.x = 500.f;
+	vPos.y = 0.f;
+	if (!CreateRenderTarget("ShadowMap", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), Resolution(SHADOW_WIDTH, SHADOW_HEIGHT),
+		true, Vector4(0.f, 0.f, 0.f, 0.f), DXGI_FORMAT_D24_UNORM_S8_UINT))
+	{
+		TrueAssert(true);
+		return false;
+	}
 
 	return true;
 }
@@ -542,7 +683,10 @@ bool CViewManager::CreateFilter()
 	CDownScale* pDownScale = CreateFilter<CDownScale>(CFT_DOWNSCALE);
 
 	if (!pDownScale)
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	pDownScale->AddUAV("DownScale2x2");
 	pDownScale->AddUAV("DownScale4x4");
@@ -551,7 +695,10 @@ bool CViewManager::CreateFilter()
 	CCSBlur* pBlur = CreateFilter<CCSBlur>(CFT_BLUR);
 
 	if (!pBlur)
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	pBlur->AddUAV("HorizontalBlur");
 	pBlur->AddUAV("VerticalBlur");
@@ -559,14 +706,20 @@ bool CViewManager::CreateFilter()
 	CMotionBlurFilter* pMBFilter = CreateFilter<CMotionBlurFilter>(CFT_MOTIONBLUR);
 
 	if (!pMBFilter)
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	pMBFilter->AddUAV("MotionBlur");
 	
 	CCSHDRFilter* pHDR = CreateFilter<CCSHDRFilter>(CFT_HDR);
 
 	if (!pHDR)
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	pHDR->AddUAV("HDRFirstPass");
 	pHDR->AddUAV("HDRSecondPass");
@@ -574,7 +727,10 @@ bool CViewManager::CreateFilter()
 	CCSAdaptFilter*	pAdapt = CreateFilter<CCSAdaptFilter>(CFT_ADAPTATION);
 
 	if (!pAdapt)
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	pAdapt->AddUAV("AdaptationFirst");
 	pAdapt->AddUAV("AdaptationSecond");
@@ -583,7 +739,10 @@ bool CViewManager::CreateFilter()
 	CCSBloomFilter*	pBloom = CreateFilter<CCSBloomFilter>(CFT_BLOOM);
 
 	if (!pBloom)
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	pBloom->AddUAV("BloomFirst");
 	pBloom->AddUAV("BloomSecond");

@@ -67,7 +67,6 @@ void GUIManager::Debug()
 	if (CCore::GetInst()->m_bGuiMode == false)
 		return;
 
-
 	if (m_bShaderOption == true)
 	{
 		ImGui::Begin("ShaderOption");
@@ -85,6 +84,4 @@ void GUIManager::Debug()
 
 		ImGui::End();
 	}
-
-	
 }

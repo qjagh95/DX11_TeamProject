@@ -13,8 +13,10 @@ CCamera::CCamera()
 	m_eCameraType = CT_PERSPECTIVE;
 	m_pTarget = nullptr;
 	m_pFrustum = new CFrustum;
-}
 
+	m_bShadow = false;
+	m_pShadowLight = NULLPTR;
+}
 
 CCamera::CCamera(const CCamera & camera) :
 	CComponent(camera)
@@ -24,10 +26,14 @@ CCamera::CCamera(const CCamera & camera) :
 	m_matProj = camera.m_matProj;
 	m_pTarget = nullptr;
 	m_pFrustum = new CFrustum;
+
+	m_bShadow = camera.m_bShadow;
+	m_pShadowLight = NULLPTR;
 }
 
 CCamera::~CCamera()
 {
+	SAFE_RELEASE(m_pShadowLight);
 	SAFE_DELETE(m_pFrustum);
 	SAFE_RELEASE(m_pTarget);
 }
@@ -88,9 +94,16 @@ void CCamera::SetCameraType(CAMERA_TYPE eType)
 {
 	m_eCameraType = eType;
 
+	float	fHalfWidth = SHADOW_WIDTH / 2.f;
+	float	fHalfHeight = SHADOW_HEIGHT / 2.f;
+
+	//m_matShadowProj = XMMatrixOrthographicOffCenterLH(-fHalfWidth, fHalfWidth, -fHalfHeight, fHalfHeight, 0.f, m_fFar);
+
 	switch (eType)
 	{
 	case CT_PERSPECTIVE:
+		m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle), SHADOW_WIDTH / (float)SHADOW_HEIGHT, m_fNear, m_fFar);
+
 		m_matProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle),
 			m_fWidth / m_fHeight, m_fNear, m_fFar);
 		break;
@@ -186,6 +199,38 @@ int CCamera::Update(float fTime)
 
 	m_pFrustum->Update(m_matView * m_matProj);
 
+	if (m_bShadow)
+	{
+		m_matShadowView.Identity();
+
+		// 조명의 3개 축을 얻어온다.
+		Vector3	vLightAxis[AXIS_END];
+
+		for (int i = 0; i < AXIS_END; ++i)
+			vLightAxis[i] = m_pShadowLight->GetWorldAxis((AXIS)i);
+
+		Vector3	vLightPos;
+
+		if (m_pTarget)
+			vLightPos = m_pTarget->GetWorldPos() - vLightAxis[AXIS_Z] * 30.f;
+
+		else
+			vLightPos = m_pTransform->GetWorldPos() + m_pTransform->GetWorldAxis(AXIS_Z) * 5.f - vLightAxis[AXIS_Z] * 30.f;
+
+		for (int i = 0; i < AXIS_END; ++i)
+		{
+			memcpy(&m_matShadowView[i][0], &vLightAxis[i], sizeof(Vector3));
+		}
+
+		m_matShadowView.Transpose();
+
+		vLightPos *= -1.f;
+
+		for (int i = 0; i < AXIS_END; ++i)
+			m_matShadowView[3][i] = vLightPos.Dot(vLightAxis[i]);
+	}
+
+
 	return 0;
 }
 
@@ -215,4 +260,31 @@ bool CCamera::FrustumInPoint(Vector3 & vPos)
 bool CCamera::FrustumInSphere(Vector3 & vCenter, float fRadius)
 {
 	return m_pFrustum->FrustumInSphere(vCenter, fRadius);
+}
+
+void CCamera::SetShadowLight(CTransform * pShadowLight)
+{
+	SAFE_RELEASE(m_pShadowLight);
+	pShadowLight->AddRef();
+	m_pShadowLight = pShadowLight;
+}
+
+void CCamera::Shadow(bool bEnable)
+{
+	m_bShadow = bEnable;
+}
+
+Matrix CCamera::GetShadowViewMatrix() const
+{
+	return m_matShadowView;
+}
+
+Matrix CCamera::GetShadowProjMatrix() const
+{
+	return m_matShadowProj;
+}
+
+bool CCamera::IsShadow() const
+{
+	return m_bShadow;
 }

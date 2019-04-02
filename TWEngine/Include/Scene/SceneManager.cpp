@@ -40,6 +40,16 @@ CScene * CSceneManager::GetNextSceneNonCount() const
 	return m_pNextScene;
 }
 
+CCamera * CSceneManager::GetMainCamera() const
+{
+	return m_pScene->GetMainCamera();
+}
+
+CCamera * CSceneManager::GetMainCameraNoneCount() const
+{
+	return m_pScene->GetMainCameraNonCount();
+}
+
 bool CSceneManager::Init()
 {
 	m_pScene = new CScene;

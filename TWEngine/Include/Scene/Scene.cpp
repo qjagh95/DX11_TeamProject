@@ -160,15 +160,16 @@ bool CScene::Init()
 
 	ProfileInit();
 
-	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 45.f, 0.03f, 1000.f);	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
+	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 90.f, 0.03f, 1000.f);;
+	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
 	m_pMainCamera = m_pMainCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
+	m_pMainCamera->Shadow(true);
 	m_pUICameraObj = CreateCamera("UICamera", Vector3(0.f, 0.f, 0.f), CT_ORTHO, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 60.f, 0.f, 1000.f);
 
 	m_pUICameraTr = m_pUICameraObj->GetTransform();
 	m_pUICamera = m_pUICameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
 
 	CLayer*	pLayer = FindLayer("Default");
-	SAFE_RELEASE(pLayer);
 
 	m_pSkyObj = CGameObject::CreateObject("Sky");
 
@@ -207,6 +208,19 @@ bool CScene::Init()
 	m_LogText.LateUpdate.open(Path + L"SceneLateUpdate.txt");
 	m_LogText.Collsion.open(Path + L"SceneCollsion.txt");
 	m_LogText.Render.open(Path + L"SceneRender.txt");
+
+	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLayer, true);
+
+	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
+	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
+	pLight->SetLightType(LT_DIR);
+	pLight->SetLightDirection(Vector3(1.0f, -1.0f, 1.0f));
+	m_pMainCamera->SetShadowLight(pLight->GetTransformNonCount());
+	m_pMainCamera->Shadow(true);
+
+	SAFE_RELEASE(pLight);
+	SAFE_RELEASE(pLightObj);
+	SAFE_RELEASE(pLayer);
 
 	return true;
 }

@@ -180,7 +180,7 @@ void CCSBloomFilter::ResetShaderResource(int iPass, float fTime)
 			m_pAdaptOldAvgLumSRV = m_vecUAV[BLOOM_OLD]->GetShaderResourceView();
 		}
 
-		ID3D11Buffer*				pTempBuffer;
+		//ID3D11Buffer*				pTempBuffer;
 		ID3D11UnorderedAccessView*	pTempUAV;
 		ID3D11ShaderResourceView*	pTempSRV;
 

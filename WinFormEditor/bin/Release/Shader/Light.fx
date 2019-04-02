@@ -9,6 +9,7 @@ Texture2D g_GBufferMaterialTex : register(t13);
 
 Texture2D g_LightDifTex : register(t14);
 Texture2D g_LightSpcTex : register(t15);
+Texture2D g_ShadowMap : register(t16);
 
 struct PS_OUTPUT_LIGHTACC
 {
@@ -102,6 +103,34 @@ PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_TEX input)
     float2 UV = input.vPos.xy / g_ViewPortSize.xy;
 
     float4 vAlbedo = g_GBufferAlbedoTex.Sample(g_GBufferSmp, UV);
+
+    if (vAlbedo.a == 0.f)
+        clip(-1);
+
+    float4 vDepth = g_GBufferDepthTex.Sample(g_GBufferSmp, input.vUV);
+
+    float4 vProjPos;
+    vProjPos.x = input.vUV.x * 2.f - 1.f;
+	// y는 uv공간은 아래가 +값이다. 이 값을 3차원 공간에서는 위고 y+ 값이므로
+	// -2를 곱해서 아래가 -값이 될 수 있도록 해준다.
+    vProjPos.y = input.vUV.y * -2.f + 1.f;
+    vProjPos.z = vDepth.r;
+    vProjPos.w = 1.f;
+
+    vProjPos *= vDepth.a;
+
+	// ShadowMap에서 위치를 얻어온다.
+    float4 vShadowMap = g_ShadowMap.Sample(g_GBufferSmp, input.vUV);
+    float4 vShadowProjPos = (float4) 0.f;
+
+    vShadowProjPos.x = input.vUV.x * 2.f - 1.f;
+	// y는 uv공간은 아래가 +값이다. 이 값을 3차원 공간에서는 위고 y+ 값이므로
+	// -2를 곱해서 아래가 -값이 될 수 있도록 해준다.
+    vShadowProjPos.y = input.vUV.y * -2.f + 1.f;
+    vShadowProjPos.z = vShadowMap.r;
+    vShadowProjPos.w = 1.f;
+
+    vShadowProjPos *= vShadowMap.a;
 
     float4 vDif = g_LightDifTex.Sample(g_GBufferSmp, UV);
     float4 vSpc = g_LightSpcTex.Sample(g_GBufferSmp, UV);

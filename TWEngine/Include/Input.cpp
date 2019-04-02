@@ -287,19 +287,19 @@ void CInput::Update(float fTime)
 			m_bFocus = true;
 	}
 
-#ifdef _DEBUG
-	static float	ftime11 = 0.f;
-	ftime11 += fTime;
-
-	if (ftime11 >= 2.f)
-	{
-		ftime11 = 0.f;
-		TCHAR	str[256] = {};
-		wsprintf(str, TEXT("Active Window : %d\n"), hWnd);
-
-		OutputDebugString(str);
-	}
-#endif
+//#ifdef _DEBUG
+//	static float	ftime11 = 0.f;
+//	ftime11 += fTime;
+//
+//	if (ftime11 >= 2.f)
+//	{
+//		ftime11 = 0.f;
+//		TCHAR	str[256] = {};
+//		wsprintf(str, TEXT("Active Window : %d\n"), hWnd);
+//
+//		OutputDebugString(str);
+//	}
+//#endif
 
 	if (!m_bFocus)
 	{

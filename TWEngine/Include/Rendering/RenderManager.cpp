@@ -99,7 +99,8 @@ bool CRenderManager::Init()
 	m_pShader[SHADER_FOG_DEPTH]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(VOLUME_FOG_FIRST_SHADER);
 	m_pShader[SHADER_FOG_COLOR]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(VOLUME_FOG_SECOND_SHADER);
 	m_pShader[SHADER_FULL_SCREEN]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(FULLSCREEN_SHADER);
-	m_pShader[SHADER_FINAL_PASS]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(FINAL_PASS_SHADER);
+	m_pShader[SHADER_FINAL_PASS] = GET_SINGLE(CShaderManager)->FindShaderNonCount(FINAL_PASS_SHADER);
+	m_pShader[SHADER_SHDOW] = GET_SINGLE(CShaderManager)->FindShaderNonCount(SHADOWMAP_SHADER);
 
 	m_pTarget[TARGET_ALBEDO]		= GET_SINGLE(CViewManager)->FindRenderTarget("Albedo");
 	m_pTarget[TARGET_DEPTH]			= GET_SINGLE(CViewManager)->FindRenderTarget("Depth");
@@ -111,7 +112,8 @@ bool CRenderManager::Init()
 	m_pTarget[TARGET_BLEND]			= GET_SINGLE(CViewManager)->FindRenderTarget("LightBlend");
 	m_pTarget[TARGET_FINAL]			= GET_SINGLE(CViewManager)->FindRenderTarget("Final");
 	m_pTarget[TARGET_TANGENT]		= GET_SINGLE(CViewManager)->FindRenderTarget("Tangent");
-	m_pTarget[TARGET_BINORMAL]		= GET_SINGLE(CViewManager)->FindRenderTarget("Binormal");
+	m_pTarget[TARGET_BINORMAL] = GET_SINGLE(CViewManager)->FindRenderTarget("Binormal");
+	m_pTarget[TARGET_SHADOWMAP] = GET_SINGLE(CViewManager)->FindRenderTarget("ShadowMap");
 
 	m_pTarget[TARGET_FOG_DEPTH]->SetClearColor(Vector4::Black);
 
@@ -124,7 +126,8 @@ bool CRenderManager::Init()
 	m_pState[STATE_CULL_NONE]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(CULL_NONE);
 	m_pState[STATE_ZERO_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ZERO_BLEND);
 	m_pState[STATE_ALL_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ALL_BLEND);
-	m_pState[STATE_DEPTH_DISABLE]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_DISABLE);
+	m_pState[STATE_DEPTH_DISABLE] = GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_DISABLE);
+	m_pState[STATE_DEPTH_READ_ONLY] = GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_DISABLE);
 
 	((CDepthState*)m_pState[STATE_DEPTH_GRATOR])->SetStencilRef(1); //스텐실값을 1로 채운다.
 
@@ -140,9 +143,9 @@ bool CRenderManager::Init()
 	m_pFilter[1]->Disable();
 	m_pFilter[2]->Disable();
 	m_pFilter[3]->Disable();
-	m_tFinalCBuffer.iHDR = 1;
+	m_tFinalCBuffer.iHDR = 0;
 	//m_pFilter[5]->Disable();
-	m_tFinalCBuffer.iBloom = 1;
+	m_tFinalCBuffer.iBloom = 0;
 	//m_tFinalCBuffer.iBlur = 1;
 
 	return true;
@@ -310,6 +313,12 @@ void CRenderManager::Render3D(float fTime)
 
 void CRenderManager::RenderDeferred(float fTime)
 {
+	// MainCamera를 얻어온다.
+	CCamera* pMainCamera = GET_SINGLE(CSceneManager)->GetMainCameraNoneCount();
+
+	if (pMainCamera->IsShadow())
+		RenderShadowMap(fTime);
+
 	// GBuffer를 만들어준다.
 	RenderGBuffer(fTime);
 	// GBuffer를 이용해 데칼을 GBuffer에 추가하여 그린다.
@@ -598,10 +607,43 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pTarget[TARGET_BLEND]->ClearTarget();
 	m_pTarget[TARGET_BLEND]->SetTarget();
 
+	TransformCBuffer	tCBuffer = {};
+
+	CCamera*	pMainCamera = GET_SINGLE(CSceneManager)->GetMainCamera();
+
+	tCBuffer.matWorld.Identity();
+	tCBuffer.matView = pMainCamera->GetViewMatrix();
+	tCBuffer.matProj = pMainCamera->GetProjMatrix();
+	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
+	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
+	tCBuffer.matWLP = tCBuffer.matWorld * pMainCamera->GetShadowViewMatrix() * pMainCamera->GetShadowProjMatrix();
+	tCBuffer.matInvWVP = tCBuffer.matWVP;
+	tCBuffer.matInvWVP.Inverse();
+	tCBuffer.matInvProj = tCBuffer.matProj;
+	tCBuffer.matInvProj.Inverse();
+	tCBuffer.matVP = tCBuffer.matView * tCBuffer.matProj;
+
+	tCBuffer.matWorld.Transpose();
+	tCBuffer.matView.Transpose();
+	tCBuffer.matProj.Transpose();
+	tCBuffer.matWV.Transpose();
+	tCBuffer.matWVP.Transpose();
+	tCBuffer.matWLP.Transpose();
+	tCBuffer.matInvWVP.Transpose();
+	tCBuffer.matInvProj.Transpose();
+	tCBuffer.matVP.Transpose();
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform", &tCBuffer);
+	SAFE_RELEASE(pMainCamera);
+
+
 	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
 	m_pGBufferSampler->SetShader(10);
+	m_pTarget[TARGET_SHADOWMAP]->SetShader(16);
+
 	m_pTarget[TARGET_ALBEDO]->SetShader(10);
+	m_pTarget[TARGET_DEPTH]->SetShader(12);
 
 	m_pTarget[TARGET_ACC_DIFF]->SetShader(14);
 	m_pTarget[TARGET_ACC_SPC]->SetShader(15);
@@ -620,6 +662,8 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pTarget[TARGET_ALBEDO]->ResetShader(10);
 	m_pTarget[TARGET_ACC_DIFF]->ResetShader(14);
 	m_pTarget[TARGET_ACC_SPC]->ResetShader(15);
+	m_pTarget[TARGET_DEPTH]->ResetShader(12);
+	m_pTarget[TARGET_SHADOWMAP]->ResetShader(16);
 
 	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 	m_pTarget[TARGET_BLEND]->ResetTarget();
@@ -817,6 +861,28 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 
 	m_pTarget[TARGET_FINAL]->ResetShader(0);
+}
+
+void CRenderManager::RenderShadowMap(float fTime)
+{
+	GET_SINGLE(CDevice)->SetShadowVP();
+
+	m_pTarget[TARGET_SHADOWMAP]->ClearTarget();
+	m_pTarget[TARGET_SHADOWMAP]->SetTarget();
+
+	m_pShader[SHADER_SHDOW]->SetShader();
+
+	for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
+	{
+		for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
+		{
+			m_tRenderObj[i].pList[j]->RenderShadow(fTime);
+		}
+	}
+
+	m_pTarget[TARGET_SHADOWMAP]->ResetTarget();
+
+	GET_SINGLE(CDevice)->ResetVP();
 }
 
 void CRenderManager::RenderComputeProcess(float fTime)

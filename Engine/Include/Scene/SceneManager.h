@@ -14,6 +14,8 @@ public:
 	class CScene * GetSceneNonCount() const;
 	class CScene* GetNextScene()	const;
 	class CScene * GetNextSceneNonCount() const;
+	class CCamera* GetMainCamera()	const;
+	class CCamera* GetMainCameraNoneCount()	const;
 
 public:
 	bool Init();

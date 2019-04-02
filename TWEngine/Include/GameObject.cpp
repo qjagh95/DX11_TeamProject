@@ -661,6 +661,28 @@ void CGameObject::Render(float fTime)
 	}
 }
 
+void CGameObject::RenderShadow(float fTime)
+{
+	m_pTransform->Render(fTime);
+
+	CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (pRenderer)
+	{
+		if (!pRenderer->GetActive())
+		{
+			pRenderer->Release();
+			m_ComList.remove(pRenderer);
+		}
+
+		else if (pRenderer->GetEnable())
+		{
+			pRenderer->RenderShadow(fTime);
+		}
+		SAFE_RELEASE(pRenderer);
+	}
+}
+
 CGameObject * CGameObject::Clone()
 {
 	return new CGameObject(*this);

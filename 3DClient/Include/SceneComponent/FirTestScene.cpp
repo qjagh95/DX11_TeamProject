@@ -33,7 +33,6 @@ bool CFirTestScene::Init()
 	_SMgr->CreateSoundEffect("bgm1", TEXT("APINK.wav"));
 	_SMgr->PlayBgm("bgm1");
 
-
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 
@@ -155,7 +154,6 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pObject);
 	
 	
-
 	CGameObject*	pDecalObj = CGameObject::CreatePrototype("Decal");
 
 	CDecal*	pDecal = pDecalObj->AddComponent<CDecal>("Decal");
@@ -231,17 +229,6 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pDecalTr);
 
 	SAFE_RELEASE(pDecalObj);
-
-
-	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
-
-	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
-	pLight->SetLightType(LT_DIR);
-	pLight->SetLightDirection(Vector3(1.0f, -1.0f, 1.0f));
-
-	SAFE_RELEASE(pLight);
-	SAFE_RELEASE(pLightObj);
 
 	CGameObject* pLandScapeObj = CGameObject::CreateObject("LandScape", pDefaultLayer);
 	pTransform = pLandScapeObj->GetTransform();

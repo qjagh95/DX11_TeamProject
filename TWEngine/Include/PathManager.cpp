@@ -1,5 +1,5 @@
 #include "EngineHeader.h"
-#include "PathManager.h"
+#include "Core.h"
 
 PUN_USING
 
@@ -13,14 +13,14 @@ CPathManager::~CPathManager()
 {
 }
 
-bool CPathManager::Init(bool _bEditEnable)
+bool CPathManager::Init()
 {
 	TCHAR	strPath[MAX_PATH] = {};
 
 	GetModuleFileName(nullptr, strPath, MAX_PATH);
 	wstring RootPath = strPath;
 
-	if (_bEditEnable)
+	if (CCore::GetInst()->m_bEditorMode == true)
 	{
 		for (size_t i = 0; i < 4; i++)
 		{
@@ -40,11 +40,8 @@ bool CPathManager::Init(bool _bEditEnable)
 				break;
 			}
 		}
-
 		m_mapPath.insert(make_pair(ROOT_PATH, strPath));
 	}
-
-
 
 	AddPath(SHADER_PATH, TEXT("Shader\\"));
 	AddPath(TEXTURE_PATH, TEXT("Texture\\"));

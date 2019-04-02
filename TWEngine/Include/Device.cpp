@@ -276,4 +276,24 @@ void CDevice::Present()
 	m_pSwapChain->Present(0, 0);
 }
 
+void CDevice::SetShadowVP()
+{
+	D3D11_VIEWPORT	tVP = {};
 
+	tVP.Width = SHADOW_WIDTH;
+	tVP.Height = SHADOW_HEIGHT;
+	tVP.MaxDepth = 1.f;
+
+	m_pContext->RSSetViewports(1, &tVP);
+}
+
+void CDevice::ResetVP()
+{
+	D3D11_VIEWPORT	tVP = {};
+
+	tVP.Width = (FLOAT)m_tRS.iWidth;
+	tVP.Height = (FLOAT)m_tRS.iHeight;
+	tVP.MaxDepth = 1.f;
+
+	m_pContext->RSSetViewports(1, &tVP);
+}

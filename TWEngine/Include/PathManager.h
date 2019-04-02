@@ -9,7 +9,7 @@ private:
 	char	m_strPath[MAX_PATH] = {};
 
 public:
-	bool Init(bool _bEditEnable = false);
+	bool Init();
 	bool AddPath(const string& strKey, const wstring& strPath,
 		const string& strBaseKey = ROOT_PATH);
 	const TCHAR* FindPath(const string& strKey);

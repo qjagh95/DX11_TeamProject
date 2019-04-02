@@ -45,6 +45,8 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
+	virtual void RenderShadow(float fTime);
+
 	virtual CComponent* Clone() = 0;
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);

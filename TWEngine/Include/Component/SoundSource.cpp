@@ -92,7 +92,7 @@ void PUN::CSoundSource::Play(int idxKey, bool bLoop)
 
 void PUN::CSoundSource::Play(std::string & strKey, bool bLoop)
 {
-	int iKey = m_mapSndInstKey.find(strKey)->second;
+	int iKey = (int)m_mapSndInstKey.find(strKey)->second;
 	m_vecsPtrSound[iKey]->Play(bLoop);
 }
 
@@ -108,7 +108,7 @@ void PUN::CSoundSource::PauseClip(int idxKey)
 
 void PUN::CSoundSource::PauseClip(std::string & strKey)
 {
-	int idxKey = m_mapSndInstKey.find(strKey)->second;
+	int idxKey = (int)m_mapSndInstKey.find(strKey)->second;
 	if (m_vecsPtrSound[idxKey]->GetState() == PAUSED)
 	{
 		m_vecsPtrSound[idxKey]->Resume();
@@ -123,9 +123,8 @@ void PUN::CSoundSource::StopClip(int idxKey, bool bImmediate)
 }
 
 void PUN::CSoundSource::StopClip(std::string & strKey, bool bImmediate )
-
 {
-	int idxKey = m_mapSndInstKey.find(strKey)->second;
+	int idxKey = (int)m_mapSndInstKey.find(strKey)->second;
 	m_vecsPtrSound[idxKey]->Stop(bImmediate);
 }
 
@@ -133,11 +132,14 @@ bool PUN::CSoundSource::LoadSounds(const vector<std::string>& vecStr)
 {
 	PUN::CSoundManager *pMgr = PUN::CSoundManager::GetInst();
 	std::shared_ptr<DirectX::SoundEffect> sNullPTR;
+
 	for (size_t i = 0; i < vecStr.size(); ++i)
 	{
 		std::shared_ptr<DirectX::SoundEffect> sPtrSound = pMgr->FindSoundEffect(vecStr[i]);
+
 		if (sPtrSound == sNullPTR)
 			return false;
+
 		std::shared_ptr<DirectX::SoundEffectInstance> sPtrSoundInst 
 			= sPtrSound->CreateInstance(SoundEffectInstance_Use3D | SoundEffectInstance_ReverbUseFilters);
 
@@ -179,13 +181,15 @@ bool PUN::CSoundSource::LoadSounds(const char ** arrStrName, const TCHAR ** arrF
 {
 	PUN::CSoundManager *pMgr = PUN::CSoundManager::GetInst();
 	std::shared_ptr<DirectX::SoundEffect> sNullPTR;
+
 	for (size_t i = 0; i < iCnt; ++i)
 	{
-
 		pMgr->CreateSoundEffect(arrStrName[i], arrFilePath[i], PathKey);
+
 		std::shared_ptr<DirectX::SoundEffect> sPtrSound = pMgr->FindSoundEffect(arrStrName[i]);
 		if (sPtrSound == sNullPTR)
 			return false;
+
 		std::shared_ptr<DirectX::SoundEffectInstance> sPtrSoundInst
 			= sPtrSound->CreateInstance(SoundEffectInstance_Use3D | SoundEffectInstance_ReverbUseFilters);
 
@@ -241,13 +245,13 @@ void PUN::CSoundSource::SetPitch(int iClipIdx, float pitch)
 
 void PUN::CSoundSource::SetVolume(std::string strClip, float vol)
 {
-	int iClipIdx = m_mapSndInstKey.find(strClip)->second;
+	int iClipIdx = (int)m_mapSndInstKey.find(strClip)->second;
 	m_vecsPtrSound[iClipIdx]->SetVolume(vol);
 }
 
 void PUN::CSoundSource::SetPitch(std::string strClip, float pitch)
 {
-	int iClipIdx = m_mapSndInstKey.find(strClip)->second;
+	int iClipIdx = (int)m_mapSndInstKey.find(strClip)->second;
 	m_vecsPtrSound[iClipIdx]->SetPitch(pitch);
 }
 

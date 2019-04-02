@@ -26,6 +26,9 @@ public:
 	Vector2					GetWindowToDeviceResolution()	const;
 	ID2D1RenderTarget*		Get2DRenderTarget()	const;
 
+	void SetShadowVP();
+	void ResetVP();
+
 public:
 	bool Init(HWND hWnd, unsigned int iWidth, 
 		unsigned int iHeight, bool bWindowMode);

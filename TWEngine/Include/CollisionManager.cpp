@@ -38,7 +38,7 @@ bool CCollisionManager::Init()
 	CreateGroup("BackGround", Vector3(0.f, 0.f, 0.f), Vector3(5000.f, 5000.f, 0.f),
 		10, 10, 1, CGT_3D);
 	CreateGroup("UI", Vector3(0.f, 0.f, 0.f),
-		Vector3(_RESOLUTION.iWidth, _RESOLUTION.iHeight, 0.f),
+		Vector3((float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 0.f),
 		4, 4, 1, CGT_2D);
 
 	return true;
@@ -67,7 +67,7 @@ bool CCollisionManager::CreateGroup(const string & strKey,
 	pGroup->pSectionList = new CollisionSection[pGroup->iCount];
 
 	pGroup->vLength = vMax - vMin;
-	pGroup->vCellLength = pGroup->vLength / Vector3(iCountX, iCountY, iCountZ);
+	pGroup->vCellLength = pGroup->vLength / Vector3((float)iCountX, (float)iCountY, (float)iCountZ);
 
 	m_mapGroup.insert(make_pair(strKey, pGroup));
 
@@ -173,7 +173,7 @@ void CCollisionManager::AddCollision(CGameObject * pObj)
 
 					if (pSection->iCapacity == pSection->iSize)
 					{
-						pSection->iCapacity *= 1.5f;
+						pSection->iCapacity *= 2;
 						CCollider**	pArray = new CCollider*[pSection->iCapacity];
 
 						memcpy(pArray, pSection->pList, sizeof(CCollider*) * pSection->iSize);

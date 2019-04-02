@@ -118,6 +118,7 @@ cbuffer Transform	: register(b0)
 	matrix	g_matProj;
 	matrix	g_matWV;
 	matrix	g_matWVP;
+    matrix  g_matWLP;
     matrix  g_matInvWVP;
     matrix  g_matInvProj;
     matrix  g_matVP;
@@ -142,7 +143,8 @@ cbuffer Component	: register(b2)
     int     g_iDeferredEnable;
     int     g_iFocus;
     int     g_iDecalEnable;
-    float3  g_ComponentEmpty;
+    int     g_i3DAnimation;
+    float2 vEmpty12312435;
 }
 
 cbuffer Public : register(b5)
@@ -535,3 +537,22 @@ _tagSkinning Skinning(float3 vPos, float3 vNormal, float4 vWeights,
     return tSkinning;
 }
 
+float3 Skinning(float3 vPos, float4 vWeights, float4 vIndices)
+{
+    float3 vSkinningPos = (float3) 0.f;
+
+    float fWeights[4];
+    fWeights[0] = vWeights.x;
+    fWeights[1] = vWeights.y;
+    fWeights[2] = vWeights.z;
+    fWeights[3] = 1.f - vWeights.x - vWeights.y - vWeights.z;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        matrix matBone = GetBoneMatrix((int) vIndices[i]);
+
+        vSkinningPos += fWeights[i] * mul(float4(vPos, 1.f), matBone).xyz;
+    }
+
+    return vSkinningPos;
+}

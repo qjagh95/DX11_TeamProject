@@ -517,7 +517,7 @@ bool CCore::EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth, unsign
 	SetClearColor(0x00, 0xff, 0x00, 0x00);
 
 	// 경로관리자 초기화
-	if (!CPathManager::GetInst()->Init(true))
+	if (!CPathManager::GetInst()->Init())
 	{
 		TrueAssert(true);
 		return false;

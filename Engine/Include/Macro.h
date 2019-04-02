@@ -1,6 +1,9 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
 
+#define	SHADOW_WIDTH	2048
+#define	SHADOW_HEIGHT	2048
+
 #define	ROOT_PATH							"RootPath"
 #define	SHADER_PATH							"ShaderPath"
 #define	TEXTURE_PATH						"TexturePath"
@@ -34,6 +37,7 @@
 #define LANDSCAPE_SHADER					"LandScapeShader"
 #define DECAL_SHADER						"DecalShader"
 #define PARTICLE_SHADER						"ParticleShader"
+#define SHADOWMAP_SHADER "ShadowShader"
 
 #define VOLUME_FOG_FIRST_SHADER				"VolumeFogFirstShader"
 #define VOLUME_FOG_SECOND_SHADER			"VolumeFogSecondShader"

@@ -62,7 +62,7 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
         output.vAlbedo = input.vColor;
         output.vNormal.xyz = input.vNormal;
         output.vNormal.w = g_vLightSpc.w;
-        output.vDepth.r = (float3) (input.vProjPos.z / input.vProjPos.w);
+        output.vDepth.r = (input.vProjPos.z / input.vProjPos.w);
         output.vDepth.g = g_iFocus;
         output.vDepth.b = g_iDecalEnable;
         output.vDepth.a = input.vProjPos.w;
@@ -230,7 +230,7 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 		output.vAlbedo = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
 		output.vNormal.xyz = vNormal;
 		output.vNormal.w = g_vMtrlSpc.w;
-		output.vDepth.r = (float3)(input.vProjPos.z / input.vProjPos.w);
+		output.vDepth.r = (input.vProjPos.z / input.vProjPos.w);
         output.vDepth.g = g_iFocus;
         output.vDepth.b = g_iDecalEnable;
 		output.vDepth.a = input.vProjPos.w;
