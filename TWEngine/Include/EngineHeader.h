@@ -64,6 +64,7 @@ using namespace concurrency;
 #include "TimerManager.h"
 #include "SoundManager.h"
 #include "ObjectManager.h"
+#include "BTManager.h"
 #include "CollisionManager.h"
 #include "Scene/SceneManager.h"
 #include "NavigationManager3D.h"

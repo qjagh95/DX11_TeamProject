@@ -174,6 +174,9 @@
     <Filter Include="03. Rendering\06. Filter\05. Adaptation">
       <UniqueIdentifier>{db5b40b4-9811-4187-9d51-7d192ea4f16c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. BehaviorTree">
+      <UniqueIdentifier>{598ff5f4-5160-4ac6-b79d-024bac17ed09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -421,6 +424,12 @@
     </ClCompile>
     <ClCompile Include="Rendering\CSAdaptFilter.cpp">
       <Filter>03. Rendering\06. Filter\05. Adaptation</Filter>
+    </ClCompile>
+    <ClCompile Include="BehaviorTree.cpp">
+      <Filter>07. BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="BTManager.cpp">
+      <Filter>07. BehaviorTree</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -687,6 +696,12 @@
     </ClInclude>
     <ClInclude Include="Rendering\CSAdaptFilter.h">
       <Filter>03. Rendering\06. Filter\05. Adaptation</Filter>
+    </ClInclude>
+    <ClInclude Include="BehaviorTree.h">
+      <Filter>07. BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="BTManager.h">
+      <Filter>07. BehaviorTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

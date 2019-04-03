@@ -648,8 +648,6 @@ void CGameObject::Render(float fTime)
 			continue;
 		}
 
-
-
 		else if (!(*iter)->GetEnable())
 		{
 			++iter;

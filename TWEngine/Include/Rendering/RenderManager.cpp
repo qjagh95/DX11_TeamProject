@@ -332,6 +332,7 @@ void CRenderManager::RenderDeferred(float fTime)
 	// 볼륨안개를 그린다.
 	if(m_bFogEnable)
 		RenderFog(fTime);
+
 	// HDR 등 다양한 화면 효과를 계산한다.
 	RenderComputeProcess(fTime);
 	// 최종 합성된 타겟을 화면에 출력한다.
@@ -342,8 +343,6 @@ void CRenderManager::RenderDeferred(float fTime)
 #endif
 	
 	GET_SINGLE(CCollisionManager)->Render(fTime);
-
-
 
 	// UI출력
 	for (int i = RG_UI; i < RG_END; ++i)

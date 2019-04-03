@@ -68,7 +68,6 @@ bool CFirTestScene::Init()
 	//SAFE_RELEASE(pFog);
 	//SAFE_RELEASE(pFogObj);
 
-
 	pObject = CGameObject::CreateObject("Field", pDefaultLayer, true);
 
 	CField*	pField = pObject->AddComponent<CField>("Field");
@@ -121,7 +120,6 @@ bool CFirTestScene::Init()
 	SAFE_RELEASE(pObject);
 
 	pObject = CGameObject::CreateObject("Minion", pDefaultLayer);
-
 
 	PUN::CSoundSource *pSoundSrc = pObject->AddComponent<PUN::CSoundSource>("Ssource");
 	const char *pStrName = "heeeeeik";

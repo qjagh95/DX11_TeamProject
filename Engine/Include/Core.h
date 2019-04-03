@@ -31,6 +31,7 @@ public:
 	HINSTANCE GetWindowInstance()	const;
 	bool m_bEditorMode;
 	bool m_bGuiMode;
+	bool m_bTreeOnOff;
 	static int m_iVecIndex;
 	static void WriteLogText(ofstream& Stream, float Compute);
 
@@ -76,6 +77,7 @@ private:
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	void GUIOnOff(float fTime);
 	void ShaderOptionOnOff(float fTime);
+	void TreeOnOff(float fTime);
 
 	DECLARE_SINGLE(CCore)
 };

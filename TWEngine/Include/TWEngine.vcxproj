@@ -209,8 +209,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BehaviorTree.h" />
     <ClInclude Include="BinaryReader.h" />
     <ClInclude Include="BinaryWriter.h" />
+    <ClInclude Include="BTManager.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Component\Animation.h" />
     <ClInclude Include="Component\Animation2D.h" />
@@ -299,8 +301,10 @@
     <ClInclude Include="Types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BehaviorTree.cpp" />
     <ClCompile Include="BinaryReader.cpp" />
     <ClCompile Include="BinaryWriter.cpp" />
+    <ClCompile Include="BTManager.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Component\Animation.cpp" />
     <ClCompile Include="Component\Animation2D.cpp">

@@ -86,12 +86,7 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
 
         vColor = (vColor * fDensity) + (vFogColor * (1.0f - fDensity));
     }
-
-
-    // 톤 매핑(HDR 색을 LDR색으로 변환)
-    if (g_iHDR == 1)
-        vColor = ToneMapping(vColor);
-
+    
     // Bloom 을 적용할 건지
     if(g_iBloom == 1)
     {        
@@ -99,8 +94,13 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
         vColor += fBloomScale * BloomTex.Sample(g_DiffuseSmp, Input.vUV.xy).xyz;
 
     // 톤 매핑
-        vColor = ToneMapping(vColor);
+        if(g_iHDR != 1)
+            vColor = ToneMapping(vColor);
     }
+    
+    // 톤 매핑(HDR 색을 LDR색으로 변환)
+    if (g_iHDR == 1)
+        vColor = ToneMapping(vColor);
 
     output.vTarget0 = float4(vColor, 1.f);
 

@@ -408,4 +408,20 @@ namespace PUN
 		GT_Z,
 		GT_END
 	};
+
+	enum BT_ROOT_CHILD_TYPE
+	{
+		BT_NONE,
+		BT_SELECTOR,
+		BT_SEQUENCE,
+		BT_ACTION,
+	};
+
+	enum BT_ACTION_TYPE
+	{
+		ACTION_NONE,
+		ACTION_SUCCED,
+		ACTION_RUNNING,
+		ACTION_FALSE,
+	};
 }
