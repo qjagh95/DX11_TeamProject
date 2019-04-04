@@ -169,8 +169,8 @@ cbuffer Light	: register(b3)
 	float	g_fLightRange;
 	float	g_fLightInAngle;
 	float	g_fLightOutAngle;
-    float   g_fFallOff;
-	float	g_vLightEmpty;
+	float   g_fFallOff;
+	int     g_iRimLight;
 }
 
 #define	RENDER_FORWARD	0
@@ -394,58 +394,88 @@ float4 ConvertColor(float fColor)
     return vColor;
 }
 
-_tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial, float fSpcPower, float3 ToCamera)
+_tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial,
+	float fSpcPower, float3 ToCamera)
 {
-    _tagLightInfo tInfo = (_tagLightInfo) 0;
+	_tagLightInfo tInfo = (_tagLightInfo)0;
 
 	// 재질정보를 분리한다.
-    float4 vMtrlDif = ConvertColor(vMaterial.r);
-    float4 vMtrlAmb = ConvertColor(vMaterial.g);
-    float4 vMtrlSpc = ConvertColor(vMaterial.b);
-    float4 vMtrlEmv = ConvertColor(vMaterial.a);
+	float4 vMtrlDif = ConvertColor(vMaterial.r);
+	float4 vMtrlAmb = ConvertColor(vMaterial.g);
+	float4 vMtrlSpc = ConvertColor(vMaterial.b);
+	float4 vMtrlEmv = ConvertColor(vMaterial.a);
 
-    float3 vLightDir = (float3) 0;
-    float fIntensity = 1.0f;
-    float SpotStrong = 1.0f;
+	float3 vLightDir = (float3) 0;
+	float fIntensity = 1.0f;
+	float SpotStrong = 1.0f;
 
-    float3 vLightPos = mul(float4(g_vLightPos, 1.f), g_matView).xyz;
-    vLightDir = vLightPos - vViewPos;
-    vLightDir = normalize(vLightDir);
+	float3 vLightPos = mul(float4(g_vLightPos, 1.f), g_matView).xyz;
+	vLightDir = vLightPos - vViewPos;
+	vLightDir = normalize(vLightDir);
 
-    float3 HalfWay = normalize(vLightPos + ToCamera);
+	float3 HalfWay = normalize(vLightPos + ToCamera);
 
-    if (g_iLightType == LIGHT_DIR)
-    {
-        vLightDir = -normalize(mul(float4(g_vLightDir, 0.f), g_matView).xyz);
-    }
+	if (g_iLightType == LIGHT_DIR)
+	{
+		vLightDir = -normalize(mul(float4(g_vLightDir, 0.f), g_matView).xyz);
+	}
 
-    if (g_iLightType == LIGHT_POINT)
-    {
+	if (g_iLightType == LIGHT_POINT)
+	{
 		// 조명과 정점사이의 거리를 구한다.
-        float fDist = distance(vLightPos, vViewPos);
+		float fDist = distance(vLightPos, vViewPos);
 
-        fIntensity = 1.f - fDist / g_fLightRange;
-        fIntensity = max(0, fIntensity) * 0.7f + 0.3f;
-    }
+		fIntensity = 1.f - fDist / g_fLightRange;
+		fIntensity = max(0, fIntensity) * 0.7f + 0.3f;
+	}
 
-    if (g_iLightType == LIGHT_SPOT)
-    {
-        float3 vDir = -vLightDir;
-        float3 vLightCenterDir = normalize(mul(float4(g_vLightDir, 0.f), g_matView).xyz);
-        float fDot = dot(vDir, vLightCenterDir);
-        float fDist = distance(vLightPos, vViewPos);
-        //SpotStrong = pow(dot(-vLightDir, normalize(g_vLightDir)), g_fFallOff);
-    }
+	if (g_iLightType == LIGHT_SPOT)
+	{
+		float3 vDir = -vLightDir;
+		float3 vLightCenterDir = normalize(mul(float4(g_vLightDir, 0.f), g_matView).xyz);
+		float fDot = dot(vDir, vLightCenterDir);
+		float fDist = distance(vLightPos, vViewPos);
+		//SpotStrong = pow(dot(-vLightDir, normalize(g_vLightDir)), g_fFallOff);
+	}
 
-    float fRamb = dot(vLightDir, vViewNormal);
+	float fRamb = dot(vLightDir, vViewNormal);
 
-    if (fRamb < 0.0f)
-        fIntensity = 0.0f;
+	if (fRamb < 0.0f)
+		fIntensity = 0.0f;
 
-    tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
-    tInfo.vDif = vMtrlDif * g_vLightDif * max(0, fRamb) * fIntensity;
-    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(HalfWay, vViewNormal)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
-    tInfo.vEmv = vMtrlSpc * vMtrlEmv;
+	tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
+	tInfo.vDif = vMtrlDif * g_vLightDif * max(0, fRamb) * fIntensity;
+	tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(HalfWay, vViewNormal)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
+
+	if (g_iLightType == LIGHT_DIR)
+	{
+		if (g_iRimLight == 1)
+		{
+			// 어둡게 처리해야 하므로 Color을 -2로 설정해주어
+			// 다른 조명에 영향을 받지 않게 한다.
+			float3 vRimColor = float3(-2.f, -2.f, -2.f);
+			int iRimPower = 5.f;
+
+			// 카메라방향과 노말벡터를 내적하여 어둡게 해줄 외각을 찾는다
+			float fRim = saturate(dot(vViewNormal, ToCamera));
+
+			// 0.3보다 크게 되면 Rim을 없애준다
+			if (fRim > 0.3)
+				fRim = 1;
+
+			// 0.3보다 작은 값만 Rim을 처리해준다
+			// 더 뚜렷한 외각선을 얻기 위함이다
+			else
+				fRim = -1;
+
+			tInfo.vEmv = vMtrlSpc * vMtrlEmv + float4(pow(1 - fRim, iRimPower) * vRimColor, 1.f);
+		}
+		else
+			tInfo.vEmv = vMtrlSpc * vMtrlEmv;
+	}
+
+	else
+		tInfo.vEmv = vMtrlSpc * vMtrlEmv;
 
 	return tInfo;
 }

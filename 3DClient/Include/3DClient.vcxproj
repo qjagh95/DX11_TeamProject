@@ -187,9 +187,11 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneComponent\FirTestScene.h" />
+    <ClInclude Include="SceneComponent\LogoScene.h" />
     <ClInclude Include="SceneComponent\MainScene.h" />
     <ClInclude Include="SceneComponent\SecTestScene.h" />
     <ClInclude Include="SceneComponent\StartScene.h" />
+    <ClInclude Include="SceneComponent\TestScene.h" />
     <ClInclude Include="SceneComponent\TrdTestScene.h" />
     <ClInclude Include="ClientHeader.h" />
     <ClInclude Include="UserComponent\Field.h" />
@@ -199,9 +201,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SceneComponent\FirTestScene.cpp" />
+    <ClCompile Include="SceneComponent\LogoScene.cpp" />
     <ClCompile Include="SceneComponent\MainScene.cpp" />
     <ClCompile Include="SceneComponent\SecTestScene.cpp" />
     <ClCompile Include="SceneComponent\StartScene.cpp" />
+    <ClCompile Include="SceneComponent\TestScene.cpp" />
     <ClCompile Include="SceneComponent\TrdTestScene.cpp" />
     <ClCompile Include="UserComponent\Field.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />

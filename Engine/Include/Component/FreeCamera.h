@@ -24,6 +24,12 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CFreeCamera* Clone();
+	void Move(float fScale, float fTime);
+	void Rotation(float fScale, float fTime);
+	void XRotation(float fScale, float fTime);
+	void ZRotation(float fScale, float fTime);
+	void RotationZero(float fScale, float fTime);
+	void PositionZero(float fScale, float fTime);
 };
 
 PUN_END

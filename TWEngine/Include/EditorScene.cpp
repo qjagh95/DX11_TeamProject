@@ -1,7 +1,9 @@
 #include "EngineHeader.h"
 #include "EditorScene.h"
 #include "Component/Camera.h"
-
+#include "Component/Light.h"
+#include "Component/Arm.h"
+#include "Component/FreeCamera.h"
 PUN_USING
 
 EditorScene::EditorScene()
@@ -25,8 +27,43 @@ bool EditorScene::Init()
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
 	pCameraTr->SetWorldPos(Vector3(0.f, 0.0f, -50.f));
+	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight1", pDefaultLayer, true);
+
+	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight1");
+	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
+	pLight->SetLightType(LT_DIR);
+	pLight->SetLightDirection(Vector3(1.0f, -1.0f, 1.0f));
+
+	SAFE_RELEASE(pLight);
+	SAFE_RELEASE(pLightObj);
+
+	//////////////Camera Target Object///////////////////////
+	CGameObject* pObject = CGameObject::CreateObject("FreeCamObj", pDefaultLayer);
+
+	CTransform* pTr = pObject->GetTransform();
+	pTr->SetWorldPos(0.f, 200.f, 0.f);
+
+	CFreeCamera* pFreeCamera = pObject->AddComponent<CFreeCamera>("FreeCam");
+
+	SAFE_RELEASE(pFreeCamera);
+	//pTr->SetWorldRotX(180.f);
+	pCamera->SetTarget(pTr);
+	CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
+
+	pArm->EnableMouse();
+	pArm->SetTarget(pTr);
+
+	SAFE_RELEASE(pArm);
+
+	SAFE_RELEASE(pTr);
+
+
+	SAFE_RELEASE(pObject);
+
+
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pCamera);
+
 
 	// TEST OBJECT 
 	/*

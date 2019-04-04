@@ -109,17 +109,19 @@ PS_OUTPUT_SINGLE StandardTexPS(VS_OUTPUT_TEX input)
 {
 	PS_OUTPUT_SINGLE	output = (PS_OUTPUT_SINGLE)0;
 
+	float3 vColor = (float3)0;
+
 	if (g_iAnimation2DEnable == 1)
 	{
 		if (g_iAnimationType == A2D_ATLAS)
-			output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV) * g_vMtrlDif;
+			output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV) * float4(g_vMtrlDif.xyz, 1.0f);
 
 		else
-			output.vTarget0 = g_DiffuseTexArray.Sample(g_DiffuseSmp, float3(input.vUV, g_iAnimFrame)) * g_vMtrlDif;
+			output.vTarget0 = g_DiffuseTexArray.Sample(g_DiffuseSmp, float3(input.vUV, g_iAnimFrame)) * float4(g_vMtrlDif.xyz, 1.0f);
 	}
 
 	else
-		output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV) * g_vMtrlDif;
+		output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV) * float4(g_vMtrlDif.xyz, 1.0f);
 
 	return output;
 }

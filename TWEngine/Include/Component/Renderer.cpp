@@ -288,6 +288,9 @@ void CRenderer::CheckComponent()
 		case CT_ANIMATION2D:
 			m_tComponentCBuffer.iTextureAnimation2D = 1;
 			break;
+		case CT_UI:
+			m_b2DRenderer = true;
+			break;
 		}
 	}
 }

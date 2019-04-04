@@ -34,6 +34,7 @@ public:
 	bool m_bTreeOnOff;
 	static int m_iVecIndex;
 	static void WriteLogText(ofstream& Stream, float Compute);
+	void SetLoop(bool _bLoop);
 
 public:
 	void SetClearColor(unsigned char r,

@@ -2,7 +2,7 @@
 #include "Component.h"
 
 PUN_BEGIN
-
+class CRenderState;
 class PUN_DLL CGizmo :
 	public CComponent
 {
@@ -12,7 +12,7 @@ private:
 	class CTransform* m_pTargetTr;
 	GIZMO_TYPE		  m_eGizmoType;
 	bool			  m_bPick;
-
+	CRenderState*	  m_pDepthDisable;
 
 public:
 	void Start();

@@ -51,6 +51,12 @@
     <ClInclude Include="UserComponent\Minion.h">
       <Filter>02. UserComponent</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent\LogoScene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\TestScene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -79,6 +85,12 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Minion.cpp">
       <Filter>02. UserComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\LogoScene.cpp">
+      <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\TestScene.cpp">
+      <Filter>01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

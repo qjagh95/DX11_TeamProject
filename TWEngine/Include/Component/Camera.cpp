@@ -15,6 +15,7 @@ CCamera::CCamera()
 	m_pFrustum = new CFrustum;
 
 	m_bShadow = false;
+	m_bFrustum = true;
 	m_pShadowLight = NULLPTR;
 }
 
@@ -104,8 +105,7 @@ void CCamera::SetCameraType(CAMERA_TYPE eType)
 	case CT_PERSPECTIVE:
 		m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle), SHADOW_WIDTH / (float)SHADOW_HEIGHT, m_fNear, m_fFar);
 
-		m_matProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle),
-			m_fWidth / m_fHeight, m_fNear, m_fFar);
+		m_matProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle), m_fWidth / m_fHeight, m_fNear, m_fFar);
 		break;
 	case CT_ORTHO:
 		/*
@@ -141,7 +141,6 @@ void CCamera::SetCameraInfo(CAMERA_TYPE eType, float fWidth, float fHeight,
 
 	SetCameraType(eType);
 }
-
 
 bool CCamera::Init()
 {
@@ -197,7 +196,8 @@ int CCamera::Update(float fTime)
 		m_matView[3][i] = vPos.Dot(m_pTransform->GetWorldAxis((AXIS)i));
 	}
 
-	m_pFrustum->Update(m_matView * m_matProj);
+	if(m_bFrustum == true)
+		m_pFrustum->Update(m_matView * m_matProj);
 
 	if (m_bShadow)
 	{
@@ -213,14 +213,11 @@ int CCamera::Update(float fTime)
 
 		if (m_pTarget)
 			vLightPos = m_pTarget->GetWorldPos() - vLightAxis[AXIS_Z] * 30.f;
-
 		else
 			vLightPos = m_pTransform->GetWorldPos() + m_pTransform->GetWorldAxis(AXIS_Z) * 5.f - vLightAxis[AXIS_Z] * 30.f;
 
 		for (int i = 0; i < AXIS_END; ++i)
-		{
 			memcpy(&m_matShadowView[i][0], &vLightAxis[i], sizeof(Vector3));
-		}
 
 		m_matShadowView.Transpose();
 
@@ -229,7 +226,6 @@ int CCamera::Update(float fTime)
 		for (int i = 0; i < AXIS_END; ++i)
 			m_matShadowView[3][i] = vLightPos.Dot(vLightAxis[i]);
 	}
-
 
 	return 0;
 }

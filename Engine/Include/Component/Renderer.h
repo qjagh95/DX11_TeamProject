@@ -38,6 +38,7 @@ public:
 	void SetMesh(const string& strKey);
 	void SetMesh(const string& strKey, const TCHAR* pFileName,
 		const string& strPathKey = MESH_DATA_PATH);
+	void RenderShadow(float fTime);
 
 	class CMesh* GetMesh() const;
 
@@ -68,7 +69,6 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual void RenderShadow(float fTime);
 	virtual CRenderer* Clone();
 
 private:

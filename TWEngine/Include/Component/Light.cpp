@@ -9,6 +9,7 @@ CLight::CLight()
 	m_tInfo.vAmb = Vector4(0.2f, 0.2f, 0.2f, 1.f);
 	m_tInfo.vSpc = Vector4::White;
 	m_tInfo.fFallOff = 0.0f;
+	m_iRim = -1.f;
 	m_eComType = CT_LIGHT;
 }
 
@@ -45,7 +46,7 @@ void CLight::Save(BinaryWrite * _pInstBW)
 	_pInstBW->WriteData(m_tInfo.fInAngle);
 	_pInstBW->WriteData(m_tInfo.fOutAngle);
 	_pInstBW->WriteData(m_tInfo.fFallOff);
-	_pInstBW->WriteData(m_tInfo.vEmpty);
+	_pInstBW->WriteData(m_tInfo.iRimLight);
 }
 
 void CLight::Load(BinaryRead * _pInstBR)
@@ -60,7 +61,7 @@ void CLight::Load(BinaryRead * _pInstBR)
 	float fInAngle = _pInstBR->ReadFloat();
 	float fOutAngle = _pInstBR->ReadFloat();
 	float fFallOff = _pInstBR->ReadFloat();
-	float vEmpty = _pInstBR->ReadFloat();
+	float iRimLight = _pInstBR->ReadInt();
 
 	// 로드된 데이터를 이용하여 조명 정보를 세팅한다.
 	m_tInfo.vDif = vDif;
@@ -73,7 +74,7 @@ void CLight::Load(BinaryRead * _pInstBR)
 	m_tInfo.fInAngle = fInAngle;
 	m_tInfo.fOutAngle = fOutAngle;
 	m_tInfo.fFallOff = fFallOff;
-	m_tInfo.vEmpty = vEmpty;
+	m_tInfo.iRimLight = iRimLight;
 }
 
 void CLight::SetLightType(LIGHT_TYPE eType)
@@ -101,6 +102,15 @@ void CLight::SetLightColor(const Vector4 & vDif, const Vector4 & vAmb, const Vec
 	m_tInfo.vAmb = vAmb;
 	m_tInfo.vSpc = vSpc;
 }
+
+void CLight::SetRimLight(int iRim)
+{
+	if (iRim == 1)
+		m_tInfo.iRimLight = 1;
+	else if (iRim == -1)
+		m_tInfo.iRimLight = -1;
+}
+
 
 void CLight::SetLightDirection(const Vector3& Dir)
 {
@@ -144,6 +154,20 @@ int CLight::LateUpdate(float fTime)
 
 	if (m_tInfo.iLightType == LT_SPOT)
 		m_pTransform->SetWorldRot(RadianToDegree(m_tInfo.vDir.y), RadianToDegree(m_tInfo.vDir.x), 0.0f);
+
+	static bool bPush = false;
+	if (GetAsyncKeyState('R') & 0x8000)
+	{
+		bPush = true;
+	}
+
+	else if (bPush)
+	{
+		bPush = false;
+		m_iRim *= -1;
+
+		SetRimLight(m_iRim);
+	}
 
 	return 0;
 }

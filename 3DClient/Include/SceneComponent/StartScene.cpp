@@ -13,7 +13,10 @@
 #include "Component/Transform.h"
 #include "Component/ColliderRect.h"
 #include "Component/ColliderPixel.h"
-
+#include "Component/Material.h"
+#include "FirTestScene.h"
+#include "Core.h"
+#include "TestScene.h"
 
 CStartScene::CStartScene()
 {
@@ -27,60 +30,59 @@ bool CStartScene::Init()
 {
 	CCamera*	pCamera = m_pScene->GetMainCamera();
 
-	pCamera->SetCameraType(CT_ORTHO);
-	pCamera->SetNear(0.f);
+	pCamera->SetCameraType(CT_PERSPECTIVE);
+	pCamera->SetNear(0.03f);
 
 	CLayer*	pDefaultLayer = m_pScene->FindLayer("Default");
 	CLayer*	pUILayer = m_pScene->FindLayer("UI");
-	CLayer* pStageLayer = m_pScene->FindLayer("Stage");
-
-	CGameObject*	pBackObj = CGameObject::CreateObject("BackGround", pStageLayer);
-
-	CRenderer*	pRenderer = pBackObj->AddComponent<CRenderer>("BackRenderer");
-
-	pRenderer->SetMesh("TexRect");
-
-	SAFE_RELEASE(pRenderer);
-
-	CMaterial*	pMaterial = pBackObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
-
-	pMaterial->SetDiffuseTex(0, "StartScene", TEXT("StartScene/StartScene.png"));
-
-	SAFE_RELEASE(pMaterial);
-	
-	CTransform*	pTransform = pBackObj->GetTransform();
-
-	pTransform->SetWorldScale(1280, 720, 1.f);
-
-	SAFE_RELEASE(pTransform);
-
-	SAFE_RELEASE(pBackObj);
 
 	CGameObject*	pStartBtnObj = CGameObject::CreateObject("StartButton",
 		pUILayer);
 
-	CTransform*	pBtnTransform = pStartBtnObj->GetTransform();
-
-	pBtnTransform->SetWorldPos(_RESOLUTION.iWidth / 2.f, _RESOLUTION.iHeight / 2.f - 150.f,
+	CTransform*	pTransform = pStartBtnObj->GetTransform();
+	
+	pTransform->SetWorldPos(_RESOLUTION.iWidth / 2.f, _RESOLUTION.iHeight / 2.f + 100.f,
 		0.f);
 
-	SAFE_RELEASE(pBtnTransform);
+	SAFE_RELEASE(pTransform);
 
 	CUIButton*	pButton = pStartBtnObj->AddComponent<CUIButton>("StartButton");
 
+	//pButton->SetStateColor(BS_CLICK, Vector4::Red);
+	//pButton->SetStateColor(BS_MOUSEON, Vector4::White * 2.f);
 	pButton->SetCallback(&CStartScene::StartBtnCallback, this);
 
 	SAFE_RELEASE(pButton);
 
-	CMaterial*	pBtnMaterial = pStartBtnObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+	SAFE_RELEASE(pStartBtnObj);
 
-	pBtnMaterial->SetDiffuseTex(0, "StartButton", TEXT("StartScene/Start.png"));
+	////////////////////////////////////////////////////////////////////////////////
+	CGameObject*	pExitBtnObj = CGameObject::CreateObject("ExitButton",
+		pUILayer);
 
-	SAFE_RELEASE(pBtnMaterial);
+	pTransform = pExitBtnObj->GetTransform();
 
-	SAFE_RELEASE(pStartBtnObj);		
+	pTransform->SetWorldPos(_RESOLUTION.iWidth / 2.f, _RESOLUTION.iHeight / 2.f - 100.f,
+		0.f);
 
-	SAFE_RELEASE(pStageLayer);
+	SAFE_RELEASE(pTransform);
+
+	pButton = pExitBtnObj->AddComponent<CUIButton>("ExitButton");
+
+	//pButton->SetStateColor(BS_CLICK, Vector4::Red);
+	//pButton->SetStateColor(BS_MOUSEON, Vector4::White * 2.f);
+	pButton->SetCallback(&CStartScene::ExitBtnCallback, this);
+
+	SAFE_RELEASE(pButton);
+
+	CMaterial* pMaterial = pExitBtnObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pMaterial->SetDiffuseTex(0, "EndButton", TEXT("End.png"));
+	pMaterial->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pMaterial);
+	SAFE_RELEASE(pExitBtnObj);
+
 	SAFE_RELEASE(pDefaultLayer);
 	SAFE_RELEASE(pUILayer);
 
@@ -98,5 +100,11 @@ void CStartScene::StartBtnCallback(float fTime)
 {
 	GET_SINGLE(CSceneManager)->CreateNextScene();
 
-	GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene", false);
+	GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene", false);
+}
+
+void CStartScene::ExitBtnCallback(float fTime)
+{
+	// CCore::GetInst()->SetLoop(false);
+	PostQuitMessage(0);
 }

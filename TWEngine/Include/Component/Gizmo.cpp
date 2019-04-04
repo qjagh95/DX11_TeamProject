@@ -6,6 +6,10 @@
 #include "../Rendering/Shader.h"
 #include "ColliderOBB3D.h"
 #include "../Input.h"
+#include "../Rendering/ViewManager.h"
+#include "../Rendering/RenderState.h"
+#include "../Rendering/DepthState.h"
+#include "../Device.h"
 
 PUN_USING
 
@@ -15,6 +19,7 @@ CGizmo::CGizmo()
 	m_pCylinderMesh = nullptr;
 	m_pTriangleMesh = nullptr;
 	m_pTargetTr = nullptr;
+	m_pDepthDisable = nullptr;
 	m_bPick = false;
 }
 
@@ -28,6 +33,7 @@ CGizmo::~CGizmo()
 	SAFE_RELEASE(m_pCylinderMesh);
 	SAFE_RELEASE(m_pTriangleMesh);
 	SAFE_RELEASE(m_pTargetTr);
+	SAFE_RELEASE(m_pDepthDisable);
 }
 
 void CGizmo::Start()
@@ -42,6 +48,8 @@ bool CGizmo::Init()
 {
 	m_eGizmoType = GT_END;
 
+	//m_pObject->SetRenderGroup(RG_UI);
+
 	CColliderOBB3D* pOBB = m_pObject->AddComponent<CColliderOBB3D>("ColliderOBB");
 
 	float	fLength[3] = { 0.5f, 4.f, 0.5f };
@@ -51,8 +59,10 @@ bool CGizmo::Init()
 	SAFE_RELEASE(pOBB);
 
 	m_pTransform->SetWorldScale(0.5f, 2.5f, 0.5f);
-	m_pTransform->SetWorldPivot(0.f, 0.f ,0.f);
-	
+	m_pTransform->SetWorldPivot(0.f, 0.f, 0.f);
+
+	m_pDepthDisable = CViewManager::GetInst()->FindRenderState(DEPTH_DISABLE);
+
 	return true;
 }
 
@@ -83,7 +93,7 @@ int CGizmo::Input(float fTime)
 		{
 			m_bPick = false;
 		}
-		else if(CInput::GetInst()->GetMousePush(MS_LBUTTON) == true)
+		else if (CInput::GetInst()->GetMousePush(MS_LBUTTON) == true)
 		{
 			vMouseGap.z = vMouseGap.y;
 			Vector3 ObjMove;
@@ -102,7 +112,7 @@ int CGizmo::Input(float fTime)
 			{
 				vAxis.z *= -1.f;
 			}
-			 
+
 			switch (m_eGizmoType)
 			{
 			case GT_X:
@@ -151,7 +161,7 @@ int CGizmo::Input(float fTime)
 					}
 				}
 			}
-				break;
+			break;
 			case GT_Y:
 			{
 				ObjMove.x = vAxis.x * vMouseGap.x;
@@ -165,18 +175,18 @@ int CGizmo::Input(float fTime)
 				{
 					ObjMove.x *= -1.f;
 				}
-				
+
 				if (vAxis.y < 0.f)
 				{
 					ObjMove.y *= -1.f;
 				}
-				
+
 				if (vAxis.z < 0.f)
 				{
 					ObjMove.z *= -1.f;
 				}
 			}
-				break;
+			break;
 			case GT_Z:
 			{
 				float fCameraYAxisX = m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_Y].x;
@@ -239,7 +249,7 @@ int CGizmo::Input(float fTime)
 					ObjMove.z /= 3.f;
 				}
 			}
-				break;
+			break;
 			}
 
 			m_pTargetTr->Move(ObjMove);
@@ -249,32 +259,32 @@ int CGizmo::Input(float fTime)
 	}
 
 	Vector3 vPos = m_pTargetTr->GetWorldPos();
-	vPos.x += m_pTransform->GetWorldAxis()[AXIS_Y].x * 4.f;
-	vPos.y += m_pTransform->GetWorldAxis()[AXIS_Y].y * 4.f;
-	vPos.z += m_pTransform->GetWorldAxis()[AXIS_Y].z * 4.f;
+	vPos.x += m_pTargetTr->GetWorldAxis()[m_eGizmoType].x * 4.f;
+	vPos.y += m_pTargetTr->GetWorldAxis()[m_eGizmoType].y * 4.f;
+	vPos.z += m_pTargetTr->GetWorldAxis()[m_eGizmoType].z * 4.f;
 
 	switch (m_eGizmoType)
 	{
 	case GT_X:
 	{
 		m_pTransform->SetWorldRot(-m_pTargetTr->GetWorldRot().y, 0.f, m_pTargetTr->GetWorldRot().z + 270.f);
-		m_pTransform->SetWorldPos(vPos.x , vPos.y, vPos.z);
+		m_pTransform->SetWorldPos(vPos.x, vPos.y, vPos.z);
 	}
-		break;
+	break;
 	case GT_Y:
 	{
 		m_pTransform->SetWorldRot(m_pTargetTr->GetWorldRot());
-		m_pTransform->SetWorldPos(vPos.x , vPos.y , vPos.z);
-	}
-		break;
-	case GT_Z:
-	{
-		m_pTransform->SetWorldRot(m_pTargetTr->GetWorldRot().x + 90.f , m_pTargetTr->GetWorldRot().y ,m_pTargetTr->GetWorldRot().z);
 		m_pTransform->SetWorldPos(vPos.x, vPos.y, vPos.z);
 	}
-		break;
+	break;
+	case GT_Z:
+	{
+		m_pTransform->SetWorldRot(m_pTargetTr->GetWorldRot().x + 90.f, m_pTargetTr->GetWorldRot().y, m_pTargetTr->GetWorldRot().z);
+		m_pTransform->SetWorldPos(vPos.x, vPos.y, vPos.z);
 	}
-	
+	break;
+	}
+
 	//ImGui::Text("--------------------------------------------------------------------------");
 
 	//ImGui::End();
@@ -288,7 +298,6 @@ int CGizmo::Update(float fTime)
 	{
 		return 0;
 	}
-
 	Vector3 vPos = m_pTransform->GetWorldPos();
 	switch (m_eGizmoType)
 	{
@@ -340,6 +349,11 @@ void CGizmo::Render(float fTime)
 		return;
 	}
 
+	m_pDepthDisable->SetState();
+
+
+	ID3D11InputLayout* pLayout = CShaderManager::GetInst()->FindInputLayout(m_pCylinderMesh->GetInputLayoutKey());
+
 	Matrix	matPos, matScale, matRot;
 
 	TransformCBuffer	tCBuffer = {};
@@ -351,6 +365,7 @@ void CGizmo::Render(float fTime)
 	/////////////////////////////Cylinder///////////////////////////////////////////
 	CShader* pShader = CShaderManager::GetInst()->FindShader(m_pCylinderMesh->GetShaderKey());
 	pShader->SetShader();
+	CONTEXT->IASetInputLayout(pLayout);
 	tCBuffer.matWorld = m_pTransform->GetWorldMatrix();
 	tCBuffer.matView = matView;
 	tCBuffer.matProj = pMainCamera->GetProjMatrix();
@@ -374,8 +389,10 @@ void CGizmo::Render(float fTime)
 	matRot.Identity();
 
 	/////////////////////////////Pyramid///////////////////////////////////////////
+	pLayout = CShaderManager::GetInst()->FindInputLayout(m_pTriangleMesh->GetInputLayoutKey());
 	pShader = CShaderManager::GetInst()->FindShader(m_pTriangleMesh->GetShaderKey());
 	pShader->SetShader();
+	CONTEXT->IASetInputLayout(pLayout);
 	matPos.Translation(m_pTransform->GetWorldPos());
 	matRot = m_pTransform->GetWorldRotMatrix();
 	matScale.Scaling(1.f, 1.f, 1.f);
@@ -402,6 +419,7 @@ void CGizmo::Render(float fTime)
 	SAFE_RELEASE(pShader);
 
 	SAFE_RELEASE(pMainCamera);
+	m_pDepthDisable->ResetState();
 }
 
 CGizmo * CGizmo::Clone()
@@ -441,26 +459,26 @@ void CGizmo::SetGizmoType(GIZMO_TYPE _eType)
 
 	switch (_eType)
 	{
-		case GT_X:
-		{	
-			//m_pTransform->SetLocalRot(0.f, 0.f, 270.f);
-			m_pCylinderMesh = CResourcesManager::GetInst()->FindMesh("XGizmoCylinder");
-			m_pTriangleMesh = CResourcesManager::GetInst()->FindMesh("Pyramid");
-		}
-		break;
-		case GT_Y:
-		{
-			m_pCylinderMesh = CResourcesManager::GetInst()->FindMesh("YGizmoCylinder");
-			m_pTriangleMesh = CResourcesManager::GetInst()->FindMesh("Pyramid");
-		}
-		break;
-		case GT_Z:
-		{
-			//m_pTransform->SetLocalRot(90.f, 0.f, 0.f);
-			m_pCylinderMesh = CResourcesManager::GetInst()->FindMesh("ZGizmoCylinder");
-			m_pTriangleMesh = CResourcesManager::GetInst()->FindMesh("Pyramid");
-		}
-		break;
+	case GT_X:
+	{
+		//m_pTransform->SetLocalRot(0.f, 0.f, 270.f);
+		m_pCylinderMesh = CResourcesManager::GetInst()->FindMesh("XGizmoCylinder");
+		m_pTriangleMesh = CResourcesManager::GetInst()->FindMesh("Pyramid");
+	}
+	break;
+	case GT_Y:
+	{
+		m_pCylinderMesh = CResourcesManager::GetInst()->FindMesh("YGizmoCylinder");
+		m_pTriangleMesh = CResourcesManager::GetInst()->FindMesh("Pyramid");
+	}
+	break;
+	case GT_Z:
+	{
+		//m_pTransform->SetLocalRot(90.f, 0.f, 0.f);
+		m_pCylinderMesh = CResourcesManager::GetInst()->FindMesh("ZGizmoCylinder");
+		m_pTriangleMesh = CResourcesManager::GetInst()->FindMesh("Pyramid");
+	}
+	break;
 	}
 }
 

@@ -16,5 +16,7 @@ public:
 
 public:
 	void StartBtnCallback(float fTime);
+	void ExitBtnCallback(float fTime);
+
 };
 

@@ -714,16 +714,22 @@ bool CCollider::CollisionRayToOBB3D(const OBB3DInfo & tDest, const RayInfo & tSr
 {
 	Matrix OBBRotInv;
 	Vector3 vOBBRot = m_pTransform->GetWorldRot();
-	OBBRotInv.Rotation(-vOBBRot.x, -vOBBRot.y, -vOBBRot.z);
+	OBBRotInv.Rotation(vOBBRot);
+	OBBRotInv.Inverse();
 	_tagAABBInfo ABInfo;
 	ABInfo.vCenter = tDest.vCenter;
 	ABInfo.vLength = tDest.vLength;
-
 	Vector3 vRayDir;
+	Vector3 vRayPos;
 	RayInfo tRay = tSrc;
+	vRayPos = tRay.vPos;
 	vRayDir = tSrc.vDir;
-	vRayDir.TransformNormal(OBBRotInv);
+	vRayDir = vRayDir.TransformNormal(OBBRotInv);
 	tRay.vDir = vRayDir;
+	memcpy(&OBBRotInv._41, &tDest.vCenter, sizeof(Vector3));
+	vRayPos = tSrc.vPos - tDest.vCenter;
+	vRayPos = vRayPos.TransformCoord(OBBRotInv);
+	tRay.vPos = vRayPos;
 
 	return CollisionRayToAABB(tRay, ABInfo);
 }

@@ -40,8 +40,8 @@ public:
 	float GetCameraViewAngle() const { return m_fViewAngle; }
 	void SetShadowLight(class CTransform* pShadowLight);
 	void Shadow(bool bEnable);
-	Matrix GetShadowViewMatrix()	const;
-	Matrix GetShadowProjMatrix()	const;
+	Matrix GetShadowViewMatrix() const;
+	Matrix GetShadowProjMatrix() const;
 	bool IsShadow()	const;
 
 public:

@@ -39,6 +39,7 @@ private:
 	CGameObject*	 m_pXGizmoObj;
 	CGameObject*	 m_pYGizmoObj;
 	CGameObject*	 m_pZGizmoObj;
+	class CArm*		 m_pArm;
 
 	class CEditTest* m_pEditTest;
 	vector<string>	m_vecstrObjList;
@@ -56,12 +57,12 @@ private:
 
 public:
 	bool Init();
-
-// 레이어
+	void Render(float _fTime);
+	// 레이어
 public:
 	void GetLayerList(vector<string>* _pVec);
 
-// 오브젝트
+	// 오브젝트
 public:
 	void GetSelectLayerObjList(string _strLayerTag, vector<string>* _pVec);
 	void SetActiveObject(const string _strObjectTag, const string _strLayerTag);
@@ -76,12 +77,12 @@ public:
 	void ActiveObjectSetPosition(double _dX, double _dY, double _dZ);
 	vector<Vector3> GetWorldTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
 
-// 메시
+	// 메시
 public:
 	void GetMeshNameList(vector<string>* _pVec);
 	void SetMesh(const string& _strMeshTag);
 
-// 애니메이션
+	// 애니메이션
 public:
 	void LoadClipFromFullPath(const wstring& _strFullPath);
 	void GetClipNameList(vector<string>* _vecstrClipList);
@@ -89,9 +90,9 @@ public:
 	void DeleteDivideKeyFrame();
 	void DeleteClip(const string& _strKey);
 	bool ModifyClip(const string& strKey, const string& strChangeKey, int iOption,
-					int iStartFrame, int iEndFrame, float fPlayTime);
+		int iStartFrame, int iEndFrame, float fPlayTime);
 	bool AddClip(const string& strKey, int iOption,
-				 int iStartFrame, int iEndFrame, float fPlayTime);
+		int iStartFrame, int iEndFrame, float fPlayTime);
 	void ChangeClip(const string& _strKey);
 	void ClipSaveFromFullPath(const string& _strFullPath);
 };

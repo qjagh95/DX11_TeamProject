@@ -21,6 +21,8 @@ private:
 	LightInfo	m_tInfo;
 	float		m_fInAngle;
 	float		m_fOutAngle;
+	int			m_iRim;
+
 public:
 	LIGHT_TYPE  GetLightType()	const;
 	LightInfo	GetLightInfo()	const;
@@ -35,6 +37,7 @@ public:
 	void SetLightDirection(const Vector3& Dir);
 	void SetAngle(float fInAngle, float fOutAngle);
 	void SetLightColor(const Vector4& vDif, const Vector4& vAmb, const Vector4& vSpc);
+	void SetRimLight(int iRim);
 	void UpdateLightCBuffer();
 
 public:

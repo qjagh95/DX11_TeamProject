@@ -61,12 +61,12 @@ void BTManager::GUIRender()
 	if (CCore::GetInst()->m_bTreeOnOff == false)
 		return;
 
-	ImGui::Begin("BehaviorTree");
-	{
-		static int SelectIndex = 0;
-		ImGui::Combo("BTList", &SelectIndex, m_Items, (int)m_vecItemsName.size());
+	//ImGui::Begin("BehaviorTree");
+	//{
+	//	static int SelectIndex = 0;
+	//	ImGui::Combo("BTList", &SelectIndex, m_Items, (int)m_vecItemsName.size());
 
-		FindTree(m_vecItemsName[SelectIndex])->GUIRender();
-	}
-	ImGui::End();
+	//	FindTree(m_vecItemsName[SelectIndex])->GUIRender();
+	//}
+	//ImGui::End();
 }

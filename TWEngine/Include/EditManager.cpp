@@ -10,6 +10,8 @@
 #include "Resource/ResourcesManager.h"
 #include "Component/Gizmo.h"
 #include "Component/EditTest.h"
+#include "Component/Arm.h"
+
 
 PUN_USING
 
@@ -25,7 +27,8 @@ CEditManager::CEditManager()
 	m_pEditTest(nullptr),
 	m_pXGizmoObj(nullptr),
 	m_pYGizmoObj(nullptr),
-	m_pZGizmoObj(nullptr)
+	m_pZGizmoObj(nullptr),
+	m_pArm(nullptr)
 {
 }
 
@@ -42,6 +45,7 @@ CEditManager::~CEditManager()
 	SAFE_RELEASE(m_pXGizmoObj);
 	SAFE_RELEASE(m_pYGizmoObj);
 	SAFE_RELEASE(m_pZGizmoObj);
+	SAFE_RELEASE(m_pArm);
 }
 
 bool CEditManager::Init()
@@ -55,15 +59,17 @@ bool CEditManager::Init()
 	CLayer* pLayer = m_pScene->FindLayer("Gimzo");
 
 	m_pXGizmoObj = CGameObject::CreateObject("XGizmo", pLayer);
+	m_pArm = m_pXGizmoObj->AddComponent<CArm>("Arm");
+	m_pArm->SetTarget(m_pXGizmoObj);
 	m_pXGizmo = m_pXGizmoObj->AddComponent<CGizmo>("XGizmo");
 	m_pXGizmo->SetGizmoType(GT_X);
 
 	m_pYGizmoObj = CGameObject::CreateObject("YGizmo", pLayer);
-	m_pYGizmo = m_pXGizmoObj->AddComponent<CGizmo>("YGizmo");
+	m_pYGizmo = m_pYGizmoObj->AddComponent<CGizmo>("YGizmo");
 	m_pYGizmo->SetGizmoType(GT_Y);
 
 	m_pZGizmoObj = CGameObject::CreateObject("ZGizmo", pLayer);
-	m_pZGizmo = m_pXGizmoObj->AddComponent<CGizmo>("ZGizmo");
+	m_pZGizmo = m_pZGizmoObj->AddComponent<CGizmo>("ZGizmo");
 	m_pZGizmo->SetGizmoType(GT_Z);
 
 	m_pEditTest = new CEditTest;
@@ -72,6 +78,13 @@ bool CEditManager::Init()
 	SAFE_RELEASE(pLayer);
 
 	return true;
+}
+
+void CEditManager::Render(float _fTime)
+{
+	m_pXGizmo->Render(_fTime);
+	m_pYGizmo->Render(_fTime);
+	m_pZGizmo->Render(_fTime);
 }
 
 void CEditManager::GetLayerList(vector<string>* _pVec)
@@ -279,21 +292,21 @@ vector<Vector3> CEditManager::GetWorldTransform(const string _strObjectTag, cons
 	pVecTranform.reserve(1);
 	switch ((eTransformType)_eType)
 	{
-		case eTransformType::TT_SCALE:
-		{
-			pVecTranform.push_back(pTr->GetWorldScale());
-			break;
-		}
-		case eTransformType::TT_ROTATE:
-		{
-			pVecTranform.push_back(pTr->GetWorldRot());
-			break;
-		}
-		case eTransformType::TT_POSITION:
-		{
-			pVecTranform.push_back(pTr->GetWorldPos());
-			break;
-		}
+	case eTransformType::TT_SCALE:
+	{
+		pVecTranform.push_back(pTr->GetWorldScale());
+		break;
+	}
+	case eTransformType::TT_ROTATE:
+	{
+		pVecTranform.push_back(pTr->GetWorldRot());
+		break;
+	}
+	case eTransformType::TT_POSITION:
+	{
+		pVecTranform.push_back(pTr->GetWorldPos());
+		break;
+	}
 	}
 
 	SAFE_RELEASE(pTr);
@@ -322,8 +335,11 @@ void CEditManager::SetMesh(const string& _strMeshTag)
 		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object의 Renderer가 없습니다"), 0, MB_OK);
 		return;
 	}
+	wstring wstrFileName;
 
-	pRenderer->SetMesh(_strMeshTag);
+	wstrFileName = CA2W(_strMeshTag.c_str());
+	wstrFileName += L".msh";
+	pRenderer->SetMesh(_strMeshTag, wstrFileName.c_str());
 	SAFE_RELEASE(pRenderer);
 }
 

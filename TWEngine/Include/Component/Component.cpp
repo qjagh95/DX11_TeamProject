@@ -86,10 +86,10 @@ void CComponent::Render(float fTime)
 {
 }
 
+
 void CComponent::RenderShadow(float fTime)
 {
 }
-
 void CComponent::Save(FILE * pFile)
 {
 	// Tag를 저장한다.

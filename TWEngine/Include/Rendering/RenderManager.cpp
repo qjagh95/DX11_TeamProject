@@ -14,6 +14,8 @@
 #include "../Resource/Sampler.h"
 #include "../Component/Light.h"
 #include "../Component/Camera.h"
+#include "EditManager.h"
+#include "Core.h"
 
 PUN_USING
 
@@ -116,6 +118,7 @@ bool CRenderManager::Init()
 	m_pTarget[TARGET_SHADOWMAP] = GET_SINGLE(CViewManager)->FindRenderTarget("ShadowMap");
 
 	m_pTarget[TARGET_FOG_DEPTH]->SetClearColor(Vector4::Black);
+	m_pTarget[TARGET_BLEND]->SetClearColor(Vector4::Zero);
 
 	m_pState[STATE_DEPTH_GRATOR]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_GRATOR);
 	m_pState[STATE_DEPTH_LESS]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_LESS);
@@ -210,11 +213,14 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 			rg = RG_NORMAL;
 	}
 
-	else if (rg != RG_UI || rg != RG_FOG)
+	else if (rg != RG_UI && rg != RG_FOG)
 	{
-		if (pObj->FrustumCull())
+		if (CCore::GetInst()->m_bEditorMode == false)
 		{
-			return;
+			if (pObj->FrustumCull())
+			{
+				return;
+			}
 		}
 	}
 
@@ -343,7 +349,10 @@ void CRenderManager::RenderDeferred(float fTime)
 #endif
 	
 	GET_SINGLE(CCollisionManager)->Render(fTime);
-
+	if (CCore::GetInst()->m_bEditorMode == true)
+	{
+		CEditManager::GetInst()->Render(fTime);
+	}
 	// UIÃâ·Â
 	for (int i = RG_UI; i < RG_END; ++i)
 	{

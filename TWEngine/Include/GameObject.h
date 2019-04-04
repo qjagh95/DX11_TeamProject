@@ -98,8 +98,9 @@ public:
 	int LateUpdate(float fTime);
 	void Collision(float fTime);
 	void Render(float fTime);
-	void RenderShadow(float fTime);
 	CGameObject* Clone();
+
+	void RenderShadow(float fTime);
 
 public:
 	void AddChild(CGameObject* pChild);

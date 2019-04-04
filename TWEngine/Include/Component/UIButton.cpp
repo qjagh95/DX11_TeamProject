@@ -11,11 +11,12 @@ PUN_USING
 
 CUIButton::CUIButton()
 {
+	m_eComType = CT_UI;
 	m_eUIType = UT_BUTTON;
 	SetTag("UIButton");
 }
 
-CUIButton::CUIButton(const CUIButton & button)	:
+CUIButton::CUIButton(const CUIButton & button) :
 	CUI(button)
 {
 	m_eState = BS_NORMAL;
@@ -30,7 +31,7 @@ CUIButton::CUIButton(const CUIButton & button)	:
 
 CUIButton::~CUIButton()
 {
-	SAFE_RELEASE(m_pAnimation);
+	//SAFE_RELEASE(m_pAnimation);
 }
 
 void CUIButton::Disable()
@@ -70,84 +71,63 @@ void CUIButton::AfterClone()
 }
 
 bool CUIButton::Init()
-{ 
+{
 	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("ButtonRenderer");
 
 	pRenderer->SetMesh("TexRect");
 	pRenderer->SetRenderState(ALPHA_BLEND);
+	pRenderer->SetRenderState(DEPTH_DISABLE);
+	//pRenderer->SetShader(BUTTON_SHADER);
 
+	pRenderer->CreateRendererCBuffer("Button", sizeof(ButtonCBuffer));
+	pRenderer->Enable2DRenderer();
 	SAFE_RELEASE(pRenderer);
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "Button", TEXT("StartScene/Start.png"));
+	pMaterial->SetDiffuseTex(0, "Button", TEXT("Start.png"));
+	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(115.f, 24.f, 1.f);
+	//m_pTransform->SetWorldPos(640.f, 360.f, 0.f);
+	m_pTransform->SetWorldScale(200.f, 50.f, 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
-
-	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("StartBtnAnimation");
-
-	vector<Clip2DFrame>	vecClipFrame;
-	Clip2DFrame	tFrame = {};
-
-	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(115.f, 24.f);
-	vecClipFrame.push_back(tFrame);
-
-	m_pAnimation->AddClip("StartBtn_Idle", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"Idle_StartBtn", TEXT("StartScene/Start.png"));
-
-	vecClipFrame.clear();
-
-	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(115.f, 24.f);
-	vecClipFrame.push_back(tFrame);
-
-	m_pAnimation->AddClip("StartBtn_On", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"On_StartBtn", TEXT("StartScene/Start2.png"));
-
-	vecClipFrame.clear();
 
 	CColliderRect*	pRC = AddComponent<CColliderRect>("ButtonBody");
 
 	pRC->SetCollisionGroup("UI");
-	pRC->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(115.f, 24.f, 0.f));
+	pRC->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(200.f, 50.f, 0.f));
 	pRC->SetCollisionCallback(CCT_ENTER, this, &CUIButton::Hit);
 	pRC->SetCollisionCallback(CCT_LEAVE, this, &CUIButton::MouseOut);
 
 	SAFE_RELEASE(pRC);
 
 	m_eState = BS_NORMAL;
+	m_vBSColor[BS_DISABLE] = Vector4(0.5f, 0.5f, 0.5f, 1.f);
+	m_vBSColor[BS_NORMAL] = Vector4(0.9f, 0.9f, 0.9f, 1.f);
+	m_vBSColor[BS_MOUSEON] = Vector4(1.f, 1.f, 1.f, 1.f);
+	m_vBSColor[BS_CLICK] = Vector4(0.7f, 0.7f, 0.7f, 1.f);
+
+	m_pObject->SetRenderGroup(RG_UI);
 
 	return true;
 }
 
 int CUIButton::Input(float fTime)
 {
-	//if (m_eState == BS_MOUSEON || m_eState == BS_CLICK)
-	//{
-	//	if (KEYPRESS("LButton"))
-	//	{
-	//		m_eState = BS_CLICK;
+	if (m_eState == BS_MOUSEON || m_eState == BS_CLICK)
+	{
+		if (CInput::GetInst()->GetMousePress(MS_LBUTTON))
+		{
+			m_eState = BS_CLICK;
+		}
 
-	//		if (!m_strSound[BS_CLICK - 1].empty())
-	//			GET_SINGLE(CSoundManager)->Play(m_strSound[BS_CLICK - 1]);
-	//	}
-
-	//	else if (KEYUP("LButton"))
-	//	{
-	//		m_ClickCallback(fTime);
-	//	}
-	//}
-
-	//if (m_eState == BS_MOUSEON || m_eState == BS_CLICK)
-	//{
-	//	m_pAnimation->ChangeClip("StartBtn_On");
-	//}
-	//else
-	//	m_pAnimation->ChangeClip("StartBtn_Idle");
+		else if (CInput::GetInst()->GetMouseRelease(MS_LBUTTON))
+		{
+			m_ClickCallback(fTime);
+		}
+	}
 
 	return 0;
 }
@@ -168,6 +148,13 @@ void CUIButton::Collision(float fTime)
 
 void CUIButton::Render(float fTime)
 {
+	m_tCBuffer.vColor = m_vBSColor[m_eState];
+
+	CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	pRenderer->UpdateRendererCBuffer("Button", &m_tCBuffer, sizeof(m_tCBuffer));
+
+	SAFE_RELEASE(pRenderer);
 }
 
 CUIButton * CUIButton::Clone()

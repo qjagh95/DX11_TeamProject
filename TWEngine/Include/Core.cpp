@@ -53,6 +53,7 @@ CCore::~CCore()
 	CoUninitialize();
 	
 	Safe_Delete_Map(m_ManagerMap);
+	BTManager::Get()->Delete();
 }
 
 HWND CCore::GetWindowHandle() const
@@ -68,6 +69,11 @@ HINSTANCE CCore::GetWindowInstance() const
 void CCore::WriteLogText(ofstream & Stream, float Compute)
 {
 	Stream << Compute << '\t' << m_pDateInfo->tm_year + 1900 << "년 " << m_pDateInfo->tm_mon + 1 << "월 " << m_pDateInfo->tm_mday << "일 " << m_pDateInfo->tm_hour << "시 " << m_pDateInfo->tm_min << "분 " << m_pDateInfo->tm_sec << "초 " << endl;
+}
+
+void CCore::SetLoop(bool _bLoop)
+{
+	m_bLoop = _bLoop;
 }
 
 void CCore::SetClearColor(unsigned char r,

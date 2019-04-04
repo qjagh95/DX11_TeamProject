@@ -426,6 +426,7 @@ void CLayer::GetLayerListObjTag(std::vector<std::string>* _vec)
 	list<CGameObject*>::iterator	iterEnd = m_ObjList.end();
 	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
 	{
+		if (strstr((*iter)->GetTag().c_str(), "Gizmo") == false)
 		_vec->push_back((*iter)->GetTag());
 	}
 }

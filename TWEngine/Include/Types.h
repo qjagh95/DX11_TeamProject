@@ -257,7 +257,7 @@ namespace PUN
 		float	fInAngle;
 		float	fOutAngle;
 		float   fFallOff;
-		float	vEmpty;
+		int		iRimLight;
 	}LightInfo, *PLightInfo;
 
 	struct PUN_DLL PublicCBuffer
