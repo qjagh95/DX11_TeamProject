@@ -4,6 +4,7 @@
 #include "../GameObject.h"
 #include "../PathManager.h"
 #include "../Resource/FbxLoader.h"
+#include "BoneSocket.h"
 
 //#define DDONGCOM 1 //
 PUN_USING
@@ -1049,6 +1050,200 @@ bool CAnimation::ReturnDefaultClip()
 	return true;
 }
 
+bool CAnimation::AddSocket(const string & strBoneName, const string & strSocketName)
+{
+	BONE* pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return false;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+			return false;
+	}
+
+	CBoneSocket*	pSocket = new CBoneSocket;
+
+	pSocket->Init();
+
+	pSocket->SetName(strSocketName);
+
+	pBone->SocketList.push_back(pSocket);
+
+	return true;
+}
+
+bool CAnimation::SetSocketObject(const string & strBoneName, const string & strSocketName, CGameObject * pObj)
+{
+	BONE*	pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return false;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+		{
+			pBone->SocketList[i]->SetObject(pObj);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CAnimation::SetSocketOffset(const string & strBoneName, const string & strSocketName, const Vector3 & vOffset)
+{
+	BONE*	pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return false;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+		{
+			pBone->SocketList[i]->SetOffset(vOffset);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CAnimation::SetSocketOffset(const string & strBoneName, const string & strSocketName, float x, float y, float z)
+{
+	BONE*	pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return false;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+		{
+			pBone->SocketList[i]->SetOffset(x, y, z);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CAnimation::SetSocketRotation(const string & strBoneName, const string & strSocketName, const Vector3 & vRot)
+{
+	BONE*	pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return false;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+		{
+			pBone->SocketList[i]->SetRotation(vRot);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CAnimation::SetSocketRotation(const string & strBoneName, const string & strSocketName, float x, float y, float z)
+{
+	BONE*	pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return false;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+		{
+			pBone->SocketList[i]->SetRotation(x, y, z);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CAnimation::SetSocketRotationX(const string & strBoneName, const string & strSocketName, float x)
+{
+	BONE*	pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return false;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+		{
+			pBone->SocketList[i]->SetRotationX(x);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CAnimation::SetSocketRotationY(const string & strBoneName, const string & strSocketName, float y)
+{
+	BONE*	pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return false;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+		{
+			pBone->SocketList[i]->SetRotationY(y);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CAnimation::SetSocketRotationZ(const string & strBoneName, const string & strSocketName, float z)
+{
+	BONE*	pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return false;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+		{
+			pBone->SocketList[i]->SetRotationZ(z);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+CBoneSocket * CAnimation::FindSocket(const string & strBoneName, const string & strSocketName)
+{
+	BONE*	pBone = FindBone(strBoneName);
+
+	if (pBone == NULLPTR)
+		return NULLPTR;
+
+	for (size_t i = 0; i < pBone->SocketList.size(); i++)
+	{
+		if (pBone->SocketList[i]->GetName() == strSocketName)
+		{
+			return pBone->SocketList[i];
+		}
+	}
+
+	return NULLPTR;
+}
+
 void CAnimation::SkipToNextClip()
 {
 	std::unordered_map<std::string, PUN::PANIMATIONCLIP>::iterator itr = m_mapClip.begin();
@@ -1421,6 +1616,13 @@ int CAnimation::Update(float fTime)
 			pMatrix[i] = *m_vecBoneMatrix[i];
 
 		CONTEXT->Unmap(m_pBoneTex, 0);
+	}
+
+	for (size_t i = 0; i < m_vecBones.size(); ++i)
+	{
+		for (size_t j = 0; j < m_vecBones[i]->SocketList.size(); j++)
+			m_vecBones[i]->SocketList[j]->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
+
 	}
 
 	return 0;

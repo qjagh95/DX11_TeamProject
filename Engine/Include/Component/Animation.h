@@ -11,7 +11,7 @@ typedef struct PUN_DLL _tagBone
 	int			iParentIndex;
 	Matrix*		matOffset;
 	Matrix*		matBone;
-	list<class CBoneSocket*>	SocketList;
+	vector<class CBoneSocket*>	SocketList;
 	int			iRefCount;
 
 	_tagBone() :
@@ -182,6 +182,17 @@ public:
 		float fPlayTime, const vector<PBONEKEYFRAME>& vecFrame);
 	bool DeleteClip(const string& strKey);
 	bool ReturnDefaultClip();
+
+	bool AddSocket(const string& strBoneName, const string& strSocketName);
+	bool SetSocketObject(const string& strBoneName,	const string& strSocketName, class CGameObject* pObj);
+	bool SetSocketOffset(const string& strBoneName,	const string& strSocketName, const Vector3& vOffset);
+	bool SetSocketOffset(const string& strBoneName,	const string& strSocketName, float x, float y, float z);
+	bool SetSocketRotation(const string& strBoneName, const string& strSocketName, const Vector3& vRot);
+	bool SetSocketRotation(const string& strBoneName, const string& strSocketName, float x, float y, float z);
+	bool SetSocketRotationX(const string& strBoneName, const string& strSocketName, float x);
+	bool SetSocketRotationY(const string& strBoneName, const string& strSocketName, float y);
+	bool SetSocketRotationZ(const string& strBoneName, const string& strSocketName, float z);
+	class CBoneSocket* FindSocket(const string& strBoneName, const string& strSocketName);
 
 	//디버그용 클립 넘기기 함수
 	void SkipToNextClip();

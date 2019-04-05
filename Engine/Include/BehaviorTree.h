@@ -3,6 +3,7 @@
 PUN_BEGIN
 
 class CGameObject;
+class BlackBoard;
 class PUN_DLL BehaviorTree
 {
 public:
@@ -478,6 +479,7 @@ private:
 	int m_Count;
 
 	CGameObject* m_Object;
+	BlackBoard* m_Board;
 
 private:
 	BehaviorTree();

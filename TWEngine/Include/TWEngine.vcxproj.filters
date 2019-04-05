@@ -431,6 +431,12 @@
     <ClCompile Include="BTManager.cpp">
       <Filter>07. BehaviorTree</Filter>
     </ClCompile>
+    <ClCompile Include="Component\BoneSocket.cpp">
+      <Filter>06. Component\06. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="BlackBoard.cpp">
+      <Filter>07. BehaviorTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Macro.h">
@@ -701,6 +707,12 @@
       <Filter>07. BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="BTManager.h">
+      <Filter>07. BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BoneSocket.h">
+      <Filter>06. Component\06. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="BlackBoard.h">
       <Filter>07. BehaviorTree</Filter>
     </ClInclude>
   </ItemGroup>

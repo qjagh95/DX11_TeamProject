@@ -212,6 +212,7 @@
     <ClInclude Include="BehaviorTree.h" />
     <ClInclude Include="BinaryReader.h" />
     <ClInclude Include="BinaryWriter.h" />
+    <ClInclude Include="BlackBoard.h" />
     <ClInclude Include="BTManager.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Component\Animation.h" />
@@ -219,6 +220,7 @@
     <ClInclude Include="Component\Arm.h" />
     <ClInclude Include="Component\Bar.h" />
     <ClInclude Include="Component\Camera.h" />
+    <ClInclude Include="Component\BoneSocket.h" />
     <ClInclude Include="Component\Collider.h" />
     <ClInclude Include="Component\ColliderOBB.h" />
     <ClInclude Include="Component\ColliderOBB3D.h" />
@@ -304,6 +306,7 @@
     <ClCompile Include="BehaviorTree.cpp" />
     <ClCompile Include="BinaryReader.cpp" />
     <ClCompile Include="BinaryWriter.cpp" />
+    <ClCompile Include="BlackBoard.cpp" />
     <ClCompile Include="BTManager.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Component\Animation.cpp" />
@@ -326,6 +329,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Component\BoneSocket.cpp" />
     <ClCompile Include="Component\Collider.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

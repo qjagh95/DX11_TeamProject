@@ -462,7 +462,9 @@ void CTransform::Rotation(const Vector3 & vRot)
 {
 	m_vWorldRot += vRot;
 
-	m_matWorldRot.Rotation(m_vWorldRot);
+	Vector3	vWorldRot = m_vWorldRot + m_vOffsetRot;
+
+	m_matWorldRot.Rotation(vWorldRot);
 
 	m_bUpdate = true;
 
@@ -486,6 +488,7 @@ Matrix CTransform::GetParentPos() const
 {
 	return m_ParentPos;
 }
+
 Matrix CTransform::GetParentRot() const
 {
 	return m_ParentRot;
@@ -685,7 +688,7 @@ int CTransform::Update(float fTime)
 		Parent *= m_ParentPos;
 	}
 	
-	m_matWorld = m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matParent;
+	m_matWorld = m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matBone * m_matParent;
 	m_matWorld *= Parent;
 	
 	m_bUpdate = false;
@@ -731,7 +734,7 @@ int CTransform::LateUpdate(float fTime)
 		Parent *= m_ParentPos;
 	}
 
-	m_matWorld = m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matParent;
+	m_matWorld = m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matBone * m_matParent;
 	m_matWorld *= Parent;
 
 	m_bUpdate = false;
@@ -789,4 +792,25 @@ void CTransform::Load(BinaryRead* _pInstBR)
 	SetWorldScale(worldS);
 	SetWorldRot(worldR);
 	SetWorldPos(worldP);
+}
+
+void CTransform::SetBoneMatrix(const Matrix& matBone)
+{
+	m_matBone = matBone;
+
+	m_bUpdate = true;
+}
+
+void CTransform::SetOffsetPos(const Vector3 & vPos)
+{
+	m_vOffsetPos = vPos;
+}
+
+void CTransform::SetOffsetRot(const Vector3 & vRot)
+{
+	m_vOffsetRot = vRot;
+	Vector3	vWorldRot = m_vWorldRot + m_vOffsetRot;
+
+	m_matWorldRot.Rotation(vWorldRot);
+	ComputeWorldAxis();
 }

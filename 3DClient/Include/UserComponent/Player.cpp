@@ -14,7 +14,6 @@
 #include "../SceneComponent/TrdTestScene.h"
 
 #include <BehaviorTree.h>
-
 #include <SoundManager.h>
 
 class ChairUp : public BehaviorTree::Action
@@ -112,7 +111,6 @@ public:
 	}
 };
 
-
 CPlayer::CPlayer()
 	: m_pAnimation(nullptr)
 {
@@ -122,7 +120,6 @@ CPlayer::CPlayer(const CPlayer & com)
 	: CUserComponent(com)
 {
 }
-
 
 CPlayer::~CPlayer()
 {
@@ -166,21 +163,32 @@ bool CPlayer::Init()
 	_input->AddKeyAction("KingHasCome", DIK_K);
 
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
-
 	pRenderer->SetMesh("BlackCow", TEXT("Monster4.msh"));
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
-
 	pMaterial->SetEmissive(1.f);
-
 	SAFE_RELEASE(pMaterial);
 
-	CAnimation* pAnimation = m_pObject->AddComponent<CAnimation>("Animation");
+	m_pAnimation = m_pObject->AddComponent<CAnimation>("Animation");
+	m_pAnimation->LoadBone("Monster4.bne");
+	m_pAnimation->Load("Monster4.anm");
+	m_pAnimation->AddSocket("Bip01-Spine1", "Anjang");
+	m_pAnimation->SetSocketOffset("Bip01-Spine1", "Anjang", Vector3(0.f, 2.5f, 0.f));
 
-	pAnimation->LoadBone("Monster4.bne");
-	pAnimation->Load("Monster4.anm");
+	CGameObject* pWeaponObj = CGameObject::CreateObject("Weapon", m_pLayer);
+	CTransform*	pTr = pWeaponObj->GetTransform();
+	pTr->SetWorldScale(0.2f, 0.2f, 0.2f);
+	pTr->SetLocalRotY(-90.f);
 
-	SAFE_RELEASE(pAnimation);
+	CRenderer*	pWeaponRenderer = pWeaponObj->AddComponent<CRenderer>("WeaponRenderer");
+	pWeaponRenderer->SetMesh("chair", TEXT("chair.msh"));
+	pWeaponRenderer->SetDecalEnable(false);
+
+	m_pAnimation->SetSocketObject("Bip01-Spine1", "Anjang", pWeaponObj);
+
+	SAFE_RELEASE(pTr);
+	SAFE_RELEASE(pWeaponRenderer);
+	SAFE_RELEASE(pWeaponObj);
 	SAFE_RELEASE(pRenderer);
 
 	//CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("PlayerBody");

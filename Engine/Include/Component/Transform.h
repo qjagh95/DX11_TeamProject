@@ -79,7 +79,11 @@ private:
 	Matrix		m_matWorldRot;
 	Matrix		m_matWorldPos;
 	Matrix		m_matParent;
-	Matrix		m_matWorld;
+	Matrix		m_matWorld;	
+
+	Vector3	m_vOffsetPos;
+	Vector3	m_vOffsetRot;
+	Matrix m_matBone;
 
 	Matrix m_ParentScale;
 	Matrix m_ParentPos;
@@ -118,6 +122,9 @@ public:
 	Matrix GetWorldMatrix()	const;
 	Matrix GetWorldScaleMatrix() const;
 	Matrix GetWorldPosMatrix() const;
+	void SetBoneMatrix(const Matrix& matBone);
+	void SetOffsetPos(const Vector3& vPos);
+	void SetOffsetRot(const Vector3& vRot);
 
 	void SetParentPos(const Matrix& parentPos);
 	void SetParentRot(const Matrix& parentRot);

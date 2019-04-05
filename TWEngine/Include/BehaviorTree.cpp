@@ -1,11 +1,13 @@
 #include "EngineHeader.h"
 #include "BTManager.h"
 #include "BehaviorTree.h"
+#include "BlackBoard.h"
 
 PUN_USING
 
 BehaviorTree::BehaviorTree()
 {
+	m_BlackBoard = NULLPTR;
 	m_RootNode = NULLPTR;
 	m_RootSequence = NULLPTR;
 	m_RootSelector = NULLPTR;
@@ -24,30 +26,7 @@ BehaviorTree::~BehaviorTree()
 	SAFE_DELETE(m_RootNode);
 	SAFE_DELETE(m_RootSequence);
 	SAFE_DELETE(m_RootSelector);
-
-	//unordered_map<string, Selector*>::iterator StartIter1 = m_SelectorMap.begin();
-	//unordered_map<string, Selector*>::iterator EndIter1 = m_SelectorMap.end();
-
-	//for (; StartIter1 != EndIter1; StartIter1++)
-	//	SAFE_DELETE(StartIter1->second);
-
-	//m_SelectorMap.clear();
-
-	//unordered_map<string, Sequence*>::iterator StartIter = m_SequenceMap.begin();
-	//unordered_map<string, Sequence*>::iterator EndIter = m_SequenceMap.end();
-
-	//for (; StartIter != EndIter; StartIter++)
-	//	SAFE_DELETE(StartIter->second);
-
-	//m_SequenceMap.clear();
-
-	//unordered_map<string, Action*>::iterator StartIter2 = m_ActionMap.begin();
-	//unordered_map<string, Action*>::iterator EndIter2 = m_ActionMap.end();
-
-	//for (; StartIter2 != EndIter2; StartIter2++)
-	//	SAFE_DELETE(StartIter2->second);
-
-	//m_ActionMap.clear();
+	SAFE_DELETE(m_BlackBoard);
 }
 
 void BehaviorTree::Update(float DeltaTime)
