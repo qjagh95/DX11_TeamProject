@@ -1,6 +1,42 @@
 #pragma once
 
-static bool bDoNotLoadSndManager = false;
+/*
+enum AUDIO_ENGINE_REVERB
+	{
+		Reverb_Off,
+		Reverb_Default,
+		Reverb_Generic,
+		Reverb_Forest,
+		Reverb_PaddedCell,
+		Reverb_Room,
+		Reverb_Bathroom,
+		Reverb_LivingRoom,
+		Reverb_StoneRoom,
+		Reverb_Auditorium,
+		Reverb_ConcertHall,
+		Reverb_Cave,
+		Reverb_Arena,
+		Reverb_Hangar,
+		Reverb_CarpetedHallway,
+		Reverb_Hallway,
+		Reverb_StoneCorridor,
+		Reverb_Alley,
+		Reverb_City,
+		Reverb_Mountains,
+		Reverb_Quarry,
+		Reverb_Plain,
+		Reverb_ParkingLot,
+		Reverb_SewerPipe,
+		Reverb_Underwater,
+		Reverb_SmallRoom,
+		Reverb_MediumRoom,
+		Reverb_LargeRoom,
+		Reverb_MediumHall,
+		Reverb_LargeHall,
+		Reverb_Plate,
+		Reverb_MAX
+	};
+*/
 
 PUN_BEGIN
 
@@ -15,7 +51,7 @@ class PUN_DLL CSoundManager
 {
 	//단발 Sound Effect
 	//루프 Sound EffectInstance
-
+	
 public:
 	bool Init();
 	void Update(float fTime);
@@ -30,6 +66,8 @@ public:
 	shared_ptr<SoundEffect> const& FindSoundEffect(const string& KeyName);
 
 private:
+	float m_fAudioCoordSizeDiv;
+	X3DAUDIO_CONE m_tSoundCone;
 
 	std::unordered_map<std::string, std::shared_ptr<DirectX::SoundEffect>>::iterator m_itrCurrBgm;
 	std::string m_strCurrBGMName;
@@ -67,17 +105,10 @@ private:
 	float m_fUIPan;
 
 public:
-
+	float GetAudioCoordSize() const;
+	void SetAudioCoordSize(float fSize);
 	bool ForgetSound(const std::string strKey);
 	
-	Vector3 GetListenerPos() const;
-	Vector3 GetListenerEulerRot() const;
-
-	void SetListenerPos(const Vector3& pos);
-	void SetListenerEulerRot(const Vector3& rot, const Vector3& upVec);
-	void SetListenerPos(float x, float y, float z);
-
-	void SetListenerQuat(const XMVECTOR& quat); //리스너의 사원수 회전(Quaternion)을 입력합니다
 	void PlayBgm(const std::string& strKey, const wstring& wstrFileName,
 		bool bEnableTransition = true,
 		bool bDeleteFormerBgmFromMem = false,

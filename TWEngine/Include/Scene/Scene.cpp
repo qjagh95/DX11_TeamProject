@@ -13,6 +13,7 @@ CScene::CScene()
 {
 	m_pSkyObj = nullptr;
 	m_pSkyMtrl = nullptr;
+	m_LogText = NULLPTR;
 
 	m_bHeader = false;
 	m_vecInput = NULLPTR;
@@ -202,12 +203,8 @@ bool CScene::Init()
 	else
 		m_bHeader = true;
 
-	wstring Path = CPathManager::GetInst()->FindPath(DATA_PATH);
-	m_LogText.Input.open(Path + L"SceneInput.txt");
-	m_LogText.Update.open(Path + L"SceneUpdate.txt");
-	m_LogText.LateUpdate.open(Path + L"SceneLateUpdate.txt");
-	m_LogText.Collsion.open(Path + L"SceneCollsion.txt");
-	m_LogText.Render.open(Path + L"SceneRender.txt");
+	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
+	m_LogText = CCore::GetInst()->CreateFileStream(Path, "Scene", "Scene");
 
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLayer, true);
 
@@ -283,7 +280,7 @@ int CScene::Input(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecInput->push_back(Compute);
 
-	CCore::WriteLogText(m_LogText.Input, Compute);
+	CCore::WriteLogText(m_LogText->Input, Compute);
 
 	if (m_vecInput->size() >= 100)
 		m_vecInput->erase(m_vecInput->begin());
@@ -356,7 +353,7 @@ int CScene::Update(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecUpdate->push_back(Compute);
 
-	CCore::WriteLogText(m_LogText.Update, Compute);
+	CCore::WriteLogText(m_LogText->Update, Compute);
 
 	if (m_vecUpdate->size() >= 100)
 		m_vecUpdate->erase(m_vecUpdate->begin());
@@ -422,7 +419,7 @@ int CScene::LateUpdate(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecLateUpdate->push_back(Compute);
 
-	CCore::WriteLogText(m_LogText.LateUpdate, Compute);
+	CCore::WriteLogText(m_LogText->LateUpdate, Compute);
 
 	if (m_vecLateUpdate->size() >= 100)
 		m_vecLateUpdate->erase(m_vecLateUpdate->begin());
@@ -490,7 +487,7 @@ void CScene::Collision(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecCollsion->push_back(Compute);
 
-	CCore::WriteLogText(m_LogText.Render, Compute);
+	CCore::WriteLogText(m_LogText->Collsion, Compute);
 
 	if (m_vecCollsion->size() >= 100)
 		m_vecCollsion->erase(m_vecCollsion->begin());
@@ -553,6 +550,8 @@ void CScene::Render(float fTime)
 		Info.End = clock();
 		float Compute = (float)(Info.End - Info.Start) * 0.01f;
 		m_vecRender->push_back(Compute);
+
+		CCore::WriteLogText(m_LogText->Render, Compute);
 
 		if (m_vecRender->size() >= 100)
 			m_vecRender->erase(m_vecRender->begin());
@@ -735,17 +734,11 @@ CGameObject * CScene::FindCamera(const string & strTag)
 
 void CScene::ProfileInit()
 {
-	CCore::GetInst()->AddManagerVector("SceneInput");
-	CCore::GetInst()->AddManagerVector("SceneUpdate");
-	CCore::GetInst()->AddManagerVector("SceneLateUpdate");
-	CCore::GetInst()->AddManagerVector("SceneCollsion");
-	CCore::GetInst()->AddManagerVector("SceneRender");
-
-	m_vecInput = CCore::GetInst()->FindManagerMap("SceneInput");
-	m_vecUpdate = CCore::GetInst()->FindManagerMap("SceneUpdate");
-	m_vecLateUpdate = CCore::GetInst()->FindManagerMap("SceneLateUpdate");
-	m_vecCollsion = CCore::GetInst()->FindManagerMap("SceneCollsion");
-	m_vecRender = CCore::GetInst()->FindManagerMap("SceneRender");
+	m_vecInput = CCore::GetInst()->AddManagerVector("SceneInput"); 
+	m_vecUpdate = CCore::GetInst()->AddManagerVector("SceneUpdate");
+	m_vecLateUpdate = CCore::GetInst()->AddManagerVector("SceneLateUpdate"); 
+	m_vecCollsion = CCore::GetInst()->AddManagerVector("SceneCollsion"); 
+	m_vecRender = CCore::GetInst()->AddManagerVector("SceneRender");
 }
 
 bool CScene::SortLayerZOrder(const CLayer* pSrc, const CLayer* pDest)

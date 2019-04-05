@@ -12,6 +12,7 @@ CLayer::CLayer() :
 	m_vecLateUpdate = NULLPTR;
 	m_vecCollsion = NULLPTR;
 	m_vecRender = NULLPTR;
+	m_LogText = NULLPTR;
 	m_bHeader = true;
 }
 
@@ -105,17 +106,11 @@ bool CLayer::Init()
 {
 	m_HeaderName = m_strTag + "Layer";
 
-	CCore::GetInst()->AddManagerVector(m_HeaderName + " Input");
-	CCore::GetInst()->AddManagerVector(m_HeaderName + " Update");
-	CCore::GetInst()->AddManagerVector(m_HeaderName + " LateUpdate");
-	CCore::GetInst()->AddManagerVector(m_HeaderName + " Collsion");
-	CCore::GetInst()->AddManagerVector(m_HeaderName + " Render");
-
-	m_vecInput = CCore::GetInst()->FindManagerMap(m_HeaderName + " Input");
-	m_vecUpdate = CCore::GetInst()->FindManagerMap(m_HeaderName + " Update");
-	m_vecLateUpdate = CCore::GetInst()->FindManagerMap(m_HeaderName + " LateUpdate");
-	m_vecCollsion = CCore::GetInst()->FindManagerMap(m_HeaderName + " Collsion");
-	m_vecRender = CCore::GetInst()->FindManagerMap(m_HeaderName + " Render");
+	m_vecInput = CCore::GetInst()->AddManagerVector(m_HeaderName + " Input"); 
+	m_vecUpdate = CCore::GetInst()->AddManagerVector(m_HeaderName + " Update");
+	m_vecLateUpdate = CCore::GetInst()->AddManagerVector(m_HeaderName + " LateUpdate");
+	m_vecCollsion = CCore::GetInst()->AddManagerVector(m_HeaderName + " Collsion");
+	m_vecRender = CCore::GetInst()->AddManagerVector(m_HeaderName + " Render");
 
 	if (CCore::GetInst()->m_bGuiMode == false)
 		m_bHeader = false;
@@ -123,11 +118,7 @@ bool CLayer::Init()
 		m_bHeader = true;
 
 	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	m_LogText.Input.open(Path + m_HeaderName + " Input.txt");
-	m_LogText.Update.open(Path + m_HeaderName + + " Update.txt");
-	m_LogText.LateUpdate.open(Path + m_HeaderName + + " LateUpdate.txt");
-	m_LogText.Collsion.open(Path + m_HeaderName + + " Collsion.txt");
-	m_LogText.Render.open(Path + m_HeaderName + + " Render.txt");
+	m_LogText = CCore::GetInst()->CreateFileStream(Path, m_HeaderName, m_HeaderName);
 
 	return true;
 }
@@ -166,7 +157,7 @@ int CLayer::Input(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecInput->push_back(Compute);
 
-	CCore::WriteLogText(m_LogText.Input, Compute);
+	CCore::WriteLogText(m_LogText->Input, Compute);
 
 	if (m_vecInput->size() >= 100)
 		m_vecInput->erase(m_vecInput->begin());
@@ -208,7 +199,7 @@ int CLayer::Update(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecUpdate->push_back(Compute);
 
-	CCore::WriteLogText(m_LogText.Update, Compute);
+	CCore::WriteLogText(m_LogText->Update, Compute);
 
 	if (m_vecUpdate->size() >= 100)
 		m_vecUpdate->erase(m_vecUpdate->begin());
@@ -250,7 +241,7 @@ int CLayer::LateUpdate(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecLateUpdate->push_back(Compute);
 
-	CCore::WriteLogText(m_LogText.LateUpdate, Compute);
+	CCore::WriteLogText(m_LogText->LateUpdate, Compute);
 
 	if (m_vecLateUpdate->size() >= 100)
 		m_vecLateUpdate->erase(m_vecLateUpdate->begin());
@@ -292,7 +283,7 @@ void CLayer::Collision(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecCollsion->push_back(Compute);
 
-	CCore::WriteLogText(m_LogText.Collsion, Compute);
+	CCore::WriteLogText(m_LogText->Collsion, Compute);
 
 	if (m_vecCollsion->size() >= 100)
 		m_vecCollsion->erase(m_vecCollsion->begin());
@@ -335,7 +326,7 @@ void CLayer::Render(float fTime)
 		float Compute = (float)(Info.End - Info.Start) * 0.01f;
 		m_vecRender->push_back(Compute);
 
-		CCore::WriteLogText(m_LogText.Render, Compute);
+		CCore::WriteLogText(m_LogText->Render, Compute);
 
 		if (m_vecRender->size() >= 100)
 			m_vecRender->erase(m_vecRender->begin());

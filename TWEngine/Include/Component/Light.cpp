@@ -9,10 +9,9 @@ CLight::CLight()
 	m_tInfo.vAmb = Vector4(0.2f, 0.2f, 0.2f, 1.f);
 	m_tInfo.vSpc = Vector4::White;
 	m_tInfo.fFallOff = 0.0f;
-	m_iRim = -1.f;
+	m_iRim = -1;
 	m_eComType = CT_LIGHT;
 }
-
 
 CLight::CLight(const CLight & light) :
 	CComponent(light)
@@ -61,7 +60,7 @@ void CLight::Load(BinaryRead * _pInstBR)
 	float fInAngle = _pInstBR->ReadFloat();
 	float fOutAngle = _pInstBR->ReadFloat();
 	float fFallOff = _pInstBR->ReadFloat();
-	float iRimLight = _pInstBR->ReadInt();
+	int iRimLight = _pInstBR->ReadInt();
 
 	// 로드된 데이터를 이용하여 조명 정보를 세팅한다.
 	m_tInfo.vDif = vDif;

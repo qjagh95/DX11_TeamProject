@@ -240,7 +240,6 @@ bool CResourcesManager::Init()
 		&vParticle, 1, sizeof(Vector3), D3D11_USAGE_DEFAULT,
 		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-
 	CreateTexture("RandomNormal", TEXT("RandomNormal.jpg"));
 
 	return true;

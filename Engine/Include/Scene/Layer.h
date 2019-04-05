@@ -27,7 +27,7 @@ private:
 
 	bool m_bHeader;
 	string m_HeaderName;
-	FileStream m_LogText;
+	FileStream* m_LogText;
 
 public:
 	int GetZOrder()	const;

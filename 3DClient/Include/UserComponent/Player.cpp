@@ -196,22 +196,21 @@ bool CPlayer::Init()
 
 	//SAFE_RELEASE(pBody);
 
-	ChairUp* chairUp;
-	Action1* ranAction1;
-	Action2* ranAction2;
+	//Action1* ranAction1;
+	//Action2* ranAction2;
 
-	BehaviorTree* myState = BTManager::Get()->CreateBehaviorTree("PlayerState1", BT_SELECTOR);
-	myState->AddRootSelectorInSelector("Selector1");
+	//BehaviorTree* myState = BTManager::Get()->CreateBehaviorTree("PlayerState1", BT_SELECTOR);
+	//myState->AddRootSelectorInSelector("Selector1");
 
-	ranAction1 = myState->AddSelectorInAction<Action1>("Selector1", "Action1");
-	ranAction2 = myState->AddSelectorInAction<Action2>("Selector1", "Action2");
+	//ranAction1 = myState->AddSelectorInAction<Action1>("Selector1", "Action1");
+	//ranAction2 = myState->AddSelectorInAction<Action2>("Selector1", "Action2");
 
-	myState->AddSelectorInSelector("Selector1", "Selector2");
-	myState->AddSelectorInSelector("Selector2", "Selector3");
+	//myState->AddSelectorInSelector("Selector1", "Selector2");
+	//myState->AddSelectorInSelector("Selector2", "Selector3");
 
-	BehaviorTree* myState1 = BTManager::Get()->CreateBehaviorTree("PlayerState2", BT_SELECTOR);
-	BehaviorTree* myState2 = BTManager::Get()->CreateBehaviorTree("PlayerState3", BT_SELECTOR);
-	BehaviorTree* myState3 = BTManager::Get()->CreateBehaviorTree("PlayerState4", BT_SELECTOR);
+	//BehaviorTree* myState1 = BTManager::Get()->CreateBehaviorTree("PlayerState2", BT_SELECTOR);
+	//BehaviorTree* myState2 = BTManager::Get()->CreateBehaviorTree("PlayerState3", BT_SELECTOR);
+	//BehaviorTree* myState3 = BTManager::Get()->CreateBehaviorTree("PlayerState4", BT_SELECTOR);
 
 	return true;
 }

@@ -7,12 +7,12 @@
 #include "Resource/Mesh.h"
 #include "Rendering/Shader.h"
 
-
 PUN_USING
 
 DEFINITION_SINGLE(CCore)
 
 unordered_map<string, vector<float>*> CCore::m_ManagerMap;
+unordered_map<string, FileStream*> CCore::m_FSMap;
 time_t CCore::m_iTime = 0;
 tm* CCore::m_pDateInfo = NULLPTR;
 bool CCore::m_bLoop = true;
@@ -24,8 +24,9 @@ CCore::CCore()
 	m_bEditorMode = false;
 	m_bTreeOnOff = true;
 	m_pTimer = NULLPTR;
+	m_LogText = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(4111);
+	_CrtSetBreakAlloc(1008);
 
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 
@@ -54,7 +55,8 @@ CCore::~CCore()
 	CoUninitialize();
 	
 	Safe_Delete_Map(m_ManagerMap);
-	BTManager::Get()->Delete();
+	Safe_Delete_Map(m_FSMap);
+	BTManager::Delete();
 }
 
 HWND CCore::GetWindowHandle() const
@@ -75,6 +77,26 @@ void CCore::WriteLogText(ofstream & Stream, float Compute)
 void CCore::SetLoop(bool _bLoop)
 {
 	m_bLoop = _bLoop;
+}
+
+FileStream * CCore::CreateFileStream(const string & Path, const string& Middle, const string & KeyName)
+{
+	FileStream* newStream = FindFileStream(KeyName);
+
+	if (newStream != NULLPTR)
+		return newStream;
+
+	newStream = new FileStream();
+
+	newStream->Input.open(Path + Middle + " Input.txt");
+	newStream->Update.open(Path + Middle + " Update.txt");
+	newStream->LateUpdate.open(Path + Middle + " LateUpdate.txt");
+	newStream->Collsion.open(Path + Middle + " Collsion.txt");
+	newStream->Render.open(Path + Middle + " Render.txt");
+
+	m_FSMap.insert(make_pair(KeyName, newStream));
+
+	return newStream;
 }
 
 void CCore::SetClearColor(unsigned char r,
@@ -219,24 +241,15 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 	GET_SINGLE(CInput)->BindAction("TreeOnOff", KEY_PRESS, this, &CCore::TreeOnOff);
 	GET_SINGLE(CInput)->AddKeyAction("TreeOnOff", DIK_F3);
 
-	AddManagerVector("LogicInput");
-	AddManagerVector("LogicUpdate");
-	AddManagerVector("LogicLateUpdate");
-	AddManagerVector("LogicCollsion");
-	AddManagerVector("LogicRender");
+	m_vecInput = AddManagerVector("LogicInput"); 
+	m_vecUpdate = AddManagerVector("LogicUpdate"); 
+	m_vecLateUpdate = AddManagerVector("LogicLateUpdate");
+	m_vecCollsion = AddManagerVector("LogicCollsion"); 
+	m_vecRender = AddManagerVector("LogicRender");
 
-	m_vecInput = FindManagerMap("LogicInput");
-	m_vecUpdate = FindManagerMap("LogicUpdate");
-	m_vecLateUpdate = FindManagerMap("LogicLateUpdate");
-	m_vecCollsion = FindManagerMap("LogicCollsion");
-	m_vecRender = FindManagerMap("LogicRender");
+	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
 
-	wstring Path = CPathManager::GetInst()->FindPath(DATA_PATH);
-	m_LogText.Input.open(Path + L"LogicInput.txt");
-	m_LogText.Update.open(Path + L"LogicUpdate.txt");
-	m_LogText.LateUpdate.open(Path + L"LogicLateUpdate.txt");
-	m_LogText.Collsion.open(Path + L"LogicCollsion.txt");
-	m_LogText.Render.open(Path + L"LogicRender.txt");
+	m_LogText = CreateFileStream(Path, "Logic", "Logic");
 
 	return true;
 }
@@ -299,7 +312,7 @@ int CCore::Input(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecInput->push_back(Compute);
 
-	WriteLogText(m_LogText.Input, Compute);
+	WriteLogText(m_LogText->Input, Compute);
 
 	if (m_vecInput->size() >= 100)
 		m_vecInput->erase(m_vecInput->begin());
@@ -321,7 +334,7 @@ int CCore::Update(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecUpdate->push_back(Compute);
 
-	WriteLogText(m_LogText.Update, Compute);
+	WriteLogText(m_LogText->Update, Compute);
 
 	if (m_vecUpdate->size() >= 100)
 		m_vecUpdate->erase(m_vecUpdate->begin());
@@ -343,7 +356,7 @@ int CCore::LateUpdate(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecLateUpdate->push_back(Compute);
 
-	WriteLogText(m_LogText.LateUpdate, Compute);
+	WriteLogText(m_LogText->LateUpdate, Compute);
 
 	if (m_vecLateUpdate->size() >= 100)
 		m_vecLateUpdate->erase(m_vecLateUpdate->begin());
@@ -381,7 +394,7 @@ int CCore::Collision(float fTime)
 	float Compute = (float)(Info.End - Info.Start) * 0.01f;
 	m_vecCollsion->push_back(Compute);
 
-	WriteLogText(m_LogText.Collsion, Compute);
+	WriteLogText(m_LogText->Collsion, Compute);
 
 	if (m_vecCollsion->size() >= 100)
 		m_vecCollsion->erase(m_vecCollsion->begin());
@@ -412,7 +425,7 @@ void CCore::Render(float fTime)
 				float Compute = (float)(Info.End - Info.Start) * 0.01f;
 				m_vecRender->push_back(Compute);
 
-				WriteLogText(m_LogText.Render, Compute);
+				WriteLogText(m_LogText->Render, Compute);
 
 				if (m_vecRender->size() >= 100)
 					m_vecRender->erase(m_vecRender->begin());
@@ -645,18 +658,20 @@ void CCore::EditCreateObject(const std::string & _strTag)
 	SAFE_RELEASE(pLayer);
 }
 
-void CCore::AddManagerVector(const string& KeyName)
+vector<float>* CCore::AddManagerVector(const string& KeyName)
 {
-	vector<float>* temp = FindManagerMap(KeyName);
+	vector<float>* newVector = FindManagerMap(KeyName);
 
-	if (temp != NULLPTR)
-		return;
+	if (newVector != NULLPTR)
+		return newVector;
 
-	temp = new vector<float>();
-	temp->reserve(100);
-	temp->clear();
+	newVector = new vector<float>();
+	newVector->reserve(100);
+	newVector->clear();
 
-	m_ManagerMap.insert(make_pair(KeyName, temp));
+	m_ManagerMap.insert(make_pair(KeyName, newVector));
+
+	return newVector;
 }
 
 vector<float>* CCore::FindManagerMap(const string& KeyName) const
@@ -664,6 +679,16 @@ vector<float>* CCore::FindManagerMap(const string& KeyName) const
 	auto FindIter = m_ManagerMap.find(KeyName);
 
 	if (FindIter == m_ManagerMap.end())
+		return NULLPTR;
+
+	return FindIter->second;
+}
+
+FileStream * CCore::FindFileStream(const string & KeyName) const
+{
+	auto FindIter = m_FSMap.find(KeyName);
+	
+	if (FindIter == m_FSMap.end())
 		return NULLPTR;
 
 	return FindIter->second;

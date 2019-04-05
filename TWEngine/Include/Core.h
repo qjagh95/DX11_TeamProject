@@ -17,6 +17,7 @@ private:
 	CTimer*		m_pTimer;
 	bool		m_bHeader;
 	static unordered_map<string, vector<float>*> m_ManagerMap;
+	static unordered_map<string, FileStream*> m_FSMap;
 	static time_t m_iTime;
 	static tm* m_pDateInfo;
 
@@ -25,7 +26,7 @@ private:
 	vector<float>* m_vecLateUpdate;
 	vector<float>* m_vecCollsion;
 	vector<float>* m_vecRender;
-	FileStream m_LogText;
+	FileStream* m_LogText;
 
 public:
 	HWND GetWindowHandle()	const;
@@ -33,9 +34,10 @@ public:
 	bool m_bEditorMode;
 	bool m_bGuiMode;
 	bool m_bTreeOnOff;
-	static int m_iVecIndex;
+
 	static void WriteLogText(ofstream& Stream, float Compute);
 	void SetLoop(bool _bLoop);
+	FileStream* CreateFileStream(const string& Path, const string& Middle, const string& KeyName);
 
 public:
 	void SetClearColor(unsigned char r,
@@ -61,8 +63,9 @@ public:
 	void EditLogic();
 	void EditDelete();
 	void EditCreateObject(const std::string& _strTag);
-	void AddManagerVector(const string& KeyName);
+	vector<float>* AddManagerVector(const string& KeyName);
 	vector<float>* FindManagerMap(const string& KeyName) const;
+	FileStream* FindFileStream(const string& KeyName) const;
 
 private:
 	int Input(float fTime);

@@ -57,7 +57,7 @@ private:
 	vector<float>* m_vecLateUpdate;
 	vector<float>* m_vecCollsion;
 	vector<float>* m_vecRender;
-	FileStream m_LogText;
+	FileStream* m_LogText;
 	bool m_bHeader;
 
 public:

@@ -49,7 +49,7 @@ namespace PUN
 		DirectX::AudioEmitter& GetEmitterInfo();
 	private:
 		int m_iChannelCnt;
-		std::unordered_map<std::string, int> m_mapSndInstKey;
+		std::unordered_map<std::string, size_t> m_mapSndInstKey;
 		std::vector<std::string> m_vecSndStr;
 		
 		float m_fVolume;

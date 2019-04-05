@@ -117,7 +117,7 @@ void PUN::CSoundSource::Play(int idxKey, bool bLoop)
 
 void PUN::CSoundSource::Play(std::string & strKey, bool bLoop)
 {
-	int iKey = m_mapSndInstKey.find(strKey)->second;
+	size_t iKey = m_mapSndInstKey.find(strKey)->second;
 	m_vecsPtrSound[iKey]->Play(bLoop);
 }
 
@@ -133,7 +133,7 @@ void PUN::CSoundSource::PauseClip(int idxKey)
 
 void PUN::CSoundSource::PauseClip(std::string & strKey)
 {
-	int idxKey = m_mapSndInstKey.find(strKey)->second;
+	size_t idxKey = m_mapSndInstKey.find(strKey)->second;
 	if (m_vecsPtrSound[idxKey]->GetState() == PAUSED)
 	{
 		m_vecsPtrSound[idxKey]->Resume();
@@ -148,9 +148,8 @@ void PUN::CSoundSource::StopClip(int idxKey, bool bImmediate)
 }
 
 void PUN::CSoundSource::StopClip(std::string & strKey, bool bImmediate )
-
 {
-	int idxKey = m_mapSndInstKey.find(strKey)->second;
+	size_t idxKey = m_mapSndInstKey.find(strKey)->second;
 	m_vecsPtrSound[idxKey]->Stop(bImmediate);
 }
 
@@ -266,13 +265,13 @@ void PUN::CSoundSource::SetPitch(int iClipIdx, float pitch)
 
 void PUN::CSoundSource::SetVolume(std::string strClip, float vol)
 {
-	int iClipIdx = m_mapSndInstKey.find(strClip)->second;
+	size_t iClipIdx = m_mapSndInstKey.find(strClip)->second;
 	m_vecsPtrSound[iClipIdx]->SetVolume(vol);
 }
 
 void PUN::CSoundSource::SetPitch(std::string strClip, float pitch)
 {
-	int iClipIdx = m_mapSndInstKey.find(strClip)->second;
+	size_t iClipIdx = m_mapSndInstKey.find(strClip)->second;
 	m_vecsPtrSound[iClipIdx]->SetPitch(pitch);
 }
 
