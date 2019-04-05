@@ -31,7 +31,8 @@ private:
 	Vector3				m_vTargetPos;
 	class CFrustum*		m_pFrustum;
 
-	bool	m_bShadow;
+	bool m_bShadow;
+	bool m_bFrustum;
 	class CTransform*	m_pShadowLight;
 
 public:
@@ -43,6 +44,8 @@ public:
 	Matrix GetShadowViewMatrix() const;
 	Matrix GetShadowProjMatrix() const;
 	bool IsShadow()	const;
+	void SetFrustumCulling(bool Value) { m_bFrustum = Value; }
+	bool GetFrustumCulling() const { return m_bFrustum; }
 
 public:
 	void SetTarget(class CGameObject* pTarget);
@@ -56,8 +59,7 @@ public:
 
 public:
 	void SetCameraType(CAMERA_TYPE eType);
-	void SetCameraInfo(CAMERA_TYPE eType, float fWidth, float fHeight,
-		float fViewAngle, float fNear, float fFar);
+	void SetCameraInfo(CAMERA_TYPE eType, float fWidth, float fHeight, float fViewAngle, float fNear, float fFar);
 	void SetWidth(float fWidth);
 	void SetHeight(float fHeight);
 	void SetViewAngle(float fAngle);

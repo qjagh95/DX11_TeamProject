@@ -21,29 +21,33 @@ BehaviorTree::BehaviorTree()
 
 BehaviorTree::~BehaviorTree()
 {
-	BTManager::Get()->Delete(m_TagName);
-
+	SAFE_DELETE(m_RootNode);
 	SAFE_DELETE(m_RootSequence);
 	SAFE_DELETE(m_RootSelector);
-	SAFE_DELETE(m_RootNode);
 
-	unordered_map<string, Selector*>::iterator StartIter1 = m_SelectorMap.begin();
-	unordered_map<string, Selector*>::iterator EndIter1 = m_SelectorMap.end();
+	//unordered_map<string, Selector*>::iterator StartIter1 = m_SelectorMap.begin();
+	//unordered_map<string, Selector*>::iterator EndIter1 = m_SelectorMap.end();
 
-	for (; StartIter1 != EndIter1; StartIter1++)
-		SAFE_DELETE(StartIter1->second);
+	//for (; StartIter1 != EndIter1; StartIter1++)
+	//	SAFE_DELETE(StartIter1->second);
 
-	unordered_map<string, Sequence*>::iterator StartIter = m_SequenceMap.begin();
-	unordered_map<string, Sequence*>::iterator EndIter = m_SequenceMap.end();
+	//m_SelectorMap.clear();
 
-	for (; StartIter != EndIter; StartIter++)
-		SAFE_DELETE(StartIter->second);
+	//unordered_map<string, Sequence*>::iterator StartIter = m_SequenceMap.begin();
+	//unordered_map<string, Sequence*>::iterator EndIter = m_SequenceMap.end();
 
-	unordered_map<string, Action*>::iterator StartIter2 = m_ActionMap.begin();
-	unordered_map<string, Action*>::iterator EndIter2 = m_ActionMap.end();
+	//for (; StartIter != EndIter; StartIter++)
+	//	SAFE_DELETE(StartIter->second);
 
-	for (; StartIter2 != EndIter2; StartIter2++)
-		SAFE_DELETE(StartIter2->second);
+	//m_SequenceMap.clear();
+
+	//unordered_map<string, Action*>::iterator StartIter2 = m_ActionMap.begin();
+	//unordered_map<string, Action*>::iterator EndIter2 = m_ActionMap.end();
+
+	//for (; StartIter2 != EndIter2; StartIter2++)
+	//	SAFE_DELETE(StartIter2->second);
+
+	//m_ActionMap.clear();
 }
 
 void BehaviorTree::Update(float DeltaTime)

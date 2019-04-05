@@ -38,6 +38,7 @@ public:
 
 	protected:
 		Action() { m_KeepNode = NULLPTR; m_pObject = NULLPTR; m_ActionType = BT_NONE; }
+		virtual ~Action() {}
 
 		vector<function<bool(float)>> m_vecDecorator;
 		string m_TagName;
@@ -50,6 +51,7 @@ public:
 	public:
 		friend class Sequence;
 		friend class Selector;
+		friend class BehaviorTree;
 	};
 
 	class CompositNode : public Action
@@ -59,17 +61,19 @@ public:
 		void AddChildNode(CompositNode* Node) { m_ChildAction.push_back(Node); }
 
 		vector<Action*>* GetChildActionList() { return &m_ChildAction; }
-		vector<CompositNode*>* GetChildNodeList() { return &m_ChildNode; }
 
 	protected:
 		void SetAllActionObject(CGameObject* Object);
 
 	protected:
 		vector<Action*> m_ChildAction;
-		vector<CompositNode*> m_ChildNode;
 
 		CompositNode() {}
-		virtual ~CompositNode() {}
+		virtual ~CompositNode()
+		{
+			for (size_t i = 0; i < m_ChildAction.size(); i++)
+				SAFE_DELETE(m_ChildAction[i]);
+		}
 	};
 
 	class Selector : public CompositNode
@@ -101,7 +105,7 @@ public:
 
 	private:
 		Selector() { m_bRandom = false; m_vecDecorator.reserve(4); m_TimeVar = 0.0f; m_CheckTime = 0.0f; m_isCheck = false; }
-		~Selector() {}
+		virtual ~Selector() {}
 
 		void Render() override;
 
@@ -173,7 +177,7 @@ public:
 		Action* m_ChildNode;
 
 	private:
-		~RootNode() {}
+		virtual ~RootNode() { }
 
 	public:
 		friend class BehaviorTree;

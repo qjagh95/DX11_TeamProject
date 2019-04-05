@@ -19,7 +19,7 @@ protected:
 	Vector4					m_vBSColor[BS_END];
 	ButtonCBuffer			m_tCBuffer;
 	string					m_strSound[BS_END];
-	class CAnimation2D*			m_pAnimation;
+	CAnimation2D*			m_pAnimation;
 
 public:
 	void Disable();

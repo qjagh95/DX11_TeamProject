@@ -474,3 +474,8 @@
 /3DClient/bin/MeshData/Corridor_3mx150cm.msh
 /3DClient/bin/MeshData/Corridor_3mx14m_4d.msh
 /3DClient/bin/MeshData/Corridor_2mx10m_1w.msh
+/EngineWrapper/BinObj
+/3DClient/BinObj
+/Mathlib/BinObj
+/TWEngine/BinObj
+/WinFormEditor/obj

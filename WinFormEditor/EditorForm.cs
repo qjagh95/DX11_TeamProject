@@ -64,6 +64,7 @@ namespace WinFormEditor
             ClearData();
             LoadObjectList();
             LoadMeshList();
+            LoadAnmFile();
             LoadLayerComboBoxList();
             LoadTransform(0);
         }
@@ -178,6 +179,18 @@ namespace WinFormEditor
             }
         }
 
+        private void LoadAnmFile()
+        {
+            string curDirectory = Directory.GetCurrentDirectory();
+            string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
+            path += "\\3DClient\\Bin\\MeshData\\";
+            foreach (string f in Directory.GetFiles(path, "*.anm"))
+            {
+                coreWrapper.LoadMeshFromFullPath(Path.GetFileNameWithoutExtension(f), f);
+                LB_AniList.Items.Add(Path.GetFileNameWithoutExtension(f));
+            }
+        }
+
         private void LoadMeshList()
         {
             // 메시 목록
@@ -194,7 +207,7 @@ namespace WinFormEditor
             foreach (string f in Directory.GetFiles(path, "*.msh"))
             {
                 coreWrapper.LoadMeshFromFullPath(Path.GetFileNameWithoutExtension(f), f);
-                LB_MeshList.Items.Add(Path.GetFileNameWithoutExtension(f));
+                LB_FileMesh.Items.Add(Path.GetFileNameWithoutExtension(f));
             }
         }
 
@@ -245,6 +258,7 @@ namespace WinFormEditor
             {
                 comboBoxIndex = 2;
             }
+
             CB_LayerList.SelectedIndex = comboBoxIndex;
         }
 
@@ -281,10 +295,14 @@ namespace WinFormEditor
                 return;
             }
 
+            int SelectIndex = LB_ObjectList.SelectedIndex;
+
             // 오브젝트, 데이터 아이템 삭제
             LB_ObjectList.SelectedIndexChanged -= ObjectList_ChangeSelectedItem;
+
             string strObjectTag = LB_ObjectList.SelectedItem.ToString();
             string strLayerTag  = m_objInfo[strObjectTag].strLayerTag;
+
             coreWrapper.DeleteObject(strObjectTag, strLayerTag);
             m_objInfo.Remove(strObjectTag);
             LB_ObjectList.Items.Remove(LB_ObjectList.SelectedItem);
@@ -308,6 +326,11 @@ namespace WinFormEditor
             // 포커스 해제
             LB_ObjectList.SelectedItem = null;
             AddLogString("오브젝트가 삭제되었습니다.");
+
+            if (SelectIndex - 1 < 0)
+                SelectIndex = 0;
+
+            LB_ObjectList.SelectedIndex = SelectIndex - 1;
         }
 
         private void KeyDown_DeleteObject(object sender, KeyEventArgs e)
@@ -497,6 +520,7 @@ namespace WinFormEditor
         {
             // -, .(소수점), BK(BackSpace, 8번), 0 ~9(숫자)를 제외한 문자는 검사하지 않는다.
             int changeASCII = Convert.ToInt32(e.KeyChar);
+
             if ((changeASCII >= '0' && changeASCII <= '9') ||
                  changeASCII == '-' || changeASCII == '.' || changeASCII == 8)
             {
@@ -635,125 +659,9 @@ namespace WinFormEditor
                 ClearData();
                 LoadObjectList();
                 LoadMeshList();
+                LoadAnmFile();
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         private void EditorForm_Load(object sender, EventArgs e)
         {
@@ -773,19 +681,7 @@ namespace WinFormEditor
             //}
         }
 
-
-
         //Object Change Tag
-
-
-
-
-
-        private void MeshList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Mesh ListBox안에 선택된 목록이 바뀔 때 호출된다.
-
-        }
 
         private void SetMesh_Click(object sender, EventArgs e)
         {
@@ -795,8 +691,20 @@ namespace WinFormEditor
                 AddLogString("Error! 선택된 Mesh가 없습니다");
                 return;
             }
-            string strTemp = LB_MeshList.SelectedItem.ToString();
-            coreWrapper.SetMesh(strTemp);
+
+            string strTemp;
+
+            if(LB_MeshList.SelectedItem != null)
+            {
+                strTemp = LB_MeshList.SelectedItem.ToString();
+                coreWrapper.SetMesh(strTemp);
+            }
+            else if(LB_FileMesh.SelectedItem != null)
+            {
+                strTemp = LB_FileMesh.SelectedItem.ToString();
+                coreWrapper.SetMesh(strTemp);
+            }
+
         }
 
         private void AddRenderComponent(object sender, EventArgs e)
@@ -804,8 +712,6 @@ namespace WinFormEditor
             // 'Renderer' 컴포넌트 추가
             coreWrapper.AddRenderComponent();
         }
-
-
 
         private void AnimationOption_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -922,7 +828,7 @@ namespace WinFormEditor
                 fileName = Path.GetFileNameWithoutExtension(filePath);
 
                 coreWrapper.LoadMeshFromFullPath(fileName, filePath);
-                LB_MeshList.Items.Add(fileName);
+                LB_FileMesh.Items.Add(fileName);
             }
         }
 
@@ -964,8 +870,6 @@ namespace WinFormEditor
                 int iStartFrame = Convert.ToInt32(m_strStartFrame);
                 int iEndFrame = Convert.ToInt32(m_strEndFrame);
                 double dPlayTime = Convert.ToDouble(m_strAniTime);
-
-
 
                 // ListBox의 이름을 변경해주면 된다.
                 if (coreWrapper.ModifyClip(strOriginName, strChangeName, iAnimationOption, iStartFrame, iEndFrame, dPlayTime) == true)
@@ -1046,6 +950,16 @@ namespace WinFormEditor
 
         }
 
-        
+        private void BasicMeshClick(object sender, EventArgs e)
+        {
+            if (LB_FileMesh.SelectedItem != null)
+                LB_FileMesh.SelectedItem = null;
+        }
+
+        private void FileMeshClick(object sender, EventArgs e)
+        {
+            if (LB_MeshList.SelectedItem != null)
+                LB_MeshList.SelectedItem = null;
+        }
     }
 }

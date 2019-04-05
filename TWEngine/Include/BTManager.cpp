@@ -17,17 +17,20 @@ BTManager::~BTManager()
 	unordered_map<string, BehaviorTree*>::iterator StartIter = m_TreeMap.begin();
 	unordered_map<string, BehaviorTree*>::iterator EndIter = m_TreeMap.end();
 	
-	for (;StartIter != EndIter; StartIter++)
+	for (; StartIter != EndIter; ++StartIter)
 		SAFE_DELETE(StartIter->second);
 
 	for (size_t i = 0; i < m_vecItemsName.size(); i++)
 		SAFE_DELETE(m_Items[i]);
 
 	SAFE_DELETE_ARRAY(m_Items);
+
+	m_TreeMap.clear();
 }
 
-void BTManager::Delete(const string & BTName)
+void BTManager::DeleteTree(const string & BTName)
 {
+	FindTree(BTName)->~BehaviorTree();
 	m_TreeMap.erase(BTName);
 }
 
@@ -58,15 +61,18 @@ BehaviorTree * BTManager::FindTree(const string & KeyName)
 
 void BTManager::GUIRender()
 {
+	if (m_TreeMap.empty() == true)
+		return;
+
 	if (CCore::GetInst()->m_bTreeOnOff == false)
 		return;
 
-	//ImGui::Begin("BehaviorTree");
-	//{
-	//	static int SelectIndex = 0;
-	//	ImGui::Combo("BTList", &SelectIndex, m_Items, (int)m_vecItemsName.size());
+	ImGui::Begin("BehaviorTree");
+	{
+		static int SelectIndex = 0;
+		ImGui::Combo("BTList", &SelectIndex, m_Items, (int)m_vecItemsName.size());
 
-	//	FindTree(m_vecItemsName[SelectIndex])->GUIRender();
-	//}
-	//ImGui::End();
+		FindTree(m_vecItemsName[SelectIndex])->GUIRender();
+	}
+	ImGui::End();
 }
