@@ -13,6 +13,46 @@ SINGLETON_VAR_INIT(CSoundManager)
 shared_ptr<SoundEffect> CSoundManager::m_NULLPTR1;
 shared_ptr<SoundEffectInstance> CSoundManager::m_NULLPTR2;
 
+
+/*
+enum AUDIO_ENGINE_REVERB
+	{
+		Reverb_Off,
+		Reverb_Default,
+		Reverb_Generic,
+		Reverb_Forest,
+		Reverb_PaddedCell,
+		Reverb_Room,
+		Reverb_Bathroom,
+		Reverb_LivingRoom,
+		Reverb_StoneRoom,
+		Reverb_Auditorium,
+		Reverb_ConcertHall,
+		Reverb_Cave,
+		Reverb_Arena,
+		Reverb_Hangar,
+		Reverb_CarpetedHallway,
+		Reverb_Hallway,
+		Reverb_StoneCorridor,
+		Reverb_Alley,
+		Reverb_City,
+		Reverb_Mountains,
+		Reverb_Quarry,
+		Reverb_Plain,
+		Reverb_ParkingLot,
+		Reverb_SewerPipe,
+		Reverb_Underwater,
+		Reverb_SmallRoom,
+		Reverb_MediumRoom,
+		Reverb_LargeRoom,
+		Reverb_MediumHall,
+		Reverb_LargeHall,
+		Reverb_Plate,
+		Reverb_MAX
+	};
+*/
+
+
 CSoundManager::CSoundManager() :
 	m_fBgmPan(0.f),
 	m_fBgmPitch(0.f),
@@ -23,7 +63,8 @@ CSoundManager::CSoundManager() :
 	m_iFlushFlag((int)FBB_NO_BUF),
 	m_fUIVolume(1.f),
 	m_fUIPan(0.f),
-	m_fUIPitch(0.f)
+	m_fUIPitch(0.f),
+	m_fAudioCoordSizeDiv(1.f)
 {
 	m_sPtrCurrentBgmTrack = m_NULLPTR2;
 	m_sPtrPrevBgmTrack = m_NULLPTR2;
@@ -38,11 +79,26 @@ CSoundManager::~CSoundManager()
 
 bool CSoundManager::Init()
 {
+	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	AUDIO_ENGINE_FLAGS Flag = AudioEngine_Default;
 #ifdef _DEBUG
 	Flag = Flag | AudioEngine_Debug;
 #endif
 	m_AudioEngine = make_unique<AudioEngine>(Flag);
+	m_AudioEngine->SetReverb(Reverb_Default);
+	m_AudioEngine->GetChannelMask();
+	/*
+	m_tSoundCone.InnerAngle = X3DAUDIO_PI;
+	m_tSoundCone.InnerReverb = 1.f;
+	m_tSoundCone.InnerLPF = 0.75f;
+	m_tSoundCone.InnerVolume = 2.f;
+	m_tSoundCone.OuterAngle = X3DAUDIO_2PI;
+	m_tSoundCone.OuterLPF = 0.25f;
+	m_tSoundCone.OuterReverb = 0.5f;
+	m_tSoundCone.OuterVolume = 1.f;
+	m_Listener.pCone = &m_tSoundCone;
+	*/
+	
 
 	//CreateSoundEffect("BGM", TEXT("bgm_Dnf.wav"));
 	//CreateSoundEffect("Effect", TEXT("BugChange.wav"));
@@ -151,6 +207,8 @@ void CSoundManager::Update(float fTime)
 		PUN::CTransform *pTrans = pMainCam->GetTransform();
 		Vector3 vPos = pTrans->GetWorldPos();
 
+		vPos /= m_fAudioCoordSizeDiv;
+
 		Vector3 vUp = pTrans->GetWorldAxis(PUN::AXIS_Y);
 		Vector3 vFront = pTrans->GetWorldAxis(PUN::AXIS_Z);
 
@@ -251,6 +309,25 @@ shared_ptr<SoundEffect> const & CSoundManager::FindSoundEffect(const string & Ke
 	return FindIter->second;
 }
 
+float CSoundManager::GetAudioCoordSize() const
+{
+	return m_fAudioCoordSizeDiv;
+}
+
+void CSoundManager::SetAudioCoordSize(float fSize)
+{
+	if (fSize == 0.f)
+		return;
+
+	if (isnan(fSize))
+		return;
+
+	if (isinf(fSize))
+		return;
+
+	m_fAudioCoordSizeDiv = fSize;
+}
+
 bool CSoundManager::ForgetSound(const std::string strKey)
 {
 	auto _snd = m_SoundEffectMap.find(strKey);
@@ -261,48 +338,6 @@ bool CSoundManager::ForgetSound(const std::string strKey)
 	m_SoundEffectMap.erase(_snd);
 
 	return true;
-}
-
-Vector3 CSoundManager::GetListenerPos() const
-{
-	// TODO: insert return statement here
-	return Vector3(m_Listener.Position);
-}
-
-Vector3 CSoundManager::GetListenerEulerRot() const
-{
-	// TODO: insert return statement here
-	return m_vRot;
-}
-
-void CSoundManager::SetListenerPos(const Vector3 & pos)
-{
-	DirectX::XMFLOAT3 xmFloat(pos.x, pos.y, pos.z);
-
-	m_Listener.SetPosition(xmFloat);
-}
-
-void CSoundManager::SetListenerEulerRot(const Vector3 & rot, const Vector3& upVec)
-{
-	DirectX::XMFLOAT3 xmFloat(rot.x, rot.y, rot.z);
-	DirectX::XMFLOAT3 xmUp(upVec.x, upVec.y, upVec.z);
-
-	m_vRot = rot;
-	m_Listener.SetOrientation(xmFloat, xmUp);
-
-}
-
-void CSoundManager::SetListenerPos(float x, float y, float z)
-{
-	DirectX::XMFLOAT3 xmFloat(x, y, z);
-	m_Listener.SetPosition(xmFloat);
-}
-
-void CSoundManager::SetListenerQuat(const XMVECTOR & quat)
-{
-	m_vQuat = quat;
-	m_Listener.SetOrientationFromQuaternion(quat);
-	m_vRot = Vector3(m_Listener.OrientFront.x, m_Listener.OrientFront.y, m_Listener.OrientFront.z);
 }
 
 void CSoundManager::PlayBgm(const std::string & strKey, const wstring & wstrFileName,
@@ -581,6 +616,13 @@ void CSoundManager::SetBgmPan(float panRatio)
 	}
 
 	m_fBgmPan = panRatio;
+
+	if (m_sPtrCurrentBgmTrack != m_NULLPTR2)
+	{
+		m_sPtrCurrentBgmTrack->Pause();
+		m_sPtrCurrentBgmTrack->SetPan(m_fBgmPan);
+		m_sPtrCurrentBgmTrack->Resume();
+	}
 }
 
 float CSoundManager::GetBgmVolume() const

@@ -2,6 +2,7 @@
 
 PUN_BEGIN
 
+
 class CTimer;
 class PUN_DLL CCore
 {

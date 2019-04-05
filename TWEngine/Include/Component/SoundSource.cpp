@@ -5,11 +5,15 @@
 
 std::shared_ptr<DirectX::SoundEffect> nullSptrSound;
 
+
 PUN::CSoundSource::CSoundSource()
 {
 	m_tAudioEmitter = {};
-	m_tAudioEmitter.ChannelCount = 5;
-	
+	m_tAudioEmitter.ChannelCount = 2;
+	m_tAudioEmitter.ChannelRadius = 5.f;
+	m_tAudioEmitter.InnerRadius = 5.f;
+	m_tAudioEmitter.EmitterAzimuths[0] = X3DAUDIO_PI * 0.5f;
+	m_tAudioEmitter.EmitterAzimuths[1] = X3DAUDIO_PI * 1.5f;
 }
 
 PUN::CSoundSource::CSoundSource(const CSoundSource & src) :
@@ -47,20 +51,41 @@ int PUN::CSoundSource::Update(float fTime)
 	Vector3 vRotFront = m_pTransform->GetWorldAxis(PUN::AXIS_Z);
 	Vector3 vRotUp = m_pTransform->GetWorldAxis(PUN::AXIS_Y);
 
+	PUN::CSoundManager *pMgr = PUN::CSoundManager::GetInst();
+	float fDiv = pMgr->GetAudioCoordSize();
+	vPos /= fDiv;
+	const DirectX::AudioListener& _mainListener = pMgr->GetMainListener();
+	
 	XMFLOAT3 xmPos(vPos.x, vPos.y, vPos.z);
+	
+	Vector3 vOriFront = vPos - Vector3(_mainListener.Position);
+	Vector3 vRotSide = m_pTransform->GetWorldAxis(PUN::AXIS_X);
+
+	Vector3 vOriUp = vOriFront.Cross(vRotSide);
+	/*
 	XMFLOAT3 xmRotFront(vRotFront.x, vRotFront.y, vRotFront.z);
 	XMFLOAT3 xmRotUp(vRotUp.x, vRotUp.y, vRotUp.z);
-
+	*/
+	
 	m_tAudioEmitter.SetPosition(xmPos);
+	
 	//m_tAudioEmitter.InnerRadius = 50.f;
-	m_tAudioEmitter.SetOrientation(xmRotFront, xmRotUp);
 
-	PUN::CSoundManager *pMgr = PUN::CSoundManager::GetInst();
+	XMFLOAT3 xmOriF(vOriFront.x, vOriFront.y, vOriFront.z);
+	XMFLOAT3 xmOriU(vOriUp.x, vOriUp.y, vOriUp.z);
+
+	m_tAudioEmitter.SetOrientation(xmOriF, xmOriU);
+
+	
 
 	for (int i = 0; i < m_vecsPtrSound.size(); ++i)
 	{
-		if(m_vecsPtrSound[i]->GetState() == PLAYING)
-			m_vecsPtrSound[i]->Apply3D(pMgr->GetMainListener(), m_tAudioEmitter);
+		
+		if (m_vecsPtrSound[i]->GetState() == PLAYING)
+		{
+			m_vecsPtrSound[i]->Apply3D(pMgr->GetMainListener(), m_tAudioEmitter, false);
+		}
+		
 		
 	}
 	
@@ -92,7 +117,7 @@ void PUN::CSoundSource::Play(int idxKey, bool bLoop)
 
 void PUN::CSoundSource::Play(std::string & strKey, bool bLoop)
 {
-	int iKey = (int)m_mapSndInstKey.find(strKey)->second;
+	int iKey = m_mapSndInstKey.find(strKey)->second;
 	m_vecsPtrSound[iKey]->Play(bLoop);
 }
 
@@ -108,7 +133,7 @@ void PUN::CSoundSource::PauseClip(int idxKey)
 
 void PUN::CSoundSource::PauseClip(std::string & strKey)
 {
-	int idxKey = (int)m_mapSndInstKey.find(strKey)->second;
+	int idxKey = m_mapSndInstKey.find(strKey)->second;
 	if (m_vecsPtrSound[idxKey]->GetState() == PAUSED)
 	{
 		m_vecsPtrSound[idxKey]->Resume();
@@ -123,8 +148,9 @@ void PUN::CSoundSource::StopClip(int idxKey, bool bImmediate)
 }
 
 void PUN::CSoundSource::StopClip(std::string & strKey, bool bImmediate )
+
 {
-	int idxKey = (int)m_mapSndInstKey.find(strKey)->second;
+	int idxKey = m_mapSndInstKey.find(strKey)->second;
 	m_vecsPtrSound[idxKey]->Stop(bImmediate);
 }
 
@@ -132,14 +158,11 @@ bool PUN::CSoundSource::LoadSounds(const vector<std::string>& vecStr)
 {
 	PUN::CSoundManager *pMgr = PUN::CSoundManager::GetInst();
 	std::shared_ptr<DirectX::SoundEffect> sNullPTR;
-
 	for (size_t i = 0; i < vecStr.size(); ++i)
 	{
 		std::shared_ptr<DirectX::SoundEffect> sPtrSound = pMgr->FindSoundEffect(vecStr[i]);
-
 		if (sPtrSound == sNullPTR)
 			return false;
-
 		std::shared_ptr<DirectX::SoundEffectInstance> sPtrSoundInst 
 			= sPtrSound->CreateInstance(SoundEffectInstance_Use3D | SoundEffectInstance_ReverbUseFilters);
 
@@ -181,15 +204,13 @@ bool PUN::CSoundSource::LoadSounds(const char ** arrStrName, const TCHAR ** arrF
 {
 	PUN::CSoundManager *pMgr = PUN::CSoundManager::GetInst();
 	std::shared_ptr<DirectX::SoundEffect> sNullPTR;
-
 	for (size_t i = 0; i < iCnt; ++i)
 	{
-		pMgr->CreateSoundEffect(arrStrName[i], arrFilePath[i], PathKey);
 
+		pMgr->CreateSoundEffect(arrStrName[i], arrFilePath[i], PathKey);
 		std::shared_ptr<DirectX::SoundEffect> sPtrSound = pMgr->FindSoundEffect(arrStrName[i]);
 		if (sPtrSound == sNullPTR)
 			return false;
-
 		std::shared_ptr<DirectX::SoundEffectInstance> sPtrSoundInst
 			= sPtrSound->CreateInstance(SoundEffectInstance_Use3D | SoundEffectInstance_ReverbUseFilters);
 
@@ -245,13 +266,13 @@ void PUN::CSoundSource::SetPitch(int iClipIdx, float pitch)
 
 void PUN::CSoundSource::SetVolume(std::string strClip, float vol)
 {
-	int iClipIdx = (int)m_mapSndInstKey.find(strClip)->second;
+	int iClipIdx = m_mapSndInstKey.find(strClip)->second;
 	m_vecsPtrSound[iClipIdx]->SetVolume(vol);
 }
 
 void PUN::CSoundSource::SetPitch(std::string strClip, float pitch)
 {
-	int iClipIdx = (int)m_mapSndInstKey.find(strClip)->second;
+	int iClipIdx = m_mapSndInstKey.find(strClip)->second;
 	m_vecsPtrSound[iClipIdx]->SetPitch(pitch);
 }
 
