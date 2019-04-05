@@ -1,21 +1,23 @@
 #include "EngineHeader.h"
 #include "RenderManager.h"
+#include "Core.h"
 #include "Shader.h"
+#include "CSBlur.h"
 #include "DownScale.h"
 #include "BlendState.h"
 #include "DepthState.h"
 #include "PostEffect.h"
 #include "ViewManager.h"
+#include "EditManager.h"
 #include "RenderTarget.h"
 #include "ComputeShader.h"
 #include "RasterizerState.h"
 #include "MultiRenderTarget.h"
 #include "../Device.h"
 #include "../Resource/Sampler.h"
+#include "../Resource/Texture.h"
 #include "../Component/Light.h"
 #include "../Component/Camera.h"
-#include "EditManager.h"
-#include "Core.h"
 
 PUN_USING
 
@@ -25,13 +27,17 @@ CRenderManager::CRenderManager() :
 	m_pCreateState(nullptr),
 	m_bDeferred(true),
 	m_bFogEnable(true),
-	m_pSkyObj(nullptr)
+	m_bSSAOEnable(true),
+	m_pSkyObj(nullptr),
+	m_pFogDepthSRV(nullptr),
+	m_pFogDepthTex(nullptr)
 {
 	m_eGameMode = GM_3D;
 	m_pSphereVolum = NULLPTR;
 	m_pCornVolum = NULLPTR;
 	m_pGBufferMultiTarget = NULLPTR;
 	m_pLightMultiTarget = NULLPTR;
+	m_pDownScaledGBufferMultiTarget = NULLPTR;
 
 	memset(m_pState, 0, sizeof(CRenderState*) * STATE_END);
 	memset(m_pTarget, 0, sizeof(CRenderTarget*) * TARGET_END);
@@ -45,6 +51,8 @@ CRenderManager::CRenderManager() :
 
 CRenderManager::~CRenderManager()
 {
+	SAFE_RELEASE(m_pFogDepthSRV);
+	SAFE_RELEASE(m_pFogDepthTex);
 	SAFE_RELEASE(m_pGBufferSampler);
 	DESTROY_SINGLE(CShaderManager);
 	DESTROY_SINGLE(CViewManager);
@@ -98,14 +106,18 @@ bool CRenderManager::Init()
 	m_pShader[SHADER_ACC_POINT]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_POINT_ACC_SHADER);
 	m_pShader[SHADER_ACC_SPOT]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_SPOT_ACC_SHADER);
 	m_pShader[SHADER_BLEND]			= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_BLEND_SHADER);
-	m_pShader[SHADER_FOG_DEPTH]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(VOLUME_FOG_FIRST_SHADER);
+	m_pShader[SHADER_FOG_FRONT]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(VOLUME_FOG_FIRST_SHADER);
+	m_pShader[SHADER_FOG_BACK]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(VOLUME_FOG_BACK_SHADER);
 	m_pShader[SHADER_FOG_COLOR]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(VOLUME_FOG_SECOND_SHADER);
 	m_pShader[SHADER_FULL_SCREEN]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(FULLSCREEN_SHADER);
-	m_pShader[SHADER_FINAL_PASS] = GET_SINGLE(CShaderManager)->FindShaderNonCount(FINAL_PASS_SHADER);
-	m_pShader[SHADER_SHDOW] = GET_SINGLE(CShaderManager)->FindShaderNonCount(SHADOWMAP_SHADER);
+	m_pShader[SHADER_DS_GBUFFER]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(DS_GBUFFER_SHADER);
+	m_pShader[SHADER_FINAL_PASS]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(FINAL_PASS_SHADER);
+	m_pShader[SHADER_SHADOW]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(SHADOWMAP_SHADER);
+	m_pShader[SHADER_SSAO]			= GET_SINGLE(CShaderManager)->FindShaderNonCount(SSAO_SHADER);
 
 	m_pTarget[TARGET_ALBEDO]		= GET_SINGLE(CViewManager)->FindRenderTarget("Albedo");
 	m_pTarget[TARGET_DEPTH]			= GET_SINGLE(CViewManager)->FindRenderTarget("Depth");
+	m_pTarget[TARGET_NORMAL]		= GET_SINGLE(CViewManager)->FindRenderTarget("Normal");
 	m_pTarget[TARGET_BACK]			= GET_SINGLE(CViewManager)->FindRenderTarget("SecondBackBuffer");
 	m_pTarget[TARGET_SKY]			= GET_SINGLE(CViewManager)->FindRenderTarget("Sky");
 	m_pTarget[TARGET_FOG_DEPTH]		= GET_SINGLE(CViewManager)->FindRenderTarget("VolumeFogDepth");
@@ -114,11 +126,11 @@ bool CRenderManager::Init()
 	m_pTarget[TARGET_BLEND]			= GET_SINGLE(CViewManager)->FindRenderTarget("LightBlend");
 	m_pTarget[TARGET_FINAL]			= GET_SINGLE(CViewManager)->FindRenderTarget("Final");
 	m_pTarget[TARGET_TANGENT]		= GET_SINGLE(CViewManager)->FindRenderTarget("Tangent");
-	m_pTarget[TARGET_BINORMAL] = GET_SINGLE(CViewManager)->FindRenderTarget("Binormal");
-	m_pTarget[TARGET_SHADOWMAP] = GET_SINGLE(CViewManager)->FindRenderTarget("ShadowMap");
-
-	m_pTarget[TARGET_FOG_DEPTH]->SetClearColor(Vector4::Black);
-	m_pTarget[TARGET_BLEND]->SetClearColor(Vector4::Zero);
+	m_pTarget[TARGET_BINORMAL]		= GET_SINGLE(CViewManager)->FindRenderTarget("Binormal");
+	m_pTarget[TARGET_SHADOWMAP]		= GET_SINGLE(CViewManager)->FindRenderTarget("ShadowMap");
+	m_pTarget[TARGET_DS_DEPTH]		= GET_SINGLE(CViewManager)->FindRenderTarget("DownScaledDepth");
+	m_pTarget[TARGET_DS_NORMAL]		= GET_SINGLE(CViewManager)->FindRenderTarget("DownScaledNormal");
+	m_pTarget[TARGET_SSAO]			= GET_SINGLE(CViewManager)->FindRenderTarget("SSAO");
 
 	m_pState[STATE_DEPTH_GRATOR]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_GRATOR);
 	m_pState[STATE_DEPTH_LESS]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_LESS);
@@ -129,7 +141,7 @@ bool CRenderManager::Init()
 	m_pState[STATE_CULL_NONE]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(CULL_NONE);
 	m_pState[STATE_ZERO_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ZERO_BLEND);
 	m_pState[STATE_ALL_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ALL_BLEND);
-	m_pState[STATE_DEPTH_DISABLE] = GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_DISABLE);
+	m_pState[STATE_DEPTH_DISABLE]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_DISABLE);
 	m_pState[STATE_DEPTH_READ_ONLY] = GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_DISABLE);
 
 	((CDepthState*)m_pState[STATE_DEPTH_GRATOR])->SetStencilRef(1); //스텐실값을 1로 채운다.
@@ -137,19 +149,25 @@ bool CRenderManager::Init()
 	m_pGBufferMultiTarget			= GET_SINGLE(CViewManager)->FindMRT("GBuffer");
 	m_pLightMultiTarget				= GET_SINGLE(CViewManager)->FindMRT("LightAcc");
 	m_pDecalMultiTarget				= GET_SINGLE(CViewManager)->FindMRT("SSDBuffer");
+	m_pDownScaledGBufferMultiTarget = GET_SINGLE(CViewManager)->FindMRT("DownScaleGBuffer");
 
 	for (int i = CFT_DOWNSCALE; i < CFT_END; ++i)
 	{
-		m_pFilter[i] = GET_SINGLE(CViewManager)->FindCSFilter((CS_FILTER_TYPE)i);		
+		m_pFilter[i] = GET_SINGLE(CViewManager)->FindCSFilter((CS_FILTER_TYPE)i);
+		m_pFilter[i]->Disable();
 	}
 
-	m_pFilter[1]->Disable();
-	m_pFilter[2]->Disable();
-	m_pFilter[3]->Disable();
-	m_tFinalCBuffer.iHDR = 0;
-	//m_pFilter[5]->Disable();
-	m_tFinalCBuffer.iBloom = 0;
-	//m_tFinalCBuffer.iBlur = 1;
+	ID3D11Texture2D* pTex = m_pTarget[TARGET_FOG_DEPTH]->GetTexture();
+
+	D3D11_TEXTURE2D_DESC tDesc;
+	pTex->GetDesc(&tDesc);
+
+	DEVICE->CreateTexture2D(&tDesc, nullptr, &m_pFogDepthTex);
+	DEVICE->CreateShaderResourceView(m_pFogDepthTex, nullptr, &m_pFogDepthSRV);
+
+	m_pRandomNormalTex = GET_SINGLE(CResourcesManager)->FindTexture("RandomNormal");
+
+	m_tCBuffer.iSSAOEnable = 1;
 
 	return true;
 }
@@ -321,14 +339,17 @@ void CRenderManager::RenderDeferred(float fTime)
 {
 	// MainCamera를 얻어온다.
 	CCamera* pMainCamera = GET_SINGLE(CSceneManager)->GetMainCameraNoneCount();
-
+	
+	// 그림자 맵을 그려준다.
 	if (pMainCamera->IsShadow())
 		RenderShadowMap(fTime);
-
 	// GBuffer를 만들어준다.
 	RenderGBuffer(fTime);
 	// GBuffer를 이용해 데칼을 GBuffer에 추가하여 그린다.
 	RenderDecal(fTime);
+	// SSAO를 계산해준다.
+	if(m_bSSAOEnable)
+		RenderSSAO(fTime);
 	// 조명 누적버퍼를 만들어준다.
 	RenderLightAcc(fTime);
 	// 조명타겟과 Albedo 를 합성한다.
@@ -338,7 +359,6 @@ void CRenderManager::RenderDeferred(float fTime)
 	// 볼륨안개를 그린다.
 	if(m_bFogEnable)
 		RenderFog(fTime);
-
 	// HDR 등 다양한 화면 효과를 계산한다.
 	RenderComputeProcess(fTime);
 	// 최종 합성된 타겟을 화면에 출력한다.
@@ -406,6 +426,77 @@ void CRenderManager::RenderDecal(float fTime)
 	m_pTarget[TARGET_BINORMAL]->ResetShader(14);
 
 	m_pDecalMultiTarget->ResetTarget();
+}
+
+void CRenderManager::DownScaleGBuffer(float fTime)
+{
+	float fClearColor[4] = {};
+	m_pDownScaledGBufferMultiTarget->ClearRenderTarget(fClearColor);
+	m_pDownScaledGBufferMultiTarget->SetTarget();
+
+	m_pShader[SHADER_DS_GBUFFER]->SetShader();
+
+	m_pTarget[TARGET_DEPTH]->SetShader(10);
+	m_pTarget[TARGET_NORMAL]->SetShader(11);
+
+	CONTEXT->IASetInputLayout(nullptr);
+
+	UINT iOffset = 0;
+	CONTEXT->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CONTEXT->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	CONTEXT->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	CONTEXT->Draw(4, 0);
+
+	m_pTarget[TARGET_DEPTH]->ResetShader(10);
+	m_pTarget[TARGET_NORMAL]->ResetShader(11);
+
+	m_pDownScaledGBufferMultiTarget->ResetTarget();
+}
+
+void CRenderManager::RenderSSAO(float fTime)
+{
+	DownScaleGBuffer(fTime);
+
+	m_pTarget[TARGET_SSAO]->ClearTarget();
+	m_pTarget[TARGET_SSAO]->SetTarget();
+
+	m_pTarget[TARGET_DS_DEPTH]->SetShader(10);
+	m_pTarget[TARGET_DS_NORMAL]->SetShader(11);
+	m_pRandomNormalTex->SetShader(12);
+
+	m_pShader[SHADER_SSAO]->SetShader();
+	
+	CONTEXT->Draw(4, 0);
+
+	m_pTarget[TARGET_DS_DEPTH]->ResetShader(10);
+	m_pTarget[TARGET_DS_NORMAL]->ResetShader(11);
+	m_pRandomNormalTex->ResetShader(12);
+
+	m_pTarget[TARGET_SSAO]->ResetTarget();
+
+	int iEnable = 0;
+	int iDOF = 0;
+	if (!m_pFilter[CFT_BLUR]->GetEnable())
+	{
+		iEnable = 1;
+		m_pFilter[CFT_BLUR]->Enable();
+		if (((CCSBlur*)m_pFilter[CFT_BLUR])->GetDOFEnable())
+		{
+			((CCSBlur*)m_pFilter[CFT_BLUR])->DisableDOF();
+			iDOF = 1;
+		}
+	}
+
+	m_pFilter[CFT_BLUR]->ChangeSourceSRV(m_pTarget[TARGET_SSAO]->GetShaderResourceView());
+
+	m_pFilter[CFT_BLUR]->Dispatch(fTime);
+	
+	m_pFilter[CFT_BLUR]->ResetSourceSRV();
+
+	if (iEnable == 1)
+		m_pFilter[CFT_BLUR]->Disable();
+	if(iDOF == 1)
+		((CCSBlur*)m_pFilter[CFT_BLUR])->EnableDOF();
 }
 
 void CRenderManager::RenderLightAcc(float fTime)
@@ -650,6 +741,8 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pGBufferSampler->SetShader(10);
 	m_pTarget[TARGET_SHADOWMAP]->SetShader(16);
 
+	m_pFilter[CFT_BLUR]->SetShaderResourceTo(11, 1);
+
 	m_pTarget[TARGET_ALBEDO]->SetShader(10);
 	m_pTarget[TARGET_DEPTH]->SetShader(12);
 
@@ -668,6 +761,9 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
 	m_pTarget[TARGET_ALBEDO]->ResetShader(10);
+	
+	m_pFilter[CFT_BLUR]->ResetShaderResourceFrom(11, 1);
+
 	m_pTarget[TARGET_ACC_DIFF]->ResetShader(14);
 	m_pTarget[TARGET_ACC_SPC]->ResetShader(15);
 	m_pTarget[TARGET_DEPTH]->ResetShader(12);
@@ -740,30 +836,50 @@ void CRenderManager::RenderFog(float _fTime)
 	{
 		m_pTarget[TARGET_FOG_DEPTH]->SetTarget();
 
-		m_pTarget[TARGET_DEPTH]->SetShader(9);
-
 		m_pState[STATE_FRONT_CULL]->SetState();
-		m_pShader[SHADER_FOG_DEPTH]->SetShader();
+
+		m_pShader[SHADER_FOG_FRONT]->SetShader();
 
 		m_tRenderObj[RG_FOG].pList[i]->Render(_fTime);
 
 		m_pState[STATE_FRONT_CULL]->ResetState();
-		m_pTarget[TARGET_FOG_DEPTH]->ResetTarget();
-		m_pTarget[TARGET_DEPTH]->ResetShader(9);
+
+		CONTEXT->CopyResource(m_pFogDepthTex, m_pTarget[TARGET_FOG_DEPTH]->GetTexture());
 
 		//두번째 패스 시작
+		m_pState[STATE_BACK_CULL]->SetState();
+
+		m_pShader[SHADER_FOG_BACK]->SetShader();
+
+		CONTEXT->PSSetShaderResources(9, 1, &m_pFogDepthSRV);
+
+		m_tRenderObj[RG_FOG].pList[i]->Render(_fTime);
+
+		ID3D11ShaderResourceView* pSRV = nullptr;
+
+		CONTEXT->PSSetShaderResources(9, 1, &pSRV);
+
+		m_pState[STATE_BACK_CULL]->ResetState();
+
+		m_pTarget[TARGET_FOG_DEPTH]->ResetTarget();
+
+		//세번째 패스 시작
 		m_pTarget[TARGET_BACK]->SetTarget();
 
 		m_pTarget[TARGET_FOG_DEPTH]->SetShader(10);
 		m_pTarget[TARGET_SKY]->SetShader(11);
+
 		m_pShader[SHADER_FOG_COLOR]->SetShader();
-		m_pState[STATE_BACK_CULL]->SetState();
+
+		m_pState[STATE_CULL_NONE]->SetState();
 
 		m_tRenderObj[RG_FOG].pList[i]->Render(_fTime);
 
-		m_pState[STATE_BACK_CULL]->ResetState();
+		m_pState[STATE_CULL_NONE]->ResetState();
+
 		m_pTarget[TARGET_FOG_DEPTH]->ResetShader(10);
 		m_pTarget[TARGET_SKY]->ResetShader(11);
+
 		m_pTarget[TARGET_BACK]->ResetTarget();
 	}
 	m_pState[STATE_DEPTH_DISABLE]->ResetState();
@@ -878,7 +994,7 @@ void CRenderManager::RenderShadowMap(float fTime)
 	m_pTarget[TARGET_SHADOWMAP]->ClearTarget();
 	m_pTarget[TARGET_SHADOWMAP]->SetTarget();
 
-	m_pShader[SHADER_SHDOW]->SetShader();
+	m_pShader[SHADER_SHADOW]->SetShader();
 
 	for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
 	{

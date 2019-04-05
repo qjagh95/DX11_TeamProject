@@ -8,7 +8,8 @@ PUN_USING
 CCSFilter::CCSFilter() :
 	m_bFilterOn(true),
 	m_iFinalPassRegister(-1),
-	m_pSrcSRV(nullptr)
+	m_pSrcSRV(nullptr),
+	m_pOldSRV(nullptr)
 {
 	m_vecUAV.clear();
 	m_eFilterType = CFT_END;
@@ -43,6 +44,22 @@ bool CCSFilter::AddUAV(const string & strUAVKey)
 void CCSFilter::SetSourceSRV(ID3D11ShaderResourceView * pSrcSRV)
 {
 	m_pSrcSRV = pSrcSRV;
+}
+
+void CCSFilter::ChangeSourceSRV(ID3D11ShaderResourceView * pSrcSRV)
+{
+	if (m_pSrcSRV)
+		m_pOldSRV = m_pSrcSRV;
+
+	m_pSrcSRV = pSrcSRV;
+}
+
+void CCSFilter::ResetSourceSRV()
+{
+	if (m_pOldSRV)
+		m_pSrcSRV = m_pOldSRV;
+
+	m_pOldSRV = nullptr;
 }
 
 void CCSFilter::Dispatch(float fTime)

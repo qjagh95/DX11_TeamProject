@@ -10,6 +10,7 @@ Texture2D g_GBufferMaterialTex : register(t13);
 Texture2D g_LightDifTex : register(t14);
 Texture2D g_LightSpcTex : register(t15);
 Texture2D g_ShadowMap : register(t16);
+Texture2D g_AmbientMap : register(t9);
 
 struct PS_OUTPUT_LIGHTACC
 {
@@ -134,8 +135,11 @@ PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_TEX input)
 
     float4 vDif = g_LightDifTex.Sample(g_GBufferSmp, UV);
     float4 vSpc = g_LightSpcTex.Sample(g_GBufferSmp, UV);
+    float4 vAmb = (float4) 0;
+    if(g_iSSAOEnable == 1)
+        vAmb = g_AmbientMap.Sample(g_GBufferSmp, UV);
 
-    float4 vColor = vAlbedo * vDif + vSpc;
+    float4 vColor = vAlbedo * (vDif + vAmb) + vSpc;
 
     output.vTarget0 = vColor;
 

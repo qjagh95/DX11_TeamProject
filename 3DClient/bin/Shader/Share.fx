@@ -95,6 +95,12 @@ struct PS_OUTPUT_GBUFFER
 };
 // 16바이트 패딩을 맞춰 주어야한다
 
+struct PS_OUTPUT_DS_GBUFFER
+{
+    float4 vDepth       : SV_TARGET;
+    float4 vNormal      : SV_TARGET1;
+};
+
 static const float2 vNullPos[4] =
 {
     float2(-1.f, 1.f),
@@ -144,18 +150,18 @@ cbuffer Component	: register(b2)
     int     g_iFocus;
     int     g_iDecalEnable;
     int     g_i3DAnimation;
-    float2 vEmpty12312435;
+    float2  vEmpty12312435;
 }
 
 cbuffer Public : register(b5)
 {
-    float g_DeltaTime;
-    float g_PlusedDeltaTime;
-    int g_isDeferred;
-    int g_isWireFrame;
-    int g_Empty12342312412;
-    float2 g_ViewPortSize;
-    float g_Empty123154142;
+    float   g_DeltaTime;
+    float   g_PlusedDeltaTime;
+    int     g_isDeferred;
+    int     g_isWireFrame;
+    int     g_Empty12342312412;
+    float2  g_ViewPortSize;
+    int     g_iSSAOEnable;
 }
 
 cbuffer Light	: register(b3)
@@ -346,7 +352,7 @@ float ConvertColor(float4 vColor)
 
     float fColor = asfloat(iColor);
 
-    if (isnan(fColor))
+    if (!isfinite(fColor))
     {
 		//nan : 지수부분(Exponent)의 모든 비트가 1이면서(여기까진 infinity) 가수부분(Mantissa)의 비트가 0이 아님
 		//비 Nvidia를 위한 뼈를 주고 살을 깎는 대책 : Alpha 값을 줄여(가장 끝부분만 줄이자) Nan 막기
@@ -443,9 +449,12 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 	if (fRamb < 0.0f)
 		fIntensity = 0.0f;
 
-	tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
+    if(g_iSSAOEnable == 0)
+	    tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
+
 	tInfo.vDif = vMtrlDif * g_vLightDif * max(0, fRamb) * fIntensity;
 	tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(HalfWay, vViewNormal)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
+    tInfo.vAmb = (float4) 0;
 
 	if (g_iLightType == LIGHT_DIR)
 	{

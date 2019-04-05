@@ -54,19 +54,19 @@ bool CFirTestScene::Init()
 
 	SAFE_RELEASE(pObject);
 
-	//CGameObject* pFogObj = CGameObject::CreateObject("FogObj", pDefaultLayer);
-	//pTransform = pFogObj->GetTransform();
+	CGameObject* pFogObj = CGameObject::CreateObject("FogObj", pDefaultLayer);
+	pTransform = pFogObj->GetTransform();
 
-	//pTransform->SetWorldScale(50, 50, 50);
-	//pTransform->SetWorldPos(3, 4, 3);
+	pTransform->SetWorldScale(50, 20, 50);
+	pTransform->SetWorldPos(3, 4, 3);
 
-	//SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pTransform);
 
-	//CVolumeFog* pFog = pFogObj->AddComponent<CVolumeFog>("Fog");
-	//pFog->SetFogColor(Vector4(0.2f, 0.2f, 0.2f, 1.0f));
+	CVolumeFog* pFog = pFogObj->AddComponent<CVolumeFog>("Fog");
+	pFog->SetFogColor(Vector4(0.2f, 0.2f, 0.2f, 1.0f));
 
-	//SAFE_RELEASE(pFog);
-	//SAFE_RELEASE(pFogObj);
+	SAFE_RELEASE(pFog);
+	SAFE_RELEASE(pFogObj);
 
 	pObject = CGameObject::CreateObject("Field", pDefaultLayer, true);
 

@@ -40,8 +40,6 @@
             this.Inspector = new System.Windows.Forms.GroupBox();
             this.InspectorTab = new System.Windows.Forms.TabControl();
             this.Animation = new System.Windows.Forms.TabPage();
-            this.label21 = new System.Windows.Forms.Label();
-            this.LB_BoneList = new System.Windows.Forms.ListBox();
             this.DeleteClipBtn = new System.Windows.Forms.Button();
             this.DeleteClipText = new System.Windows.Forms.TextBox();
             this.ClipList = new System.Windows.Forms.ListBox();
@@ -63,9 +61,6 @@
             this.ClipSave = new System.Windows.Forms.Button();
             this.Component = new System.Windows.Forms.TabPage();
             this.Effect = new System.Windows.Forms.TabPage();
-            this.GizmoPage = new System.Windows.Forms.TabPage();
-            this.RenderPage = new System.Windows.Forms.TabPage();
-            this.LightPage = new System.Windows.Forms.TabPage();
             this.LB_MeshList = new System.Windows.Forms.ListBox();
             this.GB_Transform = new System.Windows.Forms.GroupBox();
             this.RotateZ = new System.Windows.Forms.TextBox();
@@ -126,6 +121,11 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.textBox9 = new System.Windows.Forms.TextBox();
+            this.LB_BoneList = new System.Windows.Forms.ListBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.GizmoPage = new System.Windows.Forms.TabPage();
+            this.RenderPage = new System.Windows.Forms.TabPage();
+            this.LightPage = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -248,7 +248,7 @@
             this.InspectorTab.Multiline = true;
             this.InspectorTab.Name = "InspectorTab";
             this.InspectorTab.SelectedIndex = 0;
-            this.InspectorTab.Size = new System.Drawing.Size(295, 785);
+            this.InspectorTab.Size = new System.Drawing.Size(295, 773);
             this.InspectorTab.TabIndex = 0;
             // 
             // Animation
@@ -280,32 +280,13 @@
             this.Animation.Location = new System.Drawing.Point(4, 48);
             this.Animation.Name = "Animation";
             this.Animation.Padding = new System.Windows.Forms.Padding(3);
-            this.Animation.Size = new System.Drawing.Size(287, 733);
+            this.Animation.Size = new System.Drawing.Size(287, 721);
             this.Animation.TabIndex = 0;
             this.Animation.Text = "Animation";
             // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(8, 302);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(80, 17);
-            this.label21.TabIndex = 31;
-            this.label21.Text = "Bone Name";
-            // 
-            // LB_BoneList
-            // 
-            this.LB_BoneList.BackColor = System.Drawing.SystemColors.Control;
-            this.LB_BoneList.FormattingEnabled = true;
-            this.LB_BoneList.ItemHeight = 17;
-            this.LB_BoneList.Location = new System.Drawing.Point(8, 323);
-            this.LB_BoneList.Name = "LB_BoneList";
-            this.LB_BoneList.Size = new System.Drawing.Size(267, 140);
-            this.LB_BoneList.TabIndex = 30;
-            // 
             // DeleteClipBtn
             // 
-            this.DeleteClipBtn.Location = new System.Drawing.Point(167, 697);
+            this.DeleteClipBtn.Location = new System.Drawing.Point(167, 709);
             this.DeleteClipBtn.Name = "DeleteClipBtn";
             this.DeleteClipBtn.Size = new System.Drawing.Size(107, 26);
             this.DeleteClipBtn.TabIndex = 29;
@@ -317,7 +298,7 @@
             // 
             this.DeleteClipText.BackColor = System.Drawing.SystemColors.Control;
             this.DeleteClipText.ForeColor = System.Drawing.SystemColors.Desktop;
-            this.DeleteClipText.Location = new System.Drawing.Point(5, 698);
+            this.DeleteClipText.Location = new System.Drawing.Point(5, 710);
             this.DeleteClipText.Name = "DeleteClipText";
             this.DeleteClipText.Size = new System.Drawing.Size(156, 25);
             this.DeleteClipText.TabIndex = 28;
@@ -337,7 +318,7 @@
             // DivideClipBox
             // 
             this.DivideClipBox.AutoSize = true;
-            this.DivideClipBox.Location = new System.Drawing.Point(178, 486);
+            this.DivideClipBox.Location = new System.Drawing.Point(178, 498);
             this.DivideClipBox.Name = "DivideClipBox";
             this.DivideClipBox.Size = new System.Drawing.Size(96, 21);
             this.DivideClipBox.TabIndex = 26;
@@ -347,7 +328,7 @@
             // 
             // ModifyClipBtn
             // 
-            this.ModifyClipBtn.Location = new System.Drawing.Point(92, 471);
+            this.ModifyClipBtn.Location = new System.Drawing.Point(92, 483);
             this.ModifyClipBtn.Name = "ModifyClipBtn";
             this.ModifyClipBtn.Size = new System.Drawing.Size(73, 48);
             this.ModifyClipBtn.TabIndex = 25;
@@ -357,7 +338,7 @@
             // 
             // AddClipBtn
             // 
-            this.AddClipBtn.Location = new System.Drawing.Point(6, 471);
+            this.AddClipBtn.Location = new System.Drawing.Point(6, 483);
             this.AddClipBtn.Name = "AddClipBtn";
             this.AddClipBtn.Size = new System.Drawing.Size(74, 48);
             this.AddClipBtn.TabIndex = 12;
@@ -368,7 +349,7 @@
             // AniTimeBox
             // 
             this.AniTimeBox.BackColor = System.Drawing.SystemColors.Control;
-            this.AniTimeBox.Location = new System.Drawing.Point(129, 612);
+            this.AniTimeBox.Location = new System.Drawing.Point(129, 624);
             this.AniTimeBox.Name = "AniTimeBox";
             this.AniTimeBox.Size = new System.Drawing.Size(149, 25);
             this.AniTimeBox.TabIndex = 24;
@@ -377,7 +358,7 @@
             // AniEndFrameBox
             // 
             this.AniEndFrameBox.BackColor = System.Drawing.SystemColors.Control;
-            this.AniEndFrameBox.Location = new System.Drawing.Point(130, 586);
+            this.AniEndFrameBox.Location = new System.Drawing.Point(130, 598);
             this.AniEndFrameBox.Name = "AniEndFrameBox";
             this.AniEndFrameBox.Size = new System.Drawing.Size(148, 25);
             this.AniEndFrameBox.TabIndex = 23;
@@ -386,7 +367,7 @@
             // AniStartFrameBox
             // 
             this.AniStartFrameBox.BackColor = System.Drawing.SystemColors.Control;
-            this.AniStartFrameBox.Location = new System.Drawing.Point(130, 559);
+            this.AniStartFrameBox.Location = new System.Drawing.Point(130, 571);
             this.AniStartFrameBox.Name = "AniStartFrameBox";
             this.AniStartFrameBox.Size = new System.Drawing.Size(148, 25);
             this.AniStartFrameBox.TabIndex = 22;
@@ -395,7 +376,7 @@
             // AnimationTagBox
             // 
             this.AnimationTagBox.BackColor = System.Drawing.SystemColors.Control;
-            this.AnimationTagBox.Location = new System.Drawing.Point(130, 531);
+            this.AnimationTagBox.Location = new System.Drawing.Point(130, 543);
             this.AnimationTagBox.Name = "AnimationTagBox";
             this.AnimationTagBox.Size = new System.Drawing.Size(149, 25);
             this.AnimationTagBox.TabIndex = 12;
@@ -405,7 +386,7 @@
             // 
             this.AnimationOptionBox.BackColor = System.Drawing.SystemColors.Control;
             this.AnimationOptionBox.FormattingEnabled = true;
-            this.AnimationOptionBox.Location = new System.Drawing.Point(129, 639);
+            this.AnimationOptionBox.Location = new System.Drawing.Point(129, 651);
             this.AnimationOptionBox.Name = "AnimationOptionBox";
             this.AnimationOptionBox.Size = new System.Drawing.Size(149, 25);
             this.AnimationOptionBox.TabIndex = 21;
@@ -414,7 +395,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(3, 642);
+            this.label16.Location = new System.Drawing.Point(3, 654);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(121, 17);
             this.label16.TabIndex = 20;
@@ -423,7 +404,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(15, 614);
+            this.label15.Location = new System.Drawing.Point(15, 626);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(109, 17);
             this.label15.TabIndex = 19;
@@ -432,7 +413,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(50, 588);
+            this.label14.Location = new System.Drawing.Point(50, 600);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(74, 17);
             this.label14.TabIndex = 18;
@@ -441,7 +422,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(44, 562);
+            this.label13.Location = new System.Drawing.Point(44, 574);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(80, 17);
             this.label13.TabIndex = 17;
@@ -450,7 +431,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(80, 533);
+            this.label12.Location = new System.Drawing.Point(80, 545);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(44, 17);
             this.label12.TabIndex = 12;
@@ -458,7 +439,7 @@
             // 
             // MshLoad
             // 
-            this.MshLoad.Location = new System.Drawing.Point(165, 668);
+            this.MshLoad.Location = new System.Drawing.Point(165, 680);
             this.MshLoad.Name = "MshLoad";
             this.MshLoad.Size = new System.Drawing.Size(118, 23);
             this.MshLoad.TabIndex = 16;
@@ -468,7 +449,7 @@
             // 
             // ClipLoad
             // 
-            this.ClipLoad.Location = new System.Drawing.Point(86, 668);
+            this.ClipLoad.Location = new System.Drawing.Point(86, 680);
             this.ClipLoad.Name = "ClipLoad";
             this.ClipLoad.Size = new System.Drawing.Size(75, 23);
             this.ClipLoad.TabIndex = 13;
@@ -478,7 +459,7 @@
             // 
             // ClipSave
             // 
-            this.ClipSave.Location = new System.Drawing.Point(5, 668);
+            this.ClipSave.Location = new System.Drawing.Point(5, 680);
             this.ClipSave.Name = "ClipSave";
             this.ClipSave.Size = new System.Drawing.Size(75, 23);
             this.ClipSave.TabIndex = 0;
@@ -491,10 +472,10 @@
             this.Component.BackColor = System.Drawing.SystemColors.Control;
             this.Component.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.Component.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Component.Location = new System.Drawing.Point(4, 48);
+            this.Component.Location = new System.Drawing.Point(4, 26);
             this.Component.Name = "Component";
             this.Component.Padding = new System.Windows.Forms.Padding(3);
-            this.Component.Size = new System.Drawing.Size(287, 721);
+            this.Component.Size = new System.Drawing.Size(287, 743);
             this.Component.TabIndex = 1;
             this.Component.Text = "Component";
             // 
@@ -503,39 +484,12 @@
             this.Effect.BackColor = System.Drawing.SystemColors.Control;
             this.Effect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.Effect.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Effect.Location = new System.Drawing.Point(4, 48);
+            this.Effect.Location = new System.Drawing.Point(4, 26);
             this.Effect.Name = "Effect";
             this.Effect.Padding = new System.Windows.Forms.Padding(3);
-            this.Effect.Size = new System.Drawing.Size(287, 721);
+            this.Effect.Size = new System.Drawing.Size(287, 743);
             this.Effect.TabIndex = 2;
             this.Effect.Text = "Effect";
-            // 
-            // GizmoPage
-            // 
-            this.GizmoPage.BackColor = System.Drawing.SystemColors.Control;
-            this.GizmoPage.Location = new System.Drawing.Point(4, 48);
-            this.GizmoPage.Name = "GizmoPage";
-            this.GizmoPage.Size = new System.Drawing.Size(287, 721);
-            this.GizmoPage.TabIndex = 3;
-            this.GizmoPage.Text = "Gizmo";
-            // 
-            // RenderPage
-            // 
-            this.RenderPage.BackColor = System.Drawing.SystemColors.Control;
-            this.RenderPage.Location = new System.Drawing.Point(4, 48);
-            this.RenderPage.Name = "RenderPage";
-            this.RenderPage.Size = new System.Drawing.Size(287, 721);
-            this.RenderPage.TabIndex = 4;
-            this.RenderPage.Text = "Render";
-            // 
-            // LightPage
-            // 
-            this.LightPage.BackColor = System.Drawing.SystemColors.Control;
-            this.LightPage.Location = new System.Drawing.Point(4, 48);
-            this.LightPage.Name = "LightPage";
-            this.LightPage.Size = new System.Drawing.Size(287, 721);
-            this.LightPage.TabIndex = 5;
-            this.LightPage.Text = "Light";
             // 
             // LB_MeshList
             // 
@@ -1255,6 +1209,52 @@
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(64, 25);
             this.textBox9.TabIndex = 2;
+            // 
+            // LB_BoneList
+            // 
+            this.LB_BoneList.BackColor = System.Drawing.SystemColors.Control;
+            this.LB_BoneList.FormattingEnabled = true;
+            this.LB_BoneList.ItemHeight = 17;
+            this.LB_BoneList.Location = new System.Drawing.Point(8, 328);
+            this.LB_BoneList.Name = "LB_BoneList";
+            this.LB_BoneList.Size = new System.Drawing.Size(267, 140);
+            this.LB_BoneList.TabIndex = 30;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(8, 306);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(80, 17);
+            this.label21.TabIndex = 31;
+            this.label21.Text = "Bone Name";
+            // 
+            // GizmoPage
+            // 
+            this.GizmoPage.BackColor = System.Drawing.SystemColors.Control;
+            this.GizmoPage.Location = new System.Drawing.Point(4, 26);
+            this.GizmoPage.Name = "GizmoPage";
+            this.GizmoPage.Size = new System.Drawing.Size(287, 743);
+            this.GizmoPage.TabIndex = 3;
+            this.GizmoPage.Text = "Gizmo";
+            // 
+            // RenderPage
+            // 
+            this.RenderPage.BackColor = System.Drawing.SystemColors.Control;
+            this.RenderPage.Location = new System.Drawing.Point(4, 48);
+            this.RenderPage.Name = "RenderPage";
+            this.RenderPage.Size = new System.Drawing.Size(287, 721);
+            this.RenderPage.TabIndex = 4;
+            this.RenderPage.Text = "Render";
+            // 
+            // LightPage
+            // 
+            this.LightPage.BackColor = System.Drawing.SystemColors.Control;
+            this.LightPage.Location = new System.Drawing.Point(4, 48);
+            this.LightPage.Name = "LightPage";
+            this.LightPage.Size = new System.Drawing.Size(287, 721);
+            this.LightPage.TabIndex = 5;
+            this.LightPage.Text = "Light";
             // 
             // EditorForm
             // 

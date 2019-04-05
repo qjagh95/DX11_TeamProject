@@ -241,6 +241,8 @@ bool CResourcesManager::Init()
 		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 
+	CreateTexture("RandomNormal", TEXT("RandomNormal.jpg"));
+
 	return true;
 }
 

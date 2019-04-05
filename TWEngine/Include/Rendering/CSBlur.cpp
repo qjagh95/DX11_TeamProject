@@ -22,6 +22,24 @@ CCSBlur::~CCSBlur()
 {
 }
 
+bool CCSBlur::GetDOFEnable()
+{
+	if (m_tBlurCBuffer.iDepthOfField == 0)
+		return false;
+
+	return true;
+}
+
+void CCSBlur::EnableDOF()
+{
+	m_tBlurCBuffer.iDepthOfField = 1;
+}
+
+void CCSBlur::DisableDOF()
+{
+	m_tBlurCBuffer.iDepthOfField = 0;
+}
+
 bool CCSBlur::Init()
 {
 	CUAV* pUAV = GET_SINGLE(CViewManager)->FindUAV("DownScale2x2");
@@ -34,7 +52,7 @@ bool CCSBlur::Init()
 	m_pSrcSRV = pUAV->GetShaderResourceView();
 
 	m_tBlurCBuffer.iSize = 9;
-	m_tBlurCBuffer.iDepthOfField = 1;
+	m_tBlurCBuffer.iDepthOfField = 0;
 	m_tBlurCBuffer.fCameraFar = 1000.0f;
 
 	return true;

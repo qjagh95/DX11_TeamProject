@@ -32,17 +32,31 @@ VS_OUTPUT_FOG VolumeFogDepthVS(VS_INPUT_POS input)
     return output;
 }
 
-PS_OUTPUT_SINGLE VolumeFogDepthPS(VS_OUTPUT_FOG input)
+PS_OUTPUT_SINGLE VolumeFogDepthFrontPS(VS_OUTPUT_FOG input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
 
-    //float fDepth = g_DepthTex.Sample(PointSampler, vUV).w;
-    float fDepth = g_DepthTex.Sample(PointSampler, input.vUV).w;
+    float fDepth = input.vProjPos.w;
 
-    if (fDepth > input.vProjPos.w || fDepth == 0.0f)
-        fDepth = input.vProjPos.w;
+    output.vTarget0 = float4(fDepth, 0.0f, input.vUV.x, input.vUV.y);
 
-    output.vTarget0 = float4(fDepth, 1.0f, 1.0f, fDepth);
+    return output;
+}
+
+PS_OUTPUT_SINGLE VolumeFogDepthBackPS(VS_OUTPUT_FOG input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    float2 vUV = input.vPos.xy / g_ViewPortSize.xy;
+
+    if (input.vProjPos.w < 1.1f)
+        clip(-1);
+
+    float fFrontDepth = g_DepthTex.Sample(g_DiffuseSmp, vUV).x;
+
+    float fDepth = input.vProjPos.w;
+
+    output.vTarget0 = float4(fFrontDepth, fDepth, input.vUV.x, input.vUV.y);
 
     return output;
 }
@@ -50,16 +64,15 @@ PS_OUTPUT_SINGLE VolumeFogDepthPS(VS_OUTPUT_FOG input)
 PS_OUTPUT_SINGLE VolumeFogColorPS(VS_OUTPUT_FOG input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
-
-    float4 vColor = g_OriginTex.Sample(PointSampler, input.vUV);
-    float fDepth = g_FogDepthTex.Sample(PointSampler, input.vUV).x;
     
-    float fThickness = 0.0f;
+    float2 vUV = input.vPos.xy / g_ViewPortSize.xy;
 
-    if (input.vProjPos.w <= 0)
-        fThickness = fDepth;
-    else
-        fThickness = fDepth - input.vProjPos.w;
+    float4 vColor = g_OriginTex.Sample(g_DiffuseSmp, vUV);
+    float2 vDepth = g_FogDepthTex.Sample(g_DiffuseSmp, vUV).xy;
+
+    float fThickness;
+
+    fThickness = vDepth.x - vDepth.y;
 
     float fDensity = min(1, (fThickness / g_fFogMaxScale));
 

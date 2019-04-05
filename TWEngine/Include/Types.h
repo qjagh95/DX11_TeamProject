@@ -262,13 +262,19 @@ namespace PUN
 
 	struct PUN_DLL PublicCBuffer
 	{
-		float DeltaTime;
-		float PlusedDeltaTime;
-		int isDeferred;
-		int isWireFrame;
-		int Empty1234;
+		float	DeltaTime;
+		float	PlusedDeltaTime;
+		int		isDeferred;
+		int		isWireFrame;
+		int		Empty1234;
 		Vector2 ViewPortSize;
-		float Empty;
+		int		iSSAOEnable;
+
+		PublicCBuffer()	:
+			isDeferred(1),
+			iSSAOEnable(1)
+		{
+		}
 	};
 
 	typedef struct PUN_DLL _tagLandScapeCBuffer

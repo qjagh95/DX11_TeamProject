@@ -314,3 +314,81 @@ PS_OUTPUT_SINGLE FullScreenPS(VS_OUTPUT_TEX input)
 
 	return output;
 }
+
+Texture2D g_DepthTexture : register(t10);
+Texture2D g_NormalTexture : register(t11);
+Texture2D g_RandomNormalTex : register(t12);
+
+PS_OUTPUT_DS_GBUFFER DownScaleGBufferPS(VS_OUTPUT_TEX input)
+{
+    PS_OUTPUT_DS_GBUFFER output = (PS_OUTPUT_DS_GBUFFER) 0;
+
+    float2 vUV = input.vUV * 2.0f;
+
+    float4 vDepth   = g_DepthTexture.Sample(g_DiffuseSmp, vUV);
+    float4 vNormal  = g_NormalTexture.Sample(g_DiffuseSmp, vUV);
+
+    if (vDepth.a == 0.f)
+        clip(-1);
+    
+    output.vDepth = vDepth;
+    output.vNormal = vNormal;
+
+    return output;
+}
+
+static float3 g_vSampleDir[8] =
+{
+    float3(1.0f, 1.0f, 1.0f)    * 0.125f,
+    float3(1.0f, -1.0f, 1.0f)   * 0.25f,
+    float3(-1.0f, 1.0f, 1.0f)   * 0.375f,
+    float3(-1.0f, -1.0f, 1.0f)  * 0.5f,
+    float3(1.0f, 1.0f,   -1.0f) * 0.625f,
+    float3(1.0f, -1.0f,  -1.0f) * 0.75f,
+    float3(-1.0f, 1.0f,  -1.0f) * 0.875f,
+    float3(-1.0f, -1.0f, -1.0f) * 1.0f
+};
+
+PS_OUTPUT_SINGLE SSAmbientOcclusionPS(VS_OUTPUT_TEX input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    float2 vUV = input.vUV * 2.0f;
+
+    float4 vDepth = g_DepthTexture.Sample(g_DiffuseSmp, vUV);
+
+    if (vDepth.a == 0.0f)
+        clip(-1);
+
+    float4 vNormal = g_NormalTexture.Sample(g_DiffuseSmp, vUV);
+
+    float fRadius = 100.0f;
+    float fDepth = vDepth.w / 1000.0f;
+    float fViewZ = vDepth.w;
+    float3 vKernelScale = float3(fRadius / fViewZ, fRadius / fViewZ, fRadius / 1000.0f);
+
+    float fOcclusion = 0.0f;
+
+    for (int i = 1; i < 3; ++i)
+    {
+        float3 vRandomNormal = g_RandomNormalTex.Sample(g_DiffuseSmp, vUV + (float) i).xyz;
+
+        vRandomNormal = vRandomNormal * 2.0f - 1.0f;
+
+        for (int j = 0; j < 8; ++j)
+        {
+            float3 vRotatedRandomNormal = reflect(g_vSampleDir[j], vRandomNormal) * vKernelScale;
+            float fKernelDepth = g_DepthTexture.Sample(g_DiffuseSmp, vRotatedRandomNormal.xy + vUV).w;
+            fKernelDepth = fKernelDepth / 1000.0f;
+            float fDelta = max(fKernelDepth - fDepth + vRotatedRandomNormal.z, 0.0f);
+            float fRange = abs(fDelta) / (vKernelScale.z * 1.0f);
+            fOcclusion += lerp(fDelta * 1.0f, 1.0f, saturate(fRange));
+        }
+    }
+
+    fOcclusion /= 16.0f;
+
+    output.vTarget0 = fOcclusion;
+
+    return output;
+}

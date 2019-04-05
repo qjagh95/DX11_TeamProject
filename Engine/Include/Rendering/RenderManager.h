@@ -30,33 +30,38 @@ class CCSFilter;
 class PUN_DLL CRenderManager
 {
 private:
-	RenderGroup	m_tRenderObj[RG_END];
-	RenderGroup	m_tLightGroup;
+	RenderGroup					m_tRenderObj[RG_END];
+	RenderGroup					m_tLightGroup;
 
-	GAME_MODE m_eGameMode;
-	bool m_bDeferred;
-	bool m_bFogEnable;
-	ID3D11InputLayout* m_pPointLightLayout;
-	CBlendState* m_pCreateState;
+	GAME_MODE					m_eGameMode;
+	bool						m_bDeferred;
+	bool						m_bFogEnable;
+	bool						m_bSSAOEnable;
+	CTexture*					m_pRandomNormalTex;
+	ID3D11Texture2D*			m_pFogDepthTex;
+	ID3D11ShaderResourceView*	m_pFogDepthSRV;
+	ID3D11InputLayout*			m_pPointLightLayout;
+	CBlendState*				m_pCreateState;
 	
-	CSampler*			m_pGBufferSampler;
+	CSampler*					m_pGBufferSampler;
 
-	CShader*			m_pShader[SHADER_END];
-	CRenderTarget*		m_pTarget[TARGET_END];
-	CRenderState*		m_pState[STATE_END];
-	CCSFilter*			m_pFilter[CFT_END];
+	CShader*					m_pShader[SHADER_END];
+	CRenderTarget*				m_pTarget[TARGET_END];
+	CRenderState*				m_pState[STATE_END];
+	CCSFilter*					m_pFilter[CFT_END];
 
-	CMultiRenderTarget* m_pGBufferMultiTarget;
-	CMultiRenderTarget* m_pLightMultiTarget;
-	CMultiRenderTarget* m_pDecalMultiTarget;
+	CMultiRenderTarget*			m_pGBufferMultiTarget;
+	CMultiRenderTarget*			m_pLightMultiTarget;
+	CMultiRenderTarget*			m_pDecalMultiTarget;
+	CMultiRenderTarget*			m_pDownScaledGBufferMultiTarget;
 
-	CMesh*				m_pSphereVolum;
-	CMesh*				m_pCornVolum;
+	CMesh*						m_pSphereVolum;
+	CMesh*						m_pCornVolum;
 
-	CGameObject*		m_pSkyObj;
+	CGameObject*				m_pSkyObj;
 
-	PublicCBuffer		m_tCBuffer;
-	FinalPassCB			m_tFinalCBuffer;
+	PublicCBuffer				m_tCBuffer;
+	FinalPassCB					m_tFinalCBuffer;
 
 public:
 	GAME_MODE GetGameMode()	const;
@@ -90,6 +95,8 @@ private:
 
 	void RenderGBuffer(float fTime);
 	void RenderDecal(float fTime);
+	void DownScaleGBuffer(float fTime);
+	void RenderSSAO(float fTime);
 	void RenderLightAcc(float fTime);
 	void RenderLightDir(float fTime, class CLight* pLight);
 	void RenderLightPoint(float fTime, class CLight* pLight);

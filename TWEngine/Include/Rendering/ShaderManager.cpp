@@ -73,6 +73,18 @@ bool CShaderManager::Init()
 	if (!LoadShader(FULLSCREEN_SHADER, TEXT("Standard.fx"), pEntry))
 		return false;
 
+	pEntry[ST_VERTEX] = (char*)"FullScreenVS";
+	pEntry[ST_PIXEL] = (char*)"SSAmbientOcclusionPS";
+	if (!LoadShader(SSAO_SHADER, TEXT("Standard.fx"), pEntry))
+		return false;
+
+	pEntry[ST_VERTEX] = (char*)"FullScreenVS";
+	pEntry[ST_PIXEL] = (char*)"DownScaleGBufferPS";
+	if (!LoadShader(DS_GBUFFER_SHADER, TEXT("Standard.fx"), pEntry))
+		return false;
+
+	
+
 	pEntry[ST_VERTEX] = (char*)"LightDirVS";
 	pEntry[ST_PIXEL] = (char*)"LightAccPS";
 	if (!LoadShader(LIGHT_DIR_ACC_SHADER, TEXT("Light.fx"), pEntry))
@@ -168,13 +180,18 @@ bool CShaderManager::Init()
 
 
 	pEntry[ST_VERTEX] = (char*)"VolumeFogDepthVS";
-	pEntry[ST_PIXEL] = (char*)"VolumeFogDepthPS";
+	pEntry[ST_PIXEL] = (char*)"VolumeFogDepthFrontPS";
 	if (!LoadShader(VOLUME_FOG_FIRST_SHADER, TEXT("VolumeFog.fx"), pEntry))
 		return false;
 
 	pEntry[ST_VERTEX] = (char*)"VolumeFogDepthVS";
 	pEntry[ST_PIXEL] = (char*)"VolumeFogColorPS";
 	if (!LoadShader(VOLUME_FOG_SECOND_SHADER, TEXT("VolumeFog.fx"), pEntry))
+		return false;
+
+	pEntry[ST_VERTEX] = (char*)"VolumeFogDepthVS";
+	pEntry[ST_PIXEL] = (char*)"VolumeFogDepthBackPS";
+	if (!LoadShader(VOLUME_FOG_BACK_SHADER, TEXT("VolumeFog.fx"), pEntry))
 		return false;
 
 	pEntry[ST_VERTEX] = (char*)"FullScreenQuadVS";
@@ -238,11 +255,19 @@ bool CShaderManager::Init()
 		return false;
 
 	pEntry[ST_COMPUTE] = (char*)"HorizFilter";
-	if (!LoadComputeShader(HORIZONTAL_BLUR_SHADER, TEXT("Adapt_Bloom.fx"), pEntry))
+	if (!LoadComputeShader(BLOOM_HORIZONTAL_BLUR_SHADER, TEXT("Adapt_Bloom.fx"), pEntry))
 		return false;
 
 	pEntry[ST_COMPUTE] = (char*)"VerticalFilter";
-	if (!LoadComputeShader(VERTICAL_BLUR_SHADER, TEXT("Adapt_Bloom.fx"), pEntry))
+	if (!LoadComputeShader(BLOOM_VERTICAL_BLUR_SHADER, TEXT("Adapt_Bloom.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"HorizontalBlur";
+	if (!LoadComputeShader(HORIZONTAL_BLUR_SHADER, TEXT("Blur.fx"), pEntry))
+		return false;
+
+	pEntry[ST_COMPUTE] = (char*)"VerticalBlur";
+	if (!LoadComputeShader(VERTICAL_BLUR_SHADER, TEXT("Blur.fx"), pEntry))
 		return false;
 
 	// 상수버퍼 만들기

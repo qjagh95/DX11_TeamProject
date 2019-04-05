@@ -61,7 +61,7 @@ void CVolumeFog::Render(float fTime)
 
 	m_pMesh->Render();
 
-	if (++m_iPass == 2)
+	if (++m_iPass == 3)
 		m_iPass = 0;
 }
 
@@ -112,7 +112,7 @@ void CVolumeFog::UpdateData()
 	if (fDensity < vScale.z)
 		fDensity = vScale.z;
 
-	m_tFogCBuffer.fDensity = fDensity;
+	m_tFogCBuffer.fDensity = fDensity * 2.0f;
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Fog", &m_tFogCBuffer);
 

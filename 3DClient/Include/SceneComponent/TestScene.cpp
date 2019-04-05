@@ -218,7 +218,7 @@ bool CTestScene::Init()
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
 	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
 	pLight->SetLightType(LT_DIR);
-	pLight->SetLightDirection(Vector3(1.0f, -1.0f, 1.0f));
+	pLight->SetLightDirection(Vector3(0.0f, -1.0f, 0.0f));
 
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pLightObj);

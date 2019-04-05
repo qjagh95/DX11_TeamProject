@@ -19,6 +19,7 @@ public:
 protected:
 	vector<CUAV*>				m_vecUAV;
 	ID3D11ShaderResourceView*	m_pSrcSRV;
+	ID3D11ShaderResourceView*	m_pOldSRV;
 	CS_FILTER_TYPE				m_eFilterType;
 	int							m_iFinalPassRegister;
 	bool						m_bFilterOn;
@@ -32,6 +33,8 @@ public:
 	virtual bool Init() = 0;
 	virtual bool AddUAV(const string& strUAVKey);
 	virtual void SetSourceSRV(ID3D11ShaderResourceView* pSrcSRV);
+	virtual void ChangeSourceSRV(ID3D11ShaderResourceView* pSrcSRV);
+	virtual void ResetSourceSRV();
 	virtual void Dispatch(float fTime);
 	virtual void SetShaderResourceTo	(int iRegister, int iIndex,  SHADER_TYPE eType = ST_PIXEL);
 	virtual void ResetShaderResourceFrom(int iRegister, int iIndex,  SHADER_TYPE eType = ST_PIXEL);	

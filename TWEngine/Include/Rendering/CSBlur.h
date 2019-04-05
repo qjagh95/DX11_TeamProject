@@ -27,6 +27,12 @@ private:
 	BlurCBuffer	 m_tBlurCBuffer;
 
 public:
+	bool GetDOFEnable();
+	void EnableDOF();
+	void DisableDOF();
+	
+
+public:
 	virtual bool Init();
 	virtual void SetShaderResourceTo();
 	virtual void ResetShaderResourceFrom();

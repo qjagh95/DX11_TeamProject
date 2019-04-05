@@ -626,7 +626,7 @@ bool CViewManager::CreateRenderTargetView()
 
 	vPos.x = 100.f;
 	vPos.y = 200.f;
-	if (!CreateRenderTarget("VolumeFogDepth", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true, Vector4::LightCyan))
+	if (!CreateRenderTarget("VolumeFogDepth", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true))
 	{
 		TrueAssert(true);
 		return false;
@@ -635,7 +635,7 @@ bool CViewManager::CreateRenderTargetView()
 	// Light Blend
 	vPos.x = 200.f;
 	vPos.y = 0.f;
-	if (!CreateRenderTarget("LightBlend", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true, Vector4::LightCyan))
+	if (!CreateRenderTarget("LightBlend", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true))
 	{
 		TrueAssert(true);
 		return false;
@@ -643,7 +643,7 @@ bool CViewManager::CreateRenderTargetView()
 
 	vPos.x = 300.f;
 	vPos.y = 0.f;
-	if (!CreateRenderTarget("Final", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION,true, Vector4::LightCyan))
+	if (!CreateRenderTarget("Final", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION,true))
 	{
 		TrueAssert(true);
 		return false;
@@ -651,7 +651,7 @@ bool CViewManager::CreateRenderTargetView()
 
 	vPos.x = 300.f;
 	vPos.y = 100.f;
-	if (!CreateRenderTarget("Sky", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true, Vector4::LightCyan))
+	if (!CreateRenderTarget("Sky", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true))
 	{
 		TrueAssert(true);
 		return false;
@@ -659,7 +659,7 @@ bool CViewManager::CreateRenderTargetView()
 
 	vPos.x = 400.f;
 	vPos.y = 0.f;
-	if (!CreateRenderTarget("SecondBackBuffer", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true, Vector4::LightCyan))
+	if (!CreateRenderTarget("SecondBackBuffer", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION, true))
 	{
 		TrueAssert(true);
 		return false;
@@ -669,6 +669,40 @@ bool CViewManager::CreateRenderTargetView()
 	vPos.x = 500.f;
 	vPos.y = 0.f;
 	if (!CreateRenderTarget("ShadowMap", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), Resolution(SHADOW_WIDTH, SHADOW_HEIGHT),
+		true, Vector4(0.f, 0.f, 0.f, 0.f), DXGI_FORMAT_D24_UNORM_S8_UINT))
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (!CreateMultiTarget("DownScaleGBuffer"))
+	{
+		TrueAssert(true);
+		return false;
+	}	
+
+	Resolution tDSRes = Resolution(_RESOLUTION.iWidth / 2, _RESOLUTION.iHeight / 2);
+
+	if (!CreateRenderTarget("DownScaledDepth", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), tDSRes,
+		false, Vector4(0.f, 0.f, 0.f, 0.f), DXGI_FORMAT_D24_UNORM_S8_UINT))
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (!CreateRenderTarget("DownScaledNormal", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), tDSRes,
+		false, Vector4(0.f, 0.f, 0.f, 0.f), DXGI_FORMAT_D24_UNORM_S8_UINT))
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	AddMultiRenderTarget("DownScaleGBuffer", "DownScaledDepth");
+	AddMultiRenderTarget("DownScaleGBuffer", "DownScaledNormal");
+
+	vPos.y = 100.0f;
+
+	if (!CreateRenderTarget("SSAO", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), tDSRes,
 		true, Vector4(0.f, 0.f, 0.f, 0.f), DXGI_FORMAT_D24_UNORM_S8_UINT))
 	{
 		TrueAssert(true);

@@ -18,10 +18,12 @@
 
 // ========== Shader Key ========
 #define	BAR_SHADER							"BarShader"
+#define SSAO_SHADER							"SSAOShader"
 #define SHADOW_SHADER						"ShadowShader"
 #define	BUTTON_SHADER						"ButtonShader"
 #define	COLLIDER_SHADER						"ColliderShader"
 #define	FULLSCREEN_SHADER					"FullScreenShader"
+#define DS_GBUFFER_SHADER					"DownScaledGBufferShader"
 #define	LIGHT_BLEND_SHADER					"LightBlendShader"
 #define	STANDARD_TEX_SHADER					"StandardTexShader"
 #define	STANDARD_BUMP_SHADER				"StandardBumpShader"
@@ -37,10 +39,11 @@
 #define LANDSCAPE_SHADER					"LandScapeShader"
 #define DECAL_SHADER						"DecalShader"
 #define PARTICLE_SHADER						"ParticleShader"
-#define SHADOWMAP_SHADER "ShadowShader"
+#define SHADOWMAP_SHADER					"ShadowShader"
 
 #define VOLUME_FOG_FIRST_SHADER				"VolumeFogFirstShader"
 #define VOLUME_FOG_SECOND_SHADER			"VolumeFogSecondShader"
+#define VOLUME_FOG_BACK_SHADER				"VolumeFogBackShader"
 
 #define FINAL_PASS_SHADER					"HDRShader"
 #define ADAPTATION_SHADER					"AdaptationShader"
@@ -56,6 +59,9 @@
 #define DOWNSCALE_SHADER					"DownScaleShader"
 #define HORIZONTAL_BLUR_SHADER				"HorizontalBlur"
 #define VERTICAL_BLUR_SHADER				"VerticalBlur"
+
+#define BLOOM_HORIZONTAL_BLUR_SHADER		"BloomHorizontalBlur"
+#define BLOOM_VERTICAL_BLUR_SHADER			"BloomVerticalBlur"
 
 // ========== Input Layout Key =============
 #define	POS_COLOR_LAYOUT					"PosColorLayout"

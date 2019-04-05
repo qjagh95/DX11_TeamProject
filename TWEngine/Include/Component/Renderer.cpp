@@ -361,6 +361,8 @@ bool CRenderer::Init()
 	// 재질정보는 반드시 같이 생성되게 한다.
 	m_pMaterial = AddComponent<CMaterial>("Material");
 
+	m_tComponentCBuffer.iDecalEnable = 1;
+
 	CheckComponent();
 
 	return true;
