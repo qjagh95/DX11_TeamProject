@@ -38,7 +38,7 @@ public:
 		virtual void Render() {};
 
 	protected:
-		Action() { m_KeepNode = NULLPTR; m_pObject = NULLPTR; m_ActionType = BT_NONE; }
+		Action() { m_KeepNode = NULLPTR; m_pObject = NULLPTR; m_BlackBoard = NULLPTR; m_ActionType = BT_NONE; }
 		virtual ~Action() {}
 
 		vector<function<bool(float)>> m_vecDecorator;
@@ -48,6 +48,7 @@ public:
 
 	private:
 		CGameObject* m_pObject;
+		BlackBoard* m_BlackBoard;
 
 	public:
 		friend class Sequence;
@@ -444,8 +445,19 @@ public:
 	string GetRootName() const { return m_RootName; }
 	string GetRootSequenceName() const { return m_RootSequenceName; }
 	string GetRootSelectorName() const { return m_RootSelectorName; }
-
 	int GetCount() const { return m_Count; }
+	
+	template<typename T>
+	void AddBoardData(const string& VarName, T* Data)
+	{
+		m_BlackBoard->AddData(VarName, Data);
+	}
+
+	template<typename T>
+	T* GetData(const string& VarName)
+	{
+		return m_BlackBoard->GetData(VarName);
+	}
 
 private:
 	void Init(BT_ROOT_CHILD_TYPE eStyle = BT_SEQUENCE, CGameObject* Object = NULLPTR);
@@ -479,7 +491,7 @@ private:
 	int m_Count;
 
 	CGameObject* m_Object;
-	BlackBoard* m_Board;
+	BlackBoard* m_BlackBoard;
 
 private:
 	BehaviorTree();

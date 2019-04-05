@@ -204,6 +204,8 @@ public:
 		}
 
 		T* newAction = new T();
+		newAction->SetObject(m_Object);
+		newAction->m_BlackBoard = m_BlackBoard;
 		newAction->Init();
 		newAction->SetTag(ActionName);
 		newAction->SetKeepAction(m_RootSequence);
@@ -231,6 +233,8 @@ public:
 		}
 
 		T* newAction = new T();
+		newAction->SetObject(m_Object);
+		newAction->m_BlackBoard = m_BlackBoard;
 		newAction->Init();
 		newAction->SetTag(ActionName);
 		newAction->SetKeepAction(m_RootSelector);
@@ -254,6 +258,8 @@ public:
 		}
 
 		T* newAction = new T();
+		newAction->SetObject(m_Object);
+		newAction->m_BlackBoard = m_BlackBoard;
 		newAction->Init();
 		newAction->SetTag(ActionName);
 		newAction->SetKeepAction(getSequence);
@@ -277,6 +283,8 @@ public:
 		}
 
 		T* newAction = new T();
+		newAction->SetObject(m_Object);
+		newAction->m_BlackBoard = m_BlackBoard;
 		newAction->Init();
 		newAction->SetTag(ActionName);
 		newAction->SetKeepAction(getSelector);

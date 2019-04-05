@@ -7,7 +7,7 @@ PUN_USING
 
 BehaviorTree::BehaviorTree()
 {
-	m_BlackBoard = NULLPTR;
+	m_BlackBoard = new BlackBoard();
 	m_RootNode = NULLPTR;
 	m_RootSequence = NULLPTR;
 	m_RootSelector = NULLPTR;
@@ -57,6 +57,7 @@ BehaviorTree::Sequence* BehaviorTree::AddRootSequenceInSequence(const string& Ne
 	}
 
 	newSequence = new Sequence();
+	newSequence->m_BlackBoard = m_BlackBoard;
 	newSequence->SetObject(m_Object);
 	newSequence->Init();
 	newSequence->SetTag(NewSequenceKeyName);
@@ -91,6 +92,7 @@ BehaviorTree::Selector* BehaviorTree::AddRootSequenceInSelector(const string & N
 		return NULLPTR;
 
 	newSelector = new Selector();
+	newSelector->m_BlackBoard = m_BlackBoard;
 	newSelector->SetObject(m_Object);
 	newSelector->Init();
 	newSelector->SetTag(NewSelectorKeyName);
@@ -120,6 +122,7 @@ BehaviorTree::Sequence* BehaviorTree::AddRootSelectorInSequence(const string & N
 	}
 
 	Sequence* newSequence = new Sequence();
+	newSequence->m_BlackBoard = m_BlackBoard;
 	newSequence->SetObject(m_Object);
 	newSequence->Init();
 	newSequence->SetTag(NewSequenceKeyName);
@@ -147,6 +150,7 @@ BehaviorTree::Selector* BehaviorTree::AddRootSelectorInSelector(const string & N
 	}
 
 	Selector* newSelector = new Selector();
+	newSelector->m_BlackBoard = m_BlackBoard;
 	newSelector->SetObject(m_Object);
 	newSelector->Init();
 	newSelector->SetTag(NewSelectorKeyName);
@@ -180,6 +184,7 @@ BehaviorTree::Selector* BehaviorTree::AddSequenceInSelector(const string & Seque
 	}
 
 	newSelector = new Selector();
+	newSelector->m_BlackBoard = m_BlackBoard;
 	newSelector->SetObject(m_Object);
 	newSelector->Init();
 	newSelector->SetTag(SelectorKeyName);
@@ -212,6 +217,7 @@ BehaviorTree::Sequence* BehaviorTree::AddSelectorInSequence(const string & Selec
 	}
 
 	newSequence = new Sequence();
+	newSequence->m_BlackBoard = m_BlackBoard;
 	newSequence->SetObject(m_Object);
 	newSequence->Init();
 	newSequence->SetTag(SequenceKeyName);
@@ -244,6 +250,7 @@ BehaviorTree::Sequence* BehaviorTree::AddSequenceInSequence(const string & OldSe
 	}
 
 	newSequence = new Sequence();
+	newSequence->m_BlackBoard = m_BlackBoard;
 	newSequence->SetObject(m_Object);
 	newSequence->Init();
 	newSequence->SetTag(NewSequenceKey);
@@ -341,6 +348,7 @@ BehaviorTree::Selector* BehaviorTree::AddSelectorInSelector(const string & OldSe
 	}
 
 	newSelector = new Selector();
+	newSelector->m_BlackBoard = m_BlackBoard;
 	newSelector->SetObject(m_Object);
 	newSelector->Init();
 	newSelector->SetTag(NewSelector);
@@ -369,6 +377,7 @@ void BehaviorTree::AddRootChildSelector()
 	}
 
 	m_RootSelector = new Selector();
+	m_RootSelector->m_BlackBoard = m_BlackBoard;
 	m_RootSelector->SetObject(m_Object);
 	m_RootSelector->SetTag(m_RootSelectorName);
 	m_RootSelector->SetKeepAction(m_RootNode);
@@ -392,6 +401,7 @@ void BehaviorTree::AddRootChildSequence()
 	}
 
 	m_RootSequence = new Sequence();
+	m_RootSequence->m_BlackBoard = m_BlackBoard;
 	m_RootSequence->SetObject(m_Object);
 	m_RootSequence->SetTag(m_RootSequenceName);
 	m_RootSequence->SetKeepAction(m_RootNode);
@@ -419,6 +429,7 @@ void BehaviorTree::Init(BT_ROOT_CHILD_TYPE eStyle, CGameObject* Object)
 	m_Object = Object;
 	m_RootNode->SetObject(Object);
 	m_RootNode->SetTag(m_RootName);
+	m_RootNode->m_BlackBoard = m_BlackBoard;
 
 	switch (eStyle)
 	{
