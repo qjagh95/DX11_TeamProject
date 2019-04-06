@@ -199,6 +199,12 @@ bool CShaderManager::Init()
 	if (!LoadShader(FINAL_PASS_SHADER, TEXT("PostHDR.fx"), pEntry))
 		return false;
 
+	// StarLight Scope(야간 투시경)
+	pEntry[ST_VERTEX] = (char*)"StarLightScopeVS";
+	pEntry[ST_PIXEL] = (char*)"StarLightScopePS";
+	if (!LoadShader(STARLIGHTSCOPE_SHADER, TEXT("StarLight_Scope.fx"), pEntry))
+		return false;
+
 	//Geometry 쉐이더를 쓰는 파이프라인
 
 	pEntry[ST_VERTEX] = (char*)"ParticleVS";
@@ -283,6 +289,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("Bar",			9,	sizeof(BarCBuffer),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Fog",			9,	sizeof(FogCBuffer),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("FinalPass",		9,	sizeof(FinalPassCB),		CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("StarLightScope", 12, sizeof(StarLightScopeCB),	CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Particle",		10, sizeof(ParticleCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("HDRSecond",		10, sizeof(HDR2ndPassCB),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("LandScape",		11, sizeof(LandScapeCBuffer),	CST_VERTEX | CST_PIXEL);
@@ -291,6 +298,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("Adaptation",		3,	sizeof(AdaptationCB),		CST_COMPUTE);
 	CreateCBuffer("BloomThreshold", 4,	sizeof(BloomThresholdCB),	CST_COMPUTE);
 	
+
 	return true;
 }
 

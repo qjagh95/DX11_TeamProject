@@ -26,7 +26,7 @@ class CRenderState;
 class CBlendState;
 class CMultiRenderTarget;
 class CCSFilter;
-
+class CTexture;
 class PUN_DLL CRenderManager
 {
 private:
@@ -37,7 +37,10 @@ private:
 	bool						m_bDeferred;
 	bool						m_bFogEnable;
 	bool						m_bSSAOEnable;
+	bool						m_isGetCameraObj;
+	float						m_accShakeTime;
 	CTexture*					m_pRandomNormalTex;
+	CTexture*					m_pNoiseTex;
 	ID3D11Texture2D*			m_pFogDepthTex;
 	ID3D11ShaderResourceView*	m_pFogDepthSRV;
 	ID3D11InputLayout*			m_pPointLightLayout;
@@ -62,6 +65,7 @@ private:
 
 	PublicCBuffer				m_tCBuffer;
 	FinalPassCB					m_tFinalCBuffer;
+	StarLightScopeCB			m_tStarLightScope;
 
 public:
 	GAME_MODE GetGameMode()	const;
@@ -81,6 +85,7 @@ public:
 
 	void EnableFilter(CS_FILTER_TYPE eType);
 	void DisableFilter(CS_FILTER_TYPE eType);
+	void SetStarLightScope(int _flag);
 
 public:
 	void AddRenderObj(class CGameObject* pObj);

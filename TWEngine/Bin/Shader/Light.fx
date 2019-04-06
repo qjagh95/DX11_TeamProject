@@ -135,11 +135,12 @@ PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_TEX input)
 
     float4 vDif = g_LightDifTex.Sample(g_GBufferSmp, UV);
     float4 vSpc = g_LightSpcTex.Sample(g_GBufferSmp, UV);
-    float4 vAmb = (float4) 0;
+    float4 vAmb = (float4) 1.0f;
+
     if(g_iSSAOEnable == 1)
         vAmb = g_AmbientMap.Sample(g_GBufferSmp, UV);
 
-    float4 vColor = vAlbedo * (vDif + vAmb) + vSpc;
+    float4 vColor = vAlbedo * vDif * vAmb + vSpc;
 
     output.vTarget0 = vColor;
 

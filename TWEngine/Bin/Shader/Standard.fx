@@ -356,37 +356,51 @@ PS_OUTPUT_SINGLE SSAmbientOcclusionPS(VS_OUTPUT_TEX input)
     float2 vUV = input.vUV * 2.0f;
 
     float4 vDepth = g_DepthTexture.Sample(g_DiffuseSmp, vUV);
+    float3 vNormal = g_NormalTexture.Sample(g_DiffuseSmp, vUV);
 
     if (vDepth.a == 0.0f)
         clip(-1);
 
-    float4 vNormal = g_NormalTexture.Sample(g_DiffuseSmp, vUV);
+    float4 vViewPos = float4(vUV * 2.0f, vDepth.x, 1.0f);
 
-    float fRadius = 100.0f;
-    float fDepth = vDepth.w / 1000.0f;
-    float fViewZ = vDepth.w;
-    float3 vKernelScale = float3(fRadius / fViewZ, fRadius / fViewZ, fRadius / 1000.0f);
+    vViewPos.x = vViewPos.x - 1.0f;
+    vViewPos.y = 1.0f - vViewPos.y;
+    vViewPos *= vDepth.w;
+    vViewPos = mul(vViewPos, g_matInvProj);
+
+    float fRadius = 20.0f;
+    float fRatio = fRadius / 1000.0f;
 
     float fOcclusion = 0.0f;
+    
+    float3 vRandomNormal = g_RandomNormalTex.Sample(PointSampler, vUV).xyz;
 
-    for (int i = 1; i < 3; ++i)
+    vRandomNormal = normalize(vRandomNormal * 2.0f - 1.0f);
+
+    for (int j = 0; j < 8; ++j)
     {
-        float3 vRandomNormal = g_RandomNormalTex.Sample(g_DiffuseSmp, vUV + (float) i).xyz;
+        float3 vRotatedRandomNormal = reflect(g_vSampleDir[j], vRandomNormal);
+        vRotatedRandomNormal = normalize(vRotatedRandomNormal) * fRatio;
+        float2 CurUV = saturate(vUV + vRotatedRandomNormal.xy);
+        float4 CurDepth = g_DepthTexture.Sample(g_DiffuseSmp, CurUV);
+        
+        float4 CurViewPos = float4(CurUV * 2.0f, CurDepth.x, 1.0f);
+        CurViewPos.x = CurViewPos.x - 1.0f;
+        CurViewPos.y = 1.0f - CurViewPos.y;
+        CurViewPos *= CurDepth.w;
 
-        vRandomNormal = vRandomNormal * 2.0f - 1.0f;
+        CurViewPos = mul(CurViewPos, g_matInvProj);
 
-        for (int j = 0; j < 8; ++j)
-        {
-            float3 vRotatedRandomNormal = reflect(g_vSampleDir[j], vRandomNormal) * vKernelScale;
-            float fKernelDepth = g_DepthTexture.Sample(g_DiffuseSmp, vRotatedRandomNormal.xy + vUV).w;
-            fKernelDepth = fKernelDepth / 1000.0f;
-            float fDelta = max(fKernelDepth - fDepth + vRotatedRandomNormal.z, 0.0f);
-            float fRange = abs(fDelta) / (vKernelScale.z * 1.0f);
-            fOcclusion += lerp(fDelta * 1.0f, 1.0f, saturate(fRange));
-        }
+        float3 vViewDir = CurViewPos.xyz - vViewPos.xyz;
+        float fLength = length(vViewDir);
+
+        float fAngleFactor = 1.0f - dot(vViewDir / fLength, vNormal);
+        float fDistanceFactor = fLength / fRadius;
+
+        fOcclusion += saturate(max(fAngleFactor, fDistanceFactor));
     }
 
-    fOcclusion /= 16.0f;
+    fOcclusion /= 8.0f;
 
     output.vTarget0 = fOcclusion;
 

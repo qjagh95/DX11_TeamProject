@@ -7,7 +7,7 @@ class PUN_DLL CBoneSocket
 {
 	friend class CAnimation;
 
-private:
+public:
 	CBoneSocket();
 	~CBoneSocket();
 

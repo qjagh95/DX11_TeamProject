@@ -665,6 +665,12 @@ bool CViewManager::CreateRenderTargetView()
 		return false;
 	}
 
+	// StarLight Scope
+	vPos.x = 800.f;
+	vPos.y = 0.f;
+	if (!CreateRenderTarget("StarLightScope", DXGI_FORMAT_R32G32B32A32_FLOAT, Vector3::Zero, Vector3::Zero, _RESOLUTION, true))
+		return false;
+
 	// ShadowMap
 	vPos.x = 500.f;
 	vPos.y = 0.f;

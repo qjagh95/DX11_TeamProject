@@ -11,7 +11,7 @@ typedef struct PUN_DLL _tagBone
 	int			iParentIndex;
 	Matrix*		matOffset;
 	Matrix*		matBone;
-	vector<class CBoneSocket*>	SocketList;
+	list<class CBoneSocket*>	SocketList;
 	int			iRefCount;
 
 	_tagBone() :

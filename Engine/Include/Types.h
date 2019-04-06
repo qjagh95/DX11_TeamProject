@@ -266,9 +266,10 @@ namespace PUN
 		float	PlusedDeltaTime;
 		int		isDeferred;
 		int		isWireFrame;
-		int		Empty1234;
+		Vector2 vNearFar;
 		Vector2 ViewPortSize;
 		int		iSSAOEnable;
+		Vector3 vEmpty;
 
 		PublicCBuffer()	:
 			isDeferred(1),
@@ -374,6 +375,22 @@ namespace PUN
 			vFogColor = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
 		}
 	}FogCBuffer, *PFogCBuffer;
+
+	typedef struct PUN_DLL _tagStarLightScope
+	{
+		int isStarLightScope;
+		int isShake;
+		int isSign;
+		float fEmpty;
+		Vector2 vRandomPos;
+		Vector2 vEmpty;
+		_tagStarLightScope() :
+			isStarLightScope(0),
+			isShake(0),
+			isSign(0)
+		{
+		}
+	}StarLightScopeCB, *PStarLightScopeCB;
 
 	///////////////////////////////// CONSTANT BUFFER END /////////////////////////////////
 

@@ -155,13 +155,14 @@ cbuffer Component	: register(b2)
 
 cbuffer Public : register(b5)
 {
-    float   g_DeltaTime;
-    float   g_PlusedDeltaTime;
-    int     g_isDeferred;
-    int     g_isWireFrame;
-    int     g_Empty12342312412;
-    float2  g_ViewPortSize;
-    int     g_iSSAOEnable;
+    float g_DeltaTime;
+    float g_PlusedDeltaTime;
+    int g_isDeferred;
+    int g_isWireFrame;
+    float2 g_cameraNearFar;
+    float2 g_ViewPortSize;
+    int g_iSSAOEnable;
+    float3 g_empty;
 }
 
 cbuffer Light	: register(b3)

@@ -30,6 +30,9 @@ CRenderManager::CRenderManager() :
 	m_bSSAOEnable(true),
 	m_pSkyObj(nullptr),
 	m_pFogDepthSRV(nullptr),
+	m_accShakeTime(0.f),
+	m_isGetCameraObj(false),
+	m_pNoiseTex(nullptr),
 	m_pFogDepthTex(nullptr)
 {
 	m_eGameMode = GM_3D;
@@ -51,6 +54,8 @@ CRenderManager::CRenderManager() :
 
 CRenderManager::~CRenderManager()
 {
+	SAFE_RELEASE(m_pRandomNormalTex);
+	SAFE_RELEASE(m_pNoiseTex);
 	SAFE_RELEASE(m_pFogDepthSRV);
 	SAFE_RELEASE(m_pFogDepthTex);
 	SAFE_RELEASE(m_pGBufferSampler);
@@ -114,6 +119,7 @@ bool CRenderManager::Init()
 	m_pShader[SHADER_FINAL_PASS]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(FINAL_PASS_SHADER);
 	m_pShader[SHADER_SHADOW]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(SHADOWMAP_SHADER);
 	m_pShader[SHADER_SSAO]			= GET_SINGLE(CShaderManager)->FindShaderNonCount(SSAO_SHADER);
+	m_pShader[SHADER_STARLIGHT_SCOPE] = GET_SINGLE(CShaderManager)->FindShaderNonCount(STARLIGHTSCOPE_SHADER);
 
 	m_pTarget[TARGET_ALBEDO]		= GET_SINGLE(CViewManager)->FindRenderTarget("Albedo");
 	m_pTarget[TARGET_DEPTH]			= GET_SINGLE(CViewManager)->FindRenderTarget("Depth");
@@ -131,6 +137,7 @@ bool CRenderManager::Init()
 	m_pTarget[TARGET_DS_DEPTH]		= GET_SINGLE(CViewManager)->FindRenderTarget("DownScaledDepth");
 	m_pTarget[TARGET_DS_NORMAL]		= GET_SINGLE(CViewManager)->FindRenderTarget("DownScaledNormal");
 	m_pTarget[TARGET_SSAO]			= GET_SINGLE(CViewManager)->FindRenderTarget("SSAO");
+	m_pTarget[TARGET_STARLIGHT_SCOPE] = GET_SINGLE(CViewManager)->FindRenderTarget("StarLightScope");
 
 	m_pState[STATE_DEPTH_GRATOR]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_GRATOR);
 	m_pState[STATE_DEPTH_LESS]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_LESS);
@@ -169,6 +176,14 @@ bool CRenderManager::Init()
 
 	m_tCBuffer.iSSAOEnable = 1;
 
+
+	// 야간 투시경에 필요한 정보
+	srand((unsigned int)time(NULL));
+	if (CResourcesManager::GetInst()->CreateTexture("Noise", TEXT("noise6.png")))
+	{
+		m_pNoiseTex = CResourcesManager::GetInst()->FindTexture("Noise");
+	}
+	SetStarLightScope(0);
 	return true;
 }
 
@@ -741,7 +756,7 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pGBufferSampler->SetShader(10);
 	m_pTarget[TARGET_SHADOWMAP]->SetShader(16);
 
-	m_pFilter[CFT_BLUR]->SetShaderResourceTo(11, 1);
+	m_pFilter[CFT_BLUR]->SetShaderResourceTo(9, 1);
 
 	m_pTarget[TARGET_ALBEDO]->SetShader(10);
 	m_pTarget[TARGET_DEPTH]->SetShader(12);
@@ -762,7 +777,7 @@ void CRenderManager::RenderLightBlend(float _fTime)
 
 	m_pTarget[TARGET_ALBEDO]->ResetShader(10);
 	
-	m_pFilter[CFT_BLUR]->ResetShaderResourceFrom(11, 1);
+	m_pFilter[CFT_BLUR]->ResetShaderResourceFrom(9, 1);
 
 	m_pTarget[TARGET_ACC_DIFF]->ResetShader(14);
 	m_pTarget[TARGET_ACC_SPC]->ResetShader(15);
@@ -970,21 +985,95 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 
 	m_pTarget[TARGET_FINAL]->ResetTarget();
 
-	// 풀 스크린 출력
+	/***************************************************************************************/
+	// 야간 투시경 
 
-	m_pShader[SHADER_FULL_SCREEN]->SetShader();
+	// 상수 버퍼 업데이트
+	m_accShakeTime += _fTime;
+	float quakeTime = 0.3f;
+	float quakeDelay = 0.01f;
+	if (quakeDelay >= quakeDelay && m_accShakeTime <= quakeTime)
+	{
+		// Random
+		int defaultNum = 8;
+		int randNum = RandomRange(0, 2);
+		defaultNum += randNum;
+		Vector2 vPos((1.f / defaultNum), (1.f / defaultNum));
+
+		// Sign
+		int randSign = 0;
+		while (true)
+		{
+			randSign = RandomRange(-1, 1);
+			if (randSign != 0)
+			{
+				break;
+			}
+		}
+
+		m_tStarLightScope.isShake = 1;
+		m_tStarLightScope.isSign = randSign;
+		m_tStarLightScope.vRandomPos = vPos;
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("StarLightScope", &m_tStarLightScope);
+	}
+	else if (m_accShakeTime > (quakeDelay + quakeTime))
+	{
+		m_accShakeTime = 0.f;
+		m_tStarLightScope.isShake = 0;
+		GET_SINGLE(CShaderManager)->UpdateCBuffer("StarLightScope", &m_tStarLightScope);
+	}
+
+	// Public 상수 버퍼 초기화
+	if (m_isGetCameraObj == false)
+	{
+		m_isGetCameraObj = true;
+		CSceneManager* pSceneMgr = CSceneManager::GetInst();
+		CScene* pScene = pSceneMgr->GetSceneNonCount();
+		float cameraNear = pScene->GetMainCameraNonCount()->GetCameraNear();
+		float cameraFar  = pScene->GetMainCameraNonCount()->GetCameraFar();
+		m_tCBuffer.vNearFar = Vector2(cameraNear, cameraFar);
+		CShaderManager::GetInst()->UpdateCBuffer("PublicCBuffer", &m_tCBuffer);
+	}
+
+	// IA 단계는 위에 설정된 그대로 Null Buffer 설정으로 유지한다.
+
+	// 셰이더 진입점 설정
+	m_pShader[SHADER_STARLIGHT_SCOPE]->SetShader();
+
+	// 셰이더에서 사용할 자원을 넘겨준다.
+	// - FINAL_TARGET(렌더 타겟), TARET_DEPTH을 SRV(Texture2D)로 연결시킨다.
 	m_pTarget[TARGET_FINAL]->SetShader(0);
+	m_pTarget[TARGET_DEPTH]->SetShader(2);
 
+	// 노이즈 텍스처 SRV
+	if (m_pNoiseTex != nullptr)
+	{
+		m_pNoiseTex->SetShader(1);
+	}
+
+	// OM 단계에서 출력을 위한 자원인 RTV(StarLightScope)를 연결시킨다.
+	m_pTarget[TARGET_STARLIGHT_SCOPE]->ClearTarget();
+	m_pTarget[TARGET_STARLIGHT_SCOPE]->SetTarget();
+
+	// 렌더링 파이프라인 시작
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	// Reset SRV, RTV
+	m_pNoiseTex->SetShader(1);
+	m_pTarget[TARGET_FINAL]->ResetShader(0);
+	m_pTarget[TARGET_DEPTH]->ResetShader(2);
+	m_pTarget[TARGET_STARLIGHT_SCOPE]->ResetTarget();
+
+	// 풀 스크린 출력
+	m_pShader[SHADER_FULL_SCREEN]->SetShader();
+	m_pTarget[TARGET_STARLIGHT_SCOPE]->SetShader(0);
 	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
-
 	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
 	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
-
 	m_pState[STATE_DEPTH_DISABLE]->ResetState();
-
-	m_pTarget[TARGET_FINAL]->ResetShader(0);
+	m_pTarget[TARGET_STARLIGHT_SCOPE]->ResetShader(0);
 }
 
 void CRenderManager::RenderShadowMap(float fTime)
@@ -1108,4 +1197,9 @@ void CRenderManager::DisableFilter(CS_FILTER_TYPE eType)
 
 		break;
 	}
+}
+
+void CRenderManager::SetStarLightScope(int _flag)
+{
+	m_tStarLightScope.isStarLightScope = _flag;
 }

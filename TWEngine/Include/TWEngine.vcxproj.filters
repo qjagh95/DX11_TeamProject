@@ -782,6 +782,9 @@
     <FxCompile Include="..\Bin\Shader\Shadow.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\StarLight_Scope.fx">
+      <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TWEngine.rc">

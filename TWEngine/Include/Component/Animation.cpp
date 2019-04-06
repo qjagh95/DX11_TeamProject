@@ -117,7 +117,7 @@ CAnimation::~CAnimation()
 
 		if (m_vecBones[i]->iRefCount == 0)
 		{
-			//Safe_Release_VecList(m_vecBones[i]->SocketList);
+			Safe_Delete_VecList(m_vecBones[i]->SocketList);
 			SAFE_DELETE(m_vecBones[i]->matBone);
 			SAFE_DELETE(m_vecBones[i]->matOffset);
 			SAFE_DELETE(m_vecBones[i]);
@@ -1059,16 +1059,18 @@ bool CAnimation::AddSocket(const string & strBoneName, const string & strSocketN
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
-			return false;
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
+		{
+			if ((*iter)->GetName() == strSocketName)
+				return false;
+		}
 	}
 
-	CBoneSocket*	pSocket = new CBoneSocket;
-
+	CBoneSocket* pSocket = new CBoneSocket;
 	pSocket->Init();
-
 	pSocket->SetName(strSocketName);
-
 	pBone->SocketList.push_back(pSocket);
 
 	return true;
@@ -1083,10 +1085,15 @@ bool CAnimation::SetSocketObject(const string & strBoneName, const string & strS
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			pBone->SocketList[i]->SetObject(pObj);
-			return true;
+			if ((*iter)->GetName() == strSocketName)
+			{
+				(*iter)->SetObject(pObj);
+				return true;
+			}
 		}
 	}
 
@@ -1102,10 +1109,15 @@ bool CAnimation::SetSocketOffset(const string & strBoneName, const string & strS
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			pBone->SocketList[i]->SetOffset(vOffset);
-			return true;
+			if ((*iter)->GetName() == strSocketName)
+			{
+				(*iter)->SetOffset(vOffset);
+				return true;
+			}
 		}
 	}
 
@@ -1121,10 +1133,15 @@ bool CAnimation::SetSocketOffset(const string & strBoneName, const string & strS
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			pBone->SocketList[i]->SetOffset(x, y, z);
-			return true;
+			if ((*iter)->GetName() == strSocketName)
+			{
+				(*iter)->SetOffset(x, y, z);
+				return true;
+			}
 		}
 	}
 
@@ -1140,10 +1157,15 @@ bool CAnimation::SetSocketRotation(const string & strBoneName, const string & st
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			pBone->SocketList[i]->SetRotation(vRot);
-			return true;
+			if ((*iter)->GetName() == strSocketName)
+			{
+				(*iter)->SetRotation(vRot);
+				return true;
+			}
 		}
 	}
 
@@ -1159,10 +1181,15 @@ bool CAnimation::SetSocketRotation(const string & strBoneName, const string & st
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			pBone->SocketList[i]->SetRotation(x, y, z);
-			return true;
+			if ((*iter)->GetName() == strSocketName)
+			{
+				(*iter)->SetRotation(x, y, z);
+				return true;
+			}
 		}
 	}
 
@@ -1178,10 +1205,15 @@ bool CAnimation::SetSocketRotationX(const string & strBoneName, const string & s
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			pBone->SocketList[i]->SetRotationX(x);
-			return true;
+			if ((*iter)->GetName() == strSocketName)
+			{
+				(*iter)->SetRotationX(x);
+				return true;
+			}
 		}
 	}
 
@@ -1197,10 +1229,15 @@ bool CAnimation::SetSocketRotationY(const string & strBoneName, const string & s
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			pBone->SocketList[i]->SetRotationY(y);
-			return true;
+			if ((*iter)->GetName() == strSocketName)
+			{
+				(*iter)->SetRotationY(y);
+				return true;
+			}
 		}
 	}
 
@@ -1216,10 +1253,15 @@ bool CAnimation::SetSocketRotationZ(const string & strBoneName, const string & s
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			pBone->SocketList[i]->SetRotationZ(z);
-			return true;
+			if ((*iter)->GetName() == strSocketName)
+			{
+				(*iter)->SetRotationZ(z);
+				return true;
+			}
 		}
 	}
 
@@ -1235,9 +1277,14 @@ CBoneSocket * CAnimation::FindSocket(const string & strBoneName, const string & 
 
 	for (size_t i = 0; i < pBone->SocketList.size(); i++)
 	{
-		if (pBone->SocketList[i]->GetName() == strSocketName)
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = pBone->SocketList.end();
+		for (iter = pBone->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			return pBone->SocketList[i];
+			if ((*iter)->GetName() == strSocketName)
+			{
+				return *iter;
+			}
 		}
 	}
 
@@ -1621,7 +1668,15 @@ int CAnimation::Update(float fTime)
 	for (size_t i = 0; i < m_vecBones.size(); ++i)
 	{
 		for (size_t j = 0; j < m_vecBones[i]->SocketList.size(); j++)
-			m_vecBones[i]->SocketList[j]->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
+		{
+			list<CBoneSocket*>::iterator iter;
+			list<CBoneSocket*>::iterator iterEnd = m_vecBones[i]->SocketList.end();
+			for (iter = m_vecBones[i]->SocketList.begin(); iter != iterEnd; ++iter)
+			{
+				(*iter)->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
+				//m_vecBones[i]->SocketList[j]->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
+			}
+		}
 
 	}
 
