@@ -26,7 +26,7 @@ CCore::CCore()
 	m_pTimer = NULLPTR;
 	m_LogText = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(335773);
+	//_CrtSetBreakAlloc(4306);
 
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 

@@ -94,5 +94,11 @@ namespace EngineWrapper
 			MT marshal = marshal_as<MT>(_data);
 			return marshal;
 		}
+
+		void SetMouseWheel(int _iWheel)
+		{
+			PUN::CEditManager::GetInst()->SetMouseWheel((short)_iWheel);
+		}
+
 	};
 }

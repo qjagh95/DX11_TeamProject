@@ -11,6 +11,7 @@
 #include "Component/Animation2D.h"
 #include "Component/ColliderRay.h"
 #include "Component/ColliderPoint.h"
+#include "EditManager.h"
 
 PUN_USING
 
@@ -184,6 +185,12 @@ bool CInput::Init()
 	{
 		m_pWorldPoint = m_pMouse->AddComponent<CColliderRay>("MouseWorld");
 		((CColliderRay*)m_pWorldPoint)->MouseEnable();
+
+		if (CCore::GetInst()->m_bEditorMode == true)
+		{
+			m_pWorldPoint->SetCollisionCallback(CCT_STAY, this, &CInput::Hit);
+		}
+
 	}
 	
 	ShowCursor(FALSE);
@@ -599,4 +606,17 @@ PBindAction CInput::FindAction(const std::string & _strName)
 		return nullptr;
 
 	return iter->second;
+}
+
+void CInput::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	if (pDest->GetTag() == "PickingCollider")
+	{
+		if (GetMousePress(MS_LBUTTON) == true)
+		{
+			CGameObject* pDestObj = pDest->GetGameObject();
+			CEditManager::GetInst()->SetActiveObject(pDestObj);
+			SAFE_RELEASE(pDestObj);
+		}
+	}
 }

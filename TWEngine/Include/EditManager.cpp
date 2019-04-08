@@ -11,6 +11,7 @@
 #include "Component/Gizmo.h"
 #include "Component/EditTest.h"
 #include "Component/Arm.h"
+#include "Component/ColliderOBB3D.h"
 
 
 PUN_USING
@@ -109,6 +110,14 @@ void CEditManager::SetActiveObject(const string _strObjectTag, const string _str
 	// 기존 선택 오브젝트 해제
 	if (m_pObject != nullptr)
 	{
+		CColliderOBB3D* pPickOBB = m_pObject->GetPickingOBB();
+		if (pPickOBB)
+		{
+			pPickOBB->SetEnable(true);
+
+			SAFE_RELEASE(pPickOBB);
+		}
+
 		m_pObject->RemoveComponent(m_pEditTest);
 		SAFE_RELEASE(m_pObject);
 	}
@@ -119,12 +128,50 @@ void CEditManager::SetActiveObject(const string _strObjectTag, const string _str
 		TrueAssert(true);
 	}
 	m_pObject = pLayer->FindObject(_strObjectTag);
+	CColliderOBB3D* pPickOBB = m_pObject->GetPickingOBB();
+	if (pPickOBB)
+	{
+		pPickOBB->SetEnable(false);
+
+		SAFE_RELEASE(pPickOBB);
+	}
 	m_pXGizmo->SetTarget(m_pObject);
 	m_pYGizmo->SetTarget(m_pObject);
 	m_pZGizmo->SetTarget(m_pObject);
 	m_pObject->AddComponent(m_pEditTest);
 
 	SAFE_RELEASE(pLayer);
+}
+
+void CEditManager::SetActiveObject(CGameObject * _pObject)
+{
+	// 기존 선택 오브젝트 해제
+	if (m_pObject != nullptr)
+	{
+		CColliderOBB3D* pPickOBB = m_pObject->GetPickingOBB();
+		if (pPickOBB)
+		{
+			pPickOBB->SetEnable(true);
+
+			SAFE_RELEASE(pPickOBB);
+		}
+		m_pObject->RemoveComponent(m_pEditTest);
+		SAFE_RELEASE(m_pObject);
+	}
+	_pObject->AddRef();
+	m_pObject = _pObject;
+	CColliderOBB3D* pPickOBB = m_pObject->GetPickingOBB();
+
+	if (pPickOBB)
+	{
+		pPickOBB->SetEnable(false);
+
+		SAFE_RELEASE(pPickOBB);
+	}
+	m_pXGizmo->SetTarget(m_pObject);
+	m_pYGizmo->SetTarget(m_pObject);
+	m_pZGizmo->SetTarget(m_pObject);
+	m_pObject->AddComponent(m_pEditTest);
 }
 
 void CEditManager::CreateObject(const string _strObjectTag, const string _strLayerTag)
@@ -314,6 +361,11 @@ vector<Vector3> CEditManager::GetWorldTransform(const string _strObjectTag, cons
 	SAFE_RELEASE(pLayer);
 
 	return pVecTranform;
+}
+
+void CEditManager::SetMouseWheel(short _sMouseWheel)
+{
+	CInput::GetInst()->SetWheelDir(_sMouseWheel);
 }
 
 void CEditManager::GetMeshNameList(vector<string>* _pVec)

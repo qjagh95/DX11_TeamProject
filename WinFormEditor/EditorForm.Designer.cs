@@ -40,6 +40,8 @@
             this.Inspector = new System.Windows.Forms.GroupBox();
             this.InspectorTab = new System.Windows.Forms.TabControl();
             this.Animation = new System.Windows.Forms.TabPage();
+            this.label21 = new System.Windows.Forms.Label();
+            this.LB_BoneList = new System.Windows.Forms.ListBox();
             this.DeleteClipBtn = new System.Windows.Forms.Button();
             this.DeleteClipText = new System.Windows.Forms.TextBox();
             this.ClipList = new System.Windows.Forms.ListBox();
@@ -61,6 +63,9 @@
             this.ClipSave = new System.Windows.Forms.Button();
             this.Component = new System.Windows.Forms.TabPage();
             this.Effect = new System.Windows.Forms.TabPage();
+            this.GizmoPage = new System.Windows.Forms.TabPage();
+            this.RenderPage = new System.Windows.Forms.TabPage();
+            this.LightPage = new System.Windows.Forms.TabPage();
             this.LB_MeshList = new System.Windows.Forms.ListBox();
             this.GB_Transform = new System.Windows.Forms.GroupBox();
             this.RotateZ = new System.Windows.Forms.TextBox();
@@ -121,11 +126,6 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.textBox9 = new System.Windows.Forms.TextBox();
-            this.LB_BoneList = new System.Windows.Forms.ListBox();
-            this.label21 = new System.Windows.Forms.Label();
-            this.GizmoPage = new System.Windows.Forms.TabPage();
-            this.RenderPage = new System.Windows.Forms.TabPage();
-            this.LightPage = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -283,6 +283,25 @@
             this.Animation.Size = new System.Drawing.Size(287, 721);
             this.Animation.TabIndex = 0;
             this.Animation.Text = "Animation";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(8, 306);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(80, 17);
+            this.label21.TabIndex = 31;
+            this.label21.Text = "Bone Name";
+            // 
+            // LB_BoneList
+            // 
+            this.LB_BoneList.BackColor = System.Drawing.SystemColors.Control;
+            this.LB_BoneList.FormattingEnabled = true;
+            this.LB_BoneList.ItemHeight = 17;
+            this.LB_BoneList.Location = new System.Drawing.Point(8, 328);
+            this.LB_BoneList.Name = "LB_BoneList";
+            this.LB_BoneList.Size = new System.Drawing.Size(267, 140);
+            this.LB_BoneList.TabIndex = 30;
             // 
             // DeleteClipBtn
             // 
@@ -472,10 +491,10 @@
             this.Component.BackColor = System.Drawing.SystemColors.Control;
             this.Component.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.Component.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Component.Location = new System.Drawing.Point(4, 26);
+            this.Component.Location = new System.Drawing.Point(4, 48);
             this.Component.Name = "Component";
             this.Component.Padding = new System.Windows.Forms.Padding(3);
-            this.Component.Size = new System.Drawing.Size(287, 743);
+            this.Component.Size = new System.Drawing.Size(287, 721);
             this.Component.TabIndex = 1;
             this.Component.Text = "Component";
             // 
@@ -484,12 +503,39 @@
             this.Effect.BackColor = System.Drawing.SystemColors.Control;
             this.Effect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.Effect.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Effect.Location = new System.Drawing.Point(4, 26);
+            this.Effect.Location = new System.Drawing.Point(4, 48);
             this.Effect.Name = "Effect";
             this.Effect.Padding = new System.Windows.Forms.Padding(3);
-            this.Effect.Size = new System.Drawing.Size(287, 743);
+            this.Effect.Size = new System.Drawing.Size(287, 721);
             this.Effect.TabIndex = 2;
             this.Effect.Text = "Effect";
+            // 
+            // GizmoPage
+            // 
+            this.GizmoPage.BackColor = System.Drawing.SystemColors.Control;
+            this.GizmoPage.Location = new System.Drawing.Point(4, 48);
+            this.GizmoPage.Name = "GizmoPage";
+            this.GizmoPage.Size = new System.Drawing.Size(287, 721);
+            this.GizmoPage.TabIndex = 3;
+            this.GizmoPage.Text = "Gizmo";
+            // 
+            // RenderPage
+            // 
+            this.RenderPage.BackColor = System.Drawing.SystemColors.Control;
+            this.RenderPage.Location = new System.Drawing.Point(4, 48);
+            this.RenderPage.Name = "RenderPage";
+            this.RenderPage.Size = new System.Drawing.Size(287, 721);
+            this.RenderPage.TabIndex = 4;
+            this.RenderPage.Text = "Render";
+            // 
+            // LightPage
+            // 
+            this.LightPage.BackColor = System.Drawing.SystemColors.Control;
+            this.LightPage.Location = new System.Drawing.Point(4, 48);
+            this.LightPage.Name = "LightPage";
+            this.LightPage.Size = new System.Drawing.Size(287, 721);
+            this.LightPage.TabIndex = 5;
+            this.LightPage.Text = "Light";
             // 
             // LB_MeshList
             // 
@@ -546,7 +592,7 @@
             this.RotateZ.Size = new System.Drawing.Size(64, 25);
             this.RotateZ.TabIndex = 27;
             this.RotateZ.TextChanged += new System.EventHandler(this.ChangeRotate);
-            this.RotateZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.RotateZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
             // 
             // Label_RotZ
             // 
@@ -569,7 +615,7 @@
             this.RotateY.Size = new System.Drawing.Size(64, 25);
             this.RotateY.TabIndex = 25;
             this.RotateY.TextChanged += new System.EventHandler(this.ChangeRotate);
-            this.RotateY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.RotateY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
             // 
             // Label_RotX
             // 
@@ -603,7 +649,7 @@
             this.RotateX.Size = new System.Drawing.Size(64, 25);
             this.RotateX.TabIndex = 23;
             this.RotateX.TextChanged += new System.EventHandler(this.ChangeRotate);
-            this.RotateX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.RotateX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
             // 
             // Label_Rotate
             // 
@@ -626,7 +672,7 @@
             this.ScaleZ.Size = new System.Drawing.Size(64, 25);
             this.ScaleZ.TabIndex = 20;
             this.ScaleZ.TextChanged += new System.EventHandler(this.ChangeScale);
-            this.ScaleZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.ScaleZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
             // 
             // Label_ScaleZ
             // 
@@ -649,7 +695,7 @@
             this.ScaleY.Size = new System.Drawing.Size(64, 25);
             this.ScaleY.TabIndex = 18;
             this.ScaleY.TextChanged += new System.EventHandler(this.ChangeScale);
-            this.ScaleY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.ScaleY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
             // 
             // Label_ScaleX
             // 
@@ -683,7 +729,7 @@
             this.ScaleX.Size = new System.Drawing.Size(64, 25);
             this.ScaleX.TabIndex = 16;
             this.ScaleX.TextChanged += new System.EventHandler(this.ChangeScale);
-            this.ScaleX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.ScaleX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
             // 
             // Label_Scale
             // 
@@ -706,7 +752,7 @@
             this.PositionZ.Size = new System.Drawing.Size(64, 25);
             this.PositionZ.TabIndex = 13;
             this.PositionZ.TextChanged += new System.EventHandler(this.ChangePosition);
-            this.PositionZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.PositionZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
             // 
             // Label_WorldPosition
             // 
@@ -740,7 +786,7 @@
             this.PositionY.Size = new System.Drawing.Size(64, 25);
             this.PositionY.TabIndex = 11;
             this.PositionY.TextChanged += new System.EventHandler(this.ChangePosition);
-            this.PositionY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.PositionY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
             // 
             // Label_PosX
             // 
@@ -774,7 +820,7 @@
             this.PositionX.Size = new System.Drawing.Size(64, 25);
             this.PositionX.TabIndex = 2;
             this.PositionX.TextChanged += new System.EventHandler(this.ChangePosition);
-            this.PositionX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.PositionX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
             // 
             // GB_Hierachy
             // 
@@ -1209,52 +1255,6 @@
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(64, 25);
             this.textBox9.TabIndex = 2;
-            // 
-            // LB_BoneList
-            // 
-            this.LB_BoneList.BackColor = System.Drawing.SystemColors.Control;
-            this.LB_BoneList.FormattingEnabled = true;
-            this.LB_BoneList.ItemHeight = 17;
-            this.LB_BoneList.Location = new System.Drawing.Point(8, 328);
-            this.LB_BoneList.Name = "LB_BoneList";
-            this.LB_BoneList.Size = new System.Drawing.Size(267, 140);
-            this.LB_BoneList.TabIndex = 30;
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(8, 306);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(80, 17);
-            this.label21.TabIndex = 31;
-            this.label21.Text = "Bone Name";
-            // 
-            // GizmoPage
-            // 
-            this.GizmoPage.BackColor = System.Drawing.SystemColors.Control;
-            this.GizmoPage.Location = new System.Drawing.Point(4, 26);
-            this.GizmoPage.Name = "GizmoPage";
-            this.GizmoPage.Size = new System.Drawing.Size(287, 743);
-            this.GizmoPage.TabIndex = 3;
-            this.GizmoPage.Text = "Gizmo";
-            // 
-            // RenderPage
-            // 
-            this.RenderPage.BackColor = System.Drawing.SystemColors.Control;
-            this.RenderPage.Location = new System.Drawing.Point(4, 48);
-            this.RenderPage.Name = "RenderPage";
-            this.RenderPage.Size = new System.Drawing.Size(287, 721);
-            this.RenderPage.TabIndex = 4;
-            this.RenderPage.Text = "Render";
-            // 
-            // LightPage
-            // 
-            this.LightPage.BackColor = System.Drawing.SystemColors.Control;
-            this.LightPage.Location = new System.Drawing.Point(4, 48);
-            this.LightPage.Name = "LightPage";
-            this.LightPage.Size = new System.Drawing.Size(287, 721);
-            this.LightPage.TabIndex = 5;
-            this.LightPage.Text = "Light";
             // 
             // EditorForm
             // 

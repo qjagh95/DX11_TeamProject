@@ -66,6 +66,7 @@ public:
 public:
 	void GetSelectLayerObjList(string _strLayerTag, vector<string>* _pVec);
 	void SetActiveObject(const string _strObjectTag, const string _strLayerTag);
+	void SetActiveObject(class CGameObject* _pObject);
 	void CreateObject(const string _strObjectTag, const string _strLayerTag);
 	void DeleteObject(const string _strObjectTag, const string _strLayerTag);
 	void DeleteAllObject();
@@ -76,7 +77,7 @@ public:
 	void ActiveObjectSetRotate(double _dX, double _dY, double _dZ);
 	void ActiveObjectSetPosition(double _dX, double _dY, double _dZ);
 	vector<Vector3> GetWorldTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
-
+	void SetMouseWheel(short _sMouseWheel);
 	// ¸Þ½Ã
 public:
 	void GetMeshNameList(vector<string>* _pVec);

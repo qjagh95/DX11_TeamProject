@@ -50,8 +50,9 @@ private:
 	int				m_iLayerZOrder;
 	int				m_iObjectListIdx;
 	bool			m_isFrustumCull;
-
+	class CColliderOBB3D* m_pPickingCollSphere;
 public:
+	class CColliderOBB3D* GetPickingOBB() const;
 	void SetObjectListIndex(int _idx)
 	{
 		m_iObjectListIdx = _idx;

@@ -161,6 +161,11 @@ void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName,
 
 CMesh * CRenderer::GetMesh() const
 {
+	if (m_pMesh == nullptr)
+	{
+		return nullptr;
+	}
+
 	m_pMesh->AddRef();
 	return m_pMesh;
 }
@@ -471,15 +476,18 @@ void CRenderer::RenderShadow(float fTime)
 	CONTEXT->IASetInputLayout(m_pLayout);
 	//m_pShader->SetShader();
 
-	for (int i = 0; i < m_pMesh->GetContainCount(); ++i)
+	if (m_pMesh)
 	{
-		if (m_pMesh->IsSubset(i))
+		for (int i = 0; i < m_pMesh->GetContainCount(); ++i)
 		{
-			for (int j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
-				m_pMesh->Render(i, j);
+			if (m_pMesh->IsSubset(i))
+			{
+				for (int j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
+					m_pMesh->Render(i, j);
+			}
+			else
+				m_pMesh->Render(i, 0);
 		}
-		else
-			m_pMesh->Render(i, 0);
 	}
 }
 
@@ -552,6 +560,7 @@ void CRenderer::UpdateShadowTransform()
 	tCBuffer.matInvProj.Inverse();
 	tCBuffer.matVP = tCBuffer.matView * tCBuffer.matProj;
 	tCBuffer.vPivot = m_pTransform->GetPivot();
+	if(m_pMesh != nullptr)
 	tCBuffer.vLength = m_pMesh->GetLength();
 
 	tCBuffer.matWorld.Transpose();

@@ -10,7 +10,8 @@
 #include "Component/Renderer.h"
 #include "Component/Transform.h"
 #include "Component/Animation.h"
-
+#include "Core.h"
+#include "Component/ColliderOBB3D.h"
 PUN_USING
 
 unordered_map<class CScene*, unordered_map<string, CGameObject*>> CGameObject::m_mapPrototype;
@@ -19,7 +20,8 @@ CGameObject::CGameObject() :
 	m_pTransform(nullptr),
 	m_pParent(nullptr),
 	m_iObjectListIdx(0),
-	m_isFrustumCull(false)
+	m_isFrustumCull(false),
+	m_pPickingCollSphere(nullptr)
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;
@@ -89,7 +91,7 @@ CGameObject::CGameObject(const CGameObject & obj)
 		m_ChildList.push_back(pChild);
 	}
 
-	m_isFrustumCull = false; 
+	m_isFrustumCull = false;
 }
 
 CGameObject::~CGameObject()
@@ -98,6 +100,8 @@ CGameObject::~CGameObject()
 	Safe_Release_VecList(m_FindList);
 	SAFE_RELEASE(m_pTransform);
 	Safe_Release_VecList(m_ComList);
+	if (m_pPickingCollSphere)
+		SAFE_RELEASE(m_pPickingCollSphere);
 }
 
 CGameObject * CGameObject::CreateObject(const string & strTag, CLayer * pLayer,
@@ -109,6 +113,7 @@ CGameObject * CGameObject::CreateObject(const string & strTag, CLayer * pLayer,
 
 	if (bDontDestroy)
 		pObj->DontDestroyOnLoad();
+
 
 	if (!pObj->Init())
 	{
@@ -280,6 +285,16 @@ CGameObject * CGameObject::FindPrototype(CScene * pScene,
 	return iter1->second;
 }
 
+CColliderOBB3D * CGameObject::GetPickingOBB() const
+{
+	if (m_pPickingCollSphere == nullptr)
+	{
+		return nullptr;
+	}
+	m_pPickingCollSphere->AddRef();
+	return m_pPickingCollSphere;
+}
+
 CScene * CGameObject::GetScene() const
 {
 	return m_pScene;
@@ -384,7 +399,7 @@ bool CGameObject::FrustumCull()
 {
 	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
 	CRenderer* pRenderer = FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
-	
+
 	if (pRenderer == nullptr)
 	{
 		return false;
@@ -431,11 +446,44 @@ bool CGameObject::Init()
 	m_pTransform->Init();
 	m_pTransform->m_pTransform = m_pTransform;
 
+	if (CCore::GetInst()->m_bEditorMode == true)
+	{
+		if (strstr(m_strTag.c_str(), "Gizmo") == false && strstr(m_strTag.c_str(), "Cam") == false &&
+			strstr(m_strTag.c_str(), "Sky") == false && strstr(m_strTag.c_str(), "Light") == false &&
+			strstr(m_strTag.c_str(), "Mouse") == false)
+		{
+			m_pPickingCollSphere = AddComponent<CColliderOBB3D>("PickingCollider");
+		}
+	}
+
 	return true;
 }
 
 int CGameObject::Input(float fTime)
 {
+	if (CCore::GetInst()->m_bEditorMode)
+	{
+		if (m_pPickingCollSphere != nullptr)
+		{
+			CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
+			if (pRenderer)
+			{
+				CMesh* pMesh = pRenderer->GetMesh();
+				if (pMesh != nullptr)
+				{
+					Vector3 vMulScale = m_pTransform->GetWorldScale();
+					vMulScale.x *= pMesh->GetLength().x;
+					vMulScale.y *= pMesh->GetLength().y;
+					vMulScale.z *= pMesh->GetLength().z;
+
+					m_pPickingCollSphere->SetInfo(Vector3::Zero, Vector3::Axis, vMulScale);
+					SAFE_RELEASE(pMesh);
+				}
+
+				SAFE_RELEASE(pRenderer);
+			}
+		}
+	}
 	list<CComponent*>::iterator	iter;
 	list<CComponent*>::iterator	iterEnd = m_ComList.end();
 
@@ -479,7 +527,6 @@ int CGameObject::Update(float fTime)
 		if (!(*iter)->GetActive())
 		{
 			CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
-
 			if (pRenderer)
 			{
 				pRenderer->DeleteComponentCBuffer(*iter);
@@ -628,11 +675,11 @@ void CGameObject::Render(float fTime)
 			++iter;
 			continue;
 		}
-		//else if ((*iter)->GetComponentType() == CT_GIZMO)
-		//{
-		//	++iter;
-		//	continue;
-		//}
+		else if ((*iter)->GetComponentType() == CT_GIZMO)
+		{
+			++iter;
+			continue;
+		}
 		else if (!(*iter)->GetActive())
 		{
 			CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
@@ -707,6 +754,19 @@ CComponent* CGameObject::AddComponent(CComponent* pCom)
 	pCom->m_pLayer = m_pLayer;
 	pCom->m_pTransform = m_pTransform;
 	pCom->m_pObject = this;
+
+	if (CCore::GetInst()->m_bEditorMode == true)
+	{
+		if (pCom->GetComponentType() == CT_COLLIDER)
+		{
+			if (strstr(pCom->GetTag().c_str(), "Mouse") == false &&
+				strstr(pCom->GetTag().c_str(), "Gizmo") == false)
+			{
+				pCom->SetEnable(false);
+			}
+		}
+	}
+
 	pCom->AddRef();
 
 	if (pCom->GetComponentType() == CT_RENDERER)

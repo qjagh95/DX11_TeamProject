@@ -125,6 +125,8 @@ public:
 	PBindAxis FindAxis(const std::string& _strName);
 	PBindAction FindAction(const std::string& _strName);
 
+	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);
+
 public:
 	void AddKeyScale(const std::string& _strName, unsigned char _cKey, float _fScale)
 	{

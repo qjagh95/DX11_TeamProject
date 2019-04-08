@@ -109,86 +109,89 @@ void CCollisionManager::AddCollision(CGameObject * pObj)
 	{
 		((CCollider*)*iter)->ClearCollisionSection();
 
-		PCollisionGroup	pGroup = FindGroup(((CCollider*)*iter)->GetCollisionGroup());
-
-		if (!pGroup)
+		if ((*iter)->GetEnable() == true)
 		{
-			assert(false);
-			return;
-		}
+			PCollisionGroup	pGroup = FindGroup(((CCollider*)*iter)->GetCollisionGroup());
 
-		/*if (pGroup->eType == CGT_2D)
-		{
-			Vector3	vRS = Vector3(_RESOLUTION.iWidth, _RESOLUTION.iHeight,
-				0.f);
-			vCameraPos += vRS / 2.f;
-		}
-
-		if (((CCollider*)*iter)->GetCollisionGroup() == "UI")
-		{
-			vCameraPos = Vector3::Zero;
-		}*/
-
-		// 나중에 필요하면 카메라에 충돌영역 자체를 붙여주어서
-		// 충돌 영역이 카메라의 위치를 기준으로 잡힐 수 있도록
-		// 한다.
-		Vector3	vSectionMin = ((CCollider*)*iter)->GetSectionMin();
-		Vector3	vSectionMax = ((CCollider*)*iter)->GetSectionMax();
-
-		int	xMin = 0, xMax = 0, yMin = 0, yMax = 0, zMin = 0, zMax = 0;
-		xMin = (int)(vSectionMin.x - pGroup->vMin.x) / (int)pGroup->vCellLength.x;
-		xMax = (int)(vSectionMax.x - pGroup->vMin.x) / (int)pGroup->vCellLength.x;
-		yMin = (int)(vSectionMin.y - pGroup->vMin.y) / (int)pGroup->vCellLength.y;
-		yMax = (int)(vSectionMax.y - pGroup->vMin.y) / (int)pGroup->vCellLength.y;
-		if (pGroup->iCountZ > 1)
-		{
-			zMin = (int)(vSectionMin.z - pGroup->vMin.z) / (int)pGroup->vCellLength.z;
-			zMax = (int)(vSectionMax.z - pGroup->vMin.z) / (int)pGroup->vCellLength.z;
-		}
-
-		vector<int>	vecIndex;
-		for (int i = zMin; i <= zMax; ++i)
-		{
-			if (i < 0 || i >= pGroup->iCountZ)
-				continue;
-
-			for (int j = yMin; j <= yMax; ++j)
+			if (!pGroup)
 			{
-				if (j < 0 || j >= pGroup->iCountY)
+				assert(false);
+				return;
+			}
+
+			/*if (pGroup->eType == CGT_2D)
+			{
+				Vector3	vRS = Vector3(_RESOLUTION.iWidth, _RESOLUTION.iHeight,
+					0.f);
+				vCameraPos += vRS / 2.f;
+			}
+
+			if (((CCollider*)*iter)->GetCollisionGroup() == "UI")
+			{
+				vCameraPos = Vector3::Zero;
+			}*/
+
+			// 나중에 필요하면 카메라에 충돌영역 자체를 붙여주어서
+			// 충돌 영역이 카메라의 위치를 기준으로 잡힐 수 있도록
+			// 한다.
+			Vector3	vSectionMin = ((CCollider*)*iter)->GetSectionMin();
+			Vector3	vSectionMax = ((CCollider*)*iter)->GetSectionMax();
+
+			int	xMin = 0, xMax = 0, yMin = 0, yMax = 0, zMin = 0, zMax = 0;
+			xMin = (int)(vSectionMin.x - pGroup->vMin.x) / (int)pGroup->vCellLength.x;
+			xMax = (int)(vSectionMax.x - pGroup->vMin.x) / (int)pGroup->vCellLength.x;
+			yMin = (int)(vSectionMin.y - pGroup->vMin.y) / (int)pGroup->vCellLength.y;
+			yMax = (int)(vSectionMax.y - pGroup->vMin.y) / (int)pGroup->vCellLength.y;
+			if (pGroup->iCountZ > 1)
+			{
+				zMin = (int)(vSectionMin.z - pGroup->vMin.z) / (int)pGroup->vCellLength.z;
+				zMax = (int)(vSectionMax.z - pGroup->vMin.z) / (int)pGroup->vCellLength.z;
+			}
+
+			vector<int>	vecIndex;
+			for (int i = zMin; i <= zMax; ++i)
+			{
+				if (i < 0 || i >= pGroup->iCountZ)
 					continue;
 
-				for (int k = xMin; k <= xMax; ++k)
+				for (int j = yMin; j <= yMax; ++j)
 				{
-					if (k < 0 || k >= pGroup->iCountX)
+					if (j < 0 || j >= pGroup->iCountY)
 						continue;
 
-					int	idx = i * (pGroup->iCountX * pGroup->iCountY) +
-						j * pGroup->iCountX + k;
-
-					vecIndex.push_back(idx);
-
-					((CCollider*)*iter)->AddCollisionSection(idx);
-
-					PCollisionSection	pSection = &pGroup->pSectionList[idx];
-
-					if (pSection->iCapacity == pSection->iSize)
+					for (int k = xMin; k <= xMax; ++k)
 					{
-						pSection->iCapacity *= 2;
-						CCollider**	pArray = new CCollider*[pSection->iCapacity];
+						if (k < 0 || k >= pGroup->iCountX)
+							continue;
 
-						memcpy(pArray, pSection->pList, sizeof(CCollider*) * pSection->iSize);
+						int	idx = i * (pGroup->iCountX * pGroup->iCountY) +
+							j * pGroup->iCountX + k;
 
-						SAFE_DELETE_ARRAY(pSection->pList);
-						pSection->pList = pArray;
+						vecIndex.push_back(idx);
+
+						((CCollider*)*iter)->AddCollisionSection(idx);
+
+						PCollisionSection	pSection = &pGroup->pSectionList[idx];
+
+						if (pSection->iCapacity == pSection->iSize)
+						{
+							pSection->iCapacity *= 2;
+							CCollider**	pArray = new CCollider*[pSection->iCapacity];
+
+							memcpy(pArray, pSection->pList, sizeof(CCollider*) * pSection->iSize);
+
+							SAFE_DELETE_ARRAY(pSection->pList);
+							pSection->pList = pArray;
+						}
+
+						pSection->pList[pSection->iSize] = (CCollider*)*iter;
+						++pSection->iSize;
 					}
-
-					pSection->pList[pSection->iSize] = (CCollider*)*iter;
-					++pSection->iSize;
 				}
 			}
-		}
 
-		//(*iter)->Release();
+			//(*iter)->Release();
+		}
 	}
 }
 

@@ -49,6 +49,8 @@ namespace WinFormEditor
         {
             InitializeComponent();
 
+            PB_DeviceWindow.MouseWheel += new MouseEventHandler(Mouse_Wheel);
+
             //hInstance, hwnd얻어옴.
             IntPtr hinstance = System.Runtime.InteropServices.Marshal.GetHINSTANCE(PB_DeviceWindow.GetType().Module);
             IntPtr DeviceHwnd = PB_DeviceWindow.Handle;
@@ -961,5 +963,24 @@ namespace WinFormEditor
             if (LB_MeshList.SelectedItem != null)
                 LB_MeshList.SelectedItem = null;
         }
+
+        private void Mouse_Wheel(object sender, MouseEventArgs e)
+        {
+            coreWrapper.SetMouseWheel(e.Delta);
+        }
+
+        private void Transform_Press(object sender, KeyPressEventArgs e)
+        {
+            if ((e.KeyChar >= (char)48 && e.KeyChar <= (char)57) || e.KeyChar == (char)46
+                  || e.KeyChar == (char)8 || e.KeyChar == (char)127)
+            {
+
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+
     }
 }
