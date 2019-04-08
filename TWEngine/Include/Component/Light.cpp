@@ -110,6 +110,20 @@ void CLight::SetRimLight(int iRim)
 		m_tInfo.iRimLight = -1;
 }
 
+void CLight::SetRimColor(Vector3 vRimColor)
+{
+	m_tRimInfo.vRimColor = vRimColor;
+}
+
+void CLight::SetRimColor(float x, float y, float z)
+{
+	m_tRimInfo.vRimColor = Vector3(x, y, z);
+}
+
+void CLight::SetRimPower(float fRimPower)
+{
+	m_tRimInfo.fRimPower = fRimPower;
+}
 
 void CLight::SetLightDirection(const Vector3& Dir)
 {
@@ -119,6 +133,7 @@ void CLight::SetLightDirection(const Vector3& Dir)
 void CLight::UpdateLightCBuffer()
 {
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Light", &m_tInfo);
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("RimLight", &m_tRimInfo);
 }
 
 void CLight::Start()
@@ -153,6 +168,9 @@ int CLight::LateUpdate(float fTime)
 
 	if (m_tInfo.iLightType == LT_SPOT)
 		m_pTransform->SetWorldRot(RadianToDegree(m_tInfo.vDir.y), RadianToDegree(m_tInfo.vDir.x), 0.0f);
+
+	SetRimColor(1.f, 1.f, 1.f);
+	SetRimPower(3.f);
 
 	static bool bPush = false;
 	if (GetAsyncKeyState('R') & 0x8000)

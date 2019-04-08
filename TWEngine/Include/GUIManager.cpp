@@ -67,7 +67,7 @@ void GUIManager::Debug()
 	if (CCore::GetInst()->m_bGuiMode == false)
 		return;
 
-	if (m_bShaderOption == true)
+	/*if (m_bShaderOption == true)
 	{
 		ImGui::Begin("ShaderOption");
 
@@ -83,5 +83,5 @@ void GUIManager::Debug()
 		ImGui::Checkbox("MotionBlur", &m_bMotionBlur);
 
 		ImGui::End();
-	}
+	}*/
 }

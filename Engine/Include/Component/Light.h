@@ -19,6 +19,7 @@ private:
 
 private:
 	LightInfo	m_tInfo;
+	RimLightInfo	m_tRimInfo;
 	float		m_fInAngle;
 	float		m_fOutAngle;
 	int			m_iRim;
@@ -38,6 +39,9 @@ public:
 	void SetAngle(float fInAngle, float fOutAngle);
 	void SetLightColor(const Vector4& vDif, const Vector4& vAmb, const Vector4& vSpc);
 	void SetRimLight(int iRim);
+	void SetRimColor(Vector3 vRimColor);
+	void SetRimColor(float x, float y, float z);
+	void SetRimPower(float fRimPower);
 	void UpdateLightCBuffer();
 
 public:

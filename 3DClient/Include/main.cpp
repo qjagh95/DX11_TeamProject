@@ -3,6 +3,7 @@
 #include "SceneComponent/MainScene.h"
 #include "SceneComponent/StartScene.h"
 #include "SceneComponent/FirTestScene.h"
+#include "SceneComponent/TestScene.h"
 #include "SceneComponent/LogoScene.h"
 
 PUN_USING
@@ -43,7 +44,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// MainScene Ãß°¡
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CStartScene>("StartScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
-	GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");
+	//GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");
+	GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene");
 
     int iRet = CCore::GetInst()->Run();
 

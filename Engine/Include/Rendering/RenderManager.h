@@ -67,6 +67,21 @@ private:
 	FinalPassCB					m_tFinalCBuffer;
 	StarLightScopeCB			m_tStarLightScope;
 
+	// Magic Number 찾는 용도의 변수들
+	bool				m_bMagic;
+	bool				m_bHDR;
+	bool				m_bAdaptation;
+	bool				m_bBloom;
+	bool				m_bBlur;
+	bool				m_bMotionBlur;
+	bool				m_bSLC;
+	float				m_fMiddleGrey;
+	float				m_fLumWhite;
+	float				m_fBloomTheshold;
+	float				m_fBloomScale;
+	Vector3				m_vRimColor;
+	float				m_fRimColor;
+
 public:
 	GAME_MODE GetGameMode()	const;
 	bool GetRenderingMode()	const;
@@ -114,6 +129,9 @@ private:
 	void RenderFinalPass(float _fTime);
 	void RenderFinalPassDebug(float _fTime);
 	void RenderShadowMap(float fTime);
+
+public:
+	void FindMagicNumber(float fTime);
 
 	DECLARE_SINGLE(CRenderManager)
 };

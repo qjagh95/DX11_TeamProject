@@ -260,6 +260,12 @@ namespace PUN
 		int		iRimLight;
 	}LightInfo, *PLightInfo;
 
+	typedef struct PUN_DLL _tagRimLightInfo
+	{
+		Vector3 vRimColor;
+		float	fRimPower;
+	}RimLightInfo, *PRimLightInfo;
+
 	struct PUN_DLL PublicCBuffer
 	{
 		float	DeltaTime;
@@ -341,14 +347,19 @@ namespace PUN
 	{
 		int			iHDR;
 		int			iBlur;
+		int			iMotionBlur;
 		int			iDepthFog;
 		int			iBloom;
+		int			iAdaptation;
+		Vector2		vEmpty;
 
 		_tagFinalPassCBuffer() :
 			iHDR(0),
 			iBlur(0),
+			iMotionBlur(0),
 			iDepthFog(0),
-			iBloom(0)
+			iBloom(0),
+			iAdaptation(0)
 		{
 		}
 

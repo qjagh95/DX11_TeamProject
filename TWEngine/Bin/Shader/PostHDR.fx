@@ -34,8 +34,11 @@ cbuffer FinalPass : register(b9)
 {
     int     g_iHDR;
     int     g_iBlur;
+    int     g_iMotionBlur;
     int     g_iDepthFog;
     int     g_iBloom;
+    int     g_iAdaptation;
+    float2  g_Empty;
 }
 
 float3 ToneMapping(float3 vHDRColor)
@@ -71,7 +74,7 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
     float Focus = vDepth.y;
     float fDepth = vDepth.w;
 
-    if(g_iBlur == 1)
+    if (g_iBlur == 1 || g_iMotionBlur == 1)
     {
         //if (Focus < 0.5f)
         vColor = BlurTex.Sample(PointSampler, Input.vUV.xy).xyz;
@@ -94,12 +97,12 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
         vColor += fBloomScale * BloomTex.Sample(g_DiffuseSmp, Input.vUV.xy).xyz;
 
     // 톤 매핑
-        if(g_iHDR != 1)
-            vColor = ToneMapping(vColor);
+        //if(g_iHDR != 1)
+        //    vColor = ToneMapping(vColor);
     }
     
     // 톤 매핑(HDR 색을 LDR색으로 변환)
-    if (g_iHDR == 1)
+    if (g_iHDR == 1 || g_iAdaptation == 1)
         vColor = ToneMapping(vColor);
 
     output.vTarget0 = float4(vColor, 1.f);

@@ -125,9 +125,6 @@ void CCSAdaptFilter::ResetShaderResource(int iPass, float fTime)
 		break;
 
 	case 1:
-		/*CONTEXT->CopyResource(m_vecUAV[ADAPT_OLD]->GetResource<ID3D11Buffer>(),
-		m_vecUAV[ADAPT_PASS_SECOND]->GetResource<ID3D11Buffer>());*/
-
 		m_vecUAV[ADAPT_PASS_SECOND]->ResetUAV(0);
 		CONTEXT->CSSetShaderResources(1, 1, &pSRV);
 		CONTEXT->CSSetShaderResources(2, 1, &pSRV);	

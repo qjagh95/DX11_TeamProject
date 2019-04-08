@@ -281,6 +281,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("Material",		1,	sizeof(Material),			CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("Component",		2,	sizeof(ComponentCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("Light",			3,	sizeof(LightInfo),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("RimLight",		4,	 sizeof(RimLightInfo),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("PublicCBuffer",	5,	sizeof(PublicCBuffer),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Collider",		8,	sizeof(Vector4),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Animation2D",	8,	sizeof(Animation2DCBuffer), CST_VERTEX | CST_GEOMETRY | CST_PIXEL);

@@ -50,6 +50,19 @@ CRenderManager::CRenderManager() :
 	m_bWireFrame = true;
 
 	m_tCBuffer = {};
+
+	m_bHDR = false;
+	m_bAdaptation = false;
+	m_bBloom = false;
+	m_bBlur = false;
+	m_bMotionBlur = false;
+	m_bSLC = false;
+
+#ifdef _DEBUG
+	m_bMagic = true;
+#else
+	m_bMagic = false;
+#endif
 }
 
 CRenderManager::~CRenderManager()
@@ -163,6 +176,8 @@ bool CRenderManager::Init()
 		m_pFilter[i] = GET_SINGLE(CViewManager)->FindCSFilter((CS_FILTER_TYPE)i);
 		m_pFilter[i]->Disable();
 	}
+	m_pFilter[0]->Enable();
+	m_pFilter[1]->Enable();
 
 	ID3D11Texture2D* pTex = m_pTarget[TARGET_FOG_DEPTH]->GetTexture();
 
@@ -353,6 +368,8 @@ void CRenderManager::Render3D(float fTime)
 void CRenderManager::RenderDeferred(float fTime)
 {
 	// MainCamera를 얻어온다.
+	FindMagicNumber(fTime);
+
 	CCamera* pMainCamera = GET_SINGLE(CSceneManager)->GetMainCameraNoneCount();
 	
 	// 그림자 맵을 그려준다.
@@ -377,6 +394,8 @@ void CRenderManager::RenderDeferred(float fTime)
 	// HDR 등 다양한 화면 효과를 계산한다.
 	RenderComputeProcess(fTime);
 	// 최종 합성된 타겟을 화면에 출력한다.
+
+	
 #ifdef _DEBUG
 	RenderFinalPassDebug(fTime);
 #else
@@ -1173,16 +1192,29 @@ void CRenderManager::EnableFilter(CS_FILTER_TYPE eType)
 		m_tFinalCBuffer.iHDR = 1;
 		break;
 
-	case CFT_BLUR:
-	case CFT_MOTIONBLUR:
-		m_tFinalCBuffer.iBlur = 1;
+	case CFT_ADAPTATION:
+		m_tFinalCBuffer.iAdaptation = 1;
+		break;
 
+	case CFT_BLUR:
+		m_tFinalCBuffer.iBlur = 1;
+		break;
+
+	case CFT_MOTIONBLUR:
+		m_tFinalCBuffer.iMotionBlur = 1;
+		break;
+
+	case CFT_BLOOM:
+		m_tFinalCBuffer.iBloom = 1;
 		break;
 	}
 }
 
 void CRenderManager::DisableFilter(CS_FILTER_TYPE eType)
 {
+	if (eType == CFT_DOWNSCALE)
+		return;
+
 	m_pFilter[eType]->Disable();
 
 	switch (eType)
@@ -1191,10 +1223,20 @@ void CRenderManager::DisableFilter(CS_FILTER_TYPE eType)
 		m_tFinalCBuffer.iHDR = 0;
 		break;
 
-	case CFT_BLUR:
-	case CFT_MOTIONBLUR:
-		m_tFinalCBuffer.iBlur = 0;
+	case CFT_ADAPTATION:
+		m_tFinalCBuffer.iAdaptation = 0;
+		break;
 
+	case CFT_BLUR:
+		m_tFinalCBuffer.iBlur = 0;
+		break;
+
+	case CFT_MOTIONBLUR:
+		m_tFinalCBuffer.iMotionBlur = 0;
+		break;
+
+	case CFT_BLOOM:
+		m_tFinalCBuffer.iBloom = 0;
 		break;
 	}
 }
@@ -1202,4 +1244,101 @@ void CRenderManager::DisableFilter(CS_FILTER_TYPE eType)
 void CRenderManager::SetStarLightScope(int _flag)
 {
 	m_tStarLightScope.isStarLightScope = _flag;
+}
+
+void CRenderManager::FindMagicNumber(float fTime)
+{
+	if (m_bMagic == true)
+	{
+		ImGui::Begin("ShaderOption");
+
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::BeginTooltip();
+			ImGui::Text("ShaderOption");
+			ImGui::EndTooltip();
+		}
+
+		ImGui::Checkbox("StarLight Scope", &m_bSLC);
+
+		if (m_bSLC)
+		{
+			SetStarLightScope(1);
+		}
+		else
+		{
+			SetStarLightScope(0);
+		}
+
+		ImGui::Checkbox("HDR", &m_bHDR);
+
+		if (m_bHDR)
+		{
+			EnableFilter(CFT_DOWNSCALE);
+			EnableFilter(CFT_HDR);
+		}
+		else
+		{
+			DisableFilter(CFT_DOWNSCALE);
+			DisableFilter(CFT_HDR);
+		}
+
+		ImGui::Checkbox("Adaptation", &m_bAdaptation);
+
+		if (m_bAdaptation)
+		{
+			EnableFilter(CFT_DOWNSCALE);
+			EnableFilter(CFT_ADAPTATION);
+		}
+		else
+		{
+			DisableFilter(CFT_DOWNSCALE);
+			DisableFilter(CFT_ADAPTATION);
+		}
+		
+		ImGui::Checkbox("Bloom", &m_bBloom);
+
+		if (m_bBloom)			
+		{
+			EnableFilter(CFT_DOWNSCALE);
+			EnableFilter(CFT_BLOOM);
+		}
+		else
+		{
+			DisableFilter(CFT_DOWNSCALE);
+			DisableFilter(CFT_BLOOM);
+		}
+
+		ImGui::Checkbox("Blur", &m_bBlur);
+
+		if (m_bBlur)
+		{
+			EnableFilter(CFT_DOWNSCALE);
+			EnableFilter(CFT_BLUR);
+		}
+		else
+		{
+			DisableFilter(CFT_DOWNSCALE);
+			DisableFilter(CFT_BLUR);
+		}
+
+		ImGui::Checkbox("MotionBlur", &m_bMotionBlur);
+
+		if (m_bMotionBlur)
+		{
+			EnableFilter(CFT_DOWNSCALE);
+			EnableFilter(CFT_MOTIONBLUR);
+		}
+		else
+		{
+			DisableFilter(CFT_DOWNSCALE);
+			DisableFilter(CFT_MOTIONBLUR);
+		}
+
+		static float aaa = 0.0f;
+		ImGui::SliderFloat("HDR", &aaa, 0.0f, 10.0f);
+		ImGui::Text("aaa : %f", aaa);
+
+		ImGui::End();
+	}
 }
