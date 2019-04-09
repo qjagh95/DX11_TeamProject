@@ -12,6 +12,7 @@
 #include "Component/EditTest.h"
 #include "Component/Arm.h"
 #include "Component/ColliderOBB3D.h"
+#include "Component/Light.h"
 
 
 PUN_USING
@@ -253,10 +254,7 @@ void CEditManager::ChangeObjectInLayer(const string _strLayerTag)
 void CEditManager::AddComponent(std::string& _strCompTag)
 {
 	if (m_pObject == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	std::string objTag = "";
 	std::string compTag = "";
@@ -282,10 +280,7 @@ void CEditManager::AddComponent(std::string& _strCompTag)
 void CEditManager::ActiveObjectSetScale(double _dX, double _dY, double _dZ)
 {
 	if (m_pObject == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	CTransform* pTransform = m_pObject->GetTransform();
 	pTransform->SetWorldScale(Vector3((float)_dX, (float)_dY, (float)_dZ));
@@ -295,10 +290,7 @@ void CEditManager::ActiveObjectSetScale(double _dX, double _dY, double _dZ)
 void CEditManager::ActiveObjectSetRotate(double _dX, double _dY, double _dZ)
 {
 	if (m_pObject == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	CTransform* pTransform = m_pObject->GetTransform();
 	pTransform->SetWorldRot(Vector3((float)_dX, (float)_dY, (float)_dZ));
@@ -376,17 +368,12 @@ void CEditManager::GetMeshNameList(vector<string>* _pVec)
 void CEditManager::SetMesh(const string& _strMeshTag)
 {
 	if (m_pObject == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
 	if (pRenderer == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object의 Renderer가 없습니다"), 0, MB_OK);
 		return;
-	}
 	wstring wstrFileName;
 
 	wstrFileName = CA2W(_strMeshTag.c_str());
@@ -398,10 +385,7 @@ void CEditManager::SetMesh(const string& _strMeshTag)
 void CEditManager::LoadClipFromFullPath(const wstring& _strFullPath)
 {
 	if (m_pObject == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object가 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	if (m_pAnimation)
 	{
@@ -424,10 +408,7 @@ void CEditManager::LoadClipFromFullPath(const wstring& _strFullPath)
 void CEditManager::GetClipNameList(vector<string>* _vecstrClipList)
 {
 	if (m_pAnimation == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	m_pAnimation->GetClipTagList(_vecstrClipList);
 }
@@ -435,10 +416,7 @@ void CEditManager::GetClipNameList(vector<string>* _vecstrClipList)
 void CEditManager::SetDivideKeyFrame()
 {
 	if (m_pAnimation == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	m_pAnimation->GetCurrentKeyFrame(m_vecDivideFrame);
 }
@@ -446,10 +424,7 @@ void CEditManager::SetDivideKeyFrame()
 void CEditManager::DeleteDivideKeyFrame()
 {
 	if (m_vecDivideFrame.empty())
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("Divide Clip이 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	Safe_Delete_VecList(m_vecDivideFrame);
 }
@@ -457,10 +432,7 @@ void CEditManager::DeleteDivideKeyFrame()
 void CEditManager::DeleteClip(const string& _strKey)
 {
 	if (m_pAnimation == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	m_pAnimation->DeleteClip(_strKey);
 }
@@ -469,17 +441,10 @@ bool CEditManager::ModifyClip(const string& strKey, const string& strChangeKey, 
 	int iStartFrame, int iEndFrame, float fPlayTime)
 {
 	if (m_pAnimation == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
 		return false;
-	}
 
 	if (m_vecDivideFrame.empty())
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("Divide Clip이 없습니다"), 0, MB_OK);
 		return false;
-	}
-
 
 	return m_pAnimation->ModifyClip(strKey, strChangeKey, (ANIMATION_OPTION)iOption, iStartFrame, iEndFrame, fPlayTime, m_vecDivideFrame);
 }
@@ -487,16 +452,10 @@ bool CEditManager::ModifyClip(const string& strKey, const string& strChangeKey, 
 bool CEditManager::AddClip(const string& strKey, int iOption, int iStartFrame, int iEndFrame, float fPlayTime)
 {
 	if (m_pAnimation == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
 		return false;
-	}
 
 	if (m_vecDivideFrame.empty())
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("Divide Clip이 없습니다"), 0, MB_OK);
 		return false;
-	}
 
 	m_pAnimation->AddClip(strKey, (ANIMATION_OPTION)iOption, iStartFrame, iEndFrame, fPlayTime, m_vecDivideFrame);
 
@@ -506,10 +465,7 @@ bool CEditManager::AddClip(const string& strKey, int iOption, int iStartFrame, i
 void CEditManager::ChangeClip(const string& _strKey)
 {
 	if (m_pAnimation == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	m_pAnimation->ChangeClip(_strKey);
 }
@@ -517,10 +473,211 @@ void CEditManager::ChangeClip(const string& _strKey)
 void CEditManager::ClipSaveFromFullPath(const string& _strFullPath)
 {
 	if (m_pAnimation == nullptr)
-	{
-		//MessageBox(CCore::GetInst()->GetWindowHandle(), TEXT("선택된 Object에 Animation이 없습니다"), 0, MB_OK);
 		return;
-	}
 
 	m_pAnimation->SaveFromFullPath(_strFullPath.c_str());
+}
+
+void CEditManager::AddLightComponent()
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetComponentSize() > 2)
+		return;
+
+	CLight* newLight = m_pObject->AddComponent<CLight>(m_pObject->GetTag());
+	newLight->SetLightType(LT_DIR);
+	newLight->SetLightRange(10.0f);
+
+	SAFE_RELEASE(newLight);
+}
+
+void CEditManager::SetLightType(LIGHT_TYPE eType)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightType(eType);
+}
+
+void CEditManager::SetLightDiffuse(const Vector4 & _vDiffuse)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightDiffuse(_vDiffuse);
+}
+
+void CEditManager::SetLightAmbient(const Vector4 & _vAmbient)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightAmbient(_vAmbient);
+}
+
+void CEditManager::SetLightSpcular(const Vector4 & _vSpcular)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightAmbient(_vSpcular);
+}
+
+void CEditManager::SetLightSpcularR(float r)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightSpcular(Vector4(r, getLight->GetLightInfo().vSpc.y, getLight->GetLightInfo().vSpc.z, getLight->GetLightInfo().vSpc.w));
+}
+
+void CEditManager::SetLightSpcularG(float g)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightSpcular(Vector4(getLight->GetLightInfo().vSpc.x, g, getLight->GetLightInfo().vSpc.z, getLight->GetLightInfo().vSpc.w));
+}
+
+void CEditManager::SetLightSpcularB(float b)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightSpcular(Vector4(getLight->GetLightInfo().vSpc.x, getLight->GetLightInfo().vSpc.y, b, getLight->GetLightInfo().vSpc.w));
+}
+
+void CEditManager::SetLightSpcularW(float w)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightSpcular(Vector4(getLight->GetLightInfo().vSpc.x, getLight->GetLightInfo().vSpc.y, getLight->GetLightInfo().vSpc.z, w));
+}
+
+void CEditManager::SetLightDirX(float x)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightDirectionX(x / 100.0f);
+}
+
+void CEditManager::SetLightDirY(float y)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightDirectionY(y / 100.0f);
+}
+
+void CEditManager::SetLightDirZ(float z)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightDirectionZ(z / 100.0f);
+}
+
+void CEditManager::SetLightRange(float Range)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+		return;
+
+	CLight* getLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+
+	if (getLight == NULLPTR)
+		return;
+
+	getLight->SetLightRange(Range);
 }

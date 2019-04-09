@@ -644,6 +644,7 @@ void CCore::EditDelete()
 	DESTROY_SINGLE(CEditManager);
 	DESTROY_SINGLE(CDevice);
 	Safe_Delete_Map(m_ManagerMap);
+	Safe_Delete_Map(m_FSMap);
 	//CoUninitialize();
 }
 

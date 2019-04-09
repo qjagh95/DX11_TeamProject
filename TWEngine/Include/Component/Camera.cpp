@@ -3,6 +3,7 @@
 #include "Device.h"
 #include "Frustum.h"
 #include "Transform.h"
+#include "Core.h"
 #include "../GameObject.h"
 
 PUN_USING
@@ -196,7 +197,7 @@ int CCamera::Update(float fTime)
 		m_matView[3][i] = vPos.Dot(m_pTransform->GetWorldAxis((AXIS)i));
 	}
 
-	if(m_bFrustum == true)
+	if(CCore::GetInst()->m_bEditorMode == false)
 		m_pFrustum->Update(m_matView * m_matProj);
 
 	if (m_bShadow)

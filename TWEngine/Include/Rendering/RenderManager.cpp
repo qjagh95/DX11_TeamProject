@@ -46,8 +46,8 @@ CRenderManager::CRenderManager() :
 	memset(m_pTarget, 0, sizeof(CRenderTarget*) * TARGET_END);
 	memset(m_pShader, 0, sizeof(CShader*) * SHADER_END);
 	memset(m_pFilter, 0, sizeof(CCSFilter*) * CFT_END);
-
-	m_bWireFrame = true;
+	
+	m_bLightWireFrame = true;
 
 	m_tCBuffer = {};
 
@@ -292,7 +292,7 @@ void CRenderManager::Render(float fTime)
 {
 	m_tCBuffer.DeltaTime = fTime;
 	m_tCBuffer.PlusedDeltaTime += fTime;
-	m_tCBuffer.isWireFrame = m_bWireFrame;
+	m_tCBuffer.isWireFrame = m_bLightWireFrame;
 
 	CShaderManager::GetInst()->UpdateCBuffer("PublicCBuffer", &m_tCBuffer);
 
@@ -652,14 +652,18 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 	}
 	m_pState[STATE_BACK_CULL]->ResetState();
 
-	if (m_bWireFrame == false)
+	if (m_bLightWireFrame == false)
 		return;
 
+	//m_pState[STATE_DEPTH_DISABLE]->SetState();
+	m_pState[STATE_CULL_NONE]->SetState();
 	m_pState[STATE_WIRE_FRAME]->SetState();
 	{
 		m_pSphereVolum->Render();
 	}
 	m_pState[STATE_WIRE_FRAME]->ResetState();
+	m_pState[STATE_CULL_NONE]->ResetState();
+	//m_pState[STATE_DEPTH_DISABLE]->ResetState();
 }
 
 void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
@@ -702,7 +706,7 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 		{
 			m_pState[STATE_ALL_BLEND]->SetState();
 			{
-				m_pSphereVolum->Render();
+				m_pCornVolum->Render();
 			}
 			m_pState[STATE_ALL_BLEND]->ResetState();
 		}
@@ -717,7 +721,7 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 		{
 			m_pState[STATE_DEPTH_LESS]->SetState();
 			{
-				m_pSphereVolum->Render();
+				m_pCornVolum->Render();
 			}
 			m_pState[STATE_DEPTH_LESS]->ResetState();
 		}
@@ -725,14 +729,18 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 	}
 	m_pState[STATE_BACK_CULL]->ResetState();
 
-	if (m_bWireFrame == false)
+	if (m_bLightWireFrame == false)
 		return;
 
+	//m_pState[STATE_DEPTH_DISABLE]->SetState();
+	m_pState[STATE_CULL_NONE]->SetState();
 	m_pState[STATE_WIRE_FRAME]->SetState();
 	{
-		m_pSphereVolum->Render();
+		m_pCornVolum->Render();
 	}
 	m_pState[STATE_WIRE_FRAME]->ResetState();
+	m_pState[STATE_CULL_NONE]->ResetState();
+	//m_pState[STATE_DEPTH_DISABLE]->ResetState();
 }
 
 void CRenderManager::RenderLightBlend(float _fTime)
@@ -1250,6 +1258,9 @@ void CRenderManager::FindMagicNumber(float fTime)
 {
 	if (m_bMagic == true)
 	{
+		if (CCore::GetInst()->m_bEditorMode == true)
+			return;
+
 		ImGui::Begin("ShaderOption");
 
 		if (ImGui::IsItemHovered())

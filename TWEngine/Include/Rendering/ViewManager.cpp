@@ -22,6 +22,7 @@ DEFINITION_SINGLE(CViewManager)
 CViewManager::CViewManager()	:
 	m_pCreateState(nullptr)
 {
+	m_bTargetOnOff = true;
 }
 
 CViewManager::~CViewManager()
@@ -39,6 +40,7 @@ CViewManager::~CViewManager()
 	}
 
 	m_mapRenderState.clear();
+
 
 	unordered_map<string, CRenderTarget*>::iterator	iter;
 	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
@@ -796,11 +798,14 @@ bool CViewManager::CreateFilter()
 
 void CViewManager::Render(float fTime)
 {
-	unordered_map<string, CRenderTarget*>::iterator	iter;
-	unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
-
-	for (iter = m_mapRenderTarget.begin(); iter != iterEnd; ++iter)
+	if (m_bTargetOnOff == true)
 	{
-		iter->second->Render(fTime);
+		unordered_map<string, CRenderTarget*>::iterator	iter;
+		unordered_map<string, CRenderTarget*>::iterator	iterEnd = m_mapRenderTarget.end();
+
+		for (iter = m_mapRenderTarget.begin(); iter != iterEnd; ++iter)
+		{
+			iter->second->Render(fTime);
+		}
 	}
 }

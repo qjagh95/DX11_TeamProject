@@ -90,6 +90,7 @@ public:
 	bool EmptyComponent()	const;
 	bool FrustumCull();
 	bool IsFrustumCull() const;
+	size_t GetComponentSize() const { return m_ComList.size(); }
 
 public:
 	void Start();

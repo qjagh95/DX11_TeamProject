@@ -36,8 +36,14 @@ public:
 	void SetLightType(LIGHT_TYPE eType);
 	void SetLightRange(float fRange);
 	void SetLightDirection(const Vector3& Dir);
+	void SetLightDirectionX(float x);
+	void SetLightDirectionY(float y);
+	void SetLightDirectionZ(float z);
 	void SetAngle(float fInAngle, float fOutAngle);
 	void SetLightColor(const Vector4& vDif, const Vector4& vAmb, const Vector4& vSpc);
+	void SetLightAmbient(const Vector4& vAmb);
+	void SetLightDiffuse(const Vector4& vDif);
+	void SetLightSpcular(const Vector4& vSpc);
 	void SetRimLight(int iRim);
 	void SetRimColor(Vector3 vRimColor);
 	void SetRimColor(float x, float y, float z);

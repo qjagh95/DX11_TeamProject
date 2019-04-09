@@ -1,5 +1,6 @@
 #include "../EngineHeader.h"
 #include "Light.h"
+#include "Core.h"
 
 PUN_USING
 
@@ -102,6 +103,21 @@ void CLight::SetLightColor(const Vector4 & vDif, const Vector4 & vAmb, const Vec
 	m_tInfo.vSpc = vSpc;
 }
 
+void CLight::SetLightAmbient(const Vector4 & vAmb)
+{
+	m_tInfo.vAmb = vAmb;
+}
+
+void CLight::SetLightDiffuse(const Vector4 & vDif)
+{
+	m_tInfo.vDif = vDif;
+}
+
+void CLight::SetLightSpcular(const Vector4 & vSpc)
+{
+	m_tInfo.vSpc = vSpc;
+}
+
 void CLight::SetRimLight(int iRim)
 {
 	if (iRim == 1)
@@ -128,6 +144,21 @@ void CLight::SetRimPower(float fRimPower)
 void CLight::SetLightDirection(const Vector3& Dir)
 {
 	m_tInfo.vDir = Dir;
+}
+
+void CLight::SetLightDirectionX(float x)
+{
+	m_tInfo.vDir.x = x;
+}
+
+void CLight::SetLightDirectionY(float y)
+{
+	m_tInfo.vDir.y = y;
+}
+
+void CLight::SetLightDirectionZ(float z)
+{
+	m_tInfo.vDir.z = z;
 }
 
 void CLight::UpdateLightCBuffer()
@@ -164,7 +195,7 @@ int CLight::Update(float fTime)
 int CLight::LateUpdate(float fTime)
 {
 	if (m_tInfo.iLightType != LT_DIR)
-		m_pTransform->SetWorldPos(m_tInfo.vPos);
+		m_tInfo.vPos = m_pTransform->GetWorldPos();
 
 	if (m_tInfo.iLightType == LT_SPOT)
 		m_pTransform->SetWorldRot(RadianToDegree(m_tInfo.vDir.y), RadianToDegree(m_tInfo.vDir.x), 0.0f);

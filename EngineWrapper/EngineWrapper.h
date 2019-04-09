@@ -9,11 +9,15 @@
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
 #include <cliext/vector>
+
 #include <Resource/ResourcesManager.h>
+#include <Rendering/RenderManager.h>
+#include <Rendering/ViewManager.h>
 
 using namespace std;
 using namespace System;
 using namespace msclr::interop;
+using namespace PUN;
 
 namespace EngineWrapper
 {
@@ -24,22 +28,22 @@ namespace EngineWrapper
 		{
 			auto WinHandle = hWnd.ToInt64();
 			auto WinInstance = hInstance.ToInt64();
-			PUN::CCore::GetInst()->SetGameMode(PUN::GM_3D);
-			PUN::CCore::GetInst()->EditInit((HWND)WinHandle, (HINSTANCE)WinInstance, 1024, 600);
+			CCore::GetInst()->SetGameMode(GM_3D);
+			CCore::GetInst()->EditInit((HWND)WinHandle, (HINSTANCE)WinInstance, 1024, 600);
 
 			// EditScene 
 			// 툴에서 기본적으로 사용되는 객체 및 초기화 작업을 해주는 클래스
-			PUN::CSceneManager::GetInst()->AddSceneComponent<PUN::EditorScene>("EditScene");
+			CSceneManager::GetInst()->AddSceneComponent<PUN::EditorScene>("EditScene");
 		}
 
 		void Logic()
 		{
-			PUN::CCore::GetInst()->EditLogic();
+			CCore::GetInst()->EditLogic();
 		}
 
 		void Delete()
 		{
-			PUN::CCore::GetInst()->EditDelete();
+			CCore::GetInst()->EditDelete();
 		}
 
 	// 레이어
@@ -59,6 +63,81 @@ namespace EngineWrapper
 		void ActiveObjSetRotate(double _dX, double _dY, double _dZ);
 		void ActiveObjSetPosition(double _dX, double _dY, double _dZ);
 		cli::array<float>^ GetWorldTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
+
+		void SetLightAmbient(double _dR, double _dG, double _dB)
+		{
+			CEditManager::GetInst()->SetLightAmbient(Vector4((float)(255.0f / _dR), (float)(255.0f / _dG), (float)(255.0f / _dB), 1.0f));
+		}
+
+		void SetLightDiffuse(double _dR, double _dG, double _dB)
+		{
+			CEditManager::GetInst()->SetLightDiffuse(Vector4((float)(255.0f / _dR), (float)(255.0f / _dG), (float)(255.0f / _dB), 1.0f));
+		}
+
+		void SetLightSpcular(double _dR, double _dG, double _dB, double _dA)
+		{
+			CEditManager::GetInst()->SetLightSpcular(Vector4((float)(255.0f / _dR), (float)(255.0f / _dG), (float)(255.0f / _dB), (float)(255.0f / _dA)));
+		}
+
+		void AddLightComponent()
+		{
+			CEditManager::GetInst()->AddLightComponent();
+		}
+
+		void SetLightType(int eType)
+		{
+			CEditManager::GetInst()->SetLightType((LIGHT_TYPE)eType);
+		}
+		
+		void SetLightDirX(int x)
+		{
+			CEditManager::GetInst()->SetLightDirX((float)x);
+		}
+
+		void SetLightDirY(int y)
+		{
+			CEditManager::GetInst()->SetLightDirY((float)y);
+		}
+
+		void SetLightDirZ(int z)
+		{
+			CEditManager::GetInst()->SetLightDirZ((float)z);
+		}
+
+		void SetLightRange(int Range)
+		{
+			CEditManager::GetInst()->SetLightRange((float)Range);
+		}
+
+		void SetLightWireFrame(bool Value)
+		{
+			CRenderManager::GetInst()->m_bLightWireFrame = Value;
+		}
+
+		void SetTargetOnOff(bool Value)
+		{
+			CViewManager::GetInst()->SetTargetOnOff(Value);
+		}
+
+		void SetLightSpclularR(double r)
+		{
+			CEditManager::GetInst()->SetLightSpcularR((float)r);
+		}
+
+		void SetLightSpclularG(double g)
+		{
+			CEditManager::GetInst()->SetLightSpcularG((float)g);
+		}
+
+		void SetLightSpclularB(double b)
+		{
+			CEditManager::GetInst()->SetLightSpcularB((float)b);
+		}
+
+		void SetLightSpclularW(double w)
+		{
+			CEditManager::GetInst()->SetLightSpcularW((float)w);
+		}
 
 	// 메시
 	public:
@@ -97,7 +176,7 @@ namespace EngineWrapper
 
 		void SetMouseWheel(int _iWheel)
 		{
-			PUN::CEditManager::GetInst()->SetMouseWheel((short)_iWheel);
+			CEditManager::GetInst()->SetMouseWheel((short)_iWheel);
 		}
 
 	};

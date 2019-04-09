@@ -85,7 +85,7 @@ private:
 public:
 	GAME_MODE GetGameMode()	const;
 	bool GetRenderingMode()	const;
-	bool m_bWireFrame;
+	bool m_bLightWireFrame;
 
 public:
 	void SetGameMode(GAME_MODE eMode);

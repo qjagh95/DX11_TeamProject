@@ -96,6 +96,24 @@ public:
 		int iStartFrame, int iEndFrame, float fPlayTime);
 	void ChangeClip(const string& _strKey);
 	void ClipSaveFromFullPath(const string& _strFullPath);
+	///////////////////////////Light////////////////////////////////////////
+public:
+	void AddLightComponent();
+
+	void SetLightType(LIGHT_TYPE eType);
+	void SetLightDiffuse(const Vector4& _vDiffuse);
+	void SetLightAmbient(const Vector4& _vAmbient);
+	void SetLightSpcular(const Vector4& _vSpcular);
+
+	void SetLightSpcularR(float r);
+	void SetLightSpcularG(float g);
+	void SetLightSpcularB(float b);
+	void SetLightSpcularW(float w);
+
+	void SetLightDirX(float x);
+	void SetLightDirY(float y);
+	void SetLightDirZ(float z);
+	void SetLightRange(float Range);
 };
 
 PUN_END

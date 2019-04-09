@@ -22,10 +22,27 @@ namespace WinFormEditor
             }
         }
 
+        public class Vector4
+        {
+            public float x = 0.0f;
+            public float y = 0.0f;
+            public float z = 0.0f;
+            public float w = 0.0f;
+
+            public Vector4(float _x = 0.0f, float _y = 0.0f, float _z = 0.0f, float _w = 0.0f)
+            {
+                x = _x;
+                y = _y;
+                z = _z;
+                w = _w;
+            }
+        }
+
         public string  strLayerTag  { set; get; }
         public Vector3 vecScale     { set; get; }
         public Vector3 vecRotate    { set; get; }
         public Vector3 vecPosition  { set; get; }
+        public Vector4 vecColor     { set; get; }
 
         public void ClearData()
         {

@@ -18,9 +18,11 @@ private:
 	unordered_map<string, CRenderTarget*>		m_mapRenderTarget;
 	unordered_map<string, CMultiRenderTarget*>	m_mapMultiTarget;
 	unordered_map<CS_FILTER_TYPE, CCSFilter*>	m_mapCSFilter;
+	bool m_bTargetOnOff;
 
 public:
 	bool Init();
+	void SetTargetOnOff(bool Value) { m_bTargetOnOff = Value; }
 
 	void AddBlendTargetDesc(BOOL bEnable, D3D11_BLEND srcBlend = D3D11_BLEND_SRC_ALPHA,
 		D3D11_BLEND destBlend = D3D11_BLEND_INV_SRC_ALPHA,

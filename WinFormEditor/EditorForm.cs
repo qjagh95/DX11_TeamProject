@@ -20,7 +20,8 @@ namespace WinFormEditor
         public CoreWrapper coreWrapper = new CoreWrapper();
 
         enum eTransformType { TT_SCALE, TT_ROTATE, TT_POSITION, TT_MAX, };
-        
+        enum eLightType { LT_DIR, LT_POINT, LT_SPOT };
+
         // Form
         Form m_dataRemoveForm = new Form();
 
@@ -69,6 +70,14 @@ namespace WinFormEditor
             LoadAnmFile();
             LoadLayerComboBoxList();
             LoadTransform(0);
+
+            CB_WireFrame.Checked = true;
+            CB_isDebugTarget.Checked = true;
+            CB_LightType.SelectedIndex = 0;
+            TB_Range.Value = 10;
+            TB_LightXDir.Value = 0;
+            TB_LightYDir.Value = -1;
+            TB_LightZDir.Value = 0;
         }
 
         private void Delete(object sender, FormClosedEventArgs e)
@@ -688,7 +697,7 @@ namespace WinFormEditor
         private void SetMesh_Click(object sender, EventArgs e)
         {
             // '메시 등록' 버튼을 클릭 시 호출된다.
-            if (LB_MeshList.SelectedItem == null)
+            if (LB_MeshList.SelectedItem == null && LB_FileMesh.SelectedItem == null)
             {
                 AddLogString("Error! 선택된 Mesh가 없습니다");
                 return;
@@ -971,10 +980,8 @@ namespace WinFormEditor
 
         private void Transform_Press(object sender, KeyPressEventArgs e)
         {
-            if ((e.KeyChar >= (char)48 && e.KeyChar <= (char)57) || e.KeyChar == (char)46
-                  || e.KeyChar == (char)8 || e.KeyChar == (char)127)
+            if ((e.KeyChar >= (char)48 && e.KeyChar <= (char)57) || e.KeyChar == (char)46 || e.KeyChar == (char)8 || e.KeyChar == (char)127)
             {
-
             }
             else
             {
@@ -982,5 +989,110 @@ namespace WinFormEditor
             }
         }
 
+        private void Specular_Press(object sender, KeyPressEventArgs e)
+        {
+            if ((e.KeyChar >= (char)48 && e.KeyChar <= (char)57) || e.KeyChar == (char)46 || e.KeyChar == (char)8 || e.KeyChar == (char)127)
+            {
+            }
+            else
+            {
+                e.Handled = true;
+            }
+        }
+
+        public void LightAmbColor()
+        {
+            ColorDialog cd = new ColorDialog();
+
+            if (cd.ShowDialog() == DialogResult.OK)
+                coreWrapper.SetLightAmbient(cd.Color.R, cd.Color.G, cd.Color.B);
+            else
+                return;
+        }
+
+        public void LightDiffuse()
+        {
+            ColorDialog cd = new ColorDialog();
+
+            if (cd.ShowDialog() == DialogResult.OK)
+            {
+                coreWrapper.SetLightDiffuse(cd.Color.R, cd.Color.G, cd.Color.B);
+                AddLogString("색상값 변경 R : " + cd.Color.R.ToString() + "G : " + cd.Color.R.ToString() + "B : " + cd.Color.R.ToString());
+            }
+            else
+                return;
+        }
+
+        private void LightButton_Click(object sender, EventArgs e)
+        {
+            coreWrapper.AddLightComponent();
+            AddLogString("LightComponent 추가");
+        }
+
+        private void BT_DifColor_Click(object sender, EventArgs e)
+        {
+            LightDiffuse();
+            AddLogString("ColorEditorOpen");
+        }
+
+        private void CB_LightType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            coreWrapper.SetLightType(CB_LightType.SelectedIndex);
+            AddLogString("LightType이 " + CB_LightType.SelectedItem.ToString() + "로 변경되었습니다.");
+        }
+
+        private void TB_LightXDir_Scroll(object sender, EventArgs e)
+        {
+            coreWrapper.SetLightDirX(TB_LightXDir.Value);
+        }
+
+        private void TB_LightYDir_Scroll(object sender, EventArgs e)
+        {
+            coreWrapper.SetLightDirY(TB_LightYDir.Value);
+        }
+
+        private void TB_LightZDir_Scroll(object sender, EventArgs e)
+        {
+            coreWrapper.SetLightDirZ(TB_LightZDir.Value);
+        }
+
+        private void TB_Range_Scroll(object sender, EventArgs e)
+        {
+            coreWrapper.SetLightRange(TB_Range.Value);
+        }
+
+        private void CB_WireFrame_CheckedChanged(object sender, EventArgs e)
+        {
+            coreWrapper.SetLightWireFrame(CB_WireFrame.Checked);
+        }
+
+        private void CB_isDebugTarget_CheckedChanged(object sender, EventArgs e)
+        {
+            coreWrapper.SetTargetOnOff(CB_isDebugTarget.Checked);
+        }
+
+        private void TB_SpcularR_TextChanged(object sender, EventArgs e)
+        {
+            double dR = Convert.ToDouble(TB_SpcularR.Text);
+            coreWrapper.SetLightSpclularR(dR);
+        }
+
+        private void TB_SpcularG_TextChanged(object sender, EventArgs e)
+        {
+            double dR = Convert.ToDouble(TB_SpcularG.Text);
+            coreWrapper.SetLightSpclularG(dR);
+        }
+
+        private void TB_SpcularB_TextChanged(object sender, EventArgs e)
+        {
+            double dR = Convert.ToDouble(TB_SpcularB.Text);
+            coreWrapper.SetLightSpclularB(dR);
+        }
+
+        private void TB_SpcularPower_TextChanged(object sender, EventArgs e)
+        {
+            double dR = Convert.ToDouble(TB_SpcularPower.Text);
+            coreWrapper.SetLightSpclularW(dR);
+        }
     }
 }
