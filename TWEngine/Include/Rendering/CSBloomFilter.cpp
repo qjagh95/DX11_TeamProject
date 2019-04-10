@@ -11,8 +11,6 @@ PUN_USING
 CCSBloomFilter::CCSBloomFilter()
 {
 	m_eFilterType = CFT_BLOOM;
-	m_pBloomThreshold = 0.f;
-	m_pBloomScale = 0.f;
 	m_bFinal = false;
 }
 
@@ -55,7 +53,11 @@ void CCSBloomFilter::SetShaderResourceTo()
 		m_vecUAV[BLOOM_FINAL]->SetSRV(3);
 	}
 	m_vecUAV[BLOOM_SECOND]->SetSRV(m_iFinalPassRegister);
+
+#ifdef _DEBUG
+#else
 	m_pPostEffect->UpdateCBuffer(1);
+#endif
 }
 
 void CCSBloomFilter::ResetShaderResourceFrom()
@@ -79,8 +81,8 @@ void CCSBloomFilter::Dispatch(float fTime)
 
 void CCSBloomFilter::SetShaderResource(int iPass, float fTime)
 {
-	m_pPostEffect->SetBloomThresholdCB(1.1f, fTime);
-	m_pPostEffect->SetBloomCB(0.74f, fTime);
+	m_pPostEffect->SetBloomThresholdCB(m_fBloomThreshold, fTime);
+	m_pPostEffect->SetBloomCB(m_fBloomScale, fTime);
 
 	m_pPostEffect->UpdateCBuffer(0);
 	m_pPostEffect->UpdateCBuffer(3);
@@ -193,4 +195,14 @@ void CCSBloomFilter::ResetShaderResource(int iPass, float fTime)
 		m_pAdaptOldAvgLumSRV = pTempSRV;
 		break;
 	}
+}
+
+void CCSBloomFilter::SetBloomThreshold(float fBloomThreshold)
+{
+	m_fBloomThreshold = fBloomThreshold;
+}
+
+void CCSBloomFilter::SetBloomScale(float fBloomScale)
+{
+	m_fBloomScale = fBloomScale;
 }

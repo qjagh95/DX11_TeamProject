@@ -71,10 +71,9 @@ void CPostEffect::SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime
 void CPostEffect::SetAdaptationCB(float fAdaptation, float fTime)
 {
 	m_tAdaptInfo.fAdaptation = fAdaptation;
-	//GET_SINGLE(CShaderManager)->UpdateCBuffer("Adaptation", &m_tAdaptInfo);
 }
 
-void CPostEffect::SetAdaptationCB(float fAdaptation, float fBloomThreshold, float fTime)
+void CPostEffect::SetAdaptationCB(float fAdaptation)
 {
 	m_tAdaptInfo.fAdaptation = fAdaptation;
 }

@@ -41,7 +41,7 @@ public:
 	void SetFinalPassCB(float fMiddleGrey, float fLumWhite);
 	void SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime);
 	void SetAdaptationCB(float fAdaptation, float fTime);
-	void SetAdaptationCB(float fAdaptation, float fBloomThreshold, float fTime);
+	void SetAdaptationCB(float fAdaptation);
 	void SetBloomThresholdCB(float fThreshold, float fTime);
 	void SetBloomCB(float fBloomScale, float fTime);
 

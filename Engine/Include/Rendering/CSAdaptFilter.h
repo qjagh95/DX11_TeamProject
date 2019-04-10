@@ -23,12 +23,15 @@ private:
 	class	CPostEffect* m_pPostEffect;
 	float	m_fElapsedTime;
 	float	m_fAdaptation;
-	float	m_fAdapt;
+	float	m_fAdaptTime;
 	float	m_fAdaptNorm;
 	ID3D11UnorderedAccessView*	m_pAdaptAvgLumUAV;
 	ID3D11ShaderResourceView*	m_pAdaptAvgLumSRV;
 	ID3D11UnorderedAccessView*	m_pAdaptOldAvgLumUAV;
 	ID3D11ShaderResourceView*	m_pAdaptOldAvgLumSRV;
+
+public:
+	void SetAdaptationTime(float fAdapt);
 
 public:
 	virtual bool Init();

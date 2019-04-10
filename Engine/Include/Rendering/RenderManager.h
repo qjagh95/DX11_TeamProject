@@ -67,7 +67,7 @@ private:
 	StarLightScopeCB			m_tStarLightScope;
 
 	// Magic Number 찾는 용도의 변수들
-	class CPostEffect*		m_pPostEffect;
+	class CPostEffect*	m_pPostEffect;
 	bool				m_bMagic;
 	bool				m_bHDR;
 	bool				m_bAdaptation;
@@ -77,10 +77,11 @@ private:
 	bool				m_bSLC;
 	bool				m_bSSAOEnable;
 	bool				m_bDepthFog;
-	bool				m_HDROn;
+	bool				m_AdaptOn;
 	float				m_fMiddleGrey;
 	float				m_fLumWhite;
-	float				m_fBloomTheshold;
+	float				m_fAdaptation;
+	float				m_fBloomThreshold;
 	float				m_fBloomScale;
 	Vector3				m_vRimColor;
 	float				m_fRimColor;

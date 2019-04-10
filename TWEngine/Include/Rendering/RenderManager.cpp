@@ -8,6 +8,8 @@
 #include "DepthState.h"
 #include "PostEffect.h"
 #include "CSFilter.h"
+#include "CSAdaptFilter.h"
+#include "CSBloomFilter.h"
 #include "ViewManager.h"
 #include "EditManager.h"
 #include "RenderTarget.h"
@@ -53,25 +55,27 @@ CRenderManager::CRenderManager() :
 
 	m_tCBuffer = {};
 
+	// ============= Magic Number¿ë =================
 	m_bHDR = false;
 	m_bAdaptation = false;
 	m_bBloom = false;
 	m_bBlur = false;
 	m_bMotionBlur = false;
 	m_bSLC = false;
-	m_HDROn = false;
 	m_bDepthFog = false;
 
-	m_fMiddleGrey = 0.f;
-	m_fLumWhite = 0.f;
-	m_fBloomTheshold = 0.f;
-	m_fBloomScale = 0.f;
+	m_fMiddleGrey = 0.863f;
+	m_fLumWhite = 1.53f;
+	m_fAdaptation = 3.f;
+	m_fBloomThreshold = 1.1f;
+	m_fBloomScale = 0.74f;
 
 #ifdef _DEBUG
 	m_bMagic = true;
 #else
 	m_bMagic = false;
 #endif
+	// =================================================
 }
 
 CRenderManager::~CRenderManager()
@@ -1303,9 +1307,9 @@ void CRenderManager::FindMagicNumber(float fTime)
 		{
 			EnableFilter(CFT_DOWNSCALE);
 			EnableFilter(CFT_HDR);
-			ImGui::SliderFloat("MiddleGrey", &m_fMiddleGrey, 0.0f, 6.f);
+			ImGui::SliderFloat("MiddleGrey", &m_fMiddleGrey, 0.f, 6.f);
 			ImGui::Text("MiddleGrey : %f", m_fMiddleGrey);
-			ImGui::SliderFloat("LumWhite", &m_fLumWhite, 0.0f, 6.f);
+			ImGui::SliderFloat("LumWhite", &m_fLumWhite, 0.f, 6.f);
 			ImGui::Text("LumWhite : %f", m_fLumWhite);
 
 			m_pPostEffect->SetFinalPassCB(m_fMiddleGrey, m_fLumWhite, fTime);
@@ -1323,8 +1327,14 @@ void CRenderManager::FindMagicNumber(float fTime)
 		{
 			EnableFilter(CFT_DOWNSCALE);
 			EnableFilter(CFT_ADAPTATION);
+			ImGui::SliderFloat("Adaptation", &m_fAdaptation, 0.f, 10.f);
+			ImGui::Text("Adaptation : %f", m_fAdaptation);
+
+			CCSAdaptFilter*	pFilter = (CCSAdaptFilter*)GET_SINGLE(CViewManager)->FindCSFilter(CFT_ADAPTATION);
+
+			pFilter->SetAdaptationTime(m_fAdaptation);
 		}
-		else
+        else
 		{
 			DisableFilter(CFT_DOWNSCALE);
 			DisableFilter(CFT_ADAPTATION);
@@ -1336,6 +1346,14 @@ void CRenderManager::FindMagicNumber(float fTime)
 		{
 			EnableFilter(CFT_DOWNSCALE);
 			EnableFilter(CFT_BLOOM);
+			ImGui::SliderFloat("BloomThreshold", &m_fBloomThreshold, 0.f, 2.5f);
+			ImGui::Text("BoomThreshold : %f", m_fBloomThreshold);
+			ImGui::SliderFloat("BloomScale", &m_fBloomScale, 0.f, 2.f);
+			ImGui::Text("BloomScale : %f", m_fBloomScale);
+
+			CCSBloomFilter*	pFilter = (CCSBloomFilter*)GET_SINGLE(CViewManager)->FindCSFilter(CFT_BLOOM);
+			pFilter->SetBloomThreshold(m_fBloomThreshold);
+			pFilter->SetBloomScale(m_fBloomScale);
 		}
 		else
 		{

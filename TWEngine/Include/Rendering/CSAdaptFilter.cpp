@@ -13,12 +13,17 @@ CCSAdaptFilter::CCSAdaptFilter()
 	m_eFilterType = CFT_ADAPTATION;
 	m_fElapsedTime = 0.f;
 	m_fAdaptation = 1.f;
-	m_fAdapt = 3.f;
+	m_fAdaptTime = 3.f;
 }
 
 CCSAdaptFilter::~CCSAdaptFilter()
 {
 	SAFE_DELETE(m_pPostEffect);
+}
+
+void CCSAdaptFilter::SetAdaptationTime(float fAdapt)
+{
+	m_fAdaptTime = fAdapt;
 }
 
 bool CCSAdaptFilter::Init()
@@ -43,7 +48,10 @@ bool CCSAdaptFilter::Init()
 void CCSAdaptFilter::SetShaderResourceTo()
 {
 	m_vecUAV[ADAPT_PASS_SECOND]->SetSRV(m_iFinalPassRegister);
+#ifdef _DEBUG
+#else
 	m_pPostEffect->UpdateCBuffer(1);
+#endif
 }
 
 void CCSAdaptFilter::ResetShaderResourceFrom()
@@ -63,7 +71,7 @@ void CCSAdaptFilter::Dispatch(float fTime)
 
 void CCSAdaptFilter::SetShaderResource(int iPass, float fTime)
 {
-	m_fElapsedTime += fTime;
+	m_fElapsedTime += fTime / 2;
 
 	static bool bFirstTime = true;
 
@@ -81,12 +89,16 @@ void CCSAdaptFilter::SetShaderResource(int iPass, float fTime)
 
 	else
 	{
-		if (m_fElapsedTime > 3.f)
-		{
-			m_fElapsedTime -= 3.f;
-		}
+		float fResetTime = m_fAdaptTime;
 
-		fAdaptNorm = min(m_fAdapt < 0.0001f ? m_fAdapt : m_fElapsedTime / m_fAdapt, m_fAdapt - 0.0001f);
+#ifdef _DEBUG
+		if (m_fElapsedTime > fResetTime)
+		{
+			m_fElapsedTime -= fResetTime;
+		}		
+#endif
+		
+		fAdaptNorm = min(m_fAdaptTime < 0.0001f ? m_fAdaptTime : m_fElapsedTime / m_fAdaptTime, m_fAdaptTime - 0.0001f);
 	}
 
 	m_fAdaptation = fAdaptNorm;

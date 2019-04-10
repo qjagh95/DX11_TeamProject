@@ -24,8 +24,8 @@ private:
 
 private:
 	class	CPostEffect* m_pPostEffect;
-	float	m_pBloomThreshold;
-	float	m_pBloomScale;
+	float	m_fBloomThreshold;
+	float	m_fBloomScale;
 	bool	m_bFinal;
 	CUAV*						m_pDownScale;
 	ID3D11UnorderedAccessView*	m_pDownScaleUAV;
@@ -44,6 +44,10 @@ public:
 private:
 	virtual void SetShaderResource(int iPass, float fTime);
 	virtual void ResetShaderResource(int iPass, float fTime);
+
+public:
+	void SetBloomThreshold(float fBloomThreshold);
+	void SetBloomScale(float fBloomScale);
 };
 
 PUN_END
