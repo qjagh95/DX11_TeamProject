@@ -72,6 +72,7 @@ public:
 	virtual CRenderer* Clone();
 
 private:
+	void RenderNaviEditorMode(float fTime);
 	void UpdateTransform();
 	void UpdateShadowTransform();
 };

@@ -41,6 +41,14 @@ cbuffer FinalPass : register(b9)
     float2  g_Empty;
 }
 
+cbuffer DepthFog : register(b10)
+{
+    float4 vFogColor;
+    float  fStartDepth;
+    float  fEndDepth;
+    float2 vDepthFogEmpty;
+}
+
 float3 ToneMapping(float3 vHDRColor)
 {
     // 현재 픽셀에 대한 휘도 스케일 계산
@@ -92,13 +100,9 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
     
     // Bloom 을 적용할 건지
     if(g_iBloom == 1)
-    {        
+    {
     // Bloom Contribution 을 추가한다
         vColor += fBloomScale * BloomTex.Sample(g_DiffuseSmp, Input.vUV.xy).xyz;
-
-    // 톤 매핑
-        //if(g_iHDR != 1)
-        //    vColor = ToneMapping(vColor);
     }
     
     // 톤 매핑(HDR 색을 LDR색으로 변환)

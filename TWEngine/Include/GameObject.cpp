@@ -727,6 +727,16 @@ void CGameObject::RenderShadow(float fTime)
 	}
 }
 
+void CGameObject::RenderNaviEditorMode(float fTime)
+{
+	CRenderer* pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!pRenderer)
+		return;
+
+	pRenderer->RenderNaviEditorMode(fTime);
+}
+
 CGameObject * CGameObject::Clone()
 {
 	return new CGameObject(*this);

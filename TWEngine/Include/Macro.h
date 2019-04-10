@@ -41,7 +41,8 @@
 #define PARTICLE_SHADER						"ParticleShader"
 #define SHADOWMAP_SHADER					"ShadowShader"
 #define STARLIGHTSCOPE_SHADER				"StarLightScope"
-
+#define NAVI_EDITOR_SHADER					"NaviEditorShader"
+#define LAND_NAVI_EDITOR_SHADER				"LandNaviEditorShader"
 
 #define VOLUME_FOG_FIRST_SHADER				"VolumeFogFirstShader"
 #define VOLUME_FOG_SECOND_SHADER			"VolumeFogSecondShader"

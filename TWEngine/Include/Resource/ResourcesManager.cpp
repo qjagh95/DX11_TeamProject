@@ -155,15 +155,15 @@ bool CResourcesManager::Init()
 
 	VertexNormalColor Pyramid[9] =
 	{
-		VertexNormalColor(PyramidPos[0], Vector3(0.0f, 1.0f, 0.0f),  Vector4::Red),
-		VertexNormalColor(PyramidPos[1], Normal[0], Vector4::Green),
-		VertexNormalColor(PyramidPos[2], Normal[1], Vector4::Blue),
-		VertexNormalColor(PyramidPos[3], Normal[2], Vector4::Yellow),
-		VertexNormalColor(PyramidPos[4], Normal[3], Vector4::Magenta),
-		VertexNormalColor(PyramidPos[1], Vector3(0.0f, -1.0f, 0.0f), Vector4::Green),
-		VertexNormalColor(PyramidPos[2], Vector3(0.0f, -1.0f, 0.0f), Vector4::Blue),
-		VertexNormalColor(PyramidPos[3], Vector3(0.0f, -1.0f, 0.0f), Vector4::Yellow),
-		VertexNormalColor(PyramidPos[4], Vector3(0.0f, -1.0f, 0.0f), Vector4::Magenta)
+		VertexNormalColor(PyramidPos[0], Vector3(0.0f, 1.0f, 0.0f),		Vector4(1.0f, 0.0f, 0.0f, 0.5f)	),
+		VertexNormalColor(PyramidPos[1], Normal[0],						Vector4(1.0f, 0.0f, 0.0f, 0.5f)	),
+		VertexNormalColor(PyramidPos[2], Normal[1],						Vector4(1.0f, 0.0f, 0.0f, 0.5f)	),
+		VertexNormalColor(PyramidPos[3], Normal[2],						Vector4(1.0f, 0.0f, 0.0f, 0.5f)	),
+		VertexNormalColor(PyramidPos[4], Normal[3],						Vector4(1.0f, 0.0f, 0.0f, 0.5f)	),
+		VertexNormalColor(PyramidPos[1], Vector3(0.0f, -1.0f, 0.0f),	Vector4(1.0f, 0.0f, 0.0f, 0.5f)	),
+		VertexNormalColor(PyramidPos[2], Vector3(0.0f, -1.0f, 0.0f),	Vector4(1.0f, 0.0f, 0.0f, 0.5f)	),
+		VertexNormalColor(PyramidPos[3], Vector3(0.0f, -1.0f, 0.0f),	Vector4(1.0f, 0.0f, 0.0f, 0.5f)	),
+		VertexNormalColor(PyramidPos[4], Vector3(0.0f, -1.0f, 0.0f),	Vector4(1.0f, 0.0f, 0.0f, 0.5f)	)
 	};
 
 	int	PyramidIdx[18] = { 0, 4, 1, 2, 0, 1, 3, 0, 2, 4, 0, 3, 8, 6, 5, 7, 6, 8 };

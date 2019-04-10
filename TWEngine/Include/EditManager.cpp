@@ -30,7 +30,8 @@ CEditManager::CEditManager()
 	m_pXGizmoObj(nullptr),
 	m_pYGizmoObj(nullptr),
 	m_pZGizmoObj(nullptr),
-	m_pArm(nullptr)
+	m_pArm(nullptr),
+	m_bNaviEditorMode(false)
 {
 }
 

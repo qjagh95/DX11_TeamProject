@@ -474,7 +474,6 @@ void CRenderer::RenderShadow(float fTime)
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Component", &m_tComponentCBuffer);
 
 	CONTEXT->IASetInputLayout(m_pLayout);
-	//m_pShader->SetShader();
 
 	if (m_pMesh)
 	{
@@ -494,6 +493,53 @@ void CRenderer::RenderShadow(float fTime)
 CRenderer * CRenderer::Clone()
 {
 	return new CRenderer(*this);
+}
+
+void CRenderer::RenderNaviEditorMode(float fTime)
+{
+	UpdateTransform();
+
+	//if (m_pBoneTex)
+	//	return;
+
+	unordered_map<string, PRendererCBuffer>::iterator	iter;
+	unordered_map<string, PRendererCBuffer>::iterator	iterEnd = m_mapCBuffer.end();
+
+	for (iter = m_mapCBuffer.begin(); iter != iterEnd; ++iter)
+	{
+		GET_SINGLE(CShaderManager)->UpdateCBuffer(iter->first, iter->second->pBuffer);
+	}
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Component",
+		&m_tComponentCBuffer);
+
+	CONTEXT->IASetInputLayout(m_pLayout);
+
+	if (m_pMesh)
+	{
+		for (int i = 0; i < m_pMesh->GetContainCount(); ++i)
+		{
+			if (m_pMesh->IsSubset(i))
+			{
+				for (int j = 0; j < m_pMesh->GetSubsetCount(i); ++j)
+				{
+					m_pMaterial->SetShader(i, j);
+
+					m_pMesh->Render(i, j);
+
+					m_pMaterial->ResetShader((int)i, (int)j);
+				}
+			}
+			else
+			{
+				m_pMaterial->SetShader(i, 0);
+
+				m_pMesh->Render(i, 0);
+
+				m_pMaterial->ResetShader((int)i, 0);
+			}
+		}
+	}
 }
 
 void CRenderer::UpdateTransform()

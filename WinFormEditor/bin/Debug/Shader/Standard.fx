@@ -218,7 +218,7 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 
         output.vAlbedo = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV) * (tLight.vDif + tLight.vAmb) + tLight.vSpc;
     }
-    else
+    else if(g_isDeferred == RENDER_DEFERRED)
     {
         if (g_vMtrlDif.w == 1.f)
         {
@@ -251,6 +251,36 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 	}
 
 	return output;
+}
+
+VS_OUTPUT_3D StandardNaviEditorVS(VS_INPUT_3D input)
+{
+    VS_OUTPUT_3D output = (VS_OUTPUT_3D) 0;
+
+    float3 vPos = input.vPos - g_vPivot * g_vLength;
+
+    output.vViewPos = mul(float4(vPos, 1.f), g_matWV).xyz;
+    output.vProjPos = mul(float4(vPos, 1.f), g_matWVP);
+    output.vPos = output.vProjPos;
+    output.vUV = input.vUV;
+
+	// Normal을 View로 변환한다.
+    output.vNormal = normalize(mul(float4(input.vNormal, 0.f), g_matWV).xyz);
+
+    return output;
+}
+
+PS_OUTPUT_SINGLE StandardNaviEditorPS(VS_OUTPUT_3D input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    float4 vColor = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+
+    vColor.a = 0.5f;
+
+    output.vTarget0 = vColor;
+
+    return output;
 }
 
 VS_OUTPUT_3D StandardTexNormalVS(VS_INPUT_3D input)

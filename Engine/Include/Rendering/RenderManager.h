@@ -65,6 +65,7 @@ private:
 	PublicCBuffer				m_tCBuffer;
 	FinalPassCB					m_tFinalCBuffer;
 	StarLightScopeCB			m_tStarLightScope;
+	DepthFogCBuffer				m_tDepthFogCBuffer;
 
 	// Magic Number 찾는 용도의 변수들
 	class CPostEffect*	m_pPostEffect;
@@ -134,8 +135,11 @@ private:
 	void RenderFinalPassDebug(float _fTime);
 	void RenderShadowMap(float fTime);
 
+	void RenderNaviEditorMode(float fTime);
+
 public:
 	void FindMagicNumber(float fTime);
+
 
 	DECLARE_SINGLE(CRenderManager)
 };

@@ -186,8 +186,9 @@ cbuffer RimLight : register(b4)
     float g_fRimPower;
 }
 
-#define	RENDER_FORWARD	0
-#define	RENDER_DEFERRED	1
+#define	RENDER_FORWARD	    0
+#define	RENDER_DEFERRED	    1
+#define RENDER_NAVIEDITOR   2
 
 #define	A2D_ATLAS	0
 #define	A2D_FRAME	1

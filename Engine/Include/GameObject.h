@@ -103,6 +103,7 @@ public:
 	CGameObject* Clone();
 
 	void RenderShadow(float fTime);
+	void RenderNaviEditorMode(float fTime);
 
 public:
 	void AddChild(CGameObject* pChild);

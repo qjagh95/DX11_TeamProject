@@ -56,6 +56,7 @@ bool CTestScene::Init()
 
 	SAFE_RELEASE(pObject);
 
+
 	//CGameObject* pFogObj = CGameObject::CreateObject("FogObj", pDefaultLayer);
 	//pTransform = pFogObj->GetTransform();
 

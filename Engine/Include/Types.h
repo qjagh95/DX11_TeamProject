@@ -403,6 +403,14 @@ namespace PUN
 		}
 	}StarLightScopeCB, *PStarLightScopeCB;
 
+	typedef struct PUN_DLL _tagDepthFogCBuffer
+	{
+		Vector4 vFogColor;
+		float fStartDepth;
+		float fEndDepth;
+		Vector2 vEmpty;
+	}DepthFogCBuffer, *PDepthFogCBuffer;
+
 	///////////////////////////////// CONSTANT BUFFER END /////////////////////////////////
 
 

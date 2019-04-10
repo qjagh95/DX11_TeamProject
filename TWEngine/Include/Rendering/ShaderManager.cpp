@@ -154,6 +154,14 @@ bool CShaderManager::Init()
 	if (!LoadShader(LANDSCAPE_SHADER, TEXT("LandScape.fx"), pEntry))
 		return false;
 
+	//LandScapeNaviEditorPS
+
+	pEntry[ST_VERTEX] = (char*)"LandScapeVS";
+	pEntry[ST_PIXEL] = (char*)"LandScapeNaviEditorPS";
+
+	if (!LoadShader(LAND_NAVI_EDITOR_SHADER, TEXT("LandScape.fx"), pEntry))
+		return false;
+
 	pEntry[ST_VERTEX] = (char*)"SkyVS";
 	pEntry[ST_PIXEL] = (char*)"SkyPS";
 	if (!LoadShader("Sky", TEXT("Sky.fx"), pEntry))
@@ -170,6 +178,11 @@ bool CShaderManager::Init()
 	pEntry[ST_VERTEX] = (char*)"Vertex3DVS";
 	pEntry[ST_PIXEL] = (char*)"Vertex3DPS";
 	if (!LoadShader("Vertex3D", TEXT("Share.fx"), pEntry))
+		return false;
+
+	pEntry[ST_VERTEX] = (char*)"StandardNaviEditorVS";
+	pEntry[ST_PIXEL] = (char*)"StandardNaviEditorPS";
+	if (!LoadShader(NAVI_EDITOR_SHADER, TEXT("Standard.fx"), pEntry))
 		return false;
 
 	pEntry[ST_VERTEX] = (char*)"SSDVS";
@@ -294,6 +307,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("Particle",		10, sizeof(ParticleCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("HDRSecond",		10, sizeof(HDR2ndPassCB),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("LandScape",		11, sizeof(LandScapeCBuffer),	CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("DepthFog",		12, sizeof(DepthFogCBuffer),	CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Blur",			1,	sizeof(BlurCBuffer),		CST_COMPUTE);
 	CreateCBuffer("HDRFirst",		2,	sizeof(HDR1stPassCB),		CST_COMPUTE);
 	CreateCBuffer("Adaptation",		3,	sizeof(AdaptationCB),		CST_COMPUTE);

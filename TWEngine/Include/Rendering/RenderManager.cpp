@@ -147,6 +147,9 @@ bool CRenderManager::Init()
 	m_pShader[SHADER_SHADOW]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(SHADOWMAP_SHADER);
 	m_pShader[SHADER_SSAO]			= GET_SINGLE(CShaderManager)->FindShaderNonCount(SSAO_SHADER);
 	m_pShader[SHADER_STARLIGHT_SCOPE] = GET_SINGLE(CShaderManager)->FindShaderNonCount(STARLIGHTSCOPE_SHADER);
+	m_pShader[SHADER_LAND_EDITOR]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(LAND_NAVI_EDITOR_SHADER);
+	m_pShader[SHADER_OBJ_EDITOR]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(NAVI_EDITOR_SHADER);
+
 
 	m_pTarget[TARGET_ALBEDO]		= GET_SINGLE(CViewManager)->FindRenderTarget("Albedo");
 	m_pTarget[TARGET_DEPTH]			= GET_SINGLE(CViewManager)->FindRenderTarget("Depth");
@@ -166,6 +169,8 @@ bool CRenderManager::Init()
 	m_pTarget[TARGET_SSAO]			= GET_SINGLE(CViewManager)->FindRenderTarget("SSAO");
 	m_pTarget[TARGET_STARLIGHT_SCOPE] = GET_SINGLE(CViewManager)->FindRenderTarget("StarLightScope");
 
+	m_pTarget[TARGET_BACK]->SetClearColor(Vector4::Zero);
+
 	m_pState[STATE_DEPTH_GRATOR]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_GRATOR);
 	m_pState[STATE_DEPTH_LESS]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_LESS);
 	m_pState[STATE_ACC_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ACC_BLEND);
@@ -177,6 +182,8 @@ bool CRenderManager::Init()
 	m_pState[STATE_ALL_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ALL_BLEND);
 	m_pState[STATE_DEPTH_DISABLE]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_DISABLE);
 	m_pState[STATE_DEPTH_READ_ONLY] = GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_DISABLE);
+	m_pState[STATE_ALPHA_BLEND]		= GET_SINGLE(CViewManager)->FindRenderStateNonCount(ALPHA_BLEND);
+
 
 	((CDepthState*)m_pState[STATE_DEPTH_GRATOR])->SetStencilRef(1); //스텐실값을 1로 채운다.
 
@@ -218,6 +225,11 @@ bool CRenderManager::Init()
 
 	if (!m_pPostEffect->Init())
 		return false;
+	
+	m_tDepthFogCBuffer.vFogColor = Vector4(0.1f, 0.1f, 0.1f, 1.0f);
+	m_tDepthFogCBuffer.fStartDepth = 0.0f;
+	m_tDepthFogCBuffer.fEndDepth = 100.0f;
+
 
 	return true;
 }
@@ -380,13 +392,20 @@ void CRenderManager::Render3D(float fTime)
 	if (!m_bDeferred)
 		RenderForward(fTime);
 	else
-		RenderDeferred(fTime);
+	{
+		if (GET_SINGLE(CEditManager)->IsNaviEditorMode())
+			RenderNaviEditorMode(fTime);
+		else
+			RenderDeferred(fTime);
+	}
 
 	GET_SINGLE(CViewManager)->Render(fTime);
 }
 
 void CRenderManager::RenderDeferred(float fTime)
 {
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("DepthFog", &m_tDepthFogCBuffer);
+
 	// MainCamera를 얻어온다.
 	FindMagicNumber(fTime);
 
@@ -423,6 +442,7 @@ void CRenderManager::RenderDeferred(float fTime)
 #endif
 	
 	GET_SINGLE(CCollisionManager)->Render(fTime);
+
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{
 		CEditManager::GetInst()->Render(fTime);
@@ -870,6 +890,8 @@ void CRenderManager::RenderSkyObj(FAVORITE_TARGET eTarget, float fTime)
 	// Alpha 출력
 	m_pTarget[TARGET_DEPTH]->SetShader(11);
 
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
+	
 	for (int i = RG_ALPHA1; i <= RG_ALPHA3; ++i)
 	{
 		for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
@@ -877,6 +899,9 @@ void CRenderManager::RenderSkyObj(FAVORITE_TARGET eTarget, float fTime)
 			m_tRenderObj[i].pList[j]->Render(fTime);
 		}
 	}
+
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
+
 	m_pTarget[TARGET_DEPTH]->ResetShader(11);
 
 	m_pTarget[eTarget]->ResetTarget();
@@ -1143,6 +1168,57 @@ void CRenderManager::RenderShadowMap(float fTime)
 	m_pTarget[TARGET_SHADOWMAP]->ResetTarget();
 
 	GET_SINGLE(CDevice)->ResetVP();
+}
+
+void CRenderManager::RenderNaviEditorMode(float fTime)
+{
+	m_pTarget[TARGET_BACK]->ClearTarget();
+	m_pTarget[TARGET_BACK]->SetTarget();
+
+	m_pSkyObj->Render(fTime);
+
+	//m_pState[STATE_DEPTH_DISABLE]->SetState();
+	
+	m_pShader[SHADER_LAND_EDITOR]->SetShader();
+
+	for (int i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; ++i)
+	{
+		m_tRenderObj[RG_LANDSCAPE].pList[i]->RenderNaviEditorMode(fTime);
+	}
+
+	m_pShader[SHADER_OBJ_EDITOR]->SetShader();
+
+	m_pState[STATE_ALPHA_BLEND]->SetState();
+
+	for (int j = 0; j < m_tRenderObj[RG_NORMAL].iSize; ++j)
+	{
+		m_tRenderObj[RG_NORMAL].pList[j]->RenderNaviEditorMode(fTime);
+	}
+
+	m_pTarget[TARGET_BACK]->ResetTarget();
+	m_pState[STATE_ALPHA_BLEND]->ResetState();
+
+
+	m_pTarget[TARGET_BACK]->SetShader(0);
+
+	m_pShader[SHADER_FULL_SCREEN]->SetShader();
+
+	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
+
+	UINT iOffset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+	
+
+	//m_pState[STATE_DEPTH_DISABLE]->SetState();
+	
+
+	for (int i = RG_LANDSCAPE; i < RG_END; ++i)
+	{
+		m_tRenderObj[i].iSize = 0;
+	}
 }
 
 void CRenderManager::RenderComputeProcess(float fTime)

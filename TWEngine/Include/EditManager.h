@@ -46,6 +46,8 @@ private:
 	CAnimation*		m_pAnimation;
 	vector<struct _tagBoneKeyFrame*> m_vecDivideFrame;
 
+	bool			m_bNaviEditorMode;
+
 private:
 	enum eTransformType
 	{
@@ -64,6 +66,8 @@ public:
 
 	// 오브젝트
 public:
+	bool IsNaviEditorMode() const { return m_bNaviEditorMode; }
+
 	void GetSelectLayerObjList(string _strLayerTag, vector<string>* _pVec);
 	void SetActiveObject(const string _strObjectTag, const string _strLayerTag);
 	void SetActiveObject(class CGameObject* _pObject);

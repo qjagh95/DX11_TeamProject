@@ -128,3 +128,18 @@ PS_OUTPUT_GBUFFER LandScapePS(VS_OUTPUT_3D input)
 
 	return output;
 }
+
+PS_OUTPUT_SINGLE LandScapeNaviEditorPS(VS_OUTPUT_3D input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    float2 vDetailUV = input.vUV * g_fDetailLevel;
+
+    float4 vColor = g_DiffuseTex.Sample(g_DiffuseSmp, vDetailUV);
+
+    vColor.a = 1.0f;
+
+    output.vTarget0 = vColor;
+
+    return output;
+}
