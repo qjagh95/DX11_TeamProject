@@ -919,7 +919,7 @@
             this.RotateZ.Size = new System.Drawing.Size(64, 25);
             this.RotateZ.TabIndex = 27;
             this.RotateZ.TextChanged += new System.EventHandler(this.ChangeRotate);
-            this.RotateZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
+            this.RotateZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // Label_RotZ
             // 
@@ -942,7 +942,7 @@
             this.RotateY.Size = new System.Drawing.Size(64, 25);
             this.RotateY.TabIndex = 25;
             this.RotateY.TextChanged += new System.EventHandler(this.ChangeRotate);
-            this.RotateY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
+            this.RotateY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // Label_RotX
             // 
@@ -976,7 +976,7 @@
             this.RotateX.Size = new System.Drawing.Size(64, 25);
             this.RotateX.TabIndex = 23;
             this.RotateX.TextChanged += new System.EventHandler(this.ChangeRotate);
-            this.RotateX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
+            this.RotateX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // Label_Rotate
             // 
@@ -999,7 +999,7 @@
             this.ScaleZ.Size = new System.Drawing.Size(64, 25);
             this.ScaleZ.TabIndex = 20;
             this.ScaleZ.TextChanged += new System.EventHandler(this.ChangeScale);
-            this.ScaleZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
+            this.ScaleZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // Label_ScaleZ
             // 
@@ -1022,7 +1022,7 @@
             this.ScaleY.Size = new System.Drawing.Size(64, 25);
             this.ScaleY.TabIndex = 18;
             this.ScaleY.TextChanged += new System.EventHandler(this.ChangeScale);
-            this.ScaleY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
+            this.ScaleY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // Label_ScaleX
             // 
@@ -1056,7 +1056,7 @@
             this.ScaleX.Size = new System.Drawing.Size(64, 25);
             this.ScaleX.TabIndex = 16;
             this.ScaleX.TextChanged += new System.EventHandler(this.ChangeScale);
-            this.ScaleX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
+            this.ScaleX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // Label_Scale
             // 
@@ -1079,7 +1079,7 @@
             this.PositionZ.Size = new System.Drawing.Size(64, 25);
             this.PositionZ.TabIndex = 13;
             this.PositionZ.TextChanged += new System.EventHandler(this.ChangePosition);
-            this.PositionZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
+            this.PositionZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // Label_WorldPosition
             // 
@@ -1113,7 +1113,7 @@
             this.PositionY.Size = new System.Drawing.Size(64, 25);
             this.PositionY.TabIndex = 11;
             this.PositionY.TextChanged += new System.EventHandler(this.ChangePosition);
-            this.PositionY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
+            this.PositionY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // Label_PosX
             // 
@@ -1147,7 +1147,7 @@
             this.PositionX.Size = new System.Drawing.Size(64, 25);
             this.PositionX.TabIndex = 2;
             this.PositionX.TextChanged += new System.EventHandler(this.ChangePosition);
-            this.PositionX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.Transform_Press);
+            this.PositionX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // GB_Hierachy
             // 

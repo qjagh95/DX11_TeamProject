@@ -29,13 +29,14 @@ namespace WinFormEditor
         Dictionary<string, ObjectInfo> m_objInfo;
 
         // Member
-        private int    m_createObjCnt       = 0;
-        private bool   m_isChangeText       = false;
-        private string m_strClipName        = "";
-        private string m_strStartFrame      = "";
-        private string m_strEndFrame        = "";
-        private string m_strAniTime         = "";
-        private string m_strDeleteClip      = "";
+        private int m_createObjCnt = 0;
+        private bool m_isChangeText = false;
+        private string m_strClipName = "";
+        private string m_strStartFrame = "";
+        private string m_strEndFrame = "";
+        private string m_strAniTime = "";
+        private string m_strDeleteClip = "";
+        private EventHandler m_event = null;
 
         private void Run(object sender, EventArgs e)
         {
@@ -102,43 +103,43 @@ namespace WinFormEditor
             Point parentPoint = Location;
 
             // Form
-            m_dataRemoveForm                = new Form();
-            m_dataRemoveForm.Owner         = this;
+            m_dataRemoveForm = new Form();
+            m_dataRemoveForm.Owner = this;
             m_dataRemoveForm.StartPosition = FormStartPosition.Manual;
-            m_dataRemoveForm.Size          = new Size(218, 120);
-            m_dataRemoveForm.Location      = new Point(parentPoint.X + 13, parentPoint.Y + 125);
+            m_dataRemoveForm.Size = new Size(218, 120);
+            m_dataRemoveForm.Location = new Point(parentPoint.X + 13, parentPoint.Y + 125);
             m_dataRemoveForm.Show();
 
             // Label
-            Label labelRemoveInfo     = new Label();
-            labelRemoveInfo.AutoSize  = true;
-            labelRemoveInfo.Font      = new Font("맑은 고딕", 10, FontStyle.Bold);
-            labelRemoveInfo.Text      = "데이터를 삭제하시겠습니까?";
+            Label labelRemoveInfo = new Label();
+            labelRemoveInfo.AutoSize = true;
+            labelRemoveInfo.Font = new Font("맑은 고딕", 10, FontStyle.Bold);
+            labelRemoveInfo.Text = "데이터를 삭제하시겠습니까?";
             labelRemoveInfo.TextAlign = ContentAlignment.MiddleCenter;
-            labelRemoveInfo.Left      = 8;
-            labelRemoveInfo.Top       = 11;
+            labelRemoveInfo.Left = 8;
+            labelRemoveInfo.Top = 11;
             m_dataRemoveForm.Controls.Add(labelRemoveInfo);
 
             // Button (예)
-            Button btnRemove    = new Button();
-            btnRemove.Location  = new Point(20, 38);
-            btnRemove.Size      = new Size(75, 35);
-            btnRemove.Font      = new Font("맑은 고딕", 10, FontStyle.Bold);
-            btnRemove.Text      = "Remove";
+            Button btnRemove = new Button();
+            btnRemove.Location = new Point(20, 38);
+            btnRemove.Size = new Size(75, 35);
+            btnRemove.Font = new Font("맑은 고딕", 10, FontStyle.Bold);
+            btnRemove.Text = "Remove";
             btnRemove.ForeColor = Color.Red;
-            btnRemove.TabStop   = false;
+            btnRemove.TabStop = false;
             btnRemove.FlatAppearance.BorderSize = 1;
             btnRemove.Click += new System.EventHandler(BtnRemove);
             m_dataRemoveForm.Controls.Add(btnRemove);
 
             // Button (아니오)
-            Button btnCancel    = new Button();
-            btnCancel.Location  = new Point(105, 38);
-            btnCancel.Size      = new Size(75, 35);
-            btnCancel.Font      = new Font("맑은 고딕", 10, FontStyle.Bold);
-            btnCancel.Text      = "Cancel";
+            Button btnCancel = new Button();
+            btnCancel.Location = new Point(105, 38);
+            btnCancel.Size = new Size(75, 35);
+            btnCancel.Font = new Font("맑은 고딕", 10, FontStyle.Bold);
+            btnCancel.Text = "Cancel";
             btnCancel.ForeColor = Color.Blue;
-            btnCancel.TabStop   = false;
+            btnCancel.TabStop = false;
             btnCancel.FlatAppearance.BorderSize = 1;
             btnCancel.Click += new EventHandler(BtnCancel);
             m_dataRemoveForm.Controls.Add(btnCancel);
@@ -177,10 +178,10 @@ namespace WinFormEditor
                 for (int j = 0; j < arrObjTag.Length; ++j)
                 {
                     // 데이터 추가
-                    ObjectInfo info  = new ObjectInfo();
+                    ObjectInfo info = new ObjectInfo();
                     info.strLayerTag = arrLayerTag[i];
-                    info.vecScale    = new ObjectInfo.Vector3();
-                    info.vecRotate   = new ObjectInfo.Vector3();
+                    info.vecScale = new ObjectInfo.Vector3();
+                    info.vecRotate = new ObjectInfo.Vector3();
                     info.vecPosition = new ObjectInfo.Vector3();
                     m_objInfo.Add(arrObjTag[j], info);
 
@@ -246,7 +247,7 @@ namespace WinFormEditor
             // 오브젝트 선택
             int itemIndex = LB_ObjectList.SelectedIndex;
             string strObjectTag = LB_ObjectList.Items[itemIndex].ToString();
-            string strLayerTag  = m_objInfo[strObjectTag].strLayerTag;
+            string strLayerTag = m_objInfo[strObjectTag].strLayerTag;
             coreWrapper.SetActiveObject(strObjectTag, strLayerTag);
 
             // Transform
@@ -277,15 +278,15 @@ namespace WinFormEditor
         {
             // 오브젝트 생성
             string strObjectTag = "GameObject_" + m_createObjCnt;
-            string strLayerTag  = "Default"; 
+            string strLayerTag = "Default";
             coreWrapper.CreateObject(strObjectTag, strLayerTag);
             ++m_createObjCnt;
 
             // 데이터 추가
-            ObjectInfo info  = new ObjectInfo();
+            ObjectInfo info = new ObjectInfo();
             info.strLayerTag = strLayerTag;
-            info.vecScale    = new ObjectInfo.Vector3();
-            info.vecRotate   = new ObjectInfo.Vector3();
+            info.vecScale = new ObjectInfo.Vector3();
+            info.vecRotate = new ObjectInfo.Vector3();
             info.vecPosition = new ObjectInfo.Vector3();
             m_objInfo.Add(strObjectTag, info);
 
@@ -312,7 +313,7 @@ namespace WinFormEditor
             LB_ObjectList.SelectedIndexChanged -= ObjectList_ChangeSelectedItem;
 
             string strObjectTag = LB_ObjectList.SelectedItem.ToString();
-            string strLayerTag  = m_objInfo[strObjectTag].strLayerTag;
+            string strLayerTag = m_objInfo[strObjectTag].strLayerTag;
 
             coreWrapper.DeleteObject(strObjectTag, strLayerTag);
             m_objInfo.Remove(strObjectTag);
@@ -379,11 +380,11 @@ namespace WinFormEditor
 
                 // 기존 데이터 보관 및 삭제
                 int itemIndex = LB_ObjectList.SelectedIndex;
-                string strObjectTag  = LB_ObjectList.Items[itemIndex].ToString();
-                ObjectInfo tempData  = new ObjectInfo();
+                string strObjectTag = LB_ObjectList.Items[itemIndex].ToString();
+                ObjectInfo tempData = new ObjectInfo();
                 tempData.strLayerTag = m_objInfo[strObjectTag].strLayerTag;
-                tempData.vecScale    = new ObjectInfo.Vector3();
-                tempData.vecRotate   = new ObjectInfo.Vector3();
+                tempData.vecScale = new ObjectInfo.Vector3();
+                tempData.vecRotate = new ObjectInfo.Vector3();
                 tempData.vecPosition = new ObjectInfo.Vector3();
                 m_objInfo.Remove(strObjectTag);
 
@@ -407,7 +408,7 @@ namespace WinFormEditor
             {
                 int itemIndex = LB_ObjectList.SelectedIndex;
                 string strObjectTag = LB_ObjectList.Items[itemIndex].ToString();
-                string strLayerTag  = m_objInfo[strObjectTag].strLayerTag;
+                string strLayerTag = m_objInfo[strObjectTag].strLayerTag;
                 m_objInfo[strObjectTag].strLayerTag = CB_LayerList.SelectedItem.ToString();
                 coreWrapper.ChangeObjectInLayer(m_objInfo[strObjectTag].strLayerTag);
                 return;
@@ -415,78 +416,213 @@ namespace WinFormEditor
         }
 
         /*******************************************************************************************************/
+        // Key Check
+        // 최종 수정 : 2019.03.24 (김동규)
+        // 문제 있으면 바로 말해주세요 !!
+
+        private void KeyPressCheck(object sender, KeyPressEventArgs e)
+        {
+            // -, .(소수점), BK(BackSpace, 8번), 0 ~9(숫자)를 제외한 문자는 검사하지 않는다.
+            int changeASCII = Convert.ToInt32(e.KeyChar);
+            if ((changeASCII >= '0' && changeASCII <= '9') ||
+                 changeASCII == '-' || changeASCII == '.' || changeASCII == 8)
+            {
+                m_isChangeText = true;
+            }
+            else
+            {
+                // 위 키가 아닌 잘못된 형식의 값은 입력될 수 없다.
+                e.Handled = true;
+            }
+        }
+
+        private bool CheckStringForm(TextBox _textBox)
+        {
+            // 변경된 문자열 처리
+            if (m_isChangeText == true)
+            {
+                m_isChangeText = false;
+
+                int negativeCnt = 0;
+                int decimalCnt = 0;
+
+                // 문자열을 검사한다.
+                for (int i = 0; i < _textBox.Text.Length; ++i)
+                {
+                    string subStr = _textBox.Text.Substring(i, 1);
+
+                    // 문자열 0번째 위치에 .(소수점) 표시가 들어오는지 검사한다.
+                    if (i == 0 && subStr.CompareTo(".") == 0)
+                    {
+                        SetBeforeTBText(_textBox);
+                        return false;
+                    }
+                    else if (i > 0 && subStr.CompareTo(".") == 0)
+                    {
+                        subStr = _textBox.Text.Substring(i - 1, 1);
+                        if (subStr.CompareTo("-") == 0)
+                        {
+                            SetBeforeTBText(_textBox);
+                            return false;
+                        }
+                        else
+                        {
+                            if (decimalCnt == 0)
+                            {
+                                ++decimalCnt;
+                                continue;
+                            }
+                            else
+                            {
+                                SetBeforeTBText(_textBox);
+                                return false;
+                            }
+                        }
+                    }
+
+                    // -(음수) 문자가 문자열 0번째 위치가 아닌지 검사한다. 
+                    if (i > 0 && subStr.CompareTo("-") == 0)
+                    {
+                        SetBeforeTBText(_textBox);
+                        return false;
+                    }
+                    else if (i == 0 && subStr.CompareTo("-") == 0)
+                    {
+                        if (negativeCnt == 0)
+                        {
+                            ++negativeCnt;
+                            continue;
+                        }
+                        else
+                        {
+                            SetBeforeTBText(_textBox);
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private void SetBeforeTBText(TextBox _textBox)
+        {
+            // 오브젝트가 없는 경우
+            if (LB_ObjectList.SelectedItem == null)
+            {
+                MessageBox.Show("선택된 오브젝트가 없습니다.");
+            }
+            else
+            {
+                MessageBox.Show("잘못된 형식의 값이 들어왔습니다.");
+            }
+
+            // ChangePosition 이벤트 삭제
+            _textBox.TextChanged -= m_event;
+
+            if (_textBox.Text.Length > 0)
+            {
+
+                int strLength = _textBox.Text.Length;
+                _textBox.Text = _textBox.Text.Substring(0, strLength - 1);
+                _textBox.Select(_textBox.Text.Length, 0);
+            }
+
+            // ChangePosition 이벤트 추가
+            _textBox.TextChanged += m_event;
+        }
+
+        /*******************************************************************************************************/
         // Transform Component
         // 최종 수정 : 2019.03.24 (김동규)
         // 문제 있으면 바로 말해주세요 !!
 
-        private void Data_StringFormCheck(TextBox _sender)
+        private bool Data_StringFormCheck(TextBox _sender, TextBox _tbX, TextBox _tbY, TextBox _tbZ)
         {
             // 선택된 오브젝트 여부 검사
             // if(g_strObjTag != "") 조건으로도 가능
             if (LB_ObjectList.SelectedItem == null)
             {
                 SetBeforeTBText(_sender);
-                return;
+                return false;
+            }
+
+            // 음수를 표기할때 음수 자체만으로 데이터를 변환할 수 없다.
+            if (_tbX.Text == "-" || _tbY.Text == "-" || _tbZ.Text == "-")
+            {
+                return false;
             }
 
             // 형식 검사
-            CheckStringForm(_sender);
+            return CheckStringForm(_sender);
         }
 
         private void ChangePosition(object sender, EventArgs e)
         {
-            // 형식 검사
-            Data_StringFormCheck((TextBox)sender);
+            m_event = ChangePosition;
 
-            // 위치 변경
+            // 오브젝트 위치 변경
             if (PositionX.Text != "" && PositionY.Text != "" && PositionZ.Text != "")
             {
-                double dx = Convert.ToDouble(PositionX.Text);
-                double dy = Convert.ToDouble(PositionY.Text);
-                double dz = Convert.ToDouble(PositionZ.Text);
-                coreWrapper.ActiveObjSetPosition(dx, dy, dz);
+                bool isCheck = Data_StringFormCheck((TextBox)sender, PositionX, PositionY, PositionZ);
+                if (isCheck == true)
+                {
+                    double dx = Convert.ToDouble(PositionX.Text);
+                    double dy = Convert.ToDouble(PositionY.Text);
+                    double dz = Convert.ToDouble(PositionZ.Text);
+                    coreWrapper.ActiveObjSetPosition(dx, dy, dz);
+                    AddLogString(LB_ObjectList.SelectedItem.ToString() + "의 위치가 (" + dx + ", " + dy + ", " + dz + ")로 변경되었습니다.");
+                }
             }
         }
 
         private void ChangeScale(object sender, EventArgs e)
         {
-            // 형식 검사
-            Data_StringFormCheck((TextBox)sender);
+            m_event = ChangeScale;
 
             // 크기 변경
             if (ScaleX.Text != "" && ScaleY.Text != "" && ScaleZ.Text != "")
             {
-                double dx = Convert.ToDouble(ScaleX.Text);
-                double dy = Convert.ToDouble(ScaleY.Text);
-                double dz = Convert.ToDouble(ScaleZ.Text);
-                coreWrapper.ActiveObjSetScale(dx, dy, dz);
+                bool isCheck = Data_StringFormCheck((TextBox)sender, ScaleX, ScaleY, ScaleZ);
+                if (isCheck == true)
+                {
+                    double dx = Convert.ToDouble(ScaleX.Text);
+                    double dy = Convert.ToDouble(ScaleY.Text);
+                    double dz = Convert.ToDouble(ScaleZ.Text);
+                    coreWrapper.ActiveObjSetScale(dx, dy, dz);
+                    AddLogString(LB_ObjectList.SelectedItem.ToString() + "의 크기가 (" + dx + ", " + dy + ", " + dz + ")로 변경되었습니다.");
+                }
             }
         }
 
         private void ChangeRotate(object sender, EventArgs e)
         {
-            // 형식 검사
-            Data_StringFormCheck((TextBox)sender);
+            m_event = ChangeRotate;
 
             // 회전 변경
             if (RotateX.Text != "" && RotateY.Text != "" && RotateZ.Text != "")
             {
-                double dx = Convert.ToDouble(RotateX.Text);
-                double dy = Convert.ToDouble(RotateY.Text);
-                double dz = Convert.ToDouble(RotateZ.Text);
-                coreWrapper.ActiveObjSetRotate(dx, dy, dz);
+                bool isCheck = Data_StringFormCheck((TextBox)sender, RotateX, RotateY, RotateZ);
+                if (isCheck == true)
+                {
+                    double dx = Convert.ToDouble(RotateX.Text);
+                    double dy = Convert.ToDouble(RotateY.Text);
+                    double dz = Convert.ToDouble(RotateZ.Text);
+                    coreWrapper.ActiveObjSetRotate(dx, dy, dz);
+                    AddLogString(LB_ObjectList.SelectedItem.ToString() + "의 각도가 (" + dx + ", " + dy + ", " + dz + ")로 변경되었습니다.");
+                }
             }
         }
 
         private void LoadTransform(int _index)
         {
-            if(LB_ObjectList.SelectedItem == null)
+            if (LB_ObjectList.SelectedItem == null)
             {
                 return;
             }
 
             string strObjectTag = LB_ObjectList.Items[_index].ToString();
-            string strLayerTag  = m_objInfo[strObjectTag].strLayerTag;
+            string strLayerTag = m_objInfo[strObjectTag].strLayerTag;
 
             // Get World Transform(Scale, Rotate, Position)
             float[] arrSacle = coreWrapper.GetWorldTransform(strObjectTag, strLayerTag, (int)eTransformType.TT_SCALE);
@@ -523,108 +659,6 @@ namespace WinFormEditor
 
 
         /*******************************************************************************************************/
-        // Key Check
-        // 최종 수정 : 2019.03.24 (김동규)
-        // 문제 있으면 바로 말해주세요 !!
-
-        private void KeyPressCheck(object sender, KeyPressEventArgs e)
-        {
-            // -, .(소수점), BK(BackSpace, 8번), 0 ~9(숫자)를 제외한 문자는 검사하지 않는다.
-            int changeASCII = Convert.ToInt32(e.KeyChar);
-
-            if ((changeASCII >= '0' && changeASCII <= '9') ||
-                 changeASCII == '-' || changeASCII == '.' || changeASCII == 8)
-            {
-                m_isChangeText = true;
-            }
-        }
-
-        private void CheckStringForm(TextBox _textBox)
-        {
-            // 변경된 문자열 처리
-            if (m_isChangeText == true)
-            {
-                m_isChangeText = false;
-
-                int negativeCnt = 0;
-                int decimalCnt = 0;
-
-                // 문자열을 검사한다.
-                for (int i = 0; i < _textBox.Text.Length; ++i)
-                {
-                    string subStr = _textBox.Text.Substring(i, 1);
-
-                    // 문자열 0번째 위치에 .(소수점) 표시가 들어오는지 검사한다.
-                    if (i == 0 && subStr.CompareTo(".") == 0)
-                    {
-                        SetBeforeTBText(_textBox);
-                        return;
-                    }
-                    else if (i > 0 && subStr.CompareTo(".") == 0)
-                    {
-                        if (decimalCnt == 0)
-                        {
-                            ++decimalCnt;
-                            continue;
-                        }
-                        else
-                        {
-                            SetBeforeTBText(_textBox);
-                            return;
-                        }
-                    }
-
-                    // -(음수) 문자가 문자열 0번째 위치가 아닌지 검사한다. 
-                    if (i > 0 && subStr.CompareTo("-") == 0)
-                    {
-                        SetBeforeTBText(_textBox);
-                        return;
-                    }
-                    else if (i == 0 && subStr.CompareTo("-") == 0)
-                    {
-                        if (negativeCnt == 0)
-                        {
-                            ++negativeCnt;
-                            continue;
-                        }
-                        else
-                        {
-                            SetBeforeTBText(_textBox);
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void SetBeforeTBText(TextBox _textBox)
-        {
-            // 오브젝트가 없는 경우
-            if (LB_ObjectList.SelectedItem == null)
-            {
-                MessageBox.Show("선택된 오브젝트가 없습니다.");
-            }
-            else
-            {
-                MessageBox.Show("잘못된 형식의 값이 들어왔습니다.");
-            }
-
-            // ChangePosition 이벤트 삭제
-            _textBox.TextChanged -= ChangePosition;
-
-            if (_textBox.Text.Length > 0)
-            {
-
-                int strLength = _textBox.Text.Length;
-                _textBox.Text = _textBox.Text.Substring(0, strLength - 1);
-                _textBox.Select(_textBox.Text.Length, 0);
-            }
-
-            // ChangePosition 이벤트 추가
-            _textBox.TextChanged += ChangePosition;
-        }
-
-        /*******************************************************************************************************/
         // 파일 저장, 불러오기
         // 최종 수정 : 2019.03.24 (김동규)
         // 문제 있으면 바로 말해주세요 !!
@@ -635,15 +669,15 @@ namespace WinFormEditor
             // Title  : Dialog 창 이름 설정
             // Filter : 파일 형식 부분
             // AddExtension : 확장명 추가 여부
-            SaveFileDialog saveFile     = new SaveFileDialog();
-            string curDirectory         = Directory.GetCurrentDirectory();
-            string path                 = Directory.GetParent(curDirectory).Parent.Parent.FullName;
-            path                       += "\\3DClient\\bin\\Data";
-            saveFile.InitialDirectory   = path;
-            saveFile.Title              = "다른 이름으로 저장";
-            saveFile.Filter             = "데이터 파일(*.dat)|*.dat|모든파일(*.*)|*.*";
-            saveFile.DefaultExt         = "dat";
-            saveFile.AddExtension       = true;
+            SaveFileDialog saveFile = new SaveFileDialog();
+            string curDirectory = Directory.GetCurrentDirectory();
+            string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
+            path += "\\3DClient\\bin\\Data";
+            saveFile.InitialDirectory = path;
+            saveFile.Title = "다른 이름으로 저장";
+            saveFile.Filter = "데이터 파일(*.dat)|*.dat|모든파일(*.*)|*.*";
+            saveFile.DefaultExt = "dat";
+            saveFile.AddExtension = true;
             if (saveFile.ShowDialog() == DialogResult.OK)
             {
                 // 저장
@@ -653,14 +687,14 @@ namespace WinFormEditor
 
         private void FileLoad_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFile     = new OpenFileDialog();
-            string curDirectory         = Directory.GetCurrentDirectory();
-            string path                 = Directory.GetParent(curDirectory).Parent.Parent.FullName;
-            path                       += "\\3DClient\\bin\\Data";
-            openFile.InitialDirectory   = path;
-            openFile.Title              = "파일 불러오기";
-            openFile.FileName           = ".dat";
-            openFile.Filter             = "데이터 파일(*.dat) | *.dat; | 모든 파일(*.*) | *.*";
+            OpenFileDialog openFile = new OpenFileDialog();
+            string curDirectory = Directory.GetCurrentDirectory();
+            string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
+            path += "\\3DClient\\bin\\Data";
+            openFile.InitialDirectory = path;
+            openFile.Title = "파일 불러오기";
+            openFile.FileName = ".dat";
+            openFile.Filter = "데이터 파일(*.dat) | *.dat; | 모든 파일(*.*) | *.*";
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 // 불러오기
@@ -676,23 +710,10 @@ namespace WinFormEditor
 
         private void EditorForm_Load(object sender, EventArgs e)
         {
-            //LayerList.Items.Add("Stage");
-            //LayerList.Items.Add("Default");
-            //LayerList.Items.Add("UI");
-
             AnimationOptionBox.Items.Add("AO_LOOP");
             AnimationOptionBox.Items.Add("AO_ONCE_RETURN");
             AnimationOptionBox.Items.Add("AO_ONCE_DESTROY");
-
-            // ResourcManager에서 생성된 메시 목록을 불러온다.
-            //string[] arrString = coreWrapper.GetMeshNameList();
-            //for (int i = 0; i < arrString.Length; ++i)
-            //{
-            //    MeshList.Items.Add(arrString[i].ToString());
-            //}
         }
-
-        //Object Change Tag
 
         private void SetMesh_Click(object sender, EventArgs e)
         {
@@ -704,13 +725,12 @@ namespace WinFormEditor
             }
 
             string strTemp;
-
-            if(LB_MeshList.SelectedItem != null)
+            if (LB_MeshList.SelectedItem != null)
             {
                 strTemp = LB_MeshList.SelectedItem.ToString();
                 coreWrapper.SetMesh(strTemp);
             }
-            else if(LB_FileMesh.SelectedItem != null)
+            else if (LB_FileMesh.SelectedItem != null)
             {
                 strTemp = LB_FileMesh.SelectedItem.ToString();
                 coreWrapper.SetMesh(strTemp);
@@ -944,8 +964,6 @@ namespace WinFormEditor
         {
         }
 
-
-
         private void ClearLayerList()
         {
             //LB_LayerList.Items.Clear();
@@ -980,13 +998,7 @@ namespace WinFormEditor
 
         private void Transform_Press(object sender, KeyPressEventArgs e)
         {
-            if ((e.KeyChar >= (char)48 && e.KeyChar <= (char)57) || e.KeyChar == (char)46 || e.KeyChar == (char)8 || e.KeyChar == (char)127)
-            {
-            }
-            else
-            {
-                e.Handled = true;
-            }
+
         }
 
         private void Specular_Press(object sender, KeyPressEventArgs e)
