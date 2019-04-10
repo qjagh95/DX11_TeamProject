@@ -36,7 +36,6 @@ private:
 	GAME_MODE					m_eGameMode;
 	bool						m_bDeferred;
 	bool						m_bFogEnable;
-	bool						m_bSSAOEnable;
 	bool						m_isGetCameraObj;
 	float						m_accShakeTime;
 	CTexture*					m_pRandomNormalTex;
@@ -68,6 +67,7 @@ private:
 	StarLightScopeCB			m_tStarLightScope;
 
 	// Magic Number 찾는 용도의 변수들
+	class CPostEffect*		m_pPostEffect;
 	bool				m_bMagic;
 	bool				m_bHDR;
 	bool				m_bAdaptation;
@@ -75,6 +75,9 @@ private:
 	bool				m_bBlur;
 	bool				m_bMotionBlur;
 	bool				m_bSLC;
+	bool				m_bSSAOEnable;
+	bool				m_bDepthFog;
+	bool				m_HDROn;
 	float				m_fMiddleGrey;
 	float				m_fLumWhite;
 	float				m_fBloomTheshold;

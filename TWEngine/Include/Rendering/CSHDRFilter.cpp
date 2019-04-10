@@ -39,8 +39,17 @@ bool CCSHDRFilter::Init()
 
 void CCSHDRFilter::SetShaderResourceTo()
 {
+	float fMiddleGrey = m_pPostEffect->GetMiddleGrey();
+	float fLumWhite = m_pPostEffect->GetLumWhite();
+
+	m_pPostEffect->SetFinalPassCB(fMiddleGrey, fLumWhite);
 	m_vecUAV[HDR_SECOND]->SetSRV(m_iFinalPassRegister);
+
+#ifdef NDEBUG
 	m_pPostEffect->UpdateCBuffer(HDR_SECOND);
+#else
+
+#endif
 }
 
 void CCSHDRFilter::ResetShaderResourceFrom()

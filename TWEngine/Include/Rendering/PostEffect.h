@@ -6,6 +6,7 @@ PUN_BEGIN
 
 class PUN_DLL CPostEffect
 {
+	friend class CRenderManager;
 	friend class CCSHDRFilter;
 	friend class CCSAdaptFilter;
 	friend class CCSBloomFilter;
@@ -32,7 +33,12 @@ public:
 	float SetLumWhite(float fLumWhite);
 
 public:
+	float GetMiddleGrey()	const;
+	float GetLumWhite()		const;
+
+public:
 	void SetDownScaleCB(int iWidth, int iHeight, float fTime);
+	void SetFinalPassCB(float fMiddleGrey, float fLumWhite);
 	void SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime);
 	void SetAdaptationCB(float fAdaptation, float fTime);
 	void SetAdaptationCB(float fAdaptation, float fBloomThreshold, float fTime);

@@ -7,6 +7,7 @@
 #include "BlendState.h"
 #include "DepthState.h"
 #include "PostEffect.h"
+#include "CSFilter.h"
 #include "ViewManager.h"
 #include "EditManager.h"
 #include "RenderTarget.h"
@@ -41,6 +42,7 @@ CRenderManager::CRenderManager() :
 	m_pGBufferMultiTarget = NULLPTR;
 	m_pLightMultiTarget = NULLPTR;
 	m_pDownScaledGBufferMultiTarget = NULLPTR;
+	m_pPostEffect = nullptr;
 
 	memset(m_pState, 0, sizeof(CRenderState*) * STATE_END);
 	memset(m_pTarget, 0, sizeof(CRenderTarget*) * TARGET_END);
@@ -57,6 +59,13 @@ CRenderManager::CRenderManager() :
 	m_bBlur = false;
 	m_bMotionBlur = false;
 	m_bSLC = false;
+	m_HDROn = false;
+	m_bDepthFog = false;
+
+	m_fMiddleGrey = 0.f;
+	m_fLumWhite = 0.f;
+	m_fBloomTheshold = 0.f;
+	m_fBloomScale = 0.f;
 
 #ifdef _DEBUG
 	m_bMagic = true;
@@ -67,6 +76,7 @@ CRenderManager::CRenderManager() :
 
 CRenderManager::~CRenderManager()
 {
+	SAFE_DELETE(m_pPostEffect);
 	SAFE_RELEASE(m_pRandomNormalTex);
 	SAFE_RELEASE(m_pNoiseTex);
 	SAFE_RELEASE(m_pFogDepthSRV);
@@ -199,6 +209,12 @@ bool CRenderManager::Init()
 		m_pNoiseTex = CResourcesManager::GetInst()->FindTexture("Noise");
 	}
 	SetStarLightScope(0);
+
+	m_pPostEffect = new CPostEffect;
+
+	if (!m_pPostEffect->Init())
+		return false;
+
 	return true;
 }
 
@@ -1287,6 +1303,13 @@ void CRenderManager::FindMagicNumber(float fTime)
 		{
 			EnableFilter(CFT_DOWNSCALE);
 			EnableFilter(CFT_HDR);
+			ImGui::SliderFloat("MiddleGrey", &m_fMiddleGrey, 0.0f, 6.f);
+			ImGui::Text("MiddleGrey : %f", m_fMiddleGrey);
+			ImGui::SliderFloat("LumWhite", &m_fLumWhite, 0.0f, 6.f);
+			ImGui::Text("LumWhite : %f", m_fLumWhite);
+
+			m_pPostEffect->SetFinalPassCB(m_fMiddleGrey, m_fLumWhite, fTime);
+			m_pPostEffect->UpdateCBuffer(CFT_HDR);
 		}
 		else
 		{
@@ -1346,9 +1369,18 @@ void CRenderManager::FindMagicNumber(float fTime)
 			DisableFilter(CFT_MOTIONBLUR);
 		}
 
-		static float aaa = 0.0f;
-		ImGui::SliderFloat("HDR", &aaa, 0.0f, 10.0f);
-		ImGui::Text("aaa : %f", aaa);
+		ImGui::Checkbox("SSAO", &m_bSSAOEnable);
+		if (m_bSSAOEnable)
+			m_tCBuffer.iSSAOEnable = 1;
+		else
+			m_tCBuffer.iSSAOEnable = 0;
+
+		ImGui::Checkbox("DepthFog", &m_bDepthFog);
+
+		if (m_bDepthFog)
+			m_tFinalCBuffer.iDepthFog = 1;
+		else
+			m_tFinalCBuffer.iDepthFog = 0;
 
 		ImGui::End();
 	}

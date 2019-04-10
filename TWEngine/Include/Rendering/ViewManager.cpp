@@ -394,7 +394,7 @@ bool CViewManager::CreateUAV()
 		return false;
 	}
 
-	if (!CreateUAV("Temp1", VERTICAL_BLUR_SHADER, 180, 3, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	if (!CreateUAV("Temp1", VERTICAL_BLUR_SHADER, 320, 4, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
 	{
 		TrueAssert(true);
 		return false;

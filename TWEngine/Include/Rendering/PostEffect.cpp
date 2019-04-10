@@ -28,6 +28,16 @@ float CPostEffect::SetLumWhite(float fLumWhite)
 	return m_fLumWhite = fLumWhite;
 }
 
+float CPostEffect::GetMiddleGrey() const
+{
+	return m_fMiddleGrey;
+}
+
+float CPostEffect::GetLumWhite() const
+{
+	return m_fLumWhite;
+}
+
 void CPostEffect::SetDownScaleCB(int iWidth, int iHeight, float fTime)
 {
 	m_tDownScaleCBInfo.iHeight = iHeight;
@@ -36,10 +46,24 @@ void CPostEffect::SetDownScaleCB(int iWidth, int iHeight, float fTime)
 	m_tDownScaleCBInfo.iGroupSize = (int)ceil((iWidth * iHeight / 16) / 1024.f);
 }
 
+void CPostEffect::SetFinalPassCB(float fMiddleGrey, float fLumWhite)
+{
+	m_fMiddleGrey = fMiddleGrey;
+	m_fLumWhite = fLumWhite;
+
+	m_tFinalPassCBInfo.fMiddleGrey = m_fMiddleGrey;
+	m_tFinalPassCBInfo.fLumWhite = m_fLumWhite;
+	m_tFinalPassCBInfo.fMiddleGrey *= m_tFinalPassCBInfo.fMiddleGrey;
+	m_tFinalPassCBInfo.fLumWhite *= m_tFinalPassCBInfo.fLumWhite;
+}
+
 void CPostEffect::SetFinalPassCB(float fMiddleGrey, float fLumWhite, float fTime)
 {
-	m_tFinalPassCBInfo.fMiddleGrey = fMiddleGrey;
-	m_tFinalPassCBInfo.fLumWhite = fLumWhite;
+	m_fMiddleGrey = fMiddleGrey;
+	m_fLumWhite = fLumWhite;
+
+	m_tFinalPassCBInfo.fMiddleGrey = m_fMiddleGrey;
+	m_tFinalPassCBInfo.fLumWhite = m_fLumWhite;
 	m_tFinalPassCBInfo.fMiddleGrey *= m_tFinalPassCBInfo.fMiddleGrey;
 	m_tFinalPassCBInfo.fLumWhite *= m_tFinalPassCBInfo.fLumWhite;
 }
