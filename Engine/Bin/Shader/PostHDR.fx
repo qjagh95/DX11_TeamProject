@@ -84,8 +84,8 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
 
     if (g_iBlur == 1 || g_iMotionBlur == 1)
     {
-        //if (Focus < 0.5f)
-        vColor = BlurTex.Sample(PointSampler, Input.vUV.xy).xyz;
+        if (Focus < 0.5f)
+            vColor = BlurTex.Sample(PointSampler, Input.vUV.xy).xyz;
     }
 
     if (g_iDepthFog == 1)

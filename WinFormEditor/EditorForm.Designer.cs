@@ -152,6 +152,7 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.textBox9 = new System.Windows.Forms.TextBox();
+            this.CB_TargetChange = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -1261,6 +1262,7 @@
             // 
             // GB_Renderer
             // 
+            this.GB_Renderer.Controls.Add(this.CB_TargetChange);
             this.GB_Renderer.Controls.Add(this.CB_isDebugTarget);
             this.GB_Renderer.Controls.Add(this.FileMesh);
             this.GB_Renderer.Controls.Add(this.LB_FileMesh);
@@ -1596,6 +1598,18 @@
             this.textBox9.Size = new System.Drawing.Size(64, 25);
             this.textBox9.TabIndex = 2;
             // 
+            // CB_TargetChange
+            // 
+            this.CB_TargetChange.AutoSize = true;
+            this.CB_TargetChange.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.CB_TargetChange.Location = new System.Drawing.Point(136, 352);
+            this.CB_TargetChange.Name = "CB_TargetChange";
+            this.CB_TargetChange.Size = new System.Drawing.Size(140, 21);
+            this.CB_TargetChange.TabIndex = 9;
+            this.CB_TargetChange.Text = "CamTargetChange";
+            this.CB_TargetChange.UseVisualStyleBackColor = true;
+            this.CB_TargetChange.CheckedChanged += new System.EventHandler(this.CB_TargetChange_CheckedChanged);
+            // 
             // EditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -1770,6 +1784,7 @@
         private System.Windows.Forms.TrackBar TB_Range;
         private System.Windows.Forms.CheckBox CB_WireFrame;
         private System.Windows.Forms.CheckBox CB_isDebugTarget;
+        private System.Windows.Forms.CheckBox CB_TargetChange;
     }
 }
 

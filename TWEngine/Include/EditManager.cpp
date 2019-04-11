@@ -13,6 +13,7 @@
 #include "Component/Arm.h"
 #include "Component/ColliderOBB3D.h"
 #include "Component/Light.h"
+#include "Component/Camera.h"
 
 
 PUN_USING
@@ -31,12 +32,14 @@ CEditManager::CEditManager()
 	m_pYGizmoObj(nullptr),
 	m_pZGizmoObj(nullptr),
 	m_pArm(nullptr),
-	m_bNaviEditorMode(false)
+	m_bNaviEditorMode(false),
+	m_pFreeCamObj(nullptr)
 {
 }
 
 CEditManager::~CEditManager()
 {
+	SAFE_RELEASE(m_pFreeCamObj);
 	SAFE_RELEASE(m_pObject);
 	SAFE_RELEASE(m_pScene);
 	SAFE_RELEASE(m_pAnimation);
@@ -51,6 +54,24 @@ CEditManager::~CEditManager()
 	SAFE_RELEASE(m_pArm);
 }
 
+void CEditManager::SetFreeCamObj(CGameObject * _pObj)
+{
+	if (_pObj)
+	{
+		_pObj->AddRef();
+		m_pFreeCamObj = _pObj;
+	}
+}
+
+void CEditManager::SetArm(CArm * _pArm)
+{
+	if (_pArm)
+	{
+		_pArm->AddRef();
+		m_pArm = _pArm;
+	}
+}
+
 bool CEditManager::Init()
 {
 	m_pScene = CSceneManager::GetInst()->GetScene();
@@ -59,19 +80,20 @@ bool CEditManager::Init()
 		TrueAssert(true);
 		return false;
 	}
-	CLayer* pLayer = m_pScene->FindLayer("Gimzo");
+	CLayer* pLayer = m_pScene->FindLayer("Default");
 
 	m_pXGizmoObj = CGameObject::CreateObject("XGizmo", pLayer);
-	m_pArm = m_pXGizmoObj->AddComponent<CArm>("Arm");
-	m_pArm->SetTarget(m_pXGizmoObj);
+	m_pXGizmoObj->SetSave(false);
 	m_pXGizmo = m_pXGizmoObj->AddComponent<CGizmo>("XGizmo");
 	m_pXGizmo->SetGizmoType(GT_X);
 
 	m_pYGizmoObj = CGameObject::CreateObject("YGizmo", pLayer);
+	m_pYGizmoObj->SetSave(false);
 	m_pYGizmo = m_pYGizmoObj->AddComponent<CGizmo>("YGizmo");
 	m_pYGizmo->SetGizmoType(GT_Y);
 
 	m_pZGizmoObj = CGameObject::CreateObject("ZGizmo", pLayer);
+	m_pZGizmoObj->SetSave(false);
 	m_pZGizmo = m_pZGizmoObj->AddComponent<CGizmo>("ZGizmo");
 	m_pZGizmo->SetGizmoType(GT_Z);
 
@@ -381,6 +403,24 @@ void CEditManager::SetMesh(const string& _strMeshTag)
 	wstrFileName += L".msh";
 	pRenderer->SetMesh(_strMeshTag, wstrFileName.c_str());
 	SAFE_RELEASE(pRenderer);
+}
+
+void CEditManager::ChangeCameraTarget(bool _bTarget)
+{
+	if (_bTarget)
+	{
+		CCamera* pCamera = m_pScene->GetMainCamera();
+		pCamera->SetTarget(m_pObject);
+		m_pArm->SetTarget(m_pObject);
+		SAFE_RELEASE(pCamera);
+	}
+	else
+	{
+		CCamera* pCamera = m_pScene->GetMainCamera();
+		pCamera->SetTarget(m_pFreeCamObj);
+		m_pArm->SetTarget(m_pFreeCamObj);
+		SAFE_RELEASE(pCamera);
+	}
 }
 
 void CEditManager::LoadClipFromFullPath(const wstring& _strFullPath)

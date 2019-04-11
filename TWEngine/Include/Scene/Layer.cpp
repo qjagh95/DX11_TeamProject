@@ -48,21 +48,33 @@ void CLayer::Save(BinaryWrite* _pInstBW)
 {
 	// 오브젝트 개수
 	// (툴이 아닌 클라이언트에서 바로 로드될 경우 개수를 알 수 없기때문이다.)
-	_pInstBW->WriteData((int)m_ObjList.size());
-
-	// 오브젝트 목록
+	int iObjListSize = 0;
 	list<CGameObject*>::iterator iter;
 	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
 	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
 	{
-		_pInstBW->WriteData((*iter)->GetTag().c_str());	// 태그
-		_pInstBW->WriteData(this->GetTag().c_str());	// 오브젝트가 속해있는 레이어 태그
-		bool isDontDestroy = (*iter)->GetDontDestroy();
-		_pInstBW->WriteData(isDontDestroy);				// 오브젝트 삭제 여부
-		_pInstBW->WriteData(GetEnable());				// (비)활성화 상태
+		if ((*iter)->GetSave() == true)
+		{
+			++iObjListSize;
+		}
+	}
+	_pInstBW->WriteData(iObjListSize);
 
-		// Object Save 함수 호출
-		(*iter)->Save(_pInstBW);
+	// 오브젝트 목록
+	iterEnd = m_ObjList.end();
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetSave() == true)
+		{
+			_pInstBW->WriteData((*iter)->GetTag().c_str());	// 태그
+			_pInstBW->WriteData(this->GetTag().c_str());	// 오브젝트가 속해있는 레이어 태그
+			bool isDontDestroy = (*iter)->GetDontDestroy();
+			_pInstBW->WriteData(isDontDestroy);				// 오브젝트 삭제 여부
+			_pInstBW->WriteData(GetEnable());				// (비)활성화 상태
+
+			// Object Save 함수 호출
+			(*iter)->Save(_pInstBW);
+		}
 	}
 }
 

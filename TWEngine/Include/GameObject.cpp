@@ -25,6 +25,7 @@ CGameObject::CGameObject() :
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;
+	m_bSave = true;
 }
 
 CGameObject::CGameObject(const CGameObject & obj)

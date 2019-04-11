@@ -50,8 +50,18 @@ private:
 	int				m_iLayerZOrder;
 	int				m_iObjectListIdx;
 	bool			m_isFrustumCull;
+	bool			m_bSave;
 	class CColliderOBB3D* m_pPickingCollSphere;
 public:
+	void SetSave(bool _bSave)
+	{
+		m_bSave = _bSave;
+	}
+
+	bool GetSave() const
+	{
+		return m_bSave;
+	}
 	class CColliderOBB3D* GetPickingOBB() const;
 	void SetObjectListIndex(int _idx)
 	{

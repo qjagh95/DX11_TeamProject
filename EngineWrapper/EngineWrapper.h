@@ -139,6 +139,10 @@ namespace EngineWrapper
 			CEditManager::GetInst()->SetLightSpcularW((float)w);
 		}
 
+		void ChangeTarget(bool _bTarget)
+		{
+			CEditManager::GetInst()->ChangeCameraTarget(_bTarget);
+		}
 	// 메시
 	public:
 		cli::array<String^>^ GetMeshNameList();

@@ -22,27 +22,33 @@ CFreeCamera::~CFreeCamera()
 
 bool CFreeCamera::Init()
 {
-	GET_SINGLE(CInput)->BindAxis("Move", this, &CFreeCamera::Move);
-	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_W, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_S, -1.f);
-
-	GET_SINGLE(CInput)->BindAxis("Rotation", this, &CFreeCamera::Rotation);
-	GET_SINGLE(CInput)->AddKeyScale("Rotation", DIK_D, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("Rotation", DIK_A, -1.f);
+	GET_SINGLE(CInput)->BindAxis("YRotation", this, &CFreeCamera::Rotation);
+	GET_SINGLE(CInput)->AddKeyScale("YRotation", DIK_4, 1.f);
+	GET_SINGLE(CInput)->AddKeyScale("YRotation", DIK_3, -1.f);
 
 	GET_SINGLE(CInput)->BindAxis("XRotation", this, &CFreeCamera::XRotation);
 	GET_SINGLE(CInput)->AddKeyScale("XRotation", DIK_2, 1.f);
 	GET_SINGLE(CInput)->AddKeyScale("XRotation", DIK_1, -1.f);
 
-	GET_SINGLE(CInput)->BindAxis("YRotation", this, &CFreeCamera::ZRotation);
-	GET_SINGLE(CInput)->AddKeyScale("YRotation", DIK_4, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("YRotation", DIK_3, -1.f);
+	GET_SINGLE(CInput)->BindAxis("ZRotation", this, &CFreeCamera::ZRotation);
+	GET_SINGLE(CInput)->AddKeyScale("ZRotation", DIK_6, 1.f);
+	GET_SINGLE(CInput)->AddKeyScale("ZRotation", DIK_5, -1.f);
+
+	GET_SINGLE(CInput)->BindAxis("YMove", this, &CFreeCamera::YMove);
+	GET_SINGLE(CInput)->AddKeyScale("YMove", DIK_R, 1.f);
+	GET_SINGLE(CInput)->AddKeyScale("YMove", DIK_E, -1.f);
+
+	GET_SINGLE(CInput)->BindAxis("XMove", this, &CFreeCamera::XMove);
+	GET_SINGLE(CInput)->AddKeyScale("XMove", DIK_W, 1.f);
+	GET_SINGLE(CInput)->AddKeyScale("XMove", DIK_Q, -1.f);
+
+	GET_SINGLE(CInput)->BindAxis("ZMove", this, &CFreeCamera::ZMove);
+	GET_SINGLE(CInput)->AddKeyScale("ZMove", DIK_Y, 1.f);
+	GET_SINGLE(CInput)->AddKeyScale("ZMove", DIK_T, -1.f);
+
 
 	GET_SINGLE(CInput)->BindAxis("ZeroRotation", this, &CFreeCamera::RotationZero);
-	GET_SINGLE(CInput)->AddKeyScale("ZeroRotation", DIK_5, 1.f);
-
-	GET_SINGLE(CInput)->BindAxis("ZeroPosition", this, &CFreeCamera::PositionZero);
-	GET_SINGLE(CInput)->AddKeyScale("ZeroPosition", DIK_6, 1.f);
+	GET_SINGLE(CInput)->AddKeyScale("ZeroRotation", DIK_7, 1.f);
 
 	m_pTransform->SetWorldRot(Vector3::Zero);
 
@@ -90,7 +96,7 @@ void CFreeCamera::Rotation(float fScale, float fTime)
 	if (fScale == 0.f)
 		return;
 
-	m_pTransform->RotationY(180.f * fScale, fTime);
+	m_pScene->GetMainCameraTransformNonCount()->RotationY(50.f * fScale, fTime);
 }
 
 void CFreeCamera::XRotation(float fScale, float fTime)
@@ -98,7 +104,7 @@ void CFreeCamera::XRotation(float fScale, float fTime)
 	if (fScale == 0.f)
 		return;
 
-	m_pTransform->RotationX(180.f * fScale, fTime);
+	m_pScene->GetMainCameraTransformNonCount()->RotationX(50.f * fScale, fTime);
 }
 
 void CFreeCamera::ZRotation(float fScale, float fTime)
@@ -106,7 +112,31 @@ void CFreeCamera::ZRotation(float fScale, float fTime)
 	if (fScale == 0.f)
 		return;
 
-	m_pTransform->RotationZ(180.f * fScale, fTime);
+	m_pScene->GetMainCameraTransformNonCount()->RotationZ(50.f * fScale, fTime);
+}
+
+void CFreeCamera::XMove(float fScale, float fTime)
+{
+	if (fScale == 0.f)
+		return;
+
+	m_pTransform->Move(Vector3(1.f , 0.f ,0.f), 40.f * fScale, fTime);
+}
+
+void CFreeCamera::YMove(float fScale, float fTime)
+{
+	if (fScale == 0.f)
+		return;
+
+	m_pTransform->Move(Vector3(0.f, 1.f, 0.f), 40.f * fScale, fTime);
+}
+
+void CFreeCamera::ZMove(float fScale, float fTime)
+{
+	if (fScale == 0.f)
+		return;
+
+	m_pTransform->Move(Vector3(0.f, 0.f, 1.f), 40.f * fScale, fTime);
 }
 
 void CFreeCamera::RotationZero(float fScale, float fTime)

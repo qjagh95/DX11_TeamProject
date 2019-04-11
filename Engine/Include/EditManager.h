@@ -40,14 +40,16 @@ private:
 	CGameObject*	 m_pYGizmoObj;
 	CGameObject*	 m_pZGizmoObj;
 	class CArm*		 m_pArm;
-
+	CGameObject*	 m_pFreeCamObj;
 	class CEditTest* m_pEditTest;
 	vector<string>	m_vecstrObjList;
 	CAnimation*		m_pAnimation;
 	vector<struct _tagBoneKeyFrame*> m_vecDivideFrame;
 
 	bool			m_bNaviEditorMode;
-
+public:
+	void SetFreeCamObj(CGameObject* _pObj);
+	void SetArm(class CArm* _pArm);
 private:
 	enum eTransformType
 	{
@@ -86,7 +88,7 @@ public:
 public:
 	void GetMeshNameList(vector<string>* _pVec);
 	void SetMesh(const string& _strMeshTag);
-
+	void ChangeCameraTarget(bool _bTarget);
 	// 애니메이션
 public:
 	void LoadClipFromFullPath(const wstring& _strFullPath);

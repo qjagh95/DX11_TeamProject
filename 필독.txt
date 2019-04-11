@@ -66,3 +66,21 @@ PlayBgm
 
 변경점 : 릭 잡고, gui버그 수정
 ...
+
+=================================== 4/11 오전 01:01======================================================================
+Tool 이용시에
+ActiveObject
+Vector3(1,0,0) Move : J,L
+Vector3(0,1,0) Move : U,O
+Vector3(0,0,1) Move : I,K
+X축 회전 : NumPad 1,2
+Y축 회전 : NumPad 3,4
+Z축 회전 : NumPad 5,6
+
+FreeCam
+Vector3(1,0,0) Move : Q,W
+Vector3(0,1,0) Move : E,R
+Vector3(0,0,1) Move : T,Y
+X축 회전 : 1,2
+Y축 회전 : 3,4
+Z축 회전 : 5,6

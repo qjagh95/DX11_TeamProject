@@ -1106,5 +1106,10 @@ namespace WinFormEditor
             double dR = Convert.ToDouble(TB_SpcularPower.Text);
             coreWrapper.SetLightSpclularW(dR);
         }
+
+        private void CB_TargetChange_CheckedChanged(object sender, EventArgs e)
+        {
+            coreWrapper.ChangeTarget(CB_TargetChange.Checked);
+        }
     }
 }

@@ -194,6 +194,7 @@
     <ClInclude Include="SceneComponent\TestScene.h" />
     <ClInclude Include="SceneComponent\TrdTestScene.h" />
     <ClInclude Include="ClientHeader.h" />
+    <ClInclude Include="UserComponent\Door.h" />
     <ClInclude Include="UserComponent\Field.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Player.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="SceneComponent\StartScene.cpp" />
     <ClCompile Include="SceneComponent\TestScene.cpp" />
     <ClCompile Include="SceneComponent\TrdTestScene.cpp" />
+    <ClCompile Include="UserComponent\Door.cpp" />
     <ClCompile Include="UserComponent\Field.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
     <ClCompile Include="UserComponent\Player.cpp" />

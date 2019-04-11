@@ -28,6 +28,11 @@ public:
 	void Rotation(float fScale, float fTime);
 	void XRotation(float fScale, float fTime);
 	void ZRotation(float fScale, float fTime);
+
+	void XMove(float fScale, float fTime);
+	void YMove(float fScale, float fTime);
+	void ZMove(float fScale, float fTime);
+
 	void RotationZero(float fScale, float fTime);
 	void PositionZero(float fScale, float fTime);
 };

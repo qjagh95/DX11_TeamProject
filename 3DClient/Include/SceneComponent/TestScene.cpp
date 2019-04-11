@@ -29,12 +29,12 @@ CTestScene::~CTestScene()
 
 bool CTestScene::Init()
 {
-	PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
+	//PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
 
-	_SMgr->CreateSoundEffect("bgm1", TEXT("SurgeonAttack.wav"));
-	_SMgr->PlayBgm("bgm1");
-	
-	_SMgr->SetAudioCoordSize(16.f);
+	//_SMgr->CreateSoundEffect("bgm1", TEXT("SurgeonAttack.wav"));
+	//_SMgr->PlayBgm("bgm1");
+	//
+	//_SMgr->SetAudioCoordSize(16.f);
 
 	//PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
 

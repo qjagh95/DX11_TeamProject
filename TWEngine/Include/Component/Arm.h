@@ -27,7 +27,10 @@ public:
 public:
 	void EnableMouse();
 	void MouseRotation(float fTime);
-
+	void ClearArm()
+	{
+		m_fDistance = 5.f;
+	}
 public:
 	virtual bool Init();
 	virtual int Input(float fTime);

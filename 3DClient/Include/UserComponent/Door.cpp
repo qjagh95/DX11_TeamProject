@@ -137,16 +137,23 @@ void CDoor::Open()
 
 		if (m_iState & DOOR_DESTROYED)
 			return;
+
+		if (m_fCloseTime != 0.f)
+		{
+			float fRatioInv = fCurrTimer / m_fCloseTime;
+			fCurrTimer = m_fOpenTime * (1.f - fRatioInv);
+		}
 	}
 	else if (m_iState & DOOR_OPEN)
 		return;
-
-	fCurrTimer = 0.f;
+	else
+		fCurrTimer = 0.f;
 	m_iState = DOOR_ONACT | DOOR_OPEN;
 
 	if (m_pSndComp)
 	{
 		PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
+		pSnd->StopClip(0);
 		pSnd->Play(0);
 	}
 }
@@ -163,16 +170,23 @@ void CDoor::Close()
 			return;
 		if (m_iState & DOOR_DESTROYED)
 			return;
+
+		if (m_fOpenTime != 0.f)
+		{
+			float fRatioInv = fCurrTimer / m_fOpenTime;
+			fCurrTimer = m_fCloseTime * (1.f - fRatioInv);
+		}
 	}
 	else if (m_iState & DOOR_CLOSE)
 		return;
-
-	fCurrTimer = 0.f;
+	else
+		fCurrTimer = 0.f;
 	m_iState = DOOR_ONACT | DOOR_CLOSE;
 
 	if (m_pSndComp)
 	{
 		PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
+		pSnd->StopClip(1);
 		pSnd->Play(1);
 	}
 }

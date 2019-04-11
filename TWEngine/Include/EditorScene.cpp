@@ -4,6 +4,7 @@
 #include "Component/Light.h"
 #include "Component/Arm.h"
 #include "Component/FreeCamera.h"
+#include "EditManager.h"
 PUN_USING
 
 EditorScene::EditorScene()
@@ -30,7 +31,8 @@ bool EditorScene::Init()
 
 	//////////////Camera Target Object///////////////////////
 	CGameObject* pObject = CGameObject::CreateObject("FreeCamObj", pDefaultLayer);
-
+	pObject->SetSave(false);
+	CEditManager::GetInst()->SetFreeCamObj(pObject);
 	CTransform* pTr = pObject->GetTransform();
 	pTr->SetWorldPos(0.f, 200.f, 0.f);
 
@@ -43,7 +45,7 @@ bool EditorScene::Init()
 
 	pArm->EnableMouse();
 	pArm->SetTarget(pTr);
-
+	CEditManager::GetInst()->SetArm(pArm);
 	SAFE_RELEASE(pArm);
 
 	SAFE_RELEASE(pTr);
