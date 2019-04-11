@@ -18,7 +18,7 @@ VS_OUTPUT_SHADOW ShadowMapVS(VS_INPUT_3D input)
 			input.vBlendIndex);
     }
 
-    output.vProjPos = mul(float4(vPos, 1.f), g_matWVP);
+    output.vProjPos = mul(float4(vPos, 1.f), g_matWLP);
     output.vPos = mul(float4(vPos, 1.f), g_matWLP);
 
     return output;
@@ -33,3 +33,4 @@ PS_OUTPUT_SINGLE ShadowMapPS(VS_OUTPUT_SHADOW input)
 
     return output;
 }
+

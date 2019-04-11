@@ -207,14 +207,22 @@ bool CScene::Init()
 	m_LogText = CCore::GetInst()->CreateFileStream(Path, "Scene", "Scene");
 
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLayer, true);
+	CTransform* pTr = pLightObj->GetTransform();
+
+	pTr->RotationX(45.0f);
 
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
 	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
 	pLight->SetLightType(LT_DIR);
-	pLight->SetLightDirection(Vector3(1.0f, -1.0f, 1.0f));
+	
+	Vector3 vDir = pTr->GetWorldAxis(AXIS_Z);
+
+	pLight->SetLightDirection(vDir);
+	
 	m_pMainCamera->SetShadowLight(pLight->GetTransformNonCount());
 	m_pMainCamera->Shadow(true);
 
+	SAFE_RELEASE(pTr);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pLightObj);
 	SAFE_RELEASE(pLayer);

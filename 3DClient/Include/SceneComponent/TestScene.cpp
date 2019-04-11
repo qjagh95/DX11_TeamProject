@@ -222,15 +222,15 @@ bool CTestScene::Init()
 	SAFE_RELEASE(pDecalObj);*/
 
 
-	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
+	//CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
 
-	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
-	pLight->SetLightType(LT_DIR);
-	pLight->SetLightDirection(Vector3(0.0f, -1.0f, 0.0f));
+	//CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
+	//pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
+	//pLight->SetLightType(LT_DIR);
+	//pLight->SetLightDirection(Vector3(0.0f, -1.0f, 0.0f));
 
-	SAFE_RELEASE(pLight);
-	SAFE_RELEASE(pLightObj);
+	//SAFE_RELEASE(pLight);
+	//SAFE_RELEASE(pLightObj);
 
 	//CGameObject* pLandScapeObj = CGameObject::CreateObject("LandScape", pDefaultLayer);
 	//pTransform = pLandScapeObj->GetTransform();
@@ -368,6 +368,8 @@ bool CTestScene::Init()
 	pTransform->SetWorldRot(0.f, 0.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
 
+	pObject->SetRenderGroup(RG_LANDSCAPE);
+
 	SAFE_RELEASE(pTransform);
 
 	SAFE_RELEASE(pObject);
@@ -389,6 +391,8 @@ bool CTestScene::Init()
 		pTransform->SetWorldRot(0.f, 0.f, 0.f);
 		pTransform->SetWorldScale(0.2f);
 
+		pObject->SetRenderGroup(RG_LANDSCAPE);
+
 		SAFE_RELEASE(pTransform);
 
 		SAFE_RELEASE(pObject);
@@ -407,6 +411,8 @@ bool CTestScene::Init()
 	pTransform->SetWorldPos(240.f, 0.f, 0.f);
 	pTransform->SetWorldRot(0.f, 90.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
+
+	pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	SAFE_RELEASE(pTransform);
 
@@ -429,6 +435,8 @@ bool CTestScene::Init()
 		pTransform->SetWorldRot(0.f, 90.f, 0.f);
 		pTransform->SetWorldScale(0.2f);
 
+		pObject->SetRenderGroup(RG_LANDSCAPE);
+
 		SAFE_RELEASE(pTransform);
 
 		SAFE_RELEASE(pObject);
@@ -447,6 +455,8 @@ bool CTestScene::Init()
 	pTransform->SetWorldPos(240.f, 0.f, 280.f);
 	pTransform->SetWorldRot(0.f, 0.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
+
+	pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	SAFE_RELEASE(pTransform);
 
@@ -469,6 +479,8 @@ bool CTestScene::Init()
 		pTransform->SetWorldRot(0.f, 180.f, 0.f);
 		pTransform->SetWorldScale(0.2f);
 
+		pObject->SetRenderGroup(RG_LANDSCAPE);
+
 		SAFE_RELEASE(pTransform);
 
 		SAFE_RELEASE(pObject);
@@ -488,6 +500,8 @@ bool CTestScene::Init()
 	pTransform->SetWorldPos(-30.f, 0.f, 280.f);
 	pTransform->SetWorldRot(0.f, 270.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
+
+	pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	SAFE_RELEASE(pTransform);
 
@@ -510,6 +524,8 @@ bool CTestScene::Init()
 		pTransform->SetWorldRot(0.f, 90.f, 0.f);
 		pTransform->SetWorldScale(0.2f);
 
+		pObject->SetRenderGroup(RG_LANDSCAPE);
+
 		SAFE_RELEASE(pTransform);
 
 		SAFE_RELEASE(pObject);
@@ -527,6 +543,8 @@ bool CTestScene::Init()
 	pTransform->SetWorldPos(-30.f, 0.f, 50.f);
 	pTransform->SetWorldRot(0.f, 90.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
+
+	pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	SAFE_RELEASE(pTransform);
 

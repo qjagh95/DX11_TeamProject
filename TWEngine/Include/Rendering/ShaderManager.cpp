@@ -83,7 +83,15 @@ bool CShaderManager::Init()
 	if (!LoadShader(DS_GBUFFER_SHADER, TEXT("Standard.fx"), pEntry))
 		return false;
 
-	
+	pEntry[ST_VERTEX] = (char*)"FullScreenVS";
+	pEntry[ST_PIXEL] = (char*)"ShadowPS";
+	if (!LoadShader(SHADOWTEX_SHADER, TEXT("Standard.fx"), pEntry))
+		return false;
+
+	pEntry[ST_VERTEX] = (char*)"FullScreenVS";
+	pEntry[ST_PIXEL] = (char*)"DownScaleShadowPS";
+	if (!LoadShader(DOWNSCALE_SHADOW_SHADER, TEXT("Standard.fx"), pEntry))
+		return false;	
 
 	pEntry[ST_VERTEX] = (char*)"LightDirVS";
 	pEntry[ST_PIXEL] = (char*)"LightAccPS";

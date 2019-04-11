@@ -120,29 +120,17 @@ PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_TEX input)
 
     vProjPos *= vDepth.a;
 
-	// ShadowMap에서 위치를 얻어온다.
-    float4 vShadowMap = g_ShadowMap.Sample(g_GBufferSmp, input.vUV);
-    float4 vShadowProjPos = (float4) 0.f;
-
-    vShadowProjPos.x = input.vUV.x * 2.f - 1.f;
-	// y는 uv공간은 아래가 +값이다. 이 값을 3차원 공간에서는 위고 y+ 값이므로
-	// -2를 곱해서 아래가 -값이 될 수 있도록 해준다.
-    vShadowProjPos.y = input.vUV.y * -2.f + 1.f;
-    vShadowProjPos.z = vShadowMap.r;
-    vShadowProjPos.w = 1.f;
-
-    vShadowProjPos *= vShadowMap.a;
-
     float4 vDif = g_LightDifTex.Sample(g_GBufferSmp, UV);
     float4 vSpc = g_LightSpcTex.Sample(g_GBufferSmp, UV);
     float4 vAmb = (float4) 1.0f;
+    float4 vShadow = g_ShadowMap.Sample(g_GBufferSmp, UV);
 
     if(g_iSSAOEnable == 1)
         vAmb = g_AmbientMap.Sample(g_GBufferSmp, UV);
 
     float4 vColor = vAlbedo * vDif * vAmb + vSpc;
 
-    output.vTarget0 = vColor;
+    output.vTarget0 = vColor * vShadow;
 
     return output;
 }

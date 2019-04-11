@@ -137,6 +137,8 @@ private:
 	void RenderFinalPass(float _fTime);
 	void RenderFinalPassDebug(float _fTime);
 	void RenderShadowMap(float fTime);
+	void RenderShadowTexture(float fTime);
+	void DownScaleShadowTexture(float fTime);
 
 	void RenderNaviEditorMode(float fTime);
 

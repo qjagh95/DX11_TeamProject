@@ -677,11 +677,29 @@ bool CViewManager::CreateRenderTargetView()
 	vPos.x = 500.f;
 	vPos.y = 0.f;
 	if (!CreateRenderTarget("ShadowMap", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), Resolution(SHADOW_WIDTH, SHADOW_HEIGHT),
+		false, Vector4(0.f, 0.f, 0.f, 0.f), DXGI_FORMAT_D24_UNORM_S8_UINT))
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	vPos.x = 500.f;
+	vPos.y = 0.f;
+
+	if (!CreateRenderTarget("ShadowTarget", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION,
 		true, Vector4(0.f, 0.f, 0.f, 0.f), DXGI_FORMAT_D24_UNORM_S8_UINT))
 	{
 		TrueAssert(true);
 		return false;
 	}
+
+	if (!CreateRenderTarget("ShadowTexture", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), _RESOLUTION,
+		true, Vector4(0.f, 0.f, 0.f, 0.f)))
+	{
+		TrueAssert(true);
+		return false;
+	}
+	
 
 	if (!CreateMultiTarget("DownScaleGBuffer"))
 	{
@@ -705,9 +723,20 @@ bool CViewManager::CreateRenderTargetView()
 		return false;
 	}
 
+
+	vPos.x = 600.0f;
+	vPos.y = 0.0f;
+	if (!CreateRenderTarget("DownScaledShadow", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), tDSRes,
+		false, Vector4(0.f, 0.f, 0.f, 0.f), DXGI_FORMAT_D24_UNORM_S8_UINT))
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	AddMultiRenderTarget("DownScaleGBuffer", "DownScaledDepth");
 	AddMultiRenderTarget("DownScaleGBuffer", "DownScaledNormal");
 
+	vPos.x = 500.0f;
 	vPos.y = 100.0f;
 
 	if (!CreateRenderTarget("SSAO", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.f, 100.f, 1.f), tDSRes,
@@ -716,6 +745,9 @@ bool CViewManager::CreateRenderTargetView()
 		TrueAssert(true);
 		return false;
 	}
+
+
+	
 
 	return true;
 }

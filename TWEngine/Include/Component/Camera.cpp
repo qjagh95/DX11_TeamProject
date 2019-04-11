@@ -104,7 +104,8 @@ void CCamera::SetCameraType(CAMERA_TYPE eType)
 	switch (eType)
 	{
 	case CT_PERSPECTIVE:
-		m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle), SHADOW_WIDTH / (float)SHADOW_HEIGHT, m_fNear, m_fFar);
+		//m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle), SHADOW_WIDTH / (float)SHADOW_HEIGHT, m_fNear, m_fFar);
+		m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle), m_fWidth / m_fHeight, m_fNear, m_fFar);
 
 		m_matProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle), m_fWidth / m_fHeight, m_fNear, m_fFar);
 		break;
@@ -208,12 +209,15 @@ int CCamera::Update(float fTime)
 		Vector3	vLightAxis[AXIS_END];
 
 		for (int i = 0; i < AXIS_END; ++i)
+		{
 			vLightAxis[i] = m_pShadowLight->GetWorldAxis((AXIS)i);
+			vLightAxis[i].Normalize();
+		}
 
 		Vector3	vLightPos;
 
 		if (m_pTarget)
-			vLightPos = m_pTarget->GetWorldPos() - vLightAxis[AXIS_Z] * 30.f;
+			vLightPos = m_pTarget->GetWorldPos() - vLightAxis[AXIS_Z] * 20.f;
 		else
 			vLightPos = m_pTransform->GetWorldPos() + m_pTransform->GetWorldAxis(AXIS_Z) * 5.f - vLightAxis[AXIS_Z] * 30.f;
 

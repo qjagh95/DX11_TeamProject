@@ -154,7 +154,8 @@ bool CRenderManager::Init()
 	m_pShader[SHADER_STARLIGHT_SCOPE] = GET_SINGLE(CShaderManager)->FindShaderNonCount(STARLIGHTSCOPE_SHADER);
 	m_pShader[SHADER_LAND_EDITOR]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(LAND_NAVI_EDITOR_SHADER);
 	m_pShader[SHADER_OBJ_EDITOR]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(NAVI_EDITOR_SHADER);
-
+	m_pShader[SHADER_SHADOW_TEX]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(SHADOWTEX_SHADER);
+	m_pShader[SHADER_DS_SHADOW]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(DOWNSCALE_SHADOW_SHADER);
 
 	m_pTarget[TARGET_ALBEDO]		= GET_SINGLE(CViewManager)->FindRenderTarget("Albedo");
 	m_pTarget[TARGET_DEPTH]			= GET_SINGLE(CViewManager)->FindRenderTarget("Depth");
@@ -173,7 +174,11 @@ bool CRenderManager::Init()
 	m_pTarget[TARGET_DS_NORMAL]		= GET_SINGLE(CViewManager)->FindRenderTarget("DownScaledNormal");
 	m_pTarget[TARGET_SSAO]			= GET_SINGLE(CViewManager)->FindRenderTarget("SSAO");
 	m_pTarget[TARGET_STARLIGHT_SCOPE] = GET_SINGLE(CViewManager)->FindRenderTarget("StarLightScope");
+	m_pTarget[TARGET_SHADOW]		= GET_SINGLE(CViewManager)->FindRenderTarget("ShadowTarget");
+	m_pTarget[TARGET_SHADOW_TEX]	= GET_SINGLE(CViewManager)->FindRenderTarget("ShadowTexture");
+	m_pTarget[TARGET_DS_SHADOW]		= GET_SINGLE(CViewManager)->FindRenderTarget("DownScaledShadow");
 
+	m_pTarget[TARGET_SHADOW_TEX]->SetClearColor(Vector4::One);
 	m_pTarget[TARGET_BACK]->SetClearColor(Vector4::Zero);
 
 	m_pState[STATE_DEPTH_GRATOR]	= GET_SINGLE(CViewManager)->FindRenderStateNonCount(DEPTH_GRATOR);
@@ -426,6 +431,11 @@ void CRenderManager::RenderDeferred(float fTime)
 	RenderGBuffer(fTime);
 	// GBuffer를 이용해 데칼을 GBuffer에 추가하여 그린다.
 	RenderDecal(fTime);
+
+	//그림자 맵을 토대로 그림자 텍스쳐를 만들어 준다.
+	if (pMainCamera->IsShadow())
+		RenderShadowTexture(fTime);
+
 	// SSAO를 계산해준다.
 	if(m_bSSAOEnable)
 		RenderSSAO(fTime);
@@ -829,7 +839,7 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
 	m_pGBufferSampler->SetShader(10);
-	m_pTarget[TARGET_SHADOWMAP]->SetShader(16);
+	m_pTarget[TARGET_DS_SHADOW]->SetShader(16);
 
 	m_pFilter[CFT_BLUR]->SetShaderResourceTo(9, 1);
 
@@ -857,7 +867,7 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	m_pTarget[TARGET_ACC_DIFF]->ResetShader(14);
 	m_pTarget[TARGET_ACC_SPC]->ResetShader(15);
 	m_pTarget[TARGET_DEPTH]->ResetShader(12);
-	m_pTarget[TARGET_SHADOWMAP]->ResetShader(16);
+	m_pTarget[TARGET_DS_SHADOW]->ResetShader(16);
 
 	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 	m_pTarget[TARGET_BLEND]->ResetTarget();
@@ -1158,24 +1168,121 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 
 void CRenderManager::RenderShadowMap(float fTime)
 {
-	GET_SINGLE(CDevice)->SetShadowVP();
-
-	m_pTarget[TARGET_SHADOWMAP]->ClearTarget();
-	m_pTarget[TARGET_SHADOWMAP]->SetTarget();
+	m_pTarget[TARGET_SHADOW]->ClearTarget();
+	m_pTarget[TARGET_SHADOW]->SetTarget();
 
 	m_pShader[SHADER_SHADOW]->SetShader();
 
-	for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
+	//for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
+	//{
+	//	for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
+	//	{
+	//		m_tRenderObj[i].pList[j]->RenderShadow(fTime);
+	//	}
+	//}
+
+	for (int j = 0; j < m_tRenderObj[RG_NORMAL].iSize; ++j)
 	{
-		for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
-		{
-			m_tRenderObj[i].pList[j]->RenderShadow(fTime);
-		}
+		m_tRenderObj[RG_NORMAL].pList[j]->RenderShadow(fTime);
 	}
 
-	m_pTarget[TARGET_SHADOWMAP]->ResetTarget();
+	m_pTarget[TARGET_SHADOW]->ResetTarget();
+}
 
-	GET_SINGLE(CDevice)->ResetVP();
+void CRenderManager::RenderShadowTexture(float fTime)
+{
+	TransformCBuffer	tCBuffer = {};
+
+	CCamera* pCamera = GET_SINGLE(CSceneManager)->GetMainCameraNoneCount();
+
+	tCBuffer.matVP		= pCamera->GetViewMatrix() * pCamera->GetProjMatrix();
+	tCBuffer.matInvVP = tCBuffer.matVP;
+	tCBuffer.matInvVP.Inverse();
+	tCBuffer.matLP		= pCamera->GetShadowViewMatrix() * pCamera->GetShadowProjMatrix();
+
+	tCBuffer.matVP.Transpose();
+	tCBuffer.matInvVP.Transpose();
+	tCBuffer.matLP.Transpose();
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform", &tCBuffer);
+
+	m_pTarget[TARGET_SHADOW_TEX]->ClearTarget();
+	m_pTarget[TARGET_SHADOW_TEX]->SetTarget();
+
+	m_pTarget[TARGET_SHADOW]->SetShader(10);
+	m_pTarget[TARGET_DEPTH]->SetShader(11);
+
+	m_pShader[SHADER_SHADOW_TEX]->SetShader();
+
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
+
+	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
+
+	UINT iOffset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
+
+	m_pTarget[TARGET_SHADOW]->ResetShader(10);
+	m_pTarget[TARGET_DEPTH]->ResetShader(11);
+
+	m_pTarget[TARGET_SHADOW_TEX]->ResetTarget();
+
+	DownScaleShadowTexture(fTime);
+}
+
+void CRenderManager::DownScaleShadowTexture(float fTime)
+{
+	m_pTarget[TARGET_DS_SHADOW]->ClearTarget();
+	m_pTarget[TARGET_DS_SHADOW]->SetTarget();
+
+	m_pTarget[TARGET_SHADOW_TEX]->SetShader(10);
+	m_pShader[SHADER_DS_SHADOW]->SetShader();
+
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
+
+	UINT iOffset = 0;
+	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
+
+	m_pTarget[TARGET_SHADOW_TEX]->ResetShader(10);
+
+	m_pTarget[TARGET_DS_SHADOW]->ResetTarget();
+
+	int iEnable = 0;
+	int iDOF = 0;
+	if (!m_pFilter[CFT_BLUR]->GetEnable())
+	{
+		iEnable = 1;
+		m_pFilter[CFT_BLUR]->Enable();
+	}
+
+	if (((CCSBlur*)m_pFilter[CFT_BLUR])->GetDOFEnable())
+	{
+		((CCSBlur*)m_pFilter[CFT_BLUR])->DisableDOF();
+		iDOF = 1;
+	}
+
+	m_pFilter[CFT_BLUR]->ChangeSourceSRV(m_pTarget[TARGET_DS_SHADOW]->GetShaderResourceView());
+
+	m_pFilter[CFT_BLUR]->Dispatch(fTime);
+
+	m_pFilter[CFT_BLUR]->ResetSourceSRV();
+
+	if (iEnable == 1)
+		m_pFilter[CFT_BLUR]->Disable();
+	if (iDOF == 1)
+		((CCSBlur*)m_pFilter[CFT_BLUR])->EnableDOF();
+
+	CONTEXT->CopyResource(m_pTarget[TARGET_DS_SHADOW]->GetTexture(), ((CCSBlur*)m_pFilter[CFT_BLUR])->GetTexture());
 }
 
 void CRenderManager::RenderNaviEditorMode(float fTime)

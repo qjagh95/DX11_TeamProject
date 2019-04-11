@@ -27,6 +27,7 @@ private:
 	BlurCBuffer	 m_tBlurCBuffer;
 
 public:
+	ID3D11Texture2D* GetTexture() const;
 	bool GetDOFEnable();
 	void EnableDOF();
 	void DisableDOF();

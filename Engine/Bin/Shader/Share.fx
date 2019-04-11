@@ -128,6 +128,8 @@ cbuffer Transform	: register(b0)
     matrix  g_matInvWVP;
     matrix  g_matInvProj;
     matrix  g_matVP;
+    matrix  g_matInvVP;
+    matrix  g_matLP;
 	float3	g_vPivot;
 	float	g_fEmptyTr;
 	float3	g_vLength;

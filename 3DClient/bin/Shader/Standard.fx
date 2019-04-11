@@ -345,6 +345,67 @@ PS_OUTPUT_SINGLE FullScreenPS(VS_OUTPUT_TEX input)
 	return output;
 }
 
+Texture2D g_ShadowTex : register(t10);
+Texture2D g_DepthTex : register(t11);
+
+PS_OUTPUT_SINGLE ShadowPS(VS_OUTPUT_TEX input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    float4 vDepth = g_DepthTex.Sample(PointSampler, input.vUV);
+
+    float4 vProjPos = (float4) 0;
+
+    vProjPos.x = input.vUV.x * 2.0f - 1.0f;
+    vProjPos.y = input.vUV.y * -2.0f + 1.0f;
+    vProjPos.z = vDepth.x;
+    vProjPos.w = 1.0f;
+
+    vProjPos *= vDepth.w;
+
+    float4 vShadowProjPos = mul(vProjPos, g_matInvVP);
+    vShadowProjPos = mul(vShadowProjPos, g_matLP);
+    
+    float2 vShadowUV = vShadowProjPos.xy / vShadowProjPos.w;
+
+    vShadowUV.x = saturate(vShadowUV.x * 0.5f + 0.5f);
+    vShadowUV.y = saturate(vShadowUV.y * -0.5f + 0.5f);
+
+    float4 vShadowDepth = g_ShadowTex.Sample(PointSampler, vShadowUV);
+
+    if(vShadowDepth.w == 0.0f)
+        clip(-1);
+
+    float4 vColor = (float4) 0;
+
+    float fShadowBias = 1.0f;
+
+    float fPixelToLight = vShadowProjPos.w;
+    float fAmbientPixel = vShadowDepth.w + fShadowBias;
+
+    if (fPixelToLight > fAmbientPixel)
+        vColor = float4(0.2f, 0.2f, 0.2f, 1.0f);
+    else
+        vColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    
+    output.vTarget0 = vColor;
+
+    return output;
+}
+
+PS_OUTPUT_SINGLE DownScaleShadowPS(VS_OUTPUT_TEX input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    float2 vUV = input.vUV * 2.0f;
+
+    float4 vColor = g_ShadowTex.Sample(PointSampler, vUV);
+
+    output.vTarget0 = vColor;
+
+    return output;
+}
+
 Texture2D g_DepthTexture : register(t10);
 Texture2D g_NormalTexture : register(t11);
 Texture2D g_RandomNormalTex : register(t12);

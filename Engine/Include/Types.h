@@ -154,6 +154,8 @@ namespace PUN
 		Matrix	matInvWVP;
 		Matrix  matInvProj;
 		Matrix	matVP;
+		Matrix	matInvVP;
+		Matrix	matLP;
 		Vector3	vPivot;
 		float	fEmpty;
 		Vector3	vLength;

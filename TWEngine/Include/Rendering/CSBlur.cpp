@@ -22,6 +22,13 @@ CCSBlur::~CCSBlur()
 {
 }
 
+ID3D11Texture2D* CCSBlur::GetTexture() const
+{
+	ID3D11Texture2D* pTex = m_vecUAV[BLUR_VERTICAL]->GetResource<ID3D11Texture2D>();
+
+	return pTex;
+}
+
 bool CCSBlur::GetDOFEnable()
 {
 	if (m_tBlurCBuffer.iDepthOfField == 0)

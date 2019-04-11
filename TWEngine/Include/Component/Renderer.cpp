@@ -559,12 +559,16 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matProj = pMainCamera->GetProjMatrix();
 	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
 	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
-	tCBuffer.matWLP = tCBuffer.matWorld * pMainCamera->GetShadowViewMatrix() * pMainCamera->GetShadowProjMatrix();
+	tCBuffer.matLP = pMainCamera->GetShadowViewMatrix() *	pMainCamera->GetShadowProjMatrix();
+	tCBuffer.matWLP = tCBuffer.matWorld * tCBuffer.matLP;
 	tCBuffer.matInvWVP = tCBuffer.matWVP;
 	tCBuffer.matInvWVP.Inverse();
 	tCBuffer.matInvProj = tCBuffer.matProj;
 	tCBuffer.matInvProj.Inverse();
 	tCBuffer.matVP = tCBuffer.matView * tCBuffer.matProj;
+	tCBuffer.matInvVP = tCBuffer.matVP;
+	tCBuffer.matInvVP.Inverse();
+
 	tCBuffer.vPivot = m_pTransform->GetPivot();
 
 	if (m_pMesh)
@@ -581,6 +585,8 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matWLP.Transpose();
 	tCBuffer.matInvProj.Transpose();
 	tCBuffer.matVP.Transpose();
+	tCBuffer.matLP.Transpose();
+	tCBuffer.matInvVP.Transpose();
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform",
 		&tCBuffer);
@@ -599,12 +605,17 @@ void CRenderer::UpdateShadowTransform()
 	tCBuffer.matProj = pMainCamera->GetShadowProjMatrix();
 	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
 	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
-	tCBuffer.matWLP = tCBuffer.matWorld * pMainCamera->GetShadowViewMatrix() *	pMainCamera->GetShadowProjMatrix();
+	tCBuffer.matLP = pMainCamera->GetShadowViewMatrix() *	pMainCamera->GetShadowProjMatrix();
+	tCBuffer.matWLP = tCBuffer.matWorld * tCBuffer.matLP;
 	tCBuffer.matInvWVP = tCBuffer.matWVP;
 	tCBuffer.matInvWVP.Inverse();
 	tCBuffer.matInvProj = tCBuffer.matProj;
 	tCBuffer.matInvProj.Inverse();
 	tCBuffer.matVP = tCBuffer.matView * tCBuffer.matProj;
+	tCBuffer.matInvVP = tCBuffer.matVP;
+	tCBuffer.matInvVP.Inverse();
+
+
 	tCBuffer.vPivot = m_pTransform->GetPivot();
 	if(m_pMesh != nullptr)
 	tCBuffer.vLength = m_pMesh->GetLength();
@@ -618,6 +629,8 @@ void CRenderer::UpdateShadowTransform()
 	tCBuffer.matInvWVP.Transpose();
 	tCBuffer.matInvProj.Transpose();
 	tCBuffer.matVP.Transpose();
+	tCBuffer.matLP.Transpose();
+	tCBuffer.matInvVP.Transpose();
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform", &tCBuffer);
 
