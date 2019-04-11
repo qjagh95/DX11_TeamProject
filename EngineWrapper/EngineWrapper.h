@@ -9,7 +9,6 @@
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
 #include <cliext/vector>
-
 #include <Resource/ResourcesManager.h>
 #include <Rendering/RenderManager.h>
 #include <Rendering/ViewManager.h>
@@ -88,7 +87,7 @@ namespace EngineWrapper
 		{
 			CEditManager::GetInst()->SetLightType((LIGHT_TYPE)eType);
 		}
-		
+
 		void SetLightDirX(int x)
 		{
 			CEditManager::GetInst()->SetLightDirX((float)x);
@@ -182,6 +181,30 @@ namespace EngineWrapper
 		{
 			CEditManager::GetInst()->SetMouseWheel((short)_iWheel);
 		}
+	  /////////////////////Navi/////////////////////////////////////////////////
+		int GetSelectNaviIndex()
+		{
+			return CEditManager::GetInst()->GetNaviSelectIndex();
+		}
+		bool CreateTestLandScape(int _iX, int _iZ)
+		{
+			return CEditManager::GetInst()->CreateLandScape(_iX, _iZ);
+		}
+		void SetNaviEditorMode(bool _bMode)
+		{
+			CEditManager::GetInst()->SetNaviEditorMode(_bMode);
+		}
+		
+		void SaveNavFile(String^ FullPath)
+		{
+			string strFullPath = ConvertMarshal<string, String^>(FullPath);
+			CEditManager::GetInst()->SaveNavFile(strFullPath);
+		}
 
+		void LoadNavFile(String^ FullPath)
+		{
+			string strFullPath = ConvertMarshal<string, String^>(FullPath);
+			CEditManager::GetInst()->LoadNavFile(strFullPath);
+		}
 	};
 }

@@ -91,6 +91,18 @@
             this.label22 = new System.Windows.Forms.Label();
             this.CB_LightType = new System.Windows.Forms.ComboBox();
             this.NavigationPage = new System.Windows.Forms.TabPage();
+            this.label38 = new System.Windows.Forms.Label();
+            this.TB_TileFlag = new System.Windows.Forms.TextBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.label36 = new System.Windows.Forms.Label();
+            this.CB_isNaviEditor = new System.Windows.Forms.CheckBox();
+            this.TB_NumZ = new System.Windows.Forms.TextBox();
+            this.label35 = new System.Windows.Forms.Label();
+            this.TB_NumX = new System.Windows.Forms.TextBox();
+            this.BT_DeleteNavi = new System.Windows.Forms.Button();
+            this.BT_CreateNavi = new System.Windows.Forms.Button();
+            this.BT_NaviLoad = new System.Windows.Forms.Button();
+            this.BT_NaviSave = new System.Windows.Forms.Button();
             this.LB_MeshList = new System.Windows.Forms.ListBox();
             this.GB_Transform = new System.Windows.Forms.GroupBox();
             this.RotateZ = new System.Windows.Forms.TextBox();
@@ -115,6 +127,7 @@
             this.Label_PosY = new System.Windows.Forms.Label();
             this.PositionX = new System.Windows.Forms.TextBox();
             this.GB_Hierachy = new System.Windows.Forms.GroupBox();
+            this.CB_ObjectSave = new System.Windows.Forms.CheckBox();
             this.Btn_ObjectDelete = new System.Windows.Forms.Button();
             this.LB_ObjectList = new System.Windows.Forms.ListBox();
             this.Btn_FileSave = new System.Windows.Forms.Button();
@@ -124,6 +137,7 @@
             this.Label_BasicMesh = new System.Windows.Forms.Label();
             this.Btn_AddMesh = new System.Windows.Forms.Button();
             this.GB_Renderer = new System.Windows.Forms.GroupBox();
+            this.CB_TargetChange = new System.Windows.Forms.CheckBox();
             this.CB_isDebugTarget = new System.Windows.Forms.CheckBox();
             this.FileMesh = new System.Windows.Forms.Label();
             this.LB_FileMesh = new System.Windows.Forms.ListBox();
@@ -152,7 +166,7 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.textBox9 = new System.Windows.Forms.TextBox();
-            this.CB_TargetChange = new System.Windows.Forms.CheckBox();
+            this.TB_NaviIndex = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -163,6 +177,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.TB_LightZDir)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TB_LightYDir)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TB_LightXDir)).BeginInit();
+            this.NavigationPage.SuspendLayout();
             this.GB_Transform.SuspendLayout();
             this.GB_Hierachy.SuspendLayout();
             this.GB_Renderer.SuspendLayout();
@@ -228,9 +243,9 @@
             // 
             this.Btn_ObjectCreate.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.Btn_ObjectCreate.ForeColor = System.Drawing.Color.Black;
-            this.Btn_ObjectCreate.Location = new System.Drawing.Point(5, 639);
+            this.Btn_ObjectCreate.Location = new System.Drawing.Point(5, 657);
             this.Btn_ObjectCreate.Name = "Btn_ObjectCreate";
-            this.Btn_ObjectCreate.Size = new System.Drawing.Size(95, 77);
+            this.Btn_ObjectCreate.Size = new System.Drawing.Size(95, 59);
             this.Btn_ObjectCreate.TabIndex = 5;
             this.Btn_ObjectCreate.Text = "Create";
             this.Btn_ObjectCreate.UseVisualStyleBackColor = true;
@@ -859,11 +874,148 @@
             // NavigationPage
             // 
             this.NavigationPage.BackColor = System.Drawing.SystemColors.Control;
+            this.NavigationPage.Controls.Add(this.label38);
+            this.NavigationPage.Controls.Add(this.TB_TileFlag);
+            this.NavigationPage.Controls.Add(this.label37);
+            this.NavigationPage.Controls.Add(this.TB_NaviIndex);
+            this.NavigationPage.Controls.Add(this.label36);
+            this.NavigationPage.Controls.Add(this.CB_isNaviEditor);
+            this.NavigationPage.Controls.Add(this.TB_NumZ);
+            this.NavigationPage.Controls.Add(this.label35);
+            this.NavigationPage.Controls.Add(this.TB_NumX);
+            this.NavigationPage.Controls.Add(this.BT_DeleteNavi);
+            this.NavigationPage.Controls.Add(this.BT_CreateNavi);
+            this.NavigationPage.Controls.Add(this.BT_NaviLoad);
+            this.NavigationPage.Controls.Add(this.BT_NaviSave);
             this.NavigationPage.Location = new System.Drawing.Point(4, 48);
             this.NavigationPage.Name = "NavigationPage";
             this.NavigationPage.Size = new System.Drawing.Size(287, 746);
             this.NavigationPage.TabIndex = 6;
             this.NavigationPage.Text = "Navigation";
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.ForeColor = System.Drawing.Color.Black;
+            this.label38.Location = new System.Drawing.Point(4, 106);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(93, 17);
+            this.label38.TabIndex = 12;
+            this.label38.Text = "이동여부(Tab)";
+            // 
+            // TB_TileFlag
+            // 
+            this.TB_TileFlag.Location = new System.Drawing.Point(103, 103);
+            this.TB_TileFlag.Name = "TB_TileFlag";
+            this.TB_TileFlag.ReadOnly = true;
+            this.TB_TileFlag.Size = new System.Drawing.Size(165, 25);
+            this.TB_TileFlag.TabIndex = 11;
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.ForeColor = System.Drawing.Color.Black;
+            this.label37.Location = new System.Drawing.Point(4, 62);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(78, 17);
+            this.label37.TabIndex = 10;
+            this.label37.Text = "선택 인덱스";
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.ForeColor = System.Drawing.Color.Black;
+            this.label36.Location = new System.Drawing.Point(142, 19);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(46, 17);
+            this.label36.TabIndex = 8;
+            this.label36.Text = "NumZ";
+            // 
+            // CB_isNaviEditor
+            // 
+            this.CB_isNaviEditor.AutoSize = true;
+            this.CB_isNaviEditor.ForeColor = System.Drawing.Color.Black;
+            this.CB_isNaviEditor.Location = new System.Drawing.Point(14, 315);
+            this.CB_isNaviEditor.Name = "CB_isNaviEditor";
+            this.CB_isNaviEditor.Size = new System.Drawing.Size(128, 21);
+            this.CB_isNaviEditor.TabIndex = 4;
+            this.CB_isNaviEditor.Text = "NaviEditorMode";
+            this.CB_isNaviEditor.UseVisualStyleBackColor = true;
+            this.CB_isNaviEditor.CheckedChanged += new System.EventHandler(this.CB_isNaviEditor_CheckedChanged);
+            // 
+            // TB_NumZ
+            // 
+            this.TB_NumZ.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_NumZ.Location = new System.Drawing.Point(191, 15);
+            this.TB_NumZ.Name = "TB_NumZ";
+            this.TB_NumZ.Size = new System.Drawing.Size(77, 25);
+            this.TB_NumZ.TabIndex = 7;
+            this.TB_NumZ.TextChanged += new System.EventHandler(this.TB_NumZ_TextChanged);
+            this.TB_NumZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInterval_KeyPress);
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.ForeColor = System.Drawing.Color.Black;
+            this.label35.Location = new System.Drawing.Point(4, 19);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(46, 17);
+            this.label35.TabIndex = 6;
+            this.label35.Text = "NumX";
+            // 
+            // TB_NumX
+            // 
+            this.TB_NumX.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_NumX.Location = new System.Drawing.Point(53, 15);
+            this.TB_NumX.Name = "TB_NumX";
+            this.TB_NumX.Size = new System.Drawing.Size(77, 25);
+            this.TB_NumX.TabIndex = 5;
+            this.TB_NumX.TextChanged += new System.EventHandler(this.TB_NumX_TextChanged);
+            this.TB_NumX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInterval_KeyPress);
+            // 
+            // BT_DeleteNavi
+            // 
+            this.BT_DeleteNavi.ForeColor = System.Drawing.Color.Black;
+            this.BT_DeleteNavi.Location = new System.Drawing.Point(153, 348);
+            this.BT_DeleteNavi.Name = "BT_DeleteNavi";
+            this.BT_DeleteNavi.Size = new System.Drawing.Size(124, 52);
+            this.BT_DeleteNavi.TabIndex = 3;
+            this.BT_DeleteNavi.Text = "DeleteLandScape";
+            this.BT_DeleteNavi.UseVisualStyleBackColor = true;
+            this.BT_DeleteNavi.Click += new System.EventHandler(this.BT_DeleteNavi_Click);
+            // 
+            // BT_CreateNavi
+            // 
+            this.BT_CreateNavi.ForeColor = System.Drawing.Color.Black;
+            this.BT_CreateNavi.Location = new System.Drawing.Point(14, 349);
+            this.BT_CreateNavi.Name = "BT_CreateNavi";
+            this.BT_CreateNavi.Size = new System.Drawing.Size(125, 52);
+            this.BT_CreateNavi.TabIndex = 2;
+            this.BT_CreateNavi.Text = "CreateLandScape";
+            this.BT_CreateNavi.UseVisualStyleBackColor = true;
+            this.BT_CreateNavi.Click += new System.EventHandler(this.BT_CreateNavi_Click);
+            // 
+            // BT_NaviLoad
+            // 
+            this.BT_NaviLoad.ForeColor = System.Drawing.Color.Black;
+            this.BT_NaviLoad.Location = new System.Drawing.Point(153, 420);
+            this.BT_NaviLoad.Name = "BT_NaviLoad";
+            this.BT_NaviLoad.Size = new System.Drawing.Size(124, 52);
+            this.BT_NaviLoad.TabIndex = 1;
+            this.BT_NaviLoad.Text = "Load";
+            this.BT_NaviLoad.UseVisualStyleBackColor = true;
+            this.BT_NaviLoad.Click += new System.EventHandler(this.BT_NaviLoad_Click);
+            // 
+            // BT_NaviSave
+            // 
+            this.BT_NaviSave.ForeColor = System.Drawing.Color.Black;
+            this.BT_NaviSave.Location = new System.Drawing.Point(14, 420);
+            this.BT_NaviSave.Name = "BT_NaviSave";
+            this.BT_NaviSave.Size = new System.Drawing.Size(125, 52);
+            this.BT_NaviSave.TabIndex = 0;
+            this.BT_NaviSave.Text = "Save";
+            this.BT_NaviSave.UseVisualStyleBackColor = true;
+            this.BT_NaviSave.Click += new System.EventHandler(this.BT_NaviSave_Click);
             // 
             // LB_MeshList
             // 
@@ -1152,6 +1304,7 @@
             // 
             // GB_Hierachy
             // 
+            this.GB_Hierachy.Controls.Add(this.CB_ObjectSave);
             this.GB_Hierachy.Controls.Add(this.label11);
             this.GB_Hierachy.Controls.Add(this.CB_LayerList);
             this.GB_Hierachy.Controls.Add(this.label10);
@@ -1168,13 +1321,24 @@
             this.GB_Hierachy.TabStop = false;
             this.GB_Hierachy.Text = "Hierachy";
             // 
+            // CB_ObjectSave
+            // 
+            this.CB_ObjectSave.AutoSize = true;
+            this.CB_ObjectSave.ForeColor = System.Drawing.Color.Black;
+            this.CB_ObjectSave.Location = new System.Drawing.Point(9, 632);
+            this.CB_ObjectSave.Name = "CB_ObjectSave";
+            this.CB_ObjectSave.Size = new System.Drawing.Size(100, 21);
+            this.CB_ObjectSave.TabIndex = 15;
+            this.CB_ObjectSave.Text = "Object Save";
+            this.CB_ObjectSave.UseVisualStyleBackColor = true;
+            // 
             // Btn_ObjectDelete
             // 
             this.Btn_ObjectDelete.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.Btn_ObjectDelete.ForeColor = System.Drawing.Color.Black;
-            this.Btn_ObjectDelete.Location = new System.Drawing.Point(105, 639);
+            this.Btn_ObjectDelete.Location = new System.Drawing.Point(105, 657);
             this.Btn_ObjectDelete.Name = "Btn_ObjectDelete";
-            this.Btn_ObjectDelete.Size = new System.Drawing.Size(95, 77);
+            this.Btn_ObjectDelete.Size = new System.Drawing.Size(95, 59);
             this.Btn_ObjectDelete.TabIndex = 6;
             this.Btn_ObjectDelete.Text = "Delete";
             this.Btn_ObjectDelete.UseVisualStyleBackColor = true;
@@ -1278,6 +1442,18 @@
             this.GB_Renderer.TabIndex = 0;
             this.GB_Renderer.TabStop = false;
             this.GB_Renderer.Text = "Renderer";
+            // 
+            // CB_TargetChange
+            // 
+            this.CB_TargetChange.AutoSize = true;
+            this.CB_TargetChange.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.CB_TargetChange.Location = new System.Drawing.Point(136, 352);
+            this.CB_TargetChange.Name = "CB_TargetChange";
+            this.CB_TargetChange.Size = new System.Drawing.Size(140, 21);
+            this.CB_TargetChange.TabIndex = 9;
+            this.CB_TargetChange.Text = "CamTargetChange";
+            this.CB_TargetChange.UseVisualStyleBackColor = true;
+            this.CB_TargetChange.CheckedChanged += new System.EventHandler(this.CB_TargetChange_CheckedChanged);
             // 
             // CB_isDebugTarget
             // 
@@ -1598,17 +1774,13 @@
             this.textBox9.Size = new System.Drawing.Size(64, 25);
             this.textBox9.TabIndex = 2;
             // 
-            // CB_TargetChange
+            // TB_NaviIndex
             // 
-            this.CB_TargetChange.AutoSize = true;
-            this.CB_TargetChange.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.CB_TargetChange.Location = new System.Drawing.Point(136, 352);
-            this.CB_TargetChange.Name = "CB_TargetChange";
-            this.CB_TargetChange.Size = new System.Drawing.Size(140, 21);
-            this.CB_TargetChange.TabIndex = 9;
-            this.CB_TargetChange.Text = "CamTargetChange";
-            this.CB_TargetChange.UseVisualStyleBackColor = true;
-            this.CB_TargetChange.CheckedChanged += new System.EventHandler(this.CB_TargetChange_CheckedChanged);
+            this.TB_NaviIndex.Location = new System.Drawing.Point(103, 58);
+            this.TB_NaviIndex.Name = "TB_NaviIndex";
+            this.TB_NaviIndex.ReadOnly = true;
+            this.TB_NaviIndex.Size = new System.Drawing.Size(165, 25);
+            this.TB_NaviIndex.TabIndex = 9;
             // 
             // EditorForm
             // 
@@ -1646,6 +1818,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.TB_LightZDir)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TB_LightYDir)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TB_LightXDir)).EndInit();
+            this.NavigationPage.ResumeLayout(false);
+            this.NavigationPage.PerformLayout();
             this.GB_Transform.ResumeLayout(false);
             this.GB_Transform.PerformLayout();
             this.GB_Hierachy.ResumeLayout(false);
@@ -1785,6 +1959,20 @@
         private System.Windows.Forms.CheckBox CB_WireFrame;
         private System.Windows.Forms.CheckBox CB_isDebugTarget;
         private System.Windows.Forms.CheckBox CB_TargetChange;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.TextBox TB_NumZ;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.TextBox TB_NumX;
+        private System.Windows.Forms.CheckBox CB_isNaviEditor;
+        private System.Windows.Forms.Button BT_DeleteNavi;
+        private System.Windows.Forms.Button BT_CreateNavi;
+        private System.Windows.Forms.Button BT_NaviLoad;
+        private System.Windows.Forms.Button BT_NaviSave;
+        private System.Windows.Forms.CheckBox CB_ObjectSave;
+        private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.TextBox TB_TileFlag;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.TextBox TB_NaviIndex;
     }
 }
 

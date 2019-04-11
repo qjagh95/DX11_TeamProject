@@ -240,7 +240,6 @@ bool CRenderManager::Init()
 	m_tDepthFogCBuffer.fStartDepth = 0.0f;
 	m_tDepthFogCBuffer.fEndDepth = 100.0f;
 
-
 	return true;
 }
 
@@ -267,7 +266,25 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 {
 	RENDER_GROUP	rg = pObj->GetRenderGroup();
 
-	
+	if (rg == RG_GIZMO)
+		return;
+	//{
+	//	if (m_tGizmoGroup.iSize == m_tGizmoGroup.iCapacity)
+	//	{
+	//		m_tGizmoGroup.iCapacity *= 2;
+
+	//		CGameObject**	pList = new CGameObject*[m_tGizmoGroup.iCapacity];
+
+	//		memcpy(pList, m_tGizmoGroup.pList, sizeof(CGameObject*) * m_tGizmoGroup.iSize);
+
+	//		SAFE_DELETE_ARRAY(m_tGizmoGroup.pList);
+
+	//		m_tGizmoGroup.pList = pList;
+	//	}
+	//	m_tGizmoGroup.pList[m_tGizmoGroup.iSize] = pObj;
+	//	++m_tGizmoGroup.iSize;
+	//}
+
 	if (rg == RG_LIGHT)
 	{
 		if (m_tLightGroup.iSize == m_tLightGroup.iCapacity)
@@ -313,21 +330,23 @@ void CRenderManager::AddRenderObj(CGameObject * pObj)
 			}
 		}
 	}
-
-	if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)
+	if (rg != RG_GIZMO)
 	{
-		m_tRenderObj[rg].iCapacity *= 2;
+		if (m_tRenderObj[rg].iSize == m_tRenderObj[rg].iCapacity)
+		{
+			m_tRenderObj[rg].iCapacity *= 2;
 
-		CGameObject**	pList = new CGameObject*[m_tRenderObj[rg].iCapacity];
+			CGameObject**	pList = new CGameObject*[m_tRenderObj[rg].iCapacity];
 
-		memcpy(pList, m_tRenderObj[rg].pList, sizeof(CGameObject*) * m_tRenderObj[rg].iSize);
+			memcpy(pList, m_tRenderObj[rg].pList, sizeof(CGameObject*) * m_tRenderObj[rg].iSize);
 
-		SAFE_DELETE_ARRAY(m_tRenderObj[rg].pList);
+			SAFE_DELETE_ARRAY(m_tRenderObj[rg].pList);
 
-		m_tRenderObj[rg].pList = pList;
+			m_tRenderObj[rg].pList = pList;
+		}
+		m_tRenderObj[rg].pList[m_tRenderObj[rg].iSize] = pObj;
+		++m_tRenderObj[rg].iSize;
 	}
-	m_tRenderObj[rg].pList[m_tRenderObj[rg].iSize] = pObj;
-	++m_tRenderObj[rg].iSize;
 }
 
 void CRenderManager::Render(float fTime)
@@ -463,6 +482,13 @@ void CRenderManager::RenderDeferred(float fTime)
 
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{
+		m_pState[STATE_DEPTH_DISABLE]->SetState();
+		for (size_t i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; i++)
+		{
+			m_tRenderObj[RG_LANDSCAPE].pList[i]->Render(fTime);
+		}
+		m_pState[STATE_DEPTH_DISABLE]->ResetState();
+
 		CEditManager::GetInst()->Render(fTime);
 	}
 	// UIÃâ·Â
@@ -480,6 +506,7 @@ void CRenderManager::RenderDeferred(float fTime)
 	{
 		m_tRenderObj[i].iSize = 0;
 	}
+	m_tGizmoGroup.iSize = 0;
 }
 
 void CRenderManager::RenderGBuffer(float fTime)
@@ -489,11 +516,17 @@ void CRenderManager::RenderGBuffer(float fTime)
 	m_pGBufferMultiTarget->ClearRenderTarget(fClearColor);
 	m_pGBufferMultiTarget->SetTarget();
 
-	for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
+	if (CCore::GetInst()->m_bEditorMode == true)
 	{
-		for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
+		for (int j = 0; j < m_tRenderObj[RG_NORMAL].iSize; ++j)
+			m_tRenderObj[RG_NORMAL].pList[j]->Render(fTime);
+	}
+	else
+	{
+		for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
 		{
-			m_tRenderObj[i].pList[j]->Render(fTime);
+			for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
+				m_tRenderObj[i].pList[j]->Render(fTime);
 		}
 	}
 
@@ -1173,14 +1206,6 @@ void CRenderManager::RenderShadowMap(float fTime)
 
 	m_pShader[SHADER_SHADOW]->SetShader();
 
-	//for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
-	//{
-	//	for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
-	//	{
-	//		m_tRenderObj[i].pList[j]->RenderShadow(fTime);
-	//	}
-	//}
-
 	for (int j = 0; j < m_tRenderObj[RG_NORMAL].iSize; ++j)
 	{
 		m_tRenderObj[RG_NORMAL].pList[j]->RenderShadow(fTime);
@@ -1293,15 +1318,12 @@ void CRenderManager::RenderNaviEditorMode(float fTime)
 	m_pSkyObj->Render(fTime);
 
 	//m_pState[STATE_DEPTH_DISABLE]->SetState();
-	
-	m_pShader[SHADER_LAND_EDITOR]->SetShader();
-
-	for (int i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; ++i)
+	for (size_t i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; i++)
 	{
-		m_tRenderObj[RG_LANDSCAPE].pList[i]->RenderNaviEditorMode(fTime);
+		m_tRenderObj[RG_LANDSCAPE].pList[i]->Render(fTime);
 	}
 
-	m_pShader[SHADER_OBJ_EDITOR]->SetShader();
+	//m_pState[STATE_DEPTH_DISABLE]->ResetState();
 
 	m_pState[STATE_ALPHA_BLEND]->SetState();
 
@@ -1313,9 +1335,9 @@ void CRenderManager::RenderNaviEditorMode(float fTime)
 	m_pTarget[TARGET_BACK]->ResetTarget();
 	m_pState[STATE_ALPHA_BLEND]->ResetState();
 
+	CEditManager::GetInst()->Render(fTime);
 
 	m_pTarget[TARGET_BACK]->SetShader(0);
-
 	m_pShader[SHADER_FULL_SCREEN]->SetShader();
 
 	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
@@ -1325,15 +1347,14 @@ void CRenderManager::RenderNaviEditorMode(float fTime)
 	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
 	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
-	
 
-	//m_pState[STATE_DEPTH_DISABLE]->SetState();
-	
+	CCollisionManager::GetInst()->Render(fTime);
 
 	for (int i = RG_LANDSCAPE; i < RG_END; ++i)
 	{
 		m_tRenderObj[i].iSize = 0;
 	}
+	m_tGizmoGroup.iSize = 0;
 }
 
 void CRenderManager::RenderComputeProcess(float fTime)

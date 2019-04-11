@@ -37,12 +37,13 @@ namespace WinFormEditor
         private string m_strAniTime = "";
         private string m_strDeleteClip = "";
         private EventHandler m_event = null;
-
+        
         private void Run(object sender, EventArgs e)
         {
             while (this.Created == true)
             {
                 coreWrapper.Logic();
+                TB_NaviIndex.Text = Convert.ToString(coreWrapper.GetSelectNaviIndex());
                 Application.DoEvents();
             }
         }
@@ -1012,6 +1013,15 @@ namespace WinFormEditor
             }
         }
 
+        private void txtInterval_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //숫자만 입력되도록 필터링
+            if (!(char.IsDigit(e.KeyChar) || e.KeyChar == Convert.ToChar(Keys.Back)))    //숫자와 백스페이스를 제외한 나머지를 바로 처리
+            {
+                e.Handled = true;
+            }
+        }
+
         public void LightAmbColor()
         {
             ColorDialog cd = new ColorDialog();
@@ -1110,6 +1120,96 @@ namespace WinFormEditor
         private void CB_TargetChange_CheckedChanged(object sender, EventArgs e)
         {
             coreWrapper.ChangeTarget(CB_TargetChange.Checked);
+        }
+
+        private void BT_CreateNavi_Click(object sender, EventArgs e)
+        {
+            if(TB_NumX.Text == "" || TB_NumZ.Text == "")
+            {
+                AddLogString("Error! Navi Number Text에 입력값이 없습니다.");
+                return;
+            }
+
+          int iX = Convert.ToInt32(TB_NumX.Text);
+          int iZ = Convert.ToInt32(TB_NumZ.Text);
+          bool bSuccess = coreWrapper.CreateTestLandScape(iX, iZ);
+          if(bSuccess)
+          {
+             //LB_ObjectList.Items.Add("LandTestObj");
+             AddLogString("NaviLand생성");
+           }
+           else
+           {
+               AddLogString("NaviMesh가 이미 존재합니다");
+           }
+        }
+
+        private void BT_DeleteNavi_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BT_NaviSave_Click(object sender, EventArgs e)
+        {
+            string filePath;
+            string fileName;
+            SaveFileDialog opdig = new SaveFileDialog();
+
+            DirectoryInfo Pat;
+            string FullPath = Directory.GetCurrentDirectory();
+            Pat = Directory.GetParent(FullPath).Parent.Parent;
+
+            FullPath = Pat.FullName;
+            FullPath += "\\3DClient\\Bin\\Data\\";
+            opdig.InitialDirectory = FullPath;
+            opdig.Filter = "NavFile(*.nav)|*.nav|모든파일(*.*)|*.*||";
+            opdig.RestoreDirectory = true;
+
+            if (opdig.ShowDialog() == DialogResult.OK)
+            {
+                filePath = opdig.FileName;
+                fileName = Path.GetFileNameWithoutExtension(filePath);
+                coreWrapper.SaveNavFile(filePath);
+            }
+        }
+
+        private void BT_NaviLoad_Click(object sender, EventArgs e)
+        {
+            string filePath;
+            string fileName;
+            OpenFileDialog opdig = new OpenFileDialog();
+
+            DirectoryInfo Pat;
+            string FullPath = Directory.GetCurrentDirectory();
+            Pat = Directory.GetParent(FullPath).Parent.Parent;
+
+            FullPath = Pat.FullName;
+            FullPath += "\\3DClient\\Bin\\Data\\";
+            opdig.InitialDirectory = FullPath;
+            opdig.Filter = "NavFile(*.nav)|*.nav|모든파일(*.*)|*.*||";
+            opdig.RestoreDirectory = true;
+
+            if (opdig.ShowDialog() == DialogResult.OK)
+            {
+                filePath = opdig.FileName;
+                fileName = Path.GetFileNameWithoutExtension(filePath);
+                coreWrapper.LoadNavFile(filePath);
+            }
+        }
+
+        private void TB_NumX_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void TB_NumZ_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CB_isNaviEditor_CheckedChanged(object sender, EventArgs e)
+        {
+            coreWrapper.SetNaviEditorMode(CB_isNaviEditor.Checked);
         }
     }
 }

@@ -130,6 +130,19 @@ namespace PUN
 		Vector4		vIndex;
 	}Vertex3D, *PVertex3D;
 
+	struct PUN_DLL Vertex3DColor
+	{
+		Vector3		vPos;
+		Vector2		vUV;
+		Vector4		vColor;
+
+		Vertex3DColor()
+		{
+			vColor = Vector4::White;
+		}
+	};
+
+
 	/////////////////////////////// VERTEX INPUT LAYOUT INFO END //////////////////////////
 
 

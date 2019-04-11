@@ -45,11 +45,14 @@ private:
 	vector<string>	m_vecstrObjList;
 	CAnimation*		m_pAnimation;
 	vector<struct _tagBoneKeyFrame*> m_vecDivideFrame;
-
 	bool			m_bNaviEditorMode;
+	CGameObject* m_NavObject;
+	class CLandScape* m_LandScape;
+
 public:
 	void SetFreeCamObj(CGameObject* _pObj);
 	void SetArm(class CArm* _pArm);
+
 private:
 	enum eTransformType
 	{
@@ -69,7 +72,7 @@ public:
 	// 오브젝트
 public:
 	bool IsNaviEditorMode() const { return m_bNaviEditorMode; }
-
+	void SetNaviEditorMode(bool _bMode){ m_bNaviEditorMode = _bMode;}
 	void GetSelectLayerObjList(string _strLayerTag, vector<string>* _pVec);
 	void SetActiveObject(const string _strObjectTag, const string _strLayerTag);
 	void SetActiveObject(class CGameObject* _pObject);
@@ -84,6 +87,9 @@ public:
 	void ActiveObjectSetPosition(double _dX, double _dY, double _dZ);
 	vector<Vector3> GetWorldTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
 	void SetMouseWheel(short _sMouseWheel);
+	void SetGizmoEnable(bool _bEnable);
+	bool CreateLandScape(int _iX , int _iZ);
+	int GetNaviSelectIndex() const;
 	// 메시
 public:
 	void GetMeshNameList(vector<string>* _pVec);
@@ -120,6 +126,9 @@ public:
 	void SetLightDirY(float y);
 	void SetLightDirZ(float z);
 	void SetLightRange(float Range);
+
+	bool SaveNavFile(const string& FullPath);
+	bool LoadNavFile(const string& FullPath);
 };
 
 PUN_END

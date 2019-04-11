@@ -412,9 +412,7 @@ void CCollisionManager::Render(float fTime)
 		PCollisionSection	pSection = &iter->second->pSectionList[i];
 
 		for (int j = 0; j < pSection->iSize; ++j)
-		{
 			pSection->pList[j]->Render(fTime);
-		}
 
 		pSection->iSize = 0;
 	}

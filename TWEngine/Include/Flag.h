@@ -166,7 +166,8 @@ namespace PUN
 		RG_UI,
 		RG_HUD,
 		RG_END,
-		RG_LIGHT
+		RG_LIGHT,
+		RG_GIZMO
 		//RG_LIGHT를 RG_END보다 뒤에 넣은 이유는
 		//RG_LIGHT속성은 RenderManager의 m_tLightGroup에 들어가야하는지 여부만 체크하기 위함이다.
 		//RenderManager에 적어놓았듯이 렌더러가 있다면(빛이면서 동시에 그려질 오브젝트라면) 

@@ -17,7 +17,6 @@ CNavigationMesh::CNavigationMesh()
 	m_OpenList.SetSortFunc(this, &CNavigationMesh::OpenListSort);
 }
 
-
 CNavigationMesh::~CNavigationMesh()
 {
 	SAFE_DELETE_ARRAY(m_pCloseList);
@@ -68,44 +67,72 @@ bool CNavigationMesh::Init()
 	return true;
 }
 
-void CNavigationMesh::AddCell(const Vector3 vPos[3])
+void CNavigationMesh::AddCell(Vertex3DColor& vPos0, Vertex3DColor& vPos1, Vertex3DColor& vPos2)
 {
 	PNavigationCell	pCell = new NavigationCell;
 
-	for (int i = 0; i < 3; ++i)
-	{
-		pCell->vPos[i] = vPos[i];
-	}
+	pCell->vPos[0] = vPos0.vPos;
+	pCell->vPos[1] = vPos1.vPos;
+	pCell->vPos[2] = vPos2.vPos;
 
-	pCell->vEdge[0] = vPos[1] - vPos[0];
-	pCell->vEdgeCenter[0] = (vPos[1] + vPos[0]) / 2.f;
+	pCell->tCopyVertex[0] = &vPos0;
+	pCell->tCopyVertex[1] = &vPos1;
+	pCell->tCopyVertex[2] = &vPos2;
 
-	pCell->vEdge[1] = vPos[2] - vPos[1];
-	pCell->vEdgeCenter[1] = (vPos[2] + vPos[1]) / 2.f;
+	pCell->vEdge[0] = vPos1.vPos - vPos0.vPos;
+	pCell->vEdgeCenter[0] = (vPos1.vPos + vPos0.vPos) / 2.f;
 
-	pCell->vEdge[2] = vPos[2] - vPos[0];
-	pCell->vEdgeCenter[2] = (vPos[2] + vPos[0]) / 2.f;
+	pCell->vEdge[1] = vPos2.vPos - vPos1.vPos;
+	pCell->vEdgeCenter[1] = (vPos2.vPos + vPos1.vPos) / 2.f;
 
-	pCell->vCenter = (vPos[0] + vPos[1] + vPos[2]) / 3.f;
+	pCell->vEdge[2] = vPos2.vPos - vPos0.vPos;
+	pCell->vEdgeCenter[2] = (vPos2.vPos + vPos0.vPos) / 2.f;
+
+	pCell->vCenter = (vPos0.vPos + vPos1.vPos + vPos2.vPos) / 3.f;
 
 	pCell->iIndex = (int)m_vecCell.size();
 
-	for (int i = 0; i < 3; ++i)
-	{
-		if (m_vMin.x > vPos[i].x)
-			m_vMin.x = vPos[i].x;
-		if (m_vMin.y > vPos[i].y)
-			m_vMin.y = vPos[i].y;
-		if (m_vMin.z > vPos[i].z)
-			m_vMin.z = vPos[i].z;
+	if (m_vMin.x > vPos0.vPos.x)
+		m_vMin.x = vPos0.vPos.x;
+	if (m_vMin.y > vPos0.vPos.y)
+		m_vMin.y = vPos0.vPos.y;
+	if (m_vMin.z > vPos0.vPos.z)
+		m_vMin.z = vPos0.vPos.z;
 
-		if (m_vMax.x < vPos[i].x)
-			m_vMax.x = vPos[i].x;
-		if (m_vMax.y < vPos[i].y)
-			m_vMax.y = vPos[i].y;
-		if (m_vMax.z < vPos[i].z)
-			m_vMax.z = vPos[i].z;
-	}
+	if (m_vMax.x < vPos0.vPos.x)
+		m_vMax.x = vPos0.vPos.x;
+	if (m_vMax.y < vPos0.vPos.y)
+		m_vMax.y = vPos0.vPos.y;
+	if (m_vMax.z < vPos0.vPos.z)
+		m_vMax.z = vPos0.vPos.z;
+
+	if (m_vMin.x > vPos1.vPos.x)
+		m_vMin.x = vPos1.vPos.x;
+	if (m_vMin.y > vPos1.vPos.y)
+		m_vMin.y = vPos1.vPos.y;
+	if (m_vMin.z > vPos1.vPos.z)
+		m_vMin.z = vPos1.vPos.z;
+
+	if (m_vMax.x < vPos1.vPos.x)
+		m_vMax.x = vPos1.vPos.x;
+	if (m_vMax.y < vPos1.vPos.y)
+		m_vMax.y = vPos1.vPos.y;
+	if (m_vMax.z < vPos1.vPos.z)
+		m_vMax.z = vPos1.vPos.z;
+
+	if (m_vMin.x > vPos2.vPos.x)
+		m_vMin.x = vPos2.vPos.x;
+	if (m_vMin.y > vPos2.vPos.y)
+		m_vMin.y = vPos2.vPos.y;
+	if (m_vMin.z > vPos2.vPos.z)
+		m_vMin.z = vPos2.vPos.z;
+
+	if (m_vMax.x < vPos2.vPos.x)
+		m_vMax.x = vPos2.vPos.x;
+	if (m_vMax.y < vPos2.vPos.y)
+		m_vMax.y = vPos2.vPos.y;
+	if (m_vMax.z < vPos2.vPos.z)
+		m_vMax.z = vPos2.vPos.z;
 
 	Vector3	vDir1 = pCell->vEdge[0];
 	Vector3	vDir2 = pCell->vEdge[2];
@@ -122,6 +149,8 @@ void CNavigationMesh::AddCell(const Vector3 vPos[3])
 
 	if (fAngle >= 65.f)
 		pCell->bEnable = false;
+
+	m_vMax.y = 2.0f;
 
 	m_vecCell.push_back(pCell);
 }
@@ -430,7 +459,7 @@ void CNavigationMesh::FindPath(const Vector3 & vStart,
 	if (!pStart || !pEnd)
 		return;
 
-	else if (!pEnd->bEnable)
+	else if (!pEnd->bEnable || pEnd->bMove == false)
 		return;
 
 	if (pStart == pEnd)
@@ -472,7 +501,7 @@ void CNavigationMesh::FindPath(const Vector3 & vStart,
 	}
 
 	m_PathList.clear();
-	
+
 	// 시작 노드를 열린목록에 넣어준다.
 	pStart->eType = NCLT_OPEN;
 	pStart->fG = 0.f;
@@ -551,7 +580,7 @@ float CNavigationMesh::GetY(const Vector3 & vPos)
 
 	int	idx = (idxZ * m_iLineRectCount + idxX) * 2;
 
-	if (!m_vecCell[idx]->bEnable)
+	if (!m_vecCell[idx]->bEnable || m_vecCell[idx]->bMove == false)
 		return 0;
 
 	// 구해준 사각형의 좌상단 점을 구한다.
@@ -594,8 +623,8 @@ bool CNavigationMesh::CheckCell(const Vector3 & vPos)
 
 	float	fY = GetY(iCellIndex, vPos);
 
-	if (!m_vecCell[iCellIndex]->bEnable ||
-		(vPos.y - 2.f > fY || fY > vPos.y + 2.f))
+	if (!m_vecCell[iCellIndex]->bEnable || (vPos.y - 2.f > fY || fY > vPos.y + 2.f)
+		|| m_vecCell[iCellIndex]->bMove == false)
 		return false;
 
 	return true;
@@ -627,7 +656,7 @@ float CNavigationMesh::GetY(int iCellIndex, const Vector3 & vPos)
 	vConvertPos.x /= vCellSize.x;
 	vConvertPos.z /= vCellSize.z;
 
-	if (!m_vecCell[iCellIndex]->bEnable)
+	if (!m_vecCell[iCellIndex]->bEnable || m_vecCell[iCellIndex]->bMove == false)
 		return 0.f;
 
 	// 구해준 사각형의 좌상단 점을 구한다.
@@ -736,7 +765,7 @@ void CNavigationMesh::AddOpenList(PNavigationCell pCell,
 	{
 		PNavigationCell	pAdj = m_vecCell[pCell->vecAdj[i].iIndex];
 
-		if (!pAdj->bEnable)
+		if (!pAdj->bEnable || pAdj->bMove == false)
 			continue;
 
 		else if (pAdj->eType == NCLT_CLOSE)
@@ -789,66 +818,8 @@ void CNavigationMesh::AddOpenList(PNavigationCell pCell,
 				m_PathList.push_back(pCell->vEdgeCenter[iEdgeIndex]);
 			}
 
-			// 정해진 경로의 인덱스 수만큼 반복하며 해당 삼각형을
-			// 관통하는지 판단한다.
-			/*Vector3	vStartPos = vStart;
-			vector<int>	vecLastPath;
-			m_PathList.clear();
-
-			for (size_t j = 2; j < vecPathIndex.size() - 1; ++j)
-			{
-				int	idx = vecPathIndex[j];
-
-				Vector3	vDir = m_vecCell[idx]->vEdgeCenter[vecCenter[j]] - vStartPos;
-				float	fDist = vDir.Length() + 1000.f;
-				vDir.Normalize();
-
-				Vector3	vEndPos = vStartPos + vDir * fDist;
-				int	iEdgePathCount = 0;
-
-				for (int k = 0; k < 3; ++k)
-				{
-					Vector3	vEdgeStart, vEdgeEnd;
-
-					switch (k)
-					{
-					case 0:
-						vEdgeStart = m_vecCell[idx]->vPos[0];
-						vEdgeEnd = m_vecCell[idx]->vPos[1];
-						break;
-					case 1:
-						vEdgeStart = m_vecCell[idx]->vPos[2];
-						vEdgeEnd = m_vecCell[idx]->vPos[1];
-						break;
-					case 2:
-						vEdgeStart = m_vecCell[idx]->vPos[0];
-						vEdgeEnd = m_vecCell[idx]->vPos[2];
-						break;
-					}
-
-					Vector3	vIntersect;
-					if (CheckPathDir(vStartPos, vEndPos, vEdgeStart,
-						vEdgeEnd, vIntersect))
-					{
-						++iEdgePathCount;
-
-						if (iEdgePathCount == 2)
-							break;
-					}
-				}
-
-				if (iEdgePathCount < 2)
-				{
-					vecLastPath.push_back(vecPathIndex[j - 1]);
-					vStartPos = m_vecCell[vecPathIndex[j - 1]]->vEdgeCenter[vecCenter[j - 1]];
-					m_PathList.push_back(vStartPos);
-				}
-			}*/
-
 			m_PathList.push_back(vEnd);
-
 			m_bFindEnd = true;
-
 			return;
 		}
 
@@ -988,6 +959,56 @@ int CNavigationMesh::GetSectionIndex(Vector3 vPos)
 	return z * m_iSectionX + x;
 }
 
+int CNavigationMesh::MousePickGetCellIndex(const int & _iStartSectionIndex,
+	const int & _iEndSectionIndex, Vector3 rayOrigin, Vector3 rayDir, Vector3 & vIntersect, const Vector4& Color, bool isMove)
+{
+	int iStartSectionIndex = _iStartSectionIndex;
+	int iEndSectionIndex = _iEndSectionIndex;
+
+	if (iEndSectionIndex > m_iSectionX * m_iSectionZ)
+		iEndSectionIndex = m_iSectionX * m_iSectionZ;
+
+	if (iStartSectionIndex > m_iSectionX * m_iSectionZ)
+		iStartSectionIndex = m_iSectionX * m_iSectionZ;
+
+	if (iEndSectionIndex < 0)
+		iEndSectionIndex = 0;
+
+	if (iStartSectionIndex < 0)
+		iStartSectionIndex = 0;
+
+	Vector3	vOrigin = rayOrigin;
+	Vector3	vDir = rayDir;
+
+	for (int z = iStartSectionIndex; z < iEndSectionIndex; ++z)
+	{
+		for (int x = 0; x < m_pSection[z].iSize; ++x)
+		{
+			Vector3	vIntersect;
+			float	fDist = 500.0f;
+
+			PNavigationCell	pCell = m_pSection[z].pCellList[x];
+
+			if (RayIntersectTriangle(vOrigin, vDir, pCell->vPos[0], pCell->vPos[1], pCell->vPos[2], fDist, vIntersect))
+			{
+				pCell->bMove = isMove;
+				PNavigationCell	pCell2 = m_pSection[z].pCellList[x + 2];
+
+				if (pCell2 == NULLPTR)
+					return pCell->iIndex;
+
+				pCell2->tCopyVertex[0]->vColor = Color;
+				pCell2->tCopyVertex[1]->vColor = Color;
+				pCell2->tCopyVertex[2]->vColor = Color;
+
+				return pCell->iIndex;
+			}
+		}
+	}
+
+	return -1;
+}
+
 void CNavigationMesh::Save(const char * pFileName, const string & strPathKey)
 {
 	const char* pPath = GET_SINGLE(CPathManager)->FindPathFromMultibyte(strPathKey);
@@ -1030,6 +1051,7 @@ void CNavigationMesh::SaveFromFullPath(const char * pFullPath)
 		fwrite(&m_vecCell[i]->vCenter, sizeof(Vector3), 1, pFile);
 		fwrite(&m_vecCell[i]->iIndex, sizeof(int), 1, pFile);
 		fwrite(&m_vecCell[i]->bEnable, sizeof(bool), 1, pFile);
+		fwrite(&m_vecCell[i]->bMove, sizeof(bool), 1, pFile);
 
 		size_t	iAdjSize = m_vecCell[i]->vecAdj.size();
 
@@ -1093,6 +1115,7 @@ void CNavigationMesh::LoadFromFullPath(const char * pFullPath)
 		fread(&pCell->vCenter, sizeof(Vector3), 1, pFile);
 		fread(&pCell->iIndex, sizeof(int), 1, pFile);
 		fread(&pCell->bEnable, sizeof(bool), 1, pFile);
+		fread(&pCell->bMove, sizeof(bool), 1, pFile);
 
 		size_t	iAdjSize = 0;
 

@@ -450,7 +450,8 @@ bool CGameObject::Init()
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{
 		if (strstr(m_strTag.c_str(), "Gizmo") == false && strstr(m_strTag.c_str(), "Cam") == false &&
-			strstr(m_strTag.c_str(), "Sky") == false && strstr(m_strTag.c_str(), "Mouse") == false)
+			strstr(m_strTag.c_str(), "Sky") == false && strstr(m_strTag.c_str(), "Mouse") == false && 
+			strstr(m_strTag.c_str() , "LandScape") == false)
 		{
 			m_pPickingCollSphere = AddComponent<CColliderOBB3D>("PickingCollider");
 		}

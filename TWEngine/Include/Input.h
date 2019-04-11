@@ -10,7 +10,7 @@ typedef struct PUN_DLL _tagKeyScale // Key가 꾹눌렸을때(BindAxis 방식) 행위를 하
 {
 	unsigned char cKey;
 	float		  fScale;
-}KeyScale , *PKeyScale;
+}KeyScale, *PKeyScale;
 
 typedef struct PUN_DLL _tagBindAxis // Key가 꾹누르고 있는 입력 방식을 만들 구조체
 {
@@ -27,7 +27,7 @@ typedef struct PUN_DLL _tagBindAxis // Key가 꾹누르고 있는 입력 방식을 만들 구조
 	{
 		Safe_Delete_VecList(KeyList);
 	}
-}BindAxis , *PBindAxis;
+}BindAxis, *PBindAxis;
 
 typedef struct PUN_DLL _tagActionKey
 {
@@ -43,7 +43,7 @@ typedef struct PUN_DLL _tagActionKey
 		bPush = false;
 		bRelease = false;
 	}
-}ActionKey , *PActionKey;
+}ActionKey, *PActionKey;
 
 typedef struct PUN_DLL _tagBindAction
 {
@@ -62,7 +62,7 @@ typedef struct PUN_DLL _tagBindAction
 	{
 		Safe_Delete_VecList(KeyList);
 	}
-}BindAction , *PBindAction;
+}BindAction, *PBindAction;
 
 class PUN_DLL CInput
 {
@@ -79,7 +79,6 @@ private:
 	bool							m_bMousePress[MS_END];
 	bool							m_bMousePush[MS_END];
 	bool							m_bMouseRelease[MS_END];
-
 private:
 	std::unordered_map<std::string, PBindAxis>  m_mapAxis;
 	std::unordered_map<std::string, PBindAction> m_mapAction;
@@ -95,7 +94,14 @@ private:
 	class CTransform*		m_pMouseTr;
 	bool					m_bShowCursor;
 	class CCollider*		m_pWorldPoint;
+	int						m_iSelectNavIndex;
+
 public:
+	void SetSelectNavIndex(int _idx) { m_iSelectNavIndex = _idx; }
+	int GetiSelectNavIndex() const { return m_iSelectNavIndex; }
+
+public:
+	RayInfo MouseRayInfo() const;
 	class CGameObject*	GetMouseObj()	const;
 	class CGameObject * GetMouseObjNonCount() const;
 	Vector2	GetMouseGap()	const;
@@ -115,7 +121,7 @@ public:
 	bool GetMouseRelease(MOUSE_STATE eState);
 public:
 	bool Init();
-	void Update(float fTime);	
+	void Update(float fTime);
 	void RenderMouse(float fTime);
 	void AddMouseCollision();
 private:
@@ -131,7 +137,7 @@ public:
 	void AddKeyScale(const std::string& _strName, unsigned char _cKey, float _fScale)
 	{
 		PBindAxis pBind = FindAxis(_strName);
-		 
+
 		if (!pBind)
 		{
 			pBind = new _tagBindAxis;
@@ -142,7 +148,7 @@ public:
 		pKeyScale->fScale = _fScale;
 		pKeyScale->cKey = _cKey;
 
-		pBind->KeyList.push_back(pKeyScale);	
+		pBind->KeyList.push_back(pKeyScale);
 
 		vector<unsigned char>::iterator	iter;
 		vector<unsigned char>::iterator	iterEnd = m_KeyList.end();
@@ -199,114 +205,114 @@ public:
 	}
 
 
-	public:
-		void AddKeyAction(const string& strName, unsigned char cKey,
-			bool* pSKey = nullptr)
+public:
+	void AddKeyAction(const string& strName, unsigned char cKey,
+		bool* pSKey = nullptr)
+	{
+		PBindAction	pBind = FindAction(strName);
+
+		if (!pBind)
 		{
-			PBindAction	pBind = FindAction(strName);
-
-			if (!pBind)
-			{
-				pBind = new _tagBindAction;
-				m_mapAction.insert(make_pair(strName, pBind));
-			}
-
-			PActionKey	pKeyAction = new ActionKey;
-
-			pKeyAction->cKey = cKey;
-
-			if (pSKey)
-				memcpy(pKeyAction->bSKey, pSKey, sizeof(bool) * SKEY_END);
-
-			pBind->KeyList.push_back(pKeyAction);
-
-			vector<unsigned char>::iterator	iter;
-			vector<unsigned char>::iterator	iterEnd = m_KeyList.end();
-
-			bool	bFind = false;
-			for (iter = m_KeyList.begin(); iter != iterEnd; ++iter)
-			{
-				if (*iter == cKey)
-				{
-					bFind = true;
-					break;
-				}
-			}
-
-			if (!bFind)
-				m_KeyList.push_back(cKey);
+			pBind = new _tagBindAction;
+			m_mapAction.insert(make_pair(strName, pBind));
 		}
 
-		PBindAction BindAction(const string& strName, KEY_STATE eKeyState,
-			void(*pFunc)(float))
+		PActionKey	pKeyAction = new ActionKey;
+
+		pKeyAction->cKey = cKey;
+
+		if (pSKey)
+			memcpy(pKeyAction->bSKey, pSKey, sizeof(bool) * SKEY_END);
+
+		pBind->KeyList.push_back(pKeyAction);
+
+		vector<unsigned char>::iterator	iter;
+		vector<unsigned char>::iterator	iterEnd = m_KeyList.end();
+
+		bool	bFind = false;
+		for (iter = m_KeyList.begin(); iter != iterEnd; ++iter)
 		{
-			PBindAction	pBind = FindAction(strName);
-
-			if (!pBind)
+			if (*iter == cKey)
 			{
-				pBind = new _tagBindAction;
-
-				m_mapAction.insert(make_pair(strName, pBind));
-			}
-
-			ACTION_KEY_FUNCTION_TYPE	eType;
-
-			switch (eKeyState)
-			{
-			case KEY_PRESS:
-				eType = AT_PRESS;
-				break;
-			case KEY_PUSH:
-				eType = AT_PUSH;
-				break;
-			case KEY_RELEASE:
-				eType = AT_RELEASE;
+				bFind = true;
 				break;
 			}
-
-			pBind->strName = strName;
-			pBind->bFunctionBind[eType] = true;
-			pBind->func[eType] = bind(pFunc, placeholders::_1);
-			pBind->iKeyState |= eKeyState;
-
-			return pBind;
 		}
 
-		template <typename T>
-		PBindAction BindAction(const string& strName, KEY_STATE eKeyState,
-			T* pObj, void(T::*pFunc)(float))
+		if (!bFind)
+			m_KeyList.push_back(cKey);
+	}
+
+	PBindAction BindAction(const string& strName, KEY_STATE eKeyState,
+		void(*pFunc)(float))
+	{
+		PBindAction	pBind = FindAction(strName);
+
+		if (!pBind)
 		{
-			PBindAction	pBind = FindAction(strName);
+			pBind = new _tagBindAction;
 
-			if (!pBind)
-			{
-				pBind = new _tagBindAction;
-
-				m_mapAction.insert(make_pair(strName, pBind));
-			}
-
-			ACTION_KEY_FUNCTION_TYPE	eType;
-
-			switch (eKeyState)
-			{
-			case KEY_PRESS:
-				eType = AT_PRESS;
-				break;
-			case KEY_PUSH:
-				eType = AT_PUSH;
-				break;
-			case KEY_RELEASE:
-				eType = AT_RELEASE;
-				break;
-			}
-
-			pBind->strName = strName;
-			pBind->bFunctionBind[eType] = true;
-			pBind->iKeyState |= eKeyState;
-			pBind->func[eType] = bind(pFunc, pObj, placeholders::_1);
-
-			return pBind;
+			m_mapAction.insert(make_pair(strName, pBind));
 		}
+
+		ACTION_KEY_FUNCTION_TYPE	eType;
+
+		switch (eKeyState)
+		{
+		case KEY_PRESS:
+			eType = AT_PRESS;
+			break;
+		case KEY_PUSH:
+			eType = AT_PUSH;
+			break;
+		case KEY_RELEASE:
+			eType = AT_RELEASE;
+			break;
+		}
+
+		pBind->strName = strName;
+		pBind->bFunctionBind[eType] = true;
+		pBind->func[eType] = bind(pFunc, placeholders::_1);
+		pBind->iKeyState |= eKeyState;
+
+		return pBind;
+	}
+
+	template <typename T>
+	PBindAction BindAction(const string& strName, KEY_STATE eKeyState,
+		T* pObj, void(T::*pFunc)(float))
+	{
+		PBindAction	pBind = FindAction(strName);
+
+		if (!pBind)
+		{
+			pBind = new _tagBindAction;
+
+			m_mapAction.insert(make_pair(strName, pBind));
+		}
+
+		ACTION_KEY_FUNCTION_TYPE	eType;
+
+		switch (eKeyState)
+		{
+		case KEY_PRESS:
+			eType = AT_PRESS;
+			break;
+		case KEY_PUSH:
+			eType = AT_PUSH;
+			break;
+		case KEY_RELEASE:
+			eType = AT_RELEASE;
+			break;
+		}
+
+		pBind->strName = strName;
+		pBind->bFunctionBind[eType] = true;
+		pBind->iKeyState |= eKeyState;
+		pBind->func[eType] = bind(pFunc, pObj, placeholders::_1);
+
+		return pBind;
+	}
 
 	DECLARE_SINGLE(CInput)
 };

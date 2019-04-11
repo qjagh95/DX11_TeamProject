@@ -3,8 +3,9 @@
 
 PUN_BEGIN
 
-class PUN_DLL CLandScape :
-	public CComponent
+class CMesh;
+class CNavigationMesh;
+class PUN_DLL CLandScape : public CComponent
 {
 	friend class CGameObject;
 
@@ -16,11 +17,13 @@ protected:
 private:
 	unsigned int			m_iNumX;
 	unsigned int			m_iNumZ;
-	vector<Vertex3D>		m_vecVtx;
+	vector<Vertex3DColor>	m_vecVtx;
 	vector<int>				m_vecIdx;
 	vector<Vector3>			m_vecFaceNormal;
 	LandScapeCBuffer		m_tCBuffer;
-	class CNavigationMesh*	m_pNavMesh;
+	CNavigationMesh*		m_pNavMesh;
+	CMesh* m_Mesh;
+	bool m_isMove;
 
 public:
 	bool CreateLandScape(const string& strName,
@@ -38,6 +41,9 @@ public:
 		const string& strPathName = TEXTURE_PATH);
 	bool AddSplatAlphaTexture(const string& strName, const vector<const TCHAR*>& pFileName,
 		const string& strPathName = TEXTURE_PATH);
+
+	CNavigationMesh* GetNaviMesh() const { return m_pNavMesh; }
+
 public:
 	virtual void Start();
 	virtual void AfterClone();
@@ -49,9 +55,15 @@ public:
 	virtual void Render(float fTime);
 	virtual CLandScape* Clone();
 
+	void Save(const string& FullPath);
+	void Load(const string& FullPath);
+
 private:
 	void ComputeNormal();
 	void ComputeTangent();
+	void ChangeFlag(float DeltaTime);
+
+	void Click(float DeltaTime);
 };
 
 PUN_END

@@ -45,6 +45,8 @@
 #define LAND_NAVI_EDITOR_SHADER				"LandNaviEditorShader"
 #define SHADOWTEX_SHADER					"ShadowTexureShader"
 #define DOWNSCALE_SHADOW_SHADER				"DownScaleShadowShader"
+#define LANDSCAPE_COLOR_SHADER					"LandScapeColorShader"
+#define VERTEX3D_COLOR_SHADER				"Vertex3DShader"
 
 #define VOLUME_FOG_FIRST_SHADER				"VolumeFogFirstShader"
 #define VOLUME_FOG_SECOND_SHADER			"VolumeFogSecondShader"
@@ -74,6 +76,7 @@
 #define	POS_UV_LAYOUT						"PosUVLayout"
 #define	POS_LAYOUT							"PosLayout"
 #define	VERTEX3D_LAYOUT						"Vertex3DLayout"
+#define	VERTEX3D_LAYOUT_COLOR				"Vertex3DLayoutColor"
 
 // ========== RenderState Key =============
 #define	ALPHA_BLEND							"AlphaBlend"

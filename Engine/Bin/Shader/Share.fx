@@ -80,6 +80,20 @@ struct VS_OUTPUT_3D
     float4 vBlendIndex : BLENDINDICES;
 };
 
+struct VS_INPUT_3D_COLOR
+{
+    float3 vPos : POSITION;
+    float2 vUV : TEXCOORD;
+    float4 vColor : COLOR0;
+};
+
+struct VS_OUTPUT_3D_COLOR
+{
+    float4 vPos : SV_POSITION;
+    float2 vUV : TEXCOORD;
+    float4 vColor : COLOR0;
+};
+
 struct PS_OUTPUT_SINGLE
 {
 	float4	vTarget0	: SV_Target;

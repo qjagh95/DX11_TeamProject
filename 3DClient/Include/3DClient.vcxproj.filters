@@ -60,6 +60,9 @@
     <ClInclude Include="UserComponent\Door.h">
       <Filter>02. UserComponent</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent\RandScapeTestScene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -97,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Door.cpp">
       <Filter>02. UserComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\RandScapeTestScene.cpp">
+      <Filter>01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

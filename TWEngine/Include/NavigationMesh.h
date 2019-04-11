@@ -16,6 +16,7 @@ typedef struct PUN_DLL _tagAdjInfo
 {
 	int	iIndex;
 	int	iEdgeIndex;
+
 }ADJINFO, *PADJINFO;
 
 typedef struct PUN_DLL _tagNavigationCell
@@ -25,6 +26,7 @@ typedef struct PUN_DLL _tagNavigationCell
 	Vector3		vEdge[3];
 	Vector3		vEdgeCenter[3];
 	Vector3		vCenter;
+	Vertex3DColor* tCopyVertex[3];
 	vector<ADJINFO>	vecAdj;
 	int			iIndex;
 	int			iParentIdx;
@@ -32,6 +34,7 @@ typedef struct PUN_DLL _tagNavigationCell
 	float		fH;
 	float		fTotal;
 	bool		bEnable;
+	bool		bMove;
 
 	void Clear()
 	{
@@ -51,6 +54,7 @@ typedef struct PUN_DLL _tagNavigationCell
 		fH = -1.f;
 		fTotal = -1.f;
 		bEnable = true;
+		bMove = true;
 	}
 }NavigationCell, *PNavigationCell;
 
@@ -145,6 +149,8 @@ typedef struct PUN_DLL _tagNavSection
 	}
 }NavSection, *PNavSection;
 
+
+class CMesh;
 class PUN_DLL CNavigationMesh
 {
 private:
@@ -190,7 +196,7 @@ public:
 
 public:
 	bool Init();
-	void AddCell(const Vector3 vPos[3]);
+	void AddCell(Vertex3DColor& vPos0, Vertex3DColor& vPos1, Vertex3DColor& vPos2);
 	void AddAdj(int iCellIdx, int iAdjIdx);
 	void CreateGridMapAdj(int iLineRectCount);
 	void CreateAdj();
@@ -211,10 +217,13 @@ private:
 		const Vector3& vStart, const Vector3& vEnd);
 	PNavigationCell FindCell(const Vector3& vPos);
 	int GetCellIndex(const Vector3& vPos);
+public:
 	bool RayIntersectTriangle(Vector3 rayOrigin, Vector3 rayDir,
 		Vector3 v0, Vector3 v1, Vector3 v2,
 		float& t, Vector3& vIntersect);
 	int GetSectionIndex(Vector3 vPos);
+	int MousePickGetCellIndex(const int& _iStartSectionIndex, const int& _iEndSectionIndex, Vector3 rayOrigin, Vector3 rayDir,
+		Vector3& vIntersect, const Vector4& Color = Vector4::Red, bool isMove = false);
 
 public:
 	void Save(const char* pFileName, const string& strPathKey = DATA_PATH);

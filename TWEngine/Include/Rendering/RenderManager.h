@@ -32,6 +32,7 @@ class PUN_DLL CRenderManager
 private:
 	RenderGroup					m_tRenderObj[RG_END];
 	RenderGroup					m_tLightGroup;
+	RenderGroup					m_tGizmoGroup;
 
 	GAME_MODE					m_eGameMode;
 	bool						m_bDeferred;

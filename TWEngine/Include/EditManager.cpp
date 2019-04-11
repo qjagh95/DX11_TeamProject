@@ -14,6 +14,8 @@
 #include "Component/ColliderOBB3D.h"
 #include "Component/Light.h"
 #include "Component/Camera.h"
+#include "Component/LandScape.h"
+#include "NavigationMesh.h"
 
 
 PUN_USING
@@ -33,7 +35,9 @@ CEditManager::CEditManager()
 	m_pZGizmoObj(nullptr),
 	m_pArm(nullptr),
 	m_bNaviEditorMode(false),
-	m_pFreeCamObj(nullptr)
+	m_pFreeCamObj(nullptr),
+	m_NavObject(nullptr),
+	m_LandScape(nullptr)
 {
 }
 
@@ -52,6 +56,8 @@ CEditManager::~CEditManager()
 	SAFE_RELEASE(m_pYGizmoObj);
 	SAFE_RELEASE(m_pZGizmoObj);
 	SAFE_RELEASE(m_pArm);
+	SAFE_RELEASE(m_NavObject);
+	SAFE_RELEASE(m_LandScape);
 }
 
 void CEditManager::SetFreeCamObj(CGameObject * _pObj)
@@ -86,16 +92,19 @@ bool CEditManager::Init()
 	m_pXGizmoObj->SetSave(false);
 	m_pXGizmo = m_pXGizmoObj->AddComponent<CGizmo>("XGizmo");
 	m_pXGizmo->SetGizmoType(GT_X);
+	m_pXGizmoObj->SetRenderGroup(RG_GIZMO);
 
 	m_pYGizmoObj = CGameObject::CreateObject("YGizmo", pLayer);
 	m_pYGizmoObj->SetSave(false);
 	m_pYGizmo = m_pYGizmoObj->AddComponent<CGizmo>("YGizmo");
 	m_pYGizmo->SetGizmoType(GT_Y);
+	m_pYGizmoObj->SetRenderGroup(RG_GIZMO);
 
 	m_pZGizmoObj = CGameObject::CreateObject("ZGizmo", pLayer);
 	m_pZGizmoObj->SetSave(false);
 	m_pZGizmo = m_pZGizmoObj->AddComponent<CGizmo>("ZGizmo");
 	m_pZGizmo->SetGizmoType(GT_Z);
+	m_pZGizmoObj->SetRenderGroup(RG_GIZMO);
 
 	m_pEditTest = new CEditTest;
 	m_pEditTest->Init();
@@ -381,6 +390,37 @@ vector<Vector3> CEditManager::GetWorldTransform(const string _strObjectTag, cons
 void CEditManager::SetMouseWheel(short _sMouseWheel)
 {
 	CInput::GetInst()->SetWheelDir(_sMouseWheel);
+}
+
+void CEditManager::SetGizmoEnable(bool _bEnable)
+{
+	m_pXGizmo->SetEnable(_bEnable);
+	m_pYGizmo->SetEnable(_bEnable);
+	m_pZGizmo->SetEnable(_bEnable);
+}
+
+bool CEditManager::CreateLandScape(int _iX, int _iZ)
+{
+	if (m_NavObject == nullptr)
+	{
+		CLayer* pLayer = m_pScene->FindLayer("Default");
+		m_NavObject = CGameObject::CreateObject("LandTestObj", pLayer);
+		m_NavObject->SetSave(false);
+		m_LandScape = m_NavObject->AddComponent<CLandScape>("TestLandScape");
+		m_LandScape->CreateLandScape("TestLandScape", _iX, _iZ, "LandScapeDif", NULLPTR, NULLPTR, NULLPTR, NULLPTR);
+		SAFE_RELEASE(pLayer);
+	}
+	else
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+int CEditManager::GetNaviSelectIndex() const
+{
+	return CInput::GetInst()->GetiSelectNavIndex();
 }
 
 void CEditManager::GetMeshNameList(vector<string>* _pVec)
@@ -721,4 +761,40 @@ void CEditManager::SetLightRange(float Range)
 		return;
 
 	getLight->SetLightRange(Range);
+}
+
+bool CEditManager::SaveNavFile(const string & FullPath)
+{
+	if (m_NavObject == NULLPTR)
+		return false;
+
+	if (m_LandScape == NULLPTR)
+		return false;
+
+	if (m_LandScape->GetNaviMesh() == NULLPTR)
+		return false;
+
+
+	m_LandScape->GetNaviMesh()->SaveFromFullPath(FullPath.c_str());
+
+	return true;
+}
+
+bool CEditManager::LoadNavFile(const string & FullPath)
+{
+	CLayer* pLayer = m_pScene->FindLayer("Default");
+	m_NavObject->Die();
+
+	SAFE_RELEASE(m_NavObject);
+	SAFE_RELEASE(m_LandScape);
+
+	m_NavObject = CGameObject::CreateObject("LandTestObj", pLayer);
+	m_NavObject->SetSave(false);
+	m_LandScape = m_NavObject->AddComponent<CLandScape>("TestLandScape");
+
+	SAFE_RELEASE(pLayer);
+
+	m_LandScape->GetNaviMesh()->LoadFromFullPath(FullPath.c_str());
+
+	return true;
 }

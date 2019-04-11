@@ -93,27 +93,6 @@ bool CFirTestScene::Init()
 
 	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
 
-	//CGameObject* pGizmoObject = CGameObject::CreateObject("GizmoObj", pDefaultLayer);
-	//CGizmo*     pGizmo = pGizmoObject->AddComponent<CGizmo>("Gizmo");
-	//pGizmo->SetTargetTr(pTransform);
-	//pGizmo->SetGizmoType(GT_X);
-	//SAFE_RELEASE(pGizmo);
-	//SAFE_RELEASE(pGizmoObject);
-
-	//pGizmoObject = CGameObject::CreateObject("GizmoObj", pDefaultLayer);
-	//pGizmo = pGizmoObject->AddComponent<CGizmo>("Gizmo");
-	//pGizmo->SetTargetTr(pTransform);
-	//pGizmo->SetGizmoType(GT_Y);
-	//SAFE_RELEASE(pGizmo);
-	//SAFE_RELEASE(pGizmoObject);
-
-	//pGizmoObject = CGameObject::CreateObject("GizmoObj", pDefaultLayer);
-	//pGizmo = pGizmoObject->AddComponent<CGizmo>("Gizmo");
-	//pGizmo->SetTargetTr(pTransform);
-	//pGizmo->SetGizmoType(GT_Z);
-	//SAFE_RELEASE(pGizmo);
-	//SAFE_RELEASE(pGizmoObject);
-
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pPlayer);
 	SAFE_RELEASE(pObject);

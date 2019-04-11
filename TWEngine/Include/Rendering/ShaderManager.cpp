@@ -118,7 +118,6 @@ bool CShaderManager::Init()
 	if (!LoadShader(LIGHT_BLEND_SHADER, TEXT("Light.fx"), pEntry))
 		return false;
 
-
 	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement((char*)"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 8);
 
@@ -249,6 +248,19 @@ bool CShaderManager::Init()
 	AddInputElement((char*)"BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
 
 	if (!CreateInputLayout(VERTEX3D_LAYOUT, "Vertex3D"))
+		return false;
+
+	pEntry[ST_VERTEX] = (char*)"LandScapeColorVS";
+	pEntry[ST_PIXEL] = (char*)"LandScapeColorPS";
+	pEntry[ST_GEOMETRY] = nullptr;
+	if (!LoadShader(LANDSCAPE_COLOR_SHADER, TEXT("NaviLandScape.fx"), pEntry))
+		return false;
+
+	AddInputElement((char*)"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement((char*)"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 8);
+	AddInputElement((char*)"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
+
+	if (!CreateInputLayout(VERTEX3D_LAYOUT_COLOR, LANDSCAPE_COLOR_SHADER))
 		return false;
 
 	pEntry[ST_COMPUTE] = (char*)"DownScaleFirstPass";

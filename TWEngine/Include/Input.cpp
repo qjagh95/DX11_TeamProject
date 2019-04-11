@@ -24,7 +24,8 @@ CInput::CInput() :
 	m_pMouse(nullptr),
 	m_bShowCursor(false),
 	m_sWheel(0),
-	m_bFocus(false)
+	m_bFocus(false),
+	m_iSelectNavIndex(0)
 {
 }
 
@@ -43,6 +44,11 @@ CInput::~CInput()
 	}
 
 	SAFE_RELEASE(m_pInput);
+}
+
+RayInfo CInput::MouseRayInfo() const
+{
+	return ((CColliderRay*)m_pWorldPoint)->GetInfo();
 }
 
 CGameObject * CInput::GetMouseObj() const
@@ -98,7 +104,7 @@ void CInput::ChangeMouseScene(CScene * pScene)
 
 void CInput::SetWorldMousePos(Vector3 _vPos)
 {
-	m_vMouseWorld = Vector2(_vPos.x , _vPos.y);
+	m_vMouseWorld = Vector2(_vPos.x, _vPos.y);
 }
 
 void CInput::SetWheelDir(short _sWheel)
@@ -140,13 +146,13 @@ bool CInput::Init()
 		return false;
 
 	if (FAILED(m_pKeyboard->SetDataFormat(&c_dfDIKeyboard)))
-		return false;	
+		return false;
 
 	/*if (FAILED(m_pKeyboard->SetCooperativeLevel(WINDOWHANDLE, DISCL_EXCLUSIVE | DISCL_FOREGROUND)))
 		return false;*/
-	
-	//if (FAILED(m_pKeyboard->Acquire()))
-	//	return false;
+
+		//if (FAILED(m_pKeyboard->Acquire()))
+		//	return false;
 
 	m_pMouse = CGameObject::CreateObject("MouseObj");
 
@@ -170,7 +176,7 @@ bool CInput::Init()
 	m_pMouseTr = m_pMouse->GetTransform();
 
 	m_pMouseTr->SetWorldScale(32.f, 31.f, 1.f);
-	m_pMouseTr->SetWorldPivot(0.f, 1.f, 0.f);		
+	m_pMouseTr->SetWorldPivot(0.f, 1.f, 0.f);
 
 	// Window 충돌체와 World 충돌체 2개를 추가한다.
 	CColliderPoint*	pPoint = m_pMouse->AddComponent<CColliderPoint>("MouseWindow");
@@ -179,7 +185,7 @@ bool CInput::Init()
 
 	SAFE_RELEASE(pPoint);
 
-	if(CRenderManager::GetInst()->GetGameMode() == GM_2D)
+	if (CRenderManager::GetInst()->GetGameMode() == GM_2D)
 		m_pWorldPoint = m_pMouse->AddComponent<CColliderPoint>("MouseWorld");
 	else
 	{
@@ -192,7 +198,7 @@ bool CInput::Init()
 		}
 
 	}
-	
+
 	ShowCursor(FALSE);
 
 	memset(m_bPress, 0, sizeof(bool) * 256);
@@ -294,19 +300,19 @@ void CInput::Update(float fTime)
 			m_bFocus = true;
 	}
 
-//#ifdef _DEBUG
-//	static float	ftime11 = 0.f;
-//	ftime11 += fTime;
-//
-//	if (ftime11 >= 2.f)
-//	{
-//		ftime11 = 0.f;
-//		TCHAR	str[256] = {};
-//		wsprintf(str, TEXT("Active Window : %d\n"), hWnd);
-//
-//		OutputDebugString(str);
-//	}
-//#endif
+	//#ifdef _DEBUG
+	//	static float	ftime11 = 0.f;
+	//	ftime11 += fTime;
+	//
+	//	if (ftime11 >= 2.f)
+	//	{
+	//		ftime11 = 0.f;
+	//		TCHAR	str[256] = {};
+	//		wsprintf(str, TEXT("Active Window : %d\n"), hWnd);
+	//
+	//		OutputDebugString(str);
+	//	}
+	//#endif
 
 	if (!m_bFocus)
 	{
@@ -392,7 +398,7 @@ void CInput::Update(float fTime)
 			// 실제로 Key가 눌려서 Scale값이 들어가면 행위가 일어나고
 			// Key가 Release상태거나 아무런 행위를 안했을때는 Scale값에 0이들어가서
 			// 함수 호출했을때 행위가 일어나지 않는다.
-			if (iter->second->bFunctionBind) 
+			if (iter->second->bFunctionBind)
 				iter->second->func(fScale, fTime);
 		}
 	}
@@ -425,7 +431,7 @@ void CInput::Update(float fTime)
 		for (iter1 = iter2->second->KeyList.begin(); iter1 != iter1End; ++iter1)
 		{
 			bool bSKeyEnable[SKEY_END] = { false  , false , false };
-			
+
 			for (int i = 0; i < SKEY_END; ++i)
 			{
 				if ((*iter1)->bSKey[i]) // Map key에 등록되어있는 Special Key가 true 상태라면
@@ -482,7 +488,7 @@ void CInput::Update(float fTime)
 					(*iter1)->bPress = false;// 현재 Key의 Press 상태 false
 			}
 
-			else if ((*iter1)->bPress || (*iter1)->bPush) 
+			else if ((*iter1)->bPress || (*iter1)->bPush)
 				// Special키와 일반키가 조합이 다 안눌려 있는 상태라면
 				// Press와 Push 둘중에 하나라도 true 상태이면
 			{
@@ -530,8 +536,8 @@ void CInput::AddMouseCollision()
 	CScene*	pScene = GET_SINGLE(CSceneManager)->GetScene();
 	CTransform*	pCameraTr = pScene->GetMainCameraTransform();
 
-	if(CRenderManager::GetInst()->GetGameMode() == GM_2D)
-	((CColliderPoint*)m_pWorldPoint)->SetInfo(pCameraTr->GetWorldPos());
+	if (CRenderManager::GetInst()->GetGameMode() == GM_2D)
+		((CColliderPoint*)m_pWorldPoint)->SetInfo(pCameraTr->GetWorldPos());
 
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pScene);
