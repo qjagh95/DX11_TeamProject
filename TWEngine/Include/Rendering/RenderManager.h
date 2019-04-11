@@ -86,6 +86,9 @@ private:
 	float				m_fBloomScale;
 	Vector3				m_vRimColor;
 	float				m_fRimColor;
+	Vector4				m_vDepthFogColor;
+	float				m_fDepthFogStart;
+	float				m_fDepthFogEnd;
 
 public:
 	GAME_MODE GetGameMode()	const;

@@ -41,12 +41,12 @@ cbuffer FinalPass : register(b9)
     float2  g_Empty;
 }
 
-cbuffer DepthFog : register(b10)
+cbuffer DepthFog : register(b13)
 {
-    float4 vFogColor;
-    float  fStartDepth;
-    float  fEndDepth;
-    float2 vDepthFogEmpty;
+    float4 g_vFogColor;
+    float  g_fStartDepth;
+    float  g_fEndDepth;
+    float2 g_vDepthFogEmpty;
 }
 
 float3 ToneMapping(float3 vHDRColor)
@@ -84,18 +84,17 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
 
     if (g_iBlur == 1 || g_iMotionBlur == 1)
     {
-        //if (Focus < 0.5f)
-        vColor = BlurTex.Sample(PointSampler, Input.vUV.xy).xyz;
+        if (Focus < 0.5f)
+            vColor = BlurTex.Sample(PointSampler, Input.vUV.xy).xyz;
     }
 
     if (g_iDepthFog == 1)
     {
         //카메라 필터 상수버퍼에 색깔, 시작, 끝 값 넣어서 쓰기.
-        float3 vFogColor = float3(0.4f, 0.4f, 0.1f);
 
-        float fDensity = max(0, (100.f - fDepth) / 100.0f);
+        float fDensity = saturate((g_fEndDepth - fDepth) / (g_fEndDepth - g_fStartDepth));
 
-        vColor = (vColor * fDensity) + (vFogColor * (1.0f - fDensity));
+        vColor = (vColor * fDensity) + (g_vFogColor.xyz * (1.0f - fDensity));
     }
     
     // Bloom 을 적용할 건지

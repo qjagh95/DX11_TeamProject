@@ -303,11 +303,11 @@ bool CShaderManager::Init()
 	CreateCBuffer("Bar",			9,	sizeof(BarCBuffer),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Fog",			9,	sizeof(FogCBuffer),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("FinalPass",		9,	sizeof(FinalPassCB),		CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("StarLightScope", 12, sizeof(StarLightScopeCB),	CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Particle",		10, sizeof(ParticleCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("HDRSecond",		10, sizeof(HDR2ndPassCB),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("LandScape",		11, sizeof(LandScapeCBuffer),	CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("DepthFog",		12, sizeof(DepthFogCBuffer),	CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("StarLightScope", 12, sizeof(StarLightScopeCB),	CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("DepthFog",		13, sizeof(DepthFogCBuffer),	CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Blur",			1,	sizeof(BlurCBuffer),		CST_COMPUTE);
 	CreateCBuffer("HDRFirst",		2,	sizeof(HDR1stPassCB),		CST_COMPUTE);
 	CreateCBuffer("Adaptation",		3,	sizeof(AdaptationCB),		CST_COMPUTE);

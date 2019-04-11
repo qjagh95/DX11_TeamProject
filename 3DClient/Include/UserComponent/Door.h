@@ -13,7 +13,8 @@ enum DOOR_STATE {
 	//¹®À» ´Ý´Â Áß : DOOR_CLOSE | DOOR_ONACT
 };
 
-class CDoor : public PUN::CUserComponent {
+class CDoor : public PUN::CUserComponent 
+{
 
 	friend class PUN::CGameObject;
 
@@ -70,5 +71,5 @@ public:
 public:
 	void Interact(float fTime);
 
-	CDoor *Clone();
+	CDoor* Clone();
 };

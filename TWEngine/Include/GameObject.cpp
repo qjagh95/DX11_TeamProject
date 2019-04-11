@@ -735,6 +735,8 @@ void CGameObject::RenderNaviEditorMode(float fTime)
 		return;
 
 	pRenderer->RenderNaviEditorMode(fTime);
+
+	SAFE_RELEASE(pRenderer);
 }
 
 CGameObject * CGameObject::Clone()

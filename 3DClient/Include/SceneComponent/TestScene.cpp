@@ -9,16 +9,15 @@
 #include "Component/LandScape.h"
 #include "Component/Animation2D.h"
 #include "Component/ColliderOBB3D.h"
-#include "../UserComponent/Field.h"
-#include "../UserComponent/Player.h"
-#include "../UserComponent/Minion.h"
-#include "../UserComponent/Field.h"
 #include <Component/Renderer.h>
 #include <Component/Material.h>
 #include <Component/SoundSource.h>
 #include <Component/Animation.h>
 #include "Component/Gizmo.h"
-#include "../UserComponent/Door.h"
+//#include "../UserComponent/Door.h"
+#include "../UserComponent/Field.h"
+#include "../UserComponent/Player.h"
+#include "../UserComponent/Minion.h"
 
 CTestScene::CTestScene()
 {
@@ -535,44 +534,44 @@ bool CTestScene::Init()
 
 	////////////////////////////////////////////////////////////////////////
 
-	pObject = CGameObject::CreateObject("Door", pDefaultLayer);
-	pTransform = pObject->GetTransform();
+	//pObject = CGameObject::CreateObject("Door", pDefaultLayer);
+	//pTransform = pObject->GetTransform();
 
-	CDoor *pDoor = pObject->AddComponent<CDoor>("door");
+	//CDoor* pDoor = pObject->AddComponent<CDoor>("door");
 
 
-	pTransform->SetWorldPos(0.f, 0.f, 5.f);
-	pTransform->SetWorldScale(0.1f, .1f, 0.1f);
+	//pTransform->SetWorldPos(0.f, 0.f, 5.f);
+	//pTransform->SetWorldScale(0.1f, .1f, 0.1f);
 
-	pTransform->RotationY(-90.f);
-	
-	pTransform->SetWorldPivot(0.5f, .0f, .0f);
-	pDoor->SetOpenTime(1.5f);
-	pDoor->SetCloseTime(1.5f);
-	//pDoor->Open();
+	//pTransform->RotationY(-90.f);
+	//
+	//pTransform->SetWorldPivot(0.5f, .0f, .0f);
+	//pDoor->SetOpenTime(1.5f);
+	//pDoor->SetCloseTime(1.5f);
+	////pDoor->Open();
 
-	std::string names[3];
-	names[0] = "wood_Door_Open1";
-	names[1] = "wood_Door_Close1";
-	names[2] = "wood_Door_Bash1";
+	//std::string names[3];
+	//names[0] = "wood_Door_Open1";
+	//names[1] = "wood_Door_Close1";
+	//names[2] = "wood_Door_Bash1";
 
-	TCHAR *strPaths[3]; 
-	strPaths[0] = (TCHAR*)TEXT("WoodenDoor_OPENING_01.wav");
-	strPaths[1] = (TCHAR*)TEXT("WoodenDoor_CLOSING_03.wav");
-	strPaths[2] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
+	//TCHAR *strPaths[3]; 
+	//strPaths[0] = (TCHAR*)TEXT("WoodenDoor_OPENING_01.wav");
+	//strPaths[1] = (TCHAR*)TEXT("WoodenDoor_CLOSING_03.wav");
+	//strPaths[2] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
 
-	pDoor->SetSounds(names, (const TCHAR**)strPaths);
+	//pDoor->SetSounds(names, (const TCHAR**)strPaths);
 
-	PUN::CRenderer* renderer = pObject->AddComponent<PUN::CRenderer>("renderer");
-	renderer->SetMesh("wdoor_1", TEXT("wood_door.FBX"), MESH_PATH);
+	//PUN::CRenderer* renderer = pObject->AddComponent<PUN::CRenderer>("renderer");
+	//renderer->SetMesh("wdoor_1", TEXT("wood_door.FBX"), MESH_PATH);
 
-	
+	//
 
-	SAFE_RELEASE(pDoor);
+	//SAFE_RELEASE(pDoor);
 
-	SAFE_RELEASE(renderer);
-	SAFE_RELEASE(pTransform);
-	SAFE_RELEASE(pObject);
+	//SAFE_RELEASE(renderer);
+	//SAFE_RELEASE(pTransform);
+	//SAFE_RELEASE(pObject);
 
 	SAFE_RELEASE(pCamera);
 

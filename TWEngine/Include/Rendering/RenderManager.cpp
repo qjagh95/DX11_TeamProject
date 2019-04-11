@@ -70,6 +70,11 @@ CRenderManager::CRenderManager() :
 	m_fBloomThreshold = 1.1f;
 	m_fBloomScale = 0.74f;
 
+	m_fDepthFogEnd = 100.f;
+	m_fDepthFogStart = 0.f;
+
+	m_vDepthFogColor = Vector4(0.2f, 0.2f, 0.2f, 1.f);
+
 #ifdef _DEBUG
 	m_bMagic = true;
 #else
@@ -393,8 +398,13 @@ void CRenderManager::Render3D(float fTime)
 		RenderForward(fTime);
 	else
 	{
-		if (GET_SINGLE(CEditManager)->IsNaviEditorMode())
-			RenderNaviEditorMode(fTime);
+		if (GET_SINGLE(CCore)->m_bEditorMode)
+		{
+			if (GET_SINGLE(CEditManager)->IsNaviEditorMode())
+				RenderNaviEditorMode(fTime);
+			else
+				RenderDeferred(fTime);
+		}
 		else
 			RenderDeferred(fTime);
 	}
@@ -404,8 +414,6 @@ void CRenderManager::Render3D(float fTime)
 
 void CRenderManager::RenderDeferred(float fTime)
 {
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("DepthFog", &m_tDepthFogCBuffer);
-
 	// MainCamera를 얻어온다.
 	FindMagicNumber(fTime);
 
@@ -1381,7 +1389,6 @@ void CRenderManager::FindMagicNumber(float fTime)
 
 		if (m_bHDR)
 		{
-			EnableFilter(CFT_DOWNSCALE);
 			EnableFilter(CFT_HDR);
 			ImGui::SliderFloat("MiddleGrey", &m_fMiddleGrey, 0.f, 6.f);
 			ImGui::Text("MiddleGrey : %f", m_fMiddleGrey);
@@ -1392,16 +1399,12 @@ void CRenderManager::FindMagicNumber(float fTime)
 			m_pPostEffect->UpdateCBuffer(CFT_HDR);
 		}
 		else
-		{
-			DisableFilter(CFT_DOWNSCALE);
 			DisableFilter(CFT_HDR);
-		}
 
 		ImGui::Checkbox("Adaptation", &m_bAdaptation);
 
 		if (m_bAdaptation)
 		{
-			EnableFilter(CFT_DOWNSCALE);
 			EnableFilter(CFT_ADAPTATION);
 			ImGui::SliderFloat("Adaptation", &m_fAdaptation, 0.f, 10.f);
 			ImGui::Text("Adaptation : %f", m_fAdaptation);
@@ -1411,16 +1414,12 @@ void CRenderManager::FindMagicNumber(float fTime)
 			pFilter->SetAdaptationTime(m_fAdaptation);
 		}
         else
-		{
-			DisableFilter(CFT_DOWNSCALE);
 			DisableFilter(CFT_ADAPTATION);
-		}
 		
 		ImGui::Checkbox("Bloom", &m_bBloom);
 
 		if (m_bBloom)			
 		{
-			EnableFilter(CFT_DOWNSCALE);
 			EnableFilter(CFT_BLOOM);
 			ImGui::SliderFloat("BloomThreshold", &m_fBloomThreshold, 0.f, 2.5f);
 			ImGui::Text("BoomThreshold : %f", m_fBloomThreshold);
@@ -1432,36 +1431,21 @@ void CRenderManager::FindMagicNumber(float fTime)
 			pFilter->SetBloomScale(m_fBloomScale);
 		}
 		else
-		{
-			DisableFilter(CFT_DOWNSCALE);
 			DisableFilter(CFT_BLOOM);
-		}
 
 		ImGui::Checkbox("Blur", &m_bBlur);
 
 		if (m_bBlur)
-		{
-			EnableFilter(CFT_DOWNSCALE);
 			EnableFilter(CFT_BLUR);
-		}
 		else
-		{
-			DisableFilter(CFT_DOWNSCALE);
 			DisableFilter(CFT_BLUR);
-		}
 
 		ImGui::Checkbox("MotionBlur", &m_bMotionBlur);
 
 		if (m_bMotionBlur)
-		{
-			EnableFilter(CFT_DOWNSCALE);
 			EnableFilter(CFT_MOTIONBLUR);
-		}
 		else
-		{
-			DisableFilter(CFT_DOWNSCALE);
 			DisableFilter(CFT_MOTIONBLUR);
-		}
 
 		ImGui::Checkbox("SSAO", &m_bSSAOEnable);
 		if (m_bSSAOEnable)
@@ -1472,7 +1456,25 @@ void CRenderManager::FindMagicNumber(float fTime)
 		ImGui::Checkbox("DepthFog", &m_bDepthFog);
 
 		if (m_bDepthFog)
+		{
 			m_tFinalCBuffer.iDepthFog = 1;
+			ImGui::SliderFloat("DepthFog_R", &m_vDepthFogColor.r, 0.f, 1.f);
+			ImGui::Text("DepthFog_R : %f", m_vDepthFogColor.r);
+			ImGui::SliderFloat("DepthFog_G", &m_vDepthFogColor.g, 0.f, 1.f);
+			ImGui::Text("DepthFog_G : %f", m_vDepthFogColor.g);
+			ImGui::SliderFloat("DepthFog_B", &m_vDepthFogColor.b, 0.f, 1.f);
+			ImGui::Text("DepthFog_B : %f", m_vDepthFogColor.b);
+			ImGui::SliderFloat("DepthFog_StartPos", &m_fDepthFogStart, 0.f, 1000.f);
+			ImGui::Text("DepthFog_StartPos : %f", m_fDepthFogStart);
+			ImGui::SliderFloat("DepthFog_EndPos", &m_fDepthFogEnd, 0.f, 1000.f);
+			ImGui::Text("DepthFog_EndPos : %f", m_fDepthFogEnd);
+
+			m_tDepthFogCBuffer.fStartDepth = m_fDepthFogStart;
+			m_tDepthFogCBuffer.fEndDepth = m_fDepthFogEnd;
+			m_tDepthFogCBuffer.vFogColor = m_vDepthFogColor;
+
+			GET_SINGLE(CShaderManager)->UpdateCBuffer("DepthFog", &m_tDepthFogCBuffer);
+		}
 		else
 			m_tFinalCBuffer.iDepthFog = 0;
 
