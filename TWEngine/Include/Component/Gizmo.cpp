@@ -77,23 +77,16 @@ int CGizmo::Input(float fTime)
 	Vector3 vTargetPos = m_pTargetTr->GetWorldPos();
 	Vector3 vCameraPos = m_pScene->GetMainCameraTransformNonCount()->GetWorldPos();
 	Vector3 vMouseGap = CInput::GetInst()->GetMouseGap();
-	//ImGui::Begin("Axis");
-
-	//ImGui::Text("ObjAxis - X : %f Y : %f, Z : %f", vAxis.x, vAxis.y, vAxis.z);
-	//ImGui::Text("CameraAxis - X : %f Y : %f, Z : %f", vCameraAxis.x, vCameraAxis.y, vCameraAxis.z);
 
 	Vector3 vAxisDot = vAxis.Dot(vCameraAxis);
-	//vAxisDot.Normalize();
-	//ImGui::Text("DotObjAxis - X : %f Y : %f, Z : %f", vAxisDot.x, vAxisDot.y, vAxisDot.z);
-
 
 	if (m_bPick == true)
 	{
-		if (CInput::GetInst()->GetMouseRelease(MS_LBUTTON) == true)
+		if (CInput::GetInst()->KeyRelease("LButton") == true)
 		{
 			m_bPick = false;
 		}
-		else if (CInput::GetInst()->GetMousePush(MS_LBUTTON) == true)
+		else if (CInput::GetInst()->KeyPush("LButton") == true)
 		{
 			vMouseGap.z = vMouseGap.y;
 			Vector3 ObjMove;
@@ -483,7 +476,7 @@ void CGizmo::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pDest->GetTag() == "MouseWorld")
 	{
-		if (CInput::GetInst()->GetMousePress(MS_LBUTTON) == true)
+		if (CInput::GetInst()->KeyPress("LButton") == true)
 		{
 			m_bPick = true;
 		}

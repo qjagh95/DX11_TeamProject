@@ -302,8 +302,7 @@ bool CLandScape::Init()
 	m_tCBuffer.iSplatCount = 0;
 	m_pObject->SetRenderGroup(RG_LANDSCAPE);
 
-	CInput::GetInst()->BindAction("ChangeFlag", KEY_PRESS, this, &CLandScape::ChangeFlag);
-	CInput::GetInst()->AddKeyAction("ChangeFlag", DIK_TAB);
+	CInput::GetInst()->AddKey("ChangeFlag", VK_TAB);
 
 	return true;
 }
@@ -314,12 +313,14 @@ int CLandScape::Input(float fTime)
 }
 
 int CLandScape::Update(float fTime)
-{ 
+{
+	ChangeFlag(fTime);
+
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{
 		if (CEditManager::GetInst()->IsNaviEditorMode() == true)
 		{
-			if (CInput::GetInst()->GetMousePush(MS_LBUTTON) == true)
+			if (CInput::GetInst()->KeyPush("LButton") == true)
 				Click(fTime);
 		}
 	}
@@ -427,7 +428,8 @@ void CLandScape::ComputeTangent()
 
 void CLandScape::ChangeFlag(float DeltaTime)
 {
-	m_isMove ^= true;
+	if (CInput::GetInst()->KeyPress("ChangeFlag"))
+		m_isMove ^= true;
 }
 
 void CLandScape::Click(float DeltaTime)

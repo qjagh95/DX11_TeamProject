@@ -118,15 +118,11 @@ int CUIButton::Input(float fTime)
 {
 	if (m_eState == BS_MOUSEON || m_eState == BS_CLICK)
 	{
-		if (CInput::GetInst()->GetMousePress(MS_LBUTTON))
-		{
+		if (CInput::GetInst()->KeyPress("LButton"))
 			m_eState = BS_CLICK;
-		}
 
-		else if (CInput::GetInst()->GetMouseRelease(MS_LBUTTON))
-		{
+		else if (CInput::GetInst()->KeyRelease("LButton"))
 			m_ClickCallback(fTime);
-		}
 	}
 
 	return 0;

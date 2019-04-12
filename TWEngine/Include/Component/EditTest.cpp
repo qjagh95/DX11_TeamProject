@@ -28,30 +28,6 @@ CEditTest::~CEditTest()
 
 bool CEditTest::Init()
 {
-	CInput::GetInst()->BindAxis("EditObjZMove", this, &CEditTest::ZMove);
-	CInput::GetInst()->AddKeyScale("EditObjZMove", DIK_I, 50.f);
-	CInput::GetInst()->AddKeyScale("EditObjZMove", DIK_K, -50.f);
-
-	CInput::GetInst()->BindAxis("EditObjXMove", this, &CEditTest::XMove);
-	CInput::GetInst()->AddKeyScale("EditObjXMove", DIK_L, 50.f);
-	CInput::GetInst()->AddKeyScale("EditObjXMove", DIK_J, -50.f);
-
-	CInput::GetInst()->BindAxis("EditObjYMove", this, &CEditTest::YMove);
-	CInput::GetInst()->AddKeyScale("EditObjYMove", DIK_O, 50.f);
-	CInput::GetInst()->AddKeyScale("EditObjYMove", DIK_U, -50.f);
-
-	CInput::GetInst()->BindAxis("EditObjZRotation", this, &CEditTest::ZRotation);
-	CInput::GetInst()->AddKeyScale("EditObjZRotation", DIK_NUMPAD6, 40.f);
-	CInput::GetInst()->AddKeyScale("EditObjZRotation", DIK_NUMPAD5 ,-40.f);
-
-	CInput::GetInst()->BindAxis("EditObjXRotation", this, &CEditTest::XRotation);
-	CInput::GetInst()->AddKeyScale("EditObjXRotation", DIK_NUMPAD1, 40.f);
-	CInput::GetInst()->AddKeyScale("EditObjXRotation", DIK_NUMPAD2, -40.f);
-
-	CInput::GetInst()->BindAxis("EditObjYRotation", this, &CEditTest::YRotation);
-	CInput::GetInst()->AddKeyScale("EditObjYRotation", DIK_NUMPAD3, 40.f);
-	CInput::GetInst()->AddKeyScale("EditObjYRotation", DIK_NUMPAD4, -40.f);
-
 	return true;
 }
 

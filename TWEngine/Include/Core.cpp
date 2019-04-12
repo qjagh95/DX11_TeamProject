@@ -53,7 +53,7 @@ CCore::~CCore()
 	GUIManager::Delete();
 	CSoundManager::Delete();
 	CoUninitialize();
-	
+
 	Safe_Delete_Map(m_ManagerMap);
 	Safe_Delete_Map(m_FSMap);
 	BTManager::Delete();
@@ -232,19 +232,14 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 	m_fTimeScale = 1.0f;
 	m_pTimer = CTimerManager::GetInst()->FindTimer("MainTimer");
 
-	GET_SINGLE(CInput)->BindAction("GuiOnOff", KEY_PRESS, this, &CCore::GUIOnOff);
-	GET_SINGLE(CInput)->AddKeyAction("GuiOnOff", DIK_F1);
+	GET_SINGLE(CInput)->AddKey("GuiOnOff", VK_F1);
+	GET_SINGLE(CInput)->AddKey("ShaderOptionOnOff", VK_F2);
+	GET_SINGLE(CInput)->AddKey("TreeOnOff", VK_F3);
 
-	GET_SINGLE(CInput)->BindAction("ShaderOptionOnOff", KEY_PRESS, this, &CCore::ShaderOptionOnOff);
-	GET_SINGLE(CInput)->AddKeyAction("ShaderOptionOnOff", DIK_F2);
-
-	GET_SINGLE(CInput)->BindAction("TreeOnOff", KEY_PRESS, this, &CCore::TreeOnOff);
-	GET_SINGLE(CInput)->AddKeyAction("TreeOnOff", DIK_F3);
-
-	m_vecInput = AddManagerVector("LogicInput"); 
-	m_vecUpdate = AddManagerVector("LogicUpdate"); 
+	m_vecInput = AddManagerVector("LogicInput");
+	m_vecUpdate = AddManagerVector("LogicUpdate");
 	m_vecLateUpdate = AddManagerVector("LogicLateUpdate");
-	m_vecCollsion = AddManagerVector("LogicCollsion"); 
+	m_vecCollsion = AddManagerVector("LogicCollsion");
 	m_vecRender = AddManagerVector("LogicRender");
 
 	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
@@ -316,7 +311,7 @@ int CCore::Input(float fTime)
 
 	if (m_vecInput->size() >= 100)
 		m_vecInput->erase(m_vecInput->begin());
-	
+
 	return iRet;
 }
 
@@ -510,17 +505,20 @@ LRESULT CCore::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 void CCore::GUIOnOff(float fTime)
 {
-	m_bGuiMode ^= true;
+	if (CInput::GetInst()->KeyPress("GuiOnOff"))
+		m_bGuiMode ^= true;
 }
 
 void CCore::ShaderOptionOnOff(float fTime)
 {
-	GUIManager::Get()->m_bShaderOption ^= true;
+	if (CInput::GetInst()->KeyPress("ShaderOptionOnOff"))
+		GUIManager::Get()->m_bShaderOption ^= true;
 }
 
 void CCore::TreeOnOff(float fTime)
 {
-	m_bTreeOnOff ^= true;
+	if (CInput::GetInst()->KeyPress("TreeOnOff"))
+		m_bTreeOnOff ^= true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -652,8 +650,8 @@ void CCore::EditCreateObject(const std::string & _strTag)
 {
 	CScene* pScene = CSceneManager::GetInst()->GetScene();
 	CLayer* pLayer = pScene->FindLayer("Default");
-	CGameObject* pObject = CGameObject::CreateObject(_strTag , pLayer);
-	
+	CGameObject* pObject = CGameObject::CreateObject(_strTag, pLayer);
+
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pScene);
 	SAFE_RELEASE(pLayer);
@@ -688,7 +686,7 @@ vector<float>* CCore::FindManagerMap(const string& KeyName) const
 FileStream * CCore::FindFileStream(const string & KeyName) const
 {
 	auto FindIter = m_FSMap.find(KeyName);
-	
+
 	if (FindIter == m_FSMap.end())
 		return NULLPTR;
 

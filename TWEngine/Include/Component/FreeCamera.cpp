@@ -22,35 +22,26 @@ CFreeCamera::~CFreeCamera()
 
 bool CFreeCamera::Init()
 {
-	GET_SINGLE(CInput)->BindAxis("YRotation", this, &CFreeCamera::Rotation);
-	GET_SINGLE(CInput)->AddKeyScale("YRotation", DIK_4, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("YRotation", DIK_3, -1.f);
+	CInput::GetInst()->AddKey("YRotationP", 0x34);
+	CInput::GetInst()->AddKey("YRotationM", 0x33);
 
-	GET_SINGLE(CInput)->BindAxis("XRotation", this, &CFreeCamera::XRotation);
-	GET_SINGLE(CInput)->AddKeyScale("XRotation", DIK_2, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("XRotation", DIK_1, -1.f);
+	CInput::GetInst()->AddKey("XRotationP", 0x32);
+	CInput::GetInst()->AddKey("XRotationM", 0x31);
 
-	GET_SINGLE(CInput)->BindAxis("ZRotation", this, &CFreeCamera::ZRotation);
-	GET_SINGLE(CInput)->AddKeyScale("ZRotation", DIK_6, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("ZRotation", DIK_5, -1.f);
+	CInput::GetInst()->AddKey("ZRotationP", 0x36);
+	CInput::GetInst()->AddKey("ZRotationM", 0x35);
 
-	GET_SINGLE(CInput)->BindAxis("YMove", this, &CFreeCamera::YMove);
-	GET_SINGLE(CInput)->AddKeyScale("YMove", DIK_R, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("YMove", DIK_E, -1.f);
-
-	GET_SINGLE(CInput)->BindAxis("XMove", this, &CFreeCamera::XMove);
-	GET_SINGLE(CInput)->AddKeyScale("XMove", DIK_W, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("XMove", DIK_Q, -1.f);
-
-	GET_SINGLE(CInput)->BindAxis("ZMove", this, &CFreeCamera::ZMove);
-	GET_SINGLE(CInput)->AddKeyScale("ZMove", DIK_Y, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("ZMove", DIK_T, -1.f);
-
-
-	GET_SINGLE(CInput)->BindAxis("ZeroRotation", this, &CFreeCamera::RotationZero);
-	GET_SINGLE(CInput)->AddKeyScale("ZeroRotation", DIK_7, 1.f);
-
+	CInput::GetInst()->AddKey("ZeroRotation", 0x37);
 	m_pTransform->SetWorldRot(Vector3::Zero);
+
+	CInput::GetInst()->AddKey("XMoveP", 'W');
+	CInput::GetInst()->AddKey("XMoveM", 'Q');
+
+	CInput::GetInst()->AddKey("YMoveP", 'R');
+	CInput::GetInst()->AddKey("YMoveM", 'E');
+
+	CInput::GetInst()->AddKey("ZMoveP", 'Y');
+	CInput::GetInst()->AddKey("ZMoveM", 'T');
 
 	return true;
 }
@@ -62,6 +53,39 @@ int CFreeCamera::Input(float fTime)
 
 int CFreeCamera::Update(float fTime)
 {
+	if (CInput::GetInst()->KeyPush("YRotationP"))
+		YRotation(1.0f, fTime);
+	else if (CInput::GetInst()->KeyPush("YRotationM"))
+		YRotation(-1.0f, fTime);
+
+	if (CInput::GetInst()->KeyPush("XRotationP"))
+		XRotation(1.0f, fTime);
+	else if (CInput::GetInst()->KeyPush("XRotationM"))
+		XRotation(-1.0f, fTime);
+
+	if (CInput::GetInst()->KeyPush("ZRotationP"))
+		ZRotation(1.0f, fTime);
+	else if (CInput::GetInst()->KeyPush("ZRotationM"))
+		ZRotation(-1.0f, fTime);
+
+	if (CInput::GetInst()->KeyPush("XMoveP"))
+		XMove(1.0f, fTime);
+	else if (CInput::GetInst()->KeyPush("XMoveM"))
+		XMove(-1.0f, fTime);
+
+	if (CInput::GetInst()->KeyPush("YMoveP"))
+		YMove(1.0f, fTime);
+	else if (CInput::GetInst()->KeyPush("YMoveM"))
+		YMove(-1.0f, fTime);
+
+	if (CInput::GetInst()->KeyPush("ZMoveP"))
+		ZMove(1.0f, fTime);
+	else if (CInput::GetInst()->KeyPush("ZMoveM"))
+		ZMove(-1.0f, fTime);
+
+	if (CInput::GetInst()->KeyPress("ZeroRotation"))
+		RotationZero(fTime);
+
 	return 0;
 }
 
@@ -83,75 +107,43 @@ CFreeCamera * CFreeCamera::Clone()
 	return new CFreeCamera(*this);
 }
 
-void CFreeCamera::Move(float fScale, float fTime)
+void CFreeCamera::YRotation(float fScale, float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
-	m_pTransform->Move(AXIS_Z, 20.f * fScale, fTime);
-}
-
-void CFreeCamera::Rotation(float fScale, float fTime)
-{
-	if (fScale == 0.f)
-		return;
-
 	m_pScene->GetMainCameraTransformNonCount()->RotationY(50.f * fScale, fTime);
 }
 
 void CFreeCamera::XRotation(float fScale, float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
-	m_pScene->GetMainCameraTransformNonCount()->RotationX(50.f * fScale, fTime);
+	m_pScene->GetMainCameraTransformNonCount()->RotationX(50.f* fScale, fTime);
 }
 
 void CFreeCamera::ZRotation(float fScale, float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
 	m_pScene->GetMainCameraTransformNonCount()->RotationZ(50.f * fScale, fTime);
 }
 
 void CFreeCamera::XMove(float fScale, float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
-	m_pTransform->Move(Vector3(1.f , 0.f ,0.f), 40.f * fScale, fTime);
+	m_pTransform->Move(Vector3(1.f, 0.f, 0.f), 40.f * fScale, fTime);
 }
 
 void CFreeCamera::YMove(float fScale, float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
 	m_pTransform->Move(Vector3(0.f, 1.f, 0.f), 40.f * fScale, fTime);
 }
 
 void CFreeCamera::ZMove(float fScale, float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
 	m_pTransform->Move(Vector3(0.f, 0.f, 1.f), 40.f * fScale, fTime);
 }
 
-void CFreeCamera::RotationZero(float fScale, float fTime)
+void CFreeCamera::RotationZero(float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
 	m_pTransform->SetWorldRot(0.f, 0.f, 0.f);
 }
 
-void CFreeCamera::PositionZero(float fScale, float fTime)
+void CFreeCamera::PositionZero(float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
 	m_pTransform->SetWorldPos(0.f, 0.f, 0.f);
 }
 

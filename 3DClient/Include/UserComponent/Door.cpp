@@ -5,7 +5,9 @@
 #include <Component/Transform.h>
 #include <SoundManager.h>
 
-CDoor::CDoor():
+PUN_USING
+
+CDoor::CDoor() :
 	fCurrTimer(0.f),
 	m_fCloseTime(1.5f),
 	m_fOpenTime(1.5f),
@@ -16,11 +18,11 @@ CDoor::CDoor():
 	m_vRotOpened = Vector3(0.f, 90.f, 0.f);
 }
 
-CDoor::CDoor(const CDoor & door):
+CDoor::CDoor(const CDoor & door) :
 	PUN::CUserComponent(door)
 {
 	m_pSndComp = 0;
-	
+
 }
 
 CDoor::~CDoor()
@@ -30,7 +32,7 @@ CDoor::~CDoor()
 		PUN::CSoundSource* pSnd = (PUN::CSoundSource*)m_pSndComp;
 		pSnd->Release();
 	}
-	
+
 }
 
 bool CDoor::Init()
@@ -55,7 +57,7 @@ int CDoor::Update(float fTime)
 
 					m_pTransform->SetLocalRot(vRot);
 				}
-				
+
 				fCurrTimer += fTime;
 			}
 			else
@@ -114,13 +116,12 @@ void CDoor::AfterClone()
 	PUN::CSoundSource *pSound = m_pObject->FindComponentFromTag<PUN::CSoundSource>("sound");
 	if (!pSound)
 	{
-		pSound = AddComponent<PUN::CSoundSource>("sound");
+		pSound = AddComponent<CSoundSource>("sound");
 	}
 
 	m_pSndComp = (ptrdiff_t)pSound;
 
-	GET_SINGLE(PUN::CInput)->BindAction("Door_Interact", PUN::KEY_PRESS, this, &CDoor::Interact);
-	GET_SINGLE(PUN::CInput)->AddKeyAction("Door_Interact", DIK_E);
+	CInput::GetInst()->AddKey("Door_Interact", 'E');
 }
 
 void CDoor::Open()
@@ -158,7 +159,7 @@ void CDoor::Open()
 	}
 }
 
-void CDoor::Close() 
+void CDoor::Close()
 {
 	//부서진 건 하는거 아냐..
 	if (m_iState & DOOR_DESTROYED)
@@ -294,11 +295,14 @@ const bool CDoor::IsOnAction() const
 
 void CDoor::Interact(float fTime)
 {
-	if (m_iState & DOOR_CLOSE)
-		Open();
+	if (CInput::GetInst()->KeyPress("Door_Interact"))
+	{
+		if (m_iState & DOOR_CLOSE)
+			Open();
 
-	else if (m_iState & DOOR_OPEN)
-		Close();
+		else if (m_iState & DOOR_OPEN)
+			Close();
+	}
 }
 
 CDoor * CDoor::Clone()

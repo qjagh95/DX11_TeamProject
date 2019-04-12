@@ -113,9 +113,9 @@ public:
 
 CPlayer::CPlayer()
 	: m_pAnimation(nullptr),
-	  m_pInvenObj(nullptr),
-	  m_pInven(nullptr),
-	  m_pInvenTr(nullptr)
+	m_pInvenObj(nullptr),
+	m_pInven(nullptr),
+	m_pInvenTr(nullptr)
 {
 	SetTag("Player");
 	m_eComType = (COMPONENT_TYPE)UT_PLAYER;
@@ -147,28 +147,16 @@ bool CPlayer::Init()
 	m_pTransform->SetLocalRot(0.f, -90.f, 0.f);
 	m_pTransform->SetWorldScale(0.1f, 0.1f, 0.1f);
 
-	GET_SINGLE(CInput)->BindAxis("Move", this, &CPlayer::Move);
-	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_W, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("Move", DIK_S, -1.f);
+	GET_SINGLE(CInput)->AddKey("FrontMove", 'W');
+	GET_SINGLE(CInput)->AddKey("BackMove", 'S');
 
-	GET_SINGLE(CInput)->BindAxis("Rotation", this, &CPlayer::Rotation);
-	GET_SINGLE(CInput)->AddKeyScale("Rotation", DIK_D, 1.f);
-	GET_SINGLE(CInput)->AddKeyScale("Rotation", DIK_A, -1.f);
+	GET_SINGLE(CInput)->AddKey("YRotationP", 'D');
+	GET_SINGLE(CInput)->AddKey("YRotationM", 'A');
 
-	GET_SINGLE(CInput)->BindAction("Fire", KEY_PRESS, this, &CPlayer::Fire);
-	GET_SINGLE(CInput)->AddKeyAction("Fire", DIK_SPACE);
+	GET_SINGLE(CInput)->AddKey("Fire", VK_SPACE);
+	GET_SINGLE(CInput)->AddKey("YODJPUMPTHISPARTY", 'J');
 
-	bool	bSKey[SKEY_END] = { false, true, true };
-	GET_SINGLE(CInput)->BindAction("Fire1", KEY_PRESS, this, &CPlayer::Fire1);
-	GET_SINGLE(CInput)->BindAction("Fire1", KEY_RELEASE, this, &CPlayer::Fire1Release);
-	GET_SINGLE(CInput)->AddKeyAction("Fire1", DIK_SPACE, bSKey);
-
-	PUN::CInput* _input = GET_SINGLE(CInput);
-	_input->BindAction("YODJPUMPTHISPARTY", KEY_PRESS, this, &CPlayer::YoDjPumpThisParty);
-	_input->AddKeyAction("YODJPUMPTHISPARTY", DIK_J);
-
-	_input->BindAction("KingHasCome", KEY_PRESS, this, &CPlayer::KingDdenGodTtack);
-	_input->AddKeyAction("KingHasCome", DIK_K);
+	GET_SINGLE(CInput)->AddKey("KingHasCome", 'K');
 
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
 	pRenderer->SetMesh("BlackCow", TEXT("Monster4.msh"));
@@ -199,36 +187,6 @@ bool CPlayer::Init()
 	SAFE_RELEASE(pWeaponObj);
 	SAFE_RELEASE(pRenderer);
 
-	//CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("PlayerBody");
-
-	//pBody->SetInfo(Vector3::Zero, 3.f);
-
-	//SAFE_RELEASE(pBody);
-
-	//CColliderOBB3D * pBody = m_pObject->AddComponent<CColliderOBB3D>("PlayerBody");
-
-	//float	fLength[3] = { 3.f, 3.f, 3.f };
-	//pBody->SetInfo(Vector3::Zero, Vector3::Axis, fLength);
-
-	//SAFE_RELEASE(pBody);
-
-	//Action1* ranAction1;
-	//Action2* ranAction2;
-
-	//BehaviorTree* myState = BTManager::Get()->CreateBehaviorTree("PlayerState1", BT_SELECTOR);
-	//myState->AddRootSelectorInSelector("Selector1");
-
-	//ranAction1 = myState->AddSelectorInAction<Action1>("Selector1", "Action1");
-	//ranAction2 = myState->AddSelectorInAction<Action2>("Selector1", "Action2");
-
-	//myState->AddSelectorInSelector("Selector1", "Selector2");
-	//myState->AddSelectorInSelector("Selector2", "Selector3");
-
-	//BehaviorTree* myState1 = BTManager::Get()->CreateBehaviorTree("PlayerState2", BT_SELECTOR);
-	//BehaviorTree* myState2 = BTManager::Get()->CreateBehaviorTree("PlayerState3", BT_SELECTOR);
-	//BehaviorTree* myState3 = BTManager::Get()->CreateBehaviorTree("PlayerState4", BT_SELECTOR);
-
-
 	// Inventory
 	m_pInvenObj = CGameObject::CreateObject("Inven", m_pLayer);
 
@@ -236,9 +194,7 @@ bool CPlayer::Init()
 	m_pInven->SetInvenMax(19);
 
 	m_pInvenTr = m_pInvenObj->GetTransform();
-
 	pMaterial = m_pInvenObj->AddComponent<CMaterial>("Inven");
-
 	pMaterial->SetDiffuseTex(0, "Inventory", TEXT("UI/Inven/InvenBack.png"));
 
 	SAFE_RELEASE(pMaterial);
@@ -265,31 +221,21 @@ int CPlayer::Update(float fTime)
 		m_pTransform->SetWorldPos(vPos);
 	}
 
-	//float fRotationX = 0.f;
-	//float fRotationY = 0.f;
-	//fRotationX += -CInput::GetInst()->GetWorldMouseMove().y * 500.f * fTime;
-	//fRotationY += CInput::GetInst()->GetWorldMouseMove().x * 500.f * fTime;
+	if (CInput::GetInst()->KeyPush("FrontMove"))
+		Move(1.0f, fTime);
+	else if (CInput::GetInst()->KeyPush("BackMove"))
+		Move(-1.0f, fTime);
 
-	//cout << fRotationX << " " << fRotationY << endl;
+	if (CInput::GetInst()->KeyPush("YRotationP"))
+		Rotation(1.0f, fTime);
+	else if (CInput::GetInst()->KeyPush("YRotationM"))
+		Rotation(-1.0f, fTime);
 
-	//m_pTransform->RotationX(18.f * fRotationX, fTime);
-	//m_pTransform->RotationY(18.f * fRotationY, fTime);
+	if (CInput::GetInst()->KeyPress("YODJPUMPTHISPARTY"))
+		YoDjPumpThisParty(fTime);
 
-	//if (m_pTransform->GetWorldPos().z >= 0)
-	//{
-	//	if (m_pScene->GetTag() == "" || m_pScene->GetTag() == "TrdTestScene")
-	//	{
-	//		GET_SINGLE(CSceneManager)->CreateNextScene(true , "SecTestScene");
-	//		GET_SINGLE(CSceneManager)->AddSceneComponent<CSecTestScene>("SecTestScene", false);
-	//		m_pTransform->SetWorldPos(0.f, 0.f, -300.f);
-	//	}
-	//	else
-	//	{
-	//		GET_SINGLE(CSceneManager)->CreateNextScene(true, "TrdTestScene");
-	//		GET_SINGLE(CSceneManager)->AddSceneComponent<CTrdTestScene>("TrdTestScene", false);
-	//		m_pTransform->SetWorldPos(0.f, 0.f, -300.f);
-	//	}
-	//}
+	if (CInput::GetInst()->KeyPress("KingHasCome"))
+		KingDdenGodTtack(fTime);
 
 	static bool bPush = false;
 	if (GetAsyncKeyState('I') & 0x8000)
@@ -301,6 +247,7 @@ int CPlayer::Update(float fTime)
 		bPush = false;
 		m_pInven->SetVisible();
 	}
+
 	return 0;
 }
 
@@ -324,39 +271,17 @@ CPlayer * CPlayer::Clone()
 
 void CPlayer::Move(float fScale, float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
 	m_pTransform->Move(AXIS_Z, 20.f * fScale, fTime);
-}
-
-void CPlayer::Fire(float fTime)
-{
-	OutputDebugString(TEXT("Fire\n"));
-}
-
-void CPlayer::Fire1(float fTime)
-{
-	m_pTransform->SetWorldRot(0.f, 0.f, 0.f);
-	OutputDebugString(TEXT("Fire1\n"));
-}
-
-void CPlayer::Fire1Release(float fTime)
-{
-	OutputDebugString(TEXT("Fire1Release\n"));
 }
 
 void CPlayer::Rotation(float fScale, float fTime)
 {
-	if (fScale == 0.f)
-		return;
-
 	m_pTransform->RotationY(180.f * fScale, fTime);
 }
 
 void CPlayer::YoDjPumpThisParty(float fTime)
 {
-	PUN::CSoundManager::GetInst()->PlayBgm("bgm2", TEXT("room-2010.wav"),true, true, false);
+	PUN::CSoundManager::GetInst()->PlayBgm("bgm2", TEXT("room-2010.wav"), true, true, false);
 }
 
 void CPlayer::KingDdenGodTtack(float fTime)

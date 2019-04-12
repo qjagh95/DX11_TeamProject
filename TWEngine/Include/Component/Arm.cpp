@@ -52,13 +52,6 @@ void CArm::SetTarget(CComponent * pTarget)
 
 void CArm::EnableMouse()
 {
-	if (!m_bMouseAction)
-	{
-		GET_SINGLE(CInput)->AddKeyAction("ArmRotation", DIK_RBUTTON);
-		GET_SINGLE(CInput)->BindAction("ArmRotation", KEY_PUSH,
-			this, &CArm::MouseRotation);
-	}
-
 	m_bMouseAction = true;
 }
 
@@ -67,35 +60,36 @@ void CArm::MouseRotation(float fTime)
 	if (!m_pTarget)
 		return;
 
+	if (m_bMouseAction == false)
+		return;
+
 	Vector2	vMove = GET_SINGLE(CInput)->GetMouseGap();
 
-	if (vMove.x != 0.f)
+	if (CInput::GetInst()->KeyPush("RButton"))
 	{
-		float	fValueW = 180.f / _RESOLUTION.iWidth;
-		float	fAngle = vMove.x * fValueW;
+		if (vMove.x != 0.f)
+		{
+			float	fValueW = 180.f / _RESOLUTION.iWidth;
+			float	fAngle = vMove.x * fValueW;
 
-		m_pTransform->RotationY(fAngle);
+			m_pTransform->RotationY(fAngle);
 
-		m_pTransform->SetWorldPos(m_pTarget->GetWorldPos() - m_pTransform->GetWorldAxis(AXIS_Z) * m_fDistance);
-	}
+			m_pTransform->SetWorldPos(m_pTarget->GetWorldPos() - m_pTransform->GetWorldAxis(AXIS_Z) * m_fDistance);
+		}
 
-	if (vMove.y != 0.f)
-	{
-		float	fValueH = 180.f / _RESOLUTION.iHeight;
-		float	fAngle = vMove.y * fValueH * -1.f;
+		if (vMove.y != 0.f)
+		{
+			float	fValueH = 180.f / _RESOLUTION.iHeight;
+			float	fAngle = vMove.y * fValueH * -1.f;
 
-		m_pTransform->RotationX(fAngle);
+			m_pTransform->RotationX(fAngle);
 
+		}
 	}
 }
 
 bool CArm::Init()
 {
-	//GET_SINGLE(CInput)->AddKey("CameraFront", VK_UP);
-	//GET_SINGLE(CInput)->AddKey("CameraBack", VK_DOWN);
-	//GET_SINGLE(CInput)->AddKey("CameraLeft", VK_LEFT);
-	//GET_SINGLE(CInput)->AddKey("CameraRight", VK_RIGHT);
-
 	m_fSpeed = 500.f;
 
 	return true;
@@ -140,6 +134,8 @@ int CArm::Update(float fTime)
 	}
 
 	m_pTransform->SetWorldPos(m_pTarget->GetWorldPos() - m_pTransform->GetWorldAxis(AXIS_Z) * m_fDistance);
+
+	MouseRotation(fTime);
 
 	return 0;
 }
