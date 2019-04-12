@@ -2,11 +2,11 @@
 using System.IO;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Drawing;
 using EngineWrapper;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,13 +37,21 @@ namespace WinFormEditor
         private string m_strAniTime = "";
         private string m_strDeleteClip = "";
         private EventHandler m_event = null;
+
+        private Transform m_transform = null;
+
         
+
         private void Run(object sender, EventArgs e)
         {
             while (this.Created == true)
             {
                 coreWrapper.Logic();
                 TB_NaviIndex.Text = Convert.ToString(coreWrapper.GetSelectNaviIndex());
+                
+                // Update Transform
+                m_transform.UpdateTransform();
+
                 Application.DoEvents();
             }
         }
@@ -62,8 +70,23 @@ namespace WinFormEditor
             // Connection Run Funtion
             Application.Idle += Run;
 
+            // Transform Class Init
+            m_transform = new Transform();
+            m_transform.Init(this, coreWrapper);
+
+
+
+
+
+
+
+
             // Dictionary 생성
             m_objInfo = new Dictionary<string, ObjectInfo>();
+
+          
+
+
 
             // 데이터 로드
             ClearData();
@@ -97,6 +120,11 @@ namespace WinFormEditor
             LB_ObjectList.Items.Clear();
         }
 
+        public Dictionary<string, ObjectInfo> GetObjectInfo()
+        {
+            return m_objInfo;
+        }
+
         /*******************************************************************************************************/
 
         private void ObjectAllClear(object sender, MouseEventArgs e)
@@ -104,43 +132,51 @@ namespace WinFormEditor
             Point parentPoint = Location;
 
             // Form
-            m_dataRemoveForm = new Form();
-            m_dataRemoveForm.Owner = this;
-            m_dataRemoveForm.StartPosition = FormStartPosition.Manual;
-            m_dataRemoveForm.Size = new Size(218, 120);
-            m_dataRemoveForm.Location = new Point(parentPoint.X + 13, parentPoint.Y + 125);
+            m_dataRemoveForm = new Form
+            {
+                Owner = this,
+                StartPosition = FormStartPosition.Manual,
+                Size = new Size(218, 120),
+                Location = new Point(parentPoint.X + 13, parentPoint.Y + 125)
+            };
             m_dataRemoveForm.Show();
 
             // Label
-            Label labelRemoveInfo = new Label();
-            labelRemoveInfo.AutoSize = true;
-            labelRemoveInfo.Font = new Font("맑은 고딕", 10, FontStyle.Bold);
-            labelRemoveInfo.Text = "데이터를 삭제하시겠습니까?";
-            labelRemoveInfo.TextAlign = ContentAlignment.MiddleCenter;
-            labelRemoveInfo.Left = 8;
-            labelRemoveInfo.Top = 11;
+            Label labelRemoveInfo = new Label
+            {
+                AutoSize = true,
+                Font = new Font("맑은 고딕", 10, FontStyle.Bold),
+                Text = "데이터를 삭제하시겠습니까?",
+                TextAlign = ContentAlignment.MiddleCenter,
+                Left = 8,
+                Top = 11
+            };
             m_dataRemoveForm.Controls.Add(labelRemoveInfo);
 
-            // Button (예)
-            Button btnRemove = new Button();
-            btnRemove.Location = new Point(20, 38);
-            btnRemove.Size = new Size(75, 35);
-            btnRemove.Font = new Font("맑은 고딕", 10, FontStyle.Bold);
-            btnRemove.Text = "Remove";
-            btnRemove.ForeColor = Color.Red;
-            btnRemove.TabStop = false;
+            // Button(예)
+            Button btnRemove = new Button
+            {
+                Location = new Point(20, 38),
+                Size = new Size(75, 35),
+                Font = new Font("맑은 고딕", 10, FontStyle.Bold),
+                Text = "Remove",
+                ForeColor = Color.Red,
+                TabStop = false
+            };
             btnRemove.FlatAppearance.BorderSize = 1;
             btnRemove.Click += new System.EventHandler(BtnRemove);
             m_dataRemoveForm.Controls.Add(btnRemove);
 
-            // Button (아니오)
-            Button btnCancel = new Button();
-            btnCancel.Location = new Point(105, 38);
-            btnCancel.Size = new Size(75, 35);
-            btnCancel.Font = new Font("맑은 고딕", 10, FontStyle.Bold);
-            btnCancel.Text = "Cancel";
-            btnCancel.ForeColor = Color.Blue;
-            btnCancel.TabStop = false;
+            // Button(아니오)
+            Button btnCancel = new Button
+            {
+                Location = new Point(105, 38),
+                Size = new Size(75, 35),
+                Font = new Font("맑은 고딕", 10, FontStyle.Bold),
+                Text = "Cancel",
+                ForeColor = Color.Blue,
+                TabStop = false
+            };
             btnCancel.FlatAppearance.BorderSize = 1;
             btnCancel.Click += new EventHandler(BtnCancel);
             m_dataRemoveForm.Controls.Add(btnCancel);
@@ -190,6 +226,33 @@ namespace WinFormEditor
                     LB_ObjectList.Items.Add(arrObjTag[j]);
                 }
             }
+        }
+
+        public string GetSelectObjectTag()
+        {
+            string strTag = "";
+            if(LB_ObjectList.SelectedItem != null)
+            {
+                strTag = LB_ObjectList.SelectedItem.ToString();
+            }
+
+            return strTag;
+        }
+
+        public TextBox[,] GetTransformTextBox()
+        {
+            TextBox[,] arrTrTextBox = new TextBox[3, 3];
+            arrTrTextBox[0, 0] = PositionX;
+            arrTrTextBox[0, 1] = PositionY;
+            arrTrTextBox[0, 2] = PositionZ;
+            arrTrTextBox[1, 0] = ScaleX;
+            arrTrTextBox[1, 1] = ScaleY;
+            arrTrTextBox[1, 2] = ScaleZ;
+            arrTrTextBox[2, 0] = RotateX;
+            arrTrTextBox[2, 1] = RotateY;
+            arrTrTextBox[2, 2] = RotateZ;
+
+            return arrTrTextBox;
         }
 
         private void LoadAnmFile()
@@ -955,7 +1018,7 @@ namespace WinFormEditor
             ClipList.Items.Remove(ClipList.SelectedItem);
         }
 
-        void AddLogString(string _strLog)
+        public void AddLogString(string _strLog)
         {
             string strLogTime = System.DateTime.Now.ToString();
             LB_LogMessage.Items.Insert(0, "[" + strLogTime + "] " + _strLog);
