@@ -185,6 +185,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Client.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneComponent\FirTestScene.h" />
     <ClInclude Include="SceneComponent\LogoScene.h" />
@@ -197,8 +198,11 @@
     <ClInclude Include="ClientHeader.h" />
     <ClInclude Include="UserComponent\Door.h" />
     <ClInclude Include="UserComponent\Field.h" />
+    <ClInclude Include="UserComponent\Ghost.h" />
+    <ClInclude Include="UserComponent\Inventory.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Player.h" />
+    <ClInclude Include="UserComponent\Zipper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -212,8 +216,11 @@
     <ClCompile Include="SceneComponent\TrdTestScene.cpp" />
     <ClCompile Include="UserComponent\Door.cpp" />
     <ClCompile Include="UserComponent\Field.cpp" />
+    <ClCompile Include="UserComponent\Ghost.cpp" />
+    <ClCompile Include="UserComponent\Inventory.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
     <ClCompile Include="UserComponent\Player.cpp" />
+    <ClCompile Include="UserComponent\Zipper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="3DClient.rc" />

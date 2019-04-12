@@ -14,17 +14,27 @@
 #include <Component/SoundSource.h>
 #include <Component/Animation.h>
 #include "Component/Gizmo.h"
-//#include "../UserComponent/Door.h"
+#include "../UserComponent/Door.h"
 #include "../UserComponent/Field.h"
 #include "../UserComponent/Player.h"
 #include "../UserComponent/Minion.h"
+#include "../UserComponent/Ghost.h"
 
 CTestScene::CTestScene()
 {
+	m_fPlayTime = 0.f;
+	m_bGhostOn = false;
+	m_bIncrease = false;
+	m_fX = 0.f;
+	m_fY = 0.f;
 }
 
 CTestScene::~CTestScene()
 {
+	SAFE_RELEASE(m_pUILayer);
+
+	if (m_bGhostOn)
+		SAFE_RELEASE(m_pGhostTr);
 }
 
 bool CTestScene::Init()
@@ -51,7 +61,7 @@ bool CTestScene::Init()
 	SAFE_RELEASE(pCameraTr);
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
-	CLayer* pUILayer = m_pScene->FindLayer("UI");
+	m_pUILayer = m_pScene->FindLayer("UI");
 	CLayer* pTileLayer = m_pScene->FindLayer("Tile");
 
 	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
@@ -594,7 +604,7 @@ bool CTestScene::Init()
 	SAFE_RELEASE(pCamera);
 
 	SAFE_RELEASE(pDefaultLayer);
-	SAFE_RELEASE(pUILayer);
+	//SAFE_RELEASE(pUILayer);
 	SAFE_RELEASE(pTileLayer);
 	SAFE_RELEASE(pBackLayer);
 
@@ -603,6 +613,48 @@ bool CTestScene::Init()
 
 int CTestScene::Update(float fTime)
 {
+	static bool bPush = false;
+	if (GetAsyncKeyState('G') & 0x8000)
+	{
+		bPush = true;
+	}
+	else if (bPush)
+	{
+		bPush = false;
+		m_bGhostOn = true;
+		m_bIncrease = true;
+
+		CGameObject*	pGhostObj = CGameObject::CreateObject("Ghost", m_pUILayer);
+
+		CGhost*	pGhost = pGhostObj->AddComponent<CGhost>("Ghost");
+
+		m_pGhostTr = pGhostObj->GetTransform();
+
+		//SAFE_RELEASE(pGhostTr);
+		SAFE_RELEASE(pGhost);
+		SAFE_RELEASE(pGhostObj);
+	}
+
+	if (m_bIncrease)
+	{
+		m_fPlayTime += fTime;
+
+		if (m_fX <= 4096.f && m_fY <= 4096.f)
+		{
+			m_fX += 9000 * fTime;
+			m_fY += 9000 * fTime;
+			m_pGhostTr->SetWorldScale(m_fX, m_fY, 1.f);
+		}
+	}
+
+	if (m_fPlayTime >= 2.f)
+	{
+		m_bIncrease = false;
+		m_fPlayTime = 0.f;
+		m_fX = 1.f;
+		m_fY = 1.f;
+	}
+
 	return 0;
 }
 

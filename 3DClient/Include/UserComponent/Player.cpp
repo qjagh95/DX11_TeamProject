@@ -1,7 +1,6 @@
 #include "../ClientHeader.h"
 #include "Player.h"
 #include "Input.h"
-#include "Input.h"
 #include "NavigationMesh.h"
 #include "NavigationManager3D.h"
 #include "Scene/Scene.h"
@@ -12,6 +11,7 @@
 #include "Component/ColliderSphere.h"
 #include "../SceneComponent/SecTestScene.h"
 #include "../SceneComponent/TrdTestScene.h"
+#include "Inventory.h"
 
 #include <BehaviorTree.h>
 #include <SoundManager.h>
@@ -112,8 +112,13 @@ public:
 };
 
 CPlayer::CPlayer()
-	: m_pAnimation(nullptr)
+	: m_pAnimation(nullptr),
+	  m_pInvenObj(nullptr),
+	  m_pInven(nullptr),
+	  m_pInvenTr(nullptr)
 {
+	SetTag("Player");
+	m_eComType = (COMPONENT_TYPE)UT_PLAYER;
 }
 
 CPlayer::CPlayer(const CPlayer & com)
@@ -124,6 +129,9 @@ CPlayer::CPlayer(const CPlayer & com)
 CPlayer::~CPlayer()
 {
 	SAFE_RELEASE(m_pAnimation);
+	SAFE_RELEASE(m_pInvenTr);
+	SAFE_RELEASE(m_pInven);
+	SAFE_RELEASE(m_pInvenObj);
 }
 
 void CPlayer::Start()
@@ -220,6 +228,21 @@ bool CPlayer::Init()
 	//BehaviorTree* myState2 = BTManager::Get()->CreateBehaviorTree("PlayerState3", BT_SELECTOR);
 	//BehaviorTree* myState3 = BTManager::Get()->CreateBehaviorTree("PlayerState4", BT_SELECTOR);
 
+
+	// Inventory
+	m_pInvenObj = CGameObject::CreateObject("Inven", m_pLayer);
+
+	m_pInven = m_pInvenObj->AddComponent<CInventory>("Inven");
+	m_pInven->SetInvenMax(19);
+
+	m_pInvenTr = m_pInvenObj->GetTransform();
+
+	pMaterial = m_pInvenObj->AddComponent<CMaterial>("Inven");
+
+	pMaterial->SetDiffuseTex(0, "Inventory", TEXT("UI/Inven/InvenBack.png"));
+
+	SAFE_RELEASE(pMaterial);
+
 	return true;
 }
 
@@ -268,6 +291,16 @@ int CPlayer::Update(float fTime)
 	//	}
 	//}
 
+	static bool bPush = false;
+	if (GetAsyncKeyState('I') & 0x8000)
+	{
+		bPush = true;
+	}
+	else if (bPush)
+	{
+		bPush = false;
+		m_pInven->SetVisible();
+	}
 	return 0;
 }
 

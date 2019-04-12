@@ -55,6 +55,9 @@ public:
 	virtual void Render(float fTime);
 	virtual CLandScape* Clone();
 
+	void Save(const string& FullPath);
+	void Load(const string& FullPath);
+
 private:
 	void ComputeNormal();
 	void ComputeTangent();

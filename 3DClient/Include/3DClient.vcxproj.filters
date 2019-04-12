@@ -19,6 +19,18 @@
     <Filter Include="02. UserComponent">
       <UniqueIdentifier>{ccf439c4-579f-4acc-805e-afabf4a3dcac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\01. Player">
+      <UniqueIdentifier>{a3696cd4-c3f0-434c-b0f3-a77b0367be62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\02. Monster">
+      <UniqueIdentifier>{69f2d9a9-88da-4338-9a78-b7cc408f4a1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\03. Field">
+      <UniqueIdentifier>{4c081a99-a9d3-407e-84df-a1449385a06c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\04. UI">
+      <UniqueIdentifier>{2013d5d9-3504-4da1-b5b5-f876934b010b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -30,9 +42,6 @@
     <ClInclude Include="SceneComponent\StartScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Player.h">
-      <Filter>02. UserComponent</Filter>
-    </ClInclude>
     <ClInclude Include="SceneComponent\FirTestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
@@ -42,14 +51,8 @@
     <ClInclude Include="SceneComponent\TrdTestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Field.h">
-      <Filter>02. UserComponent</Filter>
-    </ClInclude>
     <ClInclude Include="ClientHeader.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\Minion.h">
-      <Filter>02. UserComponent</Filter>
     </ClInclude>
     <ClInclude Include="SceneComponent\LogoScene.h">
       <Filter>01. SceneComponent</Filter>
@@ -57,11 +60,32 @@
     <ClInclude Include="SceneComponent\TestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Door.h">
-      <Filter>02. UserComponent</Filter>
-    </ClInclude>
     <ClInclude Include="SceneComponent\RandScapeTestScene.h">
       <Filter>01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Player.h">
+      <Filter>02. UserComponent\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Minion.h">
+      <Filter>02. UserComponent\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Door.h">
+      <Filter>02. UserComponent\03. Field</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Field.h">
+      <Filter>02. UserComponent\03. Field</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Ghost.h">
+      <Filter>02. UserComponent\02. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Inventory.h">
+      <Filter>02. UserComponent\04. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Zipper.h">
+      <Filter>02. UserComponent\04. UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -74,9 +98,6 @@
     <ClCompile Include="SceneComponent\StartScene.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\Player.cpp">
-      <Filter>02. UserComponent</Filter>
-    </ClCompile>
     <ClCompile Include="SceneComponent\FirTestScene.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
@@ -86,23 +107,35 @@
     <ClCompile Include="SceneComponent\TrdTestScene.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\Field.cpp">
-      <Filter>02. UserComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\Minion.cpp">
-      <Filter>02. UserComponent</Filter>
-    </ClCompile>
     <ClCompile Include="SceneComponent\LogoScene.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\TestScene.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\Door.cpp">
-      <Filter>02. UserComponent</Filter>
-    </ClCompile>
     <ClCompile Include="SceneComponent\RandScapeTestScene.cpp">
       <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Player.cpp">
+      <Filter>02. UserComponent\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Minion.cpp">
+      <Filter>02. UserComponent\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Door.cpp">
+      <Filter>02. UserComponent\03. Field</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Field.cpp">
+      <Filter>02. UserComponent\03. Field</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Ghost.cpp">
+      <Filter>02. UserComponent\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Inventory.cpp">
+      <Filter>02. UserComponent\04. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Zipper.cpp">
+      <Filter>02. UserComponent\04. UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,7 @@
 #pragma once
 #include "Component/UserComponent.h"
 #include "Component/Animation.h"
+
 PUN_USING
 
 class CPlayer
@@ -9,7 +10,11 @@ class CPlayer
 	friend class CGameObject;
 
 private:
-	CAnimation* m_pAnimation;
+	CAnimation*			m_pAnimation;
+	class CGameObject*	m_pInvenObj;
+	class CInventory*	m_pInven;
+	class CTransform*	m_pInvenTr;
+
 protected:
 	CPlayer();
 	CPlayer(const CPlayer& com);
