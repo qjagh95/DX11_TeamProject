@@ -4,6 +4,7 @@
 #include "../Input.h"
 #include "../Device.h"
 #include "../GameObject.h"
+#include "Camera.h"
 
 PUN_USING
 
@@ -71,10 +72,16 @@ void CArm::MouseRotation(float fTime)
 		{
 			float	fValueW = 180.f / _RESOLUTION.iWidth;
 			float	fAngle = vMove.x * fValueW;
+			if (m_pTarget->GetGameObjectNonCount()->GetTag() == "FreeCamObj")
+			{
+				CSceneManager::GetInst()->GetMainCameraNoneCount()->GetTransformNonCount()->RotationY(fAngle);
+			}
+			else
+			{
+				m_pTransform->RotationY(fAngle);
 
-			m_pTransform->RotationY(fAngle);
-
-			m_pTransform->SetWorldPos(m_pTarget->GetWorldPos() - m_pTransform->GetWorldAxis(AXIS_Z) * m_fDistance);
+				m_pTransform->SetWorldPos(m_pTarget->GetWorldPos() - m_pTransform->GetWorldAxis(AXIS_Z) * m_fDistance);
+			}
 		}
 
 		if (vMove.y != 0.f)
@@ -82,8 +89,14 @@ void CArm::MouseRotation(float fTime)
 			float	fValueH = 180.f / _RESOLUTION.iHeight;
 			float	fAngle = vMove.y * fValueH * -1.f;
 
-			m_pTransform->RotationX(fAngle);
-
+			if (m_pTarget->GetGameObjectNonCount()->GetTag() == "FreeCamObj")
+			{
+				CSceneManager::GetInst()->GetMainCameraNoneCount()->GetTransformNonCount()->RotationX(fAngle);
+			}
+			else
+			{
+				m_pTransform->RotationX(fAngle);
+			}
 		}
 	}
 }

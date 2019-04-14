@@ -48,7 +48,7 @@ private:
 	bool			m_bNaviEditorMode;
 	CGameObject* m_NavObject;
 	class CLandScape* m_LandScape;
-
+	bool			  m_bSelectNaviMove;
 public:
 	void SetFreeCamObj(CGameObject* _pObj);
 	void SetArm(class CArm* _pArm);
@@ -71,8 +71,14 @@ public:
 
 	// 오브젝트
 public:
+	// Navigation
 	bool IsNaviEditorMode() const { return m_bNaviEditorMode; }
 	void SetNaviEditorMode(bool _bMode){ m_bNaviEditorMode = _bMode;}
+	void SetBlushSize(float _fSize);
+	void DeleteNavigationMesh();
+	void SetNaviMove(bool _bEnable) { m_bSelectNaviMove = _bEnable; }
+	bool GetNaviMove() const { return m_bSelectNaviMove; }
+	///////////////////////////////////////////////////////////////////////
 	void GetSelectLayerObjList(string _strLayerTag, vector<string>* _pVec);
 	void SetActiveObject(const string _strObjectTag, const string _strLayerTag);
 	void SetActiveObject(class CGameObject* _pObject);

@@ -126,6 +126,22 @@ void CEditManager::GetLayerList(vector<string>* _pVec)
 	m_pScene->GetLayerTagList(_pVec);
 }
 
+void CEditManager::SetBlushSize(float _fSize)
+{
+	CInput::GetInst()->SetBlushSize(_fSize);
+}
+
+void CEditManager::DeleteNavigationMesh()
+{
+	if (m_NavObject)
+	{
+		m_NavObject->Die();
+	}
+
+	SAFE_RELEASE(m_NavObject);
+	SAFE_RELEASE(m_LandScape);
+}
+
 void CEditManager::GetSelectLayerObjList(string _strLayerTag, vector<string>* _pVec)
 {
 	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
@@ -774,7 +790,7 @@ bool CEditManager::SaveNavFile(const string & FullPath)
 	if (m_LandScape->GetNaviMesh() == NULLPTR)
 		return false;
 
-
+	m_LandScape->SaveLandScape(FullPath);
 	m_LandScape->GetNaviMesh()->SaveFromFullPath(FullPath.c_str());
 
 	return true;
@@ -783,7 +799,10 @@ bool CEditManager::SaveNavFile(const string & FullPath)
 bool CEditManager::LoadNavFile(const string & FullPath)
 {
 	CLayer* pLayer = m_pScene->FindLayer("Default");
-	m_NavObject->Die();
+	if (m_NavObject)
+	{
+		m_NavObject->Die();
+	}
 
 	SAFE_RELEASE(m_NavObject);
 	SAFE_RELEASE(m_LandScape);
@@ -793,8 +812,7 @@ bool CEditManager::LoadNavFile(const string & FullPath)
 	m_LandScape = m_NavObject->AddComponent<CLandScape>("TestLandScape");
 
 	SAFE_RELEASE(pLayer);
-
-	m_LandScape->GetNaviMesh()->LoadFromFullPath(FullPath.c_str());
+	m_LandScape->LoadLandScape(FullPath);
 
 	return true;
 }

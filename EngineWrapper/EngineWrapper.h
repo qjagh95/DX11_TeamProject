@@ -206,5 +206,20 @@ namespace EngineWrapper
 			string strFullPath = ConvertMarshal<string, String^>(FullPath);
 			CEditManager::GetInst()->LoadNavFile(strFullPath);
 		}
+
+		void SetBlushSize(double _dSize)
+		{
+			CEditManager::GetInst()->SetBlushSize((float)_dSize);
+		}
+
+		void DeleteNaviMesh()
+		{
+			CEditManager::GetInst()->DeleteNavigationMesh();
+		}
+
+		bool GetSelectNaviMove()
+		{
+			return CEditManager::GetInst()->GetNaviMove();
+		}
 	};
 }

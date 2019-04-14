@@ -28,14 +28,20 @@ private:
 	class CTransform*		m_pMouseTr;
 	bool					m_bShowCursor;
 	class CCollider*		m_pWorldPoint;
-	int						m_iSelectNavIndex;
 	unordered_map<string, KeyInfo*> m_KeyMap;
 	KeyInfo* m_NewKey;
 	bool m_bFocus;
-
+	////////////////////Navi///////////////////////////
+	int						m_iSelectNavIndex;
+	float					m_fBlushSize;
+	Vector3					m_vSelectNaviCellCenter;
 public:
 	void SetSelectNavIndex(int _idx) { m_iSelectNavIndex = _idx; }
 	int GetiSelectNavIndex() const { return m_iSelectNavIndex; }
+	void SetSelectCellCenter(Vector3 _vCenter) { m_vSelectNaviCellCenter = _vCenter; }
+	void SetBlushSize(float _fSize) { m_fBlushSize = _fSize; }
+	float GetBlushSize() const { return m_fBlushSize; }
+	void SelectNaviBoxRender(float fTime);
 
 public:
 	RayInfo MouseRayInfo() const;

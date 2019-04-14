@@ -11,6 +11,7 @@
 #include "../Core.h"
 #include "../Device.h"
 #include "../EditManager.h"
+#include "../NavigationManager3D.h"
 
 PUN_USING
 
@@ -20,6 +21,8 @@ CLandScape::CLandScape() :
 	m_eComType = CT_LANDSCAPE;
 	m_Mesh = NULLPTR;
 	m_isMove = false;
+	if(CCore::GetInst()->m_bEditorMode == true)
+	CEditManager::GetInst()->SetNaviMove(m_isMove);
 }
 
 CLandScape::CLandScape(const CLandScape & landscape)
@@ -213,8 +216,8 @@ bool CLandScape::CreateLandScape(const string& strName, unsigned int iNumX, unsi
 		{
 			int	iAddr = i * m_iNumX + j;
 
-			m_pNavMesh->AddCell(m_vecVtx[iAddr], m_vecVtx[iAddr + 1], m_vecVtx[iAddr + m_iNumX + 1]);
-			m_pNavMesh->AddCell(m_vecVtx[iAddr], m_vecVtx[iAddr + m_iNumX + 1], m_vecVtx[iAddr + m_iNumX]);
+			m_pNavMesh->AddCell(&m_vecVtx, iAddr, iAddr + 1, iAddr + m_iNumX + 1);
+			m_pNavMesh->AddCell(&m_vecVtx, iAddr, iAddr + m_iNumX + 1, iAddr + m_iNumX);
 		}
 	}
 	m_pNavMesh->CreateGridMapAdj(m_iNumX - 1);
@@ -302,26 +305,33 @@ bool CLandScape::Init()
 	m_tCBuffer.iSplatCount = 0;
 	m_pObject->SetRenderGroup(RG_LANDSCAPE);
 
-	CInput::GetInst()->AddKey("ChangeFlag", VK_TAB);
-
 	return true;
 }
 
 int CLandScape::Input(float fTime)
 {
+	if (CInput::GetInst()->KeyPress("TabButton") == true)
+	{
+		if(CCore::GetInst()->m_bEditorMode == true)
+		ChangeFlag(fTime);
+	}
 	return 0;
 }
 
 int CLandScape::Update(float fTime)
 {
-	ChangeFlag(fTime);
-
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{
 		if (CEditManager::GetInst()->IsNaviEditorMode() == true)
 		{
+			CheckSelectIndex(fTime);
 			if (CInput::GetInst()->KeyPush("LButton") == true)
-				Click(fTime);
+			{
+				if (m_isMove)
+					m_pNavMesh->Click(m_isMove, Vector4(0.0f, 1.0f, 0.5f, 1.0f));
+				else
+					m_pNavMesh->Click(m_isMove);
+			}
 		}
 	}
 
@@ -428,11 +438,11 @@ void CLandScape::ComputeTangent()
 
 void CLandScape::ChangeFlag(float DeltaTime)
 {
-	if (CInput::GetInst()->KeyPress("ChangeFlag"))
-		m_isMove ^= true;
+	m_isMove ^= true;
+	CEditManager::GetInst()->SetNaviMove(m_isMove);
 }
 
-void CLandScape::Click(float DeltaTime)
+void CLandScape::CheckSelectIndex(float DeltaTime)
 {
 	Vector3 vRayInterSect;
 	RayInfo vRayInfo;
@@ -522,28 +532,143 @@ void CLandScape::Click(float DeltaTime)
 		}
 	}
 
-	if (m_isMove == true)
-		CInput::GetInst()->SetSelectNavIndex(m_pNavMesh->MousePickGetCellIndex(iMinSection, iMaxSection, vRayInfo.vPos, vRayInfo.vDir, vRayInterSect, Vector4(0.0f, 1.0f, 0.5f, 1.0f), true));
-	else
-		CInput::GetInst()->SetSelectNavIndex(m_pNavMesh->MousePickGetCellIndex(iMinSection, iMaxSection, vRayInfo.vPos, vRayInfo.vDir, vRayInterSect));
+	CInput::GetInst()->SetSelectNavIndex(m_pNavMesh->MousePickGetCellIndex(iMinSection, iMaxSection, vRayInfo.vPos, vRayInfo.vDir, vRayInterSect));
 
 	m_Mesh->UpdateVertexBuffer(&m_vecVtx[0]);
 }
 
-void CLandScape::Save(const string& FullPath)
+void CLandScape::SaveLandScape(const string& FullPath)
 {
-	BinaryWrite Writer(FullPath.c_str());
+	string Temp = FullPath;
+	for (int i = 0; i < 3; ++i)
+		Temp.pop_back();
+	Temp += "Land";
 
-	Writer.WriteData((int)m_iNumX);
-	Writer.WriteData((int)m_iNumZ);
+	FILE* pFile = NULL;
+
+	fopen_s(&pFile, Temp.c_str(), "wb");
+
+	if (!pFile)
+		return;
+
+	fwrite(&m_iNumX, sizeof(int), 1, pFile);
+	fwrite(&m_iNumZ, sizeof(int), 1, pFile);
+	int iVecVtxSize = m_vecVtx.size();
+	fwrite(&iVecVtxSize, sizeof(int), 1, pFile);
+	for (size_t i = 0; i < m_vecVtx.size(); ++i)
+	{
+		fwrite(&m_vecVtx[i], sizeof(Vertex3DColor), 1, pFile);
+	}
+
+	int iVecIndexSize = m_vecIdx.size();
+	fwrite(&iVecIndexSize, sizeof(int), 1, pFile);
+	for (size_t i = 0; i < m_vecIdx.size(); ++i)
+	{
+		fwrite(&m_vecIdx[i], sizeof(int), 1, pFile);
+	}
+
+	int iVecFaceNormalSize = m_vecFaceNormal.size();
+	fwrite(&iVecFaceNormalSize, sizeof(int), 1, pFile);
+	for (size_t i = 0; i < m_vecFaceNormal.size(); ++i)
+	{
+		fwrite(&m_vecFaceNormal[i], sizeof(Vector3), 1, pFile);
+	}
+
+	fclose(pFile);
 }
 
-void CLandScape::Load(const string& FullPath)
+void CLandScape::LoadLandScape(const string& FullPath)
 {
-	BinaryRead Reader(FullPath.c_str());
+	string Temp = FullPath;
+	for (int i = 0; i < 3; ++i)
+		Temp.pop_back();
+	Temp += "Land";
 
-	m_iNumX = Reader.ReadInt();
-	m_iNumZ = Reader.ReadInt();
+	FILE* pFile = NULL;
 
-	CreateLandScape("TestLandScape", m_iNumX, m_iNumZ, "LandScapeDif", NULLPTR, NULLPTR, NULLPTR, NULLPTR);
+	fopen_s(&pFile, Temp.c_str(), "rb");
+
+	if (!pFile)
+		return;
+
+	fread(&m_iNumX, sizeof(int), 1, pFile);
+	fread(&m_iNumZ, sizeof(int), 1, pFile);
+	int iVecVtxSize = 0;
+	fread(&iVecVtxSize, sizeof(int), 1, pFile);
+
+	for (size_t i = 0; i < iVecVtxSize; ++i)
+	{
+		Vertex3DColor tColor = {};
+		fread(&tColor, sizeof(Vertex3DColor), 1, pFile);
+		m_vecVtx.push_back(tColor);
+	}
+
+	int iVecIndexSize = 0;
+	fread(&iVecIndexSize, sizeof(int), 1, pFile);
+
+	for (size_t i = 0; i < iVecIndexSize; ++i)
+	{
+		int iIdx = {};
+		fread(&iIdx, sizeof(int), 1, pFile);
+		m_vecIdx.push_back(iIdx);
+	}
+
+	int iVecFaceNormalSize = 0;
+	fread(&iVecFaceNormalSize, sizeof(int), 1, pFile);
+
+	for (size_t i = 0; i < iVecFaceNormalSize; ++i)
+	{
+		Vector3 vFaceNormal = {};
+		fread(&vFaceNormal, sizeof(Vector3), 1, pFile);
+		m_vecFaceNormal.push_back(vFaceNormal);
+	}
+	fclose(pFile);
+
+	//CreateLandScape("TestLandScape", m_iNumX, m_iNumZ, "LandScapeDif", NULLPTR, NULLPTR, NULLPTR, NULLPTR);
+
+	//m_pNavMesh = CNavigationManager3D::GetInst()->CreateNavMesh(m_pScene, FullPath);
+	//for (int i = 0; i < m_vecVtx.size(); ++i)
+	//{
+	//	m_vecVtx[i].vColor = tempvec[i].vColor;
+	//}
+	//for (int i = 0; i < (int)m_iNumZ - 1; ++i)
+	//{
+	//	for (int j = 0; j < (int)m_iNumX - 1; ++j)
+	//	{
+	//		int	iAddr = i * m_iNumX + j;
+
+	//		m_pNavMesh->SetCellCopyVertex(m_vecVtx[iAddr], m_vecVtx[iAddr + 1], m_vecVtx[iAddr + m_iNumX + 1] , iAddr * 2);
+	//		m_pNavMesh->SetCellCopyVertex(m_vecVtx[iAddr], m_vecVtx[iAddr + m_iNumX + 1], m_vecVtx[iAddr + m_iNumX] , (iAddr * 2) + 1);
+	//	}
+	//}
+
+	GET_SINGLE(CResourcesManager)->CreateMesh("TestLandScape", LANDSCAPE_COLOR_SHADER, VERTEX3D_LAYOUT_COLOR,
+		&m_vecVtx[0], (int)m_vecVtx.size(), sizeof(Vertex3DColor), D3D11_USAGE_DEFAULT,
+		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &m_vecIdx[0], (int)m_vecIdx.size(),
+		4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+
+	m_Mesh = CResourcesManager::GetInst()->FindMeshNonCount("TestLandScape");
+
+	CRenderer*	pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!pRenderer)
+		pRenderer = m_pObject->AddComponent<CRenderer>("LandScapeRenderer");
+
+	pRenderer->SetMesh("TestLandScape");
+	pRenderer->SetRenderState(WIRE_FRAME);
+
+	SAFE_RELEASE(pRenderer);
+
+	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	if (!pMaterial)
+		pMaterial = m_pObject->AddComponent<CMaterial>("LandScapeMaterial");
+
+	SAFE_RELEASE(pMaterial);
+
+	m_pNavMesh = GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene);
+
+	m_pNavMesh->LoadFromFullPath(FullPath.c_str());
+
+	m_pNavMesh->LoadCell(&m_vecVtx);
 }

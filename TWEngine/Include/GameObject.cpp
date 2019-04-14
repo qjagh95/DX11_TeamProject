@@ -446,6 +446,7 @@ bool CGameObject::Init()
 
 	m_pTransform->Init();
 	m_pTransform->m_pTransform = m_pTransform;
+	m_pTransform->m_pObject = this;
 
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{

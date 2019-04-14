@@ -1,0 +1,14 @@
+float,HideTime,1.5
+float,DoorInteractDelay,0.2
+float,WalkFSpeed,5.0
+float,WalkRSpeed,3.0
+float,WalkLSpeed,3.0
+float,WalkBSpeed,2.5
+float,SprintSpeed,15.0
+sound,walk_clothes_1
+mesh,playerMesh,Hero-01_AS.msh
+bone,Hero-01_AS.bne
+anim,Hero-01_AS.anm
+string,DefaultAnimClip,player_stand_idle
+socket,Hero-L-Hand,player_cam_hand,10,0,0.0,0,0,0
+socket,Hero-Head,daegari,0,0,0,0,0,0

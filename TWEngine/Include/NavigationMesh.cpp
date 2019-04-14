@@ -67,72 +67,75 @@ bool CNavigationMesh::Init()
 	return true;
 }
 
-void CNavigationMesh::AddCell(Vertex3DColor& vPos0, Vertex3DColor& vPos1, Vertex3DColor& vPos2)
+void CNavigationMesh::AddCell(std::vector<Vertex3DColor>* vecColor, int _iPos0, int vPos1, int vPos2)
 {
 	PNavigationCell	pCell = new NavigationCell;
+	pCell->m_iVertexIndex[0] = _iPos0;
+	pCell->m_iVertexIndex[1] = vPos1;
+	pCell->m_iVertexIndex[2] = vPos2;
 
-	pCell->vPos[0] = vPos0.vPos;
-	pCell->vPos[1] = vPos1.vPos;
-	pCell->vPos[2] = vPos2.vPos;
+	pCell->vPos[0] = (*vecColor)[_iPos0].vPos;
+	pCell->vPos[1] = (*vecColor)[vPos1].vPos;
+	pCell->vPos[2] = (*vecColor)[vPos2].vPos;
 
-	pCell->tCopyVertex[0] = &vPos0;
-	pCell->tCopyVertex[1] = &vPos1;
-	pCell->tCopyVertex[2] = &vPos2;
+	pCell->tCopyVertex[0] = &(*vecColor)[_iPos0];
+	pCell->tCopyVertex[1] = &(*vecColor)[vPos1];
+	pCell->tCopyVertex[2] = &(*vecColor)[vPos2];
 
-	pCell->vEdge[0] = vPos1.vPos - vPos0.vPos;
-	pCell->vEdgeCenter[0] = (vPos1.vPos + vPos0.vPos) / 2.f;
+	pCell->vEdge[0] = (*vecColor)[vPos1].vPos - (*vecColor)[_iPos0].vPos;
+	pCell->vEdgeCenter[0] = ((*vecColor)[vPos1].vPos + (*vecColor)[_iPos0].vPos) / 2.f;
 
-	pCell->vEdge[1] = vPos2.vPos - vPos1.vPos;
-	pCell->vEdgeCenter[1] = (vPos2.vPos + vPos1.vPos) / 2.f;
+	pCell->vEdge[1] = (*vecColor)[vPos2].vPos - (*vecColor)[vPos1].vPos;
+	pCell->vEdgeCenter[1] = ((*vecColor)[vPos2].vPos + (*vecColor)[vPos1].vPos) / 2.f;
 
-	pCell->vEdge[2] = vPos2.vPos - vPos0.vPos;
-	pCell->vEdgeCenter[2] = (vPos2.vPos + vPos0.vPos) / 2.f;
+	pCell->vEdge[2] = (*vecColor)[vPos2].vPos - (*vecColor)[_iPos0].vPos;
+	pCell->vEdgeCenter[2] = ((*vecColor)[vPos2].vPos + (*vecColor)[_iPos0].vPos) / 2.f;
 
-	pCell->vCenter = (vPos0.vPos + vPos1.vPos + vPos2.vPos) / 3.f;
+	pCell->vCenter = ((*vecColor)[_iPos0].vPos + (*vecColor)[vPos1].vPos + (*vecColor)[vPos2].vPos) / 3.f;
 
 	pCell->iIndex = (int)m_vecCell.size();
 
-	if (m_vMin.x > vPos0.vPos.x)
-		m_vMin.x = vPos0.vPos.x;
-	if (m_vMin.y > vPos0.vPos.y)
-		m_vMin.y = vPos0.vPos.y;
-	if (m_vMin.z > vPos0.vPos.z)
-		m_vMin.z = vPos0.vPos.z;
+	if (m_vMin.x > (*vecColor)[_iPos0].vPos.x)
+		m_vMin.x = (*vecColor)[_iPos0].vPos.x;
+	if (m_vMin.y > (*vecColor)[_iPos0].vPos.y)
+		m_vMin.y = (*vecColor)[_iPos0].vPos.y;
+	if (m_vMin.z > (*vecColor)[_iPos0].vPos.z)
+		m_vMin.z = (*vecColor)[_iPos0].vPos.z;
 
-	if (m_vMax.x < vPos0.vPos.x)
-		m_vMax.x = vPos0.vPos.x;
-	if (m_vMax.y < vPos0.vPos.y)
-		m_vMax.y = vPos0.vPos.y;
-	if (m_vMax.z < vPos0.vPos.z)
-		m_vMax.z = vPos0.vPos.z;
+	if (m_vMax.x < (*vecColor)[_iPos0].vPos.x)
+		m_vMax.x = (*vecColor)[_iPos0].vPos.x;
+	if (m_vMax.y < (*vecColor)[_iPos0].vPos.y)
+		m_vMax.y = (*vecColor)[_iPos0].vPos.y;
+	if (m_vMax.z < (*vecColor)[_iPos0].vPos.z)
+		m_vMax.z = (*vecColor)[_iPos0].vPos.z;
 
-	if (m_vMin.x > vPos1.vPos.x)
-		m_vMin.x = vPos1.vPos.x;
-	if (m_vMin.y > vPos1.vPos.y)
-		m_vMin.y = vPos1.vPos.y;
-	if (m_vMin.z > vPos1.vPos.z)
-		m_vMin.z = vPos1.vPos.z;
+	if (m_vMin.x > (*vecColor)[vPos1].vPos.x)
+		m_vMin.x = (*vecColor)[vPos1].vPos.x;
+	if (m_vMin.y > (*vecColor)[vPos1].vPos.y)
+		m_vMin.y = (*vecColor)[vPos1].vPos.y;
+	if (m_vMin.z > (*vecColor)[vPos1].vPos.z)
+		m_vMin.z = (*vecColor)[vPos1].vPos.z;
 
-	if (m_vMax.x < vPos1.vPos.x)
-		m_vMax.x = vPos1.vPos.x;
-	if (m_vMax.y < vPos1.vPos.y)
-		m_vMax.y = vPos1.vPos.y;
-	if (m_vMax.z < vPos1.vPos.z)
-		m_vMax.z = vPos1.vPos.z;
+	if (m_vMax.x < (*vecColor)[vPos1].vPos.x)
+		m_vMax.x = (*vecColor)[vPos1].vPos.x;
+	if (m_vMax.y < (*vecColor)[vPos1].vPos.y)
+		m_vMax.y = (*vecColor)[vPos1].vPos.y;
+	if (m_vMax.z < (*vecColor)[vPos1].vPos.z)
+		m_vMax.z = (*vecColor)[vPos1].vPos.z;
 
-	if (m_vMin.x > vPos2.vPos.x)
-		m_vMin.x = vPos2.vPos.x;
-	if (m_vMin.y > vPos2.vPos.y)
-		m_vMin.y = vPos2.vPos.y;
-	if (m_vMin.z > vPos2.vPos.z)
-		m_vMin.z = vPos2.vPos.z;
+	if (m_vMin.x > (*vecColor)[vPos2].vPos.x)
+		m_vMin.x = (*vecColor)[vPos2].vPos.x;
+	if (m_vMin.y > (*vecColor)[vPos2].vPos.y)
+		m_vMin.y = (*vecColor)[vPos2].vPos.y;
+	if (m_vMin.z > (*vecColor)[vPos2].vPos.z)
+		m_vMin.z = (*vecColor)[vPos2].vPos.z;
 
-	if (m_vMax.x < vPos2.vPos.x)
-		m_vMax.x = vPos2.vPos.x;
-	if (m_vMax.y < vPos2.vPos.y)
-		m_vMax.y = vPos2.vPos.y;
-	if (m_vMax.z < vPos2.vPos.z)
-		m_vMax.z = vPos2.vPos.z;
+	if (m_vMax.x < (*vecColor)[vPos2].vPos.x)
+		m_vMax.x = (*vecColor)[vPos2].vPos.x;
+	if (m_vMax.y < (*vecColor)[vPos2].vPos.y)
+		m_vMax.y = (*vecColor)[vPos2].vPos.y;
+	if (m_vMax.z < (*vecColor)[vPos2].vPos.z)
+		m_vMax.z = (*vecColor)[vPos2].vPos.z;
 
 	Vector3	vDir1 = pCell->vEdge[0];
 	Vector3	vDir2 = pCell->vEdge[2];
@@ -153,6 +156,28 @@ void CNavigationMesh::AddCell(Vertex3DColor& vPos0, Vertex3DColor& vPos1, Vertex
 	m_vMax.y = 2.0f;
 
 	m_vecCell.push_back(pCell);
+}
+
+void CNavigationMesh::LoadCell(std::vector<Vertex3DColor>* vecColor)
+{
+	for (size_t i = 0; i < m_vecCell.size(); ++i)
+	{
+		m_vecCell[i]->tCopyVertex[0] = &(*vecColor)[m_vecCell[i]->m_iVertexIndex[0]];
+		m_vecCell[i]->tCopyVertex[1] = &(*vecColor)[m_vecCell[i]->m_iVertexIndex[1]];
+		m_vecCell[i]->tCopyVertex[2] = &(*vecColor)[m_vecCell[i]->m_iVertexIndex[2]];
+	}
+}
+
+void CNavigationMesh::SetCellCopyVertex(Vertex3DColor & vPos0, Vertex3DColor & vPos1,
+	Vertex3DColor & vPos2, int _idx)
+{
+	if (_idx >= m_vecCell.size())
+		return;
+
+	m_vecCell[_idx]->tCopyVertex[0] = &vPos0;
+	m_vecCell[_idx]->tCopyVertex[1] = &vPos1;
+	m_vecCell[_idx]->tCopyVertex[2] = &vPos2;
+
 }
 
 void CNavigationMesh::AddAdj(int iCellIdx, int iAdjIdx)
@@ -947,6 +972,11 @@ bool CNavigationMesh::RayIntersectTriangle(Vector3 rayOrigin,
 	return false;
 }
 
+bool CNavigationMesh::RectIntersectPoint(Vector3 vRectMin, Vector3 vRectMax, Vector3 vTrianglePos)
+{
+	return vRectMin.x <  vTrianglePos.x && vRectMin.z < vTrianglePos.z && vRectMax.x > vTrianglePos.x && vRectMax.z  > vTrianglePos.z;
+}
+
 int CNavigationMesh::GetSectionIndex(Vector3 vPos)
 {
 	vPos -= m_vMin;
@@ -960,7 +990,7 @@ int CNavigationMesh::GetSectionIndex(Vector3 vPos)
 }
 
 int CNavigationMesh::MousePickGetCellIndex(const int & _iStartSectionIndex,
-	const int & _iEndSectionIndex, Vector3 rayOrigin, Vector3 rayDir, Vector3 & vIntersect, const Vector4& Color, bool isMove)
+	const int & _iEndSectionIndex, Vector3 rayOrigin, Vector3 rayDir, Vector3 & vIntersect)
 {
 	int iStartSectionIndex = _iStartSectionIndex;
 	int iEndSectionIndex = _iEndSectionIndex;
@@ -991,22 +1021,117 @@ int CNavigationMesh::MousePickGetCellIndex(const int & _iStartSectionIndex,
 
 			if (RayIntersectTriangle(vOrigin, vDir, pCell->vPos[0], pCell->vPos[1], pCell->vPos[2], fDist, vIntersect))
 			{
-				pCell->bMove = isMove;
-				PNavigationCell	pCell2 = m_pSection[z].pCellList[x + 2];
+				//pCell->bMove = isMove;
+				PNavigationCell	pCell2 = m_pSection[z].pCellList[x];
 
 				if (pCell2 == NULLPTR)
 					return pCell->iIndex;
 
-				pCell2->tCopyVertex[0]->vColor = Color;
-				pCell2->tCopyVertex[1]->vColor = Color;
-				pCell2->tCopyVertex[2]->vColor = Color;
-
+				//pCell2->tCopyVertex[0]->vColor = Color;
+				//pCell2->tCopyVertex[1]->vColor = Color;
+				//pCell2->tCopyVertex[2]->vColor = Color;
+				CInput::GetInst()->SetSelectCellCenter(pCell->vCenter);
 				return pCell->iIndex;
 			}
 		}
 	}
 
 	return -1;
+}
+
+void CNavigationMesh::Click(bool _bIsMove, Vector4 _vColor)
+{
+	int iSelectNavIndex = CInput::GetInst()->GetiSelectNavIndex();
+	if (iSelectNavIndex == -1)
+	{
+		return;
+	}
+
+	Vector3 vCenter = m_vecCell[iSelectNavIndex]->vCenter;
+
+	Vector3 vRectMin = vCenter;
+	vRectMin.x -= CInput::GetInst()->GetBlushSize() / 2.f;
+	vRectMin.z -= CInput::GetInst()->GetBlushSize() / 2.f;
+	Vector3 vRectMax = vCenter;
+	vRectMax.x += CInput::GetInst()->GetBlushSize() / 2.f;
+	vRectMax.z += CInput::GetInst()->GetBlushSize() / 2.f;
+
+	int iMaxSection = GetSectionIndex(vRectMax);
+	int iMinSection = GetSectionIndex(vRectMin);
+
+	if (iMinSection < iMaxSection)
+	{
+		if (iMaxSection >= m_iSectionX * m_iSectionZ)
+		{
+			iMaxSection = m_iSectionX * m_iSectionZ - 1;
+		}
+		for (size_t iSection = iMinSection; iSection <= iMaxSection; ++iSection)
+		{
+			for (int x = 0; x < m_pSection[iSection].iSize; ++x)
+			{
+				PNavigationCell	pCell = m_pSection[iSection].pCellList[x];
+
+				bool bCollision = true;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					if (RectIntersectPoint(vRectMin, vRectMax, pCell->vPos[i]) == false)
+					{
+						bCollision = false;
+						break;
+					}
+				}
+
+				if (bCollision)
+				{
+					pCell->bMove = _bIsMove;
+					pCell->tCopyVertex[0]->vColor = _vColor;
+					pCell->tCopyVertex[1]->vColor = _vColor;
+					pCell->tCopyVertex[2]->vColor = _vColor;
+				}
+			}
+		}
+	}
+	else
+	{
+		if (iMinSection >= m_iSectionX * m_iSectionZ)
+		{
+			iMinSection = m_iSectionX * m_iSectionZ - 1;
+		}
+
+		for (size_t iSection = iMaxSection; iSection <= iMinSection; ++iSection)
+		{
+			for (int x = 0; x < m_pSection[iSection].iSize; ++x)
+			{
+				PNavigationCell	pCell = m_pSection[iSection].pCellList[x];
+
+				bool bCollision = true;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					if (RectIntersectPoint(vRectMin, vRectMax, pCell->vPos[i]) == false)
+					{
+						bCollision = false;
+						break;
+					}
+				}
+
+				if (bCollision)
+				{
+					pCell->bMove = _bIsMove;
+					pCell->tCopyVertex[0]->vColor = _vColor;
+					pCell->tCopyVertex[1]->vColor = _vColor;
+					pCell->tCopyVertex[2]->vColor = _vColor;
+				}
+			}
+		}
+
+	}
+}
+
+PNavigationCell CNavigationMesh::GetIndexFromCell(size_t _idx)
+{
+	return PNavigationCell();
 }
 
 void CNavigationMesh::Save(const char * pFileName, const string & strPathKey)
@@ -1052,7 +1177,7 @@ void CNavigationMesh::SaveFromFullPath(const char * pFullPath)
 		fwrite(&m_vecCell[i]->iIndex, sizeof(int), 1, pFile);
 		fwrite(&m_vecCell[i]->bEnable, sizeof(bool), 1, pFile);
 		fwrite(&m_vecCell[i]->bMove, sizeof(bool), 1, pFile);
-
+		fwrite(&m_vecCell[i]->m_iVertexIndex, sizeof(int), 3, pFile);
 		size_t	iAdjSize = m_vecCell[i]->vecAdj.size();
 
 		fwrite(&iAdjSize, sizeof(size_t), 1, pFile);
@@ -1116,6 +1241,7 @@ void CNavigationMesh::LoadFromFullPath(const char * pFullPath)
 		fread(&pCell->iIndex, sizeof(int), 1, pFile);
 		fread(&pCell->bEnable, sizeof(bool), 1, pFile);
 		fread(&pCell->bMove, sizeof(bool), 1, pFile);
+		fread(&pCell->m_iVertexIndex, sizeof(int), 3, pFile);
 
 		size_t	iAdjSize = 0;
 

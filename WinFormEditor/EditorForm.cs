@@ -48,7 +48,14 @@ namespace WinFormEditor
             {
                 coreWrapper.Logic();
                 TB_NaviIndex.Text = Convert.ToString(coreWrapper.GetSelectNaviIndex());
-                
+                if(coreWrapper.GetSelectNaviMove() == true)
+                {
+                    TB_TileFlag.Text = "Tile 이동 가능";
+                }
+                else
+                {
+                    TB_TileFlag.Text = "Tile 이동 불가";
+                }
                 // Update Transform
                 m_transform.UpdateTransform();
 
@@ -1209,7 +1216,7 @@ namespace WinFormEditor
 
         private void BT_DeleteNavi_Click(object sender, EventArgs e)
         {
-
+            coreWrapper.DeleteNaviMesh();
         }
 
         private void BT_NaviSave_Click(object sender, EventArgs e)
@@ -1273,6 +1280,16 @@ namespace WinFormEditor
         private void CB_isNaviEditor_CheckedChanged(object sender, EventArgs e)
         {
             coreWrapper.SetNaviEditorMode(CB_isNaviEditor.Checked);
+        }
+
+        private void TB_BlushSize_TextChanged(object sender, EventArgs e)
+        {
+            if (TB_BlushSize.Text != "")
+            {
+                double dTemp = Convert.ToDouble(TB_BlushSize.Text);
+
+                coreWrapper.SetBlushSize(dTemp);
+            }
         }
     }
 }

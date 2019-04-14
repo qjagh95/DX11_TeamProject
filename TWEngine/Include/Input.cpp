@@ -12,6 +12,10 @@
 #include "Component/ColliderRay.h"
 #include "Component/ColliderPoint.h"
 #include "EditManager.h"
+#include "Rendering/RenderManager.h"
+#include "Rendering/Shader.h"
+#include "Component/Camera.h"
+#include "Rendering/RenderState.h"
 
 PUN_USING
 
@@ -22,7 +26,8 @@ CInput::CInput() :
 	m_pMouse(nullptr),
 	m_bShowCursor(false),
 	m_sWheel(0),
-	m_iSelectNavIndex(0)
+	m_iSelectNavIndex(0),
+	m_fBlushSize(0.f)
 {
 	m_NewKey = NULLPTR;
 }
@@ -34,6 +39,59 @@ CInput::~CInput()
 	SAFE_RELEASE(m_pMouse);
 
 	Safe_Delete_Map(m_KeyMap);
+}
+
+void CInput::SelectNaviBoxRender(float fTime)
+{
+	if (m_iSelectNavIndex == -1)
+		return;
+
+	CRenderManager::GetInst()->FindRenderState(DEPTH_DISABLE)->SetState();
+
+	CShader* pShader = CShaderManager::GetInst()->FindShader(COLLIDER_SHADER);
+	pShader->SetShader();
+	ID3D11InputLayout* pLayOut = CShaderManager::GetInst()->FindInputLayout(POS_LAYOUT);
+	CONTEXT->IASetInputLayout(pLayOut);
+
+	Matrix	matPos, matScale, matRot;
+
+	matPos.Translation(m_vSelectNaviCellCenter);
+	matScale.Scaling(Vector3(m_fBlushSize / 2.f, 0.1f, m_fBlushSize / 2.f));
+
+	TransformCBuffer	tCBuffer = {};
+	CMesh* pMesh = CResourcesManager::GetInst()->FindMesh("ColliderBox");
+
+	CCamera*	pMainCamera = CSceneManager::GetInst()->GetMainCamera();
+
+	Matrix	matView = pMainCamera->GetViewMatrix();
+
+	tCBuffer.matWorld = matScale * matRot * matPos;
+	tCBuffer.matView = matView;
+	tCBuffer.matProj = pMainCamera->GetProjMatrix();
+	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
+	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
+	tCBuffer.vPivot = Vector3(0.f, 0.f, 0.f);
+	tCBuffer.vLength = pMesh->GetLength();
+
+	tCBuffer.matWorld.Transpose();
+	tCBuffer.matView.Transpose();
+	tCBuffer.matProj.Transpose();
+	tCBuffer.matWV.Transpose();
+	tCBuffer.matWVP.Transpose();
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform",
+		&tCBuffer);
+
+	SAFE_RELEASE(pMainCamera);
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Collider", &Vector4::BlueViolet);
+
+
+	pMesh->Render();
+	SAFE_RELEASE(pMesh);
+	CRenderManager::GetInst()->FindRenderState(DEPTH_DISABLE)->ResetState();
+
+	SAFE_RELEASE(pShader);
 }
 
 RayInfo CInput::MouseRayInfo() const
@@ -164,7 +222,7 @@ bool CInput::Init()
 	AddKey("LButton", VK_LBUTTON);
 	AddKey("RButton", VK_RBUTTON);
 	AddKey("MButton", VK_MBUTTON);
-
+	AddKey("TabButton", VK_TAB);
 	return true;
 }
 

@@ -91,7 +91,7 @@ void CColliderRect::Render(float fTime)
 
 	TransformCBuffer	tCBuffer = {};
 
-	CCamera*	pMainCamera = m_pScene->GetMainCamera();
+	CCamera*	pMainCamera = m_pScene->GetUICamera();
 
 	Matrix	matView;
 

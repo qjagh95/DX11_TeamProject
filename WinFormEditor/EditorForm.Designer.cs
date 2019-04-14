@@ -94,6 +94,7 @@
             this.label38 = new System.Windows.Forms.Label();
             this.TB_TileFlag = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
+            this.TB_NaviIndex = new System.Windows.Forms.TextBox();
             this.label36 = new System.Windows.Forms.Label();
             this.CB_isNaviEditor = new System.Windows.Forms.CheckBox();
             this.TB_NumZ = new System.Windows.Forms.TextBox();
@@ -166,7 +167,8 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.textBox9 = new System.Windows.Forms.TextBox();
-            this.TB_NaviIndex = new System.Windows.Forms.TextBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.TB_BlushSize = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -874,6 +876,8 @@
             // NavigationPage
             // 
             this.NavigationPage.BackColor = System.Drawing.SystemColors.Control;
+            this.NavigationPage.Controls.Add(this.label39);
+            this.NavigationPage.Controls.Add(this.TB_BlushSize);
             this.NavigationPage.Controls.Add(this.label38);
             this.NavigationPage.Controls.Add(this.TB_TileFlag);
             this.NavigationPage.Controls.Add(this.label37);
@@ -920,6 +924,14 @@
             this.label37.Size = new System.Drawing.Size(78, 17);
             this.label37.TabIndex = 10;
             this.label37.Text = "선택 인덱스";
+            // 
+            // TB_NaviIndex
+            // 
+            this.TB_NaviIndex.Location = new System.Drawing.Point(103, 58);
+            this.TB_NaviIndex.Name = "TB_NaviIndex";
+            this.TB_NaviIndex.ReadOnly = true;
+            this.TB_NaviIndex.Size = new System.Drawing.Size(165, 25);
+            this.TB_NaviIndex.TabIndex = 9;
             // 
             // label36
             // 
@@ -1774,13 +1786,24 @@
             this.textBox9.Size = new System.Drawing.Size(64, 25);
             this.textBox9.TabIndex = 2;
             // 
-            // TB_NaviIndex
+            // label39
             // 
-            this.TB_NaviIndex.Location = new System.Drawing.Point(103, 58);
-            this.TB_NaviIndex.Name = "TB_NaviIndex";
-            this.TB_NaviIndex.ReadOnly = true;
-            this.TB_NaviIndex.Size = new System.Drawing.Size(165, 25);
-            this.TB_NaviIndex.TabIndex = 9;
+            this.label39.AutoSize = true;
+            this.label39.ForeColor = System.Drawing.Color.Black;
+            this.label39.Location = new System.Drawing.Point(7, 153);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(71, 17);
+            this.label39.TabIndex = 14;
+            this.label39.Text = "Blush Size";
+            // 
+            // TB_BlushSize
+            // 
+            this.TB_BlushSize.Location = new System.Drawing.Point(103, 148);
+            this.TB_BlushSize.Name = "TB_BlushSize";
+            this.TB_BlushSize.Size = new System.Drawing.Size(165, 25);
+            this.TB_BlushSize.TabIndex = 13;
+            this.TB_BlushSize.TextChanged += new System.EventHandler(this.TB_BlushSize_TextChanged);
+            this.TB_BlushSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInterval_KeyPress);
             // 
             // EditorForm
             // 
@@ -1973,6 +1996,8 @@
         private System.Windows.Forms.TextBox TB_TileFlag;
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.TextBox TB_NaviIndex;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.TextBox TB_BlushSize;
     }
 }
 

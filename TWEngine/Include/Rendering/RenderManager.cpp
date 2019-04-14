@@ -478,7 +478,6 @@ void CRenderManager::RenderDeferred(float fTime)
 	RenderFinalPass(fTime);
 #endif
 	
-	GET_SINGLE(CCollisionManager)->Render(fTime);
 
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{
@@ -507,6 +506,8 @@ void CRenderManager::RenderDeferred(float fTime)
 		m_tRenderObj[i].iSize = 0;
 	}
 	m_tGizmoGroup.iSize = 0;
+
+	GET_SINGLE(CCollisionManager)->Render(fTime);
 }
 
 void CRenderManager::RenderGBuffer(float fTime)
@@ -1358,6 +1359,7 @@ void CRenderManager::RenderNaviEditorMode(float fTime)
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
 	CCollisionManager::GetInst()->Render(fTime);
+	CInput::GetInst()->SelectNaviBoxRender(fTime);
 
 	for (int i = RG_LANDSCAPE; i < RG_END; ++i)
 	{

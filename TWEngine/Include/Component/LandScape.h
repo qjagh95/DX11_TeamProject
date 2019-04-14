@@ -55,15 +55,16 @@ public:
 	virtual void Render(float fTime);
 	virtual CLandScape* Clone();
 
-	void Save(const string& FullPath);
-	void Load(const string& FullPath);
+	void SaveLandScape(const string& FullPath);
+	void LoadLandScape(const string& FullPath);
 
 private:
 	void ComputeNormal();
 	void ComputeTangent();
 	void ChangeFlag(float DeltaTime);
 
-	void Click(float DeltaTime);
+	void CheckSelectIndex(float DeltaTime);
+	void Click();
 };
 
 PUN_END

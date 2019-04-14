@@ -35,6 +35,7 @@ typedef struct PUN_DLL _tagNavigationCell
 	float		fTotal;
 	bool		bEnable;
 	bool		bMove;
+	int		    m_iVertexIndex[3];
 
 	void Clear()
 	{
@@ -110,7 +111,6 @@ typedef struct PUN_DLL _tagNavSection
 	int			iCapacity;
 	Vector3		vMin;
 	Vector3		vMax;
-
 	void Resize()
 	{
 		if (iSize == iCapacity)
@@ -196,7 +196,10 @@ public:
 
 public:
 	bool Init();
-	void AddCell(Vertex3DColor& vPos0, Vertex3DColor& vPos1, Vertex3DColor& vPos2);
+	//void AddCell(Vertex3DColor& vPos0, Vertex3DColor& vPos1, Vertex3DColor& vPos2);
+	void AddCell(std::vector<Vertex3DColor>* vecColor, int _iPos0, int vPos1, int vPos2);
+	void LoadCell(std::vector<Vertex3DColor>* vecColor);
+	void SetCellCopyVertex(Vertex3DColor& vPos0, Vertex3DColor& vPos1, Vertex3DColor& vPos2, int _idx);
 	void AddAdj(int iCellIdx, int iAdjIdx);
 	void CreateGridMapAdj(int iLineRectCount);
 	void CreateAdj();
@@ -221,10 +224,12 @@ public:
 	bool RayIntersectTriangle(Vector3 rayOrigin, Vector3 rayDir,
 		Vector3 v0, Vector3 v1, Vector3 v2,
 		float& t, Vector3& vIntersect);
+	bool RectIntersectPoint(Vector3 vRectMin, Vector3 vRectMax, Vector3 vTrianglePos);
 	int GetSectionIndex(Vector3 vPos);
 	int MousePickGetCellIndex(const int& _iStartSectionIndex, const int& _iEndSectionIndex, Vector3 rayOrigin, Vector3 rayDir,
-		Vector3& vIntersect, const Vector4& Color = Vector4::Red, bool isMove = false);
-
+		Vector3& vIntersect);
+	void Click(bool _bIsMove, Vector4 _vColor = Vector4::Red);
+	PNavigationCell GetIndexFromCell(size_t _idx);
 public:
 	void Save(const char* pFileName, const string& strPathKey = DATA_PATH);
 	void SaveFromFullPath(const char* pFullPath);
