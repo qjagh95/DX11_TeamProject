@@ -63,13 +63,12 @@ int CColliderOBB3D::Update(float fTime)
 
 int CColliderOBB3D::LateUpdate(float fTime)
 {
-	Vector3	vPos = m_pTransform->GetWorldPos() - m_pTransform->GetPivot() *
-		m_pTransform->GetWorldScale();
+	Vector3	vPos = m_pTransform->GetWorldPos() - m_pTransform->GetPivot() * m_pTransform->GetWorldScale();
 
-	Matrix	matWorld = m_pTransform->GetRotDelta();
-	memcpy(&matWorld._41, &m_pTransform->GetWorldPos(), sizeof(Vector3));
-
-	//matWorld *= m_pTransform->GetParentMatrix();
+	Matrix	matWorld;
+	matWorld = m_pTransform->GetBoneMatrix() * m_pTransform->GetWorldScaleMatrix();
+	matWorld *= m_pTransform->GetRotDelta();
+	matWorld *= m_pTransform->GetWorldPosMatrix();
 
 	m_tInfo.vCenter = m_tRelativeInfo.vCenter.TransformCoord(matWorld);
 

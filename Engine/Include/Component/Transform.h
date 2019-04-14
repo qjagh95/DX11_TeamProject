@@ -63,6 +63,7 @@ public:
 	const Vector3* GetLocalAxis()	const;
 	Matrix GetLocalRotMatrix()	const;
 	Matrix GetLocalMatrix()	const;
+	Matrix GetBoneMatrix()	const;
 
 private:
 	Vector3		m_vWorldScale;

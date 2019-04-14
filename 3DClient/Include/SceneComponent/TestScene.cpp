@@ -624,7 +624,6 @@ bool CTestScene::Init()
 	pTransform = pObject->GetTransform();
 	pTransform->SetWorldScale(0.1f, .1f, .1f);
 	CHuman_Player *pHPlayer = pObject->AddComponent<CHuman_Player>("Player");
-
 	pHPlayer->LoadData(TEXT("PlayerData.csv"));
 
 	SAFE_RELEASE(pHPlayer);

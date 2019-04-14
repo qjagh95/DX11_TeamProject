@@ -37,18 +37,15 @@ CHuman_Player::~CHuman_Player()
 
 bool CHuman_Player::Init()
 {
-
 	//m_pTransform->SetWorldPivot(Vector3::One * 0.5f);
 	m_pHandSocketObj = PUN::CGameObject::CreateObject("Weapon", m_pLayer);
-
 	PUN::CColliderOBB3D *pCol = m_pHandSocketObj->AddComponent<PUN::CColliderOBB3D>("col");
-
 	pCol->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(1.f, 1.f, 1.f));
 
 	SAFE_RELEASE(pCol);
 
 	PUN::CTransform*	pTr = m_pHandSocketObj->GetTransform();
-	pTr->SetWorldScale(0.05f, 0.05f, 0.05f);
+	pTr->SetWorldScale(0.2f, 0.2f, 0.2f);
 	//pTr->SetLocalRotY(-90.f);
 
 	PUN::CRenderer*	pWeaponRenderer = m_pHandSocketObj->AddComponent<PUN::CRenderer>("WeaponRenderer");
@@ -58,8 +55,7 @@ bool CHuman_Player::Init()
 	SAFE_RELEASE(pTr);
 	SAFE_RELEASE(pWeaponRenderer);
 
-
-
+	//Hero - L - Hand, player_cam_hand, 10, 0, 0.0, 0, 0, 0
 	//GET_SINGLE(PUN::CInput)->BindAxis("MoveH", this, &CHuman_Player::Forward);
 	//GET_SINGLE(PUN::CInput)->AddKeyScale("MoveH", DIK_W, 1.f);
 	//GET_SINGLE(PUN::CInput)->AddKeyScale("MoveH", DIK_S, 2.f);
@@ -75,8 +71,6 @@ bool CHuman_Player::Init()
 	_Input->AddKey("Ctrl", VK_CONTROL);
 
 	AfterClone();
-
-	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.5f);
 
 	return true;
 }
@@ -321,7 +315,6 @@ CHuman_Player * CHuman_Player::Clone()
 //LoadData : Local Transform 설정을 모두 끝내고 실행하세요
 bool CHuman_Player::LoadData(const TCHAR * dataPath)
 {
-
 	FILE *pFile = nullptr;
 	
 	m_vInitLocalPos = m_pTransform->GetLocalPos();
@@ -369,7 +362,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 		iBufIdx = 0; //0번부터 쉼표 번호 이전까지
 		//Parse by ','
 		bool bCloseLoop = false;
-		int iLast = strlen(strBuf) - 1;
+		int iLast = (int)strlen(strBuf) - 1;
 		if (strBuf[iLast] == '\n')
 			strBuf[iLast] = ',';
 		if(strBuf[iLast + 1] == 0)
@@ -578,7 +571,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 						else if (iSteps == 2)
 						{
 							WCHAR widePath[512] = {};
-							MultiByteToWideChar(CP_ACP, 0, strDataBuf, strlen(strDataBuf), widePath, strlen(strDataBuf));
+							MultiByteToWideChar(CP_ACP, 0, strDataBuf, (int)strlen(strDataBuf), widePath, (int)strlen(strDataBuf));
 							pRenderer->SetMesh(strDataBuf_1, widePath);
 							//m_pTransform->SetWorldPivot(Vector3::Zero);
 						}
@@ -589,7 +582,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 						if (iSteps == 1)
 						{
 							WCHAR widePath[512] = {};
-							MultiByteToWideChar(CP_ACP, 0, strDataBuf, strlen(strDataBuf), widePath, strlen(strDataBuf));
+							MultiByteToWideChar(CP_ACP, 0, strDataBuf, (int)strlen(strDataBuf), widePath, (int)strlen(strDataBuf));
 							m_pAnimation->Load(widePath);
 						}
 						
@@ -600,7 +593,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 						if (iSteps == 1)
 						{
 							WCHAR widePath[512] = {};
-							MultiByteToWideChar(CP_ACP, 0, strDataBuf, strlen(strDataBuf), widePath, strlen(strDataBuf));
+							MultiByteToWideChar(CP_ACP, 0, strDataBuf, (int)strlen(strDataBuf), widePath, (int)strlen(strDataBuf));
 							m_pAnimation->LoadBone(widePath);
 						}
 					}
@@ -680,13 +673,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 
 	SAFE_RELEASE(pRenderer);
 
-
-	
-	//PUN::CCamera *pCam = m_pScene->GetMainCamera();
-	
-	//pCam->SetTarget(pTr);
-
-	//SAFE_RELEASE(pCam);
+	m_pAnimation->SetSocketOffset("Hero-L-Hand", "player_cam_hand", Vector3(5.0f, 10.0f, 0.0f));
 	
 	return true;
 }

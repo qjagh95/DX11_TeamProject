@@ -6,11 +6,11 @@ PUN_USING
 CBoneSocket::CBoneSocket()
 {
 	m_pObject = NULLPTR;
+	m_pAniObject = NULLPTR;
 }
 
 CBoneSocket::~CBoneSocket()
 {
-	SAFE_RELEASE(m_pObject);
 }
 
 bool CBoneSocket::Init()
@@ -22,34 +22,28 @@ void CBoneSocket::Update(float fTime, const Matrix & matBone)
 {
 	if (m_pObject)
 	{
-		if (!m_pObject->GetActive())
-		{
-			SAFE_RELEASE(m_pObject);
+		//m_pObject = 의자오브젝트
+		//m_pAniObject = 플레이어 오브젝트
+		if (m_pObject->GetActive() == false)
 			return;
-		}
 
-		Matrix	matRot, matTrans, matSocket;
+		if (m_pAniObject->GetActive() == false)
+			return;
 
-		matRot.Rotation(m_vRotation);
-		matTrans.Translation(m_vOffset);
-
-		matSocket = matRot * matTrans;
+		Matrix matScale;
+		matScale.Scaling(m_pAniObject->GetTransformNonCount()->GetWorldScale());
 
 		CTransform*	pTransform = m_pObject->GetTransformNoneCount();
-
-		pTransform->SetOffsetRot(m_vRotation);
-		pTransform->SetBoneMatrix(matBone * matTrans);
+		pTransform->SetBoneMatrix(matBone * matScale);
+		pTransform->SetLocalRot(m_vRotation);
+		pTransform->SetWorldPos(m_pAniObject->GetTransformNonCount()->GetWorldPos() + m_vOffset);
 	}
 }
 
-void CBoneSocket::SetObject(CGameObject * pObj)
+void CBoneSocket::SetObject(class CGameObject* myObject, class CGameObject* AniObject)
 {
-	SAFE_RELEASE(m_pObject);
-
-	if (!pObj)
-		pObj->AddRef();
-
-	m_pObject = pObj;
+	m_pObject = myObject;
+	m_pAniObject = AniObject;
 }
 
 void CBoneSocket::SetOffset(const Vector3 & vOffset)

@@ -688,7 +688,7 @@ int CTransform::Update(float fTime)
 		Parent *= m_ParentPos;
 	}
 	
-	m_matWorld = m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matBone * m_matParent;
+	m_matWorld = m_matBone * m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matParent;
 	m_matWorld *= Parent;
 	
 	m_bUpdate = false;
@@ -704,8 +704,7 @@ int CTransform::LateUpdate(float fTime)
 	else if (!m_bUpdate)
 		return 0;
 
-	m_matLocal = m_matLocalScale * m_matLocalRot *
-		m_matLocalPos;
+	m_matLocal = m_matLocalScale * m_matLocalRot * m_matLocalPos;
 
 	//최종World에 곱해질 Parent행렬 선언.
 	Matrix Parent;
@@ -734,7 +733,7 @@ int CTransform::LateUpdate(float fTime)
 		Parent *= m_ParentPos;
 	}
 
-	m_matWorld = m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matBone * m_matParent;
+	m_matWorld = m_matBone * m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matParent;
 	m_matWorld *= Parent;
 
 	m_bUpdate = false;
@@ -813,4 +812,10 @@ void CTransform::SetOffsetRot(const Vector3 & vRot)
 
 	m_matWorldRot.Rotation(vWorldRot);
 	ComputeWorldAxis();
+}
+
+
+Matrix CTransform::GetBoneMatrix()	const
+{
+	return m_matBone;
 }

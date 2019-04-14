@@ -14,6 +14,7 @@ public:
 private:
 	string	m_strName;
 	CGameObject*	m_pObject;
+	CGameObject* m_pAniObject;
 	Vector3	 m_vOffset;
 	Vector3	 m_vRotation;
 
@@ -23,7 +24,7 @@ public:
 
 	string GetName() const { return m_strName; }
 	void SetName(const string& strName) { m_strName = strName; }
-	void SetObject(class CGameObject* pObj);
+	void SetObject(class CGameObject* myObject, class CGameObject* AniObject);
 	void SetOffset(const Vector3& vOffset);
 	void SetOffset(float x, float y, float z);
 	void SetRotation(const Vector3& vRot);

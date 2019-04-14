@@ -1093,7 +1093,7 @@ void CAnimation::ClearAllSockets()
 		list<CBoneSocket*>::iterator iterEnd = (*itr)->SocketList.end();
 		for (iter = (*itr)->SocketList.begin(); iter != iterEnd; ++iter)
 		{
-			(*iter)->SetObject(nullptr);
+			(*iter)->SetObject(NULLPTR, NULLPTR);
 		}
 	}
 }
@@ -1113,7 +1113,7 @@ bool CAnimation::SetSocketObject(const string & strBoneName, const string & strS
 		{
 			if ((*iter)->GetName() == strSocketName)
 			{
-				(*iter)->SetObject(pObj);
+				(*iter)->SetObject(pObj, m_pObject);
 				return true;
 			}
 		}
@@ -1713,7 +1713,6 @@ int CAnimation::Update(float fTime)
 				*m_vecBoneMatrix[i] = matBone;
 			});
 #endif
-			
 		}
 	}
 
@@ -1736,13 +1735,9 @@ int CAnimation::Update(float fTime)
 		{
 			list<CBoneSocket*>::iterator iter;
 			list<CBoneSocket*>::iterator iterEnd = m_vecBones[i]->SocketList.end();
+
 			for (iter = m_vecBones[i]->SocketList.begin(); iter != iterEnd; ++iter)
-			{
-				//(*iter)->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
-				(*iter)->Update(fTime, *m_vecBoneMatrix[i], m_pTransform);
-				//m_vecBones[i]->SocketList[j]->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
-				
-			}
+				(*iter)->Update(fTime, *m_vecBoneMatrix[i]);
 		}
 
 	}
