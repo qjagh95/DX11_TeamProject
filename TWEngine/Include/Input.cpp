@@ -27,7 +27,7 @@ CInput::CInput() :
 	m_bShowCursor(false),
 	m_sWheel(0),
 	m_iSelectNavIndex(0),
-	m_fBlushSize(0.f)
+	m_iBrushRange(0)
 {
 	m_NewKey = NULLPTR;
 }
@@ -56,7 +56,7 @@ void CInput::SelectNaviBoxRender(float fTime)
 	Matrix	matPos, matScale, matRot;
 
 	matPos.Translation(m_vSelectNaviCellCenter);
-	matScale.Scaling(Vector3(m_fBlushSize / 2.f, 0.1f, m_fBlushSize / 2.f));
+	//matScale.Scaling(Vector3(m_iBrushSize / 2.f, 0.1f, m_iBrushSize / 2.f));
 
 	TransformCBuffer	tCBuffer = {};
 	CMesh* pMesh = CResourcesManager::GetInst()->FindMesh("ColliderBox");

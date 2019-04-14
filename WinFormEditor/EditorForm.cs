@@ -40,7 +40,7 @@ namespace WinFormEditor
 
         private Transform m_transform = null;
 
-        
+
 
         private void Run(object sender, EventArgs e)
         {
@@ -48,7 +48,7 @@ namespace WinFormEditor
             {
                 coreWrapper.Logic();
                 TB_NaviIndex.Text = Convert.ToString(coreWrapper.GetSelectNaviIndex());
-                if(coreWrapper.GetSelectNaviMove() == true)
+                if (coreWrapper.GetSelectNaviMove() == true)
                 {
                     TB_TileFlag.Text = "Tile 이동 가능";
                 }
@@ -91,7 +91,7 @@ namespace WinFormEditor
             // Dictionary 생성
             m_objInfo = new Dictionary<string, ObjectInfo>();
 
-          
+
 
 
 
@@ -110,6 +110,8 @@ namespace WinFormEditor
             TB_LightXDir.Value = 0;
             TB_LightYDir.Value = -1;
             TB_LightZDir.Value = 0;
+
+            CB_GridShow.Checked = true;
         }
 
         private void Delete(object sender, FormClosedEventArgs e)
@@ -238,7 +240,7 @@ namespace WinFormEditor
         public string GetSelectObjectTag()
         {
             string strTag = "";
-            if(LB_ObjectList.SelectedItem != null)
+            if (LB_ObjectList.SelectedItem != null)
             {
                 strTag = LB_ObjectList.SelectedItem.ToString();
             }
@@ -1194,28 +1196,29 @@ namespace WinFormEditor
 
         private void BT_CreateNavi_Click(object sender, EventArgs e)
         {
-            if(TB_NumX.Text == "" || TB_NumZ.Text == "")
+            if (TB_NumX.Text == "" || TB_NumZ.Text == "")
             {
                 AddLogString("Error! Navi Number Text에 입력값이 없습니다.");
                 return;
             }
 
-          int iX = Convert.ToInt32(TB_NumX.Text);
-          int iZ = Convert.ToInt32(TB_NumZ.Text);
-          bool bSuccess = coreWrapper.CreateTestLandScape(iX, iZ);
-          if(bSuccess)
-          {
-             //LB_ObjectList.Items.Add("LandTestObj");
-             AddLogString("NaviLand생성");
-           }
-           else
-           {
-               AddLogString("NaviMesh가 이미 존재합니다");
-           }
+            int iX = Convert.ToInt32(TB_NumX.Text);
+            int iZ = Convert.ToInt32(TB_NumZ.Text);
+            bool bSuccess = coreWrapper.CreateTestLandScape(iX, iZ);
+            if (bSuccess)
+            {
+                //LB_ObjectList.Items.Add("LandTestObj");
+                AddLogString("NaviLand생성");
+            }
+            else
+            {
+                AddLogString("NaviMesh가 이미 존재합니다");
+            }
         }
 
         private void BT_DeleteNavi_Click(object sender, EventArgs e)
         {
+            AddLogString("LandScape 제거");
             coreWrapper.DeleteNaviMesh();
         }
 
@@ -1269,7 +1272,7 @@ namespace WinFormEditor
 
         private void TB_NumX_TextChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void TB_NumZ_TextChanged(object sender, EventArgs e)
@@ -1282,14 +1285,29 @@ namespace WinFormEditor
             coreWrapper.SetNaviEditorMode(CB_isNaviEditor.Checked);
         }
 
-        private void TB_BlushSize_TextChanged(object sender, EventArgs e)
+        private void TB_BrushSize_TextChanged(object sender, EventArgs e)
         {
-            if (TB_BlushSize.Text != "")
+            if (TB_BrushSize.Text != "")
             {
-                double dTemp = Convert.ToDouble(TB_BlushSize.Text);
+                int dTemp = Convert.ToInt32(TB_BrushSize.Text);
 
-                coreWrapper.SetBlushSize(dTemp);
+                coreWrapper.SetBrushSize(dTemp);
             }
+        }
+
+        private void CB_GridShow_CheckedChanged(object sender, EventArgs e)
+        {
+            bool Check = CB_GridShow.Checked;
+            coreWrapper.SetGridShow(Check);
+        }
+
+        private void TB_GridSize_TextChanged(object sender, EventArgs e)
+        {
+            if (TB_GridSize.Text == "")
+                return;
+
+            int Val = Convert.ToInt32(TB_GridSize.Text);
+            coreWrapper.SetGridSize(Val);
         }
     }
 }

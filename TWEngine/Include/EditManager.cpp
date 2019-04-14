@@ -126,9 +126,9 @@ void CEditManager::GetLayerList(vector<string>* _pVec)
 	m_pScene->GetLayerTagList(_pVec);
 }
 
-void CEditManager::SetBlushSize(float _fSize)
+void CEditManager::SetBrushSize(int _fSize)
 {
-	CInput::GetInst()->SetBlushSize(_fSize);
+	CInput::GetInst()->SetBrushSize(_fSize);
 }
 
 void CEditManager::DeleteNavigationMesh()

@@ -74,7 +74,7 @@ public:
 	// Navigation
 	bool IsNaviEditorMode() const { return m_bNaviEditorMode; }
 	void SetNaviEditorMode(bool _bMode){ m_bNaviEditorMode = _bMode;}
-	void SetBlushSize(float _fSize);
+	void SetBrushSize(int _fSize);
 	void DeleteNavigationMesh();
 	void SetNaviMove(bool _bEnable) { m_bSelectNaviMove = _bEnable; }
 	bool GetNaviMove() const { return m_bSelectNaviMove; }
@@ -135,6 +135,8 @@ public:
 
 	bool SaveNavFile(const string& FullPath);
 	bool LoadNavFile(const string& FullPath);
+
+	CLandScape * GetLandScape() const { return m_LandScape; }
 };
 
 PUN_END

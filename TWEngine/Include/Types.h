@@ -517,4 +517,22 @@ namespace PUN
 
 		~FileStream() { Input.close(); Update.close(); LateUpdate.close(); Collsion.close(); Render.close(); }
 	};
+
+	struct PUN_DLL NaviLandCBuffer
+	{
+		Vector3 BrushPos;
+		int BrushType;
+		Vector4 BrushColor;
+		int BrushRange;
+		Vector3 Empty12314545;
+	};
+
+	struct PUN_DLL GridCBuffer
+	{
+		int GridLineSize;
+		int isVisibleGrid;
+		float GridLineThickness;
+		float Empty;
+		Vector4 GridColor;
+	};
 }

@@ -1014,7 +1014,6 @@ int CNavigationMesh::MousePickGetCellIndex(const int & _iStartSectionIndex,
 	{
 		for (int x = 0; x < m_pSection[z].iSize; ++x)
 		{
-			Vector3	vIntersect;
 			float	fDist = 500.0f;
 
 			PNavigationCell	pCell = m_pSection[z].pCellList[x];
@@ -1050,11 +1049,11 @@ void CNavigationMesh::Click(bool _bIsMove, Vector4 _vColor)
 	Vector3 vCenter = m_vecCell[iSelectNavIndex]->vCenter;
 
 	Vector3 vRectMin = vCenter;
-	vRectMin.x -= CInput::GetInst()->GetBlushSize() / 2.f;
-	vRectMin.z -= CInput::GetInst()->GetBlushSize() / 2.f;
+	vRectMin.x -= CInput::GetInst()->GetBrushSize() / 2.f;
+	vRectMin.z -= CInput::GetInst()->GetBrushSize() / 2.f;
 	Vector3 vRectMax = vCenter;
-	vRectMax.x += CInput::GetInst()->GetBlushSize() / 2.f;
-	vRectMax.z += CInput::GetInst()->GetBlushSize() / 2.f;
+	vRectMax.x += CInput::GetInst()->GetBrushSize() / 2.f;
+	vRectMax.z += CInput::GetInst()->GetBrushSize() / 2.f;
 
 	int iMaxSection = GetSectionIndex(vRectMax);
 	int iMinSection = GetSectionIndex(vRectMin);

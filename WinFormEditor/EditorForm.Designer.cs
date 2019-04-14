@@ -91,6 +91,12 @@
             this.label22 = new System.Windows.Forms.Label();
             this.CB_LightType = new System.Windows.Forms.ComboBox();
             this.NavigationPage = new System.Windows.Forms.TabPage();
+            this.label40 = new System.Windows.Forms.Label();
+            this.GridSize = new System.Windows.Forms.Label();
+            this.TB_GridSize = new System.Windows.Forms.TextBox();
+            this.CB_GridShow = new System.Windows.Forms.CheckBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.TB_BrushSize = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
             this.TB_TileFlag = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
@@ -167,8 +173,6 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.textBox9 = new System.Windows.Forms.TextBox();
-            this.label39 = new System.Windows.Forms.Label();
-            this.TB_BlushSize = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -876,8 +880,12 @@
             // NavigationPage
             // 
             this.NavigationPage.BackColor = System.Drawing.SystemColors.Control;
+            this.NavigationPage.Controls.Add(this.label40);
+            this.NavigationPage.Controls.Add(this.GridSize);
+            this.NavigationPage.Controls.Add(this.TB_GridSize);
+            this.NavigationPage.Controls.Add(this.CB_GridShow);
             this.NavigationPage.Controls.Add(this.label39);
-            this.NavigationPage.Controls.Add(this.TB_BlushSize);
+            this.NavigationPage.Controls.Add(this.TB_BrushSize);
             this.NavigationPage.Controls.Add(this.label38);
             this.NavigationPage.Controls.Add(this.TB_TileFlag);
             this.NavigationPage.Controls.Add(this.label37);
@@ -896,6 +904,68 @@
             this.NavigationPage.Size = new System.Drawing.Size(287, 746);
             this.NavigationPage.TabIndex = 6;
             this.NavigationPage.Text = "Navigation";
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.ForeColor = System.Drawing.Color.Black;
+            this.label40.Location = new System.Drawing.Point(7, 221);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(127, 17);
+            this.label40.TabIndex = 18;
+            this.label40.Text = "(낮을수록 촘촘해짐)";
+            // 
+            // GridSize
+            // 
+            this.GridSize.AutoSize = true;
+            this.GridSize.ForeColor = System.Drawing.Color.Black;
+            this.GridSize.Location = new System.Drawing.Point(7, 198);
+            this.GridSize.Name = "GridSize";
+            this.GridSize.Size = new System.Drawing.Size(58, 17);
+            this.GridSize.TabIndex = 17;
+            this.GridSize.Text = "GridSize";
+            // 
+            // TB_GridSize
+            // 
+            this.TB_GridSize.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_GridSize.Location = new System.Drawing.Point(103, 193);
+            this.TB_GridSize.Name = "TB_GridSize";
+            this.TB_GridSize.Size = new System.Drawing.Size(165, 25);
+            this.TB_GridSize.TabIndex = 16;
+            this.TB_GridSize.TextChanged += new System.EventHandler(this.TB_GridSize_TextChanged);
+            this.TB_GridSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInterval_KeyPress);
+            // 
+            // CB_GridShow
+            // 
+            this.CB_GridShow.AutoSize = true;
+            this.CB_GridShow.ForeColor = System.Drawing.Color.Black;
+            this.CB_GridShow.Location = new System.Drawing.Point(10, 264);
+            this.CB_GridShow.Name = "CB_GridShow";
+            this.CB_GridShow.Size = new System.Drawing.Size(86, 21);
+            this.CB_GridShow.TabIndex = 15;
+            this.CB_GridShow.Text = "GridShow";
+            this.CB_GridShow.UseVisualStyleBackColor = true;
+            this.CB_GridShow.CheckedChanged += new System.EventHandler(this.CB_GridShow_CheckedChanged);
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.ForeColor = System.Drawing.Color.Black;
+            this.label39.Location = new System.Drawing.Point(7, 153);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(71, 17);
+            this.label39.TabIndex = 14;
+            this.label39.Text = "Blush Size";
+            // 
+            // TB_BrushSize
+            // 
+            this.TB_BrushSize.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_BrushSize.Location = new System.Drawing.Point(103, 148);
+            this.TB_BrushSize.Name = "TB_BrushSize";
+            this.TB_BrushSize.Size = new System.Drawing.Size(165, 25);
+            this.TB_BrushSize.TabIndex = 13;
+            this.TB_BrushSize.TextChanged += new System.EventHandler(this.TB_BrushSize_TextChanged);
+            this.TB_BrushSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInterval_KeyPress);
             // 
             // label38
             // 
@@ -947,7 +1017,7 @@
             // 
             this.CB_isNaviEditor.AutoSize = true;
             this.CB_isNaviEditor.ForeColor = System.Drawing.Color.Black;
-            this.CB_isNaviEditor.Location = new System.Drawing.Point(14, 315);
+            this.CB_isNaviEditor.Location = new System.Drawing.Point(10, 291);
             this.CB_isNaviEditor.Name = "CB_isNaviEditor";
             this.CB_isNaviEditor.Size = new System.Drawing.Size(128, 21);
             this.CB_isNaviEditor.TabIndex = 4;
@@ -988,7 +1058,7 @@
             // BT_DeleteNavi
             // 
             this.BT_DeleteNavi.ForeColor = System.Drawing.Color.Black;
-            this.BT_DeleteNavi.Location = new System.Drawing.Point(153, 348);
+            this.BT_DeleteNavi.Location = new System.Drawing.Point(153, 357);
             this.BT_DeleteNavi.Name = "BT_DeleteNavi";
             this.BT_DeleteNavi.Size = new System.Drawing.Size(124, 52);
             this.BT_DeleteNavi.TabIndex = 3;
@@ -999,7 +1069,7 @@
             // BT_CreateNavi
             // 
             this.BT_CreateNavi.ForeColor = System.Drawing.Color.Black;
-            this.BT_CreateNavi.Location = new System.Drawing.Point(14, 349);
+            this.BT_CreateNavi.Location = new System.Drawing.Point(14, 358);
             this.BT_CreateNavi.Name = "BT_CreateNavi";
             this.BT_CreateNavi.Size = new System.Drawing.Size(125, 52);
             this.BT_CreateNavi.TabIndex = 2;
@@ -1010,7 +1080,7 @@
             // BT_NaviLoad
             // 
             this.BT_NaviLoad.ForeColor = System.Drawing.Color.Black;
-            this.BT_NaviLoad.Location = new System.Drawing.Point(153, 420);
+            this.BT_NaviLoad.Location = new System.Drawing.Point(153, 429);
             this.BT_NaviLoad.Name = "BT_NaviLoad";
             this.BT_NaviLoad.Size = new System.Drawing.Size(124, 52);
             this.BT_NaviLoad.TabIndex = 1;
@@ -1021,7 +1091,7 @@
             // BT_NaviSave
             // 
             this.BT_NaviSave.ForeColor = System.Drawing.Color.Black;
-            this.BT_NaviSave.Location = new System.Drawing.Point(14, 420);
+            this.BT_NaviSave.Location = new System.Drawing.Point(14, 429);
             this.BT_NaviSave.Name = "BT_NaviSave";
             this.BT_NaviSave.Size = new System.Drawing.Size(125, 52);
             this.BT_NaviSave.TabIndex = 0;
@@ -1786,25 +1856,6 @@
             this.textBox9.Size = new System.Drawing.Size(64, 25);
             this.textBox9.TabIndex = 2;
             // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.ForeColor = System.Drawing.Color.Black;
-            this.label39.Location = new System.Drawing.Point(7, 153);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(71, 17);
-            this.label39.TabIndex = 14;
-            this.label39.Text = "Blush Size";
-            // 
-            // TB_BlushSize
-            // 
-            this.TB_BlushSize.Location = new System.Drawing.Point(103, 148);
-            this.TB_BlushSize.Name = "TB_BlushSize";
-            this.TB_BlushSize.Size = new System.Drawing.Size(165, 25);
-            this.TB_BlushSize.TabIndex = 13;
-            this.TB_BlushSize.TextChanged += new System.EventHandler(this.TB_BlushSize_TextChanged);
-            this.TB_BlushSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInterval_KeyPress);
-            // 
             // EditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -1997,7 +2048,11 @@
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.TextBox TB_NaviIndex;
         private System.Windows.Forms.Label label39;
-        private System.Windows.Forms.TextBox TB_BlushSize;
+        private System.Windows.Forms.TextBox TB_BrushSize;
+        private System.Windows.Forms.CheckBox CB_GridShow;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.Label GridSize;
+        private System.Windows.Forms.TextBox TB_GridSize;
     }
 }
 

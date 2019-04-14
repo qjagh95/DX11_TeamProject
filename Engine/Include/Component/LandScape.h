@@ -25,6 +25,9 @@ private:
 	CMesh* m_Mesh;
 	bool m_isMove;
 
+	NaviLandCBuffer m_tNaviCBuffer;
+	GridCBuffer m_tGridCBuffer;
+
 public:
 	bool CreateLandScape(const string& strName,
 		unsigned int iNumX, unsigned int iNumZ,
@@ -43,6 +46,13 @@ public:
 		const string& strPathName = TEXTURE_PATH);
 
 	CNavigationMesh* GetNaviMesh() const { return m_pNavMesh; }
+
+	void SetBrushPos(const Vector3& Pos) { m_tNaviCBuffer.BrushPos = Pos; }
+	void SetBrushRange(int Range) { m_tNaviCBuffer.BrushRange = Range; }
+	void SetBrushColor(const Vector4& Color) { m_tNaviCBuffer.BrushColor = Color; }
+	void SetGridColor(const Vector4& Color) { m_tGridCBuffer.GridColor = Color; }
+	void GridShow(bool Value) { m_tGridCBuffer.isVisibleGrid = Value; }
+	void SetGridLineSize(int LineSize) { m_tGridCBuffer.GridLineSize = LineSize; }
 
 public:
 	virtual void Start();

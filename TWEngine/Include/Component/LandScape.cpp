@@ -23,6 +23,16 @@ CLandScape::CLandScape() :
 	m_isMove = false;
 	if(CCore::GetInst()->m_bEditorMode == true)
 	CEditManager::GetInst()->SetNaviMove(m_isMove);
+
+	m_tCBuffer = {};
+	m_tNaviCBuffer.BrushRange = 5;
+	m_tNaviCBuffer.BrushColor = Vector4::Yellow;
+	m_tNaviCBuffer.BrushPos = Vector3(-1.0f, -1.0f, -1.0f);
+
+	m_tGridCBuffer.GridLineThickness = 0.5f;
+	m_tGridCBuffer.isVisibleGrid = 1;
+	m_tGridCBuffer.GridLineSize = 5;
+	m_tGridCBuffer.GridColor = Vector4::White;
 }
 
 CLandScape::CLandScape(const CLandScape & landscape)
@@ -175,7 +185,7 @@ bool CLandScape::CreateLandScape(const string& strName, unsigned int iNumX, unsi
 		pRenderer = m_pObject->AddComponent<CRenderer>("LandScapeRenderer");
 
 	pRenderer->SetMesh(strName);
-	pRenderer->SetRenderState(WIRE_FRAME);
+	//pRenderer->SetRenderState(WIRE_FRAME);
 
 	SAFE_RELEASE(pRenderer);
 
@@ -320,6 +330,8 @@ int CLandScape::Input(float fTime)
 
 int CLandScape::Update(float fTime)
 {
+	m_tNaviCBuffer.BrushRange = (int)CInput::GetInst()->GetBrushSize();
+
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{
 		if (CEditManager::GetInst()->IsNaviEditorMode() == true)
@@ -340,15 +352,6 @@ int CLandScape::Update(float fTime)
 
 int CLandScape::LateUpdate(float fTime)
 {
-	CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
-
-	if (pRenderer)
-	{
-		pRenderer->UpdateRendererCBuffer("LandScape", &m_tCBuffer, sizeof(LandScapeCBuffer));
-
-		SAFE_RELEASE(pRenderer);
-	}
-
 	// 내비메쉬에 이 지형의 트랜스폼에서 위치를 얻어와 지정해준다.
 	//m_pNavMesh->SetOffset(m_pTransform->GetWorldPos());
 	//m_pNavMesh->SetOffsetScale(m_pTransform->GetWorldScale());
@@ -362,6 +365,8 @@ void CLandScape::Collision(float fTime)
 
 void CLandScape::Render(float fTime)
 {
+	CShaderManager::GetInst()->UpdateCBuffer("NaviLandCBuffer", &m_tNaviCBuffer);
+	CShaderManager::GetInst()->UpdateCBuffer("GridCBuffer", &m_tGridCBuffer);
 }
 
 CLandScape * CLandScape::Clone()
@@ -439,6 +444,7 @@ void CLandScape::ComputeTangent()
 void CLandScape::ChangeFlag(float DeltaTime)
 {
 	m_isMove ^= true;
+
 	CEditManager::GetInst()->SetNaviMove(m_isMove);
 }
 
@@ -532,8 +538,7 @@ void CLandScape::CheckSelectIndex(float DeltaTime)
 		}
 	}
 
-	CInput::GetInst()->SetSelectNavIndex(m_pNavMesh->MousePickGetCellIndex(iMinSection, iMaxSection, vRayInfo.vPos, vRayInfo.vDir, vRayInterSect));
-
+	CInput::GetInst()->SetSelectNavIndex(m_pNavMesh->MousePickGetCellIndex(iMinSection, iMaxSection, vRayInfo.vPos, vRayInfo.vDir, m_tNaviCBuffer.BrushPos));
 	m_Mesh->UpdateVertexBuffer(&m_vecVtx[0]);
 }
 
@@ -553,21 +558,21 @@ void CLandScape::SaveLandScape(const string& FullPath)
 
 	fwrite(&m_iNumX, sizeof(int), 1, pFile);
 	fwrite(&m_iNumZ, sizeof(int), 1, pFile);
-	int iVecVtxSize = m_vecVtx.size();
+	int iVecVtxSize = (int)m_vecVtx.size();
 	fwrite(&iVecVtxSize, sizeof(int), 1, pFile);
 	for (size_t i = 0; i < m_vecVtx.size(); ++i)
 	{
 		fwrite(&m_vecVtx[i], sizeof(Vertex3DColor), 1, pFile);
 	}
 
-	int iVecIndexSize = m_vecIdx.size();
+	int iVecIndexSize = (int)m_vecIdx.size();
 	fwrite(&iVecIndexSize, sizeof(int), 1, pFile);
 	for (size_t i = 0; i < m_vecIdx.size(); ++i)
 	{
 		fwrite(&m_vecIdx[i], sizeof(int), 1, pFile);
 	}
 
-	int iVecFaceNormalSize = m_vecFaceNormal.size();
+	int iVecFaceNormalSize = (int)m_vecFaceNormal.size();
 	fwrite(&iVecFaceNormalSize, sizeof(int), 1, pFile);
 	for (size_t i = 0; i < m_vecFaceNormal.size(); ++i)
 	{
@@ -655,7 +660,7 @@ void CLandScape::LoadLandScape(const string& FullPath)
 		pRenderer = m_pObject->AddComponent<CRenderer>("LandScapeRenderer");
 
 	pRenderer->SetMesh("TestLandScape");
-	pRenderer->SetRenderState(WIRE_FRAME);
+	//pRenderer->SetRenderState(WIRE_FRAME);
 
 	SAFE_RELEASE(pRenderer);
 
@@ -669,6 +674,5 @@ void CLandScape::LoadLandScape(const string& FullPath)
 	m_pNavMesh = GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene);
 
 	m_pNavMesh->LoadFromFullPath(FullPath.c_str());
-
 	m_pNavMesh->LoadCell(&m_vecVtx);
 }

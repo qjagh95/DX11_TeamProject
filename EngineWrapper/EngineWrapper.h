@@ -207,9 +207,9 @@ namespace EngineWrapper
 			CEditManager::GetInst()->LoadNavFile(strFullPath);
 		}
 
-		void SetBlushSize(double _dSize)
+		void SetBrushSize(int _dSize)
 		{
-			CEditManager::GetInst()->SetBlushSize((float)_dSize);
+			CEditManager::GetInst()->SetBrushSize(_dSize);
 		}
 
 		void DeleteNaviMesh()
@@ -221,5 +221,8 @@ namespace EngineWrapper
 		{
 			return CEditManager::GetInst()->GetNaviMove();
 		}
+
+		void SetGridShow(bool Value);
+		void SetGridSize(int Value);
 	};
 }

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "EngineWrapper.h"
+#include <Component/LandScape.h>
 
 using namespace EngineWrapper;
 
@@ -206,4 +207,24 @@ void CoreWrapper::FileLoad(String^ _strFullPath)
 {
 	string strFullPath = ConvertMarshal<string, String^>(_strFullPath);
 	PUN::CSceneManager::GetInst()->GetSceneNonCount()->Load(strFullPath);
+}
+
+void EngineWrapper::CoreWrapper::SetGridShow(bool Value)
+{
+	CLandScape* getLand = CEditManager::GetInst()->GetLandScape();
+
+	if (getLand == NULLPTR)
+		return;
+
+	getLand->GridShow(Value);
+}
+
+void EngineWrapper::CoreWrapper::SetGridSize(int Value)
+{
+	CLandScape* getLand = CEditManager::GetInst()->GetLandScape();
+
+	if (getLand == NULLPTR)
+		return;
+
+	getLand->SetGridLineSize(Value);
 }

@@ -14,8 +14,8 @@ struct PUN_DLL KeyInfo
 class PUN_DLL CInput
 {
 private:
-	std::vector<unsigned char>		m_KeyList;
-	short							m_sWheel;
+	vector<unsigned char>	m_KeyList;
+	short m_sWheel;
 
 private:
 	Vector2					m_vMouseClient;
@@ -32,15 +32,15 @@ private:
 	KeyInfo* m_NewKey;
 	bool m_bFocus;
 	////////////////////Navi///////////////////////////
-	int						m_iSelectNavIndex;
-	float					m_fBlushSize;
-	Vector3					m_vSelectNaviCellCenter;
+	int	m_iSelectNavIndex;
+	int	m_iBrushRange;
+	Vector3	m_vSelectNaviCellCenter;
 public:
 	void SetSelectNavIndex(int _idx) { m_iSelectNavIndex = _idx; }
 	int GetiSelectNavIndex() const { return m_iSelectNavIndex; }
 	void SetSelectCellCenter(Vector3 _vCenter) { m_vSelectNaviCellCenter = _vCenter; }
-	void SetBlushSize(float _fSize) { m_fBlushSize = _fSize; }
-	float GetBlushSize() const { return m_fBlushSize; }
+	void SetBrushSize(int _fSize) { m_iBrushRange = _fSize; }
+	int GetBrushSize() const { return m_iBrushRange; }
 	void SelectNaviBoxRender(float fTime);
 
 public:

@@ -92,6 +92,7 @@ struct VS_OUTPUT_3D_COLOR
     float4 vPos : SV_POSITION;
     float2 vUV : TEXCOORD;
     float4 vColor : COLOR0;
+    float3 oPos : POSITION1;
 };
 
 struct PS_OUTPUT_SINGLE

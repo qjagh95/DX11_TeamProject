@@ -477,19 +477,16 @@ void CRenderManager::RenderDeferred(float fTime)
 #else
 	RenderFinalPass(fTime);
 #endif
-	
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
+
+	for (size_t i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; i++)
+		m_tRenderObj[RG_LANDSCAPE].pList[i]->Render(fTime);
+
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 
 	if (CCore::GetInst()->m_bEditorMode == true)
-	{
-		m_pState[STATE_DEPTH_DISABLE]->SetState();
-		for (size_t i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; i++)
-		{
-			m_tRenderObj[RG_LANDSCAPE].pList[i]->Render(fTime);
-		}
-		m_pState[STATE_DEPTH_DISABLE]->ResetState();
-
 		CEditManager::GetInst()->Render(fTime);
-	}
+
 	// UIÃâ·Â
 	for (int i = RG_UI; i < RG_END; ++i)
 	{
@@ -1359,7 +1356,7 @@ void CRenderManager::RenderNaviEditorMode(float fTime)
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
 	CCollisionManager::GetInst()->Render(fTime);
-	CInput::GetInst()->SelectNaviBoxRender(fTime);
+	//CInput::GetInst()->SelectNaviBoxRender(fTime);
 
 	for (int i = RG_LANDSCAPE; i < RG_END; ++i)
 	{
