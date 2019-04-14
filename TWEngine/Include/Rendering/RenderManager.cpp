@@ -29,7 +29,7 @@ DEFINITION_SINGLE(CRenderManager)
 CRenderManager::CRenderManager() :
 	m_pCreateState(nullptr),
 	m_bDeferred(true),
-	m_bFogEnable(true),
+	m_bFogEnable(false),
 	m_bSSAOEnable(true),
 	m_pSkyObj(nullptr),
 	m_pFogDepthSRV(nullptr),
@@ -712,6 +712,8 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 	cBuffer.matWV.Transpose();
 	cBuffer.matWVP.Transpose();
 
+	CONTEXT->IASetInputLayout(m_pPointLightLayout);
+
 	CShaderManager::GetInst()->UpdateCBuffer("Transform", &cBuffer);
 
 	m_pState[STATE_FRONT_CULL]->SetState();	
@@ -791,6 +793,8 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 
 	CShaderManager::GetInst()->UpdateCBuffer("Transform", &cBuffer);
 
+	CONTEXT->IASetInputLayout(m_pPointLightLayout);
+
 	m_pState[STATE_FRONT_CULL]->SetState();
 	{
 		m_pState[STATE_DEPTH_GRATOR]->SetState();
@@ -842,6 +846,11 @@ void CRenderManager::RenderLightBlend(float _fTime)
 	TransformCBuffer	tCBuffer = {};
 
 	CCamera*	pMainCamera = GET_SINGLE(CSceneManager)->GetMainCamera();
+
+	if (pMainCamera->IsShadow())
+		tCBuffer.iShadowEnable = 1;
+	else
+		tCBuffer.iShadowEnable = 0;
 
 	tCBuffer.matWorld.Identity();
 	tCBuffer.matView = pMainCamera->GetViewMatrix();
@@ -1220,10 +1229,10 @@ void CRenderManager::RenderShadowTexture(float fTime)
 
 	CCamera* pCamera = GET_SINGLE(CSceneManager)->GetMainCameraNoneCount();
 
-	tCBuffer.matVP		= pCamera->GetViewMatrix() * pCamera->GetProjMatrix();
+	tCBuffer.matVP		= pCamera->GetVP();
 	tCBuffer.matInvVP = tCBuffer.matVP;
 	tCBuffer.matInvVP.Inverse();
-	tCBuffer.matLP		= pCamera->GetShadowViewMatrix() * pCamera->GetShadowProjMatrix();
+	tCBuffer.matLP = pCamera->GetShadowVP();
 
 	tCBuffer.matVP.Transpose();
 	tCBuffer.matInvVP.Transpose();

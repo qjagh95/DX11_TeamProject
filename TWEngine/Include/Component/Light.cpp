@@ -1,6 +1,8 @@
 #include "../EngineHeader.h"
 #include "Light.h"
 #include "Core.h"
+#include "Camera.h"
+#include "../Device.h"
 
 PUN_USING
 
@@ -32,6 +34,11 @@ LIGHT_TYPE CLight::GetLightType() const
 LightInfo CLight::GetLightInfo() const
 {
 	return m_tInfo;
+}
+
+Matrix CLight::GetShadowVP() const
+{
+	return m_matShadowVP;
 }
 
 void CLight::Save(BinaryWrite * _pInstBW)
@@ -79,12 +86,19 @@ void CLight::Load(BinaryRead * _pInstBR)
 
 void CLight::SetLightType(LIGHT_TYPE eType)
 {
+	m_eLightType = eType;
 	m_tInfo.iLightType = eType;
+
+	if (eType == LT_SPOT)
+		m_pTransform->SetLocalRotX(90.0f);
 }
 
 void CLight::SetLightRange(float fRange)
 {
+	m_fRange = fRange;
 	m_tInfo.fRange = fRange;
+
+	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fOutAngle), m_fWidth / m_fHeight, 0.03f, m_fRange);
 }
 
 void CLight::SetAngle(float fInAngle, float fOutAngle)
@@ -94,6 +108,8 @@ void CLight::SetAngle(float fInAngle, float fOutAngle)
 
 	m_tInfo.fInAngle = cosf(DegreeToRadian(fInAngle / 2.f));
 	m_tInfo.fOutAngle = cosf(DegreeToRadian(fOutAngle / 2.f));
+
+	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fOutAngle), m_fWidth / m_fHeight, 0.03f, m_fRange);
 }
 
 void CLight::SetLightColor(const Vector4 & vDif, const Vector4 & vAmb, const Vector4 & vSpc)
@@ -177,28 +193,67 @@ void CLight::AfterClone()
 
 bool CLight::Init()
 {
-	m_pTransform->SetLocalRotX(90.0f);
+	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
+
+	m_fWidth = (float)_RESOLUTION.iWidth;
+	m_fHeight = (float)_RESOLUTION.iHeight;
+
+	m_fNear = pCamera->GetCameraNear();
+	m_fRange = pCamera->GetCameraFar();
+	m_fOutAngle = pCamera->GetCameraViewAngle();
+
+	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fOutAngle), m_fWidth / m_fHeight, m_fNear, m_fRange);
 
 	return true;
 }
 
 int CLight::Input(float fTime)
 {
+	if (m_eLightType != LT_DIR)
+		m_tInfo.vPos = m_pTransform->GetWorldPos();
+
+	m_tInfo.vDir = m_pTransform->GetWorldAxis(AXIS_Z);
+
+	if (m_eLightType == LT_SPOT)
+	{
+		m_matShadowView.Identity();
+
+		Vector3	vLightAxis[AXIS_END];
+
+		for (int i = 0; i < AXIS_END; ++i)
+		{
+			vLightAxis[i] = m_pTransform->GetWorldAxis((AXIS)i);
+			vLightAxis[i].Normalize();
+		}
+
+		Vector3	vLightPos = m_pTransform->GetWorldPos();
+
+		for (int i = 0; i < AXIS_END; ++i)
+			memcpy(&m_matShadowView[i][0], &vLightAxis[i], sizeof(Vector3));
+
+		m_matShadowView.Transpose();
+
+		vLightPos *= -1.f;
+
+		for (int i = 0; i < AXIS_END; ++i)
+			m_matShadowView[3][i] = vLightPos.Dot(vLightAxis[i]);
+	}
+
+	m_matShadowVP = m_matShadowView * m_matShadowProj;
+
 	return 0;
 }
 
 int CLight::Update(float fTime)
 {
+
+
 	return 0;
 }
 
 int CLight::LateUpdate(float fTime)
 {
-	if (m_tInfo.iLightType != LT_DIR)
-		m_tInfo.vPos = m_pTransform->GetWorldPos();
 
-	if (m_tInfo.iLightType == LT_SPOT)
-		m_pTransform->SetWorldRot(RadianToDegree(m_tInfo.vDir.y), RadianToDegree(m_tInfo.vDir.x), 0.0f);
 
 	SetRimColor(1.f, 1.f, 1.f);
 	SetRimPower(3.f);

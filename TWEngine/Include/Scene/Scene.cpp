@@ -156,20 +156,24 @@ bool CScene::Init()
 {
 	AddLayer("Stage", INT_MIN + 1);
 	AddLayer("Default", 0);
+	AddLayer("Light", 50);
 	AddLayer("UI", INT_MAX - 1);
 
 	ProfileInit();
+
+	CLayer* pLightLayer = FindLayer("Light");
+	CLayer*	pLayer = FindLayer("Default");
 
 	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 90.f, 0.03f, 1000.f);;
 	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
 	m_pMainCamera = m_pMainCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
 	m_pMainCamera->Shadow(true);
-	m_pUICameraObj = CreateCamera("UICamera", Vector3(0.f, 0.f, 0.f), CT_ORTHO, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 60.f, 0.f, 1000.f);
+	m_pMainCamera->SetLightLayer(pLightLayer);
 
+	m_pUICameraObj = CreateCamera("UICamera", Vector3(0.f, 0.f, 0.f), CT_ORTHO, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 60.f, 0.f, 1000.f);
 	m_pUICameraTr = m_pUICameraObj->GetTransform();
 	m_pUICamera = m_pUICameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
 
-	CLayer*	pLayer = FindLayer("Default");
 
 	m_pSkyObj = CGameObject::CreateObject("Sky");
 
@@ -205,7 +209,7 @@ bool CScene::Init()
 	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
 	m_LogText = CCore::GetInst()->CreateFileStream(Path, "Scene", "Scene");
 
-	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLayer, true);
+	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLightLayer, true);
 	CTransform* pTr = pLightObj->GetTransform();
 
 	pTr->RotationX(45.0f);
@@ -225,6 +229,7 @@ bool CScene::Init()
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pLightObj);
 	SAFE_RELEASE(pLayer);
+	SAFE_RELEASE(pLightLayer);
 
 	return true;
 }

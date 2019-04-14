@@ -122,8 +122,11 @@ PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_TEX input)
 
     float4 vDif = g_LightDifTex.Sample(g_GBufferSmp, UV);
     float4 vSpc = g_LightSpcTex.Sample(g_GBufferSmp, UV);
-    float4 vAmb = (float4) 1.0f;
-    float4 vShadow = g_ShadowMap.Sample(g_GBufferSmp, UV);
+    float4 vAmb     = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    float4 vShadow  = float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    if(g_iShadowEnable == 1)
+        vShadow = g_ShadowMap.Sample(g_GBufferSmp, UV);
 
     if(g_iSSAOEnable == 1)
         vAmb = g_AmbientMap.Sample(g_GBufferSmp, UV);

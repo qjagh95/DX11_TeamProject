@@ -16,8 +16,10 @@ protected:
 private:
 	Matrix		m_matView;
 	Matrix		m_matProj;
-	Matrix	m_matShadowView;
-	Matrix	m_matShadowProj;
+	Matrix		m_matVP;
+	Matrix		m_matShadowView;
+	Matrix		m_matShadowProj;
+	Matrix		m_matShadowVP;
 
 	CAMERA_TYPE	m_eCameraType;
 	float		m_fWidth;
@@ -26,6 +28,7 @@ private:
 	float		m_fNear;
 	float		m_fFar;
 	class CTransform*	m_pTarget;
+	class CLayer*		m_pLightLayer;
 	Vector3				m_vTargetPivot;
 	Vector3				m_vWorldSize;
 	Vector3				m_vTargetPos;
@@ -43,6 +46,7 @@ public:
 	void Shadow(bool bEnable);
 	Matrix GetShadowViewMatrix() const;
 	Matrix GetShadowProjMatrix() const;
+	Matrix GetShadowVP() const;
 	bool IsShadow()	const;
 	void SetFrustumCulling(bool Value) { m_bFrustum = Value; }
 	bool GetFrustumCulling() const { return m_bFrustum; }
@@ -52,10 +56,12 @@ public:
 	void SetTarget(class CComponent* pTarget);
 	void SetTargetPivot(Vector3 vTargetPivot);
 	void SetWorldSize(Vector3 vWorldSize);
+	void SetLightLayer(class CLayer* pLayer);
 
 public:
 	Matrix	GetViewMatrix()	const;
 	Matrix	GetProjMatrix()	const;
+	Matrix  GetVP() const;
 
 public:
 	void SetCameraType(CAMERA_TYPE eType);

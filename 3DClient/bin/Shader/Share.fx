@@ -145,7 +145,7 @@ cbuffer Transform	: register(b0)
     matrix  g_matInvVP;
     matrix  g_matLP;
 	float3	g_vPivot;
-	float	g_fEmptyTr;
+    int     g_iShadowEnable;
 	float3	g_vLength;
 	float	g_fEmptyTr1;
 }

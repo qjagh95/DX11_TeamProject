@@ -559,13 +559,13 @@ void CRenderer::UpdateTransform()
 	tCBuffer.matProj = pMainCamera->GetProjMatrix();
 	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
 	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
-	tCBuffer.matLP = pMainCamera->GetShadowViewMatrix() *	pMainCamera->GetShadowProjMatrix();
+	tCBuffer.matLP = pMainCamera->GetShadowVP();
 	tCBuffer.matWLP = tCBuffer.matWorld * tCBuffer.matLP;
 	tCBuffer.matInvWVP = tCBuffer.matWVP;
 	tCBuffer.matInvWVP.Inverse();
 	tCBuffer.matInvProj = tCBuffer.matProj;
 	tCBuffer.matInvProj.Inverse();
-	tCBuffer.matVP = tCBuffer.matView * tCBuffer.matProj;
+	tCBuffer.matVP = pMainCamera->GetVP();
 	tCBuffer.matInvVP = tCBuffer.matVP;
 	tCBuffer.matInvVP.Inverse();
 
@@ -605,13 +605,13 @@ void CRenderer::UpdateShadowTransform()
 	tCBuffer.matProj = pMainCamera->GetShadowProjMatrix();
 	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
 	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
-	tCBuffer.matLP = pMainCamera->GetShadowViewMatrix() *	pMainCamera->GetShadowProjMatrix();
+	tCBuffer.matLP = pMainCamera->GetShadowVP();
 	tCBuffer.matWLP = tCBuffer.matWorld * tCBuffer.matLP;
 	tCBuffer.matInvWVP = tCBuffer.matWVP;
 	tCBuffer.matInvWVP.Inverse();
 	tCBuffer.matInvProj = tCBuffer.matProj;
 	tCBuffer.matInvProj.Inverse();
-	tCBuffer.matVP = tCBuffer.matView * tCBuffer.matProj;
+	tCBuffer.matVP = pMainCamera->GetVP();
 	tCBuffer.matInvVP = tCBuffer.matVP;
 	tCBuffer.matInvVP.Inverse();
 

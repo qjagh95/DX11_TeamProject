@@ -720,7 +720,7 @@ bool CAnimation::LoadFromFullPath(const char * pFullPath)
 		char	strClipName[256] = {};
 		fread(&iLength, sizeof(size_t), 1, pFile);
 		fread(strClipName, sizeof(char), iLength, pFile);
-
+		//std::cout << strClipName << std::endl;
 		m_strAddClipName.push_back(strClipName);
 
 		m_mapClip.insert(make_pair(strClipName, pClip));
@@ -924,6 +924,8 @@ bool CAnimation::LoadBoneFromFullPath(const char * pFullPath)
 		char	strBoneName[256] = {};
 		fread(&iLength, sizeof(size_t), 1, pFile);
 		fread(strBoneName, sizeof(char), iLength, pFile);
+
+		//std::cout << strBoneName << endl;
 		pBone->strName = strBoneName;
 
 		fread(&pBone->iDepth, sizeof(int), 1, pFile);
@@ -1380,128 +1382,105 @@ int CAnimation::Update(float fTime)
 			m_fAnimationGlobalTime = 0.f;
 			m_fChangeTime = 0.f;
 		}
-
-		m_fChangeTime += fTime;
-
-		bool	bChange = false;
-		if (m_fChangeTime >= m_fChangeLimitTime)
+		else
 		{
-			m_fChangeTime = m_fChangeLimitTime;
-			bChange = true;
-		}
+			m_fChangeTime += fTime;
 
-		float	fAnimationTime = m_fAnimationGlobalTime + m_pCurClip->fStartTime;
+			bool	bChange = false;
+			if (m_fChangeTime >= m_fChangeLimitTime)
+			{
+				m_fChangeTime = m_fChangeLimitTime;
+				bChange = true;
+			}
 
-		int BoneSize = (int)m_vecBones.size();
+			float	fAnimationTime = m_fAnimationGlobalTime + m_pCurClip->fStartTime;
 
-		//Note : Haswell 이전 CPU는 SIMD를 다중 스레드로 표현하지 않으므로,
-		//이 구형 CPU들에서 XMVECTOR나 XMMATRIX를 이용한 concurrency 이용은
-		//CPU에 아예 명령어가 없어서 사용이 불가능한듯 싶다...
-		//그래서 그대로 parallel_for를 사용하면 Instruction Error 발생
+			int BoneSize = (int)m_vecBones.size();
 
+			//Note : Haswell 이전 CPU는 SIMD를 다중 스레드로 표현하지 않으므로,
+			//이 구형 CPU들에서 XMVECTOR나 XMMATRIX를 이용한 concurrency 이용은
+			//CPU에 아예 명령어가 없어서 사용이 불가능한듯 싶다...
+			//그래서 그대로 parallel_for를 사용하면 Instruction Error 발생
+
+			if (bChange)
+			{
+				m_pCurClip = m_pNextClip;
+				m_pNextClip = nullptr;
+				m_fAnimationGlobalTime = 0.f;
+				m_fChangeTime = 0.f;
+			}
+			else
+			{
 #ifdef DDONGCOM
-		for (int i = 0; i < BoneSize; ++i)
-		{
-			if (bChange)
-			{
-				m_pCurClip = m_pNextClip;
-				m_pNextClip = nullptr;
-				m_fAnimationGlobalTime = 0.f;
-				m_fChangeTime = 0.f;
-			}
+				for (int i = 0; i < BoneSize; ++i)
+				{
+					// 키프레임이 없을 경우
+					if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
+					{
+						*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
+						continue;
+					}
 
-			// 키프레임이 없을 경우
-			if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
-			{
-				*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-				continue;
-			}
+					int	iFrameIndex = m_pCurClip->iChangeFrame;
+					int	iNextFrameIndex = m_pNextClip->iStartFrame;
 
-			int	iFrameIndex = m_pCurClip->iChangeFrame;
-			int	iNextFrameIndex = m_pNextClip->iStartFrame;
+					const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
+					const PKEYFRAME pNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
 
-			const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
-			const PKEYFRAME pNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+					float	fPercent = m_fChangeTime / m_fChangeLimitTime;
 
-			float	fPercent = m_fChangeTime / m_fChangeLimitTime;
+					XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+					XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
+					XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
+					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 
-			XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
-			XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
-			XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
-			XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
-			Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
-
-			*m_vecBones[i]->matBone = matBone;
-			matBone = *m_vecBones[i]->matOffset * matBone;
-			*m_vecBoneMatrix[i] = matBone;
-		}
+					*m_vecBones[i]->matBone = matBone;
+					matBone = *m_vecBones[i]->matOffset * matBone;
+					*m_vecBoneMatrix[i] = matBone;
+				}
 #else
-		parallel_for((int)0, BoneSize, [&](int i)
-		{
-			if (bChange)
-			{
-				m_pCurClip = m_pNextClip;
-				m_pNextClip = nullptr;
-				m_fAnimationGlobalTime = 0.f;
-				m_fChangeTime = 0.f;
-			}
+				parallel_for((int)0, BoneSize, [&](int i)
+				{
+					if (bChange)
+					{
+						m_pCurClip = m_pNextClip;
+						m_pNextClip = nullptr;
+						m_fAnimationGlobalTime = 0.f;
+						m_fChangeTime = 0.f;
+					}
 
-			// 키프레임이 없을 경우
-			if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
-			{
-				*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-				return 0;
-			}
+					// 키프레임이 없을 경우
+					if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
+					{
+						*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
+						return 0;
+					}
 
-			int	iFrameIndex = m_pCurClip->iChangeFrame;
-			int	iNextFrameIndex = m_pNextClip->iStartFrame;
+					int	iFrameIndex = m_pCurClip->iChangeFrame;
+					int	iNextFrameIndex = m_pNextClip->iStartFrame;
 
-			const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
-			const PKEYFRAME pNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+					const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
+					const PKEYFRAME pNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
 
-			float	fPercent = m_fChangeTime / m_fChangeLimitTime;
+					float	fPercent = m_fChangeTime / m_fChangeLimitTime;
 
-			XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
-			XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
-			XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
-			XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
-			Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+					XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+					XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
+					XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
+					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 
-			*m_vecBones[i]->matBone = matBone;
-			matBone = *m_vecBones[i]->matOffset * matBone;
-			*m_vecBoneMatrix[i] = matBone;
-		});
+					*m_vecBones[i]->matBone = matBone;
+					matBone = *m_vecBones[i]->matOffset * matBone;
+					*m_vecBoneMatrix[i] = matBone;
+				});
 #endif
-		
+			}
+						
 
-		//// 본 수만큼 반복한다.
-		//for (size_t i = 0; i < m_vecBones.size(); ++i)
-		//{
-		//	// 키프레임이 없을 경우
-		//	if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
-		//	{
-		//		*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-		//		continue;
-		//	}
+		}
 
-		//	int	iFrameIndex = m_pCurClip->iChangeFrame;
-		//	int	iNextFrameIndex = m_pNextClip->iStartFrame;
-
-		//	const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
-		//	const PKEYFRAME pNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
-
-		//	float	fPercent = m_fChangeTime / m_fChangeLimitTime;
-
-		//	XMVECTOR vS = XMVectorLerp(pCurKey->vScale.Convert(),pNextKey->vScale.Convert(), fPercent);
-		//	XMVECTOR vT = XMVectorLerp(pCurKey->vPos.Convert(),pNextKey->vPos.Convert(), fPercent);
-		//	XMVECTOR vR = XMQuaternionSlerp(pCurKey->vRot.Convert(),	pNextKey->vRot.Convert(), fPercent);
-		//	XMVECTOR vZero = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-		//	Matrix	matBone = XMMatrixAffineTransformation(vS, vZero,vR, vT);
-
-		//	*m_vecBones[i]->matBone = matBone;
-		//	matBone = *m_vecBones[i]->matOffset * matBone;
-		//	*m_vecBoneMatrix[i] = matBone;
-		//}
 	}
 
 	// 기존 모션이 계속 동작될때

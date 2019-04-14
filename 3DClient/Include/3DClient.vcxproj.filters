@@ -87,6 +87,9 @@
     <ClInclude Include="UserComponent\Zipper.h">
       <Filter>02. UserComponent\04. UI</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Human_Player.h">
+      <Filter>02. UserComponent\01. Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -136,6 +139,9 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Zipper.cpp">
       <Filter>02. UserComponent\04. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Human_Player.cpp">
+      <Filter>02. UserComponent\01. Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

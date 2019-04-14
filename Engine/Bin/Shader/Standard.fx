@@ -364,9 +364,11 @@ PS_OUTPUT_SINGLE ShadowPS(VS_OUTPUT_TEX input)
     vProjPos *= vDepth.w;
 
     float4 vShadowProjPos = mul(vProjPos, g_matInvVP);
-    vShadowProjPos = mul(vShadowProjPos, g_matLP);
-    
+    vShadowProjPos = mul(vShadowProjPos, g_matLP);    
     float2 vShadowUV = vShadowProjPos.xy / vShadowProjPos.w;
+
+    if(vShadowUV.x < -1.0f || vShadowUV.x > 1.0f || vShadowUV.y < -1.0f || vShadowUV.y > 1.0f)
+        clip(-1);
 
     vShadowUV.x = saturate(vShadowUV.x * 0.5f + 0.5f);
     vShadowUV.y = saturate(vShadowUV.y * -0.5f + 0.5f);
@@ -376,7 +378,7 @@ PS_OUTPUT_SINGLE ShadowPS(VS_OUTPUT_TEX input)
     if(vShadowDepth.w == 0.0f)
         clip(-1);
 
-    float4 vColor = (float4) 0;
+    float4 vColor = float4(1.0f, 1.0f, 1.0f, 1.0f);;
 
     float fShadowBias = 1.0f;
 
@@ -385,8 +387,6 @@ PS_OUTPUT_SINGLE ShadowPS(VS_OUTPUT_TEX input)
 
     if (fPixelToLight > fAmbientPixel)
         vColor = float4(0.2f, 0.2f, 0.2f, 1.0f);
-    else
-        vColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
     
     output.vTarget0 = vColor;
 

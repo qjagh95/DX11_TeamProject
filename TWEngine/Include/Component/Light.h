@@ -18,15 +18,25 @@ private:
 	~CLight();
 
 private:
-	LightInfo	m_tInfo;
+	LightInfo		m_tInfo;
 	RimLightInfo	m_tRimInfo;
-	float		m_fInAngle;
-	float		m_fOutAngle;
-	int			m_iRim;
+	LIGHT_TYPE		m_eLightType;
+	float			m_fInAngle;
+	float			m_fOutAngle;
+	float			m_fNear;
+	float			m_fRange;
+	float			m_fWidth;
+	float			m_fHeight;
+	int				m_iRim;
+
+	Matrix			m_matShadowView;
+	Matrix			m_matShadowProj;
+	Matrix			m_matShadowVP;
 
 public:
 	LIGHT_TYPE  GetLightType()	const;
 	LightInfo	GetLightInfo()	const;
+	Matrix		GetShadowVP()	const;
 
 public:
 	void Save(BinaryWrite* _pInstBW);

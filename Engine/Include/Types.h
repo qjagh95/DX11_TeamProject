@@ -170,7 +170,7 @@ namespace PUN
 		Matrix	matInvVP;
 		Matrix	matLP;
 		Vector3	vPivot;
-		float	fEmpty;
+		int		iShadowEnable;
 		Vector3	vLength;
 		float	fEmpty1;
 	}TransformCBuffer, *PTransformCBuffer;

@@ -17,6 +17,7 @@ private:
 	virtual ~CRenderer();
 
 private:
+	TransformCBuffer	m_tTransformCBuffer;
 	class CMesh*		m_pMesh;
 	class CShader*		m_pShader;
 	ID3D11InputLayout*	m_pLayout;

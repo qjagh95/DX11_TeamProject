@@ -199,6 +199,7 @@
     <ClInclude Include="UserComponent\Door.h" />
     <ClInclude Include="UserComponent\Field.h" />
     <ClInclude Include="UserComponent\Ghost.h" />
+    <ClInclude Include="UserComponent\Human_Player.h" />
     <ClInclude Include="UserComponent\Inventory.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Player.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="UserComponent\Door.cpp" />
     <ClCompile Include="UserComponent\Field.cpp" />
     <ClCompile Include="UserComponent\Ghost.cpp" />
+    <ClCompile Include="UserComponent\Human_Player.cpp" />
     <ClCompile Include="UserComponent\Inventory.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
     <ClCompile Include="UserComponent\Player.cpp" />

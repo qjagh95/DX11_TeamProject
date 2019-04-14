@@ -457,3 +457,8 @@ CGameObject * CLayer::FindObjectFromIndex(int _idx)
 
 
 }
+
+const list<CGameObject*>* CLayer::GetObjectList() const
+{
+	return &m_ObjList;
+}
