@@ -47,7 +47,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
 
 #ifdef _DEBUG
-	GET_SINGLE(CSceneManager)->AddSceneComponent<CRandScapeTestScene>("TestScene");
+	GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene");
 #else
 	GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");
 #endif

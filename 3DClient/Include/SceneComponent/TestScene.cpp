@@ -89,6 +89,12 @@ bool CTestScene::Init()
 	pTransform->RotationX(90.0f);
 	pTransform->SetWorldPos(50.0f, 70.0f, 0.0f);
 
+	CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
+
+	pArm->EnableMouse();
+	pArm->SetTarget(pTransform);
+
+	SAFE_RELEASE(pArm);
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
@@ -127,12 +133,7 @@ bool CTestScene::Init()
 	//pCamera->SetTarget(pObject);
 	//m_pTr = pTransform;
 
-	//CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
 
-	//pArm->EnableMouse();
-	//pArm->SetTarget(pTransform);
-
-	//SAFE_RELEASE(pArm);
 
 	//CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
 

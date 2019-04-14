@@ -20,7 +20,8 @@ CAnimation::CAnimation() :
 	m_fChangeTime(0.f),
 	m_fChangeLimitTime(0.25f),
 	m_fFrameTime(1.f / 30.f),
-	m_iFrameMode(0)
+	m_iFrameMode(0),
+	m_bKeepBlending(false)
 {
 	m_eComType = CT_ANIMATION;
 }
@@ -36,7 +37,7 @@ CAnimation::CAnimation(const CAnimation & anim) :
 	m_fChangeLimitTime = anim.m_fChangeLimitTime;
 	m_fFrameTime = anim.m_fFrameTime;
 	m_iFrameMode = anim.m_iFrameMode;
-
+	m_bKeepBlending = false;
 	m_vecBones = anim.m_vecBones;
 
 	for (size_t i = 0; i < anim.m_vecBones.size(); ++i)
@@ -141,6 +142,11 @@ void CAnimation::GetClipTagList(std::vector<std::string>* _vecstrList)
 	{
 		_vecstrList->push_back(iter->second->strName);
 	}
+}
+
+void CAnimation::KeepBlendSet(bool on)
+{
+	m_bKeepBlending = on;
 }
 
 void CAnimation::AddBone(PBONE pBone)
@@ -1078,6 +1084,20 @@ bool CAnimation::AddSocket(const string & strBoneName, const string & strSocketN
 	return true;
 }
 
+void CAnimation::ClearAllSockets()
+{
+	auto itrBoneEnd = m_vecBones.end();
+	for (auto itr = m_vecBones.begin(); itr != itrBoneEnd; ++itr)
+	{
+		list<CBoneSocket*>::iterator iter;
+		list<CBoneSocket*>::iterator iterEnd = (*itr)->SocketList.end();
+		for (iter = (*itr)->SocketList.begin(); iter != iterEnd; ++iter)
+		{
+			(*iter)->SetObject(nullptr);
+		}
+	}
+}
+
 bool CAnimation::SetSocketObject(const string & strBoneName, const string & strSocketName, CGameObject * pObj)
 {
 	BONE*	pBone = FindBone(strBoneName);
@@ -1389,18 +1409,17 @@ int CAnimation::Update(float fTime)
 			bool	bChange = false;
 			if (m_fChangeTime >= m_fChangeLimitTime)
 			{
-				m_fChangeTime = m_fChangeLimitTime;
-				bChange = true;
+				if (!m_bKeepBlending)
+				{
+					m_fChangeTime = m_fChangeLimitTime;
+					bChange = true;
+				}
+				
 			}
 
 			float	fAnimationTime = m_fAnimationGlobalTime + m_pCurClip->fStartTime;
 
 			int BoneSize = (int)m_vecBones.size();
-
-			//Note : Haswell 이전 CPU는 SIMD를 다중 스레드로 표현하지 않으므로,
-			//이 구형 CPU들에서 XMVECTOR나 XMMATRIX를 이용한 concurrency 이용은
-			//CPU에 아예 명령어가 없어서 사용이 불가능한듯 싶다...
-			//그래서 그대로 parallel_for를 사용하면 Instruction Error 발생
 
 			if (bChange)
 			{
@@ -1409,7 +1428,7 @@ int CAnimation::Update(float fTime)
 				m_fAnimationGlobalTime = 0.f;
 				m_fChangeTime = 0.f;
 			}
-			else
+			else if(!m_bKeepBlending)
 			{
 #ifdef DDONGCOM
 				for (int i = 0; i < BoneSize; ++i)
@@ -1442,14 +1461,7 @@ int CAnimation::Update(float fTime)
 #else
 				parallel_for((int)0, BoneSize, [&](int i)
 				{
-					if (bChange)
-					{
-						m_pCurClip = m_pNextClip;
-						m_pNextClip = nullptr;
-						m_fAnimationGlobalTime = 0.f;
-						m_fChangeTime = 0.f;
-					}
-
+					
 					// 키프레임이 없을 경우
 					if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 					{
@@ -1476,6 +1488,111 @@ int CAnimation::Update(float fTime)
 					*m_vecBoneMatrix[i] = matBone;
 				});
 #endif
+			}
+			else //m_pNextClip != nullptr
+			{
+				m_fAnimationGlobalTime += fTime;
+				m_fClipProgress = m_fAnimationGlobalTime / m_pCurClip->fTimeLength;
+
+				while (m_fAnimationGlobalTime >= m_pCurClip->fTimeLength)
+				{
+					m_fAnimationGlobalTime -= m_pCurClip->fTimeLength;
+					
+				}
+
+				float	fAnimationTime = m_fAnimationGlobalTime +
+					m_pCurClip->fStartTime;
+
+				int	iStartFrame = m_pCurClip->iStartFrame;
+				int	iEndFrame = m_pCurClip->iEndFrame;
+
+				int	iFrameIndex = (int)(fAnimationTime / m_pCurClip->fFrameTime);
+
+				int	iNextFrameIndex = iFrameIndex + 1;
+
+				m_pCurClip->iChangeFrame = iFrameIndex;
+
+				if (iNextFrameIndex > iEndFrame)
+					iNextFrameIndex = iStartFrame;
+
+				int BoneSize = (int)m_vecBones.size();
+				parallel_for((int)0, BoneSize, [&](int i)
+				{
+					// 키프레임이 없을 경우
+					if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
+					{
+						*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
+						return 0;
+					}
+
+					const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
+					const PKEYFRAME pNextKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+
+
+					Vector3 vCurKeyPos(pCurKey->vPos);
+					Vector4 vCurKeyRot(pCurKey->vRot);
+					Vector3 vCurKeyScale(pCurKey->vScale);
+
+					XMVECTOR vR = vCurKeyRot.Convert();
+
+					Vector3 vNextKeyPos(pNextKey->vPos);
+					Vector4 vNextKeyRot(pNextKey->vRot);
+					XMVECTOR vNR = vNextKeyRot.Convert();
+					Vector3 vNextKeyScale(pNextKey->vScale);
+
+					if (!m_pNextClip->vecKeyFrame[i]->vecKeyFrame.empty())
+					{
+						int iNEndFrame = m_pNextClip->iEndFrame;
+						int	iNFrameIndex = (int)(fAnimationTime / m_pNextClip->fFrameTime);
+						if (iNFrameIndex > iNEndFrame)
+							iNFrameIndex = iFrameIndex % iNEndFrame;
+
+						int	iNNextFrameIndex = iNFrameIndex + 1;
+
+						m_pNextClip->iChangeFrame = iNFrameIndex;
+
+						if (iNNextFrameIndex > iNEndFrame)
+							iNNextFrameIndex = iStartFrame;
+
+						const PKEYFRAME pNCurKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNFrameIndex];
+						const PKEYFRAME pNNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNNextFrameIndex];
+
+						vCurKeyPos += pNCurKey->vPos;
+						vCurKeyScale += pNCurKey->vScale;
+
+						vCurKeyPos *= 0.5f;
+						vCurKeyScale *= 0.5f;
+						vR = DirectX::XMQuaternionSlerp(vR, pNCurKey->vRot.Convert(), 0.5f);
+						vCurKeyRot = Vector4(vR);
+						vNextKeyPos += pNNextKey->vPos;
+						
+						vNextKeyScale += pNNextKey->vScale;
+
+						vNextKeyPos *= 0.5f;
+						vNR = DirectX::XMQuaternionSlerp(vNR, pNNextKey->vRot.Convert(), 0.5f);
+						vNextKeyScale *= 0.5f;
+												
+					}
+
+					m_vBlendPos = vCurKeyPos;
+					m_vBlendScale = vCurKeyScale;
+					m_vBlendRot = vCurKeyRot;
+
+					// 현재 프레임의 시간을 얻어온다.
+					double	 dFrameTime = pCurKey->dTime;
+
+					float	fPercent = (float)((fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime);
+
+					XMVECTOR vS = DirectX::XMVectorLerp(vCurKeyScale.Convert(), vNextKeyScale.Convert(), fPercent);
+					XMVECTOR vT = DirectX::XMVectorLerp(vCurKeyPos.Convert(), vNextKeyPos.Convert(), fPercent);
+					vR = DirectX::XMQuaternionSlerp(vR, vNR, fPercent);
+					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+
+					*m_vecBones[i]->matBone = matBone;
+					matBone = *m_vecBones[i]->matOffset * matBone;
+					*m_vecBoneMatrix[i] = matBone;
+				});
 			}
 						
 
@@ -1596,38 +1713,7 @@ int CAnimation::Update(float fTime)
 				*m_vecBoneMatrix[i] = matBone;
 			});
 #endif
-			// 본 수만큼 반복한다.
-			//for (size_t i = 0; i < m_vecBones.size(); ++i)
-			//{
-			//	// 키프레임이 없을 경우
-			//	if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
-			//	{
-			//		*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-			//		continue;
-			//	}
-			//
-			//	const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
-			//	const PKEYFRAME pNextKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
-			//
-			//	m_vBlendPos = pCurKey->vPos;
-			//	m_vBlendScale = pCurKey->vScale;
-			//	m_vBlendRot = pCurKey->vRot;
-			//
-			//	// 현재 프레임의 시간을 얻어온다.
-			//	double	 dFrameTime = pCurKey->dTime;
-			//
-			//	float	fPercent = (float)((fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime);
-			//
-			//	XMVECTOR	vS = XMVectorLerp(pCurKey->vScale.Convert(),pNextKey->vScale.Convert(), fPercent);
-			//	XMVECTOR	vT = XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
-			//	XMVECTOR	vR = XMQuaternionSlerp(pCurKey->vRot.Convert(),	pNextKey->vRot.Convert(), fPercent);
-			//	XMVECTOR	vZero = XMVectorSet(0.f, 0.f, 0.f, 1.f);
-			//	Matrix	matBone = XMMatrixAffineTransformation(vS, vZero,vR, vT);
-			//
-			//	*m_vecBones[i]->matBone = matBone;
-			//	matBone = *m_vecBones[i]->matOffset * matBone;
-			//	*m_vecBoneMatrix[i] = matBone;
-			//}
+			
 		}
 	}
 
@@ -1652,8 +1738,10 @@ int CAnimation::Update(float fTime)
 			list<CBoneSocket*>::iterator iterEnd = m_vecBones[i]->SocketList.end();
 			for (iter = m_vecBones[i]->SocketList.begin(); iter != iterEnd; ++iter)
 			{
-				(*iter)->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
+				//(*iter)->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
+				(*iter)->Update(fTime, *m_vecBoneMatrix[i], m_pTransform);
 				//m_vecBones[i]->SocketList[j]->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
+				
 			}
 		}
 

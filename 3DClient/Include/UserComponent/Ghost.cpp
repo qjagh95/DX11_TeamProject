@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Component/Renderer.h"
 #include "Component/Transform.h"
+#include <SoundManager.h>
 
 CGhost::CGhost()
 {
@@ -34,10 +35,12 @@ void CGhost::Start()
 
 void CGhost::AfterClone()
 {
+	CSoundManager::GetInst()->SoundPlay("scream");
 }
 
 bool CGhost::Init()
 {
+	CSoundManager::GetInst()->CreateSoundEffect("scream", TEXT("KKamNol.wav"));
 	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("GhostRenderer");
 
 	pRenderer->SetMesh("TexRect");
@@ -82,6 +85,8 @@ bool CGhost::Init()
 	vecClipFrame.clear();
 
 	m_fTime = 2.f;
+
+	AfterClone();
 
 	return true;
 }

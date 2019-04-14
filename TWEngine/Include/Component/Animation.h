@@ -121,6 +121,7 @@ private:
 	PANIMATIONCLIP			m_pDefaultClip;
 	PANIMATIONCLIP			m_pCurClip;
 	PANIMATIONCLIP			m_pNextClip;
+	bool					m_bKeepBlending;
 	bool					m_bEnd;
 	float					m_fAnimationGlobalTime;
 	float					m_fClipProgress;
@@ -137,6 +138,7 @@ public:
 	const list<string>* GetAddClipName()	const;
 	void GetClipTagList(std::vector<std::string>* _vecstrList);
 public:
+	void KeepBlendSet(bool on);
 	void AddBone(PBONE pBone);
 	bool CreateBoneTexture();
 	void AddClip(ANIMATION_OPTION eOption,
@@ -184,6 +186,7 @@ public:
 	bool ReturnDefaultClip();
 
 	bool AddSocket(const string& strBoneName, const string& strSocketName);
+	void ClearAllSockets();
 	bool SetSocketObject(const string& strBoneName,	const string& strSocketName, class CGameObject* pObj);
 	bool SetSocketOffset(const string& strBoneName,	const string& strSocketName, const Vector3& vOffset);
 	bool SetSocketOffset(const string& strBoneName,	const string& strSocketName, float x, float y, float z);
