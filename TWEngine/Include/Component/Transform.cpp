@@ -662,8 +662,7 @@ int CTransform::Update(float fTime)
 
 	m_matLocal = m_matLocalScale * m_matLocalRot *	m_matLocalPos;
 	//최종World에 곱해질 Parent행렬 선언.
-	Matrix Parent;
-	Parent.Identity();
+	m_ParentWorld.Identity();
 
 	//자기자신의 행렬정보를 변화량 변수에 넣어준 후 플래그에 따라서 곱한다.
 	m_DeltaScale = m_matWorldScale;
@@ -673,26 +672,25 @@ int CTransform::Update(float fTime)
 	if (m_iParentFlag & TPF_SCALE)
 	{
 		m_DeltaScale *= m_ParentScale;
-		Parent *= m_ParentScale;
+		m_ParentWorld *= m_ParentScale;
 	}
 
 	if (m_iParentFlag & TPF_ROT)
 	{
 		m_DeltaRot *= m_ParentRot;
-		Parent *= m_ParentRot;
+		m_ParentWorld *= m_ParentRot;
 	}
 
 	if (m_iParentFlag & TPF_POS)
 	{
 		m_DeltaPos *= m_ParentPos;
-		Parent *= m_ParentPos;
+		m_ParentWorld *= m_ParentPos;
 	}
 	
 	m_matWorld = m_matBone * m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matParent;
-	m_matWorld *= Parent;
+	m_matWorld *= m_ParentWorld;
 	
 	m_bUpdate = false;
-
 	return 0;
 }
 
@@ -707,8 +705,7 @@ int CTransform::LateUpdate(float fTime)
 	m_matLocal = m_matLocalScale * m_matLocalRot * m_matLocalPos;
 
 	//최종World에 곱해질 Parent행렬 선언.
-	Matrix Parent;
-	Parent.Identity();
+	m_ParentWorld.Identity();
 
 	//자기자신의 행렬정보를 변화량 변수에 넣어준 후 플래그에 따라서 곱한다.
 	m_DeltaScale = m_matWorldScale;
@@ -718,23 +715,23 @@ int CTransform::LateUpdate(float fTime)
 	if (m_iParentFlag & TPF_SCALE)
 	{
 		m_DeltaScale *= m_ParentScale;
-		Parent *= m_ParentScale;
+		m_ParentWorld *= m_ParentScale;
 	}
 
 	if (m_iParentFlag & TPF_ROT)
 	{
 		m_DeltaRot *= m_ParentRot;
-		Parent *= m_ParentRot;
+		m_ParentWorld *= m_ParentRot;
 	}
 
 	if (m_iParentFlag & TPF_POS)
 	{
 		m_DeltaPos *= m_ParentPos;
-		Parent *= m_ParentPos;
+		m_ParentWorld *= m_ParentPos;
 	}
 
 	m_matWorld = m_matBone * m_matWorldScale * m_matWorldRot * m_matWorldPos * m_matParent;
-	m_matWorld *= Parent;
+	m_matWorld *= m_ParentWorld;
 
 	m_bUpdate = false;
 
@@ -818,4 +815,9 @@ void CTransform::SetOffsetRot(const Vector3 & vRot)
 Matrix CTransform::GetBoneMatrix()	const
 {
 	return m_matBone;
+}
+
+Matrix CTransform::GetParentWorld() const
+{
+	return m_ParentWorld;
 }

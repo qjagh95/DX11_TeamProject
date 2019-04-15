@@ -297,3 +297,8 @@ void CDevice::ResetVP()
 
 	m_pContext->RSSetViewports(1, &tVP);
 }
+
+void CDevice::ClearDepth()
+{
+	m_pContext->ClearDepthStencilView(m_pDepthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+}

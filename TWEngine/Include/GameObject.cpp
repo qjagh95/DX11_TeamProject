@@ -567,10 +567,10 @@ int CGameObject::Update(float fTime)
 
 	for (; StartIter1 != EndIter1; StartIter1++)
 	{
-		(*StartIter1)->GetTransform()->SetParentScale(S);
-		(*StartIter1)->GetTransform()->SetParentRot(R);
-		(*StartIter1)->GetTransform()->SetParentPos(T);
-		(*StartIter1)->GetTransform()->SetUpdate(true);
+		(*StartIter1)->GetTransformNonCount()->SetParentScale(S);
+		(*StartIter1)->GetTransformNonCount()->SetParentRot(R);
+		(*StartIter1)->GetTransformNonCount()->SetParentPos(T);
+		(*StartIter1)->GetTransformNonCount()->SetUpdate(true);
 	}
 
 	return 0;
@@ -625,10 +625,10 @@ int CGameObject::LateUpdate(float fTime)
 
 	for (; StartIter1 != EndIter1; StartIter1++)
 	{
-		(*StartIter1)->GetTransform()->SetParentScale(S);
-		(*StartIter1)->GetTransform()->SetParentRot(R);
-		(*StartIter1)->GetTransform()->SetParentPos(T);
-		(*StartIter1)->GetTransform()->SetUpdate(true);
+		(*StartIter1)->GetTransformNonCount()->SetParentScale(S);
+		(*StartIter1)->GetTransformNonCount()->SetParentRot(R);
+		(*StartIter1)->GetTransformNonCount()->SetParentPos(T);
+		(*StartIter1)->GetTransformNonCount()->SetUpdate(true);
 	}
 
 	return 0;

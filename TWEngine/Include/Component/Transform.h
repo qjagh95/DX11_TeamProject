@@ -64,6 +64,7 @@ public:
 	Matrix GetLocalRotMatrix()	const;
 	Matrix GetLocalMatrix()	const;
 	Matrix GetBoneMatrix()	const;
+	Matrix GetParentWorld() const;
 
 private:
 	Vector3		m_vWorldScale;
@@ -93,6 +94,7 @@ private:
 	Matrix m_DeltaScale;
 	Matrix m_DeltaRot;
 	Matrix m_DeltaPos;
+	Matrix m_ParentWorld;
 
 public:
 	void SetWorldScale(const Vector3& vScale);

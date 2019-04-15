@@ -460,8 +460,10 @@ void CRenderManager::RenderDeferred(float fTime)
 		RenderSSAO(fTime);
 	// 조명 누적버퍼를 만들어준다.
 	RenderLightAcc(fTime);
+
 	// 조명타겟과 Albedo 를 합성한다.
 	RenderLightBlend(fTime);
+
 	// 스카이 오브젝트와 조명 처리된 타겟을 합쳐 그린다.
 	RenderSkyObj(fTime);
 	// 볼륨안개를 그린다.
@@ -477,15 +479,28 @@ void CRenderManager::RenderDeferred(float fTime)
 #else
 	RenderFinalPass(fTime);
 #endif
-	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
-	for (size_t i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; i++)
-		m_tRenderObj[RG_LANDSCAPE].pList[i]->Render(fTime);
-
-	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 
 	if (CCore::GetInst()->m_bEditorMode == true)
+	{
+		m_pState[STATE_DEPTH_DISABLE]->SetState();
+
+		for (size_t i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; i++)
+			m_tRenderObj[RG_LANDSCAPE].pList[i]->Render(fTime);
+
+		m_pState[STATE_DEPTH_DISABLE]->ResetState();
+
 		CEditManager::GetInst()->Render(fTime);
+	}
+	else
+	{
+		m_pState[STATE_DEPTH_DISABLE]->SetState();
+
+		for (size_t i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; i++)
+			m_tRenderObj[RG_LANDSCAPE].pList[i]->Render(fTime);
+
+		m_pState[STATE_DEPTH_DISABLE]->ResetState();
+	}
 
 	// UI출력
 	for (int i = RG_UI; i < RG_END; ++i)
@@ -1038,6 +1053,7 @@ void CRenderManager::RenderFinalPass(float _fTime)
 
 	m_pTarget[TARGET_BACK]->SetShader(0);
 	m_pTarget[TARGET_DEPTH]->SetShader(1);
+
 	for (int i = CFT_HDR; i < CFT_END; ++i)
 	{
 		if (!m_pFilter[i]->GetEnable())
@@ -1195,6 +1211,7 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 	m_pTarget[TARGET_STARLIGHT_SCOPE]->ResetTarget();
 
 	// 풀 스크린 출력
+
 	m_pShader[SHADER_FULL_SCREEN]->SetShader();
 	m_pTarget[TARGET_STARLIGHT_SCOPE]->SetShader(0);
 	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);

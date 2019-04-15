@@ -35,8 +35,9 @@ void CBoneSocket::Update(float fTime, const Matrix & matBone)
 
 		CTransform*	pTransform = m_pObject->GetTransformNoneCount();
 		pTransform->SetBoneMatrix(matBone * matScale);
-		pTransform->SetLocalRot(m_vRotation);
+		pTransform->SetLocalRot(m_vRotation + m_pAniObject->GetTransformNonCount()->GetLocalRot());
 		pTransform->SetWorldPos(m_pAniObject->GetTransformNonCount()->GetWorldPos() + m_vOffset);
+		pTransform->SetWorldRot(m_pAniObject->GetTransformNonCount()->GetWorldRot());
 	}
 }
 

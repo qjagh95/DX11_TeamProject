@@ -28,6 +28,7 @@ public:
 
 	void SetShadowVP();
 	void ResetVP();
+	void ClearDepth();
 
 public:
 	bool Init(HWND hWnd, unsigned int iWidth, 

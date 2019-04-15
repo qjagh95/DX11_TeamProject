@@ -1858,10 +1858,11 @@
             // 
             // EditorForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1911, 827);
+            this.ClientSize = new System.Drawing.Size(1540, 827);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Btn_AllClear);
             this.Controls.Add(this.label1);

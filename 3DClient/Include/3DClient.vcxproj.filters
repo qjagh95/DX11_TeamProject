@@ -90,6 +90,9 @@
     <ClInclude Include="UserComponent\Human_Player.h">
       <Filter>02. UserComponent\01. Player</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\InteractiveObj.h">
+      <Filter>02. UserComponent\03. Field</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -142,6 +145,9 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Human_Player.cpp">
       <Filter>02. UserComponent\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\InteractiveObj.cpp">
+      <Filter>02. UserComponent\03. Field</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
