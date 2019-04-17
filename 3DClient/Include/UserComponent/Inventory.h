@@ -1,5 +1,5 @@
 #pragma once
-#include "Component/UI.h"
+#include "Component/UserComponent.h"
 #include "../Client.h"
 #include "Component/Collider.h"
 #include "Component/ColliderRect.h"
@@ -7,7 +7,7 @@
 PUN_USING
 
 class CInventory :
-	public CUI
+	public CUserComponent
 {
 	friend class CGameObject;
 
@@ -18,7 +18,6 @@ private:
 
 private:
 	vector<class CGameObject*>	m_vecItem;
-	class CColliderRect*	m_pCollider;
 	CLayer*					m_pUILayer;
 	INVENTORY_STATE			m_eState;
 	int						m_iInvenMax;

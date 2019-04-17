@@ -186,14 +186,14 @@ bool CInput::Init()
 
 	CMaterial*	pMaterial = m_pMouse->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "Mouse", TEXT("0.png"));
+	pMaterial->SetDiffuseTex(0, "Mouse", TEXT("MouseCursor.tga"));
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
 
 	m_pMouseTr = m_pMouse->GetTransform();
 
-	m_pMouseTr->SetWorldScale(32.f, 31.f, 1.f);
+	m_pMouseTr->SetWorldScale(32.f, 32.f, 1.f);
 	m_pMouseTr->SetWorldPivot(0.f, 1.f, 0.f);
 
 	// Window 충돌체와 World 충돌체 2개를 추가한다.

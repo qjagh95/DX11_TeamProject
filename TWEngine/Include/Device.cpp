@@ -271,6 +271,13 @@ void CDevice::Clear(float fClearColor[4])
 		1.f, 0);
 }
 
+void CDevice::ClearDepthView()
+{
+	m_pContext->ClearDepthStencilView(m_pDepthView,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.f, 0);
+}
+
 void CDevice::Present()
 {
 	m_pSwapChain->Present(0, 0);
@@ -296,9 +303,4 @@ void CDevice::ResetVP()
 	tVP.MaxDepth = 1.f;
 
 	m_pContext->RSSetViewports(1, &tVP);
-}
-
-void CDevice::ClearDepth()
-{
-	m_pContext->ClearDepthStencilView(m_pDepthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }

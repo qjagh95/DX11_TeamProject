@@ -12,6 +12,8 @@
 #include <Scene/Scene.h>
 #include <Component/Camera.h>
 #include <Component/ColliderOBB3D.h>
+#include "Inventory.h"
+#include "Handycam.h"
 
 CHuman_Player::CHuman_Player():
 	m_pAnimation(nullptr),
@@ -71,6 +73,34 @@ bool CHuman_Player::Init()
 	_Input->AddKey("Ctrl", VK_CONTROL);
 
 	AfterClone();
+
+	// Inventory
+	m_pInvenObj = CGameObject::CreateObject("Inven", m_pLayer);
+
+	m_pInven = m_pInvenObj->AddComponent<CInventory>("Inven");
+	m_pInven->SetInvenMax(19);
+
+	CTransform*	pInvenTr = m_pInvenObj->GetTransform();
+	pInvenTr->SetWorldPos(0.f, 0.f, 0.f);
+
+	SAFE_RELEASE(pInvenTr);
+
+	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pMaterial = m_pInvenObj->AddComponent<CMaterial>("Inven");
+	pMaterial->SetDiffuseTex(0, "Inventory", TEXT("UI/Inven/InvenBack.png"));
+
+	SAFE_RELEASE(pMaterial);
+
+	// Handycam
+	m_pHandycamObj = CGameObject::CreateObject("Handycam", m_pLayer);
+
+	m_pHandycam = m_pHandycamObj->AddComponent<CHandycam>("Handycam");
+
+	CTransform*	pHandycamTr = m_pHandycamObj->GetTransform();
+	pHandycamTr->SetWorldPos(0.f, 0.f, 0.f);
+
+	SAFE_RELEASE(pHandycamTr);
 
 	return true;
 }
@@ -290,6 +320,30 @@ int CHuman_Player::Update(float fTime)
 			}
 		}
 		
+	}
+
+
+	static bool bPush = false;
+	if (GetAsyncKeyState('I') & 0x8000)
+	{
+		bPush = true;
+	}
+	else if (bPush)
+	{
+		bPush = false;
+		m_pInven->SetVisible();
+	}
+
+
+	static bool bCamPush = false;
+	if (GetAsyncKeyState('G') & 0x8000)
+	{
+		bCamPush = true;
+	}
+	else if (bCamPush)
+	{
+		bCamPush = false;
+		m_pHandycam->SetVisible();
 	}
 
 	return 0;

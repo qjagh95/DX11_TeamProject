@@ -61,7 +61,8 @@ int CColliderSphere::Update(float fTime)
 
 int CColliderSphere::LateUpdate(float fTime)
 {
-	Vector3	vPos = m_pTransform->GetWorldPos() - m_pTransform->GetPivot() * m_pTransform->GetWorldScale();
+	Vector3	vPos = m_pTransform->GetWorldPos() - m_pTransform->GetPivot() *
+		m_pTransform->GetWorldScale();
 
 	m_tInfo.vCenter = vPos + m_tRelativeInfo.vCenter;
 

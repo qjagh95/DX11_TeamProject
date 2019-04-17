@@ -446,43 +446,12 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 
 	float3 HalfWay = normalize(vLightPos + ToCamera);
 
+    tInfo.vEmv = vMtrlSpc * vMtrlEmv;
+
 	if (g_iLightType == LIGHT_DIR)
 	{
 		vLightDir = -normalize(mul(float4(g_vLightDir, 0.f), g_matView).xyz);
-	}
 
-	if (g_iLightType == LIGHT_POINT)
-	{
-		// 조명과 정점사이의 거리를 구한다.
-		float fDist = distance(vLightPos, vViewPos);
-
-		fIntensity = 1.f - fDist / g_fLightRange;
-		fIntensity = max(0, fIntensity) * 0.7f + 0.3f;
-	}
-
-	if (g_iLightType == LIGHT_SPOT)
-	{
-		float3 vDir = -vLightDir;
-		float3 vLightCenterDir = normalize(mul(float4(g_vLightDir, 0.f), g_matView).xyz);
-		float fDot = dot(vDir, vLightCenterDir);
-		float fDist = distance(vLightPos, vViewPos);
-		//SpotStrong = pow(dot(-vLightDir, normalize(g_vLightDir)), g_fFallOff);
-	}
-
-	float fRamb = dot(vLightDir, vViewNormal);
-
-	if (fRamb < 0.0f)
-		fIntensity = 0.0f;
-
-    if(g_iSSAOEnable == 0)
-	    tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
-
-	tInfo.vDif = vMtrlDif * g_vLightDif * max(0, fRamb) * fIntensity;
-	tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(HalfWay, vViewNormal)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
-    tInfo.vAmb = (float4) 0;
-
-	if (g_iLightType == LIGHT_DIR)
-    {
         if (g_iRimLight == 1)
         {
 			// 카메라방향과 노말벡터를 내적하여 어둡게 해줄 외각을 찾는다
@@ -499,12 +468,50 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 
             tInfo.vEmv = vMtrlSpc * vMtrlEmv + float4(pow(1 - fRim, g_fRimPower) * g_vRimColor, 1.f);
         }
-        else
-            tInfo.vEmv = vMtrlSpc * vMtrlEmv;
     }
 
-	else
-		tInfo.vEmv = vMtrlSpc * vMtrlEmv;
+	if (g_iLightType == LIGHT_POINT)
+	{
+		// 조명과 정점사이의 거리를 구한다.
+		float fDist = distance(vLightPos, vViewPos);
+
+		fIntensity = 1.f - fDist / g_fLightRange;
+		fIntensity = max(0, fIntensity) * 0.7f + 0.3f;
+	}
+
+	if (g_iLightType == LIGHT_SPOT)
+	{
+        float3 vDir = -vLightDir;
+        float3 vLightCenterDir = normalize(mul(float4(g_vLightDir, 0.0f), g_matView)).xyz;
+        float fDot = dot(vDir, vLightCenterDir);
+        float fDist = distance(vLightPos, vViewPos);
+
+        if (fDot < g_fLightOutAngle || fDist >= g_fLightRange)
+            fIntensity = 0.0f;
+        
+        else if (fDot >= g_fLightInAngle)
+            fIntensity = 1.f;
+
+        else
+        {
+            float fAngleDist = g_fLightInAngle - g_fLightOutAngle;
+            float fAngle = g_fLightInAngle - fDot;
+            fIntensity = (1.f - fAngle / fAngleDist) * 0.7f + 0.3f;
+        }
+    }
+
+	float fRamb = dot(vLightDir, vViewNormal);
+
+	if (fRamb < 0.0f)
+		fIntensity = 0.0f;
+
+    float3 vR = 2.f * vViewNormal * dot(vLightDir, vViewNormal) - vLightDir;
+	//float3	vR = reflect(vViewNormal, vLightDir);
+    vR = normalize(vR);
+
+	tInfo.vDif = vMtrlDif * g_vLightDif * max(0, fRamb) * fIntensity;
+    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(vR, vViewNormal)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
+    tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
 
 	return tInfo;
 }

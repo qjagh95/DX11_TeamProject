@@ -28,7 +28,6 @@ public:
 
 	void SetShadowVP();
 	void ResetVP();
-	void ClearDepth();
 
 public:
 	bool Init(HWND hWnd, unsigned int iWidth, 
@@ -36,6 +35,7 @@ public:
 	bool EditInit(HWND hWnd, unsigned int iWidth,
 		unsigned int iHeight, bool bWindowMode);
 	void Clear(float fClearColor[4]);
+	void ClearDepthView();
 	void Present();
 
 	DECLARE_SINGLE(CDevice)

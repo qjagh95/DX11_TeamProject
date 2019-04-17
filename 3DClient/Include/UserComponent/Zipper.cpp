@@ -11,7 +11,7 @@ CZipper::CZipper()
 }
 
 CZipper::CZipper(const CZipper & zip)	:
-	CUI(zip)
+	CUserComponent(zip)
 {
 }
 

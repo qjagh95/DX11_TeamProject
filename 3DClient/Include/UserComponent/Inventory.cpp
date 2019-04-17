@@ -7,12 +7,13 @@
 #include "GameObject.h"
 #include "Input.h"
 #include "Zipper.h"
+#include "Component/ColliderSphere.h"
 
 CInventory::CInventory() :
 	m_iIndex(0),
 	m_iMoveIndex(0)
 {
-	m_eComType = (COMPONENT_TYPE)UT_INVEN;
+	m_eComType = (COMPONENT_TYPE)UT_INVENTORY;
 	SetTag("Inventory");
 
 	m_iFlag = -1;
@@ -25,14 +26,13 @@ CInventory::CInventory() :
 }
 
 CInventory::CInventory(const CInventory & inven)	:
-	CUI(inven)
+	CUserComponent(inven)
 {
 	//*this = inven;
 }
 
 CInventory::~CInventory()
 {
-	//SAFE_RELEASE(m_pCollider);
 	SAFE_RELEASE(m_pUILayer);
 
 	for (size_t i = 0; i < m_vecItem.size(); ++i)
@@ -271,4 +271,19 @@ void CInventory::BottomOut(CCollider * pSrc, CCollider * pDest, float fTime)
 
 void CInventory::AddInvenList(CGameObject * pItem)
 {
+	CTransform*	pItemTr = m_vecItem[m_iMoveIndex]->GetTransform();
+
+	Vector3	vInvenPos = m_pTransform->GetWorldPos();
+
+	pItemTr->AddParentFlag(TPF_ROT);
+	pItemTr->AddParentFlag(TPF_POS);
+	pItemTr->AddParentFlag(TPF_SCALE);
+	//pItemTr->SetWorldRelativePos(147.f, 201.f - m_fItemY, 0.f);
+	pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
+	pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+
+	SAFE_RELEASE(pItemTr);
+
+	++m_iMoveIndex;
+	m_fItemY += 100.f;
 }

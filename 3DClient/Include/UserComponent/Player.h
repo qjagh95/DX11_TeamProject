@@ -14,6 +14,8 @@ private:
 	class CGameObject*	m_pInvenObj;
 	class CInventory*	m_pInven;
 	class CTransform*	m_pInvenTr;
+	class CGameObject*	m_pHandycamObj;
+	class CHandycam*	m_pHandycam;
 
 protected:
 	CPlayer();

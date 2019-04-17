@@ -137,7 +137,7 @@ PS_OUTPUT_SINGLE LandScapeNaviEditorPS(VS_OUTPUT_3D input)
 
     float4 vColor = g_DiffuseTex.Sample(g_DiffuseSmp, vDetailUV);
 
-    vColor.a = 1.0f;
+    vColor.a = -1.0f;
 
     output.vTarget0 = vColor;
 

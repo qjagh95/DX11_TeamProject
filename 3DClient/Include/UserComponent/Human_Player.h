@@ -3,6 +3,9 @@
 #include "Component/UserComponent.h"
 #include "Component/Animation.h"
 #include "Component/SoundSource.h"
+#include "../Client.h"
+
+PUN_USING
 
 enum PLAYER_DATA_TYPE {
 	PDT_NONE,
@@ -57,6 +60,11 @@ private:
 	class PUN::CGameObject *m_pHandSocketObj; //테스트용 저장
 	class PUN::CAnimation *m_pAnimation;
 	class PUN::CSoundSource *m_pSound;
+	class CGameObject*	m_pInvenObj;
+	class CInventory*	m_pInven;
+	class CTransform*	m_pInvenTr;
+	class CGameObject*	m_pHandycamObj;
+	class CHandycam*	m_pHandycam;
 	Vector3 m_vInitLocalPos;
 	bool m_bLoadedOnce;
 	int m_iState;

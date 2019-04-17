@@ -20,6 +20,8 @@
 #include "../UserComponent/Minion.h"
 #include "../UserComponent/Ghost.h"
 #include "../UserComponent/Human_Player.h"
+#include "../UserComponent/Battery.h"
+#include "../UserComponent/BatteryIcon.h"
 
 CTestScene::CTestScene()
 {
@@ -399,7 +401,6 @@ bool CTestScene::Init()
 	pTransform->SetWorldRot(0.f, 0.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
 
-	pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	SAFE_RELEASE(pTransform);
 
@@ -422,7 +423,6 @@ bool CTestScene::Init()
 		pTransform->SetWorldRot(0.f, 0.f, 0.f);
 		pTransform->SetWorldScale(0.2f);
 
-		pObject->SetRenderGroup(RG_LANDSCAPE);
 
 		SAFE_RELEASE(pTransform);
 
@@ -443,7 +443,6 @@ bool CTestScene::Init()
 	pTransform->SetWorldRot(0.f, 90.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
 
-	pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	SAFE_RELEASE(pTransform);
 
@@ -466,7 +465,6 @@ bool CTestScene::Init()
 		pTransform->SetWorldRot(0.f, 90.f, 0.f);
 		pTransform->SetWorldScale(0.2f);
 
-		pObject->SetRenderGroup(RG_LANDSCAPE);
 
 		SAFE_RELEASE(pTransform);
 
@@ -487,7 +485,6 @@ bool CTestScene::Init()
 	pTransform->SetWorldRot(0.f, 0.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
 
-	pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	SAFE_RELEASE(pTransform);
 
@@ -510,7 +507,6 @@ bool CTestScene::Init()
 		pTransform->SetWorldRot(0.f, 180.f, 0.f);
 		pTransform->SetWorldScale(0.2f);
 
-		pObject->SetRenderGroup(RG_LANDSCAPE);
 
 		SAFE_RELEASE(pTransform);
 
@@ -532,7 +528,6 @@ bool CTestScene::Init()
 	pTransform->SetWorldRot(0.f, 270.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
 
-	pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	SAFE_RELEASE(pTransform);
 
@@ -555,7 +550,6 @@ bool CTestScene::Init()
 		pTransform->SetWorldRot(0.f, 90.f, 0.f);
 		pTransform->SetWorldScale(0.2f);
 
-		pObject->SetRenderGroup(RG_LANDSCAPE);
 
 		SAFE_RELEASE(pTransform);
 
@@ -575,7 +569,6 @@ bool CTestScene::Init()
 	pTransform->SetWorldRot(0.f, 90.f, 0.f);
 	pTransform->SetWorldScale(0.2f);
 
-	pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	SAFE_RELEASE(pTransform);
 
@@ -631,6 +624,18 @@ bool CTestScene::Init()
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pObject);
 
+	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
+
+	CBattery*	pBattery = pBatteryObj->AddComponent<CBattery>("Battery");
+
+	CTransform*	pBatteryTr = pBatteryObj->GetTransform();
+
+	pBatteryTr->SetWorldPos(-10.f, 5.f, 30.f);
+
+	SAFE_RELEASE(pBatteryTr);
+	SAFE_RELEASE(pBattery);
+	SAFE_RELEASE(pBatteryObj);
+
 	SAFE_RELEASE(pCamera);
 
 	SAFE_RELEASE(pDefaultLayer);
@@ -644,7 +649,7 @@ bool CTestScene::Init()
 int CTestScene::Update(float fTime)
 {
 	static bool bPush = false;
-	if (GetAsyncKeyState('G') & 0x8000)
+	if (GetAsyncKeyState('P') & 0x8000)
 	{
 		bPush = true;
 	}

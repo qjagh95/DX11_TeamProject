@@ -31,6 +31,9 @@
     <Filter Include="02. UserComponent\04. UI">
       <UniqueIdentifier>{2013d5d9-3504-4da1-b5b5-f876934b010b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\05. Item">
+      <UniqueIdentifier>{1b4edc38-cf5d-4fa4-80cb-e4110fb51c70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -81,17 +84,23 @@
     <ClInclude Include="UserComponent\Ghost.h">
       <Filter>02. UserComponent\02. Monster</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Inventory.h">
-      <Filter>02. UserComponent\04. UI</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\Zipper.h">
       <Filter>02. UserComponent\04. UI</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\Human_Player.h">
       <Filter>02. UserComponent\01. Player</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\InteractiveObj.h">
-      <Filter>02. UserComponent\03. Field</Filter>
+    <ClInclude Include="UserComponent\Battery.h">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\BatteryIcon.h">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Handycam.h">
+      <Filter>02. UserComponent\04. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Inventory.h">
+      <Filter>02. UserComponent\04. UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -137,17 +146,23 @@
     <ClCompile Include="UserComponent\Ghost.cpp">
       <Filter>02. UserComponent\02. Monster</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\Inventory.cpp">
-      <Filter>02. UserComponent\04. UI</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\Zipper.cpp">
       <Filter>02. UserComponent\04. UI</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Human_Player.cpp">
       <Filter>02. UserComponent\01. Player</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\InteractiveObj.cpp">
-      <Filter>02. UserComponent\03. Field</Filter>
+    <ClCompile Include="UserComponent\Battery.cpp">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\BatteryIcon.cpp">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Handycam.cpp">
+      <Filter>02. UserComponent\04. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Inventory.cpp">
+      <Filter>02. UserComponent\04. UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

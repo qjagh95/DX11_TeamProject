@@ -64,6 +64,8 @@ CRenderManager::CRenderManager() :
 	m_bSLC = false;
 	m_bDepthFog = false;
 
+	m_iScopeFlag = -1;
+
 	m_fMiddleGrey = 0.863f;
 	m_fLumWhite = 1.53f;
 	m_fAdaptation = 3.f;
@@ -137,6 +139,7 @@ bool CRenderManager::Init()
 	m_pGBufferSampler				= GET_SINGLE(CResourcesManager)->FindSampler(SAMPLER_POINT);
 	m_pSphereVolum					= GET_SINGLE(CResourcesManager)->FindMeshNonCount(SPHERE_VOLUME);
 	m_pCornVolum					= GET_SINGLE(CResourcesManager)->FindMeshNonCount(CORN_VOLUME);
+	m_pPointSmp						= GET_SINGLE(CResourcesManager)->FindSamplerNonCount(SAMPLER_POINT);
 	m_pPointLightLayout				= GET_SINGLE(CShaderManager)->FindInputLayout(POS_LAYOUT);
 
 	m_pShader[SHADER_ACC_DIR]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(LIGHT_DIR_ACC_SHADER);
@@ -156,6 +159,7 @@ bool CRenderManager::Init()
 	m_pShader[SHADER_OBJ_EDITOR]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(NAVI_EDITOR_SHADER);
 	m_pShader[SHADER_SHADOW_TEX]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(SHADOWTEX_SHADER);
 	m_pShader[SHADER_DS_SHADOW]		= GET_SINGLE(CShaderManager)->FindShaderNonCount(DOWNSCALE_SHADOW_SHADER);
+	m_pShader[SHADER_WIRE_FRAME]	= GET_SINGLE(CShaderManager)->FindShaderNonCount(COLLIDER_SHADER);
 
 	m_pTarget[TARGET_ALBEDO]		= GET_SINGLE(CViewManager)->FindRenderTarget("Albedo");
 	m_pTarget[TARGET_DEPTH]			= GET_SINGLE(CViewManager)->FindRenderTarget("Depth");
@@ -222,14 +226,12 @@ bool CRenderManager::Init()
 
 	m_tCBuffer.iSSAOEnable = 1;
 
-
 	// 야간 투시경에 필요한 정보
 	srand((unsigned int)time(NULL));
 	if (CResourcesManager::GetInst()->CreateTexture("Noise", TEXT("noise6.png")))
 	{
 		m_pNoiseTex = CResourcesManager::GetInst()->FindTexture("Noise");
 	}
-	SetStarLightScope(0);
 
 	m_pPostEffect = new CPostEffect;
 
@@ -357,6 +359,8 @@ void CRenderManager::Render(float fTime)
 
 	CShaderManager::GetInst()->UpdateCBuffer("PublicCBuffer", &m_tCBuffer);
 
+	m_pPointSmp->SetShader(9);	
+
 	switch (m_eGameMode)
 	{
 	case GM_2D:
@@ -460,10 +464,8 @@ void CRenderManager::RenderDeferred(float fTime)
 		RenderSSAO(fTime);
 	// 조명 누적버퍼를 만들어준다.
 	RenderLightAcc(fTime);
-
 	// 조명타겟과 Albedo 를 합성한다.
 	RenderLightBlend(fTime);
-
 	// 스카이 오브젝트와 조명 처리된 타겟을 합쳐 그린다.
 	RenderSkyObj(fTime);
 	// 볼륨안개를 그린다.
@@ -472,35 +474,19 @@ void CRenderManager::RenderDeferred(float fTime)
 	// HDR 등 다양한 화면 효과를 계산한다.
 	RenderComputeProcess(fTime);
 	// 최종 합성된 타겟을 화면에 출력한다.
-
 	
 #ifdef _DEBUG
 	RenderFinalPassDebug(fTime);
 #else
 	RenderFinalPass(fTime);
 #endif
+	//LandScape 클라이언트
 
+	//GBuffer 그릴 때 알비도 타겟에만 알파 음수로 놓고 그리면 댐
+	//LightBlend에서 알파 음수면 빛 적용 안하게 만들겠음
 
 	if (CCore::GetInst()->m_bEditorMode == true)
-	{
-		m_pState[STATE_DEPTH_DISABLE]->SetState();
-
-		for (size_t i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; i++)
-			m_tRenderObj[RG_LANDSCAPE].pList[i]->Render(fTime);
-
-		m_pState[STATE_DEPTH_DISABLE]->ResetState();
-
 		CEditManager::GetInst()->Render(fTime);
-	}
-	else
-	{
-		m_pState[STATE_DEPTH_DISABLE]->SetState();
-
-		for (size_t i = 0; i < m_tRenderObj[RG_LANDSCAPE].iSize; i++)
-			m_tRenderObj[RG_LANDSCAPE].pList[i]->Render(fTime);
-
-		m_pState[STATE_DEPTH_DISABLE]->ResetState();
-	}
 
 	// UI출력
 	for (int i = RG_UI; i < RG_END; ++i)
@@ -526,16 +512,28 @@ void CRenderManager::RenderGBuffer(float fTime)
 {
 	// GBuffer MRT로 타겟을 교체한다.
 	float	fClearColor[4] = {0.f , 0.f , 0.f , 0.f};
-	m_pGBufferMultiTarget->ClearRenderTarget(fClearColor);
-	m_pGBufferMultiTarget->SetTarget();
+	m_pGBufferMultiTarget->ClearRenderTarget(fClearColor);	
 
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{
+		//m_pShader[SHADER_LAND_EDITOR]->SetShader();
+
+		m_pTarget[TARGET_ALBEDO]->SetTarget();
+
+		for (int j = 0; j < m_tRenderObj[RG_LANDSCAPE].iSize; ++j)
+			m_tRenderObj[RG_LANDSCAPE].pList[j]->Render(fTime);
+
+		m_pTarget[TARGET_ALBEDO]->ResetTarget();
+
+		m_pGBufferMultiTarget->SetTarget();
+
 		for (int j = 0; j < m_tRenderObj[RG_NORMAL].iSize; ++j)
 			m_tRenderObj[RG_NORMAL].pList[j]->Render(fTime);
 	}
 	else
 	{
+		m_pGBufferMultiTarget->SetTarget();
+
 		for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
 		{
 			for (int j = 0; j < m_tRenderObj[i].iSize; ++j)
@@ -774,7 +772,7 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 
 void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 {
-	m_pShader[SHADER_ACC_SPOT]->SetShader();
+	m_pShader[SHADER_ACC_DIR]->SetShader();
 
 	pLight->UpdateLightCBuffer();
 
@@ -806,41 +804,28 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 
 	CShaderManager::GetInst()->UpdateCBuffer("Transform", &cBuffer);
 
-	CONTEXT->IASetInputLayout(m_pPointLightLayout);
+	m_pState[STATE_ACC_BLEND]->SetState();
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
-	m_pState[STATE_FRONT_CULL]->SetState();
-	{
-		m_pState[STATE_DEPTH_GRATOR]->SetState();
-		{
-			m_pState[STATE_ALL_BLEND]->SetState();
-			{
-				m_pCornVolum->Render();
-			}
-			m_pState[STATE_ALL_BLEND]->ResetState();
-		}
-		m_pState[STATE_DEPTH_GRATOR]->ResetState();
-	}
-	m_pState[STATE_FRONT_CULL]->ResetState();
+	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
 
+	UINT iOffset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
-	m_pState[STATE_BACK_CULL]->SetState();
-	{
-		m_pState[STATE_ZERO_BLEND]->SetState();
-		{
-			m_pState[STATE_DEPTH_LESS]->SetState();
-			{
-				m_pCornVolum->Render();
-			}
-			m_pState[STATE_DEPTH_LESS]->ResetState();
-		}
-		m_pState[STATE_ZERO_BLEND]->ResetState();
-	}
-	m_pState[STATE_BACK_CULL]->ResetState();
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
+	m_pState[STATE_ACC_BLEND]->ResetState();
 
 	if (m_bLightWireFrame == false)
 		return;
 
-	//m_pState[STATE_DEPTH_DISABLE]->SetState();
+	m_pShader[SHADER_WIRE_FRAME]->SetShader();
+
+	CONTEXT->IASetInputLayout(m_pPointLightLayout);
+
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
 	m_pState[STATE_CULL_NONE]->SetState();
 	m_pState[STATE_WIRE_FRAME]->SetState();
 	{
@@ -848,7 +833,7 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 	}
 	m_pState[STATE_WIRE_FRAME]->ResetState();
 	m_pState[STATE_CULL_NONE]->ResetState();
-	//m_pState[STATE_DEPTH_DISABLE]->ResetState();
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 }
 
 void CRenderManager::RenderLightBlend(float _fTime)
@@ -930,6 +915,8 @@ void CRenderManager::RenderLightBlend(float _fTime)
 
 void CRenderManager::RenderSkyObj(float _fTime)
 {
+	//CDevice::GetInst()->ClearDepthView();
+
 	if (m_bFogEnable)
 		RenderSkyObj(TARGET_SKY, _fTime);
 	else
@@ -1053,7 +1040,6 @@ void CRenderManager::RenderFinalPass(float _fTime)
 
 	m_pTarget[TARGET_BACK]->SetShader(0);
 	m_pTarget[TARGET_DEPTH]->SetShader(1);
-
 	for (int i = CFT_HDR; i < CFT_END; ++i)
 	{
 		if (!m_pFilter[i]->GetEnable())
@@ -1135,6 +1121,7 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 	// 야간 투시경 
 
 	// 상수 버퍼 업데이트
+	SetStarLightScope(m_iScopeFlag);
 	m_accShakeTime += _fTime;
 	float quakeTime = 0.3f;
 	float quakeDelay = 0.01f;
@@ -1211,7 +1198,6 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 	m_pTarget[TARGET_STARLIGHT_SCOPE]->ResetTarget();
 
 	// 풀 스크린 출력
-
 	m_pShader[SHADER_FULL_SCREEN]->SetShader();
 	m_pTarget[TARGET_STARLIGHT_SCOPE]->SetShader(0);
 	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
@@ -1508,7 +1494,9 @@ void CRenderManager::DisableFilter(CS_FILTER_TYPE eType)
 
 void CRenderManager::SetStarLightScope(int _flag)
 {
-	m_tStarLightScope.isStarLightScope = _flag;
+	m_iScopeFlag = _flag;
+
+	m_tStarLightScope.isStarLightScope = m_iScopeFlag;
 }
 
 void CRenderManager::FindMagicNumber(float fTime)
@@ -1525,18 +1513,7 @@ void CRenderManager::FindMagicNumber(float fTime)
 			ImGui::BeginTooltip();
 			ImGui::Text("ShaderOption");
 			ImGui::EndTooltip();
-		}
-
-		ImGui::Checkbox("StarLight Scope", &m_bSLC);
-
-		if (m_bSLC)
-		{
-			SetStarLightScope(1);
-		}
-		else
-		{
-			SetStarLightScope(0);
-		}
+		}		
 
 		ImGui::Checkbox("HDR", &m_bHDR);
 

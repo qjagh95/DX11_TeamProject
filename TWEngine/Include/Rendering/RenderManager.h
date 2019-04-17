@@ -38,12 +38,14 @@ private:
 	bool						m_bDeferred;
 	bool						m_bFogEnable;
 	bool						m_isGetCameraObj;
+	int							m_iScopeFlag;
 	float						m_accShakeTime;
 	CTexture*					m_pRandomNormalTex;
 	CTexture*					m_pNoiseTex;
 	ID3D11Texture2D*			m_pFogDepthTex;
 	ID3D11ShaderResourceView*	m_pFogDepthSRV;
 	ID3D11InputLayout*			m_pPointLightLayout;
+	CSampler*					m_pPointSmp;
 	CBlendState*				m_pCreateState;
 	
 	CSampler*					m_pGBufferSampler;

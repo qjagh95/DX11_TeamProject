@@ -1,23 +1,26 @@
 #pragma once
 #include "Component/UserComponent.h"
 #include "../Client.h"
-#include "Component/ColliderRect.h"
 
 PUN_USING
 
-class CZipper :
+class CHandycam :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CZipper();
-	CZipper(const CZipper& zip);
-	virtual ~CZipper();
+	CHandycam();
+	CHandycam(const CHandycam& handycam);
+	virtual ~CHandycam();
 
 private:
-	CGameObject*	m_pInvenObj;
+	int		m_iFlag;
+	bool	m_bVisible;
 
+public:
+	void SetVisible(bool bVisible);
+	void SetVisible();
 
 public:
 	virtual void AfterClone();
@@ -27,6 +30,6 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CZipper* Clone();
+	virtual CHandycam* Clone();
 };
 

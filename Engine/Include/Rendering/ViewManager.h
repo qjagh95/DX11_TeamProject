@@ -24,7 +24,7 @@ public:
 	bool Init();
 	void SetTargetOnOff(bool Value) { m_bTargetOnOff = Value; }
 
-	void AddBlendTargetDesc(BOOL bEnable, D3D11_BLEND srcBlend = D3D11_BLEND_SRC_ALPHA, 
+	void AddBlendTargetDesc(BOOL bEnable, D3D11_BLEND srcBlend = D3D11_BLEND_SRC_ALPHA,
 		D3D11_BLEND destBlend = D3D11_BLEND_INV_SRC_ALPHA,
 		D3D11_BLEND_OP blendOp = D3D11_BLEND_OP_ADD,
 		D3D11_BLEND srcAlphaBlend = D3D11_BLEND_ONE,

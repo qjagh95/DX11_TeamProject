@@ -1,23 +1,18 @@
 #pragma once
 #include "Component/UserComponent.h"
 #include "../Client.h"
-#include "Component/ColliderRect.h"
 
 PUN_USING
 
-class CZipper :
+class CBatteryIcon :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CZipper();
-	CZipper(const CZipper& zip);
-	virtual ~CZipper();
-
-private:
-	CGameObject*	m_pInvenObj;
-
+	CBatteryIcon();
+	CBatteryIcon(const CBatteryIcon& Icon1);
+	virtual ~CBatteryIcon();
 
 public:
 	virtual void AfterClone();
@@ -27,6 +22,11 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CZipper* Clone();
+	virtual CBatteryIcon* Clone();
+
+public:
+	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);
+	void MouseOn(CCollider * pSrc, CCollider * pDest, float fTime);
+	void MouseOut(class CCollider* pSrc, class CCollider* pDest, float fTime);
 };
 
