@@ -64,8 +64,12 @@ VS_OUTPUT_3D_COLOR LandScapeColorVS(VS_INPUT_3D_COLOR input)
 PS_OUTPUT_SINGLE LandScapeColorPS(VS_OUTPUT_3D_COLOR input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+    
+    float4 vColor = GetBrushColor(input.oPos, input.vColor) + GetGridColor(input.oPos);
 
-    output.vTarget0 = GetBrushColor(input.oPos, input.vColor) + GetGridColor(input.oPos);
+    vColor.a = -1.0f;
+
+    output.vTarget0 = vColor;
     
     return output;
 }

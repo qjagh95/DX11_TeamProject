@@ -66,10 +66,11 @@ bool CTestScene::Init()
 	CTransform* pCameraTr = pCamera->GetTransform();
 	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
 	SAFE_RELEASE(pCameraTr);
+
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
-	m_pUILayer = m_pScene->FindLayer("UI");
 	CLayer* pTileLayer = m_pScene->FindLayer("Tile");
+	m_pUILayer = m_pScene->FindLayer("UI");
 
 	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
 	CTransform*	pTransform = pObject->GetTransform();
@@ -643,7 +644,6 @@ bool CTestScene::Init()
 	SAFE_RELEASE(pCamera);
 
 	SAFE_RELEASE(pDefaultLayer);
-	//SAFE_RELEASE(pUILayer);
 	SAFE_RELEASE(pTileLayer);
 	SAFE_RELEASE(pBackLayer);
 

@@ -394,12 +394,15 @@ void CRenderer::Load(BinaryRead* _pInstBR)
 	m_pMesh->SetTag(strMeshTag);
 
 	// Shader
-	m_pShader->SetTag(strShaderTag);
-	SetShader(strShaderTag);
+	if (!m_pShader)
+	{
+		SetShader(strShaderTag);
+		m_pShader->SetTag(strShaderTag);
+	}
 
 	// Layout
-	SetInputLayout(m_strLayoutKey);
-	//SetInputLayout(m_pMesh->GetInputLayoutKey());
+	if (!m_pLayout)
+		SetInputLayout(strLayoutKey);
 
 	// 2D Renderer
 	m_b2DRenderer = is2DRenderer;

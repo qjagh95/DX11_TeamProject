@@ -212,15 +212,11 @@ bool CScene::Init()
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLightLayer, true);
 	CTransform* pTr = pLightObj->GetTransform();
 
-	pTr->RotationX(45.0f);
+	pTr->RotationX(120.0f);
 
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
 	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
 	pLight->SetLightType(LT_DIR);
-	
-	Vector3 vDir = pTr->GetWorldAxis(AXIS_Z);
-
-	pLight->SetLightDirection(vDir);
 	
 	m_pMainCamera->SetShadowLight(pLight->GetTransformNonCount());
 	m_pMainCamera->Shadow(true);

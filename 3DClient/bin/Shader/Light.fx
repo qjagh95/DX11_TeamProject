@@ -105,15 +105,14 @@ PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_TEX input)
 
     float4 vAlbedo = g_GBufferAlbedoTex.Sample(g_GBufferSmp, UV);
 
-    if (vAlbedo.a == 0.f)
-        clip(-1);
-
-    if(vAlbedo.a < 0.0f)
+    if (vAlbedo.a < 0.0f)
     {
         vAlbedo.a = 1.0f;
         output.vTarget0 = vAlbedo;
         return output;
     }
+    else if (vAlbedo.a == 0.f)
+        clip(-1);
 
     float4 vDepth = g_GBufferDepthTex.Sample(g_GBufferSmp, input.vUV);
 

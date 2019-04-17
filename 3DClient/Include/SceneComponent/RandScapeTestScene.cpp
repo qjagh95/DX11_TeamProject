@@ -81,8 +81,11 @@ bool CRandScapeTestScene::Init()
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
 	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
 	pLight->SetLightType(LT_DIR);
-	pLight->SetLightDirection(Vector3(1.0f, -1.0f, 1.0f));
+	
+	pTransform = pLightObj->GetTransform();
+	pTransform->RotationX(90.0f);
 
+	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pLightObj);
 
