@@ -10,15 +10,15 @@ float & Vector3::operator[](unsigned int Index)
 {
 	switch (Index)
 	{
-		case 1:
-			return x;
-			break;
-		case 2:
-			return y;
-			break;
-		case 3:
-			return z;
-			break;
+	case 1:
+		return x;
+		break;
+	case 2:
+		return y;
+		break;
+	case 3:
+		return z;
+		break;
 	}
 
 	TrueAssert(true);
@@ -30,6 +30,13 @@ void Vector3::operator=(const Vector3 & vec)
 	x = vec.x;
 	y = vec.y;
 	z = vec.z;
+}
+
+void Vector3::operator=(const Vector3 * vec)
+{
+	x = vec->x;
+	y = vec->y;
+	z = vec->z;
 }
 
 void Vector3::operator=(const XMVECTOR & Xmvec)
@@ -77,6 +84,15 @@ Vector3 Vector3::operator+(const Vector3 & vec) const
 	XMVECTOR Src, Dest;
 	Src = XMLoadFloat3((XMFLOAT3*)this);
 	Dest = XMLoadFloat3((XMFLOAT3*)&vec);
+
+	return Vector3(Src + Dest);
+}
+
+Vector3 Vector3::operator+(const Vector3 * vec) const
+{
+	XMVECTOR Src, Dest;
+	Src = XMLoadFloat3((XMFLOAT3*)this);
+	Dest = XMLoadFloat3((XMFLOAT3*)vec);
 
 	return Vector3(Src + Dest);
 }
@@ -151,6 +167,15 @@ Vector3 Vector3::operator-(const Vector3 & vec) const
 	return Vector3(Src - Dest);
 }
 
+Vector3 Vector3::operator-(const Vector3 * vec) const
+{
+	XMVECTOR Src, Dest;
+	Src = XMLoadFloat3((XMFLOAT3*)this);
+	Dest = XMLoadFloat3((XMFLOAT3*)vec);
+
+	return Vector3(Src - Dest);
+}
+
 Vector3 Vector3::operator-(const XMVECTOR & Xmvec) const
 {
 	XMVECTOR Src;
@@ -217,6 +242,15 @@ Vector3 Vector3::operator*(const Vector3 & vec) const
 	XMVECTOR Src, Dest;
 	Src = XMLoadFloat3((XMFLOAT3*)this);
 	Dest = XMLoadFloat3((XMFLOAT3*)&vec);
+
+	return Vector3(Src * Dest);
+}
+
+Vector3 Vector3::operator*(const Vector3 * vec) const
+{
+	XMVECTOR Src, Dest;
+	Src = XMLoadFloat3((XMFLOAT3*)this);
+	Dest = XMLoadFloat3((XMFLOAT3*)vec);
 
 	return Vector3(Src * Dest);
 }
@@ -292,6 +326,15 @@ Vector3 Vector3::operator/(const Vector3 & vec) const
 	return Vector3(Src / Dest);
 }
 
+Vector3 Vector3::operator/(const Vector3 * vec) const
+{
+	XMVECTOR Src, Dest;
+	Src = XMLoadFloat3((XMFLOAT3*)this);
+	Dest = XMLoadFloat3((XMFLOAT3*)vec);
+
+	return Vector3(Src / Dest);
+}
+
 Vector3 Vector3::operator/(const XMVECTOR & Xmvec) const
 {
 	XMVECTOR Src;
@@ -360,6 +403,17 @@ void Vector3::operator+=(const Vector3 & vec)
 
 	Src = XMLoadFloat3((XMFLOAT3*)this);
 	Dest = XMLoadFloat3((XMFLOAT3*)&vec);
+
+	Src += Dest;
+	Convert(Src);
+}
+
+void Vector3::operator+=(const Vector3 * vec)
+{
+	XMVECTOR Src, Dest;
+
+	Src = XMLoadFloat3((XMFLOAT3*)this);
+	Dest = XMLoadFloat3((XMFLOAT3*)vec);
 
 	Src += Dest;
 	Convert(Src);
@@ -445,6 +499,17 @@ void Vector3::operator-=(const Vector3 & vec)
 	Convert(Src);
 }
 
+void Vector3::operator-=(const Vector3 * vec)
+{
+	XMVECTOR Src, Dest;
+
+	Src = XMLoadFloat3((XMFLOAT3*)this);
+	Dest = XMLoadFloat3((XMFLOAT3*)vec);
+
+	Src -= Dest;
+	Convert(Src);
+}
+
 void Vector3::operator-=(const XMVECTOR & Xmvec)
 {
 	XMVECTOR Src, Dest;
@@ -518,6 +583,17 @@ void Vector3::operator*=(const Vector3 & vec)
 
 	Src = XMLoadFloat3((XMFLOAT3*)this);
 	Dest = XMLoadFloat3((XMFLOAT3*)&vec);
+
+	Src *= Dest;
+	Convert(Src);
+}
+
+void Vector3::operator*=(const Vector3 * vec)
+{
+	XMVECTOR Src, Dest;
+
+	Src = XMLoadFloat3((XMFLOAT3*)this);
+	Dest = XMLoadFloat3((XMFLOAT3*)vec);
 
 	Src *= Dest;
 	Convert(Src);
@@ -604,6 +680,17 @@ void Vector3::operator/=(const Vector3 & vec)
 	Convert(Src);
 }
 
+void Vector3::operator/=(const Vector3 * vec)
+{
+	XMVECTOR Src, Dest;
+
+	Src = XMLoadFloat3((XMFLOAT3*)this);
+	Dest = XMLoadFloat3((XMFLOAT3*)vec);
+
+	Src /= Dest;
+	Convert(Src);
+}
+
 void Vector3::operator/=(const XMVECTOR & Xmvec)
 {
 	XMVECTOR Src, Dest;
@@ -679,6 +766,10 @@ bool Vector3::operator==(const Vector3 & vec) const
 {
 	return x == vec.x && y == vec.y && z == vec.z;
 }
+bool Vector3::operator==(const Vector3 * vec) const
+{
+	return x == vec->x && y == vec->y && z == vec->z;
+}
 bool Vector3::operator==(const XMVECTOR & Xmvec) const
 {
 	Vector3 Temp = Vector3(Xmvec);
@@ -719,6 +810,10 @@ bool Vector3::operator==(int ValArr[3]) const
 bool Vector3::operator!=(const Vector3 & vec) const
 {
 	return (!(x == vec.x && y == vec.y && z == vec.z));
+}
+bool Vector3::operator!=(const Vector3 * vec) const
+{
+	return (!(x == vec->x && y == vec->y && z == vec->z));
 }
 bool Vector3::operator!=(const XMVECTOR & Xmvec) const
 {

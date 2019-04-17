@@ -9,6 +9,8 @@
 #include "../UserComponent/Field.h"
 #include "Component/Gizmo.h"
 
+#include "../UserComponent/TraceMob.h"
+
 CRandScapeTestScene::CRandScapeTestScene()
 {
 }
@@ -63,7 +65,7 @@ bool CRandScapeTestScene::Init()
 	SAFE_RELEASE(pArm);
 	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
 	SAFE_RELEASE(pPlayer);
-	SAFE_RELEASE(pObject);
+
 	SAFE_RELEASE(pTransform);
 
 	//pObject = CGameObject::CreateObject("Minion", pDefaultLayer);
@@ -94,13 +96,23 @@ bool CRandScapeTestScene::Init()
 
 	SAFE_RELEASE(pTransform);
 
-	CLandScape*	pLandScape = pLandScapeObj->AddComponent<CLandScape>("LandScape");
-	pLandScape->CreateLandScape("LandScape", 129, 129, "LandScapeDif", NULLPTR, NULLPTR, NULLPTR, NULLPTR);
+	string temp = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
 
-	//GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene,
-	//	"Nav.nav");
+	CLandScape*	pLandScape = pLandScapeObj->AddComponent<CLandScape>("LandScape");
+	pLandScape->LoadLandScape(temp + "Nav.nav");
+
+	CGameObject* minion = CGameObject::CreateObject("minion", pDefaultLayer);
+	minion->GetTransformNoneCount()->SetWorldPos(Vector3(5.0f, 0.0f, 10.0f));
+	minion->GetTransformNoneCount()->SetWorldScale(0.2f, 0.2f, 0.2f);;
+
+	TraceMob* newMinion = minion->AddComponent<TraceMob>("minion");
+	newMinion->SetTarget(pObject);
+	newMinion->BTInit();
 
 	SAFE_RELEASE(pLandScape);
+	SAFE_RELEASE(pObject);
+	SAFE_RELEASE(newMinion);
+	SAFE_RELEASE(minion);
 	SAFE_RELEASE(pLandScapeObj);
 	SAFE_RELEASE(pCamera);
 	SAFE_RELEASE(pDefaultLayer);

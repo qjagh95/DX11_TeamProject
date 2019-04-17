@@ -203,9 +203,12 @@
     <ClInclude Include="UserComponent\Ghost.h" />
     <ClInclude Include="UserComponent\Handycam.h" />
     <ClInclude Include="UserComponent\Human_Player.h" />
+    <ClInclude Include="UserComponent\Idle.h" />
     <ClInclude Include="UserComponent\Inventory.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Player.h" />
+    <ClInclude Include="UserComponent\Trace.h" />
+    <ClInclude Include="UserComponent\TraceMob.h" />
     <ClInclude Include="UserComponent\Zipper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -225,9 +228,12 @@
     <ClCompile Include="UserComponent\Ghost.cpp" />
     <ClCompile Include="UserComponent\Handycam.cpp" />
     <ClCompile Include="UserComponent\Human_Player.cpp" />
+    <ClCompile Include="UserComponent\Idle.cpp" />
     <ClCompile Include="UserComponent\Inventory.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
     <ClCompile Include="UserComponent\Player.cpp" />
+    <ClCompile Include="UserComponent\Trace.cpp" />
+    <ClCompile Include="UserComponent\TraceMob.cpp" />
     <ClCompile Include="UserComponent\Zipper.cpp" />
   </ItemGroup>
   <ItemGroup>

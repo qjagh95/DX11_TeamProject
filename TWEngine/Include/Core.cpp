@@ -26,8 +26,8 @@ CCore::CCore()
 	m_pTimer = NULLPTR;
 	m_LogText = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(10011);
-
+	//_CrtSetBreakAlloc(133742);
+	
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 
 	m_vecInput = NULLPTR;
@@ -434,11 +434,13 @@ void CCore::Render(float fTime)
 
 			GUIManager::Get()->ImGuiEnd();
 		}
-
 		GET_SINGLE(CInput)->RenderMouse(fTime);
 	}
-
 	GET_SINGLE(CDevice)->Present();
+
+	GUIOnOff(fTime);
+	ShaderOptionOnOff(fTime);
+	TreeOnOff(fTime);
 }
 
 void CCore::Register(const TCHAR * pClass, int iIconID, int iSmallIconID)

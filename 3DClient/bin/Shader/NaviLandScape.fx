@@ -3,10 +3,8 @@
 cbuffer NaviLandCBuffer : register(b12)
 {
     float3 g_BrushPos;
-    int g_BrushType;
-    float4 g_BrushColor;
     int g_BrushRange;
-    float3 g_Empty12314545;
+    float4 g_BrushColor;
 };
 
 cbuffer GridCBuffer : register(b10)

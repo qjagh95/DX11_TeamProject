@@ -16,7 +16,7 @@ BTManager::~BTManager()
 {
 	unordered_map<string, BehaviorTree*>::iterator StartIter = m_TreeMap.begin();
 	unordered_map<string, BehaviorTree*>::iterator EndIter = m_TreeMap.end();
-	
+
 	for (; StartIter != EndIter; ++StartIter)
 		SAFE_DELETE(StartIter->second);
 
@@ -30,15 +30,14 @@ BTManager::~BTManager()
 
 void BTManager::DeleteTree(const string & BTName)
 {
-	FindTree(BTName)->~BehaviorTree();
 	m_TreeMap.erase(BTName);
 }
 
-BehaviorTree* BTManager::CreateBehaviorTree(const string& KeyName, BT_ROOT_CHILD_TYPE eStyle)
+BehaviorTree* BTManager::CreateBehaviorTree(const string& KeyName, CGameObject* object, BT_ROOT_CHILD_TYPE eStyle)
 {
 	BehaviorTree* newTree = new BehaviorTree();
 	newTree->m_TagName = KeyName;
-	newTree->Init(eStyle, NULLPTR);
+	newTree->Init(eStyle, object);
 
 	m_TreeMap.insert(make_pair(KeyName, newTree));
 	m_vecItemsName.push_back(KeyName);
@@ -55,13 +54,16 @@ BehaviorTree * BTManager::FindTree(const string & KeyName)
 
 	if (FindIter == m_TreeMap.end())
 		return NULLPTR;
-	
+
 	return FindIter->second;
 }
 
 void BTManager::GUIRender()
 {
 	if (m_TreeMap.empty() == true)
+		return;
+
+	if (CCore::GetInst()->m_bGuiMode == false)
 		return;
 
 	if (CCore::GetInst()->m_bTreeOnOff == false)

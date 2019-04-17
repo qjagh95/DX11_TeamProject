@@ -1506,6 +1506,12 @@ void CRenderManager::FindMagicNumber(float fTime)
 		if (CCore::GetInst()->m_bEditorMode == true)
 			return;
 
+		if (CCore::GetInst()->m_bGuiMode == false)
+			return;
+
+		if (GUIManager::Get()->m_bShaderOption == false)
+			return;
+
 		ImGui::Begin("ShaderOption");
 
 		if (ImGui::IsItemHovered())

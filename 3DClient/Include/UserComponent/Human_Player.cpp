@@ -35,6 +35,11 @@ CHuman_Player::~CHuman_Player()
 	SAFE_RELEASE(m_pAnimation);
 	SAFE_RELEASE(m_pSound);
 	SAFE_RELEASE(m_pHandSocketObj);
+	SAFE_RELEASE(m_pInvenObj);
+	SAFE_RELEASE(m_pInven);
+	SAFE_RELEASE(m_pInvenTr);
+	SAFE_RELEASE(m_pHandycamObj);
+	SAFE_RELEASE(m_pHandycam);
 }
 
 bool CHuman_Player::Init()

@@ -24,6 +24,7 @@ private:
 	CNavigationMesh*		m_pNavMesh;
 	CMesh* m_Mesh;
 	bool m_isMove;
+	bool m_isShow;
 
 	NaviLandCBuffer m_tNaviCBuffer;
 	GridCBuffer m_tGridCBuffer;
@@ -72,9 +73,8 @@ private:
 	void ComputeNormal();
 	void ComputeTangent();
 	void ChangeFlag(float DeltaTime);
-
 	void CheckSelectIndex(float DeltaTime);
-	void Click();
+	void OnOff();
 };
 
 PUN_END

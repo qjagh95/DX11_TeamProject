@@ -8,6 +8,11 @@ public:
 	template<typename T>
 	void AddData(const string& VarName, T* Data)
 	{
+		T* Data = FindData(VarName);
+
+		if (Data != NULLPTR)
+			return Data;
+
 		m_DataMap.insert(make_pair(VarName, Data));
 	}
 
@@ -20,6 +25,16 @@ public:
 			return NULLPTR;
 
 		return (T*)FindIter->second;
+	}
+
+	void* FindData(const string& VarName)
+	{
+		auto FindIter = m_DataMap.find(VarName);
+
+		if (FindIter == m_DataMap.end())
+			return NULLPTR;
+
+		return FindIter->second;
 	}
 
 private:

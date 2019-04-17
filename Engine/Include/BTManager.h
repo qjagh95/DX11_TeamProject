@@ -9,7 +9,7 @@ public:
 	{
 		if (m_Instance == NULL)
 			m_Instance = new BTManager();
-		
+
 		return m_Instance;
 	}
 
@@ -21,7 +21,7 @@ public:
 	void DeleteTree(const string& BTName);
 
 public:
-	class BehaviorTree* CreateBehaviorTree(const string& KeyName, BT_ROOT_CHILD_TYPE eStyle = BT_SELECTOR);
+	class BehaviorTree* CreateBehaviorTree(const string& KeyName, CGameObject* object = NULLPTR, BT_ROOT_CHILD_TYPE eStyle = BT_SELECTOR);
 	class BehaviorTree* FindTree(const string& KeyName);
 	void GUIRender();
 

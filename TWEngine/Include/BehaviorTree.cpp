@@ -1,4 +1,5 @@
 #include "EngineHeader.h"
+#include "EngineHeader.h"
 #include "BTManager.h"
 #include "BehaviorTree.h"
 #include "BlackBoard.h"
@@ -23,6 +24,8 @@ BehaviorTree::BehaviorTree()
 
 BehaviorTree::~BehaviorTree()
 {
+	BTManager::Get()->DeleteTree(m_TagName);
+
 	SAFE_DELETE(m_RootNode);
 	SAFE_DELETE(m_RootSequence);
 	SAFE_DELETE(m_RootSelector);
@@ -498,21 +501,22 @@ int BehaviorTree::Selector::Process(float DeltaTime)
 
 	if (m_bRandom == false)
 	{
-		for (size_t i = 0; i < m_vecDecorator.size(); i++)
-		{
-			if (m_vecDecorator[i](DeltaTime) == false)
-				return ACTION_FALSE;
-		}
-
 		for (size_t i = 0; i < m_ChildAction.size(); i++)
 		{
 			for (size_t j = 0; j < m_ChildAction[i]->GetDecoratorVec()->size(); j++)
 			{
 				if (m_ChildAction[i]->GetDecoratorVec()->at(j)(DeltaTime) == false)
-					return ACTION_FALSE;
+				{
+					if (i < m_ChildAction.size())
+						i++;
+					else
+						return ACTION_FALSE;
+				}
 			}
 
-			switch ((BT_ACTION_TYPE)m_ChildAction[i]->Update(DeltaTime))
+			BT_ACTION_TYPE Type = (BT_ACTION_TYPE)m_ChildAction[i]->Update(DeltaTime);
+
+			switch (Type)
 			{
 			case ACTION_SUCCED:
 				m_ChildAction[i]->Ending(DeltaTime);
@@ -529,11 +533,6 @@ int BehaviorTree::Selector::Process(float DeltaTime)
 	}
 	else
 	{
-		for (size_t i = 0; i < m_vecDecorator.size(); i++)
-		{
-			if (m_vecDecorator[i](DeltaTime) == false)
-				return ACTION_FALSE;
-		}
 
 		int RandomNum = rand() % m_ChildAction.size();
 
@@ -543,14 +542,16 @@ int BehaviorTree::Selector::Process(float DeltaTime)
 				return ACTION_FALSE;
 		}
 
-		switch ((BT_ACTION_TYPE)m_ChildAction[RandomNum]->Update(DeltaTime))
+
+		BT_ACTION_TYPE Type = (BT_ACTION_TYPE)m_ChildAction[RandomNum]->Update(DeltaTime);
+
+		switch (Type)
 		{
 		case ACTION_SUCCED:
 			m_ChildAction[RandomNum]->Ending(DeltaTime);
 			return ACTION_SUCCED;
 			break;
 		case ACTION_FALSE:
-			return ACTION_FALSE;
 			break;
 		case ACTION_RUNNING:
 			return ACTION_RUNNING;
@@ -573,21 +574,24 @@ int BehaviorTree::Sequence::Update(float DeltaTime)
 		}
 	}
 
-	for (size_t i = 0; i < m_vecDecorator.size(); i++)
-	{
-		if (m_vecDecorator[i](DeltaTime) == false)
-			return ACTION_SUCCED;
-	}
-
 	for (size_t i = 0; i < m_ChildAction.size(); i++)
 	{
 		for (size_t j = 0; j < m_ChildAction[i]->GetDecoratorVec()->size() - 1; j++)
 		{
 			if (m_ChildAction[i]->GetDecoratorVec()->at(j)(DeltaTime) == false)
-				return ACTION_SUCCED;
+			{
+				if (i < m_ChildAction.size())
+					i++;
+				else
+					return ACTION_FALSE;
+
+				continue;
+			}
 		}
 
-		switch ((BT_ACTION_TYPE)m_ChildAction[i]->Update(DeltaTime))
+		BT_ACTION_TYPE Type = (BT_ACTION_TYPE)m_ChildAction[i]->Update(DeltaTime);
+
+		switch (Type)
 		{
 		case ACTION_RUNNING:
 			return ACTION_RUNNING;
@@ -611,7 +615,7 @@ void BehaviorTree::GUIRender()
 		ImGui::BulletText(m_RootNode->GetTag().c_str());
 		ImGui::Text("-----------Child--------------");
 
-		if(m_RootSequence != NULLPTR)
+		if (m_RootSequence != NULLPTR)
 			ImGui::Text("RootSequence");
 		else
 			ImGui::Text("RootSelector");

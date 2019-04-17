@@ -7,7 +7,8 @@
 
 PUN_USING
 
-enum PLAYER_DATA_TYPE {
+enum PLAYER_DATA_TYPE 
+{
 	PDT_NONE,
 	PDT_INT,
 	PDT_FLOAT,
@@ -19,7 +20,8 @@ enum PLAYER_DATA_TYPE {
 	PDT_SOCKET
 };
 
-enum PLAYER_STATUS {
+enum PLAYER_STATUS 
+{
 	PSTATUS_NONE,
 	PSTATUS_IDLE,
 	PSTATUS_WOUNDED = 2,
@@ -35,7 +37,7 @@ enum PLAYER_STATUS {
 	PSTATUS_DOOR_OPEN = 0x800,
 	PSTATUS_DOOR_CLOSE = 0x1000,
 	PSTATUS_CAM_ON = 0x2000,
-	PSTATUS_GUN = 0x4000
+	PSTATUS_GUN = 0x4000,
 };
 
 class CHuman_Player : public PUN::CUserComponent
@@ -55,6 +57,30 @@ public:
 	int LateUpdate(float fTime);
 	void Collision(float fTime);
 	CHuman_Player *Clone();
+	
+	/*
+	TODO : 정범호
+	상태별로 함수화 부탁드려Yo
+	이렇게되면 코드 짠사람 제외 건들수가 없어요 ㅠㅠ
+	↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+	void PSTATUS_NONE(float DeltaTime);
+	void PSTATUS_IDLE(float DeltaTime);
+	void PSTATUS_WOUNDED(float DeltaTime);
+	void PSTATUS_WALK(float DeltaTime);
+	void PSTATUS_SPRINT(float DeltaTime);
+	void PSTATUS_STOPMOVE(float DeltaTime);
+	void PSTATUS_ONAIR(float DeltaTime);
+	void PSTATUS_JUMPED(float DeltaTime);
+	void PSTATUS_CROUCHING(float DeltaTime);
+	void PSTATUS_CROUCHED(float DeltaTime);
+	void PSTATUS_INBED(float DeltaTime);
+	void PSTATUS_BEDINTERACT(float DeltaTime);
+	void PSTATUS_DOOR_OPEN(float DeltaTime);
+	void PSTATUS_DOOR_CLOSE(float DeltaTime);
+	void PSTATUS_CAM_ON(float DeltaTime);
+	void PSTATUS_GUN(float DeltaTime);
+	*/
 
 private:
 	class PUN::CGameObject *m_pHandSocketObj; //테스트용 저장

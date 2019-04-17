@@ -33,6 +33,8 @@ CLandScape::CLandScape() :
 	m_tGridCBuffer.isVisibleGrid = 1;
 	m_tGridCBuffer.GridLineSize = 5;
 	m_tGridCBuffer.GridColor = Vector4::White;
+
+	m_isShow = true;
 }
 
 CLandScape::CLandScape(const CLandScape & landscape)
@@ -315,16 +317,23 @@ bool CLandScape::Init()
 	m_tCBuffer.iSplatCount = 0;
 	m_pObject->SetRenderGroup(RG_LANDSCAPE);
 
+	CInput::GetInst()->AddKey("LandOnOff", VK_F4);
+
 	return true;
 }
 
 int CLandScape::Input(float fTime)
 {
-	if (CInput::GetInst()->KeyPress("TabButton") == true)
+	OnOff();
+
+
+
+	if (CCore::GetInst()->m_bEditorMode == true)
 	{
-		if(CCore::GetInst()->m_bEditorMode == true)
-		ChangeFlag(fTime);
+		if (CInput::GetInst()->KeyPress("TabButton") == true)
+			ChangeFlag(fTime);
 	}
+
 	return 0;
 }
 
@@ -367,6 +376,7 @@ void CLandScape::Render(float fTime)
 {
 	CShaderManager::GetInst()->UpdateCBuffer("NaviLandCBuffer", &m_tNaviCBuffer);
 	CShaderManager::GetInst()->UpdateCBuffer("GridCBuffer", &m_tGridCBuffer);
+
 }
 
 CLandScape * CLandScape::Clone()
@@ -540,6 +550,25 @@ void CLandScape::CheckSelectIndex(float DeltaTime)
 
 	CInput::GetInst()->SetSelectNavIndex(m_pNavMesh->MousePickGetCellIndex(iMinSection, iMaxSection, vRayInfo.vPos, vRayInfo.vDir, m_tNaviCBuffer.BrushPos));
 	m_Mesh->UpdateVertexBuffer(&m_vecVtx[0]);
+}
+
+void CLandScape::OnOff()
+{
+	if(CInput::GetInst()->KeyPress("LandOnOff"))
+	{
+		m_isShow ^= true;
+
+		if (m_isShow == true)
+		{
+			CRenderer* getRenderer = m_pObject->FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
+			getRenderer->SetEnable(m_isShow);
+		}
+		else
+		{
+			CRenderer* getRenderer = m_pObject->FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
+			getRenderer->SetEnable(m_isShow);
+		}
+	}
 }
 
 void CLandScape::SaveLandScape(const string& FullPath)

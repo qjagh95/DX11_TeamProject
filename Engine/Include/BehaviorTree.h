@@ -41,12 +41,13 @@ public:
 		Action() { m_KeepNode = NULLPTR; m_pObject = NULLPTR; m_BlackBoard = NULLPTR; m_ActionType = BT_NONE; }
 		virtual ~Action() {}
 
+	private:
 		vector<function<bool(float)>> m_vecDecorator;
 		string m_TagName;
 		BT_ROOT_CHILD_TYPE m_ActionType;
 		Action* m_KeepNode;
 
-	private:
+	protected:
 		CGameObject* m_pObject;
 		BlackBoard* m_BlackBoard;
 
@@ -239,7 +240,7 @@ public:
 		newAction->SetTag(ActionName);
 		newAction->SetKeepAction(m_RootSelector);
 		newAction->SetActionType(BT_ACTION);
-		
+
 		m_RootSelector->AddChildAction(newAction);
 		m_ActionMap.insert(make_pair(ActionName, newAction));
 		m_Count++;
@@ -268,7 +269,7 @@ public:
 		getSequence->AddChildAction(newAction);
 		m_ActionMap.insert(make_pair(ActionName, newAction));
 		m_Count++;
-		
+
 		return newAction;
 	}
 	template<typename T>
@@ -454,7 +455,7 @@ public:
 	string GetRootSequenceName() const { return m_RootSequenceName; }
 	string GetRootSelectorName() const { return m_RootSelectorName; }
 	int GetCount() const { return m_Count; }
-	
+
 	template<typename T>
 	void AddBoardData(const string& VarName, T* Data)
 	{
