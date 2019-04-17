@@ -60,6 +60,9 @@ public:
 	void SetRimPower(float fRimPower);
 	void UpdateLightCBuffer();
 
+	float GetRange();
+	Vector4 GetLightSpecular();
+
 public:
 	virtual void Start();
 	virtual void AfterClone();

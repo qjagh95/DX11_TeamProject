@@ -37,7 +37,8 @@ CEditManager::CEditManager()
 	m_bNaviEditorMode(false),
 	m_pFreeCamObj(nullptr),
 	m_NavObject(nullptr),
-	m_LandScape(nullptr)
+	m_LandScape(nullptr),
+	m_isGizmoClick(false)
 {
 }
 
@@ -124,6 +125,18 @@ void CEditManager::Render(float _fTime)
 void CEditManager::GetLayerList(vector<string>* _pVec)
 {
 	m_pScene->GetLayerTagList(_pVec);
+}
+
+void CEditManager::PrivateEditObjSettingLayer()
+{
+	CLayer* pLayer = m_pScene->FindLayer("Default");
+
+	pLayer->AddObject(m_pXGizmoObj);
+	pLayer->AddObject(m_pYGizmoObj);
+	pLayer->AddObject(m_pZGizmoObj);
+	pLayer->AddObject(m_pFreeCamObj);
+
+	SAFE_RELEASE(pLayer);
 }
 
 void CEditManager::SetBrushSize(int _fSize)
@@ -325,7 +338,37 @@ void CEditManager::AddComponent(std::string& _strCompTag)
 	}
 }
 
-void CEditManager::ActiveObjectSetScale(double _dX, double _dY, double _dZ)
+void CEditManager::SetLocalScale(double _dX, double _dY, double _dZ)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	CTransform* pTransform = m_pObject->GetTransform();
+	pTransform->SetLocalScale(Vector3((float)_dX, (float)_dY, (float)_dZ));
+	SAFE_RELEASE(pTransform);
+}
+
+void CEditManager::SetLocalRotate(double _dX, double _dY, double _dZ)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	CTransform* pTransform = m_pObject->GetTransform();
+	pTransform->SetLocalRot(Vector3((float)_dX, (float)_dY, (float)_dZ));
+	SAFE_RELEASE(pTransform);
+}
+
+void CEditManager::SetLocalPosition(double _dX, double _dY, double _dZ)
+{
+	if (m_pObject == nullptr)
+		return;
+
+	CTransform* pTransform = m_pObject->GetTransform();
+	pTransform->SetWorldPos(Vector3((float)_dX, (float)_dY, (float)_dZ));
+	SAFE_RELEASE(pTransform);
+}
+
+void CEditManager::SetWorldScale(double _dX, double _dY, double _dZ)
 {
 	if (m_pObject == nullptr)
 		return;
@@ -335,7 +378,7 @@ void CEditManager::ActiveObjectSetScale(double _dX, double _dY, double _dZ)
 	SAFE_RELEASE(pTransform);
 }
 
-void CEditManager::ActiveObjectSetRotate(double _dX, double _dY, double _dZ)
+void CEditManager::SetWorldRotate(double _dX, double _dY, double _dZ)
 {
 	if (m_pObject == nullptr)
 		return;
@@ -345,7 +388,7 @@ void CEditManager::ActiveObjectSetRotate(double _dX, double _dY, double _dZ)
 	SAFE_RELEASE(pTransform);
 }
 
-void CEditManager::ActiveObjectSetPosition(double _dX, double _dY, double _dZ)
+void CEditManager::SetWorldPosition(double _dX, double _dY, double _dZ)
 {
 	if (m_pObject == nullptr)
 	{
@@ -355,6 +398,90 @@ void CEditManager::ActiveObjectSetPosition(double _dX, double _dY, double _dZ)
 	CTransform* pTransform = m_pObject->GetTransform();
 	pTransform->SetWorldPos((float)_dX, (float)_dY, (float)_dZ);
 	SAFE_RELEASE(pTransform);
+}
+
+bool CEditManager::FindRenderComponent()
+{
+	if (m_pObject == nullptr)
+	{
+		TrueAssert(true);
+	}
+	CRenderer* pRenderer = m_pObject->FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
+	if (pRenderer != nullptr)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool CEditManager::FindLightComponent()
+{
+	if (m_pObject == nullptr)
+	{
+		TrueAssert(true);
+	}
+	CLight* pLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+	if (pLight != nullptr)
+	{
+		return true;
+	}
+	return false;
+}
+
+void CEditManager::SetGizmoClick(bool _isFlag)
+{
+	m_isGizmoClick = _isFlag;
+}
+
+bool CEditManager::IsGizmoCheckClick()
+{
+	return m_isGizmoClick;
+}
+
+vector<Vector3> CEditManager::GetLocalTransform(const string _strObjectTag, const string _strLayerTag, int _eType)
+{
+	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
+	if (pLayer == nullptr)
+	{
+		SAFE_RELEASE(pLayer);
+		TrueAssert(true);
+	}
+
+	CGameObject* pObj = pLayer->FindObject(_strObjectTag);
+	if (pObj == nullptr)
+	{
+		SAFE_RELEASE(pObj);
+		SAFE_RELEASE(pLayer);
+		TrueAssert(true);
+	}
+
+	CTransform* pTr = pObj->GetTransform();
+	vector<Vector3> pVecTranform;
+	pVecTranform.reserve(1);
+	switch ((eTransformType)_eType)
+	{
+		case eTransformType::TT_SCALE:
+		{
+			pVecTranform.push_back(pTr->GetLocalScale());
+			break;
+		}
+		case eTransformType::TT_ROTATE:
+		{
+			pVecTranform.push_back(pTr->GetLocalRot());
+			break;
+		}
+		case eTransformType::TT_POSITION:
+		{
+			pVecTranform.push_back(pTr->GetLocalPos());
+			break;
+		}
+	}
+
+	SAFE_RELEASE(pTr);
+	SAFE_RELEASE(pObj);
+	SAFE_RELEASE(pLayer);
+
+	return pVecTranform;
 }
 
 vector<Vector3> CEditManager::GetWorldTransform(const string _strObjectTag, const string _strLayerTag, int _eType)
@@ -815,4 +942,66 @@ bool CEditManager::LoadNavFile(const string & FullPath)
 	m_LandScape->LoadLandScape(FullPath);
 
 	return true;
+}
+
+int CEditManager::GetLightType()
+{
+	if (m_pObject == nullptr)
+	{
+		return -1;
+	}
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+	{
+		return -1;
+	}
+
+	CLight* pLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+	if (pLight == nullptr)
+	{
+		return -1;
+	}
+
+	return (int)pLight->GetLightType();
+}
+
+float CEditManager::GetLightRange()
+{
+	if (m_pObject == nullptr)
+	{
+		return -1;
+	}
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+	{
+		return -1;
+	}
+
+	CLight* pLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+	if (pLight == nullptr)
+	{
+		return -1;
+	}
+
+	return pLight->GetRange();
+}
+
+vector<Vector4> CEditManager::GetSpecular()
+{
+	vector<Vector4> vecWpecular;
+	if (m_pObject == nullptr)
+	{
+		return vecWpecular;
+	}
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+	{
+		return vecWpecular;
+	}
+
+	CLight* pLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+	if (pLight == nullptr)
+	{
+		return vecWpecular;
+	}
+
+	vecWpecular.push_back(pLight->GetLightSpecular());
+	return vecWpecular;
 }

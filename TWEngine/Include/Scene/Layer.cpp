@@ -1,6 +1,7 @@
 #include "EngineHeader.h"
 #include "Layer.h"
 #include "Core.h"
+#include "EditManager.h"
 
 PUN_USING
 
@@ -47,7 +48,7 @@ void CLayer::SetZOrder(int iZOrder)
 void CLayer::Save(BinaryWrite* _pInstBW)
 {
 	// 오브젝트 개수
-	// (툴이 아닌 클라이언트에서 바로 로드될 경우 개수를 알 수 없기때문이다.)
+	// (툴이 아닌 클라이언트에서 바로 로드될 경우 개수를 알 수 없다.)
 	int iObjListSize = 0;
 	list<CGameObject*>::iterator iter;
 	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
@@ -59,6 +60,10 @@ void CLayer::Save(BinaryWrite* _pInstBW)
 		}
 	}
 	_pInstBW->WriteData(iObjListSize);
+	if (iObjListSize == 0)
+	{
+		return;
+	}
 
 	// 오브젝트 목록
 	iterEnd = m_ObjList.end();
@@ -66,11 +71,15 @@ void CLayer::Save(BinaryWrite* _pInstBW)
 	{
 		if ((*iter)->GetSave() == true)
 		{
-			_pInstBW->WriteData((*iter)->GetTag().c_str());	// 태그
-			_pInstBW->WriteData(this->GetTag().c_str());	// 오브젝트가 속해있는 레이어 태그
+			string strTag = (*iter)->GetTag();
+			string strLayerTag = this->GetTag();
 			bool isDontDestroy = (*iter)->GetDontDestroy();
-			_pInstBW->WriteData(isDontDestroy);				// 오브젝트 삭제 여부
-			_pInstBW->WriteData(GetEnable());				// (비)활성화 상태
+			bool isEnable = (*iter)->GetEnable();
+
+			_pInstBW->WriteData(strTag);		// 태그
+			_pInstBW->WriteData(strLayerTag);	// 오브젝트가 속해있는 레이어 태그
+			_pInstBW->WriteData(isDontDestroy);	// 오브젝트 삭제 여부
+			_pInstBW->WriteData(isEnable);		// 활성화 여부
 
 			// Object Save 함수 호출
 			(*iter)->Save(_pInstBW);
@@ -82,10 +91,17 @@ void CLayer::Load(BinaryRead* _pInstBR)
 {
 	// 오브젝트 목록 개수
 	int objListSize = _pInstBR->ReadInt();
-
+	if (objListSize == 0)
+	{
+		return;
+	}
 	// 오브젝트 목록
 	Safe_Release_VecList(m_ObjList);
 	m_ObjList.clear();
+
+	if (CCore::GetInst()->m_bEditorMode == true && m_strTag == "Default")
+		CEditManager::GetInst()->PrivateEditObjSettingLayer();
+
 	for (int i = 0; i < objListSize; ++i)
 	{
 		string strObjTag = _pInstBR->ReadString();

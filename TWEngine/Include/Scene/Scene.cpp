@@ -775,6 +775,11 @@ void CScene::EnableSceneComponent(const string & strTag, bool bEnable)
 
 void CScene::Save(string _fullPath)
 {
+	// Read(읽기)를 위해서 문자열 길이를 저장 후 그 길이만큼 읽어오는 방식으로
+	// 저장하기 위해 문자열 길이를 먼저 저장한다.
+	// instBW.WriteData((char*)&strLength, sizeof(CHAR_MAX));
+	// instBW.WriteData(strLayerTag.c_str(), strLength);
+
 	// 파일 객체(ofstream) 생성
 	BinaryWrite instBW = BinaryWrite(_fullPath.c_str());
 
@@ -783,15 +788,8 @@ void CScene::Save(string _fullPath)
 	list<CLayer*>::iterator iterEnd = m_LayerList.end();
 	for (iter = m_LayerList.begin(); iter != iterEnd; ++iter)
 	{
-		/*
-		Read(읽기)를 위해서 문자열 길이를 저장 후 그 길이만큼 읽어오는 방식으로
-		저장하기 위해 문자열 길이를 먼저 저장한다.
-		instBW.WriteData((char*)&strLength, sizeof(CHAR_MAX));
-		instBW.WriteData(strLayerTag.c_str(), strLength);
-		*/
-
-		// BinaryWrite 클래스에선 위 작업을 함수화 시켜놨다.
-		instBW.WriteData((*iter)->GetTag().c_str());
+		string strLayerTag = (*iter)->GetTag();
+		instBW.WriteData(strLayerTag);
 
 		// Layer Save 함수 호출
 		(*iter)->Save(&instBW);
@@ -814,10 +812,10 @@ void CScene::Load(string _fullPath)
 		CLayer* pLayer = FindLayer(strLayerTag);
 		if (pLayer == nullptr)
 		{
-			AddLayer(strLayerTag, 0); // Default ZOrder 0
+			AddLayer(strLayerTag, 0);
 		}
 		SAFE_RELEASE(pLayer);
-		
+
 		// Layer Load 함수 호출
 		(*iter)->Load(&instBR);
 	}

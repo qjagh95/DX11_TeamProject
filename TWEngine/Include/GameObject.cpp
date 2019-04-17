@@ -10,6 +10,7 @@
 #include "Component/Renderer.h"
 #include "Component/Transform.h"
 #include "Component/Animation.h"
+#include "Component/Light.h"
 #include "Core.h"
 #include "Component/ColliderOBB3D.h"
 PUN_USING
@@ -961,11 +962,22 @@ void CGameObject::Save(BinaryWrite* _pInstBW)
 	// Transform
 	m_pTransform->Save(_pInstBW);
 
-	// 컴포넌트 목록
+	// Component Count
+	_pInstBW->WriteData((int)m_ComList.size());
+
+	// Save Component
 	list<CComponent*>::iterator	iter;
 	list<CComponent*>::iterator	iterEnd = m_ComList.end();
 	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
 	{
+		// EnumType
+		int iType = (int)((*iter)->m_eComType);
+		_pInstBW->WriteData(iType);
+
+		if (iType == CT_END || (*iter)->GetTag() == "PickingCollider")
+			continue;
+
+		// Call Save Function
 		(*iter)->Save(_pInstBW);
 	}
 }
@@ -975,15 +987,72 @@ void CGameObject::Load(BinaryRead* _pInstBR)
 	// Transform
 	m_pTransform->Load(_pInstBR);
 
-	// 컴포넌트 추가 및 컴포넌트 Load 함수 호출
-	list<CComponent*>::iterator	iter;
-	list<CComponent*>::iterator	iterEnd = m_ComList.end();
-	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	// Read Component
+	CComponent* pComp = nullptr;
+	int compSize = _pInstBR->ReadInt();
+	for (size_t i = 0; i < (int)compSize; ++i)
 	{
-		// 추가
-		this->AddComponent((*iter));
+		pComp = nullptr;
+		int iType = _pInstBR->ReadInt();
+		COMPONENT_TYPE eCompType = (COMPONENT_TYPE)iType;
+		switch (eCompType)
+		{
+			case CT_RENDERER:
+			{
+				// Renderer Component 초기화할 때 Material Component가 자동으로 등록된다.
+				pComp = AddComponent<CRenderer>("Renderer");
+				break;
+			}
+			case CT_CAMERA:
+			{
+				pComp = AddComponent<CCamera>("Camera");
+				break;
+			}
+			case CT_ANIMATION2D:
+			{
+				break;
+			}
+			case CT_ANIMATION:
+			{
+				pComp = AddComponent<CAnimation>("Animation");
+				break;
+			}
+			case CT_COLLIDER:
+			{
+				break;
+			}
+			case CT_SOUND:
+			{
+				break;
+			}
+			case CT_LIGHT:
+			{
+				pComp = AddComponent<CLight>("Light");
+				break;
+			}
+			case CT_VOLUMEFOG:
+			{
+				break;
+			}
+			case CT_DECAL:
+			{
+				break;
+			}
+			case CT_PARTICLE:
+			{
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}// end of switch
 
-		// Load 호출
-		(*iter)->Load(_pInstBR);
+		// Call Load Function
+		if (pComp != nullptr)
+		{
+			pComp->Load(_pInstBR);
+		}
+		SAFE_RELEASE(pComp);
 	}
 }

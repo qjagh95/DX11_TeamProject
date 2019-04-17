@@ -58,9 +58,19 @@ namespace EngineWrapper
 		void DeleteAllObject();
 		void ChangeObjectTag(String^ _strObjectTag);
 		void ChangeObjectInLayer(String^ _strLayerTag);
-		void ActiveObjSetScale(double _dX, double _dY, double _dZ);
+		void SetLocalScale(double _dX, double _dY, double _dZ);
+		void SetLocalRotate(double _dX, double _dY, double _dZ);
+		void SetLocalPosition(double _dX, double _dY, double _dZ);
+		void SetWorldScale(double _dX, double _dY, double _dZ);
+		void SetWorldRotate(double _dX, double _dY, double _dZ);
+		void SetWorldPosition(double _dX, double _dY, double _dZ);
+		/*void ActiveObjSetScale(double _dX, double _dY, double _dZ);
 		void ActiveObjSetRotate(double _dX, double _dY, double _dZ);
-		void ActiveObjSetPosition(double _dX, double _dY, double _dZ);
+		void ActiveObjSetPosition(double _dX, double _dY, double _dZ);*/
+		bool FindRendererComponent();
+		bool FindLightComponent();
+		bool IsGizmoClick();
+		cli::array<float>^ GetLocalTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
 		cli::array<float>^ GetWorldTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
 
 		void SetLightAmbient(double _dR, double _dG, double _dB)
@@ -148,6 +158,12 @@ namespace EngineWrapper
 		void LoadMeshFromFullPath(String^ _strMeshKey, String^ _strFullPath);
 		void SetMesh(String^ _strMeshTag);
 		void AddRenderComponent();
+
+	// 조명
+	public:
+		int GetLightType();
+		cli::array<float>^ GetSpecular();
+		float GetRange();
 
 	// 애니메이션
 	public:

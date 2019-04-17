@@ -73,19 +73,79 @@ void CoreWrapper::ChangeObjectInLayer(String^ _strLayerTag)
 	PUN::CEditManager::GetInst()->ChangeObjectInLayer(strLayerTag);
 }
 
-void CoreWrapper::ActiveObjSetScale(double _dX, double _dY, double _dZ)
+void CoreWrapper::SetLocalScale(double _dX, double _dY, double _dZ)
 {
-	PUN::CEditManager::GetInst()->ActiveObjectSetScale(_dX, _dY, _dZ);
+	PUN::CEditManager::GetInst()->SetLocalScale(_dX, _dY, _dZ);
 }
 
-void CoreWrapper::ActiveObjSetRotate(double _dX, double _dY, double _dZ)
+void CoreWrapper::SetLocalRotate(double _dX, double _dY, double _dZ)
 {
-	PUN::CEditManager::GetInst()->ActiveObjectSetRotate(_dX, _dY, _dZ);
+	PUN::CEditManager::GetInst()->SetLocalRotate(_dX, _dY, _dZ);
 }
 
-void CoreWrapper::ActiveObjSetPosition(double _dX, double _dY, double _dZ)
+void CoreWrapper::SetLocalPosition(double _dX, double _dY, double _dZ)
 {
-	PUN::CEditManager::GetInst()->ActiveObjectSetPosition(_dX, _dY, _dZ);
+	PUN::CEditManager::GetInst()->SetLocalPosition(_dX, _dY, _dZ);
+}
+
+void CoreWrapper::SetWorldScale(double _dX, double _dY, double _dZ)
+{
+	PUN::CEditManager::GetInst()->SetWorldScale(_dX, _dY, _dZ);
+}
+
+void CoreWrapper::SetWorldRotate(double _dX, double _dY, double _dZ)
+{
+	PUN::CEditManager::GetInst()->SetWorldRotate(_dX, _dY, _dZ);
+}
+
+void CoreWrapper::SetWorldPosition(double _dX, double _dY, double _dZ)
+{
+	PUN::CEditManager::GetInst()->SetWorldPosition(_dX, _dY, _dZ);
+}
+
+//void CoreWrapper::ActiveObjSetScale(double _dX, double _dY, double _dZ)
+//{
+//	PUN::CEditManager::GetInst()->ActiveObjectSetScale(_dX, _dY, _dZ);
+//}
+//
+//void CoreWrapper::ActiveObjSetRotate(double _dX, double _dY, double _dZ)
+//{
+//	PUN::CEditManager::GetInst()->ActiveObjectSetRotate(_dX, _dY, _dZ);
+//}
+//
+//void CoreWrapper::ActiveObjSetPosition(double _dX, double _dY, double _dZ)
+//{
+//	PUN::CEditManager::GetInst()->ActiveObjectSetPosition(_dX, _dY, _dZ);
+//}
+
+bool CoreWrapper::FindRendererComponent()
+{
+	return PUN::CEditManager::GetInst()->FindRenderComponent();
+}
+
+bool CoreWrapper::FindLightComponent()
+{
+	return PUN::CEditManager::GetInst()->FindLightComponent();
+}
+
+bool CoreWrapper::IsGizmoClick()
+{
+	return PUN::CEditManager::GetInst()->IsGizmoCheckClick();
+}
+
+cli::array<float>^ CoreWrapper::GetLocalTransform(String ^ _strObjectTag, String ^ _strLayerTag, int _type)
+{
+	vector<Vector3> pVecTranform;
+	string strObjectTag = ConvertMarshal<string, String^>(_strObjectTag);
+	string strLayerTag = ConvertMarshal<string, String^>(_strLayerTag);
+	pVecTranform = PUN::CEditManager::GetInst()->GetLocalTransform(strObjectTag, strLayerTag, _type);
+
+	cli::array<float>^ arrTransform = gcnew cli::array<float>(3);
+	arrTransform[0] = pVecTranform[0].x;
+	arrTransform[1] = pVecTranform[0].y;
+	arrTransform[2] = pVecTranform[0].z;
+
+	return arrTransform;
 }
 
 cli::array<float>^ CoreWrapper::GetWorldTransform(String^ _strObjectTag, String^ _strLayerTag, int _type)
@@ -134,6 +194,30 @@ void CoreWrapper::AddRenderComponent()
 	PUN::CEditManager* pManager = PUN::CEditManager::GetInst();
 	string strComponentTag = "renderer";
 	pManager->AddComponent(strComponentTag);
+}
+
+int CoreWrapper::GetLightType()
+{
+	return PUN::CEditManager::GetInst()->GetLightType();
+}
+
+cli::array<float>^ CoreWrapper::GetSpecular()
+{
+	vector<Vector4> pVecTranform;
+	pVecTranform = PUN::CEditManager::GetInst()->GetSpecular();
+
+	cli::array<float>^ arrSpecular = gcnew cli::array<float>(4);
+	arrSpecular[0] = pVecTranform[0].x;
+	arrSpecular[1] = pVecTranform[0].y;
+	arrSpecular[2] = pVecTranform[0].z;
+	arrSpecular[3] = pVecTranform[0].w;
+
+	return arrSpecular;
+}
+
+float CoreWrapper::GetRange()
+{
+	return PUN::CEditManager::GetInst()->GetLightRange();
 }
 
 void CoreWrapper::LoadClipFromFullPath(String^ _strFullPath)

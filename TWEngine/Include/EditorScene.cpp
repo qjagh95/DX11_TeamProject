@@ -34,7 +34,7 @@ bool EditorScene::Init()
 	pObject->SetSave(false);
 	CEditManager::GetInst()->SetFreeCamObj(pObject);
 	CTransform* pTr = pObject->GetTransform();
-	pTr->SetWorldPos(0.f, 200.f, 0.f);
+	pTr->SetWorldPos(0.f, 0.f, -20.f);
 
 	CFreeCamera* pFreeCamera = pObject->AddComponent<CFreeCamera>("FreeCam");
 

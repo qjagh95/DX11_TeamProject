@@ -327,32 +327,92 @@ PRendererCBuffer CRenderer::FindRendererCBuffer(const string & strName)
 
 void CRenderer::Save(BinaryWrite* _pInstBW)
 {
-	_pInstBW->WriteData(m_pMesh->GetTag());
-	_pInstBW->WriteData(m_pShader->GetTag());
-	_pInstBW->WriteData(m_strLayoutKey);
+	// Save Data
+	// Exception List
+	// - Renderstate Pass
+	// - C-Buffer
+	// - Bone Texture Name
+	string strMeshTag = "";
+	string strMaterialFileName = "";
+	string strShaderTag = "";
+	string strLayoutTag = "";
+	if (m_pMesh != nullptr)
+	{
+		strMeshTag = m_pMesh->GetTag();
+		strMaterialFileName = strMeshTag + ".msh";
+		strShaderTag = m_pShader->GetTag();
+		strLayoutTag = m_pMesh->GetInputLayoutKey();
+	}
+	bool is2DRenderer = m_b2DRenderer;
+	bool isDecal = m_bDecalEnable;
+
+	// Save
+	_pInstBW->WriteData(strMeshTag);
+	_pInstBW->WriteData(strMaterialFileName);
+	_pInstBW->WriteData(strShaderTag);
+	_pInstBW->WriteData(strLayoutTag);
+	_pInstBW->WriteData(is2DRenderer);
+	_pInstBW->WriteData(isDecal);
 }
 
 void CRenderer::Load(BinaryRead* _pInstBR)
 {
-	string strMeshTag = _pInstBR->ReadString();
-	string strShaderTag = _pInstBR->ReadString();
-	m_strLayoutKey = _pInstBR->ReadString();
-	m_pMesh->SetTag(strMeshTag);
-	m_pShader->SetTag(strShaderTag);
+	// Renderer 컴포넌트 추가시 Material 컴포넌트는 자동 등록된다.
 
-	// .msh 파일이 있는 경우에 메시를 세팅한다.
-	TCHAR* strMshFileName = CA2W((strMeshTag + ".msh").c_str());
-	ifstream* pIfs = _pInstBR->GetIfStream();
-	pIfs->open(strMeshTag + ".msh", ios::in);
-	pIfs->close();
-	if (pIfs->is_open() == true)
+	// Load Data
+	string strMeshTag = _pInstBR->ReadString();
+	string strMaterialFileName = _pInstBR->ReadString();
+	string strShaderTag = _pInstBR->ReadString();
+	string strLayoutKey = _pInstBR->ReadString();
+	bool   is2DRenderer = _pInstBR->ReadBool();
+	bool   isDecal = _pInstBR->ReadBool();
+
+	// Set
+	// Mesh
+	const TCHAR* filePath = CPathManager::GetInst()->FindPath(MESH_DATA_PATH);
+	string strFullFilePath = CW2A(filePath);
+	strFullFilePath += strMaterialFileName;
+
+	ifstream tempIfs;
+	tempIfs.open(strFullFilePath, ios::in);
+	if (tempIfs.is_open() == true)
 	{
+		// .msh File Set
+		std::basic_string<TCHAR> converted(strMaterialFileName.begin(), strMaterialFileName.end());
+		const TCHAR* strMshFileName = converted.c_str();
 		SetMesh(strMeshTag, strMshFileName);
+	}
+	else
+	{
+		// Tag Set
+		SetMesh(strMeshTag);
+	}
+	if (m_pMesh == nullptr)
+	{
 		return;
 	}
+	m_pMesh->SetTag(strMeshTag);
 
-	// 파일이 없다면 메시 태그명으로 설정하는 함수를 호출한다.
-	SetMesh(strMeshTag);
+	// Shader
+	m_pShader->SetTag(strShaderTag);
+	SetShader(strShaderTag);
+
+	// Layout
+	SetInputLayout(m_strLayoutKey);
+	//SetInputLayout(m_pMesh->GetInputLayoutKey());
+
+	// 2D Renderer
+	m_b2DRenderer = is2DRenderer;
+	if (m_b2DRenderer == true)
+	{
+		Enable2DRenderer();
+	}
+
+	// Decal 
+	m_bDecalEnable = isDecal;
+	SetDecalEnable(m_bDecalEnable);
+
+	tempIfs.close();
 }
 void CRenderer::AfterClone()
 {

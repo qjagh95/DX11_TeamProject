@@ -110,6 +110,16 @@ int CGizmo::Input(float fTime)
 			{
 			case GT_X:
 			{
+				if (fabsf(vAxis.x) < 0.2f)
+				{
+					vAxis.x = 0.f;
+				}
+
+				if (fabsf(vAxis.z) < 0.2f)
+				{
+					vAxis.z = 0.f;
+				}
+
 				if (vCameraAxis.y >= 0.92f || vCameraAxis.y <= -0.92f)
 				{
 					vAxis.x = vAxisDot.y < -0.5f ? vAxis.x *= -1.f : vAxis.x;
@@ -119,17 +129,26 @@ int CGizmo::Input(float fTime)
 					ObjMove.y /= 10.f;
 					ObjMove.z = vAxis.z * vMouseGap.z;
 					ObjMove.z /= 10.f;
+
+					if (m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_X].x < 0.f)
+					{
+						ObjMove.x *= -1.f;
+					}
+					if (m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_Z].z < 0.f)
+					{
+						ObjMove.z *= -1.f;
+					}
 				}
-				else if (vCameraAxis.z >= 0.92f || vCameraAxis.z <= -0.92f)
-				{
-					vAxis.x = vCameraAxis.z > 0.5f ? vAxis.x *= -1.f : vAxis.x;
-					ObjMove.x = vAxis.x * vMouseGap.z;
-					ObjMove.x /= 3.f;
-					ObjMove.y = vAxis.y * vMouseGap.y;
-					ObjMove.y /= 10.f;
-					ObjMove.z = vAxis.z * vMouseGap.x;
-					ObjMove.z /= 10.f;
-				}
+				//else if (vCameraAxis.z >= 0.92f || vCameraAxis.z <= -0.92f)
+				//{
+				//	vAxis.x = vCameraAxis.z > 0.5f ? vAxis.x *= -1.f : vAxis.x;
+				//	ObjMove.x = vAxis.x * vMouseGap.z;
+				//	ObjMove.x /= 3.f;
+				//	ObjMove.y = vAxis.y * vMouseGap.y;
+				//	ObjMove.y /= 10.f;
+				//	ObjMove.z = vAxis.z * vMouseGap.x;
+				//	ObjMove.z /= 10.f;
+				//}
 				else
 				{
 					ObjMove.x = vAxis.x * vMouseGap.x;
@@ -152,6 +171,15 @@ int CGizmo::Input(float fTime)
 					{
 						ObjMove.z *= -1.f;
 					}
+
+					if (m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_X].x < 0.f)
+					{
+						ObjMove.x *= -1.f;
+					}
+					if (m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_Z].z < 0.f)
+					{
+						ObjMove.z *= -1.f;
+					}
 				}
 			}
 			break;
@@ -163,6 +191,16 @@ int CGizmo::Input(float fTime)
 				ObjMove.y /= 3.f;
 				ObjMove.z = vAxis.z * vMouseGap.z;
 				ObjMove.z /= 10.f;
+
+				if (fabsf(vAxis.x) < 0.2f)
+				{
+					vAxis.x = 0.f;
+				}
+
+				if (fabsf(vAxis.z) < 0.2f)
+				{
+					vAxis.z = 0.f;
+				}
 
 				if (vAxis.x < 0.f)
 				{
@@ -178,6 +216,16 @@ int CGizmo::Input(float fTime)
 				{
 					ObjMove.z *= -1.f;
 				}
+
+				if (m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_X].x < 0.f)
+				{
+					ObjMove.x *= -1.f;
+				}
+				if (m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_Z].z < 0.f)
+				{
+					ObjMove.z *= -1.f;
+				}
+
 			}
 			break;
 			case GT_Z:
@@ -200,6 +248,11 @@ int CGizmo::Input(float fTime)
 					vAxis.z = vCameraAxis.x > -0.5f ? vAxis.z *= -1.f : vAxis.z;
 					ObjMove.z = vAxis.z * vMouseGap.x;
 					ObjMove.z /= 3.f;
+
+					if (m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_X].x < 0.f)
+					{
+						ObjMove.x *= -1.f;
+					}
 				}
 				else if (fCameraYAxisX >= 0.9f ||
 					fCameraYAxisX <= -0.9f)
@@ -211,6 +264,11 @@ int CGizmo::Input(float fTime)
 					vAxis.z = fCameraYAxisX < -0.5f ? vAxis.z *= -1.f : vAxis.z;
 					ObjMove.z = vAxis.z * vMouseGap.x;
 					ObjMove.z /= 3.f;
+
+					if (m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_X].x < 0.f)
+					{
+						ObjMove.x *= -1.f;
+					}
 				}
 				else
 				{
@@ -240,6 +298,11 @@ int CGizmo::Input(float fTime)
 					ObjMove.y = vAxis.y * vMouseGap.y;
 					ObjMove.z = vAxis.z * vMouseGap.z;
 					ObjMove.z /= 3.f;
+
+					if (m_pScene->GetMainCameraTransformNonCount()->GetWorldAxis()[AXIS_X].x < 0.f)
+					{
+						ObjMove.x *= -1.f;
+					}
 				}
 			}
 			break;

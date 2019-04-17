@@ -42,6 +42,10 @@ CTestScene::~CTestScene()
 
 bool CTestScene::Init()
 {
+	wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
+	wstr += L"Test.dat";
+	string filePath = CW2A(wstr.c_str());
+	m_pScene->Load(filePath);
 	//PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
 
 	//_SMgr->CreateSoundEffect("bgm1", TEXT("SurgeonAttack.wav"));

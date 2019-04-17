@@ -183,6 +183,16 @@ void CLight::UpdateLightCBuffer()
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("RimLight", &m_tRimInfo);
 }
 
+float CLight::GetRange()
+{
+	return m_tInfo.fRange;
+}
+
+Vector4 CLight::GetLightSpecular()
+{
+	return m_tInfo.vSpc;
+}
+
 void CLight::Start()
 {
 }

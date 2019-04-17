@@ -20,6 +20,13 @@ namespace WinFormEditor
                 y = _y;
                 z = _z;
             }
+
+            public Vector3(float[] _arrF)
+            {
+                x = _arrF[0];
+                y = _arrF[1];
+                z = _arrF[2];
+            }
         }
 
         public class Vector4
@@ -38,17 +45,20 @@ namespace WinFormEditor
             }
         }
 
-        public string  strLayerTag  { set; get; }
-        public Vector3 vecScale     { set; get; }
-        public Vector3 vecRotate    { set; get; }
-        public Vector3 vecPosition  { set; get; }
-        public Vector4 vecColor     { set; get; }
+        public string strLayerTag { set; get; }
+        public Vector3 vecLScale { set; get; }
+        public Vector3 vecLRotate { set; get; }
+        public Vector3 vecLPosition { set; get; }
+        public Vector3 vecWScale { set; get; }
+        public Vector3 vecWRotate { set; get; }
+        public Vector3 vecWPosition { set; get; }
+        public Vector4 vecColor { set; get; }
 
         public void ClearData()
         {
             strLayerTag = "";
-            Vector3[] arrVector = { vecScale, vecRotate, vecPosition };
-            for(int i = 0; i < 3; ++i)
+            Vector3[] arrVector = { vecWScale, vecWRotate, vecWPosition };
+            for (int i = 0; i < 3; ++i)
             {
                 arrVector[i].x = 0.0f;
                 arrVector[i].y = 0.0f;

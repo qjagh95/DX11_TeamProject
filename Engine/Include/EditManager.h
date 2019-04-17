@@ -39,6 +39,7 @@ private:
 	CGameObject*	 m_pXGizmoObj;
 	CGameObject*	 m_pYGizmoObj;
 	CGameObject*	 m_pZGizmoObj;
+	bool			 m_isGizmoClick;
 	class CArm*		 m_pArm;
 	CGameObject*	 m_pFreeCamObj;
 	class CEditTest* m_pEditTest;
@@ -69,6 +70,8 @@ public:
 public:
 	void GetLayerList(vector<string>* _pVec);
 
+	void PrivateEditObjSettingLayer();
+
 	// 오브젝트
 public:
 	// Navigation
@@ -88,9 +91,17 @@ public:
 	void ChangeObjectTag(const string _strObjectTag);
 	void ChangeObjectInLayer(const string _strLayerTag);
 	void AddComponent(string& _strCompTag);
-	void ActiveObjectSetScale(double _dX, double _dY, double _dZ);
-	void ActiveObjectSetRotate(double _dX, double _dY, double _dZ);
-	void ActiveObjectSetPosition(double _dX, double _dY, double _dZ);
+	void SetLocalScale(double _dX, double _dY, double _dZ);
+	void SetLocalRotate(double _dX, double _dY, double _dZ);
+	void SetLocalPosition(double _dX, double _dY, double _dZ);
+	void SetWorldScale(double _dX, double _dY, double _dZ);
+	void SetWorldRotate(double _dX, double _dY, double _dZ);
+	void SetWorldPosition(double _dX, double _dY, double _dZ);
+	bool FindRenderComponent();
+	bool FindLightComponent();
+	void SetGizmoClick(bool _isFlag);
+	bool IsGizmoCheckClick();
+	vector<Vector3> GetLocalTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
 	vector<Vector3> GetWorldTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
 	void SetMouseWheel(short _sMouseWheel);
 	void SetGizmoEnable(bool _bEnable);
@@ -135,6 +146,10 @@ public:
 
 	bool SaveNavFile(const string& FullPath);
 	bool LoadNavFile(const string& FullPath);
+
+	int GetLightType();
+	float GetLightRange();
+	vector<Vector4> GetSpecular();
 
 	CLandScape * GetLandScape() const { return m_LandScape; }
 };

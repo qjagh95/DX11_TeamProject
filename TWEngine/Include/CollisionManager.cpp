@@ -9,6 +9,7 @@
 #include "Component/ColliderRay.h"
 #include "Component/ColliderPoint.h"
 #include "Rendering/RenderManager.h"
+#include "Core.h"
 
 using namespace std;
 
@@ -33,8 +34,17 @@ CCollisionManager::~CCollisionManager()
 
 bool CCollisionManager::Init()
 {
-	CreateGroup("Default", Vector3(-200.f, -200.f, -200.f), Vector3(200.f, 200.f, 200.f),
-		10, 10, 10, CGT_3D);
+	if (CCore::GetInst()->m_bEditorMode == true)
+	{
+		CreateGroup("Default", Vector3(-3000.f, -3000.f, -3000.f), Vector3(3000.f, 3000.f, 3000.f),
+			1, 1, 1, CGT_3D);
+	}
+	else
+	{
+		CreateGroup("Default", Vector3(-200.f, -200.f, -200.f), Vector3(200.f, 200.f, 200.f),
+			10, 10, 10, CGT_3D);
+	}
+
 	CreateGroup("BackGround", Vector3(0.f, 0.f, 0.f), Vector3(5000.f, 5000.f, 0.f),
 		10, 10, 1, CGT_3D);
 	CreateGroup("UI", Vector3(0.f, 0.f, 0.f),
