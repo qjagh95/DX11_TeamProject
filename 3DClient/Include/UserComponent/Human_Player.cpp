@@ -23,6 +23,8 @@ CHuman_Player::CHuman_Player():
 	m_fTimerBuf_State(0.f),
 	m_pHandSocketObj(nullptr)
 {
+	m_bBatteryOut = false;
+	m_bBatteryChange = false;
 }
 
 CHuman_Player::CHuman_Player(const CHuman_Player & player):
@@ -37,7 +39,6 @@ CHuman_Player::~CHuman_Player()
 	SAFE_RELEASE(m_pHandSocketObj);
 	SAFE_RELEASE(m_pInvenObj);
 	SAFE_RELEASE(m_pInven);
-	SAFE_RELEASE(m_pInvenTr);
 	SAFE_RELEASE(m_pHandycamObj);
 	SAFE_RELEASE(m_pHandycam);
 }
@@ -86,7 +87,6 @@ bool CHuman_Player::Init()
 	m_pInven->SetInvenMax(19);
 
 	CTransform*	pInvenTr = m_pInvenObj->GetTransform();
-	pInvenTr->SetWorldPos(0.f, 0.f, 0.f);
 
 	SAFE_RELEASE(pInvenTr);
 
@@ -103,7 +103,6 @@ bool CHuman_Player::Init()
 	m_pHandycam = m_pHandycamObj->AddComponent<CHandycam>("Handycam");
 
 	CTransform*	pHandycamTr = m_pHandycamObj->GetTransform();
-	pHandycamTr->SetWorldPos(0.f, 0.f, 0.f);
 
 	SAFE_RELEASE(pHandycamTr);
 
@@ -348,7 +347,44 @@ int CHuman_Player::Update(float fTime)
 	else if (bCamPush)
 	{
 		bCamPush = false;
+
 		m_pHandycam->SetVisible();
+
+		if (!m_pHandycam->GetVisible())
+		{
+			GET_SINGLE(CRenderManager)->SetOnOff(1.f);
+		}
+	}
+
+	if (m_pHandycam->GetBatteryOut())
+	{
+		m_bBatteryOut = true;
+	}
+
+	else if (m_pHandycam->GetBatteryChange())
+	{
+		m_bBatteryChange = true;
+	}
+
+	if (m_bBatteryOut)
+	{
+		if (m_pHandycam->GetVisible())
+		{
+			m_pHandycam->SetVisible(false);
+			m_pHandycam->SetCantUse(true);
+			GET_SINGLE(CRenderManager)->SetOnOff(0.00001f);
+			GET_SINGLE(CRenderManager)->SetStarLightScope(-1);
+			m_bBatteryOut = false;
+			m_pHandycam->SetOutFlag(m_bBatteryOut);
+		}
+	}
+
+	if (m_bBatteryChange)
+	{
+		m_pHandycam->SetChangeFlag(false);
+		GET_SINGLE(CRenderManager)->SetOnOff(1.f);
+		GET_SINGLE(CRenderManager)->SetStarLightScope(1);
+		m_bBatteryChange = false;
 	}
 
 	return 0;

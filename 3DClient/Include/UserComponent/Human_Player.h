@@ -88,11 +88,12 @@ private:
 	class PUN::CSoundSource *m_pSound;
 	class CGameObject*	m_pInvenObj;
 	class CInventory*	m_pInven;
-	class CTransform*	m_pInvenTr;
 	class CGameObject*	m_pHandycamObj;
 	class CHandycam*	m_pHandycam;
 	Vector3 m_vInitLocalPos;
 	bool m_bLoadedOnce;
+	bool	m_bBatteryOut;
+	bool	m_bBatteryChange;
 	int m_iState;
 	float m_fTimerBuf;			//csv val :	NULL
 	float m_fHideTime;			//csv val :	fHideTime

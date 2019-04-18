@@ -113,3 +113,20 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
     // LDR °ª Ãâ·Â
     return output;
 }
+
+cbuffer FadeCBuffer : register(b11)
+{
+    float g_fFadeAmount;
+    float3 vEmpty1245134123213;
+}
+
+PS_OUTPUT_SINGLE FadePS(VS_OUTPUT_TEX input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    float4 vColor = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+    
+    output.vTarget0 = vColor * g_fFadeAmount;
+
+    return output;
+}

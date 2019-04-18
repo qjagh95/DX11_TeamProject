@@ -5,12 +5,17 @@
 #include "Component/Transform.h"
 #include "GameObject.h"
 #include "Component/ColliderRect.h"
-#include "Component/ColliderSphere.h"
-#include "Component/ColliderOBB3D.h"
+#include "Input.h"
+#include "Inventory.h"
+#include "Handycam.h"
 
-CBatteryIcon::CBatteryIcon()
+CBatteryIcon::CBatteryIcon()	:
+	 m_pInvenObj(nullptr)
+	,m_pInven(nullptr)
 {
 	m_eComType = (COMPONENT_TYPE)UT_ICON;
+	m_bMouseOn = false;
+	m_bUse = false;
 }
 
 CBatteryIcon::CBatteryIcon(const CBatteryIcon & Icon1)	:
@@ -20,6 +25,13 @@ CBatteryIcon::CBatteryIcon(const CBatteryIcon & Icon1)	:
 
 CBatteryIcon::~CBatteryIcon()
 {
+	SAFE_RELEASE(m_pInvenObj);
+	SAFE_RELEASE(m_pInven);
+}
+
+bool CBatteryIcon::GetUse() const
+{
+	return m_bUse;
 }
 
 void CBatteryIcon::AfterClone()
@@ -73,6 +85,31 @@ int CBatteryIcon::Input(float fTime)
 
 int CBatteryIcon::Update(float fTime)
 {
+	if (m_bMouseOn)
+	{
+		if (KEYPRESS("RButton"))
+		{
+			m_bUse = true;
+			m_pInvenObj = CGameObject::FindObject("Inven");
+
+			m_pInven = m_pInvenObj->FindComponentFromTag<CInventory>("Inven");
+			m_pInven->DeleteItem(m_pObject);
+
+			SAFE_RELEASE(m_pInvenObj);
+
+			CGameObject*	pHandycamObj = CGameObject::FindObject("Handycam");
+
+			CHandycam*	pHandycam = pHandycamObj->FindComponentFromTag<CHandycam>("Handycam");
+
+			pHandycam->ChangeBattery(true);
+
+			SAFE_RELEASE(pHandycam);
+			SAFE_RELEASE(pHandycamObj);
+
+			m_pObject->SetEnable(false);
+		}
+	}
+
 	return 0;
 }
 
@@ -98,7 +135,7 @@ void CBatteryIcon::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pDest->GetTag() == "MouseWindow")
 	{
-		int a = 10;
+		m_bMouseOn = true;
 	}
 }
 
@@ -108,4 +145,8 @@ void CBatteryIcon::MouseOn(CCollider * pSrc, CCollider * pDest, float fTime)
 
 void CBatteryIcon::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 {
+	if (pDest->GetTag() == "MouseWindow")
+	{
+		m_bMouseOn = false;
+	}
 }

@@ -92,6 +92,7 @@ private:
 	Vector4				m_vDepthFogColor;
 	float				m_fDepthFogStart;
 	float				m_fDepthFogEnd;
+	float				m_fOnOff;
 
 public:
 	GAME_MODE GetGameMode()	const;
@@ -112,6 +113,11 @@ public:
 	void EnableFilter(CS_FILTER_TYPE eType);
 	void DisableFilter(CS_FILTER_TYPE eType);
 	void SetStarLightScope(int _flag);
+	void SetOnOff(float iOnOff);
+
+	void SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime);
+	void SetAdaptValue(float fAdaptation);
+	void SetBloomValue(float fBloomScale);
 
 public:
 	void AddRenderObj(class CGameObject* pObj);

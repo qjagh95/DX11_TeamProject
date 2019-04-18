@@ -46,7 +46,6 @@ bool CZipper::Init()
 	SAFE_RELEASE(pMaterial);
 
 	CTransform*		pTransform = m_pObject->GetTransform();
-	//pTransform->SetWorldScale(120.f, 175.f, 1.f);
 	pTransform->SetWorldScale(120.f, 510.f, 1.f);
 	pTransform->SetWorldPos(255.f, 80.f, 1.f);
 

@@ -93,9 +93,9 @@ int CBattery::Update(float fTime)
 				SAFE_RELEASE(pIcon);
 				SAFE_RELEASE(pIconObj);
 
-				SAFE_RELEASE(m_pInvenObj);
+				//SAFE_RELEASE(m_pInvenObj);
 
-				m_pObject->Die();
+				m_pObject->SetEnable(false);
 				m_bUseInven = true;
 			}
 		}

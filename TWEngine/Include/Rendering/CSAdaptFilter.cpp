@@ -26,6 +26,11 @@ void CCSAdaptFilter::SetAdaptationTime(float fAdapt)
 	m_fAdaptTime = fAdapt;
 }
 
+void CCSAdaptFilter::ResetTime(float fTime)
+{
+	m_fElapsedTime = 0.f;
+}
+
 bool CCSAdaptFilter::Init()
 {
 	m_pPostEffect = new CPostEffect;
@@ -95,9 +100,9 @@ void CCSAdaptFilter::SetShaderResource(int iPass, float fTime)
 		if (m_fElapsedTime > fResetTime)
 		{
 			m_fElapsedTime -= fResetTime;
-		}		
+		}
 #endif
-		
+
 		fAdaptNorm = min(m_fAdaptTime < 0.0001f ? m_fAdaptTime : m_fElapsedTime / m_fAdaptTime, m_fAdaptTime - 0.0001f);
 	}
 
@@ -139,12 +144,12 @@ void CCSAdaptFilter::ResetShaderResource(int iPass, float fTime)
 	case 1:
 		m_vecUAV[ADAPT_PASS_SECOND]->ResetUAV(0);
 		CONTEXT->CSSetShaderResources(1, 1, &pSRV);
-		CONTEXT->CSSetShaderResources(2, 1, &pSRV);	
+		CONTEXT->CSSetShaderResources(2, 1, &pSRV);
 
 		//ID3D11Buffer*				pTempBuffer;
 		ID3D11UnorderedAccessView*	pTempUAV;
 		ID3D11ShaderResourceView*	pTempSRV;
-		
+
 		// Swap วุมุดู
 		pTempUAV = m_pAdaptAvgLumUAV;
 		pTempSRV = m_pAdaptAvgLumSRV;

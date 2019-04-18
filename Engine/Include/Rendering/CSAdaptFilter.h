@@ -32,6 +32,7 @@ private:
 
 public:
 	void SetAdaptationTime(float fAdapt);
+	void ResetTime(float fTime);
 
 public:
 	virtual bool Init();

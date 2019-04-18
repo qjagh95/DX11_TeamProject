@@ -407,7 +407,7 @@ namespace PUN
 		int isStarLightScope;
 		int isShake;
 		int isSign;
-		float fEmpty;
+		float fOnOff;
 		Vector2 vRandomPos;
 		Vector2 vEmpty;
 		_tagStarLightScope() :

@@ -14,6 +14,15 @@ private:
 	CBatteryIcon(const CBatteryIcon& Icon1);
 	virtual ~CBatteryIcon();
 
+private:
+	CGameObject*	m_pInvenObj;
+	class CInventory*	m_pInven;
+	bool	m_bMouseOn;
+	bool	m_bUse;
+
+public:
+	bool	GetUse()	const;
+
 public:
 	virtual void AfterClone();
 	virtual bool Init();

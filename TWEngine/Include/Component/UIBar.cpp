@@ -1,5 +1,3 @@
-
-
 #include "EngineHeader.h"
 #include "UIBar.h"
 #include "Renderer.h"
@@ -11,11 +9,11 @@
 
 PUN_USING
 
-CUIBar::CUIBar() :
-	m_pCollider(nullptr)
+CUIBar::CUIBar()
 {
 	m_eUIType = UT_BAR;
 	SetTag("UIBar");
+	m_iFlag = -1;
 }
 
 CUIBar::CUIBar(const CUIBar & bar) :
@@ -32,7 +30,6 @@ CUIBar::CUIBar(const CUIBar & bar) :
 
 CUIBar::~CUIBar()
 {
-	SAFE_RELEASE(m_pCollider);
 }
 
 void CUIBar::SetBarDir(BAR_DIR eDir)
@@ -128,9 +125,32 @@ void CUIBar::LightOff()
 	m_tCBuffer.vLight = Vector4::White;
 }
 
+void CUIBar::SetColor(Vector4 vColor)
+{
+	m_tCBuffer.vLight = vColor;
+}
+
+float CUIBar::GetValue() const
+{
+	return m_fValue;
+}
+
 void CUIBar::AfterClone()
 {
-	m_pCollider = (CColliderRect*)FindComponentFromType<CCollider>(CT_COLLIDER);
+}
+
+void CUIBar::SetVisible(float fBatteryTime)
+{
+	if (fBatteryTime < 0.5f)
+	{
+		m_pObject->SetEnable(true);
+		m_tCBuffer.vLight = Vector4::Red;
+	}
+
+	if (fBatteryTime >= 0.5f)
+	{
+		m_pObject->SetEnable(false);
+	}
 }
 
 bool CUIBar::Init()
@@ -138,16 +158,20 @@ bool CUIBar::Init()
 	m_fMinValue = 0.f;
 	m_fMaxValue = 100.f;
 	m_fValue = 100.f;
-	m_tCBuffer.fPercent = 1.f;
+	m_tCBuffer.fPercent = 100.f;
 	m_tCBuffer.vLight = Vector4::White;
 
 	m_fValueLength = 100.f;
+
+	m_pObject->SetRenderGroup(RG_UI);
 
 	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("BarRenderer");
 
 	pRenderer->SetMesh("TexRect");
 	pRenderer->SetRenderState(ALPHA_BLEND);
+	pRenderer->SetRenderState(DEPTH_DISABLE);
 	pRenderer->SetShader(BAR_SHADER);
+	pRenderer->SetDecalEnable(false);
 	pRenderer->Enable2DRenderer();
 
 	pRenderer->CreateRendererCBuffer("Bar", sizeof(BarCBuffer));
@@ -156,23 +180,13 @@ bool CUIBar::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	//pMaterial->SetDiffuseTex(0, "Bar", TEXT("UI/HPMP/HP_Bar.png"));
+	pMaterial->SetDiffuseTex(0, "HandycamBar", TEXT("UI/CameraBar.png"));
+	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(80.f, 13.f, 1.f);
+	m_pTransform->SetWorldScale(90.f, 12.f, 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
-
-	CColliderRect*	pRC = AddComponent<CColliderRect>("BarBody");
-
-	m_pCollider = pRC;
-
-	pRC->SetCollisionGroup("UI");
-	pRC->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(95.f, 13.f, 0.f));
-	pRC->SetCollisionCallback(CCT_ENTER, this, &CUIBar::Hit);
-	pRC->SetCollisionCallback(CCT_LEAVE, this, &CUIBar::MouseOut);
-
-	SAFE_RELEASE(pRC);
 
 	SetBarDir(BD_LEFT);
 
@@ -200,13 +214,11 @@ int CUIBar::Update(float fTime)
 		vScale.x *= m_tCBuffer.fPercent;
 		vMin = vScale - m_vScale;
 		m_pTransform->SetWorldScale(vScale);
-		m_pCollider->SetInfo(vMin, vScale);
 		break;
 	case BD_UP:
 		vScale.y *= m_tCBuffer.fPercent;
 		vMin = vScale - m_vScale;
 		m_pTransform->SetWorldScale(vScale);
-		m_pCollider->SetInfo(vMin, vScale);
 		break;
 	case BD_DOWN:
 		vScale.y *= m_tCBuffer.fPercent;

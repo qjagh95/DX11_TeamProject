@@ -21,7 +21,7 @@ private:
 	float		m_fValue;
 	float		m_fValueLength;
 	Vector3		m_vScale;
-	class CColliderRect*	m_pCollider;
+	int			m_iFlag;
 
 public:
 	void SetBarDir(BAR_DIR eDir);
@@ -32,9 +32,12 @@ public:
 	void SetScale(float x, float y, float z);
 	void LightOn();
 	void LightOff();
+	void SetColor(Vector4 vColor);
+	float GetValue()	const;
 
 public:
 	virtual void AfterClone();
+	void SetVisible(float fBatteryTime);
 	virtual bool Init();
 	virtual int Input(float fTime);
 	virtual int Update(float fTime);

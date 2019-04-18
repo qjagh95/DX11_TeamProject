@@ -6,7 +6,7 @@ cbuffer cbCameraFilter : register(b12)
     int isFlag;
     int isShake;
     int isSign;
-    float fcbCameraEmpty;
+    float fOnOff;
     float2 vRandomPos;
     float2 vcbCameraEmpty;
 }
@@ -74,8 +74,8 @@ PS_OUTPUT_SINGLE StarLightScopePS(VS_OUTPUT_TEX input)
         // 최종 색상 값
         vColor *= filterColor * vNoiseColor;
     }
-
-    output.vTarget0 = vColor;
+    
+    output.vTarget0 = vColor * fOnOff;
     return output;
 }
 

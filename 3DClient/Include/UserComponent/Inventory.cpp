@@ -139,6 +139,9 @@ void CInventory::DeleteItem(CGameObject * pItem)
 		{
 			m_vecItem[i] = nullptr;
 			--m_iIndex;
+			--m_iMoveIndex;
+
+			m_fItemY -= 100.f;
 		}
 	}
 }
@@ -278,7 +281,6 @@ void CInventory::AddInvenList(CGameObject * pItem)
 	pItemTr->AddParentFlag(TPF_ROT);
 	pItemTr->AddParentFlag(TPF_POS);
 	pItemTr->AddParentFlag(TPF_SCALE);
-	//pItemTr->SetWorldRelativePos(147.f, 201.f - m_fItemY, 0.f);
 	pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 	pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 

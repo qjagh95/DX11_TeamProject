@@ -31,3 +31,12 @@ enum TRACE_STATE
 	TS_TRACE,
 	TS_MAX,
 };
+
+// Handycam State
+enum HANDYCAM_STATE
+{
+	HS_NORMAL,
+	HS_BATTERYOUT,
+	HS_BATTERYCHANGE,
+	HS_END
+};

@@ -65,6 +65,7 @@ CRenderManager::CRenderManager() :
 	m_bDepthFog = false;
 
 	m_iScopeFlag = -1;
+	m_fOnOff = 1.f;
 
 	m_fMiddleGrey = 0.863f;
 	m_fLumWhite = 1.53f;
@@ -1121,6 +1122,7 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 	// 야간 투시경 
 
 	// 상수 버퍼 업데이트
+	SetOnOff(m_fOnOff);
 	SetStarLightScope(m_iScopeFlag);
 	m_accShakeTime += _fTime;
 	float quakeTime = 0.3f;
@@ -1497,6 +1499,38 @@ void CRenderManager::SetStarLightScope(int _flag)
 	m_iScopeFlag = _flag;
 
 	m_tStarLightScope.isStarLightScope = m_iScopeFlag;
+}
+
+void CRenderManager::SetOnOff(float iOnOff)
+{
+	m_fOnOff = iOnOff;
+	m_tStarLightScope.fOnOff = m_fOnOff;
+}
+
+void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime)
+{
+	m_fMiddleGrey = fMiddleGrey;
+	m_fLumWhite = fLumWhite;
+
+	m_pPostEffect->SetFinalPassCB(m_fMiddleGrey, m_fLumWhite, fTime);
+	m_pPostEffect->UpdateCBuffer(CFT_HDR);
+}
+
+void CRenderManager::SetAdaptValue(float fAdaptation)
+{
+	m_fAdaptation = fAdaptation;
+
+	CCSAdaptFilter*	pFilter = (CCSAdaptFilter*)GET_SINGLE(CViewManager)->FindCSFilter(CFT_ADAPTATION);
+
+	pFilter->SetAdaptationTime(m_fAdaptation);
+}
+
+void CRenderManager::SetBloomValue(float fBloomScale)
+{
+	m_fBloomScale = fBloomScale;
+
+	CCSBloomFilter*	pFilter = (CCSBloomFilter*)GET_SINGLE(CViewManager)->FindCSFilter(CFT_BLOOM);
+	pFilter->SetBloomScale(m_fBloomScale);
 }
 
 void CRenderManager::FindMagicNumber(float fTime)

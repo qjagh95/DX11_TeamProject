@@ -1,6 +1,6 @@
 #include "Share.fx"
 
-cbuffer Collider	: register(b8)
+cbuffer Collider	: register(b7)
 {
 	float4	g_vColor;
 }
