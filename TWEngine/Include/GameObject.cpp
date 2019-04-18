@@ -22,7 +22,8 @@ CGameObject::CGameObject() :
 	m_pParent(nullptr),
 	m_iObjectListIdx(0),
 	m_isFrustumCull(false),
-	m_pPickingCollSphere(nullptr)
+	m_pPickingCollSphere(nullptr),
+	m_bUseFrustumCull(true)
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;
@@ -387,6 +388,11 @@ const list<class CComponent*>* CGameObject::GetComponentList() const
 	return &m_ComList;
 }
 
+const std::list<CGameObject*>* CGameObject::GetChildList()
+{
+	return &m_ChildList;
+}
+
 RENDER_GROUP CGameObject::GetRenderGroup() const
 {
 	return m_eRenderGroup;
@@ -399,35 +405,54 @@ bool CGameObject::EmptyComponent() const
 
 bool CGameObject::FrustumCull()
 {
-	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
-	CRenderer* pRenderer = FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
-
-	if (pRenderer == nullptr)
+	if(m_bUseFrustumCull)
 	{
+		CCamera* pCamera = m_pScene->GetMainCameraNonCount();
+		CRenderer* pRenderer = FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
+
+		if (pRenderer == nullptr)
+		{
+			return false;
+		}
+
+		CMesh* pMesh = pRenderer->GetMesh();
+
+		Vector3	vCenter = pMesh->GetCenter().TransformCoord(m_pTransform->GetLocalMatrix() * m_pTransform->GetWorldMatrix());
+
+		Vector3	vScale = m_pTransform->GetWorldScale();
+
+		float	fScale = vScale.x;
+		fScale = fScale < vScale.y ? vScale.y : fScale;
+		fScale = fScale < vScale.z ? vScale.z : fScale;
+
+		float fRadius = pMesh->GetRadius() * fScale;
+		m_isFrustumCull = pCamera->FrustumInSphere(vCenter, fRadius);
+
+		SAFE_RELEASE(pMesh);
+
+		return m_isFrustumCull;
+	}
+	else
+	{
+		CRenderer* pRenderer = FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
+
+		if (pRenderer == nullptr)
+		{
+			return false;
+		}
 		return false;
 	}
-
-	CMesh* pMesh = pRenderer->GetMesh();
-
-	Vector3	vCenter = pMesh->GetCenter().TransformCoord(m_pTransform->GetLocalMatrix() * m_pTransform->GetWorldMatrix());
-
-	Vector3	vScale = m_pTransform->GetWorldScale();
-
-	float	fScale = vScale.x;
-	fScale = fScale < vScale.y ? vScale.y : fScale;
-	fScale = fScale < vScale.z ? vScale.z : fScale;
-
-	float fRadius = pMesh->GetRadius() * fScale;
-	m_isFrustumCull = pCamera->FrustumInSphere(vCenter, fRadius);
-
-	SAFE_RELEASE(pMesh);
-
-	return m_isFrustumCull;
+	
 }
 
 bool CGameObject::IsFrustumCull() const
 {
 	return m_isFrustumCull;
+}
+
+void CGameObject::SetFrustrumCullUse(bool bCull)
+{
+	m_bUseFrustumCull = bCull;
 }
 
 void CGameObject::Start()

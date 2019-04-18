@@ -12,8 +12,13 @@
 #include <Scene/Scene.h>
 #include <Component/Camera.h>
 #include <Component/ColliderOBB3D.h>
+#include <Component/Arm.h>
+#include <Device.h>
 #include "Inventory.h"
+
 #include "Handycam.h"
+
+using namespace PUN;
 
 CHuman_Player::CHuman_Player():
 	m_pAnimation(nullptr),
@@ -21,15 +26,52 @@ CHuman_Player::CHuman_Player():
 	m_fTimerBuf(0.f),
 	m_iState(1),
 	m_fTimerBuf_State(0.f),
-	m_pHandSocketObj(nullptr)
+	m_pHandSocketObj(nullptr),
+	m_pHeadObj(nullptr),
+	m_fViewMaxAngleY(90.f),
+	m_fViewMinAngleY(-90.f),
+	m_fGunMaxAngleY(80.f),
+	m_fGunMinAngleY(-80.f),
+	pCamEffManager(nullptr),
+	m_vCamWorldOffset(0.f, -7.5f, -5.f),
+	m_vCamLocalOffset(0.f, 2.75f, -1.6f),
+	m_fItemTakeTimerBuf(0.f),
+	m_fCamTakeTime(0.8f),
+	m_fGunTakeTime(1.2f)
 {
-	m_bBatteryOut = false;
-	m_bBatteryChange = false;
 }
 
 CHuman_Player::CHuman_Player(const CHuman_Player & player):
 	PUN::CUserComponent(player)
 {
+	m_bLoadedOnce		   = player.m_bLoadedOnce;
+	m_iState = 1;
+	
+	m_fHideTime = player.m_fHideTime;
+	m_fDoorEffectDelay = player.m_fDoorEffectDelay;
+	m_fFWalkSpeed = player.m_fFWalkSpeed;
+	m_fRWalkSpeed = player.m_fRWalkSpeed;
+	m_fLWalkSpeed = player.m_fLWalkSpeed;
+	m_fBackWalkSpeed = player.m_fBackWalkSpeed;
+	m_fSprintSpeed = player.m_fSprintSpeed;
+	m_fCrouchToStandSpeed	  = player.m_fCrouchToStandSpeed;
+	m_fStandToCrouchSpeed = player.m_fStandToCrouchSpeed;
+	m_fCrouchHeight = player.m_fCrouchHeight;
+	
+	m_fCrouchForwardSpd = player.m_fCrouchForwardSpd;
+	m_fCrouchBackSpd = player.m_fCrouchBackSpd;
+	m_fCrouchLSpd = player.m_fCrouchLSpd;
+	m_fCrouchRSpd = player.m_fCrouchRSpd;
+	m_fViewMaxAngleY = player.m_fViewMaxAngleY;
+	m_fViewMinAngleY = player.m_fViewMinAngleY;
+	m_fGunMaxAngleY = player.m_fGunMaxAngleY;
+	m_fGunMinAngleY = player.m_fGunMinAngleY;
+	m_vCamWorldOffset = player.m_vCamWorldOffset;
+
+	pCamEffManager = nullptr;
+	m_pHeadObj = nullptr; m_pAnimation = nullptr; m_pHandSocketObj = nullptr; m_pSound = nullptr;
+	m_fTimerBuf = 0.f;
+	m_fTimerBuf_State = 0.f;
 }
 
 CHuman_Player::~CHuman_Player()
@@ -37,31 +79,35 @@ CHuman_Player::~CHuman_Player()
 	SAFE_RELEASE(m_pAnimation);
 	SAFE_RELEASE(m_pSound);
 	SAFE_RELEASE(m_pHandSocketObj);
-	SAFE_RELEASE(m_pInvenObj);
+	SAFE_RELEASE(m_pHeadObj);
 	SAFE_RELEASE(m_pInven);
-	SAFE_RELEASE(m_pHandycamObj);
 	SAFE_RELEASE(m_pHandycam);
 }
 
 bool CHuman_Player::Init()
 {
-	//m_pTransform->SetWorldPivot(Vector3::One * 0.5f);
-	m_pHandSocketObj = PUN::CGameObject::CreateObject("Weapon", m_pLayer);
-	PUN::CColliderOBB3D *pCol = m_pHandSocketObj->AddComponent<PUN::CColliderOBB3D>("col");
-	pCol->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(1.f, 1.f, 1.f));
-
-	SAFE_RELEASE(pCol);
-
-	PUN::CTransform*	pTr = m_pHandSocketObj->GetTransform();
-	pTr->SetWorldScale(0.2f, 0.2f, 0.2f);
-	//pTr->SetLocalRotY(-90.f);
-
-	PUN::CRenderer*	pWeaponRenderer = m_pHandSocketObj->AddComponent<PUN::CRenderer>("WeaponRenderer");
-	pWeaponRenderer->SetMesh("chair", TEXT("chair.msh"));
-	pWeaponRenderer->SetDecalEnable(false);
+	pCamEffManager = CCameraEff::GetInst();
+	pCamEffManager->Init();
+	PUN::CTransform *pCamera = m_pScene->GetMainCameraTransform();
+	pCamEffManager->SetCamTransform(pCamera);
+	SAFE_RELEASE(pCamera);
+	
+	
+	m_pTransform->SetLocalRotY(180.f);
+	m_pHeadObj = PUN::CGameObject::CreateObject("Player_Daegari", m_pLayer);
+	m_pHeadObj->SetFrustrumCullUse(false);
+	m_pObject->SetFrustrumCullUse(false);
+	
+	PUN::CTransform*	pTr = m_pHeadObj->GetTransform();
+	pTr->SetWorldScale(0.1f, 0.1f, 0.1f);
+	
+	PUN::CRenderer*	pHeadRenderer = m_pHeadObj->AddComponent<PUN::CRenderer>("WeaponRenderer");
+	pHeadRenderer->SetMesh("head", TEXT("Head.FBX"), MESH_PATH);
+	pHeadRenderer->DontRenderMat(true);
+	pHeadRenderer->SetDecalEnable(false);
 
 	SAFE_RELEASE(pTr);
-	SAFE_RELEASE(pWeaponRenderer);
+	SAFE_RELEASE(pHeadRenderer);
 
 	//Hero - L - Hand, player_cam_hand, 10, 0, 0.0, 0, 0, 0
 	//GET_SINGLE(PUN::CInput)->BindAxis("MoveH", this, &CHuman_Player::Forward);
@@ -73,39 +119,43 @@ bool CHuman_Player::Init()
 	_Input->AddKey("S", 'S');
 	_Input->AddKey("D", 'D');
 	_Input->AddKey("A", 'A');
+	_Input->AddKey("E", 'E');
 	_Input->AddKey("Shift", VK_SHIFT);
 	_Input->AddKey("Space", VK_SPACE);
 	_Input->AddKey("I", 'I');
+	_Input->AddKey("G", 'G');
 	_Input->AddKey("Ctrl", VK_CONTROL);
 
 	AfterClone();
 
+
+	
 	// Inventory
-	m_pInvenObj = CGameObject::CreateObject("Inven", m_pLayer);
+	PUN::CGameObject *pInvObj = CGameObject::CreateObject("Inven", m_pLayer);
 
-	m_pInven = m_pInvenObj->AddComponent<CInventory>("Inven");
+	m_pInven = pInvObj->AddComponent<CInventory>("Inven");
 	m_pInven->SetInvenMax(19);
-
-	CTransform*	pInvenTr = m_pInvenObj->GetTransform();
-
-	SAFE_RELEASE(pInvenTr);
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial = m_pInvenObj->AddComponent<CMaterial>("Inven");
+	pMaterial = pInvObj->AddComponent<CMaterial>("Inven");
 	pMaterial->SetDiffuseTex(0, "Inventory", TEXT("UI/Inven/InvenBack.png"));
 
+	SAFE_RELEASE(pInvObj);
 	SAFE_RELEASE(pMaterial);
-
+	
 	// Handycam
-	m_pHandycamObj = CGameObject::CreateObject("Handycam", m_pLayer);
+	PUN::CGameObject *pHandycamObj = CGameObject::CreateObject("Handycam", m_pLayer);
 
-	m_pHandycam = m_pHandycamObj->AddComponent<CHandycam>("Handycam");
-
-	CTransform*	pHandycamTr = m_pHandycamObj->GetTransform();
+	m_pHandycam = pHandycamObj->AddComponent<CHandycam>("Handycam");
+	m_pHandycam->Release();
+	CTransform*	pHandycamTr = pHandycamObj->GetTransform();
+	pHandycamTr->SetWorldPos(0.f, 0.f, 0.f);
 
 	SAFE_RELEASE(pHandycamTr);
-
+	SAFE_RELEASE(pHandycamObj);
+	
+		
 	return true;
 }
 
@@ -116,11 +166,115 @@ void CHuman_Player::AfterClone()
 
 int CHuman_Player::Input(float fTime)
 {
+
 	m_iState |= PSTATUS_STOPMOVE;
 
 	bool bBlend = false;
 
 	PUN::CInput *_Input = PUN::CInput::GetInst();
+
+
+	//Other Keys
+	
+	if (_Input->KeyPress("I"))
+	{
+		if (m_iState & PSTATUS_ITEM)
+		{
+			m_iState ^= (PSTATUS_ITEM | PSTATUS_INACTIVE);
+			_Input->ShowMouse(false);
+			Close_Item(fTime);
+		}
+		else
+		{
+			m_iState |= (PSTATUS_ITEM | PSTATUS_INACTIVE);
+			_Input->ShowMouse(true);
+			Open_Item(fTime);
+		}
+	}
+
+	if (m_iState & PSTATUS_INACTIVE)
+	{
+		PUN::CTransform *pCamTrans = m_pScene->GetMainCameraTransform();
+		PUN::CTransform *pHeadTrans = m_pHeadObj->GetTransform();
+
+		Vector3 vCamPos = pHeadTrans->GetWorldPos() + m_vCamWorldOffset;
+		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * m_vCamLocalOffset.x;
+		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * m_vCamLocalOffset.y;
+		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * m_vCamLocalOffset.z;
+
+		pCamTrans->SetWorldPos(vCamPos);
+
+		SAFE_RELEASE(pCamTrans);
+		SAFE_RELEASE(pHeadTrans);
+
+
+		return 1; //Inactive로 인한 종료 1반환
+	}
+	if (_Input->ShowMouse())
+		_Input->ShowMouse(false);
+
+	if (_Input->KeyPress("G"))
+	{
+
+		if (m_iState ^ PSTATUS_CAM_ON)
+		{
+			
+			m_fItemTakeTimerBuf = 0.f;
+			m_iState |= PSTATUS_CAM_TAKING_ON;
+			m_iState |= PSTATUS_CAM_ON;
+
+		}
+		else
+		{
+			if (m_iState ^ PSTATUS_CAM_TAKING_OFF)
+			{
+				m_fItemTakeTimerBuf = 0.f;
+			}
+			
+			m_iState |= PSTATUS_CAM_TAKING_OFF;
+		}
+	}
+
+	if (m_iState & PSTATUS_CAM_ON)
+	{
+		if (m_iState & PSTATUS_CAM_TAKING_ON)
+		{
+			if (m_fItemTakeTimerBuf < m_fCamTakeTime)
+			{
+				m_fItemTakeTimerBuf += fTime;
+				HandyCam_On(fTime);
+			}
+			else
+			{
+				m_fItemTakeTimerBuf = 0.f;
+				m_iState ^= PSTATUS_CAM_TAKING_ON;
+				HandyCam_Start();
+			}
+		}
+		else if (m_iState & PSTATUS_CAM_TAKING_OFF)
+		{
+			if (m_fItemTakeTimerBuf < m_fCamTakeTime)
+			{
+				m_fItemTakeTimerBuf += fTime;
+				HandyCam_Off(fTime);
+			}
+			else
+			{
+				m_fItemTakeTimerBuf = 0.f;
+				m_iState ^= (PSTATUS_CAM_TAKING_OFF | PSTATUS_CAM_ON);
+				HandyCam_End();
+			}
+		}
+		else
+		{
+			HandyCam_On(fTime);
+		}
+		
+	}
+	
+
+	//Movement
+	
 	if (_Input->KeyPress("Shift"))
 	{
 
@@ -158,7 +312,7 @@ int CHuman_Player::Input(float fTime)
 		if (m_iState & PSTATUS_CROUCHED)
 		{
 			m_pAnimation->ChangeClip("player_crouch_forward");
-			m_pTransform->Move(PUN::AXIS_Z, m_fCrouchForwardSpd, fTime);			
+			Move(PUN::AXIS_Z, m_fCrouchForwardSpd, fTime);			
 		}
 		else
 		{
@@ -166,12 +320,12 @@ int CHuman_Player::Input(float fTime)
 			{
 				//std::cout << "run" << endl;
 				m_pAnimation->ChangeClip("player_run_forward");
-				m_pTransform->Move(PUN::AXIS_Z, m_fSprintSpeed, fTime);
+				Move(PUN::AXIS_Z, m_fSprintSpeed, fTime);
 			}
 			else
 			{
 				m_pAnimation->ChangeClip("player_walk_forward");
-				m_pTransform->Move(PUN::AXIS_Z, m_fFWalkSpeed, fTime);
+				Move(PUN::AXIS_Z, m_fFWalkSpeed, fTime);
 			}
 		}
 		
@@ -182,12 +336,12 @@ int CHuman_Player::Input(float fTime)
 		if (m_iState & PSTATUS_CROUCHED)
 		{
 			m_pAnimation->ChangeClip("player_crouch_backward");
-			m_pTransform->Move(PUN::AXIS_Z, -m_fCrouchBackSpd, fTime);
+			Move(PUN::AXIS_Z, -m_fCrouchBackSpd, fTime);
 		}
 		else
 		{
 			m_pAnimation->ChangeClip("player_walk_backward");
-			m_pTransform->Move(PUN::AXIS_Z, -m_fBackWalkSpeed, fTime);
+			Move(PUN::AXIS_Z, -m_fBackWalkSpeed, fTime);
 		}
 		
 	}
@@ -211,18 +365,17 @@ int CHuman_Player::Input(float fTime)
 		if (m_iState & PSTATUS_CROUCHED)
 		{
 			m_pAnimation->ChangeClip("player_crouch_strafe_right");
-			m_pTransform->Move(PUN::AXIS_X, m_fCrouchRSpd, fTime);
+			Move(PUN::AXIS_X, m_fCrouchRSpd, fTime);
 		}
 		else
 		{
 			m_pAnimation->ChangeClip("player_walk_strafe_right");
-			m_pTransform->Move(PUN::AXIS_X, m_fRWalkSpeed, fTime);
+			Move(PUN::AXIS_X, m_fRWalkSpeed, fTime);
 		}
 		
 	}
 	else if (_Input->KeyPush("A"))
 	{
-		
 
 		if (m_iState & PSTATUS_CROUCHING)
 			bBlend = true;
@@ -239,16 +392,57 @@ int CHuman_Player::Input(float fTime)
 		if (m_iState & PSTATUS_CROUCHED)
 		{
 			m_pAnimation->ChangeClip("player_crouch_strafe_left");
-			m_pTransform->Move(PUN::AXIS_X, -m_fCrouchLSpd, fTime);
+			Move(PUN::AXIS_X, -m_fCrouchLSpd, fTime);
 		}
 		else
 		{
 			m_pAnimation->ChangeClip("player_walk_strafe_left");
-			m_pTransform->Move(PUN::AXIS_X, -m_fLWalkSpeed, fTime);
+			Move(PUN::AXIS_X, -m_fLWalkSpeed, fTime);
 		}
 	}
 
+	if (_Input->KeyPress("Space"))
+	{
+		//m_iState |= PSTATUS_JUMPED;
+
+
+		if (m_iState & PSTATUS_STOPMOVE)
+		{
+			m_pAnimation->ChangeClip("player_jump_from_idle");
+		}
+		else if (m_iState & PSTATUS_SPRINT)
+		{
+			m_pAnimation->ChangeClip("player_jump_over_from_run");
+		}
+		else
+		{
+			m_pAnimation->ChangeClip("player_jump_over_from_walk");
+		}
+	}
+
+
+	//회전
+	if ((m_iState & PSTATUS_INACTIVE) == 0)
+	{
+		PUN::CTransform *pCamTrans = m_pScene->GetMainCameraTransform();
+		PUN::CTransform *pHeadTrans = m_pHeadObj->GetTransform();
+
+		Vector3 vCamPos = pHeadTrans->GetWorldPos() + m_vCamWorldOffset;
+		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * m_vCamLocalOffset.x;
+		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * m_vCamLocalOffset.y;
+		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * m_vCamLocalOffset.z;
+
+		pCamTrans->SetWorldPos(vCamPos);
+
+		pCamEffManager->FirstPersonView(m_fViewMaxAngleY, m_fViewMinAngleY, m_pTransform);
+		
+		SAFE_RELEASE(pCamTrans);
+		SAFE_RELEASE(pHeadTrans);
+				
+	}
+	
 	m_pAnimation->KeepBlendSet(bBlend);
+
 
 	if (m_iState & PSTATUS_STOPMOVE)
 	{
@@ -268,7 +462,6 @@ int CHuman_Player::Input(float fTime)
 		
 	}
 
-	
 	return 0;
 }
 
@@ -326,75 +519,28 @@ int CHuman_Player::Update(float fTime)
 		
 	}
 
-
-	static bool bPush = false;
-	if (GetAsyncKeyState('I') & 0x8000)
-	{
-		bPush = true;
-	}
-	else if (bPush)
-	{
-		bPush = false;
-		m_pInven->SetVisible();
-	}
+	pCamEffManager->Update(fTime);
 
 
-	static bool bCamPush = false;
-	if (GetAsyncKeyState('G') & 0x8000)
-	{
-		bCamPush = true;
-	}
-	else if (bCamPush)
-	{
-		bCamPush = false;
-
-		m_pHandycam->SetVisible();
-
-		if (!m_pHandycam->GetVisible())
-		{
-			GET_SINGLE(CRenderManager)->SetOnOff(1.f);
-		}
-	}
-
-	if (m_pHandycam->GetBatteryOut())
-	{
-		m_bBatteryOut = true;
-	}
-
-	else if (m_pHandycam->GetBatteryChange())
-	{
-		m_bBatteryChange = true;
-	}
-
-	if (m_bBatteryOut)
-	{
-		if (m_pHandycam->GetVisible())
-		{
-			m_pHandycam->SetVisible(false);
-			m_pHandycam->SetCantUse(true);
-			GET_SINGLE(CRenderManager)->SetOnOff(0.00001f);
-			GET_SINGLE(CRenderManager)->SetStarLightScope(-1);
-			m_bBatteryOut = false;
-			m_pHandycam->SetOutFlag(m_bBatteryOut);
-		}
-	}
-
-	if (m_bBatteryChange)
-	{
-		m_pHandycam->SetChangeFlag(false);
-		GET_SINGLE(CRenderManager)->SetOnOff(1.f);
-		GET_SINGLE(CRenderManager)->SetStarLightScope(1);
-		m_bBatteryChange = false;
-	}
-
+	
 	return 0;
 }
 
 int CHuman_Player::LateUpdate(float fTime)
 {
-	
+	/*
+	PUN::CTransform *pCam = m_pScene->GetMainCameraTransform();
+	PUN::CTransform *pTr = m_pHandSocketObj->GetTransform();
 
+	pCam->SetWorldPos(pTr->GetWorldPos());
+	pCam->SetWorldRot(pTr->GetWorldRot());
+
+	SAFE_RELEASE(pCam);
+	SAFE_RELEASE(pTr);
+	SAFE_RELEASE(pTr);
+	*/
 	
+	pCamEffManager->LateUpdate(fTime);
 	return 0;
 }
 
@@ -739,7 +885,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 									m_pAnimation->SetSocketRotation(strDataBuf_1, strDataBuf_3, vRot);
 
 									//test
-									m_pAnimation->SetSocketObject(strDataBuf_1, strDataBuf_3, m_pHandSocketObj);
+									//m_pAnimation->SetSocketObject(strDataBuf_1, strDataBuf_3, m_pHandSocketObj);
 									bCloseLoop = true;
 								}
 								break;
@@ -768,23 +914,32 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 
 	SAFE_RELEASE(pRenderer);
 
-	m_pAnimation->SetSocketOffset("Hero-L-Hand", "player_cam_hand", Vector3(5.0f, 10.0f, 0.0f));
+	m_pAnimation->SetSocketObject("Hero-Neck", "daegari", m_pHeadObj);
+
+	//m_pAnimation->SetSocketOffset("Hero-L-Hand", "player_cam_hand", Vector3(5.0f, 10.0f, 0.0f));
+
+	/*
+	PUN::CCamera *pCamera = m_pScene->GetMainCamera();
+	pCamera->SetTarget(m_pHandSocketObj);
+	
+<<<<<<< .mine
+	PUN::CArm*	pArm = pCamera->AddComponent<PUN::CArm>("CameraArm");
+
+	PUN::CTransform *pTR = m_pHandSocketObj->GetTransform();
+
+	SAFE_RELEASE(pCamera);
+	pArm->SetTarget(pTR);
+	pArm->EnableMouse();
+
+	*/
+	
 	
 	return true;
 }
 
-void CHuman_Player::Open(float fTime)
+void CHuman_Player::Move(PUN::AXIS axis, float fSpeed, float fTime)
 {
+	m_pTransform->Move(axis, fSpeed, fTime);
 }
 
-void CHuman_Player::Close(float fTime)
-{
-}
 
-void CHuman_Player::Hide_Locker(float fTime)
-{
-}
-
-void CHuman_Player::Fire_Weapon(float fTime)
-{
-}

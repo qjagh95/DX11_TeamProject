@@ -31,6 +31,7 @@ private:
 	unordered_map<string, KeyInfo*> m_KeyMap;
 	KeyInfo* m_NewKey;
 	bool m_bFocus;
+	bool m_bRenderMouse;
 	////////////////////Navi///////////////////////////
 	int	m_iSelectNavIndex;
 	int	m_iBrushRange;
@@ -59,6 +60,8 @@ public:
 	void SetWheelDir(short _sWheel);
 	void ClearWheel();
 	short GetWheelDir() const;
+	bool ShowMouse() const;
+	void ShowMouse(bool bShow);
 
 public:
 	bool Init();
@@ -66,6 +69,7 @@ public:
 	bool KeyPush(const string& Name);
 	bool KeyPress(const string& Name);
 	bool KeyRelease(const string& Name);
+	bool IsFocused() const;
 
 	template <typename T>
 	bool AddKey(const T& value)

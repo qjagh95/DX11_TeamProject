@@ -52,6 +52,8 @@ private:
 	bool			m_isFrustumCull;
 	bool			m_bSave;
 	class CColliderOBB3D* m_pPickingCollSphere;
+	//bool			m_bUseFrustumCull;
+	
 public:
 	void SetSave(bool _bSave)
 	{
@@ -89,17 +91,19 @@ private:
 	list<CComponent*>		m_FindList;
 	CGameObject*			m_pParent;
 	list<CGameObject*>		m_ChildList;
-
+	bool m_bUseFrustumCull;
 
 public:
 	class CTransform* GetTransform()	const;
 	class CTransform * GetTransformNonCount() const;
 	class CTransform* GetTransformNoneCount() const { return m_pTransform; }
 	const list<class CComponent*>* GetComponentList()	const;
+	const std::list<CGameObject*>* GetChildList();
 	RENDER_GROUP	 GetRenderGroup() const;
 	bool EmptyComponent()	const;
 	bool FrustumCull();
 	bool IsFrustumCull() const;
+	void SetFrustrumCullUse(bool bCull);
 	size_t GetComponentSize() const { return m_ComList.size(); }
 
 public:

@@ -40,6 +40,15 @@
     <Filter Include="02. UserComponent\06. TraceMob\Behavior">
       <UniqueIdentifier>{bb1c6e7c-8e11-4555-a6b8-026a244d8836}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\CameraEff">
+      <UniqueIdentifier>{a1c2bfae-bc54-449c-8c34-32eb2e78a459}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\03. Field\Items">
+      <UniqueIdentifier>{86b2e526-f7f1-4139-8a7b-7f6ba1824d3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\01. Player\PlayerFunc">
+      <UniqueIdentifier>{3a0ae269-8a4c-45c4-87b3-c23e687f79bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -64,9 +73,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SceneComponent\LogoScene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent\TestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
     <ClInclude Include="SceneComponent\RandScapeTestScene.h">
@@ -117,6 +123,18 @@
     <ClInclude Include="UserComponent\TraceMob.h">
       <Filter>02. UserComponent\06. TraceMob</Filter>
     </ClInclude>
+    <ClInclude Include="CameraEff.h">
+      <Filter>소스 파일\CameraEff</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\InteractiveObj.h">
+      <Filter>02. UserComponent\03. Field\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\TestScene-YH.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\TestScene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -138,9 +156,6 @@
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\LogoScene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\TestScene.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\RandScapeTestScene.cpp">
@@ -187,6 +202,30 @@
     </ClCompile>
     <ClCompile Include="UserComponent\TraceMob.cpp">
       <Filter>02. UserComponent\06. TraceMob</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraEff.cpp">
+      <Filter>소스 파일\CameraEff</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\InteractiveObj.cpp">
+      <Filter>02. UserComponent\03. Field\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\TestScene-YH.cpp">
+      <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\PlayerFunc_Move.cpp">
+      <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\PlayerFunc_Interact.cpp">
+      <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\PlayerFunc_Weapon.cpp">
+      <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\PlayerFunc_cam.cpp">
+      <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\TestScene.cpp">
+      <Filter>01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

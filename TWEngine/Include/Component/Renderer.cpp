@@ -17,7 +17,8 @@ CRenderer::CRenderer() :
 	m_pMaterial(nullptr),
 	m_pBoneTex(nullptr),
 	m_b2DRenderer(false),
-	m_bDecalEnable(false)
+	m_bDecalEnable(false),
+	m_bDontRenderMat(false)
 {
 	m_eComType = CT_RENDERER;
 	memset(m_pRenderState, 0, sizeof(CRenderState*) * RS_END);
@@ -93,6 +94,16 @@ CRenderer::~CRenderer()
 void CRenderer::SetBoneTexture(ID3D11ShaderResourceView** pBoneTex)
 {
 	m_pBoneTex = pBoneTex;
+}
+
+bool CRenderer::IsShadowRender() const
+{
+	return m_bDontRenderMat;
+}
+
+void CRenderer::DontRenderMat(bool bSwitch)
+{
+	m_bDontRenderMat = bSwitch;
 }
 
 void CRenderer::Enable2DRenderer()
@@ -452,6 +463,8 @@ void CRenderer::Collision(float fTime)
 
 void CRenderer::Render(float fTime)
 {
+	if (m_bDontRenderMat)
+		return;
 	if (!m_pMaterial)
 	{
 		m_pMaterial = FindComponentFromType<CMaterial>(CT_MATERIAL);

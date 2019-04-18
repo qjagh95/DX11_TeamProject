@@ -26,6 +26,7 @@ CInput::CInput() :
 	m_pMouse(nullptr),
 	m_bShowCursor(false),
 	m_sWheel(0),
+	m_bRenderMouse(true),
 	m_iSelectNavIndex(0),
 	m_iBrushRange(0)
 {
@@ -168,6 +169,16 @@ void CInput::ClearWheel()
 short CInput::GetWheelDir() const
 {
 	return m_sWheel;
+}
+
+bool CInput::ShowMouse() const
+{
+	return m_bRenderMouse;
+}
+
+void CInput::ShowMouse(bool bShow)
+{
+	m_bRenderMouse = bShow;
 }
 
 bool CInput::Init()
@@ -392,6 +403,11 @@ bool CInput::KeyRelease(const string & Name)
 	return getKey->KeyRelease;
 }
 
+bool CInput::IsFocused() const
+{
+	return m_bFocus;
+}
+
 KeyInfo * CInput::FindKey(const string & Name)
 {
 	unordered_map<string, KeyInfo*>::iterator FindIter = m_KeyMap.find(Name);
@@ -404,7 +420,8 @@ KeyInfo * CInput::FindKey(const string & Name)
 
 void CInput::RenderMouse(float fTime)
 {
-	m_pMouse->Render(fTime);
+	if(m_bRenderMouse)
+		m_pMouse->Render(fTime);
 }
 
 void CInput::AddMouseCollision()

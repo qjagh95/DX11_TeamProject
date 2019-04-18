@@ -3,9 +3,10 @@
 #include "SceneComponent/MainScene.h"
 #include "SceneComponent/StartScene.h"
 #include "SceneComponent/FirTestScene.h"
-#include "SceneComponent/TestScene.h"
+#include "SceneComponent/TestScene-YH.h"
 #include "SceneComponent/LogoScene.h"
 #include "SceneComponent/RandScapeTestScene.h"
+#include "CameraEff.h"
 
 PUN_USING
 
@@ -15,7 +16,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 	srand((unsigned int)time(0));
-
+	
 	if (!CCore::GetInst()->Init(hInstance, 1280, 720,
 		TEXT("OutLast - 1"), TEXT("OutLast - 1"), IDI_ICON1, IDI_ICON1,
 		true))
@@ -23,6 +24,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		CCore::DestroyInst();
 		return 0;
 	}
+
+	//FPS 카메라와 카메라 흔들림 이펙트를 구현하는 매니저 구동
+	CCameraEff::GetInst()->Init();
 
 	//wstring RootPath = CPathManager::GetInst()->FindPath(ROOT_PATH);
 	//SHELLEXECUTEINFO sei;
@@ -47,8 +51,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
 
 #ifdef _DEBUG
-	GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene");
-	//GET_SINGLE(CSceneManager)->AddSceneComponent<CRandScapeTestScene>("TestScene");
+	GET_SINGLE(CSceneManager)->AddSceneComponent<CTestSceneYH>("TestScene");
 #else
 	GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");
 #endif
@@ -59,6 +62,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     int iRet = CCore::GetInst()->Run();
 
 	CCore::DestroyInst();
+	CCameraEff::DestroyInst();
 
 	return iRet;
 }
