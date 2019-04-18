@@ -58,10 +58,11 @@ private:
 
 private:
 	unordered_map<string, PCollisionGroup>	m_mapGroup;
-	class CCollider*		m_pPrevMouseCollision;
-	class CCollider**		m_pWorldMouseList;
-	int				m_iListSize;
-	int				m_iListCapacity;
+	class CCollider* m_pPrevMouseCollision;
+	class CCollider** m_pWorldMouseList;
+	int	m_iListSize;
+	int	m_iListCapacity;
+	bool m_isShow;
 
 public:
 	bool Init();
@@ -73,12 +74,13 @@ public:
 	void ClearCollisionGroup();
 	void Collision(float fTime);
 	void Render(float fTime);
+	void SetIsShow(bool Value) { m_isShow = Value; }
+	bool GetIsShow() const { return m_isShow; }
+	void OnOff();
 
 private:
-	void CollisionMouse2D(CGameObject* pMouseObj,
-		float fTime);
-	void CollisionMouse3D(CGameObject* pMouseObj,
-		float fTime);
+	void CollisionMouse2D(CGameObject* pMouseObj, float fTime);
+	void CollisionMouse3D(CGameObject* pMouseObj, float fTime);
 
 private:
 	PCollisionGroup FindGroup(const string& strGroup);

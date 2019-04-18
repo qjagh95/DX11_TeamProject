@@ -11,18 +11,14 @@ CCollider::CCollider()
 {
 	m_eComType = CT_COLLIDER;
 	m_strCollisionGroup = "Default";
-
 	m_bUpdateCollision = true;
 
-#ifdef _DEBUG
 	m_pShader = GET_SINGLE(CShaderManager)->FindShader(COLLIDER_SHADER);
 	m_pMesh = nullptr;
 	m_pLayout = GET_SINGLE(CShaderManager)->FindInputLayout(POS_LAYOUT);
 	m_pDepthDisable = GET_SINGLE(CRenderManager)->FindRenderState(DEPTH_DISABLE);
 	m_vColor = Vector4::Green;
 	m_pWireFrame = nullptr;
-#endif // _DEBUG
-
 }
 
 
@@ -31,7 +27,6 @@ CCollider::CCollider(const CCollider & com) :
 {
 	*this = com;
 
-#ifdef _DEBUG
 	m_pLayout = com.m_pLayout;
 	m_pMesh = com.m_pMesh;
 	m_pShader = com.m_pShader;
@@ -50,9 +45,6 @@ CCollider::CCollider(const CCollider & com) :
 
 	if (m_pWireFrame)
 		m_pWireFrame->AddRef();
-
-	
-#endif // _DEBUG
 }
 
 CCollider::~CCollider()
@@ -67,12 +59,10 @@ CCollider::~CCollider()
 		(*iter)->ErasePrevCollision(this);
 	}
 
-#ifdef _DEBUG
 	SAFE_RELEASE(m_pWireFrame);
 	SAFE_RELEASE(m_pDepthDisable);
 	SAFE_RELEASE(m_pShader);
 	SAFE_RELEASE(m_pMesh);
-#endif	// _DEBUG
 }
 
 COLLIDER_TYPE CCollider::GetColliderType() const
@@ -251,7 +241,9 @@ void CCollider::Collision(float fTime)
 
 void CCollider::Render(float fTime)
 {
-#ifdef _DEBUG
+	if (CCollisionManager::GetInst()->GetIsShow() == false)
+		return;
+
 	if (m_PrevCollision.empty())
 		m_vColor = Vector4::Green;
 
@@ -276,8 +268,6 @@ void CCollider::Render(float fTime)
 
 	if (m_pWireFrame)
 		m_pWireFrame->ResetState();
-
-#endif
 }
 
 void CCollider::OnCollisionEnter(CCollider * pDest, float fTime)

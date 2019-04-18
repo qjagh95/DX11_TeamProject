@@ -12,10 +12,9 @@ PUN_USING
 CColliderOBB::CColliderOBB()
 {
 	m_eCollType = CT_OBB;
-#ifdef _DEBUG
+
 	m_pDepthDisable = GET_SINGLE(CRenderManager)->FindRenderState(DEPTH_DISABLE);
 	m_pMesh = GET_SINGLE(CResourcesManager)->FindMesh("ColliderRect");
-#endif // _DEBUG
 }
 
 CColliderOBB::CColliderOBB(const CColliderOBB & com)	:
@@ -94,7 +93,9 @@ void CColliderOBB::Collision(float fTime)
 
 void CColliderOBB::Render(float fTime)
 {
-#ifdef _DEBUG
+	if (CCollisionManager::GetInst()->GetIsShow() == false)
+		return;
+
 	Matrix	matPos, matScale, matRot;
 
 	// 크기를 구한다
@@ -140,7 +141,6 @@ void CColliderOBB::Render(float fTime)
 	SAFE_RELEASE(pMainCamera);
 
 	CCollider::Render(fTime);
-#endif
 }
 
 CColliderOBB * CColliderOBB::Clone()

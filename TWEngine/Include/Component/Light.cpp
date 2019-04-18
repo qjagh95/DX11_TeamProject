@@ -1,6 +1,6 @@
 #include "../EngineHeader.h"
 #include "Light.h"
-#include "Core.h"
+#include "../Core.h"
 #include "Camera.h"
 #include "../Device.h"
 

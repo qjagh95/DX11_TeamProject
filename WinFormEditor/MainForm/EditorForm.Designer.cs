@@ -81,6 +81,12 @@
             this.ClipLoad = new System.Windows.Forms.Button();
             this.ClipSave = new System.Windows.Forms.Button();
             this.NavigationPage = new System.Windows.Forms.TabPage();
+            this.label40 = new System.Windows.Forms.Label();
+            this.GridSize = new System.Windows.Forms.Label();
+            this.TB_GridSize = new System.Windows.Forms.TextBox();
+            this.CB_GridShow = new System.Windows.Forms.CheckBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.TB_BrushSize = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
             this.TB_TileFlag = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
@@ -94,8 +100,6 @@
             this.BT_CreateNavi = new System.Windows.Forms.Button();
             this.BT_NaviLoad = new System.Windows.Forms.Button();
             this.BT_NaviSave = new System.Windows.Forms.Button();
-            this.Effect = new System.Windows.Forms.TabPage();
-            this.RenderPage = new System.Windows.Forms.TabPage();
             this.MshLoad = new System.Windows.Forms.Button();
             this.LB_MeshList = new System.Windows.Forms.ListBox();
             this.GB_Transform = new System.Windows.Forms.GroupBox();
@@ -160,12 +164,6 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.LPositionX = new System.Windows.Forms.TextBox();
-            this.label40 = new System.Windows.Forms.Label();
-            this.GridSize = new System.Windows.Forms.Label();
-            this.TB_GridSize = new System.Windows.Forms.TextBox();
-            this.CB_GridShow = new System.Windows.Forms.CheckBox();
-            this.label39 = new System.Windows.Forms.Label();
-            this.TB_BrushSize = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -271,9 +269,9 @@
             this.Inspector.Controls.Add(this.InspectorTab);
             this.Inspector.Font = new System.Drawing.Font("맑은 고딕", 10F, System.Drawing.FontStyle.Bold);
             this.Inspector.ForeColor = System.Drawing.Color.Red;
-            this.Inspector.Location = new System.Drawing.Point(1612, 12);
+            this.Inspector.Location = new System.Drawing.Point(1609, 12);
             this.Inspector.Name = "Inspector";
-            this.Inspector.Size = new System.Drawing.Size(329, 809);
+            this.Inspector.Size = new System.Drawing.Size(308, 809);
             this.Inspector.TabIndex = 8;
             this.Inspector.TabStop = false;
             this.Inspector.Text = "Inspector";
@@ -283,8 +281,6 @@
             this.InspectorTab.Controls.Add(this.LightPage);
             this.InspectorTab.Controls.Add(this.Animation);
             this.InspectorTab.Controls.Add(this.NavigationPage);
-            this.InspectorTab.Controls.Add(this.Effect);
-            this.InspectorTab.Controls.Add(this.RenderPage);
             this.InspectorTab.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.InspectorTab.Location = new System.Drawing.Point(7, 24);
             this.InspectorTab.Multiline = true;
@@ -781,11 +777,12 @@
             this.NavigationPage.Controls.Add(this.BT_CreateNavi);
             this.NavigationPage.Controls.Add(this.BT_NaviLoad);
             this.NavigationPage.Controls.Add(this.BT_NaviSave);
-            this.NavigationPage.Location = new System.Drawing.Point(4, 48);
+            this.NavigationPage.Location = new System.Drawing.Point(4, 26);
             this.NavigationPage.Name = "NavigationPage";
-            this.NavigationPage.Size = new System.Drawing.Size(287, 746);
+            this.NavigationPage.Size = new System.Drawing.Size(309, 749);
             this.NavigationPage.TabIndex = 6;
             this.NavigationPage.Text = "Navigation";
+            // 
             // label40
             // 
             this.label40.AutoSize = true;
@@ -977,29 +974,6 @@
             this.BT_NaviSave.Text = "Save";
             this.BT_NaviSave.UseVisualStyleBackColor = true;
             this.BT_NaviSave.Click += new System.EventHandler(this.BT_NaviSave_Click);
-            // 
-            // Effect
-            // 
-            this.Effect.BackColor = System.Drawing.SystemColors.Control;
-            this.Effect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.Effect.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Effect.Location = new System.Drawing.Point(4, 26);
-            this.Effect.Name = "Effect";
-            this.Effect.Padding = new System.Windows.Forms.Padding(3);
-            this.Effect.Size = new System.Drawing.Size(309, 749);
-            this.Effect.TabIndex = 2;
-            this.Effect.Text = "Effect";
-            // 
-            // RenderPage
-            // 
-            this.RenderPage.BackColor = System.Drawing.SystemColors.Control;
-            this.RenderPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.RenderPage.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.RenderPage.Location = new System.Drawing.Point(4, 26);
-            this.RenderPage.Name = "RenderPage";
-            this.RenderPage.Size = new System.Drawing.Size(309, 749);
-            this.RenderPage.TabIndex = 4;
-            this.RenderPage.Text = "Render";
             // 
             // MshLoad
             // 
@@ -1569,6 +1543,7 @@
             this.LRotateZ.Size = new System.Drawing.Size(64, 25);
             this.LRotateZ.TabIndex = 27;
             this.LRotateZ.Text = "0";
+            this.LRotateZ.TextChanged += new System.EventHandler(this.ChangeRotate);
             this.LRotateZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // label2
@@ -1592,6 +1567,7 @@
             this.LRotateY.Size = new System.Drawing.Size(64, 25);
             this.LRotateY.TabIndex = 25;
             this.LRotateY.Text = "0";
+            this.LRotateY.TextChanged += new System.EventHandler(this.ChangeRotate);
             this.LRotateY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // label3
@@ -1626,6 +1602,7 @@
             this.LRotateX.Size = new System.Drawing.Size(64, 25);
             this.LRotateX.TabIndex = 23;
             this.LRotateX.Text = "0";
+            this.LRotateX.TextChanged += new System.EventHandler(this.ChangeRotate);
             this.LRotateX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // label5
@@ -1649,6 +1626,7 @@
             this.LScaleZ.Size = new System.Drawing.Size(64, 25);
             this.LScaleZ.TabIndex = 20;
             this.LScaleZ.Text = "0";
+            this.LScaleZ.TextChanged += new System.EventHandler(this.ChangeScale);
             this.LScaleZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // label6
@@ -1672,6 +1650,7 @@
             this.LScaleY.Size = new System.Drawing.Size(64, 25);
             this.LScaleY.TabIndex = 18;
             this.LScaleY.Text = "0";
+            this.LScaleY.TextChanged += new System.EventHandler(this.ChangeScale);
             this.LScaleY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // label7
@@ -1706,6 +1685,7 @@
             this.LScaleX.Size = new System.Drawing.Size(64, 25);
             this.LScaleX.TabIndex = 16;
             this.LScaleX.Text = "0";
+            this.LScaleX.TextChanged += new System.EventHandler(this.ChangeScale);
             this.LScaleX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // label9
@@ -1729,6 +1709,7 @@
             this.LPositionZ.Size = new System.Drawing.Size(64, 25);
             this.LPositionZ.TabIndex = 13;
             this.LPositionZ.Text = "0";
+            this.LPositionZ.TextChanged += new System.EventHandler(this.ChangePosition);
             this.LPositionZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // label17
@@ -1763,6 +1744,7 @@
             this.LPositionY.Size = new System.Drawing.Size(64, 25);
             this.LPositionY.TabIndex = 11;
             this.LPositionY.Text = "0";
+            this.LPositionY.TextChanged += new System.EventHandler(this.ChangePosition);
             this.LPositionY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // label19
@@ -1797,6 +1779,7 @@
             this.LPositionX.Size = new System.Drawing.Size(64, 25);
             this.LPositionX.TabIndex = 2;
             this.LPositionX.Text = "0";
+            this.LPositionX.TextChanged += new System.EventHandler(this.ChangePosition);
             this.LPositionX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // EditorForm
@@ -1805,7 +1788,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1948, 827);
+            this.ClientSize = new System.Drawing.Size(1924, 827);
             this.Controls.Add(this.GB_Transform);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Btn_AllClear);
@@ -1871,7 +1854,6 @@
         private System.Windows.Forms.ComboBox CB_LayerList;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TabPage Animation;
-        private System.Windows.Forms.TabPage Effect;
         private System.Windows.Forms.TabControl InspectorTab;
         private System.Windows.Forms.ComboBox AnimationOptionBox;
         private System.Windows.Forms.Label label16;
@@ -1942,7 +1924,6 @@
         private System.Windows.Forms.TextBox LPositionX;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.ListBox LB_BoneList;
-        private System.Windows.Forms.TabPage RenderPage;
         private System.Windows.Forms.TabPage LightPage;
         private System.Windows.Forms.TabPage NavigationPage;
         private System.Windows.Forms.Label label22;

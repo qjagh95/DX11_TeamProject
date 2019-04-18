@@ -14,9 +14,7 @@ PUN_USING
 CColliderOBB3D::CColliderOBB3D()
 {
 	m_eCollType = CT_OBB3D;
-#ifdef _DEBUG
 	m_pMesh = GET_SINGLE(CResourcesManager)->FindMesh("ColliderBox");
-#endif // _DEBUG
 }
 
 CColliderOBB3D::CColliderOBB3D(const CColliderOBB3D & com) :
@@ -129,7 +127,9 @@ void CColliderOBB3D::Collision(float fTime)
 
 void CColliderOBB3D::Render(float fTime)
 {
-#ifdef _DEBUG
+	if (CCollisionManager::GetInst()->GetIsShow() == false)
+		return;
+
 	Matrix	matPos, matScale, matRot;
 
 	for (int i = 0; i < AXIS_END; ++i)
@@ -169,7 +169,6 @@ void CColliderOBB3D::Render(float fTime)
 	SAFE_RELEASE(pMainCamera);
 
 	CCollider::Render(fTime);
-#endif // _DEBUG
 }
 
 CColliderOBB3D * CColliderOBB3D::Clone()

@@ -11,14 +11,13 @@
 #include "Rendering/RenderManager.h"
 #include "Core.h"
 
-using namespace std;
-
 PUN_USING
 
 DEFINITION_SINGLE(CCollisionManager)
 
 CCollisionManager::CCollisionManager()
 {
+	m_isShow = true;
 	m_pPrevMouseCollision = nullptr;
 	m_iListSize = 0;
 	m_iListCapacity = 128;
@@ -36,7 +35,7 @@ bool CCollisionManager::Init()
 {
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{
-		CreateGroup("Default", Vector3(-3000.f, -3000.f, -3000.f), Vector3(3000.f, 3000.f, 3000.f),
+		CreateGroup("Default", Vector3(-3000.f, -3000.f, -3000.f), Vector3(3000.f, 3000.f, 3000.f), 
 			1, 1, 1, CGT_3D);
 	}
 	else
@@ -50,6 +49,8 @@ bool CCollisionManager::Init()
 	CreateGroup("UI", Vector3(0.f, 0.f, 0.f),
 		Vector3((float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 0.f),
 		4, 4, 1, CGT_2D);
+
+	CInput::GetInst()->AddKey("LineOnOff", VK_F5);
 
 	return true;
 }
@@ -240,17 +241,22 @@ void CCollisionManager::Collision(float fTime)
 
 		if (pSection->iSize > 0)
 		{
-			// UI를 ZOrder에 따라서 정렬한다.
-			/*sort(pSection->pColliderArray,
-				&pSection->pColliderArray[pSection->iSize - 1],
-				CCollisionManager::SortZOrder);*/
-
 			for (int i = 0; i < pSection->iSize; ++i)
 			{
 				CCollider*	pCollSrc = pSection->pList[i];
 				CCollider*	pCollDest = pWindowPoint;
 
-				if (pCollSrc->Collision(pCollDest, fTime))
+				bool Pair = false;
+				for (size_t a = 0; a < pCollSrc->GetContinueSize(); a++)
+				{
+					if (pCollDest->GetMyTypeName() == pCollSrc->GetContinueName(a))
+					{
+						Pair = true;
+						break;
+					}
+				}
+
+				if (pCollSrc->Collision(pCollDest, fTime) && Pair == false)
 				{
 					// 처음 충돌될 경우
 					if (!pCollSrc->CheckPrevCollision(pCollDest))
@@ -349,7 +355,17 @@ void CCollisionManager::Collision(float fTime)
 					CCollider*	pCollSrc = pSection->pList[j];
 					CCollider*	pCollDest = pSection->pList[k];
 
-					if (pCollSrc->Collision(pCollDest, fTime))
+					bool Pair = false;
+					for (size_t a = 0; a < pCollSrc->GetContinueSize(); a++)
+					{
+						if (pCollDest->GetMyTypeName() == pCollSrc->GetContinueName(a))
+						{
+							Pair = true;
+							break;
+						}
+					}
+
+					if (pCollSrc->Collision(pCollDest, fTime) && Pair == false)
 					{
 						// 처음 충돌될 경우
 						if (!pCollSrc->CheckPrevCollision(pCollDest))
@@ -392,6 +408,8 @@ void CCollisionManager::Collision(float fTime)
 
 void CCollisionManager::Render(float fTime)
 {
+	OnOff();
+
 	unordered_map<string, PCollisionGroup>::iterator iter;
 	unordered_map<string, PCollisionGroup>::iterator iterEnd = m_mapGroup.end();
 
@@ -426,6 +444,12 @@ void CCollisionManager::Render(float fTime)
 
 		pSection->iSize = 0;
 	}
+}
+
+void CCollisionManager::OnOff()
+{
+	if (CInput::GetInst()->KeyPress("LineOnOff"))
+		m_isShow ^= true;
 }
 
 void CCollisionManager::CollisionMouse2D(CGameObject* pMouseObj,

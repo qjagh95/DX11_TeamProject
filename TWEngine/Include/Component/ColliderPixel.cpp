@@ -14,10 +14,8 @@ PUN_USING
 CColliderPixel::CColliderPixel()
 {
 	m_eCollType = CT_PIXEL;
-#ifdef _DEBUG
 	m_pDepthDisable = GET_SINGLE(CRenderManager)->FindRenderState(DEPTH_DISABLE);
 	m_pMesh = GET_SINGLE(CResourcesManager)->FindMesh("ColliderRect");
-#endif // _DEBUG
 }
 
 CColliderPixel::CColliderPixel(const CColliderPixel & com)	:
@@ -128,7 +126,9 @@ void CColliderPixel::Collision(float fTime)
 
 void CColliderPixel::Render(float fTime)
 {
-#ifdef _DEBUG
+	if (CCollisionManager::GetInst()->GetIsShow() == false)
+		return;
+
 	Matrix	matPos, matScale;
 	matPos.Translation(m_tInfo.tBox.vMin);
 	matScale.Scaling(m_tInfo.tBox.vLength);
@@ -162,7 +162,6 @@ void CColliderPixel::Render(float fTime)
 	SAFE_RELEASE(pMainCamera);
 
 	CCollider::Render(fTime);
-#endif // _DEBUG
 }
 
 CColliderPixel * CColliderPixel::Clone()

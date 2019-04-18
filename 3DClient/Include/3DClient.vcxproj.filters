@@ -63,23 +63,11 @@
     <ClInclude Include="SceneComponent\FirTestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="SceneComponent\SecTestScene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent\TrdTestScene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
     <ClInclude Include="ClientHeader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SceneComponent\LogoScene.h">
       <Filter>01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent\RandScapeTestScene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\Player.h">
-      <Filter>02. UserComponent\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\Minion.h">
       <Filter>02. UserComponent\02. Monster</Filter>
@@ -135,6 +123,12 @@
     <ClInclude Include="SceneComponent\TestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent\JBH_Stage3.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\BlackCow.h">
+      <Filter>02. UserComponent\01. Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -149,20 +143,8 @@
     <ClCompile Include="SceneComponent\FirTestScene.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="SceneComponent\SecTestScene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\TrdTestScene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
     <ClCompile Include="SceneComponent\LogoScene.cpp">
       <Filter>01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\RandScapeTestScene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\Player.cpp">
-      <Filter>02. UserComponent\01. Player</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Minion.cpp">
       <Filter>02. UserComponent\02. Monster</Filter>
@@ -226,6 +208,12 @@
     </ClCompile>
     <ClCompile Include="SceneComponent\TestScene.cpp">
       <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\JBH_Stage3.cpp">
+      <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\BlackCow.cpp">
+      <Filter>02. UserComponent\01. Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

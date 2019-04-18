@@ -15,10 +15,8 @@ PUN_USING
 CColliderSphere::CColliderSphere()
 {
 	m_eCollType = CT_SPHERE;
-#ifdef _DEBUG
 	m_pWireFrame = GET_SINGLE(CRenderManager)->FindRenderState(WIRE_FRAME);
 	m_pMesh = GET_SINGLE(CResourcesManager)->FindMesh("Sky");
-#endif // _DEBUG
 }
 
 CColliderSphere::CColliderSphere(const CColliderSphere & com) :
@@ -79,7 +77,9 @@ void CColliderSphere::Collision(float fTime)
 
 void CColliderSphere::Render(float fTime)
 {
-#ifdef _DEBUG
+	if (CCollisionManager::GetInst()->GetIsShow() == false)
+		return;
+
 	Matrix	matPos, matScale;
 	matPos.Translation(m_tInfo.vCenter);
 	matScale.Scaling(m_tInfo.fRadius);
@@ -113,8 +113,6 @@ void CColliderSphere::Render(float fTime)
 	SAFE_RELEASE(pMainCamera);
 
 	CCollider::Render(fTime);
-#endif // _DEBUG
-
 }
 
 CColliderSphere * CColliderSphere::Clone()

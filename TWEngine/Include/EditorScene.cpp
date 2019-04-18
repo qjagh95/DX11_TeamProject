@@ -35,28 +35,14 @@ bool EditorScene::Init()
 	CEditManager::GetInst()->SetFreeCamObj(pObject);
 	CTransform* pTr = pObject->GetTransform();
 	pTr->SetWorldPos(0.f, 0.f, -20.f);
-
-	CFreeCamera* pFreeCamera = pObject->AddComponent<CFreeCamera>("FreeCam");
-
-	SAFE_RELEASE(pFreeCamera);
 	//pTr->SetWorldRotX(180.f);
-	pCamera->SetTarget(pTr);
-	CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
-
-	pArm->EnableMouse();
-	pArm->SetTarget(pTr);
-	CEditManager::GetInst()->SetArm(pArm);
-	SAFE_RELEASE(pArm);
-
+	CFreeCamera* FreeCamera = pCamera->AddComponent<CFreeCamera>("CameraArm");
+	
+	SAFE_RELEASE(FreeCamera);
 	SAFE_RELEASE(pTr);
-
-
 	SAFE_RELEASE(pObject);
-
-
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pCamera);
-
 
 	// TEST OBJECT 
 	/*

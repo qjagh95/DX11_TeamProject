@@ -24,19 +24,21 @@ protected:
 	string			m_strCollisionGroup;
 	list<int>		m_CollisionSectionList;
 	OBJECT_COLLISION_TYPE m_eObjectCollType;
+	string m_MyTypeName;
+	vector<string> m_vecContinueName;
+
 public:
 	OBJECT_COLLISION_TYPE GetObjectCollType()
 	{
 		return m_eObjectCollType;
 	}
-#ifdef _DEBUG
+
 	class CShader*	m_pShader;
 	class CMesh*	m_pMesh;
 	ID3D11InputLayout*	m_pLayout;
 	class CRenderState*	m_pDepthDisable;
 	Vector4			m_vColor;
 	class CRenderState* m_pWireFrame;
-#endif // _DEBUG
 
 public:
 	COLLIDER_TYPE GetColliderType()	const;
@@ -45,6 +47,11 @@ public:
 	bool GetUpdateCollision()	const;
 	string GetCollisionGroup()	const;
 	const list<int>* GetColisionSection()	const;
+	void SetMyTypeName(const string& TypeName) { m_MyTypeName = TypeName; }
+	void SetContinueTypeName(const string& ContinueTypeName) { m_vecContinueName.push_back(ContinueTypeName); }
+	string GetMyTypeName() const { return m_MyTypeName; }
+	string GetContinueName(size_t Index) const { return m_vecContinueName[Index]; }
+	size_t GetContinueSize() const { return m_vecContinueName.size(); }
 
 public:
 	void ClearCollisionSection();

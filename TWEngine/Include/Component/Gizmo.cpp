@@ -48,8 +48,6 @@ bool CGizmo::Init()
 {
 	m_eGizmoType = GT_END;
 
-	//m_pObject->SetRenderGroup(RG_UI);
-
 	CColliderOBB3D* pOBB = m_pObject->AddComponent<CColliderOBB3D>("GizmoCollider");
 
 	float	fLength[3] = { 4.f , 20.f, 4.f };
