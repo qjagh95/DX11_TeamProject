@@ -48,6 +48,8 @@ public:
 	RayInfo MouseRayInfo() const;
 	class CGameObject*	GetMouseObj()	const;
 	class CGameObject * GetMouseObjNonCount() const;
+	class CTransform* GetMouseTr() const;
+	class CTransform* GetMouseTrNonCount() const;
 	Vector2	GetMouseGap()	const;
 	Vector2 GetMouseClient()	const;
 	Vector2 GetMouseWorld()	const;

@@ -28,6 +28,7 @@ public:
 	void AddParentFlag(TRANSFORM_PARENT_FLAG eFlag);
 	void DeleteParentFlag(TRANSFORM_PARENT_FLAG eFlag);
 	void DeleteParentFlag();
+	bool IsMoved();
 
 private:
 	Vector3		m_vLocalScale;

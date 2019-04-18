@@ -54,6 +54,14 @@ void CTransform::DeleteParentFlag()
 	m_iParentFlag = 0;
 }
 
+bool CTransform::IsMoved()
+{
+	if (m_vWorldMove != Vector3::Zero)
+		return true;
+	
+	return false;
+}
+
 void CTransform::SetLocalScale(const Vector3 & vScale)
 {
 	m_vLocalScale = vScale;

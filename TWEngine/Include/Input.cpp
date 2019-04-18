@@ -111,6 +111,17 @@ CGameObject * CInput::GetMouseObjNonCount() const
 	return m_pMouse;
 }
 
+CTransform * CInput::GetMouseTr() const
+{
+	m_pMouseTr->AddRef();
+	return m_pMouseTr;
+}
+
+CTransform * CInput::GetMouseTrNonCount() const
+{
+	return m_pMouseTr;
+}
+
 Vector2 CInput::GetMouseGap() const
 {
 	return m_vMouseGap;

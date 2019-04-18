@@ -14,7 +14,9 @@ protected:
 	~CFreeCamera();
 
 private:
-	float		m_fSpeed;
+	float				m_fSpeed;
+	float				m_fRotSpeed;
+	class CTransform*	m_pMouseTr;
 
 public:
 	virtual bool Init();
@@ -24,6 +26,9 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CFreeCamera* Clone();
+
+	void SetMoveSpeed(float fSpeed);
+	void SetRotSpeed(float fSpeed);
 
 	void YRotation(float fScale, float fTime);
 	void XRotation(float fScale, float fTime);
@@ -35,6 +40,8 @@ public:
 
 	void RotationZero(float fTime);
 	void PositionZero(float fTime);
+
+	void RotationByMouse(float fTime);
 };
 
 PUN_END

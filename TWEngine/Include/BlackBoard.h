@@ -8,10 +8,10 @@ public:
 	template<typename T>
 	void AddData(const string& VarName, T* Data)
 	{
-		T* Data = FindData(VarName);
+		T* getData = (T*)FindData(VarName);
 
-		if (Data != NULLPTR)
-			return Data;
+		if (getData != NULLPTR)
+			return;
 
 		m_DataMap.insert(make_pair(VarName, Data));
 	}

@@ -14,6 +14,7 @@
 #include <Component/SoundSource.h>
 #include <Component/Animation.h>
 #include "Component/Gizmo.h"
+#include "Component/FreeCamera.h"
 #include "../UserComponent/Door.h"
 #include "../UserComponent/Field.h"
 #include "../UserComponent/Player.h"
@@ -64,7 +65,10 @@ bool CTestScene::Init()
 	pCamera->SetNear(0.03f);
 
 	CTransform* pCameraTr = pCamera->GetTransform();
-	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
+	
+	CFreeCamera* pFreeCam = pCamera->AddComponent<CFreeCamera>("FreeCamera");
+
+	SAFE_RELEASE(pFreeCam);
 	SAFE_RELEASE(pCameraTr);
 
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
@@ -96,17 +100,19 @@ bool CTestScene::Init()
 	pTransform->RotationX(90.0f);
 	pTransform->SetWorldPos(50.0f, 70.0f, 0.0f);
 
-	CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
 
-	pArm->EnableMouse();
-	pArm->SetTarget(pTransform);
-
-	SAFE_RELEASE(pArm);
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLightLayer);
 
+
+	//CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
+
+	//pArm->EnableMouse();
+	//pArm->SetTarget(pTransform);
+
+	//SAFE_RELEASE(pArm);
 
 	//CGameObject* pFogObj = CGameObject::CreateObject("FogObj", pDefaultLayer);
 	//pTransform = pFogObj->GetTransform();
@@ -352,16 +358,16 @@ bool CTestScene::Init()
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pObject);
 
-	pObject = PUN::CGameObject::CreateObject("hPlayer", pDefaultLayer, true);
-	pTransform = pObject->GetTransform();
-	pTransform->SetWorldScale(0.1f, .1f, .1f);
-	CHuman_Player *pHPlayer = pObject->AddComponent<CHuman_Player>("Player");
-	pHPlayer->LoadData(TEXT("PlayerData.csv"));
+	//pObject = PUN::CGameObject::CreateObject("hPlayer", pDefaultLayer, true);
+	//pTransform = pObject->GetTransform();
+	//pTransform->SetWorldScale(0.1f, .1f, .1f);
+	//CHuman_Player *pHPlayer = pObject->AddComponent<CHuman_Player>("Player");
+	//pHPlayer->LoadData(TEXT("PlayerData.csv"));
 
-	SAFE_RELEASE(pHPlayer);
+	//SAFE_RELEASE(pHPlayer);
 
-	SAFE_RELEASE(pTransform);
-	SAFE_RELEASE(pObject);
+	//SAFE_RELEASE(pTransform);
+	//SAFE_RELEASE(pObject);
 
 	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
 

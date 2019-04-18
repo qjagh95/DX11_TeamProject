@@ -4,6 +4,7 @@
 #include "SceneComponent/StartScene.h"
 #include "SceneComponent/FirTestScene.h"
 #include "SceneComponent/TestScene-YH.h"
+#include "SceneComponent/TestScene-YH.h"
 #include "SceneComponent/LogoScene.h"
 #include "SceneComponent/RandScapeTestScene.h"
 #include "CameraEff.h"
@@ -51,7 +52,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
 
 #ifdef _DEBUG
+<<<<<<< .mine
 	GET_SINGLE(CSceneManager)->AddSceneComponent<CTestSceneYH>("TestScene");
+||||||| .r158
+	GET_SINGLE(CSceneManager)->AddSceneComponent<CRandScapeTestScene>("TestScene");
+=======
+	GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene");
+>>>>>>> .r163
 #else
 	GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");
 #endif

@@ -28,12 +28,15 @@ private:
 	ComponentCBuffer	m_tComponentCBuffer;
 	bool				m_b2DRenderer;
 	bool				m_bDecalEnable;
+	bool				m_bDontRenderMat;
 	ID3D11ShaderResourceView**  m_pBoneTex;
 
 public:
 	void SetBoneTexture(ID3D11ShaderResourceView** _pBoneTex);
 
 public:
+	bool IsShadowRender() const;
+	void DontRenderMat(bool bSwitch);
 	void Enable2DRenderer();
 	void SetMesh(class CMesh* pMesh);
 	void SetMesh(const string& strKey);

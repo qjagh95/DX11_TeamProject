@@ -195,7 +195,10 @@ void Safe_Release_Map(T& p)
 
 #define	KEYPRESS(key)			CInput::GetInst()->KeyPress(key)
 #define	KEYPUSH(key)			CInput::GetInst()->KeyPush(key)
-#define	KEYUP(key)				CInput::GetInst()->KeyUp(key)
+#define	KEYUP(key)				CInput::GetInst()->KeyRelease(key)
+
+#define KEYDOWN(key)			CInput::GetInst()->KeyPress(key)
+#define KEYHOLD(key)			CInput::GetInst()->KeyPush(key)
 
 #define NULLPTR nullptr
 
