@@ -452,15 +452,13 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 	{
 		vLightDir = -normalize(mul(float4(g_vLightDir, 0.f), g_matView).xyz);
 
-        fIntensity = saturate(dot(vLightDir, vViewNormal));        
-
         if (g_iRimLight == 1)
         {
 			// 카메라방향과 노말벡터를 내적하여 어둡게 해줄 외각을 찾는다
             float fRim = saturate(dot(vViewNormal, vLightDir));
 
 			// 0.3보다 크게 되면 Rim을 없애준다
-            if (fRim > 0.3)
+            if (fRim > 0.1)
                 fRim = 1;
 
 			// 0.3보다 작은 값만 Rim을 처리해준다

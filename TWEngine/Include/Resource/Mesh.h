@@ -78,10 +78,14 @@ public:
 	bool	IsSubset(int iContainer)	const;
 
 public:
+	void SetMeshFileName(const string& _meshFileName);
+	string GetMeshFileName();
 	string GetShaderKey()	const;
 	string GetInputLayoutKey()	const;
 	size_t GetContainCount()	const;
 	size_t GetSubsetCount(int iContainer)	const;
+
+	CMaterial* GetMaterial() const;
 
 public:
 	bool CreateMesh(const string& strName, const string& strShaderKey,

@@ -10,7 +10,7 @@
 #include "Component/Animation2D.h"
 #include "Component/ColliderOBB3D.h"
 #include "../UserComponent/Field.h"
-#include "../UserComponent/BlackCow.h"
+#include "../UserComponent/Player.h"
 #include "../UserComponent/Minion.h"
 #include "../UserComponent/Field.h"
 #include <Component/Renderer.h>
@@ -91,7 +91,7 @@ bool CFirTestScene::Init()
 
 	SAFE_RELEASE(pArm);
 
-	BlackCow*	pPlayer = pObject->AddComponent<BlackCow>("Player");
+	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
 
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pPlayer);

@@ -47,6 +47,8 @@ void CLayer::SetZOrder(int iZOrder)
 
 void CLayer::Save(BinaryWrite* _pInstBW)
 {
+	m_AllChildList.clear();
+
 	// 오브젝트 개수
 	// (툴이 아닌 클라이언트에서 바로 로드될 경우 개수를 알 수 없다.)
 	int iObjListSize = 0;
@@ -55,15 +57,11 @@ void CLayer::Save(BinaryWrite* _pInstBW)
 	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
 	{
 		if ((*iter)->GetSave() == true)
-		{
 			++iObjListSize;
-		}
 	}
 	_pInstBW->WriteData(iObjListSize);
 	if (iObjListSize == 0)
-	{
 		return;
-	}
 
 	// 오브젝트 목록
 	iterEnd = m_ObjList.end();
@@ -77,24 +75,146 @@ void CLayer::Save(BinaryWrite* _pInstBW)
 			bool isEnable = (*iter)->GetEnable();
 
 			_pInstBW->WriteData(strTag);		// 태그
-			_pInstBW->WriteData(strLayerTag);	// 오브젝트가 속해있는 레이어 태그
-			_pInstBW->WriteData(isDontDestroy);	// 오브젝트 삭제 여부
-			_pInstBW->WriteData(isEnable);		// 활성화 여부
+			_pInstBW->WriteData(strLayerTag);   // 오브젝트가 속해있는 레이어 태그
+			_pInstBW->WriteData(isDontDestroy); // 오브젝트 삭제 여부
+			_pInstBW->WriteData(isEnable);      // 활성화 여부
 
 			// Object Save 함수 호출
 			(*iter)->Save(_pInstBW);
 		}
 	}
+	_pInstBW->WriteData((int)m_AllChildList.size());
+	for (size_t i = 0; i < m_AllChildList.size(); i++)
+	{
+		_pInstBW->WriteData(m_AllChildList[i]->GetParent()->GetTag());
+		_pInstBW->WriteData(m_AllChildList[i]->GetTag());
+	}
+	/*
+	// 오브젝트 개수
+	// (툴이 아닌 클라이언트에서 바로 로드될 경우 개수를 알 수 없다.)
+	int iObjListSize = 0;
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetSave() == true && (*iter)->GetisChild() == false)
+			++iObjListSize;
+	}
+
+	_pInstBW->WriteData(iObjListSize);
+
+	if (iObjListSize == 0)
+		return;
+
+	bool bParent = false;
+	string strParent = "";
+	
+	// 오브젝트 목록
+	iterEnd = m_ObjList.end();
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		//_pInstBW->WriteData((*iter)->GetisChild());
+		bParent = false;
+
+		strParent = (*iter)->GetParentTag();
+
+		if ((*iter)->GetSave() == true)
+		{
+			if (strParent != "None")
+				bParent = true;
+			else
+				continue;
+
+			string strTag = (*iter)->GetTag();			
+			string strLayerTag = this->GetTag();
+			bool isDontDestroy = (*iter)->GetDontDestroy();
+			bool isEnable = (*iter)->GetEnable();
+
+			_pInstBW->WriteData(strTag);		// 태그
+			_pInstBW->WriteData(strLayerTag);	// 오브젝트가 속해있는 레이어 태그
+			_pInstBW->WriteData(isDontDestroy);	// 오브젝트 삭제 여부
+			_pInstBW->WriteData(isEnable);		// 활성화 여부
+			_pInstBW->WriteData((int)(*iter)->GetChildList()->size());
+			
+			// Object Save 함수 호출
+			(*iter)->Save(_pInstBW);
+			if(!(*iter)->GetChildList()->empty())
+			{
+				(*iter)->ChildSave(_pInstBW);
+			}
+		}
+	}
+	*/
+
 }
 
 void CLayer::Load(BinaryRead* _pInstBR)
 {
+	m_AllChildList.clear();
+
 	// 오브젝트 목록 개수
 	int objListSize = _pInstBR->ReadInt();
 	if (objListSize == 0)
-	{
 		return;
+
+	// 오브젝트 목록
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
+	for (iter = m_ObjList.begin() ; iter != iterEnd; )
+	{
+		if ((*iter)->GetSave())
+		{
+			SAFE_RELEASE((*iter));
+			iter = m_ObjList.erase(iter);
+			continue;
+		}
+		++iter;
 	}
+
+	if (CCore::GetInst()->m_bEditorMode == true && m_strTag == "Default")
+		CEditManager::GetInst()->PrivateEditObjSettingLayer();
+
+	for (int i = 0; i < objListSize; ++i)
+	{
+		CGameObject* newObject = NULLPTR;
+
+		string strObjTag = _pInstBR->ReadString();
+		string strLayerTag = _pInstBR->ReadString();
+		bool isDontDestroy = _pInstBR->ReadBool();
+		bool isEnable = _pInstBR->ReadBool();
+
+		// 생성
+		newObject = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
+		newObject->SetEnable(isEnable);
+		// 오브젝트 Load 호출
+		newObject->Load(_pInstBR);
+
+		m_AllChildList.push_back(newObject);
+
+		SAFE_RELEASE(newObject);
+	}
+
+	int AllSize = _pInstBR->ReadInt();
+
+	for (size_t i = 0; i < AllSize; i++)
+	{
+		string ParentTag = _pInstBR->ReadString();
+		string ChildTag = _pInstBR->ReadString();
+
+		CGameObject* ParentObject = FindObjectLoadVersion(ParentTag);
+		CGameObject* ChildObject = FindObjectLoadVersion(ChildTag);
+
+		//EraseObjectNoRelease(ChildObject);
+		ParentObject->AddChild(ChildObject, true);
+	}
+	m_AllChildList.clear();
+
+	/*
+	// 오브젝트 목록 개수
+	int objListSize = _pInstBR->ReadInt();
+	if (objListSize == 0)
+		return;
+
 	// 오브젝트 목록
 	Safe_Release_VecList(m_ObjList);
 	m_ObjList.clear();
@@ -104,25 +224,64 @@ void CLayer::Load(BinaryRead* _pInstBR)
 
 	for (int i = 0; i < objListSize; ++i)
 	{
-		string strObjTag = _pInstBR->ReadString();
-		string strLayerTag = _pInstBR->ReadString();
-		bool isDontDestroy = _pInstBR->ReadBool();
-		bool isEnable = _pInstBR->ReadBool();
+		CGameObject* newObject = NULLPTR;
 
-		// 생성
-		CGameObject* pObj = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
-		pObj->SetEnable(isEnable);
+		if (isChild == false)
+		{
+			string strObjTag = _pInstBR->ReadString();
+			string strLayerTag = _pInstBR->ReadString();
+			bool isDontDestroy = _pInstBR->ReadBool();
+			bool isEnable = _pInstBR->ReadBool();
+			bool isParent = _pInstBR->ReadBool();
+			bool isChild = _pInstBR->ReadBool(); _pInstBR->ReadBool();
+			// 생성
+			newObject = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
+			newObject->SetEnable(isEnable);
+			// 오브젝트 Load 호출
+			newObject->Load(_pInstBR);
+			SAFE_RELEASE(newObject);
+		}
+		else
+		{
+			string strObjTag = _pInstBR->ReadString();
+			string strLayerTag = _pInstBR->ReadString();
+			bool isDontDestroy = _pInstBR->ReadBool();
+			bool isEnable = _pInstBR->ReadBool();
+			int ChildSize = _pInstBR->ReadInt();
 
-		// 오브젝트 Load 호출
-		pObj->Load(_pInstBR);
-		SAFE_RELEASE(pObj);
+			// 생성
+			newObject = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
+			newObject->SetEnable(isEnable);
+			// 오브젝트 Load 호출
+			newObject->Load(_pInstBR);
+
+			CGameObject* newChild = NULLPTR;
+
+			for (int i = 0; i < ChildSize; i++)
+			{
+				string strObjTag = _pInstBR->ReadString();
+				string strLayerTag = _pInstBR->ReadString();
+				bool isDontDestroy = _pInstBR->ReadBool();
+				bool isEnable = _pInstBR->ReadBool();
+
+				newChild = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
+				newChild->SetEnable(isEnable);
+				newChild->ChildLoad(_pInstBR);
+				newObject->AddChild(newChild);
+				SAFE_RELEASE(newChild);
+			}
+			SAFE_RELEASE(newObject);
+		}
 	}
+
+	int childSize = _pInstBR->ReadInt();
+	*/
 }
 
 void CLayer::Start()
 {
-	list<CGameObject*>::iterator	iter;
-	list<CGameObject*>::iterator	iterEnd = m_ObjList.end();
+	list<CGameObject*>::iterator   iter;
+	list<CGameObject*>::iterator   iterEnd = m_ObjList.end();
 
 	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
 	{
@@ -368,13 +527,16 @@ void CLayer::Render(float fTime)
 
 }
 
-void CLayer::AddObject(CGameObject * pObj)
+void CLayer::AddObject(CGameObject * pObj, bool _isChild)
 {
 	pObj->SetScene(m_pScene);
 	pObj->SetLayer(this);
-	pObj->AddRef();
 	pObj->SetObjectListIndex((int)m_ObjList.size());
 
+	if (_isChild)
+		return;
+
+	pObj->AddRef();
 	m_ObjList.push_back(pObj);
 }
 
@@ -412,6 +574,22 @@ CGameObject * CLayer::FindObjectNonCount(const string & strTag)
 	return nullptr;
 }
 
+CGameObject * CLayer::FindObjectLoadVersion(const string & strTag)
+{
+	vector<CGameObject*>::iterator	iter;
+	vector<CGameObject*>::iterator	iterEnd = m_AllChildList.end();
+
+	for (iter = m_AllChildList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetTag() == strTag)
+		{
+			return *iter;
+		}
+	}
+
+	return nullptr;
+}
+
 void CLayer::EraseObject(CGameObject* pObj)
 {
 	list<CGameObject*>::iterator iter;
@@ -420,8 +598,22 @@ void CLayer::EraseObject(CGameObject* pObj)
 	{
 		if (*iter == pObj)
 		{
+			SAFE_RELEASE((*iter));
 			iter = m_ObjList.erase(iter);
-			SAFE_RELEASE(pObj);
+			return;
+		}
+	}
+}
+
+void CLayer::EraseObjectNoRelease(CGameObject * pObj)
+{
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
+	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
+	{
+		if (*iter == pObj)
+		{
+			iter = m_ObjList.erase(iter);
 			return;
 		}
 	}

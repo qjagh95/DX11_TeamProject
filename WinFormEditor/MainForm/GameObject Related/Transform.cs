@@ -8,7 +8,7 @@ namespace WinFormEditor
     public class Transform
     {
         // Member
-        public bool m_isUpdateTr { set; get; }
+        public bool  m_isUpdateTr { set; get; }
         EventHandler m_event = null;
 
         // Instance

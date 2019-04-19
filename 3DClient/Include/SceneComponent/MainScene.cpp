@@ -4,7 +4,7 @@
 #include "Component/Light.h"
 #include "Component/Camera.h"
 #include "Component/LandScape.h"
-#include "../UserComponent/BlackCow.h"
+#include "../UserComponent/Player.h"
 
 CMainScene::CMainScene()
 {
@@ -51,7 +51,7 @@ bool CMainScene::Init()
 
 	SAFE_RELEASE(pTransform);
 
-	BlackCow*	pPlayer = pObject->AddComponent<BlackCow>("Player");
+	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
 
 	SAFE_RELEASE(pPlayer);
 

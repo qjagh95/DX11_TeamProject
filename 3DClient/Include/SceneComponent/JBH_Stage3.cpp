@@ -25,9 +25,6 @@ bool JBH_Stage3::Init()
 
 
 
-
-
-
 	SAFE_RELEASE(pBackLayer);
 	SAFE_RELEASE(pDefaultLayer);
 	SAFE_RELEASE(pUILayer);

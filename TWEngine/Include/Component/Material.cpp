@@ -111,6 +111,11 @@ CMaterial::~CMaterial()
 	m_vecMaterial.clear();
 }
 
+const vector<vector<PSubsetMaterial>>* CMaterial::GetMaterialSubSet() const
+{
+	return &m_vecMaterial;
+}
+
 void CMaterial::SetMaterial(const Vector4 & vDiffuse, const Vector4& vAmbient,
 	const Vector4& vSpecular, float fSpecularPower,
 	const Vector4& vEmissive, int iContainer, int iSubset)

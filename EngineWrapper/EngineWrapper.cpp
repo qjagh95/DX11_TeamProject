@@ -42,11 +42,11 @@ void CoreWrapper::SetActiveObject(String^ _strObjectTag, String^ _strLayerTag)
 	PUN::CEditManager::GetInst()->SetActiveObject(strObjectTag, strLayerTag);
 }
 
-void CoreWrapper::CreateObject(String^ _strObjectTag, String^ _strLayerTag)
+void CoreWrapper::CreateObject(String^ _strObjectTag, String^ _strLayerTag, bool _isChild)
 {
 	string strObjectTag = ConvertMarshal<string, String^>(_strObjectTag);
 	string strLayerTag  = ConvertMarshal<string, String^>(_strLayerTag);
-	PUN::CEditManager::GetInst()->CreateObject(strObjectTag, strLayerTag);
+	PUN::CEditManager::GetInst()->CreateObject(strObjectTag, strLayerTag, _isChild);
 }
 
 void CoreWrapper::DeleteObject(String^ _strObjectTag, String^ _strLayerTag)
@@ -133,6 +133,20 @@ bool CoreWrapper::IsGizmoClick()
 	return PUN::CEditManager::GetInst()->IsGizmoCheckClick();
 }
 
+void CoreWrapper::AddChild(String^ _strParentTag, String^ _strLayerTag)
+{
+	string strObjectTag = ConvertMarshal<string, String^>(_strParentTag);
+	string strLayerTag = ConvertMarshal<string, String^>(_strLayerTag);
+	PUN::CEditManager::GetInst()->AddChild(strObjectTag, strLayerTag);
+}
+
+String^ EngineWrapper::CoreWrapper::GetParentTag()
+{
+	string strParentTag = PUN::CEditManager::GetInst()->GetParentTag();
+	String^ strCvtParentTag = ConvertMarshal<String^, string>(strParentTag);
+	return strCvtParentTag;
+}
+
 cli::array<float>^ CoreWrapper::GetLocalTransform(String ^ _strObjectTag, String ^ _strLayerTag, int _type)
 {
 	vector<Vector3> pVecTranform;
@@ -176,11 +190,11 @@ cli::array<String^>^ CoreWrapper::GetMeshNameList()
 	return arrStrMarshalList;
 }
 
-void CoreWrapper::LoadMeshFromFullPath(String^ _strMeshKey, String^ _strFullPath)
+bool CoreWrapper::LoadMeshFromFullPath(String^ _strMeshTag, String^ _strFullPath)
 {
-	string strMeshKey = ConvertMarshal<string, String^>(_strMeshKey);
+	string strMeshKey = ConvertMarshal<string, String^>(_strMeshTag);
 	wstring strFullPath = ConvertMarshal<wstring, String^>(_strFullPath);
-	PUN::CResourcesManager::GetInst()->LoadMeshFromFullPath(strMeshKey, strFullPath.c_str());
+	return PUN::CResourcesManager::GetInst()->LoadMeshFromFullPath(strMeshKey, strFullPath.c_str());
 }
 
 void CoreWrapper::SetMesh(String^ _strMeshTag)

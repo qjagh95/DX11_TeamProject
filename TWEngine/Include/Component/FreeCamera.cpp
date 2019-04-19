@@ -6,7 +6,7 @@
 PUN_USING
 
 CFreeCamera::CFreeCamera() :
-	m_fSpeed(40.0f),
+	m_fSpeed(80.0f),
 	m_fRotSpeed(180.0f)
 {
 	m_eComType = CT_FREECAMERA;
@@ -77,7 +77,7 @@ int CFreeCamera::Update(float fTime)
 	short	sWheel = GET_SINGLE(CInput)->GetWheelDir();
 
 	if (sWheel != 0)
-		m_pTransform->Move(Vector3::Axis[AXIS_Y], m_fSpeed * sWheel, fTime);
+		m_pTransform->Move(Vector3::Axis[AXIS_Y], 8.0f * m_fSpeed * sWheel, fTime);
 
 	return 0;
 }

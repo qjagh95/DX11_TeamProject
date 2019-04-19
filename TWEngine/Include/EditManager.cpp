@@ -36,7 +36,7 @@ CEditManager::CEditManager()
 	m_pArm(nullptr),
 	m_bNaviEditorMode(false),
 	m_pFreeCamObj(nullptr),
-	m_NavObject(nullptr),
+	m_pNavObject(nullptr),
 	m_LandScape(nullptr),
 	m_isGizmoClick(false)
 {
@@ -48,7 +48,6 @@ CEditManager::~CEditManager()
 	SAFE_RELEASE(m_pObject);
 	SAFE_RELEASE(m_pScene);
 	SAFE_RELEASE(m_pAnimation);
-	Safe_Delete_VecList(m_vecDivideFrame);
 	SAFE_RELEASE(m_pXGizmo);
 	SAFE_RELEASE(m_pYGizmo);
 	SAFE_RELEASE(m_pZGizmo);
@@ -57,8 +56,9 @@ CEditManager::~CEditManager()
 	SAFE_RELEASE(m_pYGizmoObj);
 	SAFE_RELEASE(m_pZGizmoObj);
 	SAFE_RELEASE(m_pArm);
-	SAFE_RELEASE(m_NavObject);
+	SAFE_RELEASE(m_pNavObject);
 	SAFE_RELEASE(m_LandScape);
+	Safe_Delete_VecList(m_vecDivideFrame);
 }
 
 void CEditManager::SetFreeCamObj(CGameObject * _pObj)
@@ -130,11 +130,10 @@ void CEditManager::GetLayerList(vector<string>* _pVec)
 void CEditManager::PrivateEditObjSettingLayer()
 {
 	CLayer* pLayer = m_pScene->FindLayer("Default");
-
 	pLayer->AddObject(m_pXGizmoObj);
 	pLayer->AddObject(m_pYGizmoObj);
 	pLayer->AddObject(m_pZGizmoObj);
-	pLayer->AddObject(m_pFreeCamObj);
+
 
 	SAFE_RELEASE(pLayer);
 }
@@ -146,12 +145,11 @@ void CEditManager::SetBrushSize(int _fSize)
 
 void CEditManager::DeleteNavigationMesh()
 {
-	if (m_NavObject)
+	if (m_pNavObject)
 	{
-		m_NavObject->Die();
+		m_pNavObject->Die();
 	}
-
-	SAFE_RELEASE(m_NavObject);
+	SAFE_RELEASE(m_pNavObject);
 	SAFE_RELEASE(m_LandScape);
 }
 
@@ -189,12 +187,12 @@ void CEditManager::SetActiveObject(const string _strObjectTag, const string _str
 		SAFE_RELEASE(pLayer);
 		TrueAssert(true);
 	}
-	m_pObject = pLayer->FindObject(_strObjectTag);
+
+	m_pObject = pLayer->FindObject(_strObjectTag);;
 	CColliderOBB3D* pPickOBB = m_pObject->GetPickingOBB();
 	if (pPickOBB)
 	{
 		pPickOBB->SetEnable(false);
-
 		SAFE_RELEASE(pPickOBB);
 	}
 	m_pXGizmo->SetTarget(m_pObject);
@@ -207,6 +205,9 @@ void CEditManager::SetActiveObject(const string _strObjectTag, const string _str
 
 void CEditManager::SetActiveObject(CGameObject * _pObject)
 {
+	if (m_pObject == _pObject)
+		return;
+
 	// 기존 선택 오브젝트 해제
 	if (m_pObject != nullptr)
 	{
@@ -219,7 +220,8 @@ void CEditManager::SetActiveObject(CGameObject * _pObject)
 		}
 		m_pObject->RemoveComponent(m_pEditTest);
 		SAFE_RELEASE(m_pObject);
-	}
+	}	
+
 	_pObject->AddRef();
 	m_pObject = _pObject;
 	CColliderOBB3D* pPickOBB = m_pObject->GetPickingOBB();
@@ -236,7 +238,7 @@ void CEditManager::SetActiveObject(CGameObject * _pObject)
 	m_pObject->AddComponent(m_pEditTest);
 }
 
-void CEditManager::CreateObject(const string _strObjectTag, const string _strLayerTag)
+void CEditManager::CreateObject(const string _strObjectTag, const string _strLayerTag, bool _isChild)
 {
 	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
 	if (pLayer == nullptr)
@@ -245,7 +247,10 @@ void CEditManager::CreateObject(const string _strObjectTag, const string _strLay
 		TrueAssert(true);
 		return;
 	}
-	CGameObject* pObject = CGameObject::CreateObject(_strObjectTag, pLayer);
+	CGameObject* pObject = nullptr;
+
+	pObject = CGameObject::CreateObject(_strObjectTag, pLayer);
+
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLayer);
 }
@@ -259,6 +264,16 @@ void CEditManager::DeleteObject(const string _strObjectTag, const string _strLay
 		TrueAssert(true);
 	}
 	CGameObject* pObject = pLayer->FindObject(_strObjectTag);
+	if (pObject->GetChildList()->size() > 0)
+	{
+		list<CGameObject*>::iterator iter;
+		list<CGameObject*>::iterator iterEnd = pObject->GetChildList()->end();
+		for (iter = pObject->GetChildList()->begin(); iter != iterEnd; ++iter)
+		{
+			(*iter)->SetParentNullptr();
+		}
+	}
+
 	pLayer->EraseObject(pObject);
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLayer);
@@ -300,6 +315,8 @@ void CEditManager::ChangeObjectInLayer(const string _strLayerTag)
 		TrueAssert(true);
 	}
 	pLayer->EraseObject(m_pObject);
+
+
 
 	// 새로운 레이어에 오브젝트 등록
 	pLayer = m_pScene->FindLayer(_strLayerTag);
@@ -438,6 +455,31 @@ bool CEditManager::IsGizmoCheckClick()
 	return m_isGizmoClick;
 }
 
+void CEditManager::AddChild(const string _strObjectTag, const string _strLayerTag)
+{
+	if (m_pObject == nullptr)
+	{
+		TrueAssert(true);
+		return;
+	}
+
+	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
+	CGameObject* pParent = pLayer->FindObject(_strObjectTag);
+	pParent->AddChild(m_pObject, true);
+	SAFE_RELEASE(pParent);
+	SAFE_RELEASE(pLayer);
+}
+
+string CEditManager::GetParentTag()
+{
+	if (m_pObject->GetParent() == nullptr)
+	{
+		return "None";
+	}
+
+	return m_pObject->GetParentTag();
+}
+
 vector<Vector3> CEditManager::GetLocalTransform(const string _strObjectTag, const string _strLayerTag, int _eType)
 {
 	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
@@ -544,12 +586,12 @@ void CEditManager::SetGizmoEnable(bool _bEnable)
 
 bool CEditManager::CreateLandScape(int _iX, int _iZ)
 {
-	if (m_NavObject == nullptr)
+	if (m_pNavObject == nullptr)
 	{
 		CLayer* pLayer = m_pScene->FindLayer("Default");
-		m_NavObject = CGameObject::CreateObject("LandTestObj", pLayer);
-		m_NavObject->SetSave(false);
-		m_LandScape = m_NavObject->AddComponent<CLandScape>("TestLandScape");
+		m_pNavObject = CGameObject::CreateObject("LandTestObj", pLayer);
+		m_pNavObject->SetSave(false);
+		m_LandScape = m_pNavObject->AddComponent<CLandScape>("TestLandScape");
 		m_LandScape->CreateLandScape("TestLandScape", _iX, _iZ, "LandScapeDif", NULLPTR, NULLPTR, NULLPTR, NULLPTR);
 		SAFE_RELEASE(pLayer);
 	}
@@ -908,7 +950,7 @@ void CEditManager::SetLightRange(float Range)
 
 bool CEditManager::SaveNavFile(const string & FullPath)
 {
-	if (m_NavObject == NULLPTR)
+	if (m_pNavObject == NULLPTR)
 		return false;
 
 	if (m_LandScape == NULLPTR)
@@ -926,17 +968,17 @@ bool CEditManager::SaveNavFile(const string & FullPath)
 bool CEditManager::LoadNavFile(const string & FullPath)
 {
 	CLayer* pLayer = m_pScene->FindLayer("Default");
-	if (m_NavObject)
+	if (m_pNavObject)
 	{
-		m_NavObject->Die();
+		m_pNavObject->Die();
 	}
 
-	SAFE_RELEASE(m_NavObject);
+	SAFE_RELEASE(m_pNavObject);
 	SAFE_RELEASE(m_LandScape);
 
-	m_NavObject = CGameObject::CreateObject("LandTestObj", pLayer);
-	m_NavObject->SetSave(false);
-	m_LandScape = m_NavObject->AddComponent<CLandScape>("TestLandScape");
+	m_pNavObject = CGameObject::CreateObject("LandTestObj", pLayer);
+	m_pNavObject->SetSave(false);
+	m_LandScape = m_pNavObject->AddComponent<CLandScape>("TestLandScape");
 
 	SAFE_RELEASE(pLayer);
 	m_LandScape->LoadLandScape(FullPath);

@@ -53,7 +53,7 @@ namespace EngineWrapper
 	public:
 		cli::array<String^>^ GetSelectLayerObjList(String^ _strLayerTag);
 		void SetActiveObject(String^ _strObjectTag, String^ _strLayerTag);
-		void CreateObject(String^ _strObjectTag, String^ _strLayerTag);
+		void CreateObject(String^ _strObjectTag, String^ _strLayerTag, bool _isChild);
 		void DeleteObject(String^ _strObjectTag, String^ _strLayerTag);
 		void DeleteAllObject();
 		void ChangeObjectTag(String^ _strObjectTag);
@@ -70,6 +70,8 @@ namespace EngineWrapper
 		bool FindRendererComponent();
 		bool FindLightComponent();
 		bool IsGizmoClick();
+		void AddChild(String^ _strParentTag, String^ _strLayerTag);
+		String^ GetParentTag();
 		cli::array<float>^ GetLocalTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
 		cli::array<float>^ GetWorldTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
 
@@ -155,7 +157,7 @@ namespace EngineWrapper
 	// 메시
 	public:
 		cli::array<String^>^ GetMeshNameList();
-		void LoadMeshFromFullPath(String^ _strMeshKey, String^ _strFullPath);
+		bool LoadMeshFromFullPath(String^ _strMeshKey, String^ _strFullPath);
 		void SetMesh(String^ _strMeshTag);
 		void AddRenderComponent();
 

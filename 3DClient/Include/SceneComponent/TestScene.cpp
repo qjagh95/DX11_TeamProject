@@ -17,7 +17,7 @@
 #include "Component/FreeCamera.h"
 #include "../UserComponent/Door.h"
 #include "../UserComponent/Field.h"
-#include "../UserComponent/BlackCow.h"
+#include "../UserComponent/Player.h"
 #include "../UserComponent/Minion.h"
 #include "../UserComponent/Ghost.h"
 #include "../UserComponent/Human_Player.h"
@@ -64,6 +64,8 @@ bool CTestScene::Init()
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	pCamera->SetNear(0.03f);
 
+
+
 	CTransform* pCameraTr = pCamera->GetTransform();
 	
 	CFreeCamera* pFreeCam = pCamera->AddComponent<CFreeCamera>("FreeCamera");
@@ -89,6 +91,7 @@ bool CTestScene::Init()
 	CLayer* pLightLayer = m_pScene->FindLayer("Light");
 
 	pObject = CGameObject::CreateObject("SpotLight", pLightLayer);
+
 
 	CLight* pLight = pObject->AddComponent<CLight>("Light");
 	pLight->SetLightDiffuse(Vector4::Red);
@@ -132,69 +135,75 @@ bool CTestScene::Init()
 //////////////////////////////////////////Terrain 배치 //////////////////////////////////////////////////
 ///////////////////////////////X Tile 배치///////////////////////////////////////////////////////
 
-	pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
+	//pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
 
-	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
+	//CRenderer* pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
 
-	pRenderer->SetMesh("Corridor_3mx2m", L"Corridor_3mx2m.msh");
+	//pRenderer->SetMesh("Corridor_3mx2m", L"Corridor_3mx2m.msh");
 
-	SAFE_RELEASE(pRenderer);
+	//SAFE_RELEASE(pRenderer);
 
-	pTransform = pObject->GetTransform();
+	//pTransform = pObject->GetTransform();
 
-	pTransform->SetWorldPos(20.f, 0.f, 0.f);
-	pTransform->SetWorldRot(0.f, 0.f, 0.f);
-	pTransform->SetWorldScale(0.2f);
+	//pTransform->SetWorldPos(20.f, 0.f, 0.f);
+	//pTransform->SetWorldRot(0.f, 0.f, 0.f);
+	//pTransform->SetWorldScale(0.2f);
 
+	//CGameObject* pChild = CGameObject::CreateObject("sadf");
 
-	SAFE_RELEASE(pTransform);
+	//pObject->AddChild(pChild);
 
-	SAFE_RELEASE(pObject);
-
-
-	for (int i = 1; i < 6; ++i)
-	{
-		pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
-
-		CRenderer* pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
-
-		pRenderer->SetMesh("Corridor_3mx2m", L"Corridor_3mx2m.msh");
-
-		SAFE_RELEASE(pRenderer);
-
-		pTransform = pObject->GetTransform();
-
-		pTransform->SetWorldPos(i * 40.f, 0.f, 0.f);
-		pTransform->SetWorldRot(0.f, 0.f, 0.f);
-		pTransform->SetWorldScale(0.2f);
+	//SAFE_RELEASE(pChild);
 
 
-		SAFE_RELEASE(pTransform);
+	//SAFE_RELEASE(pTransform);
 
-		SAFE_RELEASE(pObject);
-	}
-	///////////////////////XCorner 배치////////////////////////////////////
-	pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
-
-	pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
-
-	pRenderer->SetMesh("Corridor_3m3m_Corner", L"Corridor_3mx3m_Corner.msh");
-
-	SAFE_RELEASE(pRenderer);
-
-	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldPos(240.f, 0.f, 0.f);
-	pTransform->SetWorldRot(0.f, 90.f, 0.f);
-	pTransform->SetWorldScale(0.2f);
+	//SAFE_RELEASE(pObject);
 
 
-	SAFE_RELEASE(pTransform);
+	//for (int i = 1; i < 6; ++i)
+	//{
+	//	pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
 
-	SAFE_RELEASE(pObject);
+	//	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
+
+	//	pRenderer->SetMesh("Corridor_3mx2m", L"Corridor_3mx2m.msh");
+
+	//	SAFE_RELEASE(pRenderer);
+
+	//	pTransform = pObject->GetTransform();
+
+	//	pTransform->SetWorldPos(i * 40.f, 0.f, 0.f);
+	//	pTransform->SetWorldRot(0.f, 0.f, 0.f);
+	//	pTransform->SetWorldScale(0.2f);
+
+
+	//	SAFE_RELEASE(pTransform);
+
+	//	SAFE_RELEASE(pObject);
+	//}
+	/////////////////////////XCorner 배치////////////////////////////////////
+	//pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
+
+	//pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
+
+	//pRenderer->SetMesh("Corridor_3m3m_Corner", L"Corridor_3mx3m_Corner.msh");
+
+	//SAFE_RELEASE(pRenderer);
+
+	//pTransform = pObject->GetTransform();
+
+	//pTransform->SetWorldPos(240.f, 0.f, 0.f);
+	//pTransform->SetWorldRot(0.f, 90.f, 0.f);
+	//pTransform->SetWorldScale(0.2f);
+
+
+	//SAFE_RELEASE(pTransform);
+
+	//SAFE_RELEASE(pObject);
 	//////////////////////////////////Z배치//////////////////////////////////
 
-	for (int i = 0; i < 6; ++i)
+	/*for (int i = 0; i < 6; ++i)
 	{
 		pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
 
@@ -214,9 +223,9 @@ bool CTestScene::Init()
 		SAFE_RELEASE(pTransform);
 
 		SAFE_RELEASE(pObject);
-	}
+	}*/
 	///////////////////////ZCorner 배치////////////////////////////////////
-	pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
+	/*pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
 
 	pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
 
@@ -233,165 +242,165 @@ bool CTestScene::Init()
 
 	SAFE_RELEASE(pTransform);
 
-	SAFE_RELEASE(pObject);
+	SAFE_RELEASE(pObject);*/
 
 	///////////////////////////////X Tile 배치///////////////////////////////////////////////////////
-	for (int i = 0; i < 6; ++i)
-	{
-		pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
+	//for (int i = 0; i < 6; ++i)
+	//{
+	//	pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
 
-		CRenderer* pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
+	//	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
 
-		pRenderer->SetMesh("Corridor_3mx2m", L"Corridor_3mx2m.msh");
+	//	pRenderer->SetMesh("Corridor_3mx2m", L"Corridor_3mx2m.msh");
 
-		SAFE_RELEASE(pRenderer);
+	//	SAFE_RELEASE(pRenderer);
 
-		pTransform = pObject->GetTransform();
+	//	pTransform = pObject->GetTransform();
 
-		pTransform->SetWorldPos(200.f - (i * 40.f), 0.f, 280.f);
-		pTransform->SetWorldRot(0.f, 180.f, 0.f);
-		pTransform->SetWorldScale(0.2f);
-
-
-		SAFE_RELEASE(pTransform);
-
-		SAFE_RELEASE(pObject);
-	}
-
-	///////////////////////XCorner 배치////////////////////////////////////
-	pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
-
-	pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
-
-	pRenderer->SetMesh("Corridor_3m3m_Corner", L"Corridor_3mx3m_Corner.msh");
-
-	SAFE_RELEASE(pRenderer);
-
-	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldPos(-30.f, 0.f, 280.f);
-	pTransform->SetWorldRot(0.f, 270.f, 0.f);
-	pTransform->SetWorldScale(0.2f);
+	//	pTransform->SetWorldPos(200.f - (i * 40.f), 0.f, 280.f);
+	//	pTransform->SetWorldRot(0.f, 180.f, 0.f);
+	//	pTransform->SetWorldScale(0.2f);
 
 
-	SAFE_RELEASE(pTransform);
+	//	SAFE_RELEASE(pTransform);
 
-	SAFE_RELEASE(pObject);
+	//	SAFE_RELEASE(pObject);
+	//}
 
-	///////////////////////////////Z Tile 배치///////////////////////////////////////////////////////
-	for (int i = 0; i < 5; ++i)
-	{
-		pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
+	/////////////////////////XCorner 배치////////////////////////////////////
+	//pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
 
-		CRenderer* pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
+	//pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
 
-		pRenderer->SetMesh("Corridor_3mx2m", L"Corridor_3mx2m.msh");
+	//pRenderer->SetMesh("Corridor_3m3m_Corner", L"Corridor_3mx3m_Corner.msh");
 
-		SAFE_RELEASE(pRenderer);
+	//SAFE_RELEASE(pRenderer);
 
-		pTransform = pObject->GetTransform();
-
-		pTransform->SetWorldPos(-30.f, 0.f, 240.f - (i * 40.f));
-		pTransform->SetWorldRot(0.f, 90.f, 0.f);
-		pTransform->SetWorldScale(0.2f);
-
-
-		SAFE_RELEASE(pTransform);
-
-		SAFE_RELEASE(pObject);
-	}
-	pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
-
-	pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
-
-	pRenderer->SetMesh("Corridor_3m3m_Corner", L"Corridor_3mx2m.msh");
-
-	SAFE_RELEASE(pRenderer);
-
-	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldPos(-30.f, 0.f, 50.f);
-	pTransform->SetWorldRot(0.f, 90.f, 0.f);
-	pTransform->SetWorldScale(0.2f);
-
-
-	SAFE_RELEASE(pTransform);
-
-	SAFE_RELEASE(pObject);
-
-	////////////////////////////////////////////////////////////////////////
-
-	pObject = CGameObject::CreateObject("Door", pDefaultLayer);
-	pTransform = pObject->GetTransform();
-
-	CDoor* pDoor = pObject->AddComponent<CDoor>("door");
-
-
-	pTransform->SetWorldPos(0.f, 0.f, 5.f);
-	pTransform->SetWorldScale(0.1f, .1f, 0.1f);
-
-	pTransform->RotationY(-90.f);
-	
-	pTransform->SetWorldPivot(0.5f, .0f, .0f);
-	pDoor->SetOpenTime(1.5f);
-	pDoor->SetCloseTime(1.5f);
-	
-	std::string names[3];
-	names[0] = "wood_Door_Open1";
-	names[1] = "wood_Door_Close1";
-	names[2] = "wood_Door_Bash1";
-
-	TCHAR *strPaths[3]; 
-	strPaths[0] = (TCHAR*)TEXT("WoodenDoor_OPENING_01.wav");
-	strPaths[1] = (TCHAR*)TEXT("WoodenDoor_CLOSING_03.wav");
-	strPaths[2] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
-
-	pDoor->SetSounds(names, (const TCHAR**)strPaths);
-
-	PUN::CRenderer* renderer = pObject->AddComponent<PUN::CRenderer>("renderer");
-	renderer->SetMesh("wdoor_1", TEXT("wood_door.FBX"), MESH_PATH);
-
-	
-	SAFE_RELEASE(pDoor);
-
-	SAFE_RELEASE(renderer);
-	SAFE_RELEASE(pTransform);
-	SAFE_RELEASE(pObject);
-
-	//pObject = PUN::CGameObject::CreateObject("hPlayer", pDefaultLayer, true);
 	//pTransform = pObject->GetTransform();
-	//pTransform->SetWorldScale(0.1f, .1f, .1f);
-	//CHuman_Player *pHPlayer = pObject->AddComponent<CHuman_Player>("Player");
-	//pHPlayer->LoadData(TEXT("PlayerData.csv"));
 
-	//SAFE_RELEASE(pHPlayer);
+	//pTransform->SetWorldPos(-30.f, 0.f, 280.f);
+	//pTransform->SetWorldRot(0.f, 270.f, 0.f);
+	//pTransform->SetWorldScale(0.2f);
 
+
+	//SAFE_RELEASE(pTransform);
+
+	//SAFE_RELEASE(pObject);
+
+	/////////////////////////////////Z Tile 배치///////////////////////////////////////////////////////
+	//for (int i = 0; i < 5; ++i)
+	//{
+	//	pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
+
+	//	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
+
+	//	pRenderer->SetMesh("Corridor_3mx2m", L"Corridor_3mx2m.msh");
+
+	//	SAFE_RELEASE(pRenderer);
+
+	//	pTransform = pObject->GetTransform();
+
+	//	pTransform->SetWorldPos(-30.f, 0.f, 240.f - (i * 40.f));
+	//	pTransform->SetWorldRot(0.f, 90.f, 0.f);
+	//	pTransform->SetWorldScale(0.2f);
+
+
+	//	SAFE_RELEASE(pTransform);
+
+	//	SAFE_RELEASE(pObject);
+	//}
+	//pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
+
+	//pRenderer = pObject->AddComponent<CRenderer>("TerrainRenderer");
+
+	//pRenderer->SetMesh("Corridor_3m3m_Corner", L"Corridor_3mx2m.msh");
+
+	//SAFE_RELEASE(pRenderer);
+
+	//pTransform = pObject->GetTransform();
+
+	//pTransform->SetWorldPos(-30.f, 0.f, 50.f);
+	//pTransform->SetWorldRot(0.f, 90.f, 0.f);
+	//pTransform->SetWorldScale(0.2f);
+
+
+	//SAFE_RELEASE(pTransform);
+
+	//SAFE_RELEASE(pObject);
+
+	//////////////////////////////////////////////////////////////////////////
+
+	//pObject = CGameObject::CreateObject("Door", pDefaultLayer);
+	//pTransform = pObject->GetTransform();
+
+	//CDoor* pDoor = pObject->AddComponent<CDoor>("door");
+
+
+	//pTransform->SetWorldPos(0.f, 0.f, 5.f);
+	//pTransform->SetWorldScale(0.1f, .1f, 0.1f);
+
+	//pTransform->RotationY(-90.f);
+	//
+	//pTransform->SetWorldPivot(0.5f, .0f, .0f);
+	//pDoor->SetOpenTime(1.5f);
+	//pDoor->SetCloseTime(1.5f);
+	//
+	//std::string names[3];
+	//names[0] = "wood_Door_Open1";
+	//names[1] = "wood_Door_Close1";
+	//names[2] = "wood_Door_Bash1";
+
+	//TCHAR *strPaths[3]; 
+	//strPaths[0] = (TCHAR*)TEXT("WoodenDoor_OPENING_01.wav");
+	//strPaths[1] = (TCHAR*)TEXT("WoodenDoor_CLOSING_03.wav");
+	//strPaths[2] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
+
+	//pDoor->SetSounds(names, (const TCHAR**)strPaths);
+
+	//PUN::CRenderer* renderer = pObject->AddComponent<PUN::CRenderer>("renderer");
+	//renderer->SetMesh("wdoor_1", TEXT("wood_door.FBX"), MESH_PATH);
+
+	//
+	//SAFE_RELEASE(pDoor);
+
+	//SAFE_RELEASE(renderer);
 	//SAFE_RELEASE(pTransform);
 	//SAFE_RELEASE(pObject);
 
-	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
+	////pObject = PUN::CGameObject::CreateObject("hPlayer", pDefaultLayer, true);
+	////pTransform = pObject->GetTransform();
+	////pTransform->SetWorldScale(0.1f, .1f, .1f);
+	////CHuman_Player *pHPlayer = pObject->AddComponent<CHuman_Player>("Player");
+	////pHPlayer->LoadData(TEXT("PlayerData.csv"));
 
-	CBattery*	pBattery = pBatteryObj->AddComponent<CBattery>("Battery");
+	////SAFE_RELEASE(pHPlayer);
 
-	CTransform*	pBatteryTr = pBatteryObj->GetTransform();
+	////SAFE_RELEASE(pTransform);
+	////SAFE_RELEASE(pObject);
 
-	pBatteryTr->SetWorldPos(-10.f, 5.f, 30.f);
+	//CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
 
-	SAFE_RELEASE(pBatteryTr);
-	SAFE_RELEASE(pBattery);
-	SAFE_RELEASE(pBatteryObj);
+	//CBattery*	pBattery = pBatteryObj->AddComponent<CBattery>("Battery");
 
-	CGameObject*	pBattery2Obj = CGameObject::CreateObject("Battery2", pDefaultLayer);
+	//CTransform*	pBatteryTr = pBatteryObj->GetTransform();
 
-	CBattery*	pBattery2 = pBattery2Obj->AddComponent<CBattery>("Battery2");
+	//pBatteryTr->SetWorldPos(-10.f, 5.f, 30.f);
 
-	CTransform*	pBattery2Tr = pBattery2Obj->GetTransform();
+	//SAFE_RELEASE(pBatteryTr);
+	//SAFE_RELEASE(pBattery);
+	//SAFE_RELEASE(pBatteryObj);
 
-	pBattery2Tr->SetWorldPos(-10.f, 5.f, 10.f);
+	//CGameObject*	pBattery2Obj = CGameObject::CreateObject("Battery2", pDefaultLayer);
 
-	SAFE_RELEASE(pBattery2Tr);
-	SAFE_RELEASE(pBattery2);
-	SAFE_RELEASE(pBattery2Obj);
+	//CBattery*	pBattery2 = pBattery2Obj->AddComponent<CBattery>("Battery2");
+
+	//CTransform*	pBattery2Tr = pBattery2Obj->GetTransform();
+
+	//pBattery2Tr->SetWorldPos(-10.f, 5.f, 10.f);
+
+	//SAFE_RELEASE(pBattery2Tr);
+	//SAFE_RELEASE(pBattery2);
+	//SAFE_RELEASE(pBattery2Obj);
 
 	SAFE_RELEASE(pCamera);
 

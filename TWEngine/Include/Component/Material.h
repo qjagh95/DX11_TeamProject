@@ -51,6 +51,9 @@ private:
 	vector<vector<PSubsetMaterial>>	m_vecMaterial;
 
 public:
+	const vector<vector<PSubsetMaterial>>* GetMaterialSubSet() const;
+
+public:
 	void SetMaterial(const Vector4& vDiffuse, const Vector4& vAmbient,
 		const Vector4& vSpecular, float fSpecularPower,
 		const Vector4& vEmissive, int iContainer = 0, int iSubset = 0);

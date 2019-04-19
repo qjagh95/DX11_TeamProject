@@ -100,6 +100,8 @@
             this.BT_CreateNavi = new System.Windows.Forms.Button();
             this.BT_NaviLoad = new System.Windows.Forms.Button();
             this.BT_NaviSave = new System.Windows.Forms.Button();
+            this.Effect = new System.Windows.Forms.TabPage();
+            this.RenderPage = new System.Windows.Forms.TabPage();
             this.MshLoad = new System.Windows.Forms.Button();
             this.LB_MeshList = new System.Windows.Forms.ListBox();
             this.GB_Transform = new System.Windows.Forms.GroupBox();
@@ -125,6 +127,8 @@
             this.Label_PosY = new System.Windows.Forms.Label();
             this.PositionX = new System.Windows.Forms.TextBox();
             this.GB_Hierachy = new System.Windows.Forms.GroupBox();
+            this.TB_ParentName = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.CB_ObjectSave = new System.Windows.Forms.CheckBox();
             this.Btn_ObjectDelete = new System.Windows.Forms.Button();
             this.LB_ObjectList = new System.Windows.Forms.ListBox();
@@ -192,7 +196,7 @@
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label11.ForeColor = System.Drawing.Color.Black;
-            this.label11.Location = new System.Drawing.Point(6, 634);
+            this.label11.Location = new System.Drawing.Point(6, 600);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(49, 17);
             this.label11.TabIndex = 14;
@@ -204,7 +208,7 @@
             this.CB_LayerList.Cursor = System.Windows.Forms.Cursors.Default;
             this.CB_LayerList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CB_LayerList.FormattingEnabled = true;
-            this.CB_LayerList.Location = new System.Drawing.Point(57, 631);
+            this.CB_LayerList.Location = new System.Drawing.Point(57, 597);
             this.CB_LayerList.Name = "CB_LayerList";
             this.CB_LayerList.Size = new System.Drawing.Size(143, 25);
             this.CB_LayerList.TabIndex = 13;
@@ -215,7 +219,7 @@
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label10.ForeColor = System.Drawing.Color.Black;
-            this.label10.Location = new System.Drawing.Point(16, 601);
+            this.label10.Location = new System.Drawing.Point(16, 567);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(39, 17);
             this.label10.TabIndex = 12;
@@ -227,7 +231,7 @@
             this.TB_ObjectTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_ObjectTag.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.TB_ObjectTag.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.TB_ObjectTag.Location = new System.Drawing.Point(57, 598);
+            this.TB_ObjectTag.Location = new System.Drawing.Point(57, 564);
             this.TB_ObjectTag.Name = "TB_ObjectTag";
             this.TB_ObjectTag.Size = new System.Drawing.Size(143, 23);
             this.TB_ObjectTag.TabIndex = 1;
@@ -237,7 +241,7 @@
             // 
             this.Btn_ObjectCreate.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.Btn_ObjectCreate.ForeColor = System.Drawing.Color.Black;
-            this.Btn_ObjectCreate.Location = new System.Drawing.Point(5, 687);
+            this.Btn_ObjectCreate.Location = new System.Drawing.Point(5, 652);
             this.Btn_ObjectCreate.Name = "Btn_ObjectCreate";
             this.Btn_ObjectCreate.Size = new System.Drawing.Size(95, 29);
             this.Btn_ObjectCreate.TabIndex = 5;
@@ -269,9 +273,9 @@
             this.Inspector.Controls.Add(this.InspectorTab);
             this.Inspector.Font = new System.Drawing.Font("맑은 고딕", 10F, System.Drawing.FontStyle.Bold);
             this.Inspector.ForeColor = System.Drawing.Color.Red;
-            this.Inspector.Location = new System.Drawing.Point(1609, 12);
+            this.Inspector.Location = new System.Drawing.Point(1612, 12);
             this.Inspector.Name = "Inspector";
-            this.Inspector.Size = new System.Drawing.Size(308, 809);
+            this.Inspector.Size = new System.Drawing.Size(329, 809);
             this.Inspector.TabIndex = 8;
             this.Inspector.TabStop = false;
             this.Inspector.Text = "Inspector";
@@ -281,6 +285,8 @@
             this.InspectorTab.Controls.Add(this.LightPage);
             this.InspectorTab.Controls.Add(this.Animation);
             this.InspectorTab.Controls.Add(this.NavigationPage);
+            this.InspectorTab.Controls.Add(this.Effect);
+            this.InspectorTab.Controls.Add(this.RenderPage);
             this.InspectorTab.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.InspectorTab.Location = new System.Drawing.Point(7, 24);
             this.InspectorTab.Multiline = true;
@@ -975,6 +981,29 @@
             this.BT_NaviSave.UseVisualStyleBackColor = true;
             this.BT_NaviSave.Click += new System.EventHandler(this.BT_NaviSave_Click);
             // 
+            // Effect
+            // 
+            this.Effect.BackColor = System.Drawing.SystemColors.Control;
+            this.Effect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.Effect.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Effect.Location = new System.Drawing.Point(4, 26);
+            this.Effect.Name = "Effect";
+            this.Effect.Padding = new System.Windows.Forms.Padding(3);
+            this.Effect.Size = new System.Drawing.Size(309, 749);
+            this.Effect.TabIndex = 2;
+            this.Effect.Text = "Effect";
+            // 
+            // RenderPage
+            // 
+            this.RenderPage.BackColor = System.Drawing.SystemColors.Control;
+            this.RenderPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.RenderPage.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.RenderPage.Location = new System.Drawing.Point(4, 26);
+            this.RenderPage.Name = "RenderPage";
+            this.RenderPage.Size = new System.Drawing.Size(309, 749);
+            this.RenderPage.TabIndex = 4;
+            this.RenderPage.Text = "Render";
+            // 
             // MshLoad
             // 
             this.MshLoad.ForeColor = System.Drawing.Color.Black;
@@ -1282,6 +1311,8 @@
             // 
             // GB_Hierachy
             // 
+            this.GB_Hierachy.Controls.Add(this.TB_ParentName);
+            this.GB_Hierachy.Controls.Add(this.button1);
             this.GB_Hierachy.Controls.Add(this.CB_ObjectSave);
             this.GB_Hierachy.Controls.Add(this.label11);
             this.GB_Hierachy.Controls.Add(this.CB_LayerList);
@@ -1299,11 +1330,31 @@
             this.GB_Hierachy.TabStop = false;
             this.GB_Hierachy.Text = "Hierachy";
             // 
+            // TB_ParentName
+            // 
+            this.TB_ParentName.Location = new System.Drawing.Point(105, 689);
+            this.TB_ParentName.Name = "TB_ParentName";
+            this.TB_ParentName.ReadOnly = true;
+            this.TB_ParentName.Size = new System.Drawing.Size(95, 25);
+            this.TB_ParentName.TabIndex = 17;
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.button1.ForeColor = System.Drawing.Color.Black;
+            this.button1.Location = new System.Drawing.Point(5, 687);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(94, 29);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "Add Child";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Btn_AddChild);
+            // 
             // CB_ObjectSave
             // 
             this.CB_ObjectSave.AutoSize = true;
             this.CB_ObjectSave.ForeColor = System.Drawing.Color.Black;
-            this.CB_ObjectSave.Location = new System.Drawing.Point(9, 662);
+            this.CB_ObjectSave.Location = new System.Drawing.Point(9, 628);
             this.CB_ObjectSave.Name = "CB_ObjectSave";
             this.CB_ObjectSave.Size = new System.Drawing.Size(100, 21);
             this.CB_ObjectSave.TabIndex = 15;
@@ -1314,7 +1365,7 @@
             // 
             this.Btn_ObjectDelete.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.Btn_ObjectDelete.ForeColor = System.Drawing.Color.Black;
-            this.Btn_ObjectDelete.Location = new System.Drawing.Point(105, 687);
+            this.Btn_ObjectDelete.Location = new System.Drawing.Point(105, 652);
             this.Btn_ObjectDelete.Name = "Btn_ObjectDelete";
             this.Btn_ObjectDelete.Size = new System.Drawing.Size(95, 29);
             this.Btn_ObjectDelete.TabIndex = 6;
@@ -1331,7 +1382,7 @@
             this.LB_ObjectList.ItemHeight = 17;
             this.LB_ObjectList.Location = new System.Drawing.Point(5, 24);
             this.LB_ObjectList.Name = "LB_ObjectList";
-            this.LB_ObjectList.Size = new System.Drawing.Size(195, 565);
+            this.LB_ObjectList.Size = new System.Drawing.Size(195, 531);
             this.LB_ObjectList.TabIndex = 0;
             this.LB_ObjectList.SelectedIndexChanged += new System.EventHandler(this.ChangeSelectedObject);
             this.LB_ObjectList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDown_DeleteObject);
@@ -1788,7 +1839,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1924, 827);
+            this.ClientSize = new System.Drawing.Size(1948, 827);
             this.Controls.Add(this.GB_Transform);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Btn_AllClear);
@@ -1854,6 +1905,7 @@
         private System.Windows.Forms.ComboBox CB_LayerList;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TabPage Animation;
+        private System.Windows.Forms.TabPage Effect;
         private System.Windows.Forms.TabControl InspectorTab;
         private System.Windows.Forms.ComboBox AnimationOptionBox;
         private System.Windows.Forms.Label label16;
@@ -1924,6 +1976,7 @@
         private System.Windows.Forms.TextBox LPositionX;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.ListBox LB_BoneList;
+        private System.Windows.Forms.TabPage RenderPage;
         private System.Windows.Forms.TabPage LightPage;
         private System.Windows.Forms.TabPage NavigationPage;
         private System.Windows.Forms.Label label22;
@@ -1967,6 +2020,8 @@
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.Label GridSize;
         private System.Windows.Forms.TextBox TB_GridSize;
+        private System.Windows.Forms.TextBox TB_ParentName;
+        private System.Windows.Forms.Button button1;
     }
 }
 

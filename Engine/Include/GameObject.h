@@ -77,6 +77,7 @@ public:
 	class CLayer* GetLayer()	const;
 	string GetLayerName()	const;
 	int GetLayerZOrder()	const;
+	bool GetisChild() const { return m_isChild; }
 
 public:
 	void SetRenderGroup(RENDER_GROUP eGroup);
@@ -91,6 +92,7 @@ private:
 	list<CComponent*>		m_FindList;
 	CGameObject*			m_pParent;
 	list<CGameObject*>		m_ChildList;
+	bool m_isChild;
 	bool m_bUseFrustumCull;
 
 public:
@@ -98,7 +100,9 @@ public:
 	class CTransform * GetTransformNonCount() const;
 	class CTransform* GetTransformNoneCount() const { return m_pTransform; }
 	const list<class CComponent*>* GetComponentList()	const;
-	const std::list<CGameObject*>* GetChildList();
+	list<class CGameObject*>* GetChildList();
+	
+	string GetParentTag();
 	RENDER_GROUP	 GetRenderGroup() const;
 	bool EmptyComponent()	const;
 	bool FrustumCull();
@@ -120,7 +124,7 @@ public:
 	void RenderNaviEditorMode(float fTime);
 
 public:
-	void AddChild(CGameObject* pChild);
+	void AddChild(CGameObject* pChild, bool bEditorMode = false);
 
 public:
 	class CComponent* AddComponent(class CComponent* pCom);
@@ -139,6 +143,11 @@ public:
 public:
 	void Save(BinaryWrite* _pInstBW);
 	void Load(BinaryRead*  _pInstBR);
+
+	void SetParentNullptr();
+	CGameObject* GetParent();
+	void ChildSave(BinaryWrite* _pInstBW);
+	void ChildLoad(BinaryRead*  _pInstBR);
 
 public:
 	template <typename T>

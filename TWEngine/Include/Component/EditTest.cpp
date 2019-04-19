@@ -14,6 +14,7 @@ PUN_USING
 
 CEditTest::CEditTest()
 {
+	m_eComType = CT_END;
 }
 
 

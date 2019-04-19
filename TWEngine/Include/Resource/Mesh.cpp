@@ -66,6 +66,16 @@ bool CMesh::IsSubset(int iContainer) const
 	return !m_vecMeshContainer[iContainer]->vecIB.empty();
 }
 
+void CMesh::SetMeshFileName(const string& _meshFileName)
+{
+
+}
+
+string CMesh::GetMeshFileName()
+{
+	return string();
+}
+
 string CMesh::GetShaderKey() const
 {
 	return m_strShaderKey;
@@ -84,6 +94,11 @@ size_t CMesh::GetContainCount() const
 size_t CMesh::GetSubsetCount(int iContainer) const
 {
 	return m_vecMeshContainer[iContainer]->vecIB.size();
+}
+
+CMaterial * CMesh::GetMaterial() const
+{
+	return m_pMaterial;
 }
 
 bool CMesh::CreateMesh(const string & strName, const string & strShaderKey, const string & strLayoutKey,
@@ -745,7 +760,8 @@ bool CMesh::LoadFromFullPath(const char * pFullPath)
 	fread(&iLength, 4, 1, pFile);
 	char	strTag[256] = {};
 	fread(strTag, 1, iLength, pFile);
-	m_strTag = strTag;
+	if(m_strTag == "")
+		m_strTag = strTag;
 
 	// ShaderName 길이를 저장한다.
 	iLength = 0;

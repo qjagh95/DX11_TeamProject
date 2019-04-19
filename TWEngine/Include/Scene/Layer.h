@@ -17,8 +17,12 @@ private:
 private:
 	class CScene*	m_pScene;
 	int				m_iZOrder;
-	list<class CGameObject*>	m_ObjList;
 
+public:
+	vector<class CGameObject*> m_AllChildList;
+
+private:
+	list<class CGameObject*>	m_ObjList;
 	vector<float>* m_vecInput;
 	vector<float>* m_vecUpdate;
 	vector<float>* m_vecLateUpdate;
@@ -51,10 +55,12 @@ public:
 	void Render(float fTime);
 
 public:
-	void AddObject(class CGameObject* pObj);
+	void AddObject(class CGameObject* pObj, bool _isChild = false);
 	class CGameObject* FindObject(const string & strTag);
 	class CGameObject * FindObjectNonCount(const string & strTag);
+	class CGameObject * FindObjectLoadVersion(const string & strTag);
 	void EraseObject(class CGameObject* pObj);
+	void EraseObjectNoRelease(class CGameObject* pObj);
 	void EraseObjectAll();
 	void GetLayerListObjTag(std::vector<std::string>* _vec);
 	class CGameObject* FindObjectFromIndex(int _idx);

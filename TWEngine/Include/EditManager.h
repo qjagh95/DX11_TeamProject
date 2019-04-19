@@ -31,25 +31,27 @@ public:
 	}
 
 private:
-	CScene*			m_pScene;
-	CGameObject*	 m_pObject;
-	class CGizmo*	 m_pXGizmo;
-	class CGizmo*	 m_pYGizmo;
-	class CGizmo*	 m_pZGizmo;
-	CGameObject*	 m_pXGizmoObj;
-	CGameObject*	 m_pYGizmoObj;
-	CGameObject*	 m_pZGizmoObj;
-	bool			 m_isGizmoClick;
-	class CArm*		 m_pArm;
-	CGameObject*	 m_pFreeCamObj;
-	class CEditTest* m_pEditTest;
-	vector<string>	m_vecstrObjList;
-	CAnimation*		m_pAnimation;
+	CScene*				m_pScene;
+	class CGizmo*		m_pXGizmo;
+	class CGizmo*		m_pYGizmo;
+	class CGizmo*		m_pZGizmo;
+	CGameObject*		m_pObject;
+	CGameObject*		m_pXGizmoObj;
+	CGameObject*		m_pYGizmoObj;
+	CGameObject*		m_pZGizmoObj;
+	CGameObject*		m_pFreeCamObj;
+	CGameObject*		m_pNavObject;
+	class CArm*			m_pArm;
+	class CEditTest*	m_pEditTest;
+	class CLandScape*	m_LandScape;
+	CAnimation*			m_pAnimation;
+
+	bool				m_isGizmoClick;
+	bool				m_bNaviEditorMode;
+	bool				m_bSelectNaviMove;
+	vector<string>		m_vecstrObjList;
 	vector<struct _tagBoneKeyFrame*> m_vecDivideFrame;
-	bool			m_bNaviEditorMode;
-	CGameObject* m_NavObject;
-	class CLandScape* m_LandScape;
-	bool			  m_bSelectNaviMove;
+
 public:
 	void SetFreeCamObj(CGameObject* _pObj);
 	void SetArm(class CArm* _pArm);
@@ -85,7 +87,7 @@ public:
 	void GetSelectLayerObjList(string _strLayerTag, vector<string>* _pVec);
 	void SetActiveObject(const string _strObjectTag, const string _strLayerTag);
 	void SetActiveObject(class CGameObject* _pObject);
-	void CreateObject(const string _strObjectTag, const string _strLayerTag);
+	void CreateObject(const string _strObjectTag, const string _strLayerTag, bool _isChild = false);
 	void DeleteObject(const string _strObjectTag, const string _strLayerTag);
 	void DeleteAllObject();
 	void ChangeObjectTag(const string _strObjectTag);
@@ -101,6 +103,8 @@ public:
 	bool FindLightComponent();
 	void SetGizmoClick(bool _isFlag);
 	bool IsGizmoCheckClick();
+	void AddChild(const string _strObjectTag, const string _strLayerTag);
+	string GetParentTag();
 	vector<Vector3> GetLocalTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
 	vector<Vector3> GetWorldTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
 	void SetMouseWheel(short _sMouseWheel);

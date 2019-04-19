@@ -424,9 +424,9 @@ bool CResourcesManager::LoadMesh(const string & strName, const TCHAR * pFileName
 	return true;
 }
 
-bool CResourcesManager::LoadMeshFromFullPath(const string & strName, const TCHAR * pFullPath)
+bool CResourcesManager::LoadMeshFromFullPath(const string& strName, const TCHAR * pFullPath)
 {
-	CMesh*	pMesh = FindMesh(strName);
+	CMesh* pMesh = FindMesh(strName);
 	if (pMesh)
 	{
 		SAFE_RELEASE(pMesh);
@@ -434,11 +434,43 @@ bool CResourcesManager::LoadMeshFromFullPath(const string & strName, const TCHAR
 	}
 
 	pMesh = new CMesh;
+	pMesh->SetMeshFileName(strName);
 	if (!pMesh->LoadMeshFromFullPath(strName, pFullPath))
 	{
 		SAFE_RELEASE(pMesh);
 		return false;
 	}
+	CMaterial* pMtrl = pMesh->GetMaterial();
+	if (pMtrl == nullptr)
+	{
+		SAFE_DELETE(pMesh);
+		return false;
+	}
+	const vector<vector<PSubsetMaterial>>* pMaterialSubSet = pMtrl->GetMaterialSubSet();
+	for (size_t i = 0; i < pMaterialSubSet->size(); ++i)
+	{
+		vector<PSubsetMaterial> pVecSubSet = pMaterialSubSet->at(i);
+		for (size_t j = 0; j < pVecSubSet.size(); j++)
+		{
+			PSubsetMaterial pSubSet = pVecSubSet[j];
+			if (pSubSet->pDiffuse	== nullptr ||
+				pSubSet->pSpecular	== nullptr ||
+				pSubSet->pNormal	== nullptr)
+			{
+				SAFE_DELETE(pMesh);
+				return false;
+			}
+
+			if (pSubSet->pDiffuse->pTex  == nullptr || 
+				pSubSet->pSpecular->pTex == nullptr ||
+				pSubSet->pNormal->pTex	 == nullptr)
+			{
+				SAFE_DELETE(pMesh);
+				return false;
+			}
+		}
+	}
+
 	m_mapMesh.insert(make_pair(strName, pMesh));
 
 	return true;

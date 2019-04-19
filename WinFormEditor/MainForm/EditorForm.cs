@@ -211,6 +211,11 @@ namespace WinFormEditor
             return PositionX;
         }
 
+        public TextBox GetParentTextBox()
+        {
+            return TB_ParentName;
+        }
+
         public Dictionary<string, ObjectInfo> GetObjInfo()
         {
             return m_objInfo;
@@ -237,13 +242,18 @@ namespace WinFormEditor
 
         public void LoadData(bool _isFileLoad)
         {
-            ClearData();
-            LoadObjList(_isFileLoad);
-            LoadMeshList();
-            LoadAnmFile();
+            ClearData(_isFileLoad);
+            LoadObjList();
+
+            // 처음에 툴을 실행시킬 때만 로드를 한다.
+            if(_isFileLoad == false)
+            {
+                LoadMeshList();
+                LoadAnmFile();
+            }
         }
 
-        private void ClearData()
+        private void ClearData(bool _isFileLoad)
         {
             // 데이터 지우기
             m_objInfo.Clear();
@@ -251,15 +261,20 @@ namespace WinFormEditor
             // 아이템 목록 지우기
             LB_ObjectList.Items.Clear();
             LB_LogMessage.Items.Clear();
-            LB_MeshList.Items.Clear();
-            LB_FileMesh.Items.Clear();
-            LB_AniList.Items.Clear();
-            LB_BoneList.Items.Clear();
-            ClipList.Items.Clear();
+            if(_isFileLoad == false)
+            {
+                ClipList.Items.Clear();
+                LB_BoneList.Items.Clear();
+                LB_MeshList.Items.Clear();
+                LB_FileMesh.Items.Clear();
+                LB_AniList.Items.Clear();
+            }
         }
 
-        private void LoadObjList(bool _isFileLoad)
+        private void LoadObjList()
         {
+            m_objInfo.Clear();
+
             // 레이어 이름 목록
             string[] arrLayerTag = m_coreWrapper.GetLayerList();
             for (int i = 0; i < arrLayerTag.Length; ++i)
@@ -319,8 +334,11 @@ namespace WinFormEditor
             path += "\\3DClient\\Bin\\MeshData\\";
             foreach (string f in Directory.GetFiles(path, "*.msh"))
             {
-                m_coreWrapper.LoadMeshFromFullPath(Path.GetFileNameWithoutExtension(f), f);
-                LB_FileMesh.Items.Add(Path.GetFileNameWithoutExtension(f));
+                bool isLoad = m_coreWrapper.LoadMeshFromFullPath(Path.GetFileNameWithoutExtension(f), f);
+                if(isLoad == true)
+                {
+                    LB_FileMesh.Items.Add(Path.GetFileNameWithoutExtension(f));
+                }
             }
         }
 
@@ -332,8 +350,11 @@ namespace WinFormEditor
             path += "\\3DClient\\Bin\\MeshData\\";
             foreach (string f in Directory.GetFiles(path, "*.anm"))
             {
-                m_coreWrapper.LoadMeshFromFullPath(Path.GetFileNameWithoutExtension(f), f);
-                LB_AniList.Items.Add(Path.GetFileNameWithoutExtension(f));
+                bool isLoad = m_coreWrapper.LoadMeshFromFullPath(Path.GetFileNameWithoutExtension(f), f);
+                if (isLoad == true)
+                {
+                    LB_AniList.Items.Add(Path.GetFileNameWithoutExtension(f));
+                }
             }
         }
 
@@ -381,7 +402,7 @@ namespace WinFormEditor
         /*******************************************************************************************************/
         // 오브젝트 선택, 생성, 삭제, 수정
 
-        private void ChangeSelectedObject(object sender, EventArgs e)
+        public void ChangeSelectedObject(object sender, EventArgs e)
         {
             // 선택 오브젝트
             m_gameObj.SelectedObject(m_transform, LB_ObjectList, TB_ObjectTag, CB_LayerList);
@@ -389,7 +410,7 @@ namespace WinFormEditor
 
         private void Btn_CreateObjectClick(object sender, EventArgs e)
         {
-            m_gameObj.CreateObject(LB_ObjectList);
+            m_gameObj.CreateObject(LB_ObjectList, false);
         }
 
         private void Btn_DeleteObjectClick(object sender, EventArgs e)
@@ -447,6 +468,16 @@ namespace WinFormEditor
                 EventHandler changeSelectedItem = ChangeSelectedObject;
                 m_gameObj.ChangeTag(LB_ObjectList, changeSelectedItem, TB_ObjectTag);
             }
+        }
+
+        private void Btn_AddChild(object sender, EventArgs e)
+        {
+            if (LB_ObjectList.SelectedItem == null)
+            {
+                MessageBox.Show("선택된 오브젝트가 없습니다.");
+                return;
+            }
+            m_gameObj.AddChild(LB_ObjectList, TB_ParentName);
         }
 
         /*******************************************************************************************************/
@@ -925,72 +956,6 @@ namespace WinFormEditor
             int Val = Convert.ToInt32(TB_GridSize.Text);
             m_coreWrapper.SetGridSize(Val);
         }
-        /*******************************************************************************************************/
-
-
-
-        //private void BtnRemove(object sender, EventArgs e)
-        //{
-        //    // 오브젝트 전부 삭제
-        //    m_coreWrapper.DeleteAllObject();
-
-        //    // 아이템 전부 삭제
-        //    m_createObjCnt = 0;
-        //    LB_ObjectList.Items.Clear();
-        //    m_dataRemoveForm.Close();
-        //    MessageBox.Show("데이터를 전부 삭제했습니다.");
-        //}
-
-        //private void BtnCancel(object sender, EventArgs e)
-        //{
-        //    m_dataRemoveForm.Close();
-        //}
-
-        //private void LoadObjectList()
-        //{
-        //    // 데이터 지우기
-        //    m_objInfo.Clear();
-
-        //    // 아이템 모두 지우기
-        //    LB_ObjectList.Items.Clear();
-
-        //    // 오브젝트 목록
-        //    string[] arrLayerTag = m_coreWrapper.GetLayerList();
-        //    for (int i = 0; i < arrLayerTag.Length; ++i)
-        //    {
-        //        string[] arrObjTag = m_coreWrapper.GetSelectLayerObjList(arrLayerTag[i]);
-        //        for (int j = 0; j < arrObjTag.Length; ++j)
-        //        {
-        //            // 데이터 추가
-        //            ObjectInfo info = new ObjectInfo();
-        //            info.strLayerTag = arrLayerTag[i];
-        //            info.vecScale = new ObjectInfo.Vector3();
-        //            info.vecRotate = new ObjectInfo.Vector3();
-        //            info.vecPosition = new ObjectInfo.Vector3();
-        //            m_objInfo.Add(arrObjTag[j], info);
-
-        //            // 아이템 추가
-        //            LB_ObjectList.Items.Add(arrObjTag[j]);
-        //        }
-        //    }
-        //}
-
-        //public string GetSelectObjectTag()
-        //{
-        //    string strTag = "";
-        //    if (LB_ObjectList.SelectedItem != null)
-        //    {
-        //        strTag = LB_ObjectList.SelectedItem.ToString();
-        //    }
-
-        //    return strTag;
-        //}
-
-        
-
-        
-
-        
 
         private void LoadLayerComboBoxList()
         {
@@ -1000,377 +965,6 @@ namespace WinFormEditor
                 CB_LayerList.Items.Add(arrLayerTag[i].ToString());
             }
         }
-
-        /*******************************************************************************************************/
-        // Layer, Object
-        // 최종 수정 : 2019.03.24 (김동규)
-        // 문제 있으면 바로 말해주세요 !!
-
-        //private void ObjectList_ChangeSelectedItem(object sender, EventArgs e) // 19.03.24
-        //{
-        //    if (LB_ObjectList.SelectedItem == null)
-        //    {
-        //        return;
-        //    }
-
-        //    // 오브젝트 선택
-        //    int itemIndex = LB_ObjectList.SelectedIndex;
-        //    string strObjectTag = LB_ObjectList.Items[itemIndex].ToString();
-        //    string strLayerTag = m_objInfo[strObjectTag].strLayerTag;
-        //    m_coreWrapper.SetActiveObject(strObjectTag, strLayerTag);
-
-        //    // Transform
-        //    LoadTransform(itemIndex);
-
-        //    // 오브젝트 텍스트 박스 
-        //    TB_ObjectTag.Text = strObjectTag;
-
-        //    // 레이어 콤보 박스
-        //    int comboBoxIndex = 0;
-        //    if (strLayerTag == "Stage")
-        //    {
-        //        comboBoxIndex = 0;
-        //    }
-        //    else if (strLayerTag == "Default")
-        //    {
-        //        comboBoxIndex = 1;
-        //    }
-        //    else if (strLayerTag == "UI")
-        //    {
-        //        comboBoxIndex = 2;
-        //    }
-        //    CB_LayerList.SelectedIndex = comboBoxIndex;
-        //}
-
-        //private void Btn_CreateObject(object sender, EventArgs e)
-        //{
-        //    // 오브젝트 생성
-        //    string strObjectTag = "GameObject_" + m_createObjCnt;
-        //    string strLayerTag = "Default";
-        //    m_coreWrapper.CreateObject(strObjectTag, strLayerTag);
-        //    ++m_createObjCnt;
-
-        //    // 데이터 추가
-        //    ObjectInfo info = new ObjectInfo();
-        //    info.strLayerTag = strLayerTag;
-        //    info.vecScale = new ObjectInfo.Vector3();
-        //    info.vecRotate = new ObjectInfo.Vector3();
-        //    info.vecPosition = new ObjectInfo.Vector3();
-        //    m_objInfo.Add(strObjectTag, info);
-
-        //    // 아이템 추가
-        //    LB_ObjectList.Items.Add(strObjectTag);
-
-        //    // 만들어진 오브젝트 포커스 활성화
-        //    int itemIndex = LB_ObjectList.Items.Count - 1;
-        //    LB_ObjectList.SelectedItem = LB_ObjectList.Items[itemIndex];
-        //    AddLogString("오브젝트가 생성되었습니다.");
-        //}
-
-        //private void Btn_DeleteObject(object sender, EventArgs e)
-        //{
-        //    if (LB_ObjectList.SelectedItem == null)
-        //    {
-        //        MessageBox.Show("선택된 오브젝트가 없습니다.");
-        //        return;
-        //    }
-
-        //    int SelectIndex = LB_ObjectList.SelectedIndex;
-
-        //    // 오브젝트, 데이터 아이템 삭제
-        //    LB_ObjectList.SelectedIndexChanged -= ObjectList_ChangeSelectedItem;
-
-        //    string strObjectTag = LB_ObjectList.SelectedItem.ToString();
-        //    string strLayerTag = m_objInfo[strObjectTag].strLayerTag;
-
-        //    m_coreWrapper.DeleteObject(strObjectTag, strLayerTag);
-        //    m_objInfo.Remove(strObjectTag);
-        //    LB_ObjectList.Items.Remove(LB_ObjectList.SelectedItem);
-        //    LB_ObjectList.SelectedIndexChanged += ObjectList_ChangeSelectedItem;
-
-        //    // 오브젝트 정보 초기화
-        //    if (LB_ObjectList.SelectedIndex == -1)
-        //    {
-        //        // ComboBox 이벤트 제거
-        //        CB_LayerList.TextChanged -= ChangeLayerComboBox;
-        //        CB_LayerList.SelectedItem = null;
-        //        CB_LayerList.TextChanged += ChangeLayerComboBox;
-        //    }
-
-        //    // 오브젝트 텍스트 박스 
-        //    TB_ObjectTag.Text = "";
-
-        //    // 레이어 콤보 박스
-        //    CB_LayerList.SelectedItem = null;
-
-        //    // 포커스 해제
-        //    LB_ObjectList.SelectedItem = null;
-        //    AddLogString("오브젝트가 삭제되었습니다.");
-
-        //    if (SelectIndex - 1 < 0)
-        //        SelectIndex = 0;
-
-        //    LB_ObjectList.SelectedIndex = SelectIndex - 1;
-        //}
-
-        
-
-        
-
-        
-
-        ///*******************************************************************************************************/
-        //// Key Check
-        //// 최종 수정 : 2019.03.24 (김동규)
-        //// 문제 있으면 바로 말해주세요 !!
-
-        
-
-        //private bool CheckStringForm(TextBox _textBox)
-        //{
-        //    // 변경된 문자열 처리
-        //    if (m_isChangeText == true)
-        //    {
-        //        m_isChangeText = false;
-
-        //        int negativeCnt = 0;
-        //        int decimalCnt = 0;
-
-        //        // 문자열을 검사한다.
-        //        for (int i = 0; i < _textBox.Text.Length; ++i)
-        //        {
-        //            string subStr = _textBox.Text.Substring(i, 1);
-
-        //            // 문자열 0번째 위치에 .(소수점) 표시가 들어오는지 검사한다.
-        //            if (i == 0 && subStr.CompareTo(".") == 0)
-        //            {
-        //                SetBeforeTBText(_textBox);
-        //                return false;
-        //            }
-        //            else if (i > 0 && subStr.CompareTo(".") == 0)
-        //            {
-        //                subStr = _textBox.Text.Substring(i - 1, 1);
-        //                if (subStr.CompareTo("-") == 0)
-        //                {
-        //                    SetBeforeTBText(_textBox);
-        //                    return false;
-        //                }
-        //                else
-        //                {
-        //                    if (decimalCnt == 0)
-        //                    {
-        //                        ++decimalCnt;
-        //                        continue;
-        //                    }
-        //                    else
-        //                    {
-        //                        SetBeforeTBText(_textBox);
-        //                        return false;
-        //                    }
-        //                }
-        //            }
-
-        //            // -(음수) 문자가 문자열 0번째 위치가 아닌지 검사한다. 
-        //            if (i > 0 && subStr.CompareTo("-") == 0)
-        //            {
-        //                SetBeforeTBText(_textBox);
-        //                return false;
-        //            }
-        //            else if (i == 0 && subStr.CompareTo("-") == 0)
-        //            {
-        //                if (negativeCnt == 0)
-        //                {
-        //                    ++negativeCnt;
-        //                    continue;
-        //                }
-        //                else
-        //                {
-        //                    SetBeforeTBText(_textBox);
-        //                    return false;
-        //                }
-        //            }
-        //        }
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
-        //private void SetBeforeTBText(TextBox _textBox)
-        //{
-        //    // 오브젝트가 없는 경우
-        //    if (LB_ObjectList.SelectedItem == null)
-        //    {
-        //        MessageBox.Show("선택된 오브젝트가 없습니다.");
-        //    }
-        //    else
-        //    {
-        //        MessageBox.Show("잘못된 형식의 값이 들어왔습니다.");
-        //    }
-
-        //    // ChangePosition 이벤트 삭제
-        //    _textBox.TextChanged -= m_event;
-
-        //    if (_textBox.Text.Length > 0)
-        //    {
-
-        //        int strLength = _textBox.Text.Length;
-        //        _textBox.Text = _textBox.Text.Substring(0, strLength - 1);
-        //        _textBox.Select(_textBox.Text.Length, 0);
-        //    }
-
-        //    // ChangePosition 이벤트 추가
-        //    _textBox.TextChanged += m_event;
-        //}
-
-        /*******************************************************************************************************/
-        // Transform Component
-        // 최종 수정 : 2019.03.24 (김동규)
-        // 문제 있으면 바로 말해주세요 !!
-
-        //private bool Data_StringFormCheck(TextBox _sender, TextBox _tbX, TextBox _tbY, TextBox _tbZ)
-        //{
-        //    // 선택된 오브젝트 여부 검사
-        //    // if(g_strObjTag != "") 조건으로도 가능
-        //    if (LB_ObjectList.SelectedItem == null)
-        //    {
-        //        SetBeforeTBText(_sender);
-        //        return false;
-        //    }
-
-        //    // 음수를 표기할때 음수 자체만으로 데이터를 변환할 수 없다.
-        //    if (_tbX.Text == "-" || _tbY.Text == "-" || _tbZ.Text == "-")
-        //    {
-        //        return false;
-        //    }
-
-        //    // 형식 검사
-        //    return CheckStringForm(_sender);
-        //}
-
-        
-
-        
-
-        
-
-        //private void LoadTransform(int _index)
-        //{
-        //    if (LB_ObjectList.SelectedItem == null)
-        //    {
-        //        return;
-        //    }
-
-        //    string strObjectTag = LB_ObjectList.Items[_index].ToString();
-        //    string strLayerTag = m_objInfo[strObjectTag].strLayerTag;
-
-        //    // Get World Transform(Scale, Rotate, Position)
-        //    float[] arrSacle = m_coreWrapper.GetWorldTransform(strObjectTag, strLayerTag, (int)eTransformType.TT_SCALE);
-        //    float[] arrRotate = m_coreWrapper.GetWorldTransform(strObjectTag, strLayerTag, (int)eTransformType.TT_ROTATE);
-        //    float[] arrPosition = m_coreWrapper.GetWorldTransform(strObjectTag, strLayerTag, (int)eTransformType.TT_POSITION);
-
-        //    // Position
-        //    ObjectInfo.Vector3 vPos = new ObjectInfo.Vector3(arrPosition[0], arrPosition[1], arrPosition[2]);
-        //    m_objInfo[strObjectTag].vecPosition = vPos;
-        //    PositionX.Text = Convert.ToString(vPos.x);
-        //    PositionY.Text = Convert.ToString(vPos.y);
-        //    PositionZ.Text = Convert.ToString(vPos.z);
-
-        //    // Scale
-        //    ObjectInfo.Vector3 vScale = new ObjectInfo.Vector3(arrSacle[0], arrSacle[1], arrSacle[2]);
-        //    m_objInfo[strObjectTag].vecScale = vScale;
-        //    ScaleX.Text = Convert.ToString(vScale.x);
-        //    ScaleY.Text = Convert.ToString(vScale.y);
-        //    ScaleZ.Text = Convert.ToString(vScale.z);
-
-        //    // Rotate
-        //    ObjectInfo.Vector3 vRotate = new ObjectInfo.Vector3(arrRotate[0], arrRotate[1], arrRotate[2]);
-        //    m_objInfo[strObjectTag].vecRotate = vRotate;
-        //    RotateX.Text = Convert.ToString(vRotate.x);
-        //    RotateY.Text = Convert.ToString(vRotate.y);
-        //    RotateZ.Text = Convert.ToString(vRotate.z);
-        //}
-
-        /*******************************************************************************************************/
-        // Animation Component
-        // 최종 수정 : 2019.??.?? (천진호)
-        // 문제 있으면 바로 말해주세요 !!
-
-
-
-        /*******************************************************************************************************/
-        // 파일 저장, 불러오기
-        // 최종 수정 : 2019.03.24 (김동규)
-        // 문제 있으면 바로 말해주세요 !!
-
-        //private void FileSave_Click(object sender, EventArgs e)
-        //{
-        //    // SaveFileDialog 창 설정
-        //    // Title  : Dialog 창 이름 설정
-        //    // Filter : 파일 형식 부분
-        //    // AddExtension : 확장명 추가 여부
-        //    SaveFileDialog saveFile = new SaveFileDialog();
-        //    string curDirectory = Directory.GetCurrentDirectory();
-        //    string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
-        //    path += "\\3DClient\\bin\\Data";
-        //    saveFile.InitialDirectory = path;
-        //    saveFile.Title = "다른 이름으로 저장";
-        //    saveFile.Filter = "데이터 파일(*.dat)|*.dat|모든파일(*.*)|*.*";
-        //    saveFile.DefaultExt = "dat";
-        //    saveFile.AddExtension = true;
-        //    if (saveFile.ShowDialog() == DialogResult.OK)
-        //    {
-        //        // 저장
-        //        m_coreWrapper.FileSave(saveFile.FileName);
-        //    }
-        //}
-
-        //private void FileLoad_Click(object sender, EventArgs e)
-        //{
-        //    OpenFileDialog openFile = new OpenFileDialog();
-        //    string curDirectory = Directory.GetCurrentDirectory();
-        //    string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
-        //    path += "\\3DClient\\bin\\Data";
-        //    openFile.InitialDirectory = path;
-        //    openFile.Title = "파일 불러오기";
-        //    openFile.FileName = ".dat";
-        //    openFile.Filter = "데이터 파일(*.dat) | *.dat; | 모든 파일(*.*) | *.*";
-        //    if (openFile.ShowDialog() == DialogResult.OK)
-        //    {
-        //        // 불러오기
-        //        m_coreWrapper.FileLoad(openFile.FileName);
-
-        //        // 로드
-        //        ClearData();
-        //        LoadObjectList();
-        //        LoadMeshList();
-        //        LoadAnmFile();
-        //    }
-        //}
-
-        //private void SetMesh_Click(object sender, EventArgs e)
-        //{
-        //    // '메시 등록' 버튼을 클릭 시 호출된다.
-        //    if (LB_MeshList.SelectedItem == null && LB_FileMesh.SelectedItem == null)
-        //    {
-        //        AddLogString("Error! 선택된 Mesh가 없습니다");
-        //        return;
-        //    }
-
-        //    string strTemp;
-        //    if (LB_MeshList.SelectedItem != null)
-        //    {
-        //        strTemp = LB_MeshList.SelectedItem.ToString();
-        //        m_coreWrapper.SetMesh(strTemp);
-        //    }
-        //    else if (LB_FileMesh.SelectedItem != null)
-        //    {
-        //        strTemp = LB_FileMesh.SelectedItem.ToString();
-        //        m_coreWrapper.SetMesh(strTemp);
-        //    }
-        //}
-
-        
-
 
         private void MshLoad_Click(object sender, EventArgs e)
         {
@@ -1406,23 +1000,16 @@ namespace WinFormEditor
 
         private void ClearLayerList()
         {
-            //LB_LayerList.Items.Clear();
         }
 
         private void ClearObjectList()
         {
-
         }
 
         private void ChangeLayer_Click(object sender, EventArgs e)
         {
-
         }
-
         
-
-       
-
         private void Mouse_Wheel(object sender, MouseEventArgs e)
         {
             m_coreWrapper.SetMouseWheel(e.Delta);
@@ -1430,7 +1017,6 @@ namespace WinFormEditor
 
         private void Transform_Press(object sender, KeyPressEventArgs e)
         {
-
         }
 
         private void Specular_Press(object sender, KeyPressEventArgs e)
@@ -1476,8 +1062,6 @@ namespace WinFormEditor
                 return;
         }
 
-        
-
         private void BT_DifColor_Click(object sender, EventArgs e)
         {
             LightDiffuse();
@@ -1489,64 +1073,5 @@ namespace WinFormEditor
             m_coreWrapper.SetLightType(CB_LightType.SelectedIndex);
             AddLogString("LightType이 " + CB_LightType.SelectedItem.ToString() + "로 변경되었습니다.");
         }
-
-        //private void TB_LightXDir_Scroll(object sender, EventArgs e)
-        //{
-        //    m_coreWrapper.SetLightDirX(TB_LightXDir.Value);
-        //}
-
-        //private void TB_LightYDir_Scroll(object sender, EventArgs e)
-        //{
-        //    m_coreWrapper.SetLightDirY(TB_LightYDir.Value);
-        //}
-
-        //private void TB_LightZDir_Scroll(object sender, EventArgs e)
-        //{
-        //    m_coreWrapper.SetLightDirZ(TB_LightZDir.Value);
-        //}
-
-        //private void TB_Range_Scroll(object sender, EventArgs e)
-        //{
-        //    m_coreWrapper.SetLightRange(TB_Range.Value);
-        //}
-
-        //private void CB_WireFrame_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    m_coreWrapper.SetLightWireFrame(CB_WireFrame.Checked);
-        //}
-
-        //private void CB_isDebugTarget_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    m_coreWrapper.SetTargetOnOff(CB_isDebugTarget.Checked);
-        //}
-
-        //private void TB_SpcularR_TextChanged(object sender, EventArgs e)
-        //{
-        //    double dR = Convert.ToDouble(TB_SpcularR.Text);
-        //    m_coreWrapper.SetLightSpclularR(dR);
-        //}
-
-        //private void TB_SpcularG_TextChanged(object sender, EventArgs e)
-        //{
-        //    double dR = Convert.ToDouble(TB_SpcularG.Text);
-        //    m_coreWrapper.SetLightSpclularG(dR);
-        //}
-
-        //private void TB_SpcularB_TextChanged(object sender, EventArgs e)
-        //{
-        //    double dR = Convert.ToDouble(TB_SpcularB.Text);
-        //    m_coreWrapper.SetLightSpclularB(dR);
-        //}
-
-        //private void TB_SpcularPower_TextChanged(object sender, EventArgs e)
-        //{
-        //    double dR = Convert.ToDouble(TB_SpcularPower.Text);
-        //    m_coreWrapper.SetLightSpclularW(dR);
-        //}
-
-        //private void CB_TargetChange_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    m_coreWrapper.ChangeTarget(CB_TargetChange.Checked);
-        //}
     }
 }

@@ -10,6 +10,7 @@
 #include "../Rendering/RenderState.h"
 #include "../Rendering/DepthState.h"
 #include "../Device.h"
+#include "../EditManager.h"
 
 PUN_USING
 
@@ -32,7 +33,7 @@ CGizmo::~CGizmo()
 {
 	SAFE_RELEASE(m_pCylinderMesh);
 	SAFE_RELEASE(m_pTriangleMesh);
-	SAFE_RELEASE(m_pTargetTr);
+	//SAFE_RELEASE(m_pTargetTr);
 	SAFE_RELEASE(m_pDepthDisable);
 }
 
@@ -83,6 +84,7 @@ int CGizmo::Input(float fTime)
 		if (CInput::GetInst()->KeyRelease("LButton") == true)
 		{
 			m_bPick = false;
+			CEditManager::GetInst()->SetGizmoClick(m_bPick);
 		}
 		else if (CInput::GetInst()->KeyPush("LButton") == true)
 		{
@@ -479,20 +481,20 @@ CGizmo * CGizmo::Clone()
 
 void CGizmo::SetTargetTr(CTransform * _pTr)
 {
-	if (m_pTargetTr != nullptr)
-		SAFE_RELEASE(m_pTargetTr);
+	//if (m_pTargetTr != nullptr)
+	//	SAFE_RELEASE(m_pTargetTr);
 
-	_pTr->AddRef();
+	//_pTr->AddRef();
 
 	m_pTargetTr = _pTr;
 }
 
 void CGizmo::SetTarget(CGameObject * _pObj)
 {
-	if (m_pTargetTr != nullptr)
-		SAFE_RELEASE(m_pTargetTr);
+	//if (m_pTargetTr != nullptr)
+	//	SAFE_RELEASE(m_pTargetTr);
 
-	m_pTargetTr = _pObj->GetTransform();
+	m_pTargetTr = _pObj->GetTransformNonCount();
 }
 
 void CGizmo::SetGizmoType(GIZMO_TYPE _eType)
@@ -540,6 +542,7 @@ void CGizmo::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 		if (CInput::GetInst()->KeyPress("LButton") == true)
 		{
 			m_bPick = true;
+			CEditManager::GetInst()->SetGizmoClick(m_bPick);
 		}
 	}
 }

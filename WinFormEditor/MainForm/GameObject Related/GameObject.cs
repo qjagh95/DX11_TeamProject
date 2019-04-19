@@ -49,6 +49,11 @@ namespace WinFormEditor
             string strLayerTag = m_editForm.GetObjInfo()[strTag].strLayerTag;
             wrapper.SetActiveObject(strTag, strLayerTag);
 
+            // Check Parent
+            string strParentTag = wrapper.GetParentTag();
+            TextBox parentTextBox = m_editForm.GetParentTextBox();
+            parentTextBox.Text = strParentTag;
+
             // Transform
             _instTr.LoadTransform();
 
@@ -82,7 +87,7 @@ namespace WinFormEditor
             else if (strLayerTag == "UI")       { _comboBox.SelectedIndex = 3; }
         }
 
-        public void CreateObject(ListBox _listBox)
+        public void CreateObject(ListBox _listBox, bool _isChild = false)
         {
             CoreWrapper wrapper = m_editForm.GetWrapper();
 
@@ -101,7 +106,7 @@ namespace WinFormEditor
                     break;
                 }
             }
-            wrapper.CreateObject(strObjectTag, strLayerTag);
+            wrapper.CreateObject(strObjectTag, strLayerTag, _isChild);
             ++m_createObjCnt;
 
             // 데이터 추가
@@ -290,6 +295,24 @@ namespace WinFormEditor
                 _listBox.Items[_listBox.SelectedIndex] = _textBox.Text;
             }
             _listBox.SelectedIndexChanged += _event;
+        }
+
+        public void AddChild(ListBox _listBox, TextBox _textBox)
+        {
+            // 오브젝트 생성
+            string strParentTag = _listBox.SelectedItem.ToString();
+            _textBox.Text = strParentTag;
+            CreateObject(_listBox, true);
+
+            // Wrapper를 통하여 AddChild() 함수를 호출
+            CoreWrapper wrapper = m_editForm.GetWrapper();
+            string strLayerTag = m_editForm.GetObjInfo()[strParentTag].strLayerTag;
+            wrapper.AddChild(strParentTag, strLayerTag);
+
+            // Change ParentTag 
+            strParentTag = wrapper.GetParentTag();
+            TextBox parentTextBox = m_editForm.GetParentTextBox();
+            parentTextBox.Text = strParentTag;
         }
     }
 }

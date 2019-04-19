@@ -26,21 +26,19 @@ bool EditorScene::Init()
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	CTransform* pCameraTr = pCamera->GetTransform();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
-	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
 	pCameraTr->SetWorldPos(Vector3(0.f, 0.0f, -50.f));
 
 	//////////////Camera Target Object///////////////////////
-	CGameObject* pObject = CGameObject::CreateObject("FreeCamObj", pDefaultLayer);
-	pObject->SetSave(false);
-	CEditManager::GetInst()->SetFreeCamObj(pObject);
-	CTransform* pTr = pObject->GetTransform();
-	pTr->SetWorldPos(0.f, 0.f, -20.f);
-	//pTr->SetWorldRotX(180.f);
+	//CGameObject* pObject = CGameObject::CreateObject("FreeCamObj", pDefaultLayer);
+	//pObject->SetSave(false);
+	//CEditManager::GetInst()->SetFreeCamObj(pObject);
+	//CTransform* pTr = pObject->GetTransform();
+	//pTr->SetWorldPos(0.f, 0.f, -20.f);
+
 	CFreeCamera* FreeCamera = pCamera->AddComponent<CFreeCamera>("CameraArm");
-	
 	SAFE_RELEASE(FreeCamera);
-	SAFE_RELEASE(pTr);
-	SAFE_RELEASE(pObject);
+	//SAFE_RELEASE(pTr);
+	//SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pCamera);
 

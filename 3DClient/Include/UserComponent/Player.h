@@ -4,7 +4,7 @@
 
 PUN_USING
 
-class BlackCow
+class CPlayer
 	:public CUserComponent
 {
 	friend class CGameObject;
@@ -18,9 +18,9 @@ private:
 	class CHandycam*	m_pHandycam;
 
 protected:
-	BlackCow();
-	BlackCow(const BlackCow& com);
-	virtual ~BlackCow();
+	CPlayer();
+	CPlayer(const CPlayer& com);
+	virtual ~CPlayer();
 
 public:
 	virtual void Start();
@@ -31,10 +31,13 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual BlackCow* Clone();
+	virtual CPlayer* Clone();
 
 public:
 	void Move(float fScale, float fTime);
+	void Fire(float fTime);
+	void Fire1(float fTime);
+	void Fire1Release(float fTime);
 	void Rotation(float fScale, float fTime);
 
 	//Sound Test

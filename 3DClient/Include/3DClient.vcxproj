@@ -189,9 +189,9 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneComponent\FirTestScene.h" />
-    <ClInclude Include="SceneComponent\JBH_Stage3.h" />
     <ClInclude Include="SceneComponent\LogoScene.h" />
     <ClInclude Include="SceneComponent\MainScene.h" />
+    <ClInclude Include="SceneComponent\Scene4.h" />
     <ClInclude Include="SceneComponent\StartScene.h" />
     <ClInclude Include="SceneComponent\TestScene-YH.h" />
     <ClInclude Include="SceneComponent\TestScene.h" />
@@ -207,7 +207,7 @@
     <ClInclude Include="UserComponent\InteractiveObj.h" />
     <ClInclude Include="UserComponent\Inventory.h" />
     <ClInclude Include="UserComponent\Minion.h" />
-    <ClInclude Include="UserComponent\BlackCow.h" />
+    <ClInclude Include="UserComponent\Player.h" />
     <ClInclude Include="UserComponent\Trace.h" />
     <ClInclude Include="UserComponent\TraceMob.h" />
     <ClInclude Include="UserComponent\Zipper.h" />
@@ -216,9 +216,9 @@
     <ClCompile Include="CameraEff.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SceneComponent\FirTestScene.cpp" />
-    <ClCompile Include="SceneComponent\JBH_Stage3.cpp" />
     <ClCompile Include="SceneComponent\LogoScene.cpp" />
     <ClCompile Include="SceneComponent\MainScene.cpp" />
+    <ClCompile Include="SceneComponent\Scene4.cpp" />
     <ClCompile Include="SceneComponent\StartScene.cpp" />
     <ClCompile Include="SceneComponent\TestScene-YH.cpp" />
     <ClCompile Include="SceneComponent\TestScene.cpp" />
@@ -233,7 +233,7 @@
     <ClCompile Include="UserComponent\InteractiveObj.cpp" />
     <ClCompile Include="UserComponent\Inventory.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
-    <ClCompile Include="UserComponent\BlackCow.cpp" />
+    <ClCompile Include="UserComponent\Player.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_cam.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Interact.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Move.cpp" />

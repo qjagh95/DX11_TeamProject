@@ -23,11 +23,13 @@ CGameObject::CGameObject() :
 	m_iObjectListIdx(0),
 	m_isFrustumCull(false),
 	m_pPickingCollSphere(nullptr),
-	m_bUseFrustumCull(true)
+	m_bUseFrustumCull(true),
+	m_isDontDestroy(false)
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;
 	m_bSave = true;
+	m_isChild = false;
 }
 
 CGameObject::CGameObject(const CGameObject & obj)
@@ -99,12 +101,13 @@ CGameObject::CGameObject(const CGameObject & obj)
 
 CGameObject::~CGameObject()
 {
-	Safe_Release_VecList(m_ChildList);
+	if(!m_ChildList.empty())
+		Safe_Release_VecList(m_ChildList);
 	Safe_Release_VecList(m_FindList);
 	SAFE_RELEASE(m_pTransform);
 	Safe_Release_VecList(m_ComList);
 	if (m_pPickingCollSphere)
-		SAFE_RELEASE(m_pPickingCollSphere);
+		SAFE_RELEASE(m_pPickingCollSphere); 
 }
 
 CGameObject * CGameObject::CreateObject(const string & strTag, CLayer * pLayer,
@@ -388,9 +391,22 @@ const list<class CComponent*>* CGameObject::GetComponentList() const
 	return &m_ComList;
 }
 
-const std::list<CGameObject*>* CGameObject::GetChildList()
+std::list<CGameObject*>* CGameObject::GetChildList()
 {
 	return &m_ChildList;
+}
+
+void CGameObject::SetParentNullptr()
+{
+	m_pParent = nullptr;
+}
+
+string CGameObject::GetParentTag()
+{
+	if (!m_pParent)
+		return "None";
+
+	return m_pParent->GetTag();
 }
 
 RENDER_GROUP CGameObject::GetRenderGroup() const
@@ -593,10 +609,10 @@ int CGameObject::Update(float fTime)
 
 	for (; StartIter1 != EndIter1; StartIter1++)
 	{
-		(*StartIter1)->GetTransform()->SetParentScale(S);
-		(*StartIter1)->GetTransform()->SetParentRot(R);
-		(*StartIter1)->GetTransform()->SetParentPos(T);
-		(*StartIter1)->GetTransform()->SetUpdate(true);
+		(*StartIter1)->GetTransformNonCount()->SetParentScale(S);
+		(*StartIter1)->GetTransformNonCount()->SetParentRot(R);
+		(*StartIter1)->GetTransformNonCount()->SetParentPos(T);
+		(*StartIter1)->GetTransformNonCount()->SetUpdate(true);
 	}
 
 	return 0;
@@ -651,10 +667,10 @@ int CGameObject::LateUpdate(float fTime)
 
 	for (; StartIter1 != EndIter1; StartIter1++)
 	{
-		(*StartIter1)->GetTransform()->SetParentScale(S);
-		(*StartIter1)->GetTransform()->SetParentRot(R);
-		(*StartIter1)->GetTransform()->SetParentPos(T);
-		(*StartIter1)->GetTransform()->SetUpdate(true);
+		(*StartIter1)->GetTransformNonCount()->SetParentScale(S);
+		(*StartIter1)->GetTransformNonCount()->SetParentRot(R);
+		(*StartIter1)->GetTransformNonCount()->SetParentPos(T);
+		(*StartIter1)->GetTransformNonCount()->SetUpdate(true);
 	}
 
 	return 0;
@@ -773,18 +789,19 @@ CGameObject * CGameObject::Clone()
 	return new CGameObject(*this);
 }
 
-void CGameObject::AddChild(CGameObject * pChild)
+void CGameObject::AddChild(CGameObject * pChild, bool bEditorMode)
 {
 	pChild->m_pParent = this;
 	pChild->m_pTransform->m_pParent = m_pTransform;
-	pChild->m_pTransform->AddRef();
 	m_pTransform->m_ChildList.push_back(pChild->m_pTransform);
 	pChild->m_pTransform->SetParentFlag(TPF_ROT | TPF_POS);
 	pChild->AddRef();
+	pChild->m_pTransform->AddRef();
 
 	m_ChildList.push_back(pChild);
+	m_pLayer->AddObject(pChild, bEditorMode);
 
-	m_pLayer->AddObject(pChild);
+	m_isChild = true;
 }
 
 
@@ -984,6 +1001,7 @@ void CGameObject::Load(FILE * pFile)
 
 void CGameObject::Save(BinaryWrite* _pInstBW)
 {
+	/*
 	// Transform
 	m_pTransform->Save(_pInstBW);
 
@@ -1005,6 +1023,35 @@ void CGameObject::Save(BinaryWrite* _pInstBW)
 		// Call Save Function
 		(*iter)->Save(_pInstBW);
 	}
+	*/
+
+	// Transform
+	m_pTransform->Save(_pInstBW);
+
+	// Component Count
+	_pInstBW->WriteData((int)m_ComList.size());
+
+	// Save Component
+	list<CComponent*>::iterator   iter;
+	list<CComponent*>::iterator   iterEnd = m_ComList.end();
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		// EnumType
+		int iType = (int)((*iter)->m_eComType);
+		_pInstBW->WriteData(iType);
+
+		if (iType == CT_END || (*iter)->GetTag() == "PickingCollider")
+			continue;
+
+		// Call Save Function
+		(*iter)->Save(_pInstBW);
+	}
+
+	auto StartIter = m_ChildList.begin();
+	auto EndIter = m_ChildList.end();
+
+	for (; StartIter != EndIter; StartIter++)
+		m_pLayer->m_AllChildList.push_back(*StartIter);
 }
 
 void CGameObject::Load(BinaryRead* _pInstBR)
@@ -1080,4 +1127,132 @@ void CGameObject::Load(BinaryRead* _pInstBR)
 		}
 		SAFE_RELEASE(pComp);
 	}
+}
+
+CGameObject* CGameObject::GetParent()
+{
+	return m_pParent;
+}
+
+void CGameObject::ChildSave(BinaryWrite * _pInstBW)
+{
+	string strTag = GetTag();
+	string strLayerTag = this->GetTag();
+	bool isDontDestroy = m_isDontDestroy;
+	bool isEnable = GetEnable();
+	bool isChild = m_isChild;
+
+	_pInstBW->WriteData(strTag);		// 태그
+	_pInstBW->WriteData(strLayerTag);	// 오브젝트가 속해있는 레이어 태그
+	_pInstBW->WriteData(isDontDestroy);	// 오브젝트 삭제 여부
+	_pInstBW->WriteData(isEnable);		// 활성화 여부
+	_pInstBW->WriteData(isChild);		// 자식 여부
+
+	m_pTransform->Save(_pInstBW);
+
+	_pInstBW->WriteData((int)m_ComList.size());
+	_pInstBW->WriteData((int)m_ChildList.size());
+
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		// EnumType
+		int iType = (int)((*iter)->m_eComType);
+		_pInstBW->WriteData(iType);
+
+		if (iType == CT_END || (*iter)->GetTag() == "PickingCollider")
+			continue;
+
+		// Call Save Function
+		(*iter)->Save(_pInstBW);
+	}
+
+	if (!m_ChildList.empty())
+	{
+		list<CGameObject*>::iterator iter;
+		list<CGameObject*>::iterator iterEnd = m_ChildList.end();
+
+		for (iter = m_ChildList.begin(); iter != iterEnd; ++iter)
+		{
+			(*iter)->ChildSave(_pInstBW);
+		}
+	}
+}
+
+void CGameObject::ChildLoad(BinaryRead * _pInstBR)
+{
+	// Transform
+	m_pTransform->Load(_pInstBR);
+
+	// Read Component
+	CComponent* pComp = nullptr;
+	int compSize = _pInstBR->ReadInt();
+	for (size_t i = 0; i < (int)compSize; ++i)
+	{
+		pComp = nullptr;
+		int iType = _pInstBR->ReadInt();
+		COMPONENT_TYPE eCompType = (COMPONENT_TYPE)iType;
+		switch (eCompType)
+		{
+		case CT_RENDERER:
+		{
+			// Renderer Component 초기화할 때 Material Component가 자동으로 등록된다.
+			pComp = AddComponent<CRenderer>("Renderer");
+			break;
+		}
+		case CT_CAMERA:
+		{
+			pComp = AddComponent<CCamera>("Camera");
+			break;
+		}
+		case CT_ANIMATION2D:
+		{
+			break;
+		}
+		case CT_ANIMATION:
+		{
+			pComp = AddComponent<CAnimation>("Animation");
+			break;
+		}
+		case CT_COLLIDER:
+		{
+			break;
+		}
+		case CT_SOUND:
+		{
+			break;
+		}
+		case CT_LIGHT:
+		{
+			pComp = AddComponent<CLight>("Light");
+			break;
+		}
+		case CT_VOLUMEFOG:
+		{
+			break;
+		}
+		case CT_DECAL:
+		{
+			break;
+		}
+		case CT_PARTICLE:
+		{
+			break;
+		}
+		default:
+		{
+			break;
+		}
+		}// end of switch
+
+		// Call Load Function
+		if (pComp != nullptr)
+		{
+			pComp->Load(_pInstBR);
+		}
+		SAFE_RELEASE(pComp);
+	}
+
+	
 }
