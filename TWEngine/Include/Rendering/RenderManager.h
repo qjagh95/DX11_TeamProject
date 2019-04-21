@@ -115,9 +115,13 @@ public:
 	void SetStarLightScope(int _flag);
 	void SetOnOff(float iOnOff);
 
-	void SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime);
-	void SetAdaptValue(float fAdaptation);
-	void SetBloomValue(float fBloomScale);
+public:
+	void SetHDRValue(float fMiddleGrey, float fLumWhite, bool bOnOff = true);
+	void SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime, bool bOnOff = true);
+	void SetAdaptValue(float fAdaptation, bool bOnOff = false);
+	void SetAdaptValue(float fAdaptation, float fTime, bool bOnOff = false);
+	void SetBloomValue(float fBloomScale, bool bOnOff = false);
+	void SetBloomValue(float fBloomScale, float fTime, bool bOnOff = false);
 
 public:
 	void AddRenderObj(class CGameObject* pObj);

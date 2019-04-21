@@ -458,7 +458,7 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
             float fRim = saturate(dot(vViewNormal, vLightDir));
 
 			// 0.3보다 크게 되면 Rim을 없애준다
-            if (fRim > 0.1)
+            if (fRim > 0.3)
                 fRim = 1;
 
 			// 0.3보다 작은 값만 Rim을 처리해준다
@@ -502,7 +502,7 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 
 	float fRamb = dot(vLightDir, vViewNormal);
 
-	if (fRamb < 0.0f)
+	if (fRamb < 0.001f)
 		fIntensity = 0.0f;
 
     float3 vR = 2.f * vViewNormal * dot(vLightDir, vViewNormal) - vLightDir;

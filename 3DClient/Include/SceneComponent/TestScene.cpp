@@ -44,7 +44,7 @@ CTestScene::~CTestScene()
 bool CTestScene::Init()
 {
 	wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
-	wstr += L"Test.dat";
+	wstr += L"SC.dat";
 	string filePath = CW2A(wstr.c_str());
 	m_pScene->Load(filePath);
 	//PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
@@ -101,15 +101,67 @@ bool CTestScene::Init()
 
 	pTransform = pObject->GetTransform();
 	pTransform->RotationX(90.0f);
-	pTransform->SetWorldPos(50.0f, 70.0f, 0.0f);
+	pTransform->SetWorldPos(0.0f, 70.0f, 0.0f);
 
 
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
+
+	pObject = CGameObject::CreateObject("GlobalLight1", pLightLayer);
+	pTransform = pObject->GetTransform();
+	pLight = pObject->AddComponent<CLight>("GlobalLight1");
+	pLight->SetLightType(LT_DIR);
+
+
+	SAFE_RELEASE(pLight);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObject);
+
+	pObject = CGameObject::CreateObject("GlobalLight1", pLightLayer);
+	pTransform = pObject->GetTransform();
+	pLight = pObject->AddComponent<CLight>("GlobalLight1");
+	pLight->SetLightType(LT_DIR);
+
+	pTransform->RotationY(90.0f);
+
+	SAFE_RELEASE(pLight);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObject);
+
+	pObject = CGameObject::CreateObject("GlobalLight1", pLightLayer);
+	pTransform = pObject->GetTransform();
+	pLight = pObject->AddComponent<CLight>("GlobalLight1");
+	pLight->SetLightType(LT_DIR);
+
+	pTransform->RotationY(180.0f);
+	SAFE_RELEASE(pLight);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObject);
+
+	pObject = CGameObject::CreateObject("GlobalLight1", pLightLayer);
+	pTransform = pObject->GetTransform();
+	pLight = pObject->AddComponent<CLight>("GlobalLight1");
+	pLight->SetLightType(LT_DIR);
+
+	pTransform->RotationY(-90.0f);
+
+	SAFE_RELEASE(pLight);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObject);
+
+	pObject = CGameObject::CreateObject("GlobalLight1", pLightLayer);
+	pTransform = pObject->GetTransform();
+	pLight = pObject->AddComponent<CLight>("GlobalLight1");
+	pLight->SetLightType(LT_DIR);
+
+	pTransform->RotationX(-90.0f);
+
+	SAFE_RELEASE(pLight);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObject);
+
 	SAFE_RELEASE(pLightLayer);
-
-
 	//CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
 
 	//pArm->EnableMouse();

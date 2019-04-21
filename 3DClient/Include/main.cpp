@@ -1,7 +1,7 @@
 #include "ClientHeader.h"
 #include "Core.h"
 #include "SceneComponent/MainScene.h"
-#include "SceneComponent/StartScene.h"
+#include "SceneComponent/TutorialScene.h"
 #include "SceneComponent/FirTestScene.h"
 #include "SceneComponent/TestScene.h"
 #include "SceneComponent/TestScene-YH.h"
@@ -51,7 +51,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
 
 #ifdef _DEBUG
-	GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene");
+	GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TutorialScene");
 #else
 	GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");
 #endif

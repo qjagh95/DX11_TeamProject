@@ -4,7 +4,7 @@
 #include "Scene/Scene.h"
 #include "Scene/Layer.h"
 #include "Component/Renderer.h"
-#include "StartScene.h"
+#include "TutorialScene.h"
 #include "FirTestScene.h"
 
 CLogoScene::CLogoScene()
@@ -69,7 +69,7 @@ int CLogoScene::Update(float fTime)
 	{
 		GET_SINGLE(CSceneManager)->CreateNextScene();
 
-		GET_SINGLE(CSceneManager)->AddSceneComponent<CStartScene>("StartScene", false);
+		GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene", false);
 	}
 	return 0;
 }

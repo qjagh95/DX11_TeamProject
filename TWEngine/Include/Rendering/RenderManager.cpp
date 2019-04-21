@@ -30,7 +30,7 @@ CRenderManager::CRenderManager() :
 	m_pCreateState(nullptr),
 	m_bDeferred(true),
 	m_bFogEnable(false),
-	m_bSSAOEnable(true),
+	m_bSSAOEnable(false),
 	m_pSkyObj(nullptr),
 	m_pFogDepthSRV(nullptr),
 	m_accShakeTime(0.f),
@@ -215,6 +215,8 @@ bool CRenderManager::Init()
 	m_pFilter[0]->Enable();
 	m_pFilter[1]->Enable();
 
+	//m_tFinalCBuffer.iHDR = 1;
+
 	ID3D11Texture2D* pTex = m_pTarget[TARGET_FOG_DEPTH]->GetTexture();
 
 	D3D11_TEXTURE2D_DESC tDesc;
@@ -225,7 +227,7 @@ bool CRenderManager::Init()
 
 	m_pRandomNormalTex = GET_SINGLE(CResourcesManager)->FindTexture("RandomNormal");
 
-	m_tCBuffer.iSSAOEnable = 1;
+	m_tCBuffer.iSSAOEnable = 0;
 
 	// 야간 투시경에 필요한 정보
 	srand((unsigned int)time(NULL));
@@ -645,7 +647,7 @@ void CRenderManager::RenderLightAcc(float fTime)
 	m_pShader[SHADER_ACC_DIR]->SetShader();
 
 	m_pState[STATE_ACC_BLEND]->SetState();
-	m_pState[STATE_DEPTH_DISABLE];
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
 	m_pGBufferSampler->SetShader(10);
 
@@ -682,6 +684,23 @@ void CRenderManager::RenderLightDir(float fTime, CLight * pLight)
 {
 	m_pShader[SHADER_ACC_DIR]->SetShader();
 
+	CScene* pScene = CSceneManager::GetInst()->GetSceneNonCount();
+	CCamera* getCamera = NULLPTR;
+
+	getCamera = pScene->GetMainCameraNonCount();
+
+	TransformCBuffer cBuffer = {};
+	cBuffer.matView = getCamera->GetViewMatrix();
+	cBuffer.matProj = getCamera->GetProjMatrix();
+	cBuffer.matInvProj = cBuffer.matProj;
+	cBuffer.matInvProj.Inverse();
+	cBuffer.matInvProj.Transpose();
+
+	cBuffer.matView.Transpose();
+	cBuffer.matProj.Transpose();
+
+	CShaderManager::GetInst()->UpdateCBuffer("Transform", &cBuffer);
+
 	// 조명 정보를 상수버퍼에 넘겨준다.
 	pLight->UpdateLightCBuffer();
 
@@ -717,6 +736,9 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 
 	cBuffer.matWV = cBuffer.matWorld * cBuffer.matView;
 	cBuffer.matWVP = cBuffer.matWV * cBuffer.matProj;
+	cBuffer.matInvProj = cBuffer.matProj;
+	cBuffer.matInvProj.Inverse();
+	cBuffer.matInvProj.Transpose();
 
 	cBuffer.matWorld.Transpose();
 	cBuffer.matView.Transpose();
@@ -796,6 +818,9 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 
 	cBuffer.matWV = cBuffer.matWorld * cBuffer.matView;
 	cBuffer.matWVP = cBuffer.matWV * cBuffer.matProj;
+	cBuffer.matInvProj = cBuffer.matProj;
+	cBuffer.matInvProj.Inverse();
+	cBuffer.matInvProj.Transpose();
 
 	cBuffer.matWorld.Transpose();
 	cBuffer.matView.Transpose();
@@ -1507,8 +1532,29 @@ void CRenderManager::SetOnOff(float iOnOff)
 	m_tStarLightScope.fOnOff = m_fOnOff;
 }
 
-void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime)
+void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, bool bOnOff)
 {
+	if (bOnOff)
+		EnableFilter(CFT_HDR);
+
+	else
+		DisableFilter(CFT_HDR);
+
+	m_fMiddleGrey = fMiddleGrey;
+	m_fLumWhite = fLumWhite;
+
+	m_pPostEffect->SetFinalPassCB(m_fMiddleGrey, m_fLumWhite);
+	m_pPostEffect->UpdateCBuffer(CFT_HDR);
+}
+
+void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime, bool bOnOff)
+{
+	if (bOnOff)
+		EnableFilter(CFT_HDR);
+
+	else
+		DisableFilter(CFT_HDR);
+
 	m_fMiddleGrey = fMiddleGrey;
 	m_fLumWhite = fLumWhite;
 
@@ -1516,8 +1562,14 @@ void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime
 	m_pPostEffect->UpdateCBuffer(CFT_HDR);
 }
 
-void CRenderManager::SetAdaptValue(float fAdaptation)
+void CRenderManager::SetAdaptValue(float fAdaptation, float fTime, bool bOnOff)
 {
+	if (bOnOff)
+		EnableFilter(CFT_ADAPTATION);
+
+	else
+		DisableFilter(CFT_ADAPTATION);
+
 	m_fAdaptation = fAdaptation;
 
 	CCSAdaptFilter*	pFilter = (CCSAdaptFilter*)GET_SINGLE(CViewManager)->FindCSFilter(CFT_ADAPTATION);
@@ -1525,8 +1577,43 @@ void CRenderManager::SetAdaptValue(float fAdaptation)
 	pFilter->SetAdaptationTime(m_fAdaptation);
 }
 
-void CRenderManager::SetBloomValue(float fBloomScale)
+void CRenderManager::SetAdaptValue(float fAdaptation, bool bOnOff)
 {
+	if (bOnOff)
+		EnableFilter(CFT_ADAPTATION);
+
+	else
+		DisableFilter(CFT_ADAPTATION);
+
+	m_fAdaptation = fAdaptation;
+
+	CCSAdaptFilter*	pFilter = (CCSAdaptFilter*)GET_SINGLE(CViewManager)->FindCSFilter(CFT_ADAPTATION);
+
+	pFilter->SetAdaptationTime(m_fAdaptation);
+}
+
+void CRenderManager::SetBloomValue(float fBloomScale, float fTime, bool bOnOff)
+{
+	if (bOnOff)
+		EnableFilter(CFT_BLOOM);
+
+	else
+		DisableFilter(CFT_BLOOM);
+
+	m_fBloomScale = fBloomScale;
+
+	CCSBloomFilter*	pFilter = (CCSBloomFilter*)GET_SINGLE(CViewManager)->FindCSFilter(CFT_BLOOM);
+	pFilter->SetBloomScale(m_fBloomScale);
+}
+
+void CRenderManager::SetBloomValue(float fBloomScale, bool bOnOff)
+{
+	if (bOnOff)
+		EnableFilter(CFT_BLOOM);
+
+	else
+		DisableFilter(CFT_BLOOM);
+
 	m_fBloomScale = fBloomScale;
 
 	CCSBloomFilter*	pFilter = (CCSBloomFilter*)GET_SINGLE(CViewManager)->FindCSFilter(CFT_BLOOM);
