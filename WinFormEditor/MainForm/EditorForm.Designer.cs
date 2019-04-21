@@ -168,6 +168,8 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.LPositionX = new System.Windows.Forms.TextBox();
+            this.CB_PickColliderEnable = new System.Windows.Forms.CheckBox();
+            this.CB_GizmoEnable = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -1024,7 +1026,7 @@
             this.LB_MeshList.ItemHeight = 17;
             this.LB_MeshList.Location = new System.Drawing.Point(9, 79);
             this.LB_MeshList.Name = "LB_MeshList";
-            this.LB_MeshList.Size = new System.Drawing.Size(278, 123);
+            this.LB_MeshList.Size = new System.Drawing.Size(278, 106);
             this.LB_MeshList.TabIndex = 1;
             this.LB_MeshList.Click += new System.EventHandler(this.BasicMeshClick);
             // 
@@ -1455,6 +1457,8 @@
             // 
             // GB_Renderer
             // 
+            this.GB_Renderer.Controls.Add(this.CB_GizmoEnable);
+            this.GB_Renderer.Controls.Add(this.CB_PickColliderEnable);
             this.GB_Renderer.Controls.Add(this.FileMesh);
             this.GB_Renderer.Controls.Add(this.CB_TargetChange);
             this.GB_Renderer.Controls.Add(this.LB_FileMesh);
@@ -1477,7 +1481,7 @@
             // 
             this.FileMesh.AutoSize = true;
             this.FileMesh.ForeColor = System.Drawing.Color.Black;
-            this.FileMesh.Location = new System.Drawing.Point(7, 205);
+            this.FileMesh.Location = new System.Drawing.Point(7, 192);
             this.FileMesh.Name = "FileMesh";
             this.FileMesh.Size = new System.Drawing.Size(91, 17);
             this.FileMesh.TabIndex = 7;
@@ -1501,9 +1505,9 @@
             this.LB_FileMesh.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.LB_FileMesh.FormattingEnabled = true;
             this.LB_FileMesh.ItemHeight = 17;
-            this.LB_FileMesh.Location = new System.Drawing.Point(9, 225);
+            this.LB_FileMesh.Location = new System.Drawing.Point(9, 212);
             this.LB_FileMesh.Name = "LB_FileMesh";
-            this.LB_FileMesh.Size = new System.Drawing.Size(278, 140);
+            this.LB_FileMesh.Size = new System.Drawing.Size(278, 106);
             this.LB_FileMesh.TabIndex = 6;
             this.LB_FileMesh.Click += new System.EventHandler(this.FileMeshClick);
             // 
@@ -1833,6 +1837,30 @@
             this.LPositionX.TextChanged += new System.EventHandler(this.ChangePosition);
             this.LPositionX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
+            // CB_PickColliderEnable
+            // 
+            this.CB_PickColliderEnable.AutoSize = true;
+            this.CB_PickColliderEnable.ForeColor = System.Drawing.Color.Black;
+            this.CB_PickColliderEnable.Location = new System.Drawing.Point(9, 348);
+            this.CB_PickColliderEnable.Name = "CB_PickColliderEnable";
+            this.CB_PickColliderEnable.Size = new System.Drawing.Size(141, 21);
+            this.CB_PickColliderEnable.TabIndex = 17;
+            this.CB_PickColliderEnable.Text = "PickColliderEnable";
+            this.CB_PickColliderEnable.UseVisualStyleBackColor = true;
+            this.CB_PickColliderEnable.CheckedChanged += new System.EventHandler(this.CB_PickColliderEnable_CheckedChanged);
+            // 
+            // CB_GizmoEnable
+            // 
+            this.CB_GizmoEnable.AutoSize = true;
+            this.CB_GizmoEnable.ForeColor = System.Drawing.Color.Black;
+            this.CB_GizmoEnable.Location = new System.Drawing.Point(9, 324);
+            this.CB_GizmoEnable.Name = "CB_GizmoEnable";
+            this.CB_GizmoEnable.Size = new System.Drawing.Size(107, 21);
+            this.CB_GizmoEnable.TabIndex = 18;
+            this.CB_GizmoEnable.Text = "GizmoEnable";
+            this.CB_GizmoEnable.UseVisualStyleBackColor = true;
+            this.CB_GizmoEnable.CheckedChanged += new System.EventHandler(this.CB_GizmoEnable_CheckedChanged);
+            // 
             // EditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -2022,6 +2050,8 @@
         private System.Windows.Forms.TextBox TB_GridSize;
         private System.Windows.Forms.TextBox TB_ParentName;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.CheckBox CB_GizmoEnable;
+        private System.Windows.Forms.CheckBox CB_PickColliderEnable;
     }
 }
 

@@ -29,7 +29,7 @@ public:
 	void DeleteParentFlag(TRANSFORM_PARENT_FLAG eFlag);
 	void DeleteParentFlag();
 	bool IsMoved();
-
+	void RemoveChildList(CTransform* _pTr);
 private:
 	Vector3		m_vLocalScale;
 	Vector3		m_vLocalRot;

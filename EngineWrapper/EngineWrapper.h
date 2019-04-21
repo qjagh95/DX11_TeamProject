@@ -242,5 +242,16 @@ namespace EngineWrapper
 
 		void SetGridShow(bool Value);
 		void SetGridSize(int Value);
+		
+		void GizmoEnable(bool _bEnable)
+		{
+			CEditManager::GetInst()->SetGizmoEnable(_bEnable);
+		}
+
+		void PickingColliderEnable(bool _bEnable)
+		{
+			CEditManager::GetInst()->SetPickingColliderEnable(_bEnable);
+		}
+
 	};
 }

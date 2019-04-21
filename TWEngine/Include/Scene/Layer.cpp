@@ -527,6 +527,17 @@ void CLayer::Render(float fTime)
 
 }
 
+void CLayer::SetPickingColliderEnable(bool _bEnable)
+{
+	std::list<CGameObject*>::iterator Iter;
+	std::list<CGameObject*>::iterator EndIter = m_ObjList.end();
+
+	for (Iter = m_ObjList.begin(); Iter != EndIter; ++Iter)
+	{
+		(*Iter)->SetPickingColliderEnable(_bEnable);
+	}
+}
+
 void CLayer::AddObject(CGameObject * pObj, bool _isChild)
 {
 	pObj->SetScene(m_pScene);

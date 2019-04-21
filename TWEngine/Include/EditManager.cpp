@@ -117,9 +117,20 @@ bool CEditManager::Init()
 
 void CEditManager::Render(float _fTime)
 {
-	m_pXGizmo->Render(_fTime);
-	m_pYGizmo->Render(_fTime);
-	m_pZGizmo->Render(_fTime);
+	if (m_pXGizmo->GetEnable())
+	{
+		m_pXGizmo->Render(_fTime);
+	}
+
+	if (m_pYGizmo->GetEnable())
+	{
+		m_pYGizmo->Render(_fTime);
+	}
+
+	if (m_pZGizmo->GetEnable())
+	{
+		m_pZGizmo->Render(_fTime);
+	}
 }
 
 void CEditManager::GetLayerList(vector<string>* _pVec)
@@ -264,6 +275,7 @@ void CEditManager::DeleteObject(const string _strObjectTag, const string _strLay
 		TrueAssert(true);
 	}
 	CGameObject* pObject = pLayer->FindObject(_strObjectTag);
+
 	if (pObject->GetChildList()->size() > 0)
 	{
 		list<CGameObject*>::iterator iter;
@@ -271,6 +283,18 @@ void CEditManager::DeleteObject(const string _strObjectTag, const string _strLay
 		for (iter = pObject->GetChildList()->begin(); iter != iterEnd; ++iter)
 		{
 			(*iter)->SetParentNullptr();
+		}
+	}
+
+	if (pObject->GetParentTag() != "None")
+	{
+		CGameObject* pParent = pLayer->FindObject(pObject->GetParentTag());
+
+		if (pParent != nullptr)
+		{
+			pParent->DeleteChild(pObject);
+
+			SAFE_RELEASE(pParent);
 		}
 	}
 
@@ -579,9 +603,19 @@ void CEditManager::SetMouseWheel(short _sMouseWheel)
 
 void CEditManager::SetGizmoEnable(bool _bEnable)
 {
+	m_pXGizmoObj->SetEnable(_bEnable);
+	m_pYGizmoObj->SetEnable(_bEnable);
+	m_pZGizmoObj->SetEnable(_bEnable);
 	m_pXGizmo->SetEnable(_bEnable);
 	m_pYGizmo->SetEnable(_bEnable);
 	m_pZGizmo->SetEnable(_bEnable);
+}
+
+void CEditManager::SetPickingColliderEnable(bool _bEnable)
+{
+	m_pScene->SetPickingColliderEnable(_bEnable);
+	if(m_pObject)
+	m_pObject->SetPickingColliderEnable(false);
 }
 
 bool CEditManager::CreateLandScape(int _iX, int _iZ)

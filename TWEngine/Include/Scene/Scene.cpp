@@ -816,3 +816,14 @@ void CScene::Load(string _fullPath)
 		(*iter)->Load(&instBR);
 	}
 }
+
+void CScene::SetPickingColliderEnable(bool _bEnable)
+{
+	std::list<CLayer*>::iterator Iter;
+	std::list<CLayer*>::iterator EndIter = m_LayerList.end();
+
+	for (Iter = m_LayerList.begin(); Iter != EndIter; ++Iter)
+	{
+		(*Iter)->SetPickingColliderEnable(_bEnable);
+	}
+}

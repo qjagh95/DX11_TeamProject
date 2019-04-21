@@ -116,7 +116,7 @@ public:
 public:
 	void Save(string _fullPath);
 	void Load(string _fullPath);
-
+	void SetPickingColliderEnable(bool _bEnable);
 public:
 	void Start();
 	bool Init();

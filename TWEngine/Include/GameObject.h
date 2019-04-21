@@ -101,7 +101,8 @@ public:
 	class CTransform* GetTransformNoneCount() const { return m_pTransform; }
 	const list<class CComponent*>* GetComponentList()	const;
 	list<class CGameObject*>* GetChildList();
-	
+	void DeleteChild(CGameObject* _pObj);
+
 	string GetParentTag();
 	RENDER_GROUP	 GetRenderGroup() const;
 	bool EmptyComponent()	const;
@@ -134,8 +135,9 @@ public:
 	const list<CComponent*>* FindComponentsFromTypeNonCount(COMPONENT_TYPE eType);
 	bool CheckComponentFromType(COMPONENT_TYPE eType);
 	void RemoveComponentFromType(COMPONENT_TYPE eType);
+	void RemoveComponentFromTag(const std::string& _strComTag);
 	void RemoveComponent(CComponent* _pCom);
-
+	void SetPickingColliderEnable(bool _bEnable);
 public:
 	void Save(FILE* pFile);
 	void Load(FILE* pFile);

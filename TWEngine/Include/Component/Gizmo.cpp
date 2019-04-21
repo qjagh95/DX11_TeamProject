@@ -51,13 +51,16 @@ bool CGizmo::Init()
 
 	CColliderOBB3D* pOBB = m_pObject->AddComponent<CColliderOBB3D>("GizmoCollider");
 
-	float	fLength[3] = { 4.f , 20.f, 4.f };
+	float	fLength[3] = { 2.f , 10.f, 2.f };
 
 	pOBB->SetInfo(Vector3::Zero, Vector3::Axis, fLength);
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CGizmo::Hit);
+	pOBB->SetMyTypeName("Gizmo");
+	pOBB->SetContinueTypeName("Gizmo");
+	pOBB->SetContinueTypeName("PickingCollider");
 	SAFE_RELEASE(pOBB);
 
-	m_pTransform->SetWorldScale(4.f, 12.f, 4.f);
+	m_pTransform->SetWorldScale(2.f, 6.f, 2.f);
 	m_pTransform->SetWorldPivot(0.f, 0.f, 0.f);
 
 	m_pDepthDisable = CViewManager::GetInst()->FindRenderState(DEPTH_DISABLE);
@@ -315,9 +318,9 @@ int CGizmo::Input(float fTime)
 	}
 
 	Vector3 vPos = m_pTargetTr->GetWorldPos();
-	vPos.x += m_pTargetTr->GetWorldAxis()[m_eGizmoType].x * 25.f;
-	vPos.y += m_pTargetTr->GetWorldAxis()[m_eGizmoType].y * 25.f;
-	vPos.z += m_pTargetTr->GetWorldAxis()[m_eGizmoType].z * 25.f;
+	vPos.x += m_pTargetTr->GetWorldAxis()[m_eGizmoType].x * 12.f;
+	vPos.y += m_pTargetTr->GetWorldAxis()[m_eGizmoType].y * 12.f;
+	vPos.z += m_pTargetTr->GetWorldAxis()[m_eGizmoType].z * 12.f;
 
 	switch (m_eGizmoType)
 	{
@@ -447,14 +450,14 @@ void CGizmo::Render(float fTime)
 	CONTEXT->IASetInputLayout(pLayout);
 	matPos.Translation(m_pTransform->GetWorldPos());
 	matRot = m_pTransform->GetWorldRotMatrix();
-	matScale.Scaling(6.f, 5.f, 6.f);
+	matScale.Scaling(4.f, 3.f, 4.f);
 
 	tCBuffer.matWorld = matScale * matRot * matPos;
 	tCBuffer.matView = matView;
 	tCBuffer.matProj = pMainCamera->GetProjMatrix();
 	tCBuffer.matWV = tCBuffer.matWorld * tCBuffer.matView;
 	tCBuffer.matWVP = tCBuffer.matWV * tCBuffer.matProj;
-	tCBuffer.vPivot = Vector3(0.f, -4.f, 0.f);
+	tCBuffer.vPivot = Vector3(0.f, -3.0f, 0.f);
 	tCBuffer.vLength = m_pTriangleMesh->GetLength();
 
 	tCBuffer.matWorld.Transpose();

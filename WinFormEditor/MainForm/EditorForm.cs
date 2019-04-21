@@ -101,8 +101,10 @@ namespace WinFormEditor
             ItemInit();
             LoadData(false);
             CB_GridShow.Checked = true;
-
             // Connection Run Funtion
+            CB_GizmoEnable.Checked = true;
+            CB_PickColliderEnable.Checked = true;
+
             Application.Idle += Run;
         }
 
@@ -350,11 +352,7 @@ namespace WinFormEditor
             path += "\\3DClient\\Bin\\MeshData\\";
             foreach (string f in Directory.GetFiles(path, "*.anm"))
             {
-                bool isLoad = m_coreWrapper.LoadMeshFromFullPath(Path.GetFileNameWithoutExtension(f), f);
-                if (isLoad == true)
-                {
-                    LB_AniList.Items.Add(Path.GetFileNameWithoutExtension(f));
-                }
+               LB_AniList.Items.Add(Path.GetFileNameWithoutExtension(f));
             }
         }
 
@@ -1072,6 +1070,16 @@ namespace WinFormEditor
         {
             m_coreWrapper.SetLightType(CB_LightType.SelectedIndex);
             AddLogString("LightType이 " + CB_LightType.SelectedItem.ToString() + "로 변경되었습니다.");
+        }
+
+        private void CB_PickColliderEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            m_coreWrapper.PickingColliderEnable(CB_PickColliderEnable.Checked);
+        }
+
+        private void CB_GizmoEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            m_coreWrapper.GizmoEnable(CB_GizmoEnable.Checked);
         }
     }
 }

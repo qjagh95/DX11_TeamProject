@@ -396,6 +396,28 @@ std::list<CGameObject*>* CGameObject::GetChildList()
 	return &m_ChildList;
 }
 
+void CGameObject::DeleteChild(CGameObject* _pObj)
+{
+	std::list<CGameObject*>::iterator Iter;
+	std::list<CGameObject*>::iterator EndIter = m_ChildList.end();
+
+	for (Iter = m_ChildList.begin(); Iter != EndIter; ++Iter)
+	{
+		if (*Iter == _pObj)
+		{
+			CTransform* pTr = (*Iter)->GetTransform();
+		
+			m_pTransform->RemoveChildList(pTr);
+
+			SAFE_RELEASE(pTr)
+			SAFE_RELEASE((*Iter));
+			m_ChildList.erase(Iter);
+
+			return;
+		}
+	}
+}
+
 void CGameObject::SetParentNullptr()
 {
 	m_pParent = nullptr;
@@ -497,6 +519,12 @@ bool CGameObject::Init()
 			strstr(m_strTag.c_str() , "LandScape") == false)
 		{
 			m_pPickingCollSphere = AddComponent<CColliderOBB3D>("PickingCollider");
+			m_pPickingCollSphere->SetMyTypeName("PickingCollider");
+			m_pPickingCollSphere->SetContinueTypeName("Gizmo");
+			m_pPickingCollSphere->SetContinueTypeName("PickingCollider");
+
+			float fLength[3] = { 3.f , 3.f, 3.f };
+			m_pPickingCollSphere->SetInfo(Vector3::Zero, Vector3::Axis, fLength);
 		}
 	}
 
@@ -505,29 +533,6 @@ bool CGameObject::Init()
 
 int CGameObject::Input(float fTime)
 {
-	if (CCore::GetInst()->m_bEditorMode)
-	{
-		if (m_pPickingCollSphere != nullptr)
-		{
-			CRenderer*	pRenderer = FindComponentFromType<CRenderer>(CT_RENDERER);
-			if (pRenderer)
-			{
-				CMesh* pMesh = pRenderer->GetMesh();
-				if (pMesh != nullptr)
-				{
-					Vector3 vMulScale = m_pTransform->GetWorldScale();
-					vMulScale.x *= pMesh->GetLength().x;
-					vMulScale.y *= pMesh->GetLength().y;
-					vMulScale.z *= pMesh->GetLength().z;
-
-					m_pPickingCollSphere->SetInfo(Vector3::Zero, Vector3::Axis, vMulScale);
-					SAFE_RELEASE(pMesh);
-				}
-
-				SAFE_RELEASE(pRenderer);
-			}
-		}
-	}
 	list<CComponent*>::iterator	iter;
 	list<CComponent*>::iterator	iterEnd = m_ComList.end();
 
@@ -975,6 +980,22 @@ void CGameObject::RemoveComponentFromType(COMPONENT_TYPE eType)
 	}
 }
 
+void CGameObject::RemoveComponentFromTag(const std::string & _strComTag)
+{
+	list<CComponent*>::iterator	iter;
+	list<CComponent*>::iterator	iterEnd = m_ComList.end();
+
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetTag() == _strComTag)
+		{
+			SAFE_RELEASE((*iter));
+			m_ComList.erase(iter);
+			return;
+		}
+	}
+}
+
 void CGameObject::RemoveComponent(CComponent * _pCom)
 {
 	list<CComponent*>::iterator	iter;
@@ -988,6 +1009,14 @@ void CGameObject::RemoveComponent(CComponent * _pCom)
 			m_ComList.erase(iter);
 			return;
 		}
+	}
+}
+
+void CGameObject::SetPickingColliderEnable(bool _bEnable)
+{
+	if (m_pPickingCollSphere)
+	{
+		m_pPickingCollSphere->SetEnable(_bEnable);
 	}
 }
 

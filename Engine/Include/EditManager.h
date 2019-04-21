@@ -109,6 +109,8 @@ public:
 	vector<Vector3> GetWorldTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
 	void SetMouseWheel(short _sMouseWheel);
 	void SetGizmoEnable(bool _bEnable);
+	void SetPickingColliderEnable(bool _bEnable);
+
 	bool CreateLandScape(int _iX , int _iZ);
 	int GetNaviSelectIndex() const;
 	// ¸Þ½Ã

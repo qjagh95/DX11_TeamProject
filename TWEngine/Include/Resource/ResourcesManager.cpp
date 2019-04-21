@@ -453,20 +453,36 @@ bool CResourcesManager::LoadMeshFromFullPath(const string& strName, const TCHAR 
 		for (size_t j = 0; j < pVecSubSet.size(); j++)
 		{
 			PSubsetMaterial pSubSet = pVecSubSet[j];
-			if (pSubSet->pDiffuse	== nullptr ||
-				pSubSet->pSpecular	== nullptr ||
+			if (pSubSet->pDiffuse	== nullptr &&
+				pSubSet->pSpecular	== nullptr &&
 				pSubSet->pNormal	== nullptr)
 			{
 				SAFE_DELETE(pMesh);
 				return false;
 			}
-
-			if (pSubSet->pDiffuse->pTex  == nullptr || 
-				pSubSet->pSpecular->pTex == nullptr ||
-				pSubSet->pNormal->pTex	 == nullptr)
+			if (pSubSet->pDiffuse)
 			{
-				SAFE_DELETE(pMesh);
-				return false;
+				if (pSubSet->pDiffuse->pTex == nullptr)
+				{
+					SAFE_DELETE(pMesh);
+					return false;
+				}
+			}
+			if (pSubSet->pSpecular)
+			{
+				if (pSubSet->pSpecular->pTex == nullptr)
+				{
+					SAFE_DELETE(pMesh);
+					return false;
+				}
+			}
+			if (pSubSet->pNormal)
+			{
+				if (pSubSet->pNormal->pTex == nullptr)
+				{
+					SAFE_DELETE(pMesh);
+					return false;
+				}
 			}
 		}
 	}

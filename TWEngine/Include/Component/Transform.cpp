@@ -829,3 +829,19 @@ Matrix CTransform::GetParentWorld() const
 {
 	return m_ParentWorld;
 }
+
+void CTransform::RemoveChildList(CTransform* _pTr)
+{
+	std::list<CTransform*>::iterator Iter;
+	std::list<CTransform*>::iterator EndIter = m_ChildList.end();
+
+	for (Iter = m_ChildList.begin(); Iter != EndIter; ++Iter)
+	{
+		if (*Iter == _pTr)
+		{
+			SAFE_RELEASE((*Iter));
+			m_ChildList.erase(Iter);
+			return;
+		}
+	}
+}
