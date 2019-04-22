@@ -521,8 +521,10 @@ namespace PUN
 	struct PUN_DLL NaviLandCBuffer
 	{
 		Vector3 BrushPos;
-		int BrushRange;
+		int iBrushXRange;
+		int iBrushZRange;
 		Vector4 BrushColor;
+		Vector3 vEmpty;
 	};
 
 	struct PUN_DLL GridCBuffer

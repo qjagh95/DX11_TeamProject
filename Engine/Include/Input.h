@@ -37,14 +37,18 @@ private:
 	bool m_bRenderMouse;
 	////////////////////Navi///////////////////////////
 	int	m_iSelectNavIndex;
-	int	m_iBrushRange;
+	int	m_iBrushXRange;
+	int m_iBrushZRange;
 	Vector3	m_vSelectNaviCellCenter;
 public:
 	void SetSelectNavIndex(int _idx) { m_iSelectNavIndex = _idx; }
 	int GetiSelectNavIndex() const { return m_iSelectNavIndex; }
 	void SetSelectCellCenter(Vector3 _vCenter) { m_vSelectNaviCellCenter = _vCenter; }
-	void SetBrushSize(int _fSize) { m_iBrushRange = _fSize; }
-	int GetBrushSize() const { return m_iBrushRange; }
+	void SetXBrushSize(int _fSize) { m_iBrushXRange = _fSize; }
+	int GetXBrushSize() const { return m_iBrushXRange; }
+	void SetZBrushSize(int _fSize) { m_iBrushZRange = _fSize; }
+	int GetZBrushSize() const { return m_iBrushZRange; }
+
 	void SelectNaviBoxRender(float fTime);
 
 public:

@@ -151,7 +151,17 @@ void CEditManager::PrivateEditObjSettingLayer()
 
 void CEditManager::SetBrushSize(int _fSize)
 {
-	CInput::GetInst()->SetBrushSize(_fSize);
+	CInput::GetInst()->SetXBrushSize(_fSize);
+}
+
+void CEditManager::SetBrushXSize(int _fSize)
+{
+	CInput::GetInst()->SetXBrushSize(_fSize);
+}
+
+void CEditManager::SetBrushZSize(int _fSize)
+{
+	CInput::GetInst()->SetZBrushSize(_fSize);
 }
 
 void CEditManager::DeleteNavigationMesh()

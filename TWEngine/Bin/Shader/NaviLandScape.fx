@@ -3,8 +3,10 @@
 cbuffer NaviLandCBuffer : register(b12)
 {
     float3 g_BrushPos;
-    int g_BrushRange;
+    int g_BrushXRange;
+    int g_BrushZRange;
     float4 g_BrushColor;
+    float3 vEmpty;
 };
 
 cbuffer GridCBuffer : register(b10)
@@ -18,12 +20,13 @@ cbuffer GridCBuffer : register(b10)
 
 float4 GetBrushColor(float3 vPos, float4 BasicColor)
 {
-    float Range = g_BrushRange * 0.5f;
+    float XRange = g_BrushXRange * 0.5f;
+    float ZRange = g_BrushZRange * 0.5f;
 
-    if ((vPos.x >= g_BrushPos.x - Range) &&
-        (vPos.x <= g_BrushPos.x + Range) &&
-        (vPos.z >= g_BrushPos.z - Range) &&
-        (vPos.z <= g_BrushPos.z + Range))
+    if ((vPos.x >= g_BrushPos.x - XRange) &&
+        (vPos.x <= g_BrushPos.x + XRange) &&
+        (vPos.z >= g_BrushPos.z - ZRange) &&
+        (vPos.z <= g_BrushPos.z + ZRange))
 
         return g_BrushColor;
 

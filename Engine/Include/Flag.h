@@ -443,4 +443,18 @@ namespace PUN
 		ACTION_RUNNING,
 		ACTION_FALSE,
 	};
+
+	enum STAGE_SECTION_TYPE
+	{
+		SST_S1_R0,
+		SST_S1_R1,
+		SST_S1_R2,
+		SST_S1_R3,
+		SST_S1_R4,
+		SST_S1_R5,
+		SST_S1_R6,
+		SST_S1_R7,
+		SST_S1_R8,
+		SST_S1_RG
+	};
 }

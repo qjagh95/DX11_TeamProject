@@ -29,7 +29,8 @@ CInput::CInput() :
 	m_bRenderMouse(true),
 	m_isPicking(false),
 	m_iSelectNavIndex(0),
-	m_iBrushRange(0)
+	m_iBrushXRange(0),
+	m_iBrushZRange(0)
 {
 	m_NewKey = NULLPTR;
 }

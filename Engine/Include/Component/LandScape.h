@@ -49,7 +49,9 @@ public:
 	CNavigationMesh* GetNaviMesh() const { return m_pNavMesh; }
 
 	void SetBrushPos(const Vector3& Pos) { m_tNaviCBuffer.BrushPos = Pos; }
-	void SetBrushRange(int Range) { m_tNaviCBuffer.BrushRange = Range; }
+	void SetBrushXRange(int Range) { m_tNaviCBuffer.iBrushXRange = Range; }
+	void SetBrushZRange(int Range) { m_tNaviCBuffer.iBrushZRange = Range; }
+
 	void SetBrushColor(const Vector4& Color) { m_tNaviCBuffer.BrushColor = Color; }
 	void SetGridColor(const Vector4& Color) { m_tGridCBuffer.GridColor = Color; }
 	void GridShow(bool Value) { m_tGridCBuffer.isVisibleGrid = Value; }

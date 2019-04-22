@@ -238,6 +238,17 @@ namespace EngineWrapper
 			CEditManager::GetInst()->SetBrushSize(_dSize);
 		}
 
+		void SetBrushXSize(int _dSize)
+		{
+			CEditManager::GetInst()->SetBrushXSize(_dSize);
+		}
+
+		void SetBrushZSize(int _dSize)
+		{
+			CEditManager::GetInst()->SetBrushZSize(_dSize);
+		}
+
+
 		void DeleteNaviMesh()
 		{
 			CEditManager::GetInst()->DeleteNavigationMesh();

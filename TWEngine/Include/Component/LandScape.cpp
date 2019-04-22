@@ -25,7 +25,8 @@ CLandScape::CLandScape() :
 	CEditManager::GetInst()->SetNaviMove(m_isMove);
 
 	m_tCBuffer = {};
-	m_tNaviCBuffer.BrushRange = 5;
+	m_tNaviCBuffer.iBrushXRange = 5;
+	m_tNaviCBuffer.iBrushZRange = 5;
 	m_tNaviCBuffer.BrushColor = Vector4::Yellow;
 	m_tNaviCBuffer.BrushPos = Vector3(-1.0f, -1.0f, -1.0f);
 
@@ -339,7 +340,8 @@ int CLandScape::Input(float fTime)
 
 int CLandScape::Update(float fTime)
 {
-	m_tNaviCBuffer.BrushRange = (int)CInput::GetInst()->GetBrushSize();
+	m_tNaviCBuffer.iBrushXRange = (int)CInput::GetInst()->GetXBrushSize();
+	m_tNaviCBuffer.iBrushZRange = (int)CInput::GetInst()->GetZBrushSize();
 
 	if (CCore::GetInst()->m_bEditorMode == true)
 	{

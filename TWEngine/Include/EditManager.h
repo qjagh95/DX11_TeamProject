@@ -80,6 +80,9 @@ public:
 	bool IsNaviEditorMode() const { return m_bNaviEditorMode; }
 	void SetNaviEditorMode(bool _bMode){ m_bNaviEditorMode = _bMode;}
 	void SetBrushSize(int _fSize);
+	void SetBrushXSize(int _fSize);
+	void SetBrushZSize(int _fSize);
+
 	void DeleteNavigationMesh();
 	void SetNaviMove(bool _bEnable) { m_bSelectNaviMove = _bEnable; }
 	bool GetNaviMove() const { return m_bSelectNaviMove; }

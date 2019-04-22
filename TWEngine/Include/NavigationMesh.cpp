@@ -1049,11 +1049,11 @@ void CNavigationMesh::Click(bool _bIsMove, Vector4 _vColor)
 	Vector3 vCenter = m_vecCell[iSelectNavIndex]->vCenter;
 
 	Vector3 vRectMin = vCenter;
-	vRectMin.x -= CInput::GetInst()->GetBrushSize() / 2.f;
-	vRectMin.z -= CInput::GetInst()->GetBrushSize() / 2.f;
+	vRectMin.x -= CInput::GetInst()->GetXBrushSize() / 2.f;
+	vRectMin.z -= CInput::GetInst()->GetZBrushSize() / 2.f;
 	Vector3 vRectMax = vCenter;
-	vRectMax.x += CInput::GetInst()->GetBrushSize() / 2.f;
-	vRectMax.z += CInput::GetInst()->GetBrushSize() / 2.f;
+	vRectMax.x += CInput::GetInst()->GetXBrushSize() / 2.f;
+	vRectMax.z += CInput::GetInst()->GetZBrushSize() / 2.f;
 
 	int iMaxSection = GetSectionIndex(vRectMax);
 	int iMinSection = GetSectionIndex(vRectMin);

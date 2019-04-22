@@ -1003,7 +1003,17 @@ namespace WinFormEditor
             {
                 int dTemp = Convert.ToInt32(TB_BrushSize.Text);
 
-                m_coreWrapper.SetBrushSize(dTemp);
+                m_coreWrapper.SetBrushXSize(dTemp);
+            }
+        }
+
+        private void TB_BrushZSize_TextChanged(object sender, EventArgs e)
+        {
+            if (TB_BrushZSize.Text != "")
+            {
+                int dTemp = Convert.ToInt32(TB_BrushZSize.Text);
+
+                m_coreWrapper.SetBrushZSize(dTemp);
             }
         }
 
@@ -1147,6 +1157,16 @@ namespace WinFormEditor
         private void CB_GizmoEnable_CheckedChanged(object sender, EventArgs e)
         {
             m_coreWrapper.GizmoEnable(CB_GizmoEnable.Checked);
+        }
+
+        private void CB_ChangeStageSection_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CB_StageSection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

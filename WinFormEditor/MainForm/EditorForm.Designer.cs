@@ -81,6 +81,8 @@
             this.ClipLoad = new System.Windows.Forms.Button();
             this.ClipSave = new System.Windows.Forms.Button();
             this.NavigationPage = new System.Windows.Forms.TabPage();
+            this.label41 = new System.Windows.Forms.Label();
+            this.TB_BrushZSize = new System.Windows.Forms.TextBox();
             this.label40 = new System.Windows.Forms.Label();
             this.GridSize = new System.Windows.Forms.Label();
             this.TB_GridSize = new System.Windows.Forms.TextBox();
@@ -134,6 +136,9 @@
             this.Label_PosY = new System.Windows.Forms.Label();
             this.PositionX = new System.Windows.Forms.TextBox();
             this.GB_Hierachy = new System.Windows.Forms.GroupBox();
+            this.CB_ChangeStageSection = new System.Windows.Forms.Button();
+            this.label42 = new System.Windows.Forms.Label();
+            this.CB_StageSection = new System.Windows.Forms.ComboBox();
             this.TB_ParentName = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.CB_ObjectSave = new System.Windows.Forms.CheckBox();
@@ -146,6 +151,7 @@
             this.Label_BasicMesh = new System.Windows.Forms.Label();
             this.Btn_AddMesh = new System.Windows.Forms.Button();
             this.GB_Renderer = new System.Windows.Forms.GroupBox();
+            this.TB_SelecteMesh = new System.Windows.Forms.TextBox();
             this.CB_GizmoEnable = new System.Windows.Forms.CheckBox();
             this.CB_PickColliderEnable = new System.Windows.Forms.CheckBox();
             this.FileMesh = new System.Windows.Forms.Label();
@@ -177,7 +183,6 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.LPositionX = new System.Windows.Forms.TextBox();
-            this.TB_SelecteMesh = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -774,6 +779,8 @@
             // NavigationPage
             // 
             this.NavigationPage.BackColor = System.Drawing.SystemColors.Control;
+            this.NavigationPage.Controls.Add(this.label41);
+            this.NavigationPage.Controls.Add(this.TB_BrushZSize);
             this.NavigationPage.Controls.Add(this.label40);
             this.NavigationPage.Controls.Add(this.GridSize);
             this.NavigationPage.Controls.Add(this.TB_GridSize);
@@ -799,11 +806,31 @@
             this.NavigationPage.TabIndex = 6;
             this.NavigationPage.Text = "Navigation";
             // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.ForeColor = System.Drawing.Color.Black;
+            this.label41.Location = new System.Drawing.Point(7, 189);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(79, 17);
+            this.label41.TabIndex = 20;
+            this.label41.Text = "Blush ZSize";
+            // 
+            // TB_BrushZSize
+            // 
+            this.TB_BrushZSize.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_BrushZSize.Location = new System.Drawing.Point(103, 184);
+            this.TB_BrushZSize.Name = "TB_BrushZSize";
+            this.TB_BrushZSize.Size = new System.Drawing.Size(165, 25);
+            this.TB_BrushZSize.TabIndex = 19;
+            this.TB_BrushZSize.TextChanged += new System.EventHandler(this.TB_BrushZSize_TextChanged);
+            this.TB_BrushZSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInterval_KeyPress);
+            // 
             // label40
             // 
             this.label40.AutoSize = true;
             this.label40.ForeColor = System.Drawing.Color.Black;
-            this.label40.Location = new System.Drawing.Point(7, 221);
+            this.label40.Location = new System.Drawing.Point(7, 251);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(127, 17);
             this.label40.TabIndex = 18;
@@ -813,7 +840,7 @@
             // 
             this.GridSize.AutoSize = true;
             this.GridSize.ForeColor = System.Drawing.Color.Black;
-            this.GridSize.Location = new System.Drawing.Point(7, 198);
+            this.GridSize.Location = new System.Drawing.Point(7, 228);
             this.GridSize.Name = "GridSize";
             this.GridSize.Size = new System.Drawing.Size(58, 17);
             this.GridSize.TabIndex = 17;
@@ -822,7 +849,7 @@
             // TB_GridSize
             // 
             this.TB_GridSize.BackColor = System.Drawing.SystemColors.Control;
-            this.TB_GridSize.Location = new System.Drawing.Point(103, 193);
+            this.TB_GridSize.Location = new System.Drawing.Point(103, 223);
             this.TB_GridSize.Name = "TB_GridSize";
             this.TB_GridSize.Size = new System.Drawing.Size(165, 25);
             this.TB_GridSize.TabIndex = 16;
@@ -833,7 +860,7 @@
             // 
             this.CB_GridShow.AutoSize = true;
             this.CB_GridShow.ForeColor = System.Drawing.Color.Black;
-            this.CB_GridShow.Location = new System.Drawing.Point(10, 264);
+            this.CB_GridShow.Location = new System.Drawing.Point(10, 294);
             this.CB_GridShow.Name = "CB_GridShow";
             this.CB_GridShow.Size = new System.Drawing.Size(86, 21);
             this.CB_GridShow.TabIndex = 15;
@@ -847,9 +874,9 @@
             this.label39.ForeColor = System.Drawing.Color.Black;
             this.label39.Location = new System.Drawing.Point(7, 153);
             this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(71, 17);
+            this.label39.Size = new System.Drawing.Size(79, 17);
             this.label39.TabIndex = 14;
-            this.label39.Text = "Blush Size";
+            this.label39.Text = "Blush XSize";
             // 
             // TB_BrushSize
             // 
@@ -911,7 +938,7 @@
             // 
             this.CB_isNaviEditor.AutoSize = true;
             this.CB_isNaviEditor.ForeColor = System.Drawing.Color.Black;
-            this.CB_isNaviEditor.Location = new System.Drawing.Point(14, 315);
+            this.CB_isNaviEditor.Location = new System.Drawing.Point(14, 345);
             this.CB_isNaviEditor.Name = "CB_isNaviEditor";
             this.CB_isNaviEditor.Size = new System.Drawing.Size(128, 21);
             this.CB_isNaviEditor.TabIndex = 4;
@@ -950,7 +977,7 @@
             // BT_DeleteNavi
             // 
             this.BT_DeleteNavi.ForeColor = System.Drawing.Color.Black;
-            this.BT_DeleteNavi.Location = new System.Drawing.Point(153, 348);
+            this.BT_DeleteNavi.Location = new System.Drawing.Point(153, 378);
             this.BT_DeleteNavi.Name = "BT_DeleteNavi";
             this.BT_DeleteNavi.Size = new System.Drawing.Size(124, 52);
             this.BT_DeleteNavi.TabIndex = 3;
@@ -961,7 +988,7 @@
             // BT_CreateNavi
             // 
             this.BT_CreateNavi.ForeColor = System.Drawing.Color.Black;
-            this.BT_CreateNavi.Location = new System.Drawing.Point(14, 349);
+            this.BT_CreateNavi.Location = new System.Drawing.Point(14, 379);
             this.BT_CreateNavi.Name = "BT_CreateNavi";
             this.BT_CreateNavi.Size = new System.Drawing.Size(125, 52);
             this.BT_CreateNavi.TabIndex = 2;
@@ -972,7 +999,7 @@
             // BT_NaviLoad
             // 
             this.BT_NaviLoad.ForeColor = System.Drawing.Color.Black;
-            this.BT_NaviLoad.Location = new System.Drawing.Point(153, 420);
+            this.BT_NaviLoad.Location = new System.Drawing.Point(153, 450);
             this.BT_NaviLoad.Name = "BT_NaviLoad";
             this.BT_NaviLoad.Size = new System.Drawing.Size(124, 52);
             this.BT_NaviLoad.TabIndex = 1;
@@ -983,7 +1010,7 @@
             // BT_NaviSave
             // 
             this.BT_NaviSave.ForeColor = System.Drawing.Color.Black;
-            this.BT_NaviSave.Location = new System.Drawing.Point(14, 420);
+            this.BT_NaviSave.Location = new System.Drawing.Point(14, 450);
             this.BT_NaviSave.Name = "BT_NaviSave";
             this.BT_NaviSave.Size = new System.Drawing.Size(125, 52);
             this.BT_NaviSave.TabIndex = 0;
@@ -1408,6 +1435,9 @@
             // 
             // GB_Hierachy
             // 
+            this.GB_Hierachy.Controls.Add(this.CB_ChangeStageSection);
+            this.GB_Hierachy.Controls.Add(this.label42);
+            this.GB_Hierachy.Controls.Add(this.CB_StageSection);
             this.GB_Hierachy.Controls.Add(this.TB_ParentName);
             this.GB_Hierachy.Controls.Add(this.button1);
             this.GB_Hierachy.Controls.Add(this.CB_ObjectSave);
@@ -1426,6 +1456,47 @@
             this.GB_Hierachy.TabIndex = 9;
             this.GB_Hierachy.TabStop = false;
             this.GB_Hierachy.Text = "Hierachy";
+            // 
+            // CB_ChangeStageSection
+            // 
+            this.CB_ChangeStageSection.ForeColor = System.Drawing.Color.Black;
+            this.CB_ChangeStageSection.Location = new System.Drawing.Point(9, 523);
+            this.CB_ChangeStageSection.Name = "CB_ChangeStageSection";
+            this.CB_ChangeStageSection.Size = new System.Drawing.Size(191, 32);
+            this.CB_ChangeStageSection.TabIndex = 31;
+            this.CB_ChangeStageSection.Text = "Change Stage Section";
+            this.CB_ChangeStageSection.UseVisualStyleBackColor = true;
+            this.CB_ChangeStageSection.Click += new System.EventHandler(this.CB_ChangeStageSection_Click);
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.ForeColor = System.Drawing.Color.Black;
+            this.label42.Location = new System.Drawing.Point(6, 465);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(87, 17);
+            this.label42.TabIndex = 30;
+            this.label42.Text = "StageSection";
+            // 
+            // CB_StageSection
+            // 
+            this.CB_StageSection.FormattingEnabled = true;
+            this.CB_StageSection.Items.AddRange(new object[] {
+            "Stage1_Room0",
+            "Stage1_Room1",
+            "Stage1_Room2",
+            "Stage1_Room3",
+            "Stage1_Room4",
+            "Stage1_Room5",
+            "Stage1_Room6",
+            "Stage1_Room7",
+            "Stage1_Room8",
+            "Stage1_RoomG"});
+            this.CB_StageSection.Location = new System.Drawing.Point(9, 490);
+            this.CB_StageSection.Name = "CB_StageSection";
+            this.CB_StageSection.Size = new System.Drawing.Size(191, 25);
+            this.CB_StageSection.TabIndex = 29;
+            this.CB_StageSection.SelectedIndexChanged += new System.EventHandler(this.CB_StageSection_SelectedIndexChanged);
             // 
             // TB_ParentName
             // 
@@ -1479,7 +1550,7 @@
             this.LB_ObjectList.ItemHeight = 17;
             this.LB_ObjectList.Location = new System.Drawing.Point(5, 24);
             this.LB_ObjectList.Name = "LB_ObjectList";
-            this.LB_ObjectList.Size = new System.Drawing.Size(195, 531);
+            this.LB_ObjectList.Size = new System.Drawing.Size(195, 429);
             this.LB_ObjectList.TabIndex = 0;
             this.LB_ObjectList.SelectedIndexChanged += new System.EventHandler(this.ChangeSelectedObject);
             this.LB_ObjectList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDown_DeleteObject);
@@ -1572,6 +1643,14 @@
             this.GB_Renderer.TabIndex = 0;
             this.GB_Renderer.TabStop = false;
             this.GB_Renderer.Text = "Renderer";
+            // 
+            // TB_SelecteMesh
+            // 
+            this.TB_SelecteMesh.Location = new System.Drawing.Point(120, 56);
+            this.TB_SelecteMesh.Name = "TB_SelecteMesh";
+            this.TB_SelecteMesh.ReadOnly = true;
+            this.TB_SelecteMesh.Size = new System.Drawing.Size(168, 25);
+            this.TB_SelecteMesh.TabIndex = 19;
             // 
             // CB_GizmoEnable
             // 
@@ -1957,14 +2036,6 @@
             this.LPositionX.TextChanged += new System.EventHandler(this.ChangePosition);
             this.LPositionX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
-            // TB_SelecteMesh
-            // 
-            this.TB_SelecteMesh.Location = new System.Drawing.Point(120, 56);
-            this.TB_SelecteMesh.Name = "TB_SelecteMesh";
-            this.TB_SelecteMesh.ReadOnly = true;
-            this.TB_SelecteMesh.Size = new System.Drawing.Size(168, 25);
-            this.TB_SelecteMesh.TabIndex = 19;
-            // 
             // EditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -2164,6 +2235,11 @@
         private System.Windows.Forms.TextBox TB_ChildPosX;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.TextBox TB_SelecteMesh;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.TextBox TB_BrushZSize;
+        private System.Windows.Forms.Button CB_ChangeStageSection;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.ComboBox CB_StageSection;
     }
 }
 

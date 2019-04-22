@@ -31,6 +31,8 @@ CMaterial::CMaterial(const CMaterial & mtrl) :
 			{
 				pMtrl->pDiffuse = new TextureSet;
 				*pMtrl->pDiffuse = *mtrl.m_vecMaterial[i][j]->pDiffuse;
+
+				if(pMtrl->pDiffuse)
 				pMtrl->pDiffuse->pTex->AddRef();
 				pMtrl->pDiffuse->pSampler->AddRef();
 			}
