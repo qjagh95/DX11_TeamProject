@@ -27,6 +27,7 @@ CInput::CInput() :
 	m_bShowCursor(false),
 	m_sWheel(0),
 	m_bRenderMouse(true),
+	m_isPicking(false),
 	m_iSelectNavIndex(0),
 	m_iBrushRange(0)
 {
@@ -190,6 +191,16 @@ bool CInput::ShowMouse() const
 void CInput::ShowMouse(bool bShow)
 {
 	m_bRenderMouse = bShow;
+}
+
+void CInput::SetIsPickingFalse()
+{
+	m_isPicking = false;
+}
+
+bool CInput::GetIsPicking()
+{
+	return m_isPicking;
 }
 
 bool CInput::Init()
@@ -455,6 +466,7 @@ void CInput::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 	{
 		if (KeyPress("LButton") == true)
 		{
+			m_isPicking = true;
 			CGameObject* pDestObj = pDest->GetGameObject();
 			CEditManager::GetInst()->SetActiveObject(pDestObj);
 			SAFE_RELEASE(pDestObj);

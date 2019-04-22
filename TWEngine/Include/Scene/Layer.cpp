@@ -89,63 +89,6 @@ void CLayer::Save(BinaryWrite* _pInstBW)
 		_pInstBW->WriteData(m_AllChildList[i]->GetParent()->GetTag());
 		_pInstBW->WriteData(m_AllChildList[i]->GetTag());
 	}
-	/*
-	// 오브젝트 개수
-	// (툴이 아닌 클라이언트에서 바로 로드될 경우 개수를 알 수 없다.)
-	int iObjListSize = 0;
-	list<CGameObject*>::iterator iter;
-	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
-	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
-	{
-		if ((*iter)->GetSave() == true && (*iter)->GetisChild() == false)
-			++iObjListSize;
-	}
-
-	_pInstBW->WriteData(iObjListSize);
-
-	if (iObjListSize == 0)
-		return;
-
-	bool bParent = false;
-	string strParent = "";
-	
-	// 오브젝트 목록
-	iterEnd = m_ObjList.end();
-	for (iter = m_ObjList.begin(); iter != iterEnd; ++iter)
-	{
-		//_pInstBW->WriteData((*iter)->GetisChild());
-		bParent = false;
-
-		strParent = (*iter)->GetParentTag();
-
-		if ((*iter)->GetSave() == true)
-		{
-			if (strParent != "None")
-				bParent = true;
-			else
-				continue;
-
-			string strTag = (*iter)->GetTag();			
-			string strLayerTag = this->GetTag();
-			bool isDontDestroy = (*iter)->GetDontDestroy();
-			bool isEnable = (*iter)->GetEnable();
-
-			_pInstBW->WriteData(strTag);		// 태그
-			_pInstBW->WriteData(strLayerTag);	// 오브젝트가 속해있는 레이어 태그
-			_pInstBW->WriteData(isDontDestroy);	// 오브젝트 삭제 여부
-			_pInstBW->WriteData(isEnable);		// 활성화 여부
-			_pInstBW->WriteData((int)(*iter)->GetChildList()->size());
-			
-			// Object Save 함수 호출
-			(*iter)->Save(_pInstBW);
-			if(!(*iter)->GetChildList()->empty())
-			{
-				(*iter)->ChildSave(_pInstBW);
-			}
-		}
-	}
-	*/
-
 }
 
 void CLayer::Load(BinaryRead* _pInstBR)

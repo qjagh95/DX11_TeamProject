@@ -3,7 +3,6 @@ using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using EngineWrapper;
 
 namespace WinFormEditor
@@ -38,6 +37,15 @@ namespace WinFormEditor
             while (this.Created == true)
             {
                 m_coreWrapper.Logic();
+
+                // 오브젝트 Picking 검사한다.
+                // Picking을 검사해서, 있다면 한번만 정보를 갱신 한다.
+                // Picking된 오브젝트의 정보(Tag, LayerTag)를 가져온다. 
+                if(m_coreWrapper.IsPicking() == true)
+                {
+                    m_coreWrapper.SetPickingFalse();
+                    m_gameObj.SetPickingObjectInfo(LB_ObjectList, LB_MeshList, LB_FileMesh, TB_SelecteMesh);
+                }
 
                 // Update Transform
                 if (m_coreWrapper.IsGizmoClick())
@@ -218,6 +226,21 @@ namespace WinFormEditor
             return TB_ParentName;
         }
 
+        public ListBox GetMeshListBox()
+        {
+            return LB_MeshList;
+        }
+
+        public ListBox GetFileMeshListBox()
+        {
+            return LB_FileMesh;
+        }
+
+        public TextBox GetSelecteMeshNameTextBox()
+        {
+            return TB_SelecteMesh;
+        }
+
         public Dictionary<string, ObjectInfo> GetObjInfo()
         {
             return m_objInfo;
@@ -231,6 +254,11 @@ namespace WinFormEditor
         public Transform GetTransformInst()
         {
             return m_transform;
+        }
+
+        public Renderer GetRenderInst()
+        {
+            return m_renderer;
         }
 
         private void ItemInit()
@@ -252,6 +280,22 @@ namespace WinFormEditor
             {
                 LoadMeshList();
                 LoadAnmFile();
+            }
+
+            // 오브젝트 메쉬 이름 저장
+            string strTag = "";
+            string strMeshName = "";
+            for (int i = 0; i < LB_ObjectList.Items.Count; ++i)
+            {
+                strTag = LB_ObjectList.Items[i].ToString();
+                strMeshName = m_coreWrapper.GetMeshName(strTag);
+                if(m_objInfo[strTag].meshInfo != null)
+                {
+                    // MeshName
+                    ObjectInfo.MeshInfo _meshInfo = new ObjectInfo.MeshInfo("");
+                    m_objInfo[strTag].meshInfo = _meshInfo;
+                }
+                m_objInfo[strTag].meshInfo.m_strMeshName = strMeshName;
             }
         }
 
@@ -304,13 +348,20 @@ namespace WinFormEditor
                     // 데이터 생성 및 추가
                     ObjectInfo info = new ObjectInfo
                     {
-                        strLayerTag     = arrLayerTag[i],
+                        // MeshName
+                        meshInfo = new ObjectInfo.MeshInfo(""),
+
+                        // Vector
                         vecLScale       = new ObjectInfo.Vector3(arrFLScale),
                         vecLRotate      = new ObjectInfo.Vector3(arrFLRot),
                         vecLPosition    = new ObjectInfo.Vector3(arrFLPos),
                         vecWScale       = new ObjectInfo.Vector3(arrFWScale),
                         vecWRotate      = new ObjectInfo.Vector3(arrFWRot),
-                        vecWPosition    = new ObjectInfo.Vector3(arrFWPos)
+                        vecWPosition    = new ObjectInfo.Vector3(arrFWPos),
+                        vecColor        = new ObjectInfo.Vector4(),
+
+                        // Member
+                        strLayerTag     = arrLayerTag[i],
                     };
                     m_objInfo.Add(arrObjTag[j], info);
 
@@ -580,9 +631,15 @@ namespace WinFormEditor
                     if (PositionX.Text != "-" && PositionY.Text != "-" && PositionZ.Text != "-")
                     {
                         m_transform.ChangeWorldPosition((TextBox)sender, PositionX, PositionY, PositionZ);
+                        ReadChildWorldPosition();
                     }
                 }
             }
+        }
+
+        public void ReadChildWorldPosition()
+        {
+            m_transform.ReadChildWorldPosition(TB_ChildPosX, TB_ChildPosY, TB_ChildPosZ);
         }
 
         /*******************************************************************************************************/
@@ -595,7 +652,7 @@ namespace WinFormEditor
 
         private void Btn_SetMeshClick(object sender, EventArgs e)
         {
-            m_renderer.SetMesh(Btn_AddComponent, LB_MeshList, LB_FileMesh);
+            m_renderer.SetMesh(Btn_AddComponent, LB_MeshList, LB_FileMesh, TB_SelecteMesh);
 
             // '메시 등록' 버튼을 클릭 시 호출된다.
             if (LB_MeshList.SelectedItem == null && LB_FileMesh.SelectedItem == null)
@@ -612,6 +669,11 @@ namespace WinFormEditor
             {
                 LB_FileMesh.SelectedItem = null;
             }
+
+            // Mesh
+            string strMeshName = ((ListBox)sender).SelectedItem.ToString();
+            ObjectInfo.MeshInfo meshInfo = m_objInfo[LB_ObjectList.SelectedItem.ToString()].meshInfo;
+            meshInfo.m_strMeshName = strMeshName;
         }
 
         private void FileMeshClick(object sender, EventArgs e)
@@ -620,6 +682,11 @@ namespace WinFormEditor
             {
                 LB_MeshList.SelectedItem = null;
             }
+
+            // FileMesh
+            string strMeshName = ((ListBox)sender).SelectedItem.ToString();
+            ObjectInfo.MeshInfo meshInfo = m_objInfo[LB_ObjectList.SelectedItem.ToString()].meshInfo;
+            meshInfo.m_strMeshName = strMeshName;
         }
 
         private void DebugRenderTarget_OnOff(object sender, EventArgs e)

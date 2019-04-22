@@ -123,6 +123,30 @@ namespace WinFormEditor
             return arrFTr;
         }
 
+        public void ReadChildWorldPosition(TextBox _x, TextBox _y, TextBox _z)
+        {
+            // Init
+            _x.Text = "0";
+            _y.Text = "0";
+            _z.Text = "0";
+
+            TextBox tbParent = m_editForm.GetParentTextBox();
+            if (tbParent.Text == "" || tbParent.Text == "None")
+            {
+                return;
+            }
+
+            CoreWrapper wrapper = m_editForm.GetWrapper();
+
+            // 부모의 태그, 레이어 태그를 넘긴다.
+            string strParentTag = tbParent.Text;
+            string strLayerTag = m_editForm.GetObjInfo()[strParentTag].strLayerTag;
+            float[] fArrPos = wrapper.GetChildWorldPosition(strParentTag, strLayerTag);
+            _x.Text = Convert.ToString(fArrPos[0]);
+            _y.Text = Convert.ToString(fArrPos[1]);
+            _z.Text = Convert.ToString(fArrPos[2]);
+        }
+
         public void SetEventHandler(EventHandler _event)
         {
             m_event = _event;

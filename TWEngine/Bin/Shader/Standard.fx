@@ -276,7 +276,7 @@ PS_OUTPUT_SINGLE StandardNaviEditorPS(VS_OUTPUT_3D input)
 
     float4 vColor = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
 
-    vColor.a = 0.5f;
+    vColor.a = 1.0f;
 
     output.vTarget0 = vColor;
 

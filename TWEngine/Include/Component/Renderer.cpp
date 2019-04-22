@@ -1,5 +1,6 @@
 #include "../EngineHeader.h"
 #include "Renderer.h"
+#include "../Core.h"
 #include "Camera.h"
 #include "Transform.h"
 #include "Animation.h"
@@ -443,6 +444,9 @@ bool CRenderer::Init()
 	m_tComponentCBuffer.iDecalEnable = 1;
 
 	CheckComponent();
+
+	if (CCore::GetInst()->m_bEditorMode)
+		SetRenderState(CULL_NONE);
 
 	return true;
 }

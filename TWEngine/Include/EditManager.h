@@ -87,6 +87,7 @@ public:
 	void GetSelectLayerObjList(string _strLayerTag, vector<string>* _pVec);
 	void SetActiveObject(const string _strObjectTag, const string _strLayerTag);
 	void SetActiveObject(class CGameObject* _pObject);
+	vector<string> GetActiveObjectInfo();
 	void CreateObject(const string _strObjectTag, const string _strLayerTag, bool _isChild = false);
 	void DeleteObject(const string _strObjectTag, const string _strLayerTag);
 	void DeleteAllObject();
@@ -103,10 +104,12 @@ public:
 	bool FindLightComponent();
 	void SetGizmoClick(bool _isFlag);
 	bool IsGizmoCheckClick();
+	string GetMeshName(string _strTag);
 	void AddChild(const string _strObjectTag, const string _strLayerTag);
 	string GetParentTag();
 	vector<Vector3> GetLocalTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
 	vector<Vector3> GetWorldTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
+	Vector3 GetChildWorldPosition(const string _strParentTag, const string _strLayerTag);
 	void SetMouseWheel(short _sMouseWheel);
 	void SetGizmoEnable(bool _bEnable);
 	void SetPickingColliderEnable(bool _bEnable);

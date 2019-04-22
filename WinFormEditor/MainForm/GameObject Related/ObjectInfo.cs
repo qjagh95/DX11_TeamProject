@@ -8,6 +8,30 @@ namespace WinFormEditor
 {
     public class ObjectInfo
     {
+        // Mesh
+        public MeshInfo meshInfo    { set; get; }
+
+        // Vector3
+        public Vector3 vecLScale    { set; get; }
+        public Vector3 vecLRotate   { set; get; }
+        public Vector3 vecLPosition { set; get; }
+        public Vector3 vecWScale    { set; get; }
+        public Vector3 vecWRotate   { set; get; }
+        public Vector3 vecWPosition { set; get; }
+        public Vector4 vecColor     { set; get; }
+
+        // Member
+        public string strLayerTag   { set; get; }
+
+        public class MeshInfo
+        {
+            public string m_strMeshName { set; get; }
+            public MeshInfo(string _str)
+            {
+                m_strMeshName = _str;
+            }
+        }
+
         public class Vector3
         {
             public float x = 0.0f;
@@ -44,15 +68,6 @@ namespace WinFormEditor
                 w = _w;
             }
         }
-
-        public string strLayerTag { set; get; }
-        public Vector3 vecLScale { set; get; }
-        public Vector3 vecLRotate { set; get; }
-        public Vector3 vecLPosition { set; get; }
-        public Vector3 vecWScale { set; get; }
-        public Vector3 vecWRotate { set; get; }
-        public Vector3 vecWPosition { set; get; }
-        public Vector4 vecColor { set; get; }
 
         public void ClearData()
         {

@@ -249,6 +249,21 @@ void CEditManager::SetActiveObject(CGameObject * _pObject)
 	m_pObject->AddComponent(m_pEditTest);
 }
 
+vector<string> CEditManager::GetActiveObjectInfo()
+{
+	if (m_pObject == nullptr)
+	{
+		TrueAssert(true);
+	}
+
+	vector<string> vecInfo;
+	string strTag = m_pObject->GetTag();
+	string strLayerTag = m_pObject->GetLayerName();
+	vecInfo.push_back(strTag);
+	vecInfo.push_back(strLayerTag);
+	return vecInfo;
+}
+
 void CEditManager::CreateObject(const string _strObjectTag, const string _strLayerTag, bool _isChild)
 {
 	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
@@ -479,6 +494,31 @@ bool CEditManager::IsGizmoCheckClick()
 	return m_isGizmoClick;
 }
 
+string CEditManager::GetMeshName(string _strTag)
+{
+	CGameObject* pObj = m_pScene->FindObject(_strTag);
+	if(pObj == nullptr)
+	{
+		TrueAssert(true);
+	}
+
+	CRenderer* pRender = pObj->FindComponentFromType<CRenderer>(CT_RENDERER);
+	if (pRender == nullptr)
+	{
+		SAFE_RELEASE(pObj);
+		return "None";
+	}
+
+	CMesh* pMesh = pRender->GetMesh();
+	string strMeshTag = pMesh->GetTag();
+
+	SAFE_RELEASE(pRender);
+	SAFE_RELEASE(pMesh);
+	SAFE_RELEASE(pObj);
+
+	return strMeshTag;
+}
+
 void CEditManager::AddChild(const string _strObjectTag, const string _strLayerTag)
 {
 	if (m_pObject == nullptr)
@@ -594,6 +634,43 @@ vector<Vector3> CEditManager::GetWorldTransform(const string _strObjectTag, cons
 	SAFE_RELEASE(pLayer);
 
 	return pVecTranform;
+}
+
+Vector3 CEditManager::GetChildWorldPosition(const string _strParentTag, const string _strLayerTag)
+{
+	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
+	if (pLayer == nullptr)
+	{
+		TrueAssert(true);
+	}
+	CGameObject* pParent = pLayer->FindObject(_strParentTag);
+	if (pParent == nullptr)
+	{
+		TrueAssert(true);
+	}
+
+	CTransform* pChildTr = m_pObject->GetTransform();
+	if (pChildTr == nullptr)
+	{
+		TrueAssert(true);
+	}
+	CTransform* pParentTr = pParent->GetTransform();
+
+	float parentPosX = pParentTr->GetPosDelta()[3][0];
+	float parentPosY = pParentTr->GetPosDelta()[3][1];
+	float parentPosZ = pParentTr->GetPosDelta()[3][2];
+	Vector3 vecParentPos = Vector3(parentPosX, parentPosY, parentPosZ);
+	Vector3 vecChildPos = pChildTr->GetWorldPos();
+	Vector3 vecChildWorldPos = Vector3(vecParentPos.x + vecChildPos.x,
+									   vecParentPos.y + vecChildPos.y,
+									   vecParentPos.z + vecChildPos.z);
+
+	SAFE_RELEASE(pParent);
+	SAFE_RELEASE(pLayer);
+	SAFE_RELEASE(pChildTr);
+	SAFE_RELEASE(pParentTr);
+
+	return vecChildWorldPos;
 }
 
 void CEditManager::SetMouseWheel(short _sMouseWheel)

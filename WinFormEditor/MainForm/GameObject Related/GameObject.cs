@@ -8,7 +8,9 @@ namespace WinFormEditor
     public class GameObject
     {
         // Member
-        private int m_createObjCnt = 0;
+        private int  m_createObjCnt = 0;
+        private int  m_beforeSelectedIndex = -1;
+        private bool m_isLoadTransform = false;
         Form m_dataRemoveForm = new Form();
 
         // Instance
@@ -20,6 +22,39 @@ namespace WinFormEditor
             if (m_editForm == null)
             {
                 m_editForm.AddLogString("EditForm is null");
+            }
+        }
+
+        public void SetPickingObjectInfo(ListBox _listBox, ListBox _meshListBox, ListBox _fileMeshList, TextBox _textBox)
+        {
+            CoreWrapper wrapper = m_editForm.GetWrapper();
+            string[] arrInfo = wrapper.GetActiveObjectInfo();
+
+            // Object ListBox 정보를 갱신한다.
+            string strTag = arrInfo[0];
+            string strLayerTag = arrInfo[1];
+            int findIndex = _listBox.FindString(strTag);
+            _listBox.SelectedIndex = findIndex;
+
+            // Mesh ListBox 정보를 갱신한다.
+            if (wrapper.FindRendererComponent() == true)
+            {
+                string strMeshName = "";
+                if (_meshListBox.SelectedItem != null)
+                {
+                    strMeshName = _meshListBox.SelectedItem.ToString();
+                }
+                else if (_fileMeshList.SelectedItem != null)
+                {
+                    strMeshName = _fileMeshList.SelectedItem.ToString();
+                }
+                _textBox.Text = strMeshName;
+            }
+            else
+            {
+                _textBox.Text = "None";
+                _meshListBox.SelectedItem = null;
+                _fileMeshList.SelectedItem = null;
             }
         }
 
@@ -41,6 +76,16 @@ namespace WinFormEditor
                 return;
             }
 
+            // 선택된 오브젝트가 이전 오브젝트와 다를경우 Transform 정보를 1회 갱신한다.
+            if (m_beforeSelectedIndex != _listBox.SelectedIndex)
+            {
+                if (m_isLoadTransform == false)
+                {
+                    m_isLoadTransform = true;
+                    m_editForm.GetTransformInst().m_isUpdateTr = true;
+                }
+            }
+
             CoreWrapper wrapper = m_editForm.GetWrapper();
 
             // 오브젝트 선택
@@ -48,19 +93,23 @@ namespace WinFormEditor
             string strTag = _listBox.Items[itemIndex].ToString();
             string strLayerTag = m_editForm.GetObjInfo()[strTag].strLayerTag;
             wrapper.SetActiveObject(strTag, strLayerTag);
+            m_beforeSelectedIndex = itemIndex;
 
-            // Check Parent
+            // 부모 오브젝트 검사
             string strParentTag = wrapper.GetParentTag();
             TextBox parentTextBox = m_editForm.GetParentTextBox();
             parentTextBox.Text = strParentTag;
 
             // Transform
+            m_editForm.ReadChildWorldPosition();
             _instTr.LoadTransform();
+            m_isLoadTransform = false;
+            m_editForm.GetTransformInst().m_isUpdateTr = false;
 
             // Light 컴포넌트가 있는지 검사한다.
             bool isFind = wrapper.FindLightComponent();
             m_editForm.GetAddLightComponentBtn().BackColor = SystemColors.ControlLight;
-            if(isFind == true)
+            if (isFind == true)
             {
                 m_editForm.GetAddLightComponentBtn().BackColor = Color.LawnGreen;
                 m_editForm.GetLightInst().SetLightToolsEnable(true);
@@ -71,12 +120,7 @@ namespace WinFormEditor
             }
 
             // Render 컴포넌트가 있는지 검사한다.
-            isFind = wrapper.FindRendererComponent();
-            m_editForm.GetAddRenderComponentBtn().BackColor = SystemColors.ControlLight;
-            if (isFind == true)
-            {
-                m_editForm.GetAddRenderComponentBtn().BackColor = Color.LawnGreen;
-            }
+            m_editForm.GetRenderInst().SetRenderingInfo();
 
             // 오브젝트 텍스트 박스 
             _textBox.Text = strTag;
@@ -113,12 +157,14 @@ namespace WinFormEditor
             ObjectInfo info = new ObjectInfo
             {
                 strLayerTag     = strLayerTag,
+                meshInfo        = new ObjectInfo.MeshInfo(""),
                 vecLScale       = new ObjectInfo.Vector3(),
                 vecLRotate      = new ObjectInfo.Vector3(),
                 vecLPosition    = new ObjectInfo.Vector3(),
                 vecWScale       = new ObjectInfo.Vector3(),
                 vecWRotate      = new ObjectInfo.Vector3(),
-                vecWPosition    = new ObjectInfo.Vector3()
+                vecWPosition    = new ObjectInfo.Vector3(),
+                vecColor        = new ObjectInfo.Vector4(),
             };
             m_editForm.GetObjInfo().Add(strObjectTag, info);
             _listBox.Items.Add(strObjectTag);

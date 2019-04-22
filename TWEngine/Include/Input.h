@@ -18,6 +18,9 @@ private:
 	short m_sWheel;
 
 private:
+	bool m_isPicking;
+
+private:
 	Vector2					m_vMouseClient;
 	Vector2					m_vMouseWorld;
 	Vector2					m_vMouseGap;
@@ -64,6 +67,8 @@ public:
 	short GetWheelDir() const;
 	bool ShowMouse() const;
 	void ShowMouse(bool bShow);
+	void SetIsPickingFalse();
+	bool GetIsPicking();
 
 public:
 	bool Init();

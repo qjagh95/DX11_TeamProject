@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <Core.h>
+#include <Input.h>
 #include <Scene/Scene.h>
 #include <EditorScene.h>
 #include <Scene/SceneManager.h>
@@ -70,10 +71,17 @@ namespace EngineWrapper
 		bool FindRendererComponent();
 		bool FindLightComponent();
 		bool IsGizmoClick();
+		void SetPickingFalse();
+		bool IsPicking();
+		String^ GetMeshName(String^ _strTag);
+
+		cli::array<String^>^ GetActiveObjectInfo();
+
 		void AddChild(String^ _strParentTag, String^ _strLayerTag);
 		String^ GetParentTag();
 		cli::array<float>^ GetLocalTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
 		cli::array<float>^ GetWorldTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
+		cli::array<float>^ GetChildWorldPosition(String^ _strParentTag, String^ _strLayerTag);
 
 		void SetLightAmbient(double _dR, double _dG, double _dB)
 		{

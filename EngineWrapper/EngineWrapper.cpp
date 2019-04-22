@@ -133,6 +133,36 @@ bool CoreWrapper::IsGizmoClick()
 	return PUN::CEditManager::GetInst()->IsGizmoCheckClick();
 }
 
+void CoreWrapper::SetPickingFalse()
+{
+	CInput::GetInst()->SetIsPickingFalse();
+}
+
+bool CoreWrapper::IsPicking()
+{
+	return CInput::GetInst()->GetIsPicking();
+}
+
+String^ EngineWrapper::CoreWrapper::GetMeshName(String^ _strTag)
+{
+	string strCvtTag = ConvertMarshal<string, String^>(_strTag);
+	strCvtTag = PUN::CEditManager::GetInst()->GetMeshName(strCvtTag);
+	String^ strTag = ConvertMarshal<String^, string>(strCvtTag);
+	return strTag;
+}
+
+cli::array<String^>^ EngineWrapper::CoreWrapper::GetActiveObjectInfo()
+{
+	vector<string> vecObjInfo = PUN::CEditManager::GetInst()->GetActiveObjectInfo();
+	cli::array<String^>^ arrActiveObjInfo = gcnew cli::array<String^>((int)vecObjInfo.size());
+	String^ strTag = ConvertMarshal<String^, string>((vecObjInfo)[0]);
+	String^ strLayerTag = ConvertMarshal<String^, string>((vecObjInfo)[1]);
+	arrActiveObjInfo[0] = strTag;
+	arrActiveObjInfo[1] = strLayerTag;
+
+	return arrActiveObjInfo;
+}
+
 void CoreWrapper::AddChild(String^ _strParentTag, String^ _strLayerTag)
 {
 	string strObjectTag = ConvertMarshal<string, String^>(_strParentTag);
@@ -174,6 +204,19 @@ cli::array<float>^ CoreWrapper::GetWorldTransform(String^ _strObjectTag, String^
 	arrTransform[1] = pVecTranform[0].y;
 	arrTransform[2] = pVecTranform[0].z;
 
+	return arrTransform;
+}
+
+cli::array<float>^ CoreWrapper::GetChildWorldPosition(String^ _strParentTag, String^ _strLayerTag)
+{
+	// 부모 오브젝트를 찾아서 자신의 위치와 더한 좌표를 돌려준다.
+	cli::array<float>^ arrTransform = gcnew cli::array<float>(3);
+	string strParentTag = ConvertMarshal<string, String^>(_strParentTag);
+	string strLayerTag = ConvertMarshal<string, String^>(_strLayerTag);
+	Vector3 pVecPosition = PUN::CEditManager::GetInst()->GetChildWorldPosition(strParentTag, strLayerTag);
+	arrTransform[0] = pVecPosition.x;
+	arrTransform[1] = pVecPosition.y;
+	arrTransform[2] = pVecPosition.z;
 	return arrTransform;
 }
 
