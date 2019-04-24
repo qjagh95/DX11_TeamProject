@@ -177,6 +177,9 @@
     <Filter Include="07. BehaviorTree">
       <UniqueIdentifier>{598ff5f4-5160-4ac6-b79d-024bac17ed09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Component\19.Parkour">
+      <UniqueIdentifier>{9a91e4da-7893-4259-9f49-f3cab4230235}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -436,6 +439,9 @@
     </ClCompile>
     <ClCompile Include="BlackBoard.cpp">
       <Filter>07. BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ParkourTest.cpp">
+      <Filter>06. Component\19.Parkour</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -714,6 +720,9 @@
     </ClInclude>
     <ClInclude Include="BlackBoard.h">
       <Filter>07. BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ParkourTest.h">
+      <Filter>06. Component\19.Parkour</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -191,6 +191,7 @@
     <ClInclude Include="SceneComponent\FirTestScene.h" />
     <ClInclude Include="SceneComponent\LogoScene.h" />
     <ClInclude Include="SceneComponent\MainScene.h" />
+    <ClInclude Include="SceneComponent\RandScapeTestScene.h" />
     <ClInclude Include="SceneComponent\Scene4.h" />
     <ClInclude Include="SceneComponent\TestScene-YH.h" />
     <ClInclude Include="SceneComponent\TestScene.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="SceneComponent\FirTestScene.cpp" />
     <ClCompile Include="SceneComponent\LogoScene.cpp" />
     <ClCompile Include="SceneComponent\MainScene.cpp" />
+    <ClCompile Include="SceneComponent\RandScapeTestScene.cpp" />
     <ClCompile Include="SceneComponent\Scene4.cpp" />
     <ClCompile Include="SceneComponent\TestScene-YH.cpp" />
     <ClCompile Include="SceneComponent\TestScene.cpp" />

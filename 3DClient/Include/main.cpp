@@ -6,6 +6,7 @@
 #include "SceneComponent/TestScene.h"
 #include "SceneComponent/TestScene-YH.h"
 #include "SceneComponent/LogoScene.h"
+#include "SceneComponent/RandScapeTestScene.h"
 #include "CameraEff.h"
 
 PUN_USING
@@ -51,7 +52,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
 
 #ifdef _DEBUG
-	GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene");
+	GET_SINGLE(CSceneManager)->AddSceneComponent<CRandScapeTestScene>("TutorialScene");
 #else
 	GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");

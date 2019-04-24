@@ -16,7 +16,9 @@ private:
 	class CTransform*	m_pInvenTr;
 	class CGameObject*	m_pHandycamObj;
 	class CHandycam*	m_pHandycam;
-
+	bool				m_bParkour;
+	bool				m_bNaviOn;
+	float				m_fParkourYPos;
 protected:
 	CPlayer();
 	CPlayer(const CPlayer& com);
@@ -43,5 +45,7 @@ public:
 	//Sound Test
 	void YoDjPumpThisParty(float fTime);
 	void KingDdenGodTtack(float fTime);
+	void ParkourOut(CCollider * pSrc, CCollider * pDest, float fTime);
+	void ParkourIn(CCollider * pSrc, CCollider * pDest, float fTime);
 };
 

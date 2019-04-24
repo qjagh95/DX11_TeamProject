@@ -238,6 +238,7 @@
     <ClInclude Include="Component\LandScape.h" />
     <ClInclude Include="Component\Light.h" />
     <ClInclude Include="Component\Material.h" />
+    <ClInclude Include="Component\ParkourTest.h" />
     <ClInclude Include="Component\Particle.h" />
     <ClInclude Include="Component\Renderer.h" />
     <ClInclude Include="Component\SoundSource.h" />
@@ -389,6 +390,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Component\ParkourTest.cpp" />
     <ClCompile Include="Component\Particle.cpp" />
     <ClCompile Include="Component\Renderer.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

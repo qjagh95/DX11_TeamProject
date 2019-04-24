@@ -120,6 +120,10 @@ CPlayer::CPlayer()
 {
 	SetTag("Player");
 	m_eComType = (COMPONENT_TYPE)UT_PLAYER;
+	m_bParkour = false;
+	m_bNaviOn = true;
+	m_fParkourYPos = 0.f;
+
 }
 
 CPlayer::CPlayer(const CPlayer & com)
@@ -217,6 +221,27 @@ bool CPlayer::Init()
 
 	SAFE_RELEASE(pHandycamTr);
 
+	CColliderOBB3D*	pBody = m_pObject->AddComponent<CColliderOBB3D>("ObjectCheckBody");
+
+	float	fLength[3] = { 3.f, 3.f, 3.f };
+	pBody->SetInfo(Vector3(0.f, 0.f, 2.f), Vector3::Axis, fLength);
+	pBody->SetCollisionCallback(CCT_STAY, this, &CPlayer::ParkourIn);
+	//pBody->SetCollisionCallback(CCT_LEAVE, this, &CPlayer::ParkourOut);
+
+
+	SAFE_RELEASE(pBody);
+
+	pBody = m_pObject->AddComponent<CColliderOBB3D>("PlayerBody");
+
+	fLength[0] = 3.f;
+	fLength[1] = 3.f;
+	fLength[2] = 3.f;
+	pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3::Axis, fLength);
+	pBody->SetCollisionCallback(CCT_LEAVE, this, &CPlayer::ParkourOut);
+
+	SAFE_RELEASE(pBody);
+
+
 	return true;
 }
 
@@ -232,11 +257,14 @@ int CPlayer::Update(float fTime)
 
 	if (pMesh)
 	{
-		float	fY = pMesh->GetY(m_pTransform->GetWorldPos());
+		if (m_bNaviOn)
+		{
+			float	fY = pMesh->GetY(m_pTransform->GetWorldPos());
 
-		Vector3 vPos = m_pTransform->GetWorldPos();
-		vPos.y = fY;
-		m_pTransform->SetWorldPos(vPos);
+			Vector3 vPos = m_pTransform->GetWorldPos();
+			vPos.y = fY;
+			m_pTransform->SetWorldPos(vPos);
+		}
 	}
 
 	if (CInput::GetInst()->KeyPush("FrontMove"))
@@ -278,11 +306,34 @@ int CPlayer::Update(float fTime)
 		m_pHandycam->SetVisible();
 	}
 
+	if (m_bParkour == true)
+	{
+		Vector3 vPos = m_pTransform->GetWorldPos();
+
+		m_pTransform->SetWorldPos(vPos.x, m_fParkourYPos, vPos.z);
+
+		m_pTransform->Move(AXIS_Z, 50.f, fTime);
+	}
+
+	if (m_bParkour == false && !m_bNaviOn)
+	{
+		m_pTransform->Move(AXIS_Z, 50.f, fTime);
+		m_pTransform->Move(Vector3(0.f, -1.f, 0.f), 100.f, fTime);
+	}
+
 	return 0;
 }
 
 int CPlayer::LateUpdate(float fTime)
 {
+	if (m_bParkour == false && !m_bNaviOn)
+	{
+		if (m_pTransform->GetWorldPos().y <= 0.f)
+		{
+			m_bNaviOn = true;
+		}
+	}
+
 	return 0;
 }
 
@@ -317,4 +368,43 @@ void CPlayer::YoDjPumpThisParty(float fTime)
 void CPlayer::KingDdenGodTtack(float fTime)
 {
 	PUN::CSoundManager::GetInst()->PlayBgm(TEXT("orig_sudden.wav"), true, true, true);
+}
+
+
+void CPlayer::ParkourOut(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	if (pDest->GetTag() == "ParkourOBB")
+	{
+		if (m_bParkour == true)
+		{
+			m_bParkour = false;
+		}
+	}
+}
+
+void CPlayer::ParkourIn(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	if (pDest->GetTag() == "ParkourOBB")
+	{
+		if (m_bParkour == false)
+		{
+			m_bParkour = true;
+			m_bNaviOn = false;
+			CGameObject* pObject = pDest->GetGameObject();
+
+			CRenderer* pRenderer = pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+			CMesh* pMesh = pRenderer->GetMesh();
+			CTransform* pTransform = pObject->GetTransform();
+
+
+
+			m_fParkourYPos = (pMesh->GetLength().y * pTransform->GetWorldScale().y) / 2.f;
+
+			SAFE_RELEASE(pTransform);
+			SAFE_RELEASE(pMesh);
+			SAFE_RELEASE(pRenderer);
+			SAFE_RELEASE(pObject);
+		}
+	}
 }

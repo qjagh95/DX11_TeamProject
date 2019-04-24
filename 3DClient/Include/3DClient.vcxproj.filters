@@ -129,6 +129,9 @@
     <ClInclude Include="SceneComponent\TutorialScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent\RandScapeTestScene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -213,6 +216,9 @@
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\TutorialScene.cpp">
+      <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\RandScapeTestScene.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
