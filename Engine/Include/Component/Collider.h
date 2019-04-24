@@ -14,6 +14,7 @@ protected:
 	virtual ~CCollider() = 0;
 
 protected:
+	COLLIDER_ID		m_eColliderID;
 	COLLIDER_TYPE	m_eCollType;
 	Vector3			m_vPivot;
 	list<CCollider*>	m_PrevCollision;
@@ -41,6 +42,8 @@ public:
 	class CRenderState* m_pWireFrame;
 
 public:
+	COLLIDER_ID GetColliderID() const;
+	void SetColliderID(int iID);
 	COLLIDER_TYPE GetColliderType()	const;
 	Vector3 GetSectionMin()	const;
 	Vector3 GetSectionMax()	const;

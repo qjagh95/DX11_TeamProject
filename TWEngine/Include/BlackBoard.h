@@ -13,7 +13,7 @@ public:
 		if (getData != NULLPTR)
 			return;
 
-		m_DataMap.insert(make_pair(VarName, Data));
+		m_DataMap.insert(make_pair(VarName, (void**)Data));
 	}
 
 	template<typename T>

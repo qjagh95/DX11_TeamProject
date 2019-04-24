@@ -457,7 +457,7 @@ public:
 	int GetCount() const { return m_Count; }
 
 	template<typename T>
-	void AddBoardData(const string& VarName, T** Data)
+	void AddBoardData(const string& VarName, T* Data)
 	{
 		m_BlackBoard->AddData(VarName, Data);
 	}

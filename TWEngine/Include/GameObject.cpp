@@ -311,6 +311,21 @@ int CGameObject::GetLayerZOrder() const
 	return m_iLayerZOrder;
 }
 
+Vector3 CGameObject::GetWorldPos() const
+{
+	return m_pTransform->GetWorldPos();
+}
+
+Vector3 CGameObject::GetWorldRot() const
+{
+	return m_pTransform->GetWorldRot();
+}
+
+Vector3 CGameObject::GetWorldScale() const
+{
+	return m_pTransform->GetWorldScale();
+}
+
 void CGameObject::SetRenderGroup(RENDER_GROUP eGroup)
 {
 	m_eRenderGroup = eGroup;
@@ -601,6 +616,7 @@ int CGameObject::Update(float fTime)
 	Matrix S = m_pTransform->GetWorldScaleMatrix() * m_pTransform->GetParentScale();
 	Matrix R = m_pTransform->GetWorldRotMatrix() * m_pTransform->GetParentRot();
 	Matrix T = m_pTransform->GetWorldPosMatrix() * m_pTransform->GetParentPos();
+
 
 	for (; StartIter1 != EndIter1; StartIter1++)
 	{

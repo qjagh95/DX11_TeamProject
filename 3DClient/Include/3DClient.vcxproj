@@ -187,6 +187,7 @@
   <ItemGroup>
     <ClInclude Include="CameraEff.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="CommonSoundLoader.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneComponent\FirTestScene.h" />
     <ClInclude Include="SceneComponent\JBH_Stage3.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="SceneComponent\TutorialScene.h" />
     <ClInclude Include="UserComponent\Battery.h" />
     <ClInclude Include="UserComponent\BatteryIcon.h" />
+    <ClInclude Include="UserComponent\Bed.h" />
     <ClInclude Include="UserComponent\Door.h" />
     <ClInclude Include="UserComponent\Field.h" />
     <ClInclude Include="UserComponent\Ghost.h" />
@@ -208,6 +210,7 @@
     <ClInclude Include="UserComponent\Idle.h" />
     <ClInclude Include="UserComponent\InteractiveObj.h" />
     <ClInclude Include="UserComponent\Inventory.h" />
+    <ClInclude Include="UserComponent\Locker.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Player.h" />
     <ClInclude Include="UserComponent\Trace.h" />
@@ -216,6 +219,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CameraEff.cpp" />
+    <ClCompile Include="CommonSoundLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SceneComponent\FirTestScene.cpp" />
     <ClCompile Include="SceneComponent\JBH_Stage3.cpp" />
@@ -228,6 +232,7 @@
     <ClCompile Include="SceneComponent\TutorialScene.cpp" />
     <ClCompile Include="UserComponent\Battery.cpp" />
     <ClCompile Include="UserComponent\BatteryIcon.cpp" />
+    <ClCompile Include="UserComponent\Bed.cpp" />
     <ClCompile Include="UserComponent\Door.cpp" />
     <ClCompile Include="UserComponent\Field.cpp" />
     <ClCompile Include="UserComponent\Ghost.cpp" />
@@ -236,8 +241,10 @@
     <ClCompile Include="UserComponent\Idle.cpp" />
     <ClCompile Include="UserComponent\InteractiveObj.cpp" />
     <ClCompile Include="UserComponent\Inventory.cpp" />
+    <ClCompile Include="UserComponent\Locker.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
     <ClCompile Include="UserComponent\Player.cpp" />
+    <ClCompile Include="UserComponent\PlayerFunc_CallBack.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_cam.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Interact.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Move.cpp" />

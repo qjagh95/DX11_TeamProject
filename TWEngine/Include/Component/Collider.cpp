@@ -65,6 +65,16 @@ CCollider::~CCollider()
 	SAFE_RELEASE(m_pMesh);
 }
 
+COLLIDER_ID CCollider::GetColliderID() const
+{
+	return m_eColliderID;
+}
+
+void CCollider::SetColliderID(int iID)
+{
+	m_eColliderID = (COLLIDER_ID)iID;
+}
+
 COLLIDER_TYPE CCollider::GetColliderType() const
 {
 	return m_eCollType;

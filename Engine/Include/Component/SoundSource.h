@@ -32,6 +32,8 @@ namespace PUN
 
 		void StopClip(int idxKey = 0, bool bImmediate = true);
 		void StopClip(std::string& strKey, bool bImmediate = true);
+		int GetClipState(std::string& strKey) const;
+		int GetClipState(int idxKey = 0) const;
 
 		bool LoadSounds(const vector<std::string>& vecStr);
 		bool LoadSounds(const char** arrStr, int iCnt);

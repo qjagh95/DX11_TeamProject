@@ -8,6 +8,15 @@
 
 PUN_USING
 
+enum PLAYER_MOVE_TAG
+{
+	PMT_NONE,
+	PMT_FOWARD,
+	PMT_BACKWARD,
+	PMT_LEFT = 4,
+	PMT_RIGHT = 8
+};
+
 enum PLAYER_DATA_TYPE 
 {
 	PDT_NONE,
@@ -44,8 +53,25 @@ enum PLAYER_STATUS
 	PSTATUS_GUN		= 0x20000,
 	PSTATUS_GUN_TAKING_OFF = 0x40000,
 	PSTATUS_ITEM = 0x80000,
+	PSTATUS_UPDATEPOS = 0x100000,
 	PSTATUS_INACTIVE = 0x10000000
 };
+
+
+static const char* strFootStepSndHeader			= "FTS_";
+static const char* strWalkSndHeader				= "Walk";
+static const char* strRunSndHeader				= "Run";
+static const char* strLandSndHeader				= "Land";
+static const char* strMatConcreteSndHeader		= "Concrete_";
+static const char* strMatWoodSndHeader			= "Wood_";
+static const char* strMatThinWoodSndHeader		= "ThinWood_";
+static const char* strMatSmallWaterSndHeader	= "Smallwater_";
+static const char* strMatHeavySndHeader			= "MtrlHeavy_";
+static const char* strMatLightSndHeader			= "MtrlLight_";
+static const char* strMatGrassSndHeader			= "Grass_";
+static const char* strMatBloodSndHeader			= "Blood_";
+static const char* strMatCarpetSndHeader		= "Carpet_";
+
 
 class CHuman_Player : public PUN::CUserComponent
 {
@@ -55,6 +81,8 @@ protected:
 	CHuman_Player();
 	CHuman_Player(const CHuman_Player& player);
 	~CHuman_Player();
+
+	
 
 public:
 	bool Init();
@@ -85,16 +113,31 @@ public:
 	*/
 
 private:
+	FOOTSTEP_ENVIRONMENT m_eFootStep;
 	CCameraEff *pCamEffManager;
 	class PUN::CGameObject *m_pHandSocketObj; //테스트용 저장
 	class PUN::CGameObject *m_pHeadObj;
+	class PUN::CGameObject *m_pHandGun;
 	class PUN::CAnimation *m_pAnimation;
 	class PUN::CSoundSource *m_pSound;
+	class PUN::CGameObject *m_pCamModelObj;
+	class PUN::CTransform *m_pRootBonePos;
+	std::string m_strFTSKey;
+	std::vector<int> m_vecIgnoreRightArmKey;
+	std::vector<int> m_vecIgnoreLegsAndLeftArmKey;
+	std::vector<int> m_vecIgnoreLegsKey;
+	std::vector<int> m_vecIgnoreUppderBodyKey;
+
+	PUN::PPARTANIM m_pPartCamAnim;
+
+	PUN::ANIMATIONCALLBACK m_arrAnimCallbacks[16];
 	class CInventory*	m_pInven;
 	class CHandycam*	m_pHandycam;
 	Vector3 m_vInitLocalPos;
 	bool  m_bLoadedOnce		;
 	int	  m_iState			;
+	int   m_iDirFlag;
+	Vector3 m_vMoveDirection;
 	float m_fItemTakeTimerBuf	;
 	float m_fCamTakeTime		;
 	float m_fGunTakeTime		;
@@ -120,6 +163,8 @@ private:
 	float m_fGunMinAngleY		;
 	Vector3 m_vCamWorldOffset	;
 	Vector3 m_vCamLocalOffset;
+	Vector3 m_vCamCrouchLocalOffset;
+	Vector3 m_vTracerBuf;
 	//Crouch는 스프린트가 없다
 	/*
 	other csv val
@@ -135,6 +180,7 @@ private:
 	sound : strKey, strPath, iIndex 순서
 		
 	*/
+
 
 public:
 	bool LoadData(const TCHAR *dataPath); //플레이어는 혼자니까 굳이 툴까지 만들어 다룰 필요는 없지만, 데이터 수치 및 리소스는 밖에서 준비해볼 필요가 있어 분리함
@@ -152,6 +198,7 @@ public:
 	void Pakur_Doing(float fTime, int iHeightType);
 	void OnWalk(float fTime);
 	void OnSprint(float fTime);
+	void OnCrouching(float fTime);
 	void OnCrouchWalk(float fTime);
 	void Pickup_Item(float fTime);
 	void Open_Item(float fTime);
@@ -165,6 +212,46 @@ public:
 	void HandyCam_Using(float fTime);
 	void HandyCam_Off(float fTime);
 	void Move(PUN::AXIS axis, float fSpeed, float fTime);
+	void SetAnimNotify();
+	const Vector3& GetMoveDirection() const;
 
-	
+	//Animation Notify
+	/*
+	typedef struct PUN_DLL _tagAnimationCallback
+	{
+		int		iAnimationProgress;
+		float	fAnimationProgress;
+		function<void(float)> func;
+		bool	bCall;
+	}ANIMATIONCALLBACK, *PANIMATIONCALLBACK;
+
+	*/
+	void FootStepWalkNormal		(float fTime);
+	void FootStepRun			(float fTime);
+	void FootStepCrouch			(float fTime);
+	void FootStepFallDownLow	(float fTime);
+	void FootStepFallDownHigh	(float fTime);
+	void CrouchForwardMendPos	(float fTime);
+	void CrouchBackwardMendPos	(float fTime);
+	void CrouchSideMendPos		(float fTime);
+
+	void SetFootStepEnvironment(FOOTSTEP_ENVIRONMENT eEnv);
+	FOOTSTEP_ENVIRONMENT GetFootStepEnvironment() const;
+
+	void LoadArmAnim();
+	void AfterLoad();
+
+	///////////////// 콜백 함수 선언부 //////////////////
+
+	void InteractCallBackEnter(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+	void InteractCallBackStay(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+	void InteractCallBackLeave(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+
+	void HitCallBackEnter(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+	void HitCallBackStay(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+	void HitCallBackLeave(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+
+	void RayCallBackEnter(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+	void RayCallBackStay(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+	void RayCallBackLeave(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component/UserComponent.h"
+#include "Component/Collider.h"
 
 enum DOOR_STATE {
 
@@ -13,9 +14,8 @@ enum DOOR_STATE {
 	//¹®À» ´Ý´Â Áß : DOOR_CLOSE | DOOR_ONACT
 };
 
-class CDoor : public PUN::CUserComponent 
+class CDoor : public PUN::CUserComponent
 {
-
 	friend class PUN::CGameObject;
 
 protected:
@@ -35,18 +35,24 @@ public:
 	void Destroy();
 
 private:
-	int m_iState;
-	int m_iDoorType;
-	float m_fOpenTime;
-	float m_fCloseTime;
-	float m_fDestroyBurstTime;
-	float fCurrTimer;
-	Vector3 m_vRotClosed;
-	Vector3 m_vRotOpened;
-	ptrdiff_t m_pSndComp;
-	
+	int			m_iState;
+	float		m_fOpenTime;
+	float		m_fCloseTime;
+	float		m_fDestroyBurstTime;
+	float		fCurrTimer;
+	bool		m_bLock;
+	Vector3		m_vRotClosed;
+	Vector3		m_vRotOpened;
+	Vector3		m_vOpenDir;
+	DOOR_TYPE	m_eDoorType;
+
+	ptrdiff_t	m_pSndComp;
+
 public:
-	int GetState() const;
+	bool IsLock() const;
+	void UnLock();
+
+	int  GetState() const;
 	void SetState(int state);
 
 	float GetOpenTime() const;
@@ -62,14 +68,20 @@ public:
 	bool SetCloseSound(const std::string strKey);
 	bool SetDestroySound(const std::string strKey);
 
-	int GetDoorType() const;
+	void OnAct(float fTime);
+	void OnActNormal(float fTime);
+	void OnActStage(float fTime);
+	void OnActLocker(float fTime);
+	void OnActHeavy(float fTime);
+
+	DOOR_TYPE  GetDoorType() const;
 	void SetDoorType(int iType);
-	
+
 	const bool IsOpened() const;
 	const bool IsOnAction() const;
 
 public:
-	void Interact(float fTime);
+	void Interact(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 
 	CDoor* Clone();
 };

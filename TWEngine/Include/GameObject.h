@@ -75,8 +75,11 @@ public:
 	}
 	class CScene* GetScene()	const;
 	class CLayer* GetLayer()	const;
-	string GetLayerName()	const;
-	int GetLayerZOrder()	const;
+	string  GetLayerName()		const;
+	int		GetLayerZOrder()	const;
+	Vector3 GetWorldPos()		const;
+	Vector3 GetWorldRot()		const;
+	Vector3 GetWorldScale()		const;
 	bool GetisChild() const { return m_isChild; }
 
 public:

@@ -5,12 +5,14 @@
 #include <Device.h>
 #include <Core.h>
 #include <Input.h>
+#include <SoundManager.h>
 
 CCameraEff* CCameraEff::m_pInst = nullptr;
 
 CCameraEff::CCameraEff():
 	pMainCamTransform(nullptr),
-	m_bWndFocused(false)
+	m_bWndFocused(false),
+	m_bUseFirstPersonView(false)
 {
 }
 
@@ -68,6 +70,21 @@ int CCameraEff::LateUpdate(float fTime)
 		++itr;
 	}
 	return 0;
+}
+
+void CCameraEff::SetFirstPersonViewEnable()
+{
+	m_bUseFirstPersonView = !m_bUseFirstPersonView;
+
+	if (m_bUseFirstPersonView)
+	{
+		PUN::CSoundManager::GetInst()->SetListenerTransform(pMainCamTransform);
+	}
+}
+
+bool CCameraEff::IsFirstPersonEnabled() const
+{
+	return m_bUseFirstPersonView;
 }
 
 void CCameraEff::AddUpdateEffect(const tCameraEffects & eff)
@@ -128,13 +145,21 @@ void CCameraEff::SetCamMainRot(const Vector3 & vRot)
 		pMainCamTransform->SetWorldRot(vRot);
 }
 
-void CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Body)
+bool CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Body, const Vector3& vEyePos, const Vector3 &vEyeRot)
 {
+	if (!m_bUseFirstPersonView)
+		return false;
+
+	if (pMainCamTransform)
+	{
+		pMainCamTransform->SetWorldPos(vEyePos);
+		//PUN::CSoundManager::GetInst()->SetListenerTransform(pMainCamTransform);
+	}
 	PUN::CInput *_Input = PUN::CInput::GetInst();
 	if (!_Input->IsFocused())
 	{
 		m_bWndFocused = false;
-		return;
+		return false;
 	}
 	else
 	{
@@ -170,6 +195,7 @@ void CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Bod
 
 		if (pMainCamTransform)
 		{
+			
 			vCamRot = pMainCamTransform->GetWorldRot();
 
 			float fValueW = 180.f / PUN::CDevice::GetInst()->GetResolution().iWidth;
@@ -189,13 +215,16 @@ void CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Bod
 			}
 		}
 		
-		
+		return true;
 	}
+
+	return false;
 }
 
 void CCameraEff::SetCamTransform(PUN::CTransform * pMainCamTr)
 {
 	pMainCamTransform = pMainCamTr;
+	PUN::CSoundManager::GetInst()->SetListenerTransform(pMainCamTransform);
 }
 
 CCameraEff * CCameraEff::GetInst()

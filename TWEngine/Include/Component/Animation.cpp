@@ -6,7 +6,103 @@
 #include "../Resource/FbxLoader.h"
 #include "BoneSocket.h"
 
-//#define DDONGCOM 1 //
+#define PART_METHOD_1 1
+//#define PART_METHOD_2 1
+#define ZYX 1
+void to_Euler_Angle(const Vector4 & q, Vector3 & vEuler)
+{
+	//Quaternion -> Euler 변환은 오일러 축 순서가 ㅈㄴ 중요하다(이것 때문에 기생수 많이 만들고 애먹음)
+	//Matrix.Rotation 함수를 살펴보면 우리 엔진은 분명히 XYZ 순서를 사용하고 있다
+	//추가 분석 : XYZ 순서로 매트릭스를 만들었고, 거기서 파생된 Quaternion을 분해하기 위해 만든 기능
+	//따라서 이 쿼터니언의 분해 순서는 ZYX가 되어야 한다는 가설을 세워본 결과 이것이 유효했다
+	//인터넷에 돌아다니는 수많은 자료들이 모두 Quaternion을 Euler로 만드는 것이 확실하지만,
+	//Euler 각은 적용하는 순서에 따라 값이 달라지기 때문에 XYZ, XZY, YXZ, YZX, ZXY, ZYX 여섯 가지 경우에서
+	//적용하려는 것이 무엇인지 확실히 해 두어야 한다.
+
+#ifdef XYZ
+	float fSingularityTest = 2.f * ((q.x * q.z) + (q.w * q.y));
+
+	if (fSingularityTest > 0.999998f)
+	{
+		vEuler.y = 2.f * atan2f(q.x, q.w);
+		vEuler.z = 0.f;
+		vEuler.x = PUN_PI / 2.f;
+		return;
+	}
+	else if (fSingularityTest < -0.999998f)
+	{
+		vEuler.y = -2.f * atan2f(q.x, q.w);
+		vEuler.z = 0.f;
+		vEuler.x = -PUN_PI / 2.f;
+		return;
+	}
+
+	float fSqrQx = q.x * q.x;
+	float fSqrQy = q.y * q.y;
+	float fSqrQz = q.z * q.z;
+	float fSqrQw = q.w * q.w;
+
+	vEuler.z = atan2f(-2.f *(q.x * q.y - q.w * q.z), fSqrQw + fSqrQx - fSqrQy - fSqrQz);
+	vEuler.y = asinf(fSingularityTest);
+	vEuler.x = atan2f(-2.f*((q.y*q.z) - (q.w*q.x)), fSqrQw - fSqrQx - fSqrQy + fSqrQz);
+#else
+#ifdef ZYX
+
+	float fSqrQx = q.x * q.x;
+	float fSqrQy = q.y * q.y;
+	float fSqrQz = q.z * q.z;
+	float fSqrQw = q.w * q.w;
+
+	float fSingularityTest = -2.f * ((q.x * q.z) - (q.w * q.y));
+
+	if (fSingularityTest > 0.999998f || fSingularityTest < -0.999998f)
+	{
+		vEuler.y = copysignf(PUN_PI * 0.5f, fSingularityTest);
+	}
+	else
+	{
+		vEuler.y = asinf(fSingularityTest);
+	}
+
+
+	vEuler.z = atan2f(2.f *(q.x * q.y + q.w * q.z), fSqrQw + fSqrQx - fSqrQy - fSqrQz);
+
+	vEuler.x = atan2f(2.f*((q.y*q.z) + (q.w*q.x)), fSqrQw - fSqrQx - fSqrQy + fSqrQz);
+#endif
+#endif
+}
+
+#define EULER_TO_QUAT_ZYX 1
+
+void EulertoQuat(const Vector3& vEuler, Vector4& vQuat)
+{
+	float c1 = cosf(vEuler.x * 0.5f);
+	float c2 = cosf(vEuler.y * 0.5f);
+	float c3 = cosf(vEuler.z * 0.5f);
+	float s1 = sinf(vEuler.x * 0.5f);
+	float s2 = sinf(vEuler.y * 0.5f);
+	float s3 = sinf(vEuler.z * 0.5f);
+
+#ifdef EULER_TO_QUAT_ZYX
+	vQuat = Vector4(
+		s1 * c2 * c3 - c1 * s2 * s3,
+		c1 * s2 * c3 + s1 * c2 * s3,
+		c1 * c2 * s3 - s1 * s2 * c3,
+		c1 * c2 * c3 + s1 * s2 * s3
+	);
+#else
+#ifdef EULER_TO_QUAT_XYZ
+
+	vQuat = Vector4(
+		s1 * c2 * c3 + c1 * s2 * s3,
+		c1 * s2 * c3 - s1 * c2 * s3,
+		c1 * c2 * s3 + s1 * s2 * c3,
+		c1 * c2 * c3 - s1 * s2 * s3
+	);
+#endif
+#endif
+}
+
 PUN_USING
 
 CAnimation::CAnimation() :
@@ -44,29 +140,6 @@ CAnimation::CAnimation(const CAnimation & anim) :
 	{
 		++m_vecBones[i]->iRefCount;
 	}
-
-	/*for (size_t i = 0; i < anim.m_vecBones.size(); ++i)
-	{
-		PBONE	pBone = new BONE;
-
-		*pBone = *anim.m_vecBones[i];
-
-		pBone->matOffset = new Matrix;
-		pBone->matBone = new Matrix;
-
-		*pBone->matOffset = *anim.m_vecBones[i]->matOffset;
-		*pBone->matBone = *anim.m_vecBones[i]->matBone;
-
-		list<CBoneSocket*>::const_iterator	iterB;
-		list<CBoneSocket*>::const_iterator	iterBEnd = anim.m_vecBones[i]->SocketList.end();
-
-		for (iterB = anim.m_vecBones[i]->SocketList.begin(); iterB != iterBEnd; ++iterB)
-		{
-			pBone->SocketList.push_back((*iterB)->Clone());
-		}
-
-		m_vecBones.push_back(pBone);
-	}*/
 
 	m_pBoneTex = nullptr;
 
@@ -106,6 +179,7 @@ CAnimation::CAnimation(const CAnimation & anim) :
 
 CAnimation::~CAnimation()
 {
+	Safe_Delete_VecList(m_vecPartialAnim);
 	Safe_Delete_Map(m_mapClip);
 	Safe_Delete_VecList(m_vecBoneMatrix);
 
@@ -144,6 +218,41 @@ void CAnimation::GetClipTagList(std::vector<std::string>* _vecstrList)
 	}
 }
 
+bool CAnimation::AddPartialClip(PPARTANIM partAnim)
+{
+	m_vecPartialAnim.push_back(partAnim);
+	partAnim->fChangeLimitTime = m_fChangeLimitTime;
+	//partAnim->fChangeTime = m_fChangeTime;
+	
+	return true;
+}
+
+PANIMATIONCLIP CAnimation::GetAnimClip(const std::string & strKey)
+{
+	return FindClip(strKey);
+}
+
+
+const Matrix * CAnimation::GetBoneMatrix(int iBoneIdx)
+{
+	if (!m_pCurClip)
+		return nullptr;
+
+	if (iBoneIdx >= m_vecBones.size())
+		return nullptr;
+
+	if (iBoneIdx < 0)
+		return nullptr;
+
+	return m_vecBoneMatrix[iBoneIdx];
+}
+
+
+float CAnimation::GetCurrentClipTime()
+{
+	return m_fAnimationGlobalTime;
+}
+
 void CAnimation::KeepBlendSet(bool on)
 {
 	m_bKeepBlending = on;
@@ -161,7 +270,7 @@ bool CAnimation::CreateBoneTexture()
 	tDesc.ArraySize = 1;
 	tDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	tDesc.Usage = D3D11_USAGE_DYNAMIC;
-	tDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	tDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; //D3D11_USAGE_DYNAMIC 은 절대 D3D_CPU_ACCESS_WRITE만 가능함
 	tDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	tDesc.Height = 1;
 	tDesc.Width = (UINT)m_vecBones.size() * 4;
@@ -277,7 +386,7 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 			pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
 		}
 	}
-	
+
 
 	if (m_iFrameMode == 0)
 	{
@@ -298,13 +407,13 @@ void CAnimation::AddClip(ANIMATION_OPTION eOption,
 	m_mapClip.insert(make_pair(pAnimClip->strName, pAnimClip));
 }
 
-void CAnimation::AddClip(const string & strName, ANIMATION_OPTION eOption, 
+void CAnimation::AddClip(const string & strName, ANIMATION_OPTION eOption,
 	int iStartFrame, int iEndFrame)
 {
 }
 
-void CAnimation::AddClip(const string & strName, ANIMATION_OPTION eOption, 
-	int iStartFrame, int iEndFrame, float fPlayTime, 
+void CAnimation::AddClip(const string & strName, ANIMATION_OPTION eOption,
+	int iStartFrame, int iEndFrame, float fPlayTime,
 	const vector<PBONEKEYFRAME>& vecFrame)
 {
 	PANIMATIONCLIP	pAnimClip = FindClip(strName);
@@ -529,6 +638,22 @@ ID3D11ShaderResourceView** CAnimation::GetBoneTexture()
 	return &m_pBoneRV;
 }
 
+ID3D11Texture2D * CAnimation::GetBoneTex2D()
+{
+	return m_pBoneTex;
+}
+
+void CAnimation::SetBoneTexture(ID3D11ShaderResourceView ** ppSRV, ID3D11Texture2D * ppBoneTex)
+{
+	SAFE_RELEASE(m_pBoneRV);
+	SAFE_RELEASE(m_pBoneTex);
+	m_pBoneRV = *ppSRV;
+	m_pBoneRV->AddRef();
+
+	m_pBoneTex = ppBoneTex;
+	m_pBoneTex->AddRef();
+}
+
 bool CAnimation::Save(const TCHAR * pFileName, const string & strPathKey)
 {
 	char	strFileName[MAX_PATH] = {};
@@ -578,7 +703,7 @@ bool CAnimation::SaveFromFullPath(const char * pFullPath)
 	fopen_s(&pFile, pFullPath, "wb");
 
 	if (!pFile)
-		return false;	
+		return false;
 
 	fwrite(&m_iFrameMode, sizeof(float), 1, pFile);
 	fwrite(&m_fChangeLimitTime, sizeof(float), 1, pFile);
@@ -940,6 +1065,18 @@ bool CAnimation::LoadBoneFromFullPath(const char * pFullPath)
 		fread(&pBone->matBone->matrix, sizeof(XMMATRIX), 1, pFile);
 	}
 
+	/*
+	auto itrBoneEnd = m_vecBones.end();
+	std::cout << "\n\n\tBone Of :\t" << m_strTag << std::endl;
+	int iii = 0;
+	for (auto itr = m_vecBones.begin(); itr != itrBoneEnd; ++itr)
+	{
+		std::cout << "\t" << iii << "," << (*itr)->strName << "," << (*itr)->iParentIndex << std::endl;
+		++iii;
+	}
+	*/
+
+
 	fclose(pFile);
 
 	return true;
@@ -966,7 +1103,7 @@ bool CAnimation::LoadBoneAndAnimationFullPath(const TCHAR * pFullPath)
 
 bool CAnimation::ModifyClip(const string & strKey,
 	const string & strChangeKey, ANIMATION_OPTION eOption,
-	int iStartFrame, int iEndFrame, float fPlayTime, 
+	int iStartFrame, int iEndFrame, float fPlayTime,
 	const vector<PBONEKEYFRAME>& vecFrame)
 {
 	PANIMATIONCLIP	pClip = FindClip(strKey);
@@ -1392,6 +1529,85 @@ int CAnimation::Update(float fTime)
 
 	m_bEnd = false;
 
+	//Run Notify functions
+
+	if (m_pCurClip)
+	{
+		float fBeforeTime = m_fAnimationGlobalTime - fTime;
+
+		if (fBeforeTime < 0.f)
+		{
+			fBeforeTime = 0.f;
+
+			std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pCurClip->vecCallback.end();
+			for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pCurClip->vecCallback.begin();
+				itr != itrEnd; ++itr)
+			{
+				PANIMATIONCALLBACK pCallbackInfo = (*itr);
+				pCallbackInfo->bCall = false;
+
+			}
+		}
+
+		std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pCurClip->vecCallback.end();
+		for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pCurClip->vecCallback.begin();
+			itr != itrEnd; ++itr)
+		{
+			PANIMATIONCALLBACK pCallbackInfo = (*itr);
+			float fActivateTime = m_pCurClip->fEndTime * pCallbackInfo->fAnimationProgress;
+			if (pCallbackInfo->bCall)
+				continue;
+
+			if (fActivateTime > fBeforeTime && fActivateTime <= m_fAnimationGlobalTime)
+			{
+				pCallbackInfo->func(fTime);
+				pCallbackInfo->bCall = true;
+			}
+		}
+	}
+	if (m_pNextClip)
+	{
+		float fBeforeTime = m_fAnimationGlobalTime - fTime;
+		if (fBeforeTime < 0.f)
+		{
+			fBeforeTime = 0.f;
+
+			std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pNextClip->vecCallback.end();
+			for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pNextClip->vecCallback.begin();
+				itr != itrEnd; ++itr)
+			{
+				PANIMATIONCALLBACK pCallbackInfo = (*itr);
+				pCallbackInfo->bCall = false;
+
+			}
+		}
+
+		std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pNextClip->vecCallback.end();
+		for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pNextClip->vecCallback.begin();
+			itr != itrEnd; ++itr)
+		{
+			PANIMATIONCALLBACK pCallbackInfo = (*itr);
+			float fActivateTime = m_pNextClip->fEndTime * pCallbackInfo->fAnimationProgress;
+			if (pCallbackInfo->bCall)
+				continue;
+
+			if (fActivateTime > fBeforeTime && fActivateTime <= m_fAnimationGlobalTime)
+			{
+				pCallbackInfo->func(fTime);
+				pCallbackInfo->bCall = true;
+			}
+		}
+	}
+	//Notify end
+
+	//부분 애니메이션이 있는지?
+	int iPartAnimCnt = (int)m_vecPartialAnim.size();
+
+	//글로벌 애니메이션 프레임
+
+	int g_iFrameIndex = 0;
+	int g_iNextFrameIndex = 0;
+
 	// 모션이 변할때
 	if (m_pNextClip)
 	{
@@ -1414,7 +1630,7 @@ int CAnimation::Update(float fTime)
 					m_fChangeTime = m_fChangeLimitTime;
 					bChange = true;
 				}
-				
+
 			}
 
 			float	fAnimationTime = m_fAnimationGlobalTime + m_pCurClip->fStartTime;
@@ -1428,52 +1644,44 @@ int CAnimation::Update(float fTime)
 				m_fAnimationGlobalTime = 0.f;
 				m_fChangeTime = 0.f;
 			}
-			else if(!m_bKeepBlending)
+			else if (!m_bKeepBlending)
 			{
-#ifdef DDONGCOM
-				for (int i = 0; i < BoneSize; ++i)
-				{
-					// 키프레임이 없을 경우
-					if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
-					{
-						*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-						continue;
-					}
-
-					int	iFrameIndex = m_pCurClip->iChangeFrame;
-					int	iNextFrameIndex = m_pNextClip->iStartFrame;
-
-					const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
-					const PKEYFRAME pNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
-
-					float	fPercent = m_fChangeTime / m_fChangeLimitTime;
-
-					XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
-					XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
-					XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
-					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
-					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
-
-					*m_vecBones[i]->matBone = matBone;
-					matBone = *m_vecBones[i]->matOffset * matBone;
-					*m_vecBoneMatrix[i] = matBone;
-				}
-#else
 				parallel_for((int)0, BoneSize, [&](int i)
 				{
-					
+
 					// 키프레임이 없을 경우
+					// 매 클립의 vecKeyFrame -> 본 갯수만큼 있다
+					// parallel_for의 i 번호 : 본 번호
+
+					//생략 본들을 찾아보자
+					for (int iPartIdx = 0; iPartIdx < iPartAnimCnt; ++iPartIdx)
+					{
+						if (!m_vecPartialAnim[iPartIdx]->bActivated)
+							continue;
+
+						std::vector<int>::iterator itr = (m_vecPartialAnim[iPartIdx])->vecPartIdx.begin();
+						std::vector<int>::iterator itrEnd = (m_vecPartialAnim[iPartIdx])->vecPartIdx.end();
+						for (; itr != itrEnd; ++itr)
+						{
+							if (i == (*itr))
+							{
+								if (m_vecPartialAnim[iPartIdx]->iRootParentIndex != i)
+									return;
+							}
+						}
+					}
+
 					if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 					{
 						*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-						return 0;
+						return;
 					}
 
-					int	iFrameIndex = m_pCurClip->iChangeFrame;
-					int	iNextFrameIndex = m_pNextClip->iStartFrame;
+					g_iFrameIndex = m_pCurClip->iChangeFrame;
+					g_iNextFrameIndex = m_pNextClip->iStartFrame;
 
-					const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
-					const PKEYFRAME pNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+					const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[g_iFrameIndex];
+					const PKEYFRAME pNextKey = m_pNextClip->vecKeyFrame[i]->vecKeyFrame[g_iNextFrameIndex];
 
 					float	fPercent = m_fChangeTime / m_fChangeLimitTime;
 
@@ -1487,7 +1695,6 @@ int CAnimation::Update(float fTime)
 					matBone = *m_vecBones[i]->matOffset * matBone;
 					*m_vecBoneMatrix[i] = matBone;
 				});
-#endif
 			}
 			else //m_pNextClip != nullptr
 			{
@@ -1497,7 +1704,7 @@ int CAnimation::Update(float fTime)
 				while (m_fAnimationGlobalTime >= m_pCurClip->fTimeLength)
 				{
 					m_fAnimationGlobalTime -= m_pCurClip->fTimeLength;
-					
+
 				}
 
 				float	fAnimationTime = m_fAnimationGlobalTime +
@@ -1506,14 +1713,14 @@ int CAnimation::Update(float fTime)
 				int	iStartFrame = m_pCurClip->iStartFrame;
 				int	iEndFrame = m_pCurClip->iEndFrame;
 
-				int	iFrameIndex = (int)(fAnimationTime / m_pCurClip->fFrameTime);
+				g_iFrameIndex = (int)(fAnimationTime / m_pCurClip->fFrameTime);
 
-				int	iNextFrameIndex = iFrameIndex + 1;
+				g_iNextFrameIndex = g_iFrameIndex + 1;
 
-				m_pCurClip->iChangeFrame = iFrameIndex;
+				m_pCurClip->iChangeFrame = g_iFrameIndex;
 
-				if (iNextFrameIndex > iEndFrame)
-					iNextFrameIndex = iStartFrame;
+				if (g_iNextFrameIndex > iEndFrame)
+					g_iNextFrameIndex = iStartFrame;
 
 				int BoneSize = (int)m_vecBones.size();
 				parallel_for((int)0, BoneSize, [&](int i)
@@ -1522,11 +1729,29 @@ int CAnimation::Update(float fTime)
 					if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 					{
 						*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-						return 0;
+						return;
 					}
 
-					const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
-					const PKEYFRAME pNextKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+					//생략 본들을 찾아보자
+					for (int iPartIdx = 0; iPartIdx < iPartAnimCnt; ++iPartIdx)
+					{
+						if (!m_vecPartialAnim[iPartIdx]->bActivated)
+							continue;
+
+						std::vector<int>::iterator itr = (m_vecPartialAnim[iPartIdx])->vecPartIdx.begin();
+						std::vector<int>::iterator itrEnd = (m_vecPartialAnim[iPartIdx])->vecPartIdx.end();
+						for (; itr != itrEnd; ++itr)
+						{
+							if (i == (*itr))
+							{
+								if (m_vecPartialAnim[iPartIdx]->iRootParentIndex != i)
+									return;
+							}
+						}
+					}
+
+					const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[g_iFrameIndex];
+					const PKEYFRAME pNextKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[g_iNextFrameIndex];
 
 
 					Vector3 vCurKeyPos(pCurKey->vPos);
@@ -1545,7 +1770,7 @@ int CAnimation::Update(float fTime)
 						int iNEndFrame = m_pNextClip->iEndFrame;
 						int	iNFrameIndex = (int)(fAnimationTime / m_pNextClip->fFrameTime);
 						if (iNFrameIndex > iNEndFrame)
-							iNFrameIndex = iFrameIndex % iNEndFrame;
+							iNFrameIndex = g_iFrameIndex % iNEndFrame;
 
 						int	iNNextFrameIndex = iNFrameIndex + 1;
 
@@ -1565,13 +1790,13 @@ int CAnimation::Update(float fTime)
 						vR = DirectX::XMQuaternionSlerp(vR, pNCurKey->vRot.Convert(), 0.5f);
 						vCurKeyRot = Vector4(vR);
 						vNextKeyPos += pNNextKey->vPos;
-						
+
 						vNextKeyScale += pNNextKey->vScale;
 
 						vNextKeyPos *= 0.5f;
 						vNR = DirectX::XMQuaternionSlerp(vNR, pNNextKey->vRot.Convert(), 0.5f);
 						vNextKeyScale *= 0.5f;
-												
+
 					}
 
 					m_vBlendPos = vCurKeyPos;
@@ -1594,7 +1819,7 @@ int CAnimation::Update(float fTime)
 					*m_vecBoneMatrix[i] = matBone;
 				});
 			}
-						
+
 
 		}
 
@@ -1605,6 +1830,7 @@ int CAnimation::Update(float fTime)
 	{
 		m_fAnimationGlobalTime += fTime;
 		m_fClipProgress = m_fAnimationGlobalTime / m_pCurClip->fTimeLength;
+
 
 		while (m_fAnimationGlobalTime >= m_pCurClip->fTimeLength)
 		{
@@ -1647,47 +1873,31 @@ int CAnimation::Update(float fTime)
 				iNextFrameIndex = iStartFrame;
 
 			int BoneSize = (int)m_vecBones.size();
-
-#ifdef DDONGCOM
-			for (int i = 0; i < BoneSize; ++i)
-			{
-				// 키프레임이 없을 경우
-				if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
-				{
-					*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-					continue;
-				}
-
-				const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
-				const PKEYFRAME pNextKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
-
-				m_vBlendPos = pCurKey->vPos;
-				m_vBlendScale = pCurKey->vScale;
-				m_vBlendRot = pCurKey->vRot;
-
-				// 현재 프레임의 시간을 얻어온다.
-				double	 dFrameTime = pCurKey->dTime;
-
-				float	fPercent = (float)((fAnimationTime - dFrameTime) / m_pCurClip->fFrameTime);
-
-				XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
-				XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
-				XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(), pNextKey->vRot.Convert(), fPercent);
-				XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
-				Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
-
-				*m_vecBones[i]->matBone = matBone;
-				matBone = *m_vecBones[i]->matOffset * matBone;
-				*m_vecBoneMatrix[i] = matBone;
-			}
-#else
 			parallel_for((int)0, BoneSize, [&](int i)
 			{
 				// 키프레임이 없을 경우
 				if (m_pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
 				{
 					*m_vecBoneMatrix[i] = *m_vecBones[i]->matBone;
-					return 0;
+					return;
+				}
+
+				//생략 본들을 찾아보자
+				for (int iPartIdx = 0; iPartIdx < iPartAnimCnt; ++iPartIdx)
+				{
+					if (!m_vecPartialAnim[iPartIdx]->bActivated)
+						continue;
+
+					std::vector<int>::iterator itr = (m_vecPartialAnim[iPartIdx])->vecPartIdx.begin();
+					std::vector<int>::iterator itrEnd = (m_vecPartialAnim[iPartIdx])->vecPartIdx.end();
+					for (; itr != itrEnd; ++itr)
+					{
+						if (i == (*itr))
+						{
+							if (m_vecPartialAnim[iPartIdx]->iRootParentIndex != i)
+								return;
+						}
+					}
 				}
 
 				const PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
@@ -1712,20 +1922,537 @@ int CAnimation::Update(float fTime)
 				matBone = *m_vecBones[i]->matOffset * matBone;
 				*m_vecBoneMatrix[i] = matBone;
 			});
-#endif
-			
+
 		}
 	}
+
+	//Partial Anim
+	std::vector<PPARTANIM>::iterator itrPart = m_vecPartialAnim.begin();
+	std::vector<PPARTANIM>::iterator itrEnd = m_vecPartialAnim.end();
+	for (; itrPart != itrEnd; ++itrPart)
+	{
+		PPARTANIM part = *itrPart;
+		if (!part->bActivated)
+		{
+			part->fPartAnimationGTime = 0.f;
+			continue;
+		}
+			
+
+		if (part->mapPartClips.empty())
+			continue;
+
+		part->bEnd = false;
+
+		//Run Partial Anim Notify functions
+		if (part->pCurClip)
+		{
+			float fBeforeTime = part->fPartAnimationGTime - fTime;
+
+			if (fBeforeTime < 0.f)
+			{
+				fBeforeTime = 0.f;
+
+				std::vector<PANIMATIONCALLBACK>::iterator itrEnd = part->pCurClip->vecCallback.end();
+				for (std::vector<PANIMATIONCALLBACK>::iterator itr = part->pCurClip->vecCallback.begin();
+					itr != itrEnd; ++itr)
+				{
+					PANIMATIONCALLBACK pCallbackInfo = (*itr);
+					pCallbackInfo->bCall = false;
+
+				}
+			}
+
+			std::vector<PANIMATIONCALLBACK>::iterator itrEnd = part->pCurClip->vecCallback.end();
+			for (std::vector<PANIMATIONCALLBACK>::iterator itr = part->pCurClip->vecCallback.begin();
+				itr != itrEnd; ++itr)
+			{
+				PANIMATIONCALLBACK pCallbackInfo = (*itr);
+				float fActivateTime = part->pCurClip->fEndTime * pCallbackInfo->fAnimationProgress;
+				if (pCallbackInfo->bCall)
+					continue;
+
+				if (fActivateTime > fBeforeTime && fActivateTime <= part->fPartAnimationGTime)
+				{
+					pCallbackInfo->func(fTime);
+					pCallbackInfo->bCall = true;
+				}
+			}
+		}
+		if (part->pNextClip)
+		{
+			float fBeforeTime = part->fPartAnimationGTime - fTime;
+			if (fBeforeTime < 0.f)
+			{
+				fBeforeTime = 0.f;
+
+				std::vector<PANIMATIONCALLBACK>::iterator itrEnd = part->pNextClip->vecCallback.end();
+				for (std::vector<PANIMATIONCALLBACK>::iterator itr = part->pNextClip->vecCallback.begin();
+					itr != itrEnd; ++itr)
+				{
+					PANIMATIONCALLBACK pCallbackInfo = (*itr);
+					pCallbackInfo->bCall = false;
+
+				}
+			}
+
+			std::vector<PANIMATIONCALLBACK>::iterator itrEnd = part->pNextClip->vecCallback.end();
+			for (std::vector<PANIMATIONCALLBACK>::iterator itr = part->pNextClip->vecCallback.begin();
+				itr != itrEnd; ++itr)
+			{
+				PANIMATIONCALLBACK pCallbackInfo = (*itr);
+				float fActivateTime = part->pNextClip->fEndTime * pCallbackInfo->fAnimationProgress;
+				if (pCallbackInfo->bCall)
+					continue;
+
+				if (fActivateTime > fBeforeTime && fActivateTime <= part->fPartAnimationGTime)
+				{
+					pCallbackInfo->func(fTime);
+					pCallbackInfo->bCall = true;
+				}
+			}
+		}
+		//Partial Anim Notify end
+
+		//Partial Anim 모션이 변할때
+		if (part->pNextClip)
+		{
+			if (part->pCurClip == nullptr)
+			{
+				part->pCurClip = part->pNextClip;
+				part->pNextClip = nullptr;
+				part->fPartAnimationGTime = 0.f;
+				part->fChangeTime = 0.f;
+			}
+			else
+			{
+				part->fChangeTime += fTime;
+
+				bool	bChange = false;
+				if (part->fChangeTime >= part->fChangeLimitTime)
+				{
+					if (!part->bKeepBlending)
+					{
+						part->fChangeTime = part->fChangeLimitTime;
+						bChange = true;
+					}
+
+				}
+
+				float	fAnimationTime = part->fPartAnimationGTime + part->pCurClip->fStartTime;
+
+				int BoneSize = (int)part->vecPartIdx.size();
+
+				if (bChange)
+				{
+					part->pCurClip = part->pNextClip;
+					part->pNextClip = nullptr;
+					part->fPartAnimationGTime = 0.f;
+					part->fChangeTime = 0.f;
+				}
+				else if (!part->bKeepBlending)
+				{
+					parallel_for((int)0, BoneSize, [&](int i)
+					{
+						int iBoneIdx = part->vecPartIdx[i];
+						// 키프레임이 없을 경우
+						// 매 클립의 vecKeyFrame -> 본 갯수만큼 있다
+						// parallel_for의 i 번호 : 본 번호
+
+
+						if (part->pNextClip->vecKeyFrame[i]->vecKeyFrame.empty())
+						{
+							*m_vecBoneMatrix[iBoneIdx] = *m_vecBones[iBoneIdx]->matBone;
+							return;
+						}
+
+						int	iFrameIndex = part->pCurClip->iChangeFrame;
+						int	iNextFrameIndex = part->pNextClip->iStartFrame;
+
+						const PKEYFRAME pCurKey = part->pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
+						const PKEYFRAME pNextKey = part->pNextClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+
+						float	fPercent = part->fChangeTime / part->fChangeLimitTime;
+
+						//Method 1
+#ifdef PART_METHOD_1
+						Vector3 vParentMove;
+						Vector4 vParentQuat;
+
+						if (part->iRootParentIndex > -1)
+						{
+
+							DirectX::XMVECTOR xmRot;
+							DirectX::XMVECTOR xmPos;
+							DirectX::XMVECTOR xmScale;
+
+							//느리지만 눈물을 머금구..
+							DirectX::XMMatrixDecompose(&xmScale, &xmRot, &xmPos, m_vecBones[part->iRootParentIndex]->matBone->matrix);
+
+							vParentMove = Vector3(xmPos);
+							vParentQuat = Vector4(xmRot);
+						}
+
+						XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+						XMVECTOR vT = DirectX::XMVectorLerp((pCurKey->vPos + vParentMove).Convert(), (pNextKey->vPos + vParentMove).Convert(), fPercent);
+						XMVECTOR vR = DirectX::XMQuaternionSlerp(DirectX::XMQuaternionMultiply(pCurKey->vRot.Convert(), vParentQuat.Convert()),
+							DirectX::XMQuaternionMultiply(pNextKey->vRot.Convert(), vParentQuat.Convert()), fPercent);
+						XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+						Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+						//Method 1 end
+#else
+#ifdef PART_METHOD_2
+
+						//Method 2
+						XMVECTOR vRCurr = pCurKey->vRot.Convert();
+						XMVECTOR vRNext = pNextKey->vRot.Convert();
+
+						XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+						XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
+						XMVECTOR vR = DirectX::XMQuaternionSlerp(vRCurr, vRNext, fPercent);
+						XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+						Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+
+
+						//공전 먼저 한다!
+						XMVECTOR vInvParentRot = DirectX::XMQuaternionSlerp(vRCurr, vRNext, fPercent);
+						//
+						
+						//부모 본 가지고 와서 곱한다
+						if (part->iRootParentIndex > -1)
+						{
+							matBone = matBone * (*m_vecBones[part->iRootParentIndex]->matBone);
+						}
+
+						matBone = matBone * Matrix(XMMatrixRotationQuaternion(vInvParentRot));
+
+						//Method 2 end
+
+#endif
+#endif
+
+
+						*m_vecBones[iBoneIdx]->matBone = matBone;
+						matBone = *m_vecBones[iBoneIdx]->matOffset * matBone;
+						*m_vecBoneMatrix[iBoneIdx] = matBone;
+					});
+				}
+				else //part->pNextClip != nullptr
+				{
+					part->fPartAnimationGTime += fTime;
+					part->fClipProgress = part->fPartAnimationGTime / part->pCurClip->fTimeLength;
+
+					while (part->fPartAnimationGTime >= part->pCurClip->fTimeLength)
+					{
+						part->fPartAnimationGTime -= part->pCurClip->fTimeLength;
+
+					}
+
+					float	fAnimationTime = part->fPartAnimationGTime +
+						part->pCurClip->fStartTime;
+
+					int	iStartFrame = part->pCurClip->iStartFrame;
+					int	iEndFrame = part->pCurClip->iEndFrame;
+
+					int	iFrameIndex = (int)(fAnimationTime / part->pCurClip->fFrameTime);
+
+					int	iNextFrameIndex = iFrameIndex + 1;
+
+					part->pCurClip->iChangeFrame = iFrameIndex;
+
+					if (iNextFrameIndex > iEndFrame)
+						iNextFrameIndex = iStartFrame;
+
+					int BoneSize = (int)part->vecPartIdx.size();
+					parallel_for((int)0, BoneSize, [&](int i)
+					{
+						// 키프레임이 없을 경우
+						int iBoneIdx = part->vecPartIdx[i];
+						if (part->pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
+						{
+							*m_vecBoneMatrix[iBoneIdx] = *m_vecBones[iBoneIdx]->matBone;
+							return;
+						}
+
+						const PKEYFRAME pCurKey = part->pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
+						const PKEYFRAME pNextKey = part->pCurClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+
+
+						Vector3 vCurKeyPos(pCurKey->vPos);
+						Vector4 vCurKeyRot(pCurKey->vRot);
+						Vector3 vCurKeyScale(pCurKey->vScale);
+
+						XMVECTOR vR = vCurKeyRot.Convert();
+
+						Vector3 vNextKeyPos(pNextKey->vPos);
+						Vector4 vNextKeyRot(pNextKey->vRot);
+						XMVECTOR vNR = vNextKeyRot.Convert();
+						Vector3 vNextKeyScale(pNextKey->vScale);
+
+						if (!part->pNextClip->vecKeyFrame[i]->vecKeyFrame.empty())
+						{
+							int iNEndFrame = part->pNextClip->iEndFrame;
+							int	iNFrameIndex = (int)(fAnimationTime / part->pNextClip->fFrameTime);
+							if (iNFrameIndex > iNEndFrame)
+								iNFrameIndex = iFrameIndex % iNEndFrame;
+
+							int	iNNextFrameIndex = iNFrameIndex + 1;
+
+							part->pNextClip->iChangeFrame = iNFrameIndex;
+
+							if (iNNextFrameIndex > iNEndFrame)
+								iNNextFrameIndex = iStartFrame;
+
+							const PKEYFRAME pNCurKey = part->pNextClip->vecKeyFrame[i]->vecKeyFrame[iNFrameIndex];
+							const PKEYFRAME pNNextKey = part->pNextClip->vecKeyFrame[i]->vecKeyFrame[iNNextFrameIndex];
+
+							vCurKeyPos += pNCurKey->vPos;
+							vCurKeyScale += pNCurKey->vScale;
+
+							vCurKeyPos *= 0.5f;
+							vCurKeyScale *= 0.5f;
+							vR = DirectX::XMQuaternionSlerp(vR, pNCurKey->vRot.Convert(), 0.5f);
+							vCurKeyRot = Vector4(vR);
+							vNextKeyPos += pNNextKey->vPos;
+
+							vNextKeyScale += pNNextKey->vScale;
+
+							vNextKeyPos *= 0.5f;
+							vNR = DirectX::XMQuaternionSlerp(vNR, pNNextKey->vRot.Convert(), 0.5f);
+							vNextKeyScale *= 0.5f;
+
+						}
+
+						part->vBlendPos = vCurKeyPos;
+						part->vBlendScale = vCurKeyScale;
+						part->vBlendRot = vCurKeyRot;
+
+						// 현재 프레임의 시간을 얻어온다.
+						double	 dFrameTime = pCurKey->dTime;
+
+						float	fPercent = (float)((fAnimationTime - dFrameTime) / part->pCurClip->fFrameTime);
+						//Method 1
+#ifdef PART_METHOD_1
+						Vector3 vParentMove;
+						Vector4 vParentQuat;
+
+						if (part->iRootParentIndex > -1)
+						{
+
+							DirectX::XMVECTOR xmRot;
+							DirectX::XMVECTOR xmPos;
+							DirectX::XMVECTOR xmScale;
+
+							//느리지만 눈물을 머금구..
+							DirectX::XMMatrixDecompose(&xmScale, &xmRot, &xmPos, m_vecBones[part->iRootParentIndex]->matBone->matrix);
+
+							vParentMove = Vector3(xmPos);
+							vParentQuat = Vector4(xmRot);
+						}
+
+						XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+						XMVECTOR vT = DirectX::XMVectorLerp((pCurKey->vPos + vParentMove).Convert(), (pNextKey->vPos + vParentMove).Convert(), fPercent);
+						vR = DirectX::XMQuaternionSlerp(DirectX::XMQuaternionMultiply(pCurKey->vRot.Convert(), vParentQuat.Convert()),
+							DirectX::XMQuaternionMultiply(pNextKey->vRot.Convert(), vParentQuat.Convert()), fPercent);
+						XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+						Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+						//Method 1 end
+#else
+#ifdef PART_METHOD_2
+						XMVECTOR vRCurr = pCurKey->vRot.Convert();
+						XMVECTOR vRNext = pNextKey->vRot.Convert();
+
+
+						XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+						XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
+						vR = DirectX::XMQuaternionSlerp(vRCurr, vRNext, fPercent);
+						XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+						Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+
+
+						//공전 먼저 한다?!?
+						XMVECTOR vInvParentRot = DirectX::XMQuaternionSlerp(vRCurr, vRNext, fPercent);
+						
+						//부모 본 가지고 와서 곱한다
+						if (part->iRootParentIndex > -1)
+						{
+							matBone = matBone * (*m_vecBones[part->iRootParentIndex]->matBone);
+						}
+
+						matBone = matBone * Matrix(XMMatrixRotationQuaternion(vInvParentRot));
+						
+						//Method 2 end
+#endif
+#endif
+
+						*m_vecBones[iBoneIdx]->matBone = matBone;
+						matBone = *m_vecBones[iBoneIdx]->matOffset * matBone;
+						*m_vecBoneMatrix[iBoneIdx] = matBone;
+					});
+				}
+
+
+			}
+
+		}
+
+		// 기존 모션이 계속 동작될때
+		else
+		{
+			part->fPartAnimationGTime += fTime;
+			part->fClipProgress = part->fPartAnimationGTime / part->pCurClip->fTimeLength;
+
+
+			while (part->fPartAnimationGTime >= part->pCurClip->fTimeLength)
+			{
+				part->fPartAnimationGTime -= part->pCurClip->fTimeLength;
+				part->bEnd = true;
+				
+				/*for (size_t i = 0; i < m_vecChannel[m_iCurChannel].pClip->m_tInfo.vecCallback.size();	++i)
+				{
+					m_vecChannel[m_iCurChannel].pClip->m_tInfo.vecCallback[i]->bCall = false;
+				}*/
+			}
+
+			float	fAnimationTime = part->fPartAnimationGTime +
+				part->pCurClip->fStartTime;
+
+			int	iStartFrame = part->pCurClip->iStartFrame;
+			int	iEndFrame = part->pCurClip->iEndFrame;
+
+			int	iFrameIndex = (int)(fAnimationTime / part->pCurClip->fFrameTime);
+
+			if (part->bEnd)
+			{
+				switch (part->pCurClip->eOption)
+				{
+				case AO_LOOP:
+					iFrameIndex = iStartFrame;
+					break;
+				case AO_ONCE_DESTROY:
+					//m_pObject->Die();
+					break;
+				case AO_ONCE_RETURN:
+					iFrameIndex = 0;
+					part->pCurClip = part->pDefaultClip;
+					break;
+				}
+			}
+			else
+			{
+				int	iNextFrameIndex = iFrameIndex + 1;
+
+				part->pCurClip->iChangeFrame = iFrameIndex;
+
+				if (iNextFrameIndex > iEndFrame)
+					iNextFrameIndex = iStartFrame;
+
+				int BoneSize = (int)part->vecPartIdx.size();
+				parallel_for((int)0, BoneSize, [&](int i)
+				{
+					int iBoneIdx = part->vecPartIdx[i];
+					// 키프레임이 없을 경우
+					if (part->pCurClip->vecKeyFrame[i]->vecKeyFrame.empty())
+					{
+						*m_vecBoneMatrix[iBoneIdx] = *m_vecBones[iBoneIdx]->matBone;
+						return;
+					}
+
+					const PKEYFRAME pCurKey = part->pCurClip->vecKeyFrame[i]->vecKeyFrame[iFrameIndex];
+					const PKEYFRAME pNextKey = part->pCurClip->vecKeyFrame[i]->vecKeyFrame[iNextFrameIndex];
+
+					part->vBlendPos = pCurKey->vPos;
+					part->vBlendScale = pCurKey->vScale;
+					part->vBlendRot = pCurKey->vRot;
+
+					// 현재 프레임의 시간을 얻어온다.
+					double	 dFrameTime = pCurKey->dTime;
+
+					float	fPercent = (float)((fAnimationTime - dFrameTime) / part->pCurClip->fFrameTime);
+					//Method 1
+#ifdef PART_METHOD_1
+					Vector3 vParentMove;
+					Vector4 vParentQuat;
+
+					if (part->iRootParentIndex > -1)
+					{
+
+						DirectX::XMVECTOR xmRot;
+						DirectX::XMVECTOR xmPos;
+						DirectX::XMVECTOR xmScale;
+
+						//느리지만 눈물을 머금구..
+						DirectX::XMMatrixDecompose(&xmScale, &xmRot, &xmPos, m_vecBones[part->iRootParentIndex]->matBone->matrix);
+
+						vParentMove = Vector3(xmPos);
+						vParentQuat = Vector4(xmRot);
+					}
+
+					XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+					XMVECTOR vT = DirectX::XMVectorLerp((pCurKey->vPos + vParentMove).Convert(), (pNextKey->vPos + vParentMove).Convert(), fPercent);
+					XMVECTOR vR = DirectX::XMQuaternionSlerp(DirectX::XMQuaternionMultiply(pCurKey->vRot.Convert(), vParentQuat.Convert()),
+						DirectX::XMQuaternionMultiply(pNextKey->vRot.Convert(), vParentQuat.Convert()), fPercent);
+					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+					//Method 1 end
+#else
+#ifdef PART_METHOD_2
+
+					//Method 2
+					XMVECTOR vRCurr = pCurKey->vRot.Convert();
+					XMVECTOR vRNext = pNextKey->vRot.Convert();
+
+					XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
+					XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
+					XMVECTOR vR = DirectX::XMQuaternionSlerp(vRCurr, vRNext, fPercent);
+					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
+					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
+
+					//공전 먼저 한다!
+					XMVECTOR vInvParentRot = DirectX::XMQuaternionSlerp(vRCurr, vRNext, fPercent);
+					
+					//부모 본 가지고 와서 곱한다
+					if (part->iRootParentIndex > -1)
+					{
+						matBone = matBone * (*m_vecBones[part->iRootParentIndex]->matBone);
+					}
+					
+					matBone = matBone * Matrix(XMMatrixRotationQuaternion(vInvParentRot));
+
+					//Method 2 end
+#endif
+#endif
+
+					*m_vecBones[iBoneIdx]->matBone = matBone;
+					matBone = *m_vecBones[iBoneIdx]->matOffset * matBone;
+					*m_vecBoneMatrix[iBoneIdx] = matBone;
+				});
+
+			}
+		}
+
+		if (m_bEnd)
+		{
+			if (!part->bEnd)
+				m_bEnd = false;
+		}
+	}
+
 
 	if (!m_bEnd)
 	{
 		D3D11_MAPPED_SUBRESOURCE	tMap = {};
+
 		CONTEXT->Map(m_pBoneTex, 0, D3D11_MAP_WRITE_DISCARD, 0, &tMap);
 
 		Matrix*	pMatrix = (Matrix*)tMap.pData;
 
 		for (size_t i = 0; i < m_vecBoneMatrix.size(); ++i)
+		{
+
 			pMatrix[i] = *m_vecBoneMatrix[i];
+		}
+
 
 		CONTEXT->Unmap(m_pBoneTex, 0);
 	}
@@ -1741,7 +2468,7 @@ int CAnimation::Update(float fTime)
 				//(*iter)->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
 				(*iter)->Update(fTime, *m_vecBoneMatrix[i], m_pTransform);
 				//m_vecBones[i]->SocketList[j]->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
-				
+
 			}
 		}
 
@@ -1766,4 +2493,238 @@ void CAnimation::Render(float fTime)
 CAnimation * CAnimation::Clone()
 {
 	return new CAnimation(*this);
+}
+
+bool _tagPartialAnim::LoadPartAnimFromExistingClip(PANIMATIONCLIP pAnim)
+{
+	std::unordered_map<std::string, PPARTCLIP>::iterator itr = mapPartClips.find(pAnim->strName);
+	if (itr != mapPartClips.end())
+		return false;
+
+	PPARTCLIP _newAnim = new PARTCLIP;
+	mapPartClips.insert(std::make_pair(pAnim->strName, _newAnim));
+	if (!pCurClip)
+		pCurClip = _newAnim;
+	//복사할 소스 클립 루프
+	_newAnim->eOption = pAnim->eOption;
+	_newAnim->strName = pAnim->strName;
+	_newAnim->fStartTime = pAnim->fStartTime;
+	_newAnim->fEndTime = pAnim->fEndTime;
+	_newAnim->fTimeLength = pAnim->fTimeLength;
+	_newAnim->fFrameTime = pAnim->fFrameTime;
+	_newAnim->fPlayTime = pAnim->fPlayTime;
+	_newAnim->iStartFrame = pAnim->iStartFrame;
+	_newAnim->iEndFrame = pAnim->iEndFrame;
+	_newAnim->iFrameLength = pAnim->iFrameLength;
+	_newAnim->iFrameMode = pAnim->iFrameMode;
+	_newAnim->iChangeFrame = pAnim->iChangeFrame;
+
+	int ipAnimSize = (int)pAnim->vecKeyFrame.size();
+
+
+	unsigned int iBoneSize = (unsigned int)vecPartIdx.size();
+	_newAnim->vecKeyFrame.resize(iBoneSize);
+	int iPBI = -1;
+
+
+	if (iRootParentIndex > 0)
+	{
+		int iFrameSize = pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame.size();
+		if (iFrameSize > 0)
+		{
+			_newAnim->vecXmRotVector.resize(iFrameSize);
+			for (int i = 0; i < iFrameSize; ++i)
+			{
+				_newAnim->vecXmRotVector[i] = DirectX::XMQuaternionInverse(pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[i]->vRot.Convert());
+			}
+		}
+	}
+
+	for (unsigned int i = 0; i < iBoneSize; ++i)
+	{
+		iPBI = vecPartIdx[i];
+		_newAnim->vecKeyFrame[i] = new BONEKEYFRAME;
+		_newAnim->vecKeyFrame[i]->iBoneIndex = pAnim->vecKeyFrame[iPBI]->iBoneIndex;
+		int iFrameSize = (int)pAnim->vecKeyFrame[iPBI]->vecKeyFrame.size();
+		_newAnim->vecKeyFrame[i]->vecKeyFrame.resize(iFrameSize);
+
+		if (iRootParentIndex < 0)
+			continue;
+
+		
+		if (pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame.size() > 0)
+		{
+			if (_newAnim->vecXmRotVector.size() < 1)
+			{
+				_newAnim->vecXmRotVector.resize(pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame.size());
+			}
+
+			for (int j = 0; j < iFrameSize; ++j)
+			{
+				_newAnim->vecKeyFrame[i]->vecKeyFrame[j] = new KEYFRAME;
+				*(_newAnim->vecKeyFrame[i]->vecKeyFrame[j]) = *(pAnim->vecKeyFrame[iPBI]->vecKeyFrame[j]);
+				_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vPos -= pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vPos;
+				//DirectX::XMVECTOR vConjugatedRootRot = DirectX::XMQuaternionInverse(pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vRot.Convert());
+				
+				//_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot = Vector4(DirectX::XMQuaternionMultiply(_newAnim->vecXmRotVector[j], _newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot.Convert()));
+				
+				DirectX::XMVECTOR vConjugatedRootRot = DirectX::XMQuaternionInverse(pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vRot.Convert());
+				_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot = Vector4(DirectX::XMQuaternionMultiply(_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot.Convert(), vConjugatedRootRot));
+				
+				//Quaternion Inverse : 쿼터니온 회전을 역전한다
+				//함정 : 쿼터니온의 역전은 오일러 축 회전 순서의 역전 역시 의미한다. 즉 XYZ 축의 회전은 ZYX 축의 회전을 의미한다.
+				//따라서 Conjugate(복소수, Inverse)는 지금 하려는 축 회전의 초기화와는 거리가 멀다
+				//눈물을 머금고 또 오일러 축으로 변환...
+				//Vector3 vParentEulerRot;
+				//Vector3 vEulerRot;
+				//to_Euler_Angle(_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot, vEulerRot);
+				//to_Euler_Angle(pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vRot, vParentEulerRot);
+				//vEulerRot -= vParentEulerRot;
+				//vEulerRot -= Vector3(-1.f, 160.f, -13.f);
+				//vEulerRot = vEulerRot - Vector4(0.f, 0.9848078f, 0.f, 0.1736482f);
+				//Vector4 vQuat;
+				//Vector4 vQuat = Vector4(0.f, 0.9848078f, 0.f, 0.1736482f);
+				//EulertoQuat(vEulerRot, vQuat);
+
+				//_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot = vQuat;
+
+				_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vScale /= pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vScale;
+			}
+		}
+
+	}
+
+	return true;
+}
+
+bool _tagPartialAnim::LoadPartAnimFromNewFile(const std::wstring & filePath, const std::string& strPathTag)
+{
+	const TCHAR *path = CPathManager::GetInst()->FindPath(strPathTag);
+	std::wstring _path = filePath;
+	_path += path;
+	FILE *pFile = nullptr;
+	_wfopen_s(&pFile, _path.c_str(), TEXT("rb"));
+
+	if (!pFile)
+		return false;
+
+	fread(&iFrameMode, sizeof(float), 1, pFile);
+	fread(&fChangeLimitTime, sizeof(float), 1, pFile);
+
+	// 애니메이션 클립정보를 저장한다.
+	size_t iCount = 0, iLength = 0;
+	fread(&iCount, sizeof(size_t), 1, pFile);
+
+	char	strDefaultClip[256] = {};
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	fread(strDefaultClip, sizeof(char),
+		iLength, pFile);
+
+	char	strCurClip[256] = {};
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	fread(strCurClip, sizeof(char), iLength, pFile);
+
+	strAddClipName.clear();
+
+	int kEnd = (int)vecPartIdx.size();
+	int iBoneSteps = 0;
+
+	for (int l = 0; l < iCount; ++l)
+	{
+		PPARTCLIP	pClip = new PARTCLIP;
+
+		// 애니메이션 클립 키를 저장한다.
+		char	strClipName[256] = {};
+		fread(&iLength, sizeof(size_t), 1, pFile);
+		fread(strClipName, sizeof(char), iLength, pFile);
+		//std::cout << strClipName << std::endl;
+		strAddClipName.push_back(strClipName);
+
+		mapPartClips.insert(make_pair(strClipName, pClip));
+
+		pClip->strName = strClipName;
+		pClip->iChangeFrame = 0;
+
+		fread(&pClip->eOption, sizeof(ANIMATION_OPTION), 1, pFile);
+
+		fread(&pClip->fStartTime, sizeof(float), 1, pFile);
+		fread(&pClip->fEndTime, sizeof(float), 1, pFile);
+		fread(&pClip->fTimeLength, sizeof(float), 1, pFile);
+		fread(&pClip->fFrameTime, sizeof(float), 1, pFile);
+		fread(&pClip->fPlayTime, sizeof(float), 1, pFile);
+		fread(&pClip->iFrameMode, sizeof(int), 1, pFile);
+		fread(&pClip->iStartFrame, sizeof(int), 1, pFile);
+		fread(&pClip->iEndFrame, sizeof(int), 1, pFile);
+		fread(&pClip->iFrameLength, sizeof(int), 1, pFile);
+
+		size_t	iFrameCount = 0;
+
+		fread(&iFrameCount, sizeof(size_t), 1, pFile);
+
+		for (size_t i = 0; i < iFrameCount; ++i)
+		{
+			bool bNext = true;
+			for (int k = 0; k < kEnd; ++k)
+			{
+				if (vecPartIdx[k] == i)
+				{
+					bNext = false;
+					break;
+				}
+			}
+			if (bNext)
+			{
+				Vector4 vEmpty;
+				fread(&vEmpty, sizeof(int), 1, pFile);
+				fread(&vEmpty, sizeof(size_t), 1, pFile);
+				continue;
+			}
+
+			PBONEKEYFRAME	pBoneKeyFrame = new BONEKEYFRAME;
+			pClip->vecKeyFrame.push_back(pBoneKeyFrame);
+
+			fread(&pBoneKeyFrame->iBoneIndex, sizeof(int), 1,
+				pFile);
+
+			size_t	iBoneFrameCount = 0;
+
+			fread(&iBoneFrameCount, sizeof(size_t), 1, pFile);
+
+			iBoneSteps = 0;
+			for (size_t j = 0; j < iBoneFrameCount; ++j)
+			{
+				bool bNext = true;
+				for (int k = 0; k < kEnd; ++k)
+				{
+					if (vecPartIdx[k] == i)
+					{
+						bNext = false;
+						break;
+					}
+				}
+				if (bNext)
+				{
+					Vector4 vEmpty;
+					fread(&vEmpty, sizeof(double), 1, pFile);
+					fread(&vEmpty, sizeof(Vector3), 1, pFile);
+					fread(&vEmpty, sizeof(Vector3), 1, pFile);
+					fread(&vEmpty, sizeof(Vector4), 1, pFile);
+					continue;
+				}
+
+				PKEYFRAME	pKeyFrame = new KEYFRAME;
+				pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
+
+				fread(&pKeyFrame->dTime, sizeof(double), 1, pFile);
+				fread(&pKeyFrame->vPos, sizeof(Vector3), 1, pFile);
+				fread(&pKeyFrame->vScale, sizeof(Vector3), 1, pFile);
+				fread(&pKeyFrame->vRot, sizeof(Vector4), 1, pFile);
+			}
+		}
+	}
+
+
+	fclose(pFile);
+
+	return true;
 }

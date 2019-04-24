@@ -9,6 +9,7 @@
 #include "SceneComponent/LogoScene.h"
 #include "SceneComponent/RandScapeTestScene.h"
 #include "CameraEff.h"
+#include "CommonSoundLoader.h"
 
 PUN_USING
 
@@ -52,10 +53,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CStartScene>("StartScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
 
+	CCommonSoundLoader::GetInst()->LoadSoundCSVList(TEXT("CommonSound.csv"));
+	CCommonSoundLoader::GetInst()->LoadSoundRandomSeedCnt(TEXT("CommonSound_SoundCnt.csv"));
+
 #ifdef _DEBUG
 	GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("First", "LogoScene");
-	GET_SINGLE(CSceneManager)->AddScene<JBH_Stage3>("Second", "JBH_Stage3");
-	GET_SINGLE(CSceneManager)->AddScene<CFirTestScene>("Third", "FirTestScene");
+	GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("Second", "YH_TEST");
+	//GET_SINGLE(CSceneManager)->AddScene<CFirTestScene>("Third", "FirTestScene");
 
 #else
 	GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene");
@@ -69,6 +73,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	CCore::DestroyInst();
 	CCameraEff::DestroyInst();
+	CCommonSoundLoader::DestroyInst();
 
 	return iRet;
 }

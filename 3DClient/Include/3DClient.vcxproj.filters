@@ -49,6 +49,12 @@
     <Filter Include="02. UserComponent\01. Player\PlayerFunc">
       <UniqueIdentifier>{3a0ae269-8a4c-45c4-87b3-c23e687f79bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\CommonSound">
+      <UniqueIdentifier>{6e818e87-9fe3-4906-9a5d-0c9011ecaf9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\07. Interact">
+      <UniqueIdentifier>{31cc6127-71d1-4c4a-b677-8773538cb065}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -134,6 +140,15 @@
     </ClInclude>
     <ClInclude Include="SceneComponent\JBH_Stage3.h">
       <Filter>01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonSoundLoader.h">
+      <Filter>소스 파일\CommonSound</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Bed.h">
+      <Filter>02. UserComponent\07. Interact</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Locker.h">
+      <Filter>02. UserComponent\07. Interact</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -226,6 +241,18 @@
     </ClCompile>
     <ClCompile Include="SceneComponent\JBH_Stage3.cpp">
       <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonSoundLoader.cpp">
+      <Filter>소스 파일\CommonSound</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\PlayerFunc_CallBack.cpp">
+      <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Bed.cpp">
+      <Filter>02. UserComponent\07. Interact</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Locker.cpp">
+      <Filter>02. UserComponent\07. Interact</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

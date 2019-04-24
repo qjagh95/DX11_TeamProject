@@ -74,6 +74,7 @@ private:
 	std::string m_strPrevBGMName;
 	std::shared_ptr<DirectX::SoundEffect> m_NoKeyBgmBuf;
 	std::shared_ptr<DirectX::SoundEffect> m_NoKeyBgmBuf2;
+	class CTransform *m_pListenerTransform;
 
 	unique_ptr<AudioEngine> m_AudioEngine;
 	unordered_map<string, shared_ptr<SoundEffect>> m_SoundEffectMap;
@@ -105,6 +106,7 @@ private:
 	float m_fUIPan;
 
 public:
+	void SetListenerTransform(class CTransform* pTrans);
 	float GetAudioCoordSize() const;
 	void SetAudioCoordSize(float fSize);
 	bool ForgetSound(const std::string strKey);

@@ -112,12 +112,16 @@ PUN::CSoundSource * PUN::CSoundSource::Clone()
 
 void PUN::CSoundSource::Play(int idxKey, bool bLoop)
 {
+	if (m_vecsPtrSound[idxKey]->GetState() == PLAYING)
+		m_vecsPtrSound[idxKey]->Stop(true);
 	m_vecsPtrSound[idxKey]->Play(bLoop);
 }
 
 void PUN::CSoundSource::Play(std::string & strKey, bool bLoop)
 {
 	size_t iKey = m_mapSndInstKey.find(strKey)->second;
+	if (m_vecsPtrSound[iKey]->GetState() == PLAYING)
+		m_vecsPtrSound[iKey]->Stop(true);
 	m_vecsPtrSound[iKey]->Play(bLoop);
 }
 
@@ -153,6 +157,18 @@ void PUN::CSoundSource::StopClip(std::string & strKey, bool bImmediate )
 	m_vecsPtrSound[idxKey]->Stop(bImmediate);
 }
 
+int PUN::CSoundSource::GetClipState(std::string & strKey) const
+{
+	size_t idxKey = m_mapSndInstKey.find(strKey)->second;
+	
+	return m_vecsPtrSound[idxKey]->GetState();
+}
+
+int PUN::CSoundSource::GetClipState(int idxKey) const
+{
+	return m_vecsPtrSound[idxKey]->GetState();
+}
+
 bool PUN::CSoundSource::LoadSounds(const vector<std::string>& vecStr)
 {
 	PUN::CSoundManager *pMgr = PUN::CSoundManager::GetInst();
@@ -166,7 +182,9 @@ bool PUN::CSoundSource::LoadSounds(const vector<std::string>& vecStr)
 			= sPtrSound->CreateInstance(SoundEffectInstance_Use3D | SoundEffectInstance_ReverbUseFilters);
 
 		sPtrSoundInst->Apply3D(pMgr->GetMainListener(), m_tAudioEmitter);
-
+		sPtrSoundInst->SetPan(0.f);
+		sPtrSoundInst->SetVolume(1.f);
+		sPtrSoundInst->SetPitch(0.f);
 		m_vecsPtrSound.push_back(sPtrSoundInst);
 		m_mapSndInstKey.insert(std::make_pair(vecStr[i], i));
 		m_vecSndStr.push_back(vecStr[i]);

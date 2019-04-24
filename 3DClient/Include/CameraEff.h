@@ -27,12 +27,14 @@ private:
 	RECT gameWnd;
 	RECT windowWnd;
 	bool m_bWndFocused;
+	bool m_bUseFirstPersonView;
 public:
 	bool Init();
 	int Input(float fTime);
 	int Update(float fTime);
 	int LateUpdate(float fTime);
-	
+	void SetFirstPersonViewEnable();
+	bool IsFirstPersonEnabled() const;
 public:
 	void AddUpdateEffect(const tCameraEffects& eff);
 	void AddLateUpdateEffect(const tCameraEffects &eff);
@@ -41,7 +43,7 @@ public:
 	void DeleteAllCurrEff();
 	void SetCamMainPos(const Vector3& vPos);
 	void SetCamMainRot(const Vector3& vRot);
-	void FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Body = nullptr);
+	bool FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Body = nullptr, const Vector3& vEyePos = Vector3::Zero, const Vector3 &vEyeRot = Vector3::Zero);
 
 public:
 	void SetCamTransform(PUN::CTransform *pMainCamTr);

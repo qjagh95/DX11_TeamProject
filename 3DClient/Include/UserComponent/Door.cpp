@@ -4,6 +4,7 @@
 #include <Component/SoundSource.h>
 #include <Component/Transform.h>
 #include <SoundManager.h>
+#include "Component/Collider.h"
 
 PUN_USING
 
@@ -12,10 +13,12 @@ CDoor::CDoor() :
 	m_fCloseTime(1.5f),
 	m_fOpenTime(1.5f),
 	m_iState(1),
-	m_pSndComp(0)
+	m_pSndComp(0),
+	m_bLock(false)
 {
 	m_vRotClosed = Vector3(0.f, 0.f, 0.f);
 	m_vRotOpened = Vector3(0.f, 90.f, 0.f);
+	m_eDoorType = DOOR_NORMAL;
 }
 
 CDoor::CDoor(const CDoor & door) :
@@ -43,66 +46,7 @@ bool CDoor::Init()
 
 int CDoor::Update(float fTime)
 {
-	if (m_iState & DOOR_ONACT)
-	{
-		if (m_iState & DOOR_OPEN)
-		{
-			if (fCurrTimer <= m_fOpenTime)
-			{
-				if (m_fOpenTime > 0.f)
-				{
-					float fRatio = fCurrTimer / m_fOpenTime;
 
-					Vector3 vRot = m_vRotClosed + ((m_vRotOpened - m_vRotClosed) * fRatio);
-
-					m_pTransform->SetLocalRot(vRot);
-				}
-
-				fCurrTimer += fTime;
-			}
-			else
-			{
-				m_iState ^= DOOR_ONACT; //XOR 연산으로 ONACT 종료
-				fCurrTimer = 0.f;
-			}
-		}
-
-		if (m_iState & DOOR_CLOSE)
-		{
-			if (fCurrTimer <= m_fCloseTime)
-			{
-				if (m_fCloseTime > 0.f)
-				{
-					float fRatio = fCurrTimer / m_fCloseTime;
-
-					Vector3 vRot = m_vRotOpened + ((m_vRotClosed - m_vRotOpened) * fRatio);
-
-					m_pTransform->SetLocalRot(vRot);
-				}
-
-				fCurrTimer += fTime;
-			}
-			else
-			{
-				m_iState ^= DOOR_ONACT; //XOR 연산으로 ONACT 종료
-				fCurrTimer = 0.f;
-			}
-		}
-
-		if (m_iState & DOOR_DESTROYED)
-		{
-			if (fCurrTimer <= m_fDestroyBurstTime)
-			{
-
-				fCurrTimer += fTime;
-			}
-			else
-			{
-				m_iState ^= DOOR_ONACT; //XOR 연산으로 ONACT 종료
-				fCurrTimer = 0.f;
-			}
-		}
-	}
 	return 0;
 }
 
@@ -199,6 +143,16 @@ void CDoor::Destroy()
 	m_iState = DOOR_ONACT | DOOR_DESTROYED;
 }
 
+bool CDoor::IsLock() const
+{
+	return m_bLock;
+}
+
+void CDoor::UnLock()
+{
+	m_bLock = false;
+}
+
 int CDoor::GetState() const
 {
 	return 0;
@@ -274,13 +228,112 @@ bool CDoor::SetDestroySound(const std::string strKey)
 	return true;
 }
 
-int CDoor::GetDoorType() const
+void CDoor::OnAct(float fTime)
 {
-	return m_iDoorType;
+	switch (m_eDoorType)
+	{
+	case DOOR_NORMAL:
+		OnActNormal(fTime);
+		break;
+
+	case DOOR_STAGE:
+		OnActStage(fTime);
+		break;
+
+	case DOOR_LOCKER:
+		OnActLocker(fTime);
+		break;
+
+	case DOOR_HEAVY:
+		OnActHeavy(fTime);
+		break;
+	}
+}
+
+void CDoor::OnActNormal(float fTime)
+{
+	if (m_iState & DOOR_ONACT)
+	{
+		if (m_iState & DOOR_OPEN)
+		{
+			if (fCurrTimer <= m_fOpenTime)
+			{
+				if (m_fOpenTime > 0.f)
+				{
+					float fRatio = fCurrTimer / m_fOpenTime;
+
+					Vector3 vRot = m_vRotClosed + ((m_vRotOpened - m_vRotClosed) * fRatio);
+
+					m_pTransform->SetLocalRot(vRot);
+				}
+
+				fCurrTimer += fTime;
+			}
+			else
+			{
+				m_iState ^= DOOR_ONACT; //XOR 연산으로 ONACT 종료
+				fCurrTimer = 0.f;
+			}
+		}
+
+		if (m_iState & DOOR_CLOSE)
+		{
+			if (fCurrTimer <= m_fCloseTime)
+			{
+				if (m_fCloseTime > 0.f)
+				{
+					float fRatio = fCurrTimer / m_fCloseTime;
+
+					Vector3 vRot = m_vRotOpened + ((m_vRotClosed - m_vRotOpened) * fRatio);
+
+					m_pTransform->SetLocalRot(vRot);
+				}
+
+				fCurrTimer += fTime;
+			}
+			else
+			{
+				m_iState ^= DOOR_ONACT; //XOR 연산으로 ONACT 종료
+				fCurrTimer = 0.f;
+			}
+		}
+
+		if (m_iState & DOOR_DESTROYED)
+		{
+			if (fCurrTimer <= m_fDestroyBurstTime)
+			{
+
+				fCurrTimer += fTime;
+			}
+			else
+			{
+				m_iState ^= DOOR_ONACT; //XOR 연산으로 ONACT 종료
+				fCurrTimer = 0.f;
+			}
+		}
+	}
+}
+
+void CDoor::OnActStage(float fTime)
+{
+}
+
+void CDoor::OnActLocker(float fTime)
+{
+}
+
+void CDoor::OnActHeavy(float fTime)
+{
+}
+
+DOOR_TYPE CDoor::GetDoorType() const
+{
+	return m_eDoorType;
 }
 
 void CDoor::SetDoorType(int iType)
 {
+	m_eDoorType = (DOOR_TYPE)iType;
 }
 
 const bool CDoor::IsOpened() const
@@ -293,7 +346,8 @@ const bool CDoor::IsOnAction() const
 	return m_iState & DOOR_ONACT;
 }
 
-void CDoor::Interact(float fTime)
+
+void CDoor::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (CInput::GetInst()->KeyPress("Door_Interact"))
 	{
@@ -307,5 +361,14 @@ void CDoor::Interact(float fTime)
 
 CDoor * CDoor::Clone()
 {
+	if (CInput::GetInst()->KeyPress("Door_Interact"))
+	{
+		if (m_iState & DOOR_CLOSE)
+			Open();
+
+		else if (m_iState & DOOR_OPEN)
+			Close();
+	}
+
 	return new CDoor(*this);
 }

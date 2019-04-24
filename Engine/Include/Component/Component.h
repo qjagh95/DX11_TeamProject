@@ -35,6 +35,10 @@ protected:
 public:
 	COMPONENT_TYPE	GetComponentType()	const;
 
+	Vector3 GetWorldPos() const;
+	Vector3 GetWorldRot() const;
+	Vector3 GetWorldScale() const;
+
 public:
 	// Start함수는 장면이 시작되면서 딱 1번만 호출될 함수이다.
 	virtual void Start();

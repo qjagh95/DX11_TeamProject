@@ -4,6 +4,7 @@
 
 PUN_BEGIN
 
+
 typedef struct PUN_DLL _tagBone
 {
 	string		strName;
@@ -101,6 +102,119 @@ typedef struct PUN_DLL _tagAnimationClip
 	}
 }ANIMATIONCLIP, *PANIMATIONCLIP;
 
+
+typedef struct PUN_DLL _tagPartialClip
+{
+	ANIMATION_OPTION	eOption;
+	string				strName;
+	float				fStartTime;
+	float				fEndTime;
+	float				fTimeLength;
+	float				fFrameTime;
+	float				fPlayTime;
+	int					iStartFrame;
+	int					iEndFrame;
+	int					iFrameLength;
+	int					iFrameMode;
+	int					iChangeFrame;
+	vector<PBONEKEYFRAME>		vecKeyFrame;
+	vector<PANIMATIONCALLBACK>	vecCallback;
+	vector<XMVECTOR> vecXmRotVector;
+
+	_tagPartialClip():
+		eOption(AO_LOOP),
+		fStartTime(0.f),
+		fEndTime(0.f),
+		fTimeLength(0.f),
+		fFrameTime(0.f),
+		fPlayTime(0.f),
+		iStartFrame(0),
+		iEndFrame(0),
+		iFrameLength(0),
+		iFrameMode(30),
+		iChangeFrame(0)
+	{
+		vecCallback.clear();
+		vecKeyFrame.clear();
+		vecXmRotVector.clear();
+	}
+
+	~_tagPartialClip() 
+	{
+		Safe_Delete_VecList(vecKeyFrame);
+	}
+}PARTCLIP, *PPARTCLIP;
+
+typedef struct PUN_DLL _tagPartialAnim
+{
+	bool bActivated = false;
+	std::unordered_map<std::string, PPARTCLIP> mapPartClips;
+	std::vector<int> vecPartIdx;
+	std::vector<std::string> strAddClipName;
+	//std::vector<Matrix>			vecPartBoneMatrix;
+
+	int iRootParentIndex = -1;
+
+	PPARTCLIP			pDefaultClip = nullptr;
+	PPARTCLIP			pCurClip = nullptr;
+	PPARTCLIP			pNextClip = nullptr;
+	bool				bKeepBlending = false;
+	bool				bEnd;
+	float				fPartAnimationGTime;
+	float				fClipProgress= 0.f;
+	float				fChangeTime = 0.f;
+	float				fChangeLimitTime = 0.f;
+	float				fFrameTime = 0.f;
+	int					iFrameMode = 0;
+	Vector3				vBlendScale;
+	Vector4				vBlendRot;
+	Vector3				vBlendPos;
+	int					iRefCnt;
+
+	//vecPartIdx, iRootParentIndex가 값이 설정된 이후 실행할 것
+	bool LoadPartAnimFromExistingClip(PANIMATIONCLIP pAnim);
+	bool LoadPartAnimFromNewFile(const std::wstring& filePath, const std::string& strPathTag = MESH_DATA_PATH);
+
+	_tagPartialAnim():
+		pDefaultClip(nullptr),
+		pCurClip(nullptr),
+		pNextClip(nullptr),
+		bKeepBlending(false),
+		bEnd(false),
+		fPartAnimationGTime(0.f),
+		fClipProgress(0.f),
+		fChangeTime(0.f),
+		fChangeLimitTime(0.f),
+		fFrameTime(0.f),
+		iFrameMode(0),
+		iRefCnt(1)
+	{}
+	~_tagPartialAnim() 
+	{
+		Safe_Delete_Map(mapPartClips);
+	}
+
+	void AddRef()
+	{
+		++iRefCnt;
+	}
+
+	void Release()
+	{
+		--iRefCnt;
+		if (iRefCnt < 1)
+			delete this;
+	}
+	/*
+	기존의 ANIMATIONCLIP 의 본들이 전부 부모에서 직접 상속받은 위치를 기반으로 넘어가기 때문에
+	부분 애니메이션을 돌리기 위해서는 이 부모의 행렬의 역행렬들을 곱해줘야 한다.
+	그러니까 엥간하면 부분 애니메이션은 적을수록 좋다....
+
+	*/
+
+}PARTANIM, *PPARTANIM;
+
+
 class PUN_DLL CAnimation :
 	public CComponent
 {
@@ -113,6 +227,9 @@ public:
 	~CAnimation();
 
 private:
+
+	std::vector<PPARTANIM> m_vecPartialAnim;
+	
 	vector<PBONE>		m_vecBones;
 	ID3D11Texture2D*	m_pBoneTex;
 	ID3D11ShaderResourceView*	m_pBoneRV;
@@ -138,6 +255,11 @@ public:
 	const list<string>* GetAddClipName()	const;
 	void GetClipTagList(std::vector<std::string>* _vecstrList);
 public:
+	bool AddPartialClip(PPARTANIM partAnim);
+	PANIMATIONCLIP GetAnimClip(const std::string& strKey);
+	
+	const Matrix* GetBoneMatrix(int iBoneIdx);
+	float GetCurrentClipTime();
 	void KeepBlendSet(bool on);
 	void AddBone(PBONE pBone);
 	bool CreateBoneTexture();
@@ -162,6 +284,9 @@ public:
 	Matrix GetBoneMatrix(const string& strBoneName);
 	bool ChangeClip(const string& strClip);
 	ID3D11ShaderResourceView** GetBoneTexture();
+	ID3D11Texture2D *GetBoneTex2D();
+
+	void SetBoneTexture(ID3D11ShaderResourceView **ppSRV, ID3D11Texture2D *ppBoneTex);
 	bool Save(const TCHAR* pFileName, const string& strPathKey = MESH_PATH);
 	bool Save(const char* pFileName, const string& strPathKey = MESH_PATH);
 	bool SaveFromFullPath(const TCHAR* pFullPath);
@@ -199,6 +324,9 @@ public:
 
 	//디버그용 클립 넘기기 함수
 	void SkipToNextClip();
+
+	//부분 애니매이션 추가
+
 
 private:
 	void LoadFbxAnimation(const char* pFullPath);

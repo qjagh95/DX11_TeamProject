@@ -64,7 +64,8 @@ CSoundManager::CSoundManager() :
 	m_fUIVolume(1.f),
 	m_fUIPan(0.f),
 	m_fUIPitch(0.f),
-	m_fAudioCoordSizeDiv(1.f)
+	m_fAudioCoordSizeDiv(1.f),
+	m_pListenerTransform(nullptr)
 {
 	m_sPtrCurrentBgmTrack = m_NULLPTR2;
 	m_sPtrPrevBgmTrack = m_NULLPTR2;
@@ -74,7 +75,7 @@ CSoundManager::CSoundManager() :
 
 CSoundManager::~CSoundManager()
 {
-
+	SAFE_RELEASE(m_pListenerTransform);
 }
 
 bool CSoundManager::Init()
@@ -196,24 +197,15 @@ void CSoundManager::Update(float fTime)
 		
 	}
 
-	PUN::CScene* pScene = PUN::CSceneManager::GetInst()->GetScene();
-
-	if (!pScene)
-		return;
-	PUN::CCamera* pMainCam = pScene->GetMainCamera();
-
-	if (pMainCam)
+	if (m_pListenerTransform)
 	{
-		PUN::CTransform *pTrans = pMainCam->GetTransform();
-		Vector3 vPos = pTrans->GetWorldPos();
+	
+		Vector3 vPos = m_pListenerTransform->GetWorldPos();
 
 		vPos /= m_fAudioCoordSizeDiv;
 
-		Vector3 vUp = pTrans->GetWorldAxis(PUN::AXIS_Y);
-		Vector3 vFront = pTrans->GetWorldAxis(PUN::AXIS_Z);
-
-		SAFE_RELEASE(pTrans);
-		SAFE_RELEASE(pMainCam);
+		Vector3 vUp = m_pListenerTransform->GetWorldAxis(PUN::AXIS_Y);
+		Vector3 vFront = m_pListenerTransform->GetWorldAxis(PUN::AXIS_Z);
 
 		DirectX::XMFLOAT3 mPos(vPos.x, vPos.y, vPos.z);
 		m_Listener.SetPosition(mPos);
@@ -221,8 +213,6 @@ void CSoundManager::Update(float fTime)
 		m_Listener.SetOrientation(DirectX::XMFLOAT3(vFront.x, vFront.y, vFront.z),
 			DirectX::XMFLOAT3(vUp.x, vUp.y, vUp.z));
 	}
-
-	SAFE_RELEASE(pScene);
 
 	m_AudioEngine->Update();
 }
@@ -307,6 +297,14 @@ shared_ptr<SoundEffect> const & CSoundManager::FindSoundEffect(const string & Ke
 		return m_NULLPTR1;
 
 	return FindIter->second;
+}
+
+void CSoundManager::SetListenerTransform(CTransform * pTrans)
+{
+	SAFE_RELEASE(m_pListenerTransform);
+	m_pListenerTransform = pTrans;
+	if(pTrans)
+		pTrans->AddRef();
 }
 
 float CSoundManager::GetAudioCoordSize() const

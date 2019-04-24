@@ -55,6 +55,22 @@ COMPONENT_TYPE CComponent::GetComponentType() const
 	return m_eComType;
 }
 
+Vector3 CComponent::GetWorldPos() const
+{
+	return m_pTransform->GetWorldPos();
+}
+
+Vector3 CComponent::GetWorldRot() const
+{
+	return m_pTransform->GetWorldRot();
+}
+
+Vector3 CComponent::GetWorldScale() const
+{
+	return m_pTransform->GetWorldScale();
+}
+
+
 void CComponent::Start()
 {
 }
