@@ -21,8 +21,8 @@ CLandScape::CLandScape() :
 	m_eComType = CT_LANDSCAPE;
 	m_Mesh = NULLPTR;
 	m_isMove = false;
-	if(CCore::GetInst()->m_bEditorMode == true)
-	CEditManager::GetInst()->SetNaviMove(m_isMove);
+	if (CCore::GetInst()->m_bEditorMode == true)
+		CEditManager::GetInst()->SetNaviMove(m_isMove);
 
 	m_tCBuffer = {};
 	m_tNaviCBuffer.iBrushXRange = 5;
@@ -319,6 +319,8 @@ bool CLandScape::Init()
 	m_pObject->SetRenderGroup(RG_LANDSCAPE);
 
 	CInput::GetInst()->AddKey("LandOnOff", VK_F4);
+	CInput::GetInst()->AddKey("LandUp", VK_UP);
+	CInput::GetInst()->AddKey("LandDown", VK_DOWN);
 
 	return true;
 }
@@ -354,6 +356,16 @@ int CLandScape::Update(float fTime)
 					m_pNavMesh->Click(m_isMove, Vector4(0.0f, 1.0f, 0.5f, 1.0f));
 				else
 					m_pNavMesh->Click(m_isMove);
+			}
+			if (CInput::GetInst()->KeyPush("LandUp") == true)
+			{
+				m_pNavMesh->LandUp(fTime);
+				m_Mesh->UpdateVertexBuffer(&m_vecVtx[0]);
+			}
+			else if (CInput::GetInst()->KeyPush("LandDown") == true)
+			{
+				m_pNavMesh->LandDown(fTime);
+				m_Mesh->UpdateVertexBuffer(&m_vecVtx[0]);
 			}
 		}
 	}
@@ -556,7 +568,7 @@ void CLandScape::CheckSelectIndex(float DeltaTime)
 
 void CLandScape::OnOff()
 {
-	if(CInput::GetInst()->KeyPress("LandOnOff"))
+	if (CInput::GetInst()->KeyPress("LandOnOff"))
 	{
 		m_isShow ^= true;
 

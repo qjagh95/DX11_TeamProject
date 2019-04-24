@@ -153,7 +153,8 @@ void CNavigationMesh::AddCell(std::vector<Vertex3DColor>* vecColor, int _iPos0, 
 	if (fAngle >= 65.f)
 		pCell->bEnable = false;
 
-	m_vMax.y = 2.0f;
+	m_vMax.y = 5000.0f;
+	m_vMin.y = -5000.0f;
 
 	m_vecCell.push_back(pCell);
 }
@@ -166,6 +167,10 @@ void CNavigationMesh::LoadCell(std::vector<Vertex3DColor>* vecColor)
 		m_vecCell[i]->tCopyVertex[1] = &(*vecColor)[m_vecCell[i]->m_iVertexIndex[1]];
 		m_vecCell[i]->tCopyVertex[2] = &(*vecColor)[m_vecCell[i]->m_iVertexIndex[2]];
 	}
+
+	m_vMax.y = 5000.f;
+	m_vMin.y = -5000.0f;
+
 }
 
 void CNavigationMesh::SetCellCopyVertex(Vertex3DColor & vPos0, Vertex3DColor & vPos1,
@@ -623,7 +628,7 @@ float CNavigationMesh::GetY(const Vector3 & vPos)
 		float	fY[3] = {};
 		for (int i = 0; i < 3; ++i)
 		{
-			fY[i] = m_vecCell[idx]->vPos[i].y;
+			fY[i] = m_vecCell[idx]->tCopyVertex[i]->vPos.y;
 		}
 
 		return fY[0] + (fY[1] - fY[0]) * fX + (fY[2] - fY[1]) * fZ;
@@ -633,7 +638,7 @@ float CNavigationMesh::GetY(const Vector3 & vPos)
 	float	fY[3] = {};
 	for (int i = 0; i < 3; ++i)
 	{
-		fY[i] = m_vecCell[idx + 1]->vPos[i].y;
+		 fY[i] = m_vecCell[idx + 1]->tCopyVertex[i]->vPos.y;
 	}
 
 	return fY[0] + (fY[1] - fY[2]) * fX + (fY[2] - fY[0]) * fZ;
@@ -648,7 +653,7 @@ bool CNavigationMesh::CheckCell(const Vector3 & vPos)
 
 	float	fY = GetY(iCellIndex, vPos);
 
-	if (!m_vecCell[iCellIndex]->bEnable || (vPos.y - 2.f > fY || fY > vPos.y + 2.f)
+	if (!m_vecCell[iCellIndex]->bEnable || (vPos.y - m_vMax.y > fY || fY > vPos.y + m_vMax.y)
 		|| m_vecCell[iCellIndex]->bMove == false)
 		return false;
 
@@ -1124,7 +1129,180 @@ void CNavigationMesh::Click(bool _bIsMove, Vector4 _vColor)
 				}
 			}
 		}
+	}
+}
 
+void CNavigationMesh::LandUp(float DeltaTime)
+{
+	int iSelectNavIndex = CInput::GetInst()->GetiSelectNavIndex();
+	if (iSelectNavIndex == -1)
+	{
+		return;
+	}
+
+	Vector3 vCenter = m_vecCell[iSelectNavIndex]->vCenter;
+
+	Vector3 vRectMin = vCenter;
+	vRectMin.x -= CInput::GetInst()->GetXBrushSize() / 2.f;
+	vRectMin.z -= CInput::GetInst()->GetZBrushSize() / 2.f;
+	Vector3 vRectMax = vCenter;
+	vRectMax.x += CInput::GetInst()->GetXBrushSize() / 2.f;
+	vRectMax.z += CInput::GetInst()->GetZBrushSize() / 2.f;
+
+	int iMaxSection = GetSectionIndex(vRectMax);
+	int iMinSection = GetSectionIndex(vRectMin);
+
+	if (iMinSection < iMaxSection)
+	{
+		if (iMaxSection >= m_iSectionX * m_iSectionZ)
+		{
+			iMaxSection = m_iSectionX * m_iSectionZ - 1;
+		}
+		for (size_t iSection = iMinSection; iSection <= iMaxSection; ++iSection)
+		{
+			for (int x = 0; x < m_pSection[iSection].iSize; ++x)
+			{
+				PNavigationCell	pCell = m_pSection[iSection].pCellList[x];
+
+				bool bCollision = true;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					if (RectIntersectPoint(vRectMin, vRectMax, pCell->vPos[i]) == false)
+					{
+						bCollision = false;
+						break;
+					}
+				}
+
+				if (bCollision)
+				{
+					pCell->tCopyVertex[0]->vPos.y += 1.0f * DeltaTime;
+					pCell->tCopyVertex[1]->vPos.y += 1.0f * DeltaTime;
+					pCell->tCopyVertex[2]->vPos.y += 1.0f * DeltaTime;
+				}
+			}
+		}
+	}
+	else
+	{
+		if (iMinSection >= m_iSectionX * m_iSectionZ)
+		{
+			iMinSection = m_iSectionX * m_iSectionZ - 1;
+		}
+
+		for (size_t iSection = iMaxSection; iSection <= iMinSection; ++iSection)
+		{
+			for (int x = 0; x < m_pSection[iSection].iSize; ++x)
+			{
+				PNavigationCell	pCell = m_pSection[iSection].pCellList[x];
+
+				bool bCollision = true;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					if (RectIntersectPoint(vRectMin, vRectMax, pCell->vPos[i]) == false)
+					{
+						bCollision = false;
+						break;
+					}
+				}
+
+				if (bCollision)
+				{
+					pCell->tCopyVertex[0]->vPos.y += 1.0f * DeltaTime;
+					pCell->tCopyVertex[1]->vPos.y += 1.0f * DeltaTime;
+					pCell->tCopyVertex[2]->vPos.y += 1.0f * DeltaTime;
+				}
+			}
+		}
+	}
+}
+
+void CNavigationMesh::LandDown(float DeltaTime)
+{
+	int iSelectNavIndex = CInput::GetInst()->GetiSelectNavIndex();
+	if (iSelectNavIndex == -1)
+	{
+		return;
+	}
+
+	Vector3 vCenter = m_vecCell[iSelectNavIndex]->vCenter;
+
+	Vector3 vRectMin = vCenter;
+	vRectMin.x -= CInput::GetInst()->GetXBrushSize() / 2.f;
+	vRectMin.z -= CInput::GetInst()->GetZBrushSize() / 2.f;
+	Vector3 vRectMax = vCenter;
+	vRectMax.x += CInput::GetInst()->GetXBrushSize() / 2.f;
+	vRectMax.z += CInput::GetInst()->GetZBrushSize() / 2.f;
+
+	int iMaxSection = GetSectionIndex(vRectMax);
+	int iMinSection = GetSectionIndex(vRectMin);
+
+	if (iMinSection < iMaxSection)
+	{
+		if (iMaxSection >= m_iSectionX * m_iSectionZ)
+		{
+			iMaxSection = m_iSectionX * m_iSectionZ - 1;
+		}
+		for (size_t iSection = iMinSection; iSection <= iMaxSection; ++iSection)
+		{
+			for (int x = 0; x < m_pSection[iSection].iSize; ++x)
+			{
+				PNavigationCell	pCell = m_pSection[iSection].pCellList[x];
+
+				bool bCollision = true;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					if (RectIntersectPoint(vRectMin, vRectMax, pCell->vPos[i]) == false)
+					{
+						bCollision = false;
+						break;
+					}
+				}
+
+				if (bCollision)
+				{
+					pCell->tCopyVertex[0]->vPos.y -= 1.0f * DeltaTime;
+					pCell->tCopyVertex[1]->vPos.y -= 1.0f * DeltaTime;
+					pCell->tCopyVertex[2]->vPos.y -= 1.0f * DeltaTime;
+				}
+			}
+		}
+	}
+	else
+	{
+		if (iMinSection >= m_iSectionX * m_iSectionZ)
+		{
+			iMinSection = m_iSectionX * m_iSectionZ - 1;
+		}
+
+		for (size_t iSection = iMaxSection; iSection <= iMinSection; ++iSection)
+		{
+			for (int x = 0; x < m_pSection[iSection].iSize; ++x)
+			{
+				PNavigationCell	pCell = m_pSection[iSection].pCellList[x];
+
+				bool bCollision = true;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					if (RectIntersectPoint(vRectMin, vRectMax, pCell->vPos[i]) == false)
+					{
+						bCollision = false;
+						break;
+					}
+				}
+
+				if (bCollision)
+				{
+					pCell->tCopyVertex[0]->vPos.y -= 1.0f * DeltaTime;
+					pCell->tCopyVertex[1]->vPos.y -= 1.0f * DeltaTime;
+					pCell->tCopyVertex[2]->vPos.y -= 1.0f * DeltaTime;
+				}
+			}
+		}
 	}
 }
 

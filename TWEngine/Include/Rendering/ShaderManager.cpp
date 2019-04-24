@@ -332,7 +332,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("HDRFirst",		2,	sizeof(HDR1stPassCB),		CST_COMPUTE);
 	CreateCBuffer("Adaptation",		3,	sizeof(AdaptationCB),		CST_COMPUTE);
 	CreateCBuffer("BloomThreshold", 4,	sizeof(BloomThresholdCB),	CST_COMPUTE);
-	CreateCBuffer("NaviLandCBuffer", 12, sizeof(NaviLandCBuffer), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("NaviLandCBuffer", 6, sizeof(NaviLandCBuffer), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("GridCBuffer", 10, sizeof(GridCBuffer), CST_VERTEX | CST_PIXEL);
 	
 	return true;
