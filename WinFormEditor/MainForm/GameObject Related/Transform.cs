@@ -154,9 +154,9 @@ namespace WinFormEditor
 
         private void DecimalFormat(ObjectInfo.Vector3 _vec)
         {
-            string cvtVecX = string.Format("{0:0.##}", _vec.x);
-            string cvtVecY = string.Format("{0:0.##}", _vec.y);
-            string cvtVecZ = string.Format("{0:0.##}", _vec.z);
+            string cvtVecX = string.Format("{0:0.######}", _vec.x);
+            string cvtVecY = string.Format("{0:0.######}", _vec.y);
+            string cvtVecZ = string.Format("{0:0.######}", _vec.z);
             _vec.x = (float)Convert.ToDouble(cvtVecX);
             _vec.y = (float)Convert.ToDouble(cvtVecY);
             _vec.z = (float)Convert.ToDouble(cvtVecZ);
