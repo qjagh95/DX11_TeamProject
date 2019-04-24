@@ -96,11 +96,11 @@ void CCSAdaptFilter::SetShaderResource(int iPass, float fTime)
 	{
 		float fResetTime = m_fAdaptTime;
 
-#ifdef _DEBUG
 		if (m_fElapsedTime > fResetTime)
 		{
 			m_fElapsedTime -= fResetTime;
 		}
+#ifdef _DEBUG
 #endif
 
 		fAdaptNorm = min(m_fAdaptTime < 0.0001f ? m_fAdaptTime : m_fElapsedTime / m_fAdaptTime, m_fAdaptTime - 0.0001f);

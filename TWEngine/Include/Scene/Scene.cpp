@@ -198,7 +198,7 @@ bool CScene::Init()
 
 	m_pSkyMtrl = m_pSkyObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
+	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("NightSky.dds"));
 	m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
 
 	if (CCore::GetInst()->m_bGuiMode == false)

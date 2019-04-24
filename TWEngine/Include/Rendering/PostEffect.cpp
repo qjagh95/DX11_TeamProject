@@ -118,8 +118,8 @@ bool CPostEffect::Init()
 	m_fHeight = (float)(_RESOLUTION.iHeight / 4);
 	m_fWidth = (float)(_RESOLUTION.iWidth / 4);
 
-	m_fMiddleGrey = 0.863f;
-	m_fLumWhite = 1.53f;
+	m_fMiddleGrey = 0.363f;
+	m_fLumWhite = 5.73f;
 
 	m_tDownScaleCBInfo.iHeight = (int)m_fHeight;
 	m_tDownScaleCBInfo.iWidth = (int)m_fWidth;

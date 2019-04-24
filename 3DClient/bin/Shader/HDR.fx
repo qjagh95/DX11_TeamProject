@@ -3,9 +3,7 @@
 Texture2D HDRTex : register(t0);
 
 StructuredBuffer<float> AverageValues1D : register(t1);
-StructuredBuffer<float> PrevAvgLum : register(t2);
 
-//RWStructuredBuffer<float> AverageLum : register(u0);
 RWStructuredBuffer<float> AverageLumFinal : register(u0);
 
 groupshared float SharedPositions[1024];
@@ -222,12 +220,8 @@ void DownScaleSecondPass(uint3 groupId : SV_GroupID,
             SharedAvgFinal[dispatchThreadId.x + 48] : favgLum;
 
         fFinalLumValue /= 64.f;
-
-        float fApaptedAverageLum = lerp(PrevAvgLum[1], fFinalLumValue, g_fAdaptation);
-
+        
         AverageLumFinal[0] = max(fFinalLumValue, 0.0001);
-       // AverageLumFinal[1] = max(fApaptedAverageLum, 0.0001);
-
     }
 }
 

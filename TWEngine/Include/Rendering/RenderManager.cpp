@@ -78,11 +78,8 @@ CRenderManager::CRenderManager() :
 
 	m_vDepthFogColor = Vector4(0.2f, 0.2f, 0.2f, 1.f);
 
-#ifdef _DEBUG
 	m_bMagic = true;
-#else
-	m_bMagic = false;
-#endif
+
 	// =================================================
 }
 

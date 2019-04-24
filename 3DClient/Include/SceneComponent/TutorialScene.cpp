@@ -37,11 +37,11 @@ CTutorialScene::~CTutorialScene()
 bool CTutorialScene::Init()
 {
 	wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
-	wstr += L"tt.dat";
+	wstr += L"Tutorial.dat";
 	string filePath = CW2A(wstr.c_str());
-	//m_pScene->Load(filePath);
+	m_pScene->Load(filePath);
 
-	GET_SINGLE(CRenderManager)->SetHDRValue(0.22f, 5.7f);
+	GET_SINGLE(CRenderManager)->SetHDRValue(0.02f, 5.7f);
 
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
@@ -109,7 +109,7 @@ bool CTutorialScene::Init()
 
 		SAFE_RELEASE(pObject);*/
 
-	pObject = CGameObject::CreateObject("Ground", pDefaultLayer);
+	/*pObject = CGameObject::CreateObject("Ground", pDefaultLayer);
 
 	CRenderer*	pRenderer = pObject->AddComponent<CRenderer>("GroundRenderer");
 
@@ -195,7 +195,7 @@ bool CTutorialScene::Init()
 
 	SAFE_RELEASE(pTransform);
 
-	SAFE_RELEASE(pObject);
+	SAFE_RELEASE(pObject);*/
 
 	SAFE_RELEASE(pCamera);
 
