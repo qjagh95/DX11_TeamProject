@@ -265,22 +265,22 @@ int CLight::LateUpdate(float fTime)
 {
 
 
-	SetRimColor(1.f, 1.f, 1.f);
-	SetRimPower(3.f);
+	//SetRimColor(1.f, 1.f, 1.f);
+	//SetRimPower(3.f);
 
-	static bool bPush = false;
-	if (GetAsyncKeyState('R') & 0x8000)
-	{
-		bPush = true;
-	}
+	//static bool bPush = false;
+	//if (GetAsyncKeyState('R') & 0x8000)
+	//{
+	//	bPush = true;
+	//}
 
-	else if (bPush)
-	{
-		bPush = false;
-		m_iRim *= -1;
+	//else if (bPush)
+	//{
+	//	bPush = false;
+	//	m_iRim *= -1;
 
-		SetRimLight(m_iRim);
-	}
+	//	SetRimLight(m_iRim);
+	//}
 
 	return 0;
 }

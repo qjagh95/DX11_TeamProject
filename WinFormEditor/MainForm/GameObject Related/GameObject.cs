@@ -321,11 +321,16 @@ namespace WinFormEditor
             // 기존 데이터 보관 및 삭제
             int itemIndex = _listBox.SelectedIndex;
             string strTag = _listBox.Items[itemIndex].ToString();
-            ObjectInfo tempData = new ObjectInfo();
-            tempData.strLayerTag = m_editForm.GetObjInfo()[strTag].strLayerTag;
-            tempData.vecWScale = new ObjectInfo.Vector3();
-            tempData.vecWRotate = new ObjectInfo.Vector3();
-            tempData.vecWPosition = new ObjectInfo.Vector3();
+            ObjectInfo tempData     = new ObjectInfo();
+            tempData.strLayerTag    = m_editForm.GetObjInfo()[strTag].strLayerTag;
+			tempData.meshInfo       = new ObjectInfo.MeshInfo("");
+            tempData.vecLPosition   = new ObjectInfo.Vector3();
+            tempData.vecLRotate     = new ObjectInfo.Vector3();
+            tempData.vecLScale      = new ObjectInfo.Vector3();
+            tempData.vecWScale      = new ObjectInfo.Vector3();
+            tempData.vecWRotate     = new ObjectInfo.Vector3();
+            tempData.vecWPosition   = new ObjectInfo.Vector3();
+            tempData.vecColor       = new ObjectInfo.Vector4();
             m_editForm.GetObjInfo().Remove(strTag);
 
             // 변경
@@ -352,6 +357,7 @@ namespace WinFormEditor
 
             // Wrapper를 통하여 AddChild() 함수를 호출
             CoreWrapper wrapper = m_editForm.GetWrapper();
+
             string strLayerTag = m_editForm.GetObjInfo()[strParentTag].strLayerTag;
             wrapper.AddChild(strParentTag, strLayerTag);
 

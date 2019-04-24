@@ -673,6 +673,11 @@ namespace WinFormEditor
             // Mesh
             string strMeshName = ((ListBox)sender).SelectedItem.ToString();
             ObjectInfo.MeshInfo meshInfo = m_objInfo[LB_ObjectList.SelectedItem.ToString()].meshInfo;
+            if (meshInfo == null)
+            {
+                meshInfo = new ObjectInfo.MeshInfo(strMeshName);
+                return;
+            }
             meshInfo.m_strMeshName = strMeshName;
         }
 
@@ -686,6 +691,12 @@ namespace WinFormEditor
             // FileMesh
             string strMeshName = ((ListBox)sender).SelectedItem.ToString();
             ObjectInfo.MeshInfo meshInfo = m_objInfo[LB_ObjectList.SelectedItem.ToString()].meshInfo;
+			if (meshInfo == null)
+			{
+				meshInfo = new ObjectInfo.MeshInfo(strMeshName);
+				return;
+			}
+
             meshInfo.m_strMeshName = strMeshName;
         }
 

@@ -520,6 +520,10 @@ string CEditManager::GetMeshName(string _strTag)
 	}
 
 	CMesh* pMesh = pRender->GetMesh();
+
+	if (!pMesh)
+		return "CantFindMesh";
+
 	string strMeshTag = pMesh->GetTag();
 
 	SAFE_RELEASE(pRender);
