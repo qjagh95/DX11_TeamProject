@@ -132,6 +132,9 @@
     <ClInclude Include="SceneComponent\RandScapeTestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent\JBH_Stage3.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -219,6 +222,9 @@
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\RandScapeTestScene.cpp">
+      <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\JBH_Stage3.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>

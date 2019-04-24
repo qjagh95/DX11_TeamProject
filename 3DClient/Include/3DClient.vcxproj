@@ -189,6 +189,7 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneComponent\FirTestScene.h" />
+    <ClInclude Include="SceneComponent\JBH_Stage3.h" />
     <ClInclude Include="SceneComponent\LogoScene.h" />
     <ClInclude Include="SceneComponent\MainScene.h" />
     <ClInclude Include="SceneComponent\RandScapeTestScene.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="CameraEff.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SceneComponent\FirTestScene.cpp" />
+    <ClCompile Include="SceneComponent\JBH_Stage3.cpp" />
     <ClCompile Include="SceneComponent\LogoScene.cpp" />
     <ClCompile Include="SceneComponent\MainScene.cpp" />
     <ClCompile Include="SceneComponent\RandScapeTestScene.cpp" />

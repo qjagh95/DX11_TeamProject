@@ -264,7 +264,6 @@ int CLight::Update(float fTime)
 int CLight::LateUpdate(float fTime)
 {
 
-
 	//SetRimColor(1.f, 1.f, 1.f);
 	//SetRimPower(3.f);
 

@@ -61,8 +61,7 @@ void TraceMob::BTInit()
 {
 	m_BT = BTManager::Get()->CreateBehaviorTree("TraceBT", m_pObject);
 
-	m_BT->AddBoardData("m_TargetTr", m_TargetTr);
-	m_BT->AddBoardData("m_State", &m_State);
+	m_BT->AddBoardData("m_TargetTr", &m_TargetTr);
 
 	m_BT->AddRootSelectorInSelector("TraceAndIdle");
 	Idle* myIdle = m_BT->AddSelectorInAction<Idle>("TraceAndIdle", "Idle");

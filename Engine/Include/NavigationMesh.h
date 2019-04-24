@@ -229,7 +229,10 @@ public:
 	int MousePickGetCellIndex(const int& _iStartSectionIndex, const int& _iEndSectionIndex, Vector3 rayOrigin, Vector3 rayDir,
 		Vector3& vIntersect);
 	void Click(bool _bIsMove, Vector4 _vColor = Vector4::Red);
+	void LandUp(float DeltaTime);
+	void LandDown(float DeltaTime);
 	PNavigationCell GetIndexFromCell(size_t _idx);
+
 public:
 	void Save(const char* pFileName, const string& strPathKey = DATA_PATH);
 	void SaveFromFullPath(const char* pFullPath);

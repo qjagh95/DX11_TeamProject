@@ -445,7 +445,7 @@ void CRenderManager::RenderDeferred(float fTime)
 	// MainCamera를 얻어온다.
 	FindMagicNumber(fTime);
 
-	CCamera* pMainCamera = GET_SINGLE(CSceneManager)->GetMainCameraNoneCount();
+	CCamera* pMainCamera = GET_SINGLE(CSceneManager)->GetMainCameraNonCount();
 	
 	// 그림자 맵을 그려준다.
 	if (pMainCamera->IsShadow())
@@ -1252,7 +1252,7 @@ void CRenderManager::RenderShadowTexture(float fTime)
 {
 	TransformCBuffer	tCBuffer = {};
 
-	CCamera* pCamera = GET_SINGLE(CSceneManager)->GetMainCameraNoneCount();
+	CCamera* pCamera = GET_SINGLE(CSceneManager)->GetMainCameraNonCount();
 
 	tCBuffer.matVP		= pCamera->GetVP();
 	tCBuffer.matInvVP = tCBuffer.matVP;

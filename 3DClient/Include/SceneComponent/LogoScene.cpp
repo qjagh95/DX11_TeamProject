@@ -22,7 +22,6 @@ bool CLogoScene::Init()
 {
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_ORTHO);
-	pCamera->SetNear(0.f);
 
 	CLayer* pUILayer = m_pScene->FindLayer("UI");
 
@@ -65,12 +64,11 @@ int CLogoScene::Update(float fTime)
 {
 	m_fChangeTime += fTime;
 
-	if (m_fChangeTime >= 3.f)
+	if (m_fChangeTime >= 10.f)
 	{
-		GET_SINGLE(CSceneManager)->CreateNextScene();
-
-		GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene", false);
+		GET_SINGLE(CSceneManager)->ChangScene("Second");
 	}
+
 	return 0;
 }
 

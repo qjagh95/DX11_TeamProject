@@ -13,8 +13,8 @@ class CEditManager;
 class CSceneManager;
 class PUN_DLL CScene : public CRef
 {
-	friend CEditManager;
-	friend CSceneManager;
+	friend class CEditManager;
+	friend class CSceneManager;
 
 private:
 	CScene();
@@ -22,10 +22,9 @@ private:
 
 private:
 	list<CLayer*> m_LayerList;
-	list<CSceneComponent*> m_SceneComponentList;
-	unordered_map<string, CGameObject*>	m_mapCamera;
+	CSceneComponent* m_pSceneComponent;
 
-// 레이어
+	// 레이어
 public:
 	void AddLayer(const string& strTag, int iZOrder);
 	void SortLayer();
@@ -37,21 +36,13 @@ public:
 public:
 	static bool SortLayerZOrder(const CLayer* pSrc, const  CLayer* pDest);
 
-// 오브젝트
+	// 오브젝트
 public:
 	CGameObject* FindObject(const string& strTag);
 	CGameObject* FindObjectNonCount(const string& strTag);
 
-// 카메라
+	// 카메라
 private:
-	CGameObject*	m_pMainCameraObj;
-	CTransform*		m_pMainCameraTr;
-	CCamera*		m_pMainCamera;
-
-	CGameObject*	m_pUICameraObj;
-	CTransform*		m_pUICameraTr;
-	CCamera*		m_pUICamera;
-
 	vector<float>* m_vecInput;
 	vector<float>* m_vecUpdate;
 	vector<float>* m_vecLateUpdate;
@@ -78,14 +69,14 @@ public:
 	CGameObject*	GetSkyObjectNonCount()				const;
 
 	CGameObject* CreateCamera(const string& strTag, const Vector3& vPos, CAMERA_TYPE eType,
-							  float fWidth, float fHeight, float fViewAngle, float fNear, float fFar);
+		float fWidth, float fHeight, float fViewAngle, float fNear, float fFar);
 	void ChangeCamera(const string& strTag);
 
 private:
 	CGameObject* FindCamera(const string& strTag);
 	void ProfileInit();
 
-// 스카이 박스
+	// 스카이 박스
 private:
 	CGameObject*	m_pSkyObj;
 	CMaterial*		m_pSkyMtrl;
@@ -106,8 +97,7 @@ public:
 			SAFE_RELEASE(pCom);
 			return false;
 		}
-		m_SceneComponentList.push_back(pCom);
-
+		m_pSceneComponent = pCom;
 		return true;
 	}
 

@@ -22,6 +22,5 @@ private:
 	void CreatePrototype();
 
 public:
-	void NextScene(float fTime);
 };
 

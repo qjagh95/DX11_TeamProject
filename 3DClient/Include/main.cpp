@@ -3,6 +3,7 @@
 #include "SceneComponent/MainScene.h"
 #include "SceneComponent/TutorialScene.h"
 #include "SceneComponent/FirTestScene.h"
+#include "SceneComponent/JBH_Stage3.h"
 #include "SceneComponent/TestScene.h"
 #include "SceneComponent/TestScene-YH.h"
 #include "SceneComponent/LogoScene.h"
@@ -52,7 +53,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
 
 #ifdef _DEBUG
-	GET_SINGLE(CSceneManager)->AddSceneComponent<CRandScapeTestScene>("TutorialScene");
+	GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("First", "LogoScene");
+	GET_SINGLE(CSceneManager)->AddScene<JBH_Stage3>("Second", "JBH_Stage3");
+	GET_SINGLE(CSceneManager)->AddScene<CFirTestScene>("Third", "FirTestScene");
+
 #else
 	GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");

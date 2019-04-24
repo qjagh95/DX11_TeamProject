@@ -74,7 +74,7 @@ void CArm::MouseRotation(float fTime)
 			float	fAngle = vMove.x * fValueW;
 			if (m_pTarget->GetGameObjectNonCount()->GetTag() == "FreeCamObj")
 			{
-				CSceneManager::GetInst()->GetMainCameraNoneCount()->GetTransformNonCount()->RotationY(fAngle);
+				CSceneManager::GetInst()->GetMainCameraNonCount()->GetTransformNonCount()->RotationY(fAngle);
 			}
 			else
 			{
@@ -91,7 +91,7 @@ void CArm::MouseRotation(float fTime)
 
 			if (m_pTarget->GetGameObjectNonCount()->GetTag() == "FreeCamObj")
 			{
-				CSceneManager::GetInst()->GetMainCameraNoneCount()->GetTransformNonCount()->RotationX(fAngle);
+				CSceneManager::GetInst()->GetMainCameraNonCount()->GetTransformNonCount()->RotationX(fAngle);
 			}
 			else
 			{

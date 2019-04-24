@@ -1,6 +1,6 @@
 #include "Share.fx"
 
-cbuffer NaviLandCBuffer : register(b12)
+cbuffer NaviLandCBuffer : register(b6)
 {
     float3 g_BrushPos;
     int g_BrushXRange;

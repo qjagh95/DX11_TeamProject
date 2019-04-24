@@ -109,10 +109,9 @@ void CCamera::SetCameraType(CAMERA_TYPE eType)
 	switch (eType)
 	{
 	case CT_PERSPECTIVE:
-		
 		m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle), m_fWidth / m_fHeight, m_fNear, m_fFar);
-
 		m_matProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fViewAngle), m_fWidth / m_fHeight, m_fNear, m_fFar);
+
 		break;
 	case CT_ORTHO:
 		/*
@@ -132,7 +131,7 @@ void CCamera::SetCameraType(CAMERA_TYPE eType)
 		(l+r)/(l-r)  (t+b)/(b-t)  zn/(zn-zf)  l
 		*/
 		m_matProj = XMMatrixOrthographicOffCenterLH(0.f, m_fWidth,
-			0.f, m_fHeight, m_fNear, m_fFar);
+			0.f, m_fHeight, 0.0f, m_fFar);
 		break;
 	}
 }
@@ -205,7 +204,7 @@ int CCamera::Update(float fTime)
 
 	m_matVP = m_matView * m_matProj;
 
-	if(CCore::GetInst()->m_bEditorMode == false)
+	if (CCore::GetInst()->m_bEditorMode == false)
 		m_pFrustum->Update(m_matView * m_matProj);
 
 	//if (m_bShadow)
@@ -244,83 +243,83 @@ int CCamera::Update(float fTime)
 
 int CCamera::LateUpdate(float fTime)
 {
-	const list<CGameObject*>* pObjList = m_pLightLayer->GetObjectList();
+	//const list<CGameObject*>* pObjList = m_pLightLayer->GetObjectList();
 
-	list<CGameObject*>::const_iterator iter;
-	list<CGameObject*>::const_iterator iterEnd = pObjList->end();
+	//list<CGameObject*>::const_iterator iter;
+	//list<CGameObject*>::const_iterator iterEnd = pObjList->end();
 
-	list<CGameObject*> pList;
+	//list<CGameObject*> pList;
 
-	pList.clear();
+	//pList.clear();
 
-	for (iter = pObjList->begin(); iter != iterEnd; ++iter)
-	{
-		if (!(*iter)->GetEnable())
-			continue;
+	//for (iter = pObjList->begin(); iter != iterEnd; ++iter)
+	//{
+	//	if (!(*iter)->GetEnable())
+	//		continue;
 
-		pList.push_back((*iter));
-	}
+	//	pList.push_back((*iter));
+	//}
 
-	if (pList.empty())
-	{
-		if (m_bShadow)
-			m_bShadow = false;
-		return 0;
-	}
+	//if (pList.empty())
+	//{
+	//	if (m_bShadow)
+	//		m_bShadow = false;
+	//	return 0;
+	//}
 
-	CTransform* pTr = nullptr;
-	CLight* pLight = nullptr;
-	float fLength = 1000000.0f;
-	Vector3 vDist;
-	float fDist = 0.0f;
+	//CTransform* pTr = nullptr;
+	//CLight* pLight = nullptr;
+	//float fLength = 1000000.0f;
+	//Vector3 vDist;
+	//float fDist = 0.0f;
 
-	list<CGameObject*>::iterator iter1;
-	list<CGameObject*>::iterator iter1End = pList.end();
-	list<CGameObject*>::iterator iter1Find;
+	//list<CGameObject*>::iterator iter1;
+	//list<CGameObject*>::iterator iter1End = pList.end();
+	//list<CGameObject*>::iterator iter1Find;
 
-	for (iter1 = pList.begin(); iter1 != iter1End;)
-	{
-		pTr = (*iter1)->GetTransformNonCount();
+	//for (iter1 = pList.begin(); iter1 != iter1End;)
+	//{
+	//	pTr = (*iter1)->GetTransformNonCount();
 
-		vDist = pTr->GetWorldPos() - m_pTransform->GetWorldPos();
-		fDist = vDist.Length();
+	//	vDist = pTr->GetWorldPos() - m_pTransform->GetWorldPos();
+	//	fDist = vDist.Length();
 
-		if (fDist < fLength)
-		{
-			SAFE_RELEASE(pLight);
-			pLight = (*iter1)->FindComponentFromType<CLight>(CT_LIGHT);
+	//	if (fDist < fLength)
+	//	{
+	//		SAFE_RELEASE(pLight);
+	//		pLight = (*iter1)->FindComponentFromType<CLight>(CT_LIGHT);
 
-			if (pLight->GetLightType() != LT_SPOT)
-			{
-				SAFE_RELEASE(pLight);
-				iter1 = pList.erase(iter1);
-				if (pList.empty())
-					break;
+	//		if (pLight->GetLightType() != LT_SPOT)
+	//		{
+	//			SAFE_RELEASE(pLight);
+	//			iter1 = pList.erase(iter1);
+	//			if (pList.empty())
+	//				break;
 
-				continue;
-			}
+	//			continue;
+	//		}
 
-			fLength = fDist;
-			iter1Find = iter1;
-		}
+	//		fLength = fDist;
+	//		iter1Find = iter1;
+	//	}
 
-		++iter1;
-	}
+	//	++iter1;
+	//}
 
-	if (!pLight)
-	{
-		if(m_bShadow)
-			m_bShadow = false;
+	//if (!pLight)
+	//{
+	//	if(m_bShadow)
+	//		m_bShadow = false;
 
-		return 0;
-	}
+	//	return 0;
+	//}
 
-	if(!m_bShadow)
-		m_bShadow = true;
+	//if(!m_bShadow)
+	//	m_bShadow = true;
 
-	m_matShadowVP = pLight->GetShadowVP();
+	//m_matShadowVP = pLight->GetShadowVP();
 
-	SAFE_RELEASE(pLight);
+	//SAFE_RELEASE(pLight);
 
 	return 0;
 }
@@ -377,7 +376,7 @@ Matrix CCamera::GetShadowVP() const
 
 bool CCamera::IsShadow() const
 {
-	return m_bShadow;
+	return false;
 }
 
 Matrix CCamera::GetVP() const

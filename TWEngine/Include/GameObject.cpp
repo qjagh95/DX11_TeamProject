@@ -149,12 +149,7 @@ CGameObject * CGameObject::CreatePrototype(const string & strTag,
 	bool bCurrent)
 {
 	CScene*	pScene = nullptr;
-
-	if (bCurrent)
-		pScene = GET_SINGLE(CSceneManager)->GetScene();
-
-	else
-		pScene = GET_SINGLE(CSceneManager)->GetNextScene();
+	pScene = GET_SINGLE(CSceneManager)->GetScene();
 
 	CGameObject*	pPrototype = FindPrototype(pScene, strTag);
 
@@ -198,12 +193,7 @@ CGameObject * CGameObject::CreateClone(const string & strTag,
 	const string & strProto, CLayer* pLayer, bool bCurrent)
 {
 	class CScene*	pScene = nullptr;
-
-	if (bCurrent)
-		pScene = GET_SINGLE(CSceneManager)->GetScene();
-
-	else
-		pScene = GET_SINGLE(CSceneManager)->GetNextScene();
+	pScene = GET_SINGLE(CSceneManager)->GetScene();
 
 	CGameObject*	pProto = FindPrototype(pScene, strProto);
 

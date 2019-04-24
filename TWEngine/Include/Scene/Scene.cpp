@@ -14,6 +14,7 @@ CScene::CScene()
 	m_pSkyObj = nullptr;
 	m_pSkyMtrl = nullptr;
 	m_LogText = NULLPTR;
+	m_pSceneComponent = NULLPTR;
 
 	m_bHeader = false;
 	m_vecInput = NULLPTR;
@@ -30,82 +31,68 @@ CScene::~CScene()
 
 	CGameObject::DestroyPrototype(this);
 	Safe_Release_VecList(m_LayerList);
-	Safe_Release_VecList(m_SceneComponentList);
 
-	Safe_Release_Map(m_mapCamera);
-	SAFE_RELEASE(m_pMainCameraObj);
-	SAFE_RELEASE(m_pMainCameraTr);
-	SAFE_RELEASE(m_pMainCamera);
-	SAFE_RELEASE(m_pUICameraObj);
-	SAFE_RELEASE(m_pUICameraTr);
-	SAFE_RELEASE(m_pUICamera);
+	SAFE_RELEASE(m_pSceneComponent);
 }
 
 CGameObject * CScene::GetMainCameraObj() const
 {
-	m_pMainCameraObj->AddRef();
-	return m_pMainCameraObj;
+	return CSceneManager::GetInst()->GetMainCameraObj();
 }
 
 CGameObject * CScene::GetMainCameraObjNonCount() const
 {
-	return m_pMainCameraObj;
+	return CSceneManager::GetInst()->GetMainCameraObjNonCount();
 }
 
 CCamera * CScene::GetMainCamera() const
 {
-	m_pMainCamera->AddRef();
-	return m_pMainCamera;
+	return CSceneManager::GetInst()->GetMainCamera();
 }
 
 CCamera * CScene::GetMainCameraNonCount() const
 {
-	return m_pMainCamera;
+	return CSceneManager::GetInst()->GetMainCameraNonCount();
 }
 
 CTransform * CScene::GetMainCameraTransform() const
 {
-	m_pMainCameraTr->AddRef();
-	return m_pMainCameraTr;
+	return CSceneManager::GetInst()->GetMainCameraTransform();
 }
 
 CTransform * CScene::GetMainCameraTransformNonCount() const
 {
-	return m_pMainCameraTr;
+	return CSceneManager::GetInst()->GetMainCameraTransformNonCount();
 }
-
 
 CGameObject * CScene::GetUICameraObj() const
 {
-	m_pUICameraObj->AddRef();
-	return m_pUICameraObj;
+	return CSceneManager::GetInst()->GetUICameraObj();
 }
 
 CGameObject * CScene::GetUICameraObjNonCount() const
 {
-	return m_pUICameraObj;
+	return CSceneManager::GetInst()->GetUICameraObjNonCount();
 }
 
 CCamera * CScene::GetUICamera() const
 {
-	m_pUICamera->AddRef();
-	return m_pUICamera;
+	return CSceneManager::GetInst()->GetUICamera();
 }
 
 CCamera * CScene::GetUICameraNonCount() const
 {
-	return m_pUICamera;
+	return CSceneManager::GetInst()->GetUICameraNonCount();
 }
 
 CTransform * CScene::GetUICameraTransform() const
 {
-	m_pUICameraTr->AddRef();
-	return m_pUICameraTr;
+	return CSceneManager::GetInst()->GetUICameraTransform();
 }
 
 CTransform * CScene::GetUICameraTransformNonCount() const
 {
-	return m_pUICameraTr;
+	return CSceneManager::GetInst()->GetUICameraTransformNonCount();
 }
 
 CGameObject * CScene::GetSkyObject() const
@@ -141,14 +128,6 @@ void CScene::Start()
 		(*iter)->Start();
 	}
 
-	list<CSceneComponent*>::iterator	iter1;
-	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
-
-	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End; ++iter1)
-	{
-		(*iter1)->Start();
-	}
-
 	GET_SINGLE(CRenderManager)->SetSkyObject(m_pSkyObj);
 }
 
@@ -163,17 +142,6 @@ bool CScene::Init()
 
 	CLayer* pLightLayer = FindLayer("Light");
 	CLayer*	pLayer = FindLayer("Default");
-
-	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 90.f, 0.03f, 1000.f);;
-	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
-	m_pMainCamera = m_pMainCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
-	m_pMainCamera->Shadow(true);
-	m_pMainCamera->SetLightLayer(pLightLayer);
-
-	m_pUICameraObj = CreateCamera("UICamera", Vector3(0.f, 0.f, 0.f), CT_ORTHO, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 60.f, 0.f, 1000.f);
-	m_pUICameraTr = m_pUICameraObj->GetTransform();
-	m_pUICamera = m_pUICameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
-
 
 	m_pSkyObj = CGameObject::CreateObject("Sky");
 
@@ -191,14 +159,14 @@ bool CScene::Init()
 	pRenderer->SetMesh("Sky");
 	pRenderer->SetRenderState(DEPTH_LESSEQUAL);
 	//pRenderer->SetRenderState(DEPTH_DISABLE);
-	
+
 	pRenderer->SetRenderState(CULL_NONE);
 
 	SAFE_RELEASE(pRenderer);
 
 	m_pSkyMtrl = m_pSkyObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("NightSky.dds"));
+	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
 	m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
 
 	if (CCore::GetInst()->m_bGuiMode == false)
@@ -210,16 +178,13 @@ bool CScene::Init()
 	m_LogText = CCore::GetInst()->CreateFileStream(Path, "Scene", "Scene");
 
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLightLayer, true);
-	CTransform* pTr = pLightObj->GetTransform();	
+	CTransform* pTr = pLightObj->GetTransform();
 
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
 	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
 	pLight->SetLightType(LT_DIR);
 
 	pTr->RotationX(90.0f);
-	
-	m_pMainCamera->SetShadowLight(pLight->GetTransformNonCount());
-	m_pMainCamera->Shadow(true);
 
 	SAFE_RELEASE(pTr);
 	SAFE_RELEASE(pLight);
@@ -235,27 +200,7 @@ int CScene::Input(float fTime)
 	TimeInfo Info = {};
 	Info.Start = clock();
 
-	list<CSceneComponent*>::iterator	iter1;
-	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
-
-	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
-	{
-		if (!(*iter1)->GetActive())
-		{
-			SAFE_RELEASE((*iter1));
-			iter1 = m_SceneComponentList.erase(iter1);
-			continue;
-		}
-
-		else if (!(*iter1)->GetEnable())
-		{
-			++iter1;
-			continue;
-		}
-
-		(*iter1)->Input(fTime);
-		++iter1;
-	}
+	m_pSceneComponent->Input(fTime);
 
 	list<CLayer*>::iterator	iter;
 	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
@@ -279,8 +224,6 @@ int CScene::Input(float fTime)
 		++iter;
 	}
 
-	m_pMainCameraObj->Input(fTime);
-
 	if (m_bHeader == false)
 		return 0;
 
@@ -301,34 +244,15 @@ int CScene::Update(float fTime)
 	TimeInfo Info = {};
 	Info.Start = clock();
 
-	CTransform*	pTr = m_pSkyObj->GetTransform();
+	//CTransform*	pTr = m_pSkyObj->GetTransform();
 
-	pTr->RotationY(3.f, fTime);
-	pTr->Update(fTime);
+	//pTr->RotationY(3.f, fTime);
+	//pTr->Update(fTime);
 
-	SAFE_RELEASE(pTr);
+	//SAFE_RELEASE(pTr);
 
-	list<CSceneComponent*>::iterator	iter1;
-	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
 
-	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
-	{
-		if (!(*iter1)->GetActive())
-		{
-			SAFE_RELEASE((*iter1));
-			iter1 = m_SceneComponentList.erase(iter1);
-			continue;
-		}
-
-		else if (!(*iter1)->GetEnable())
-		{
-			++iter1;
-			continue;
-		}
-
-		(*iter1)->Update(fTime);
-		++iter1;
-	}
+	m_pSceneComponent->Update(fTime);
 
 	list<CLayer*>::iterator	iter;
 	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
@@ -352,8 +276,6 @@ int CScene::Update(float fTime)
 		++iter;
 	}
 
-	m_pMainCameraObj->Update(fTime);
-
 	if (m_bHeader == false)
 		return 0;
 
@@ -374,27 +296,8 @@ int CScene::LateUpdate(float fTime)
 	TimeInfo Info = {};
 	Info.Start = clock();
 
-	list<CSceneComponent*>::iterator	iter1;
-	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
 
-	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
-	{
-		if (!(*iter1)->GetActive())
-		{
-			SAFE_RELEASE((*iter1));
-			iter1 = m_SceneComponentList.erase(iter1);
-			continue;
-		}
-
-		else if (!(*iter1)->GetEnable())
-		{
-			++iter1;
-			continue;
-		}
-
-		(*iter1)->LateUpdate(fTime);
-		++iter1;
-	}
+	m_pSceneComponent->LateUpdate(fTime);
 
 	list<CLayer*>::iterator	iter;
 	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
@@ -418,8 +321,6 @@ int CScene::LateUpdate(float fTime)
 		++iter;
 	}
 
-	m_pMainCameraObj->LateUpdate(fTime);
-	
 	if (m_bHeader == false)
 		return 0;
 
@@ -440,27 +341,7 @@ void CScene::Collision(float fTime)
 	TimeInfo Info = {};
 	Info.Start = clock();
 
-	list<CSceneComponent*>::iterator	iter1;
-	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
-
-	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
-	{
-		if (!(*iter1)->GetActive())
-		{
-			SAFE_RELEASE((*iter1));
-			iter1 = m_SceneComponentList.erase(iter1);
-			continue;
-		}
-
-		else if (!(*iter1)->GetEnable())
-		{
-			++iter1;
-			continue;
-		}
-
-		(*iter1)->Collision(fTime);
-		++iter1;
-	}
+	m_pSceneComponent->Collision(fTime);
 
 	list<CLayer*>::iterator	iter;
 	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
@@ -506,27 +387,7 @@ void CScene::Render(float fTime)
 	TimeInfo Info = {};
 	Info.Start = clock();
 
-	list<CSceneComponent*>::iterator	iter1;
-	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
-
-	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End;)
-	{
-		if (!(*iter1)->GetActive())
-		{
-			SAFE_RELEASE((*iter1));
-			iter1 = m_SceneComponentList.erase(iter1);
-			continue;
-		}
-
-		else if (!(*iter1)->GetEnable())
-		{
-			++iter1;
-			continue;
-		}
-
-		(*iter1)->Render(fTime);
-		++iter1;
-	}
+	m_pSceneComponent->Render(fTime);
 
 	list<CLayer*>::iterator	iter;
 	list<CLayer*>::iterator	iterEnd = m_LayerList.end();
@@ -550,7 +411,7 @@ void CScene::Render(float fTime)
 		++iter;
 	}
 
-	if(CCore::GetInst()->m_bGuiMode == true)
+	if (CCore::GetInst()->m_bGuiMode == true)
 		m_bHeader = ImGui::CollapsingHeader("Scene");
 
 	if (m_bHeader == true)
@@ -681,71 +542,27 @@ CGameObject* CScene::FindObjectNonCount(const string & strTag)
 	return nullptr;
 }
 
-CGameObject * CScene::CreateCamera(const string & strTag,
-	const Vector3& vPos,
-	CAMERA_TYPE eType, float fWidth, float fHeight, float fViewAngle,
-	float fNear, float fFar)
+CGameObject * CScene::CreateCamera(const string & strTag, const Vector3& vPos, CAMERA_TYPE eType, float fWidth, float fHeight, float fViewAngle, float fNear, float fFar)
 {
-	CGameObject*	pCameraObj = FindCamera(strTag);
-
-	if (pCameraObj)
-		return pCameraObj;
-
-	pCameraObj = CGameObject::CreateObject(strTag);
-
-	CTransform*	pTr = pCameraObj->GetTransform();
-
-	pTr->SetWorldPos(vPos);
-
-	SAFE_RELEASE(pTr);
-
-	CCamera*	pCamera = pCameraObj->AddComponent<CCamera>("Camera");
-
-	pCamera->SetCameraInfo(eType, fWidth, fHeight, fViewAngle, fNear, fFar);
-
-	SAFE_RELEASE(pCamera);
-
-	pCameraObj->AddRef();
-
-	m_mapCamera.insert(make_pair(strTag, pCameraObj));
-
-	return pCameraObj;
+	return CSceneManager::GetInst()->CreateCamera(strTag, vPos, eType, fWidth, fHeight, fViewAngle, fNear, fFar);
 }
 
 void CScene::ChangeCamera(const string & strTag)
 {
-	CGameObject*	pCameraObj = FindCamera(strTag);
-
-	if (!pCameraObj)
-		return;
-
-	SAFE_RELEASE(m_pMainCameraObj);
-	SAFE_RELEASE(m_pMainCamera);
-	SAFE_RELEASE(m_pMainCameraTr);
-
-	m_pMainCameraObj = pCameraObj;
-	m_pMainCameraTr = pCameraObj->GetTransform();
-	m_pMainCamera = pCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
+	CSceneManager::GetInst()->ChangeCamera(strTag);
 }
 
 CGameObject * CScene::FindCamera(const string & strTag)
 {
-	unordered_map<string, CGameObject*>::iterator	iter = m_mapCamera.find(strTag);
-
-	if (iter == m_mapCamera.end())
-		return nullptr;
-
-	iter->second->AddRef();
-
-	return iter->second;
+	return CSceneManager::GetInst()->FindCamera(strTag);
 }
 
 void CScene::ProfileInit()
 {
-	m_vecInput = CCore::GetInst()->AddManagerVector("SceneInput"); 
+	m_vecInput = CCore::GetInst()->AddManagerVector("SceneInput");
 	m_vecUpdate = CCore::GetInst()->AddManagerVector("SceneUpdate");
-	m_vecLateUpdate = CCore::GetInst()->AddManagerVector("SceneLateUpdate"); 
-	m_vecCollsion = CCore::GetInst()->AddManagerVector("SceneCollsion"); 
+	m_vecLateUpdate = CCore::GetInst()->AddManagerVector("SceneLateUpdate");
+	m_vecCollsion = CCore::GetInst()->AddManagerVector("SceneCollsion");
 	m_vecRender = CCore::GetInst()->AddManagerVector("SceneRender");
 }
 
@@ -756,17 +573,7 @@ bool CScene::SortLayerZOrder(const CLayer* pSrc, const CLayer* pDest)
 
 void CScene::EnableSceneComponent(const string & strTag, bool bEnable)
 {
-	list<CSceneComponent*>::iterator	iter1;
-	list<CSceneComponent*>::iterator	iter1End = m_SceneComponentList.end();
-
-	for (iter1 = m_SceneComponentList.begin(); iter1 != iter1End; ++iter1)
-	{
-		if ((*iter1)->GetTag() == strTag)
-		{
-			(*iter1)->SetEnable(bEnable);
-			return;
-		}
-	}
+	m_pSceneComponent->SetEnable(bEnable);
 }
 
 void CScene::Save(string _fullPath)

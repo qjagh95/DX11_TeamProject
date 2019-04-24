@@ -65,6 +65,14 @@ bool CRandScapeTestScene::Init()
 	SAFE_RELEASE(pPlayer);
 	SAFE_RELEASE(pObject);
 
+	CGameObject* newLand = CGameObject::CreateObject("123", pDefaultLayer);
+	CLandScape* Land = newLand->AddComponent< CLandScape>("123");
+	string Temp = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
+	Temp += "Nav.nav";
+	Land->LoadLandScape(Temp);
+
+	SAFE_RELEASE(newLand);
+	SAFE_RELEASE(Land);
 	//pObject = CGameObject::CreateObject("Minion", pDefaultLayer);
 
 	//CMinion3D*	pMinion = pObject->AddComponent<CMinion3D>("Minion");
@@ -104,12 +112,12 @@ bool CRandScapeTestScene::Init()
 	//SAFE_RELEASE(pLandScape);
 	//SAFE_RELEASE(pLandScapeObj);
 
-	CGameObject* pParkourObj = CGameObject::CreateObject("ParkourTestObj", pDefaultLayer);
+	//CGameObject* pParkourObj = CGameObject::CreateObject("ParkourTestObj", pDefaultLayer);
 
-	CParkourTest* pParkourTest = pParkourObj->AddComponent<CParkourTest>("ParkourTestCom");
+	//CParkourTest* pParkourTest = pParkourObj->AddComponent<CParkourTest>("ParkourTestCom");
 
-	SAFE_RELEASE(pParkourTest);
-	SAFE_RELEASE(pParkourObj);
+	//SAFE_RELEASE(pParkourTest);
+	//SAFE_RELEASE(pParkourObj);
 	
 	SAFE_RELEASE(pCamera);
 	SAFE_RELEASE(pDefaultLayer);

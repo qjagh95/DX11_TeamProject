@@ -18,6 +18,7 @@
 #include <Component/SoundSource.h>
 #include <Component/Animation.h>
 #include "Component/Gizmo.h"
+
 CFirTestScene::CFirTestScene()
 {
 }
@@ -339,6 +340,11 @@ bool CFirTestScene::Init()
 
 int CFirTestScene::Update(float fTime)
 {
+	if (CInput::GetInst()->KeyPress("ChangeScene"))
+	{
+		CSceneManager::GetInst()->ChangScene("Second");
+	}
+
 	return 0;
 }
 

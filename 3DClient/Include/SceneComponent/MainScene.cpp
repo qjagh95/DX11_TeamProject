@@ -196,10 +196,4 @@ void CMainScene::Move(float fScale, float fTime)
 
 void CMainScene::CreatePrototype()
 {
-	
-}
-
-void CMainScene::NextScene(float fTime)
-{
-	GET_SINGLE(CSceneManager)->CreateNextScene();
 }

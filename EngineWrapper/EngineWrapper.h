@@ -33,7 +33,7 @@ namespace EngineWrapper
 
 			// EditScene 
 			// 툴에서 기본적으로 사용되는 객체 및 초기화 작업을 해주는 클래스
-			CSceneManager::GetInst()->AddSceneComponent<PUN::EditorScene>("EditScene");
+			CSceneManager::GetInst()->AddScene<PUN::EditorScene>("EditScene", "EditCom");
 		}
 
 		void Logic()
