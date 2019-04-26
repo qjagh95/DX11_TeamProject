@@ -607,11 +607,11 @@ bool CCore::EditInit(HWND hWnd, HINSTANCE hInstance, unsigned int iWidth, unsign
 		return false;
 	}
 
-	if (!GET_SINGLE(CEditManager)->GetInst()->Init())
-	{
-		TrueAssert(true);
-		return false;
-	}
+	//if (!GET_SINGLE(CEditManager)->GetInst()->Init())
+	//{
+	//	TrueAssert(true);
+	//	return false;
+	//}
 
 	m_fTimeScale = 1.0f;
 	m_pTimer = CTimerManager::GetInst()->FindTimer("MainTimer");
