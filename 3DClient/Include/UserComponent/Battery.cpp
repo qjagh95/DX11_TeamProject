@@ -13,6 +13,7 @@ CBattery::CBattery()
 	m_bUseInven = false;
 	m_bMouseOn = false;
 	m_bOnInven = false;
+	m_iCount = 0;
 }
 
 CBattery::CBattery(const CBattery & battery)	:
@@ -80,11 +81,15 @@ int CBattery::Update(float fTime)
 			{
 				m_bOnInven = true;
 
+
 				m_pInvenObj = CGameObject::FindObject("Inven");
 
 				CGameObject*	pIconObj = CGameObject::CreateObject("Icon_Battery", m_pLayer);
 
 				CBatteryIcon*	pIcon = pIconObj->AddComponent<CBatteryIcon>("Icon_Battery");
+
+				++m_iCount;
+				pIcon->Add(m_iCount);
 
 				m_pInven = m_pInvenObj->FindComponentFromTag<CInventory>("Inven");
 				m_pInven->AddItem(pIconObj);

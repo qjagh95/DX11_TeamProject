@@ -150,6 +150,12 @@
     <ClInclude Include="UserComponent\Locker.h">
       <Filter>02. UserComponent\07. Interact</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\DocxInven.h">
+      <Filter>02. UserComponent\04. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Document.h">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -253,6 +259,12 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Locker.cpp">
       <Filter>02. UserComponent\07. Interact</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\DocxInven.cpp">
+      <Filter>02. UserComponent\04. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Document.cpp">
+      <Filter>02. UserComponent\05. Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

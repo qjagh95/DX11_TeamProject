@@ -443,6 +443,12 @@
     <ClCompile Include="Component\ParkourTest.cpp">
       <Filter>06. Component\19.Parkour</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Item.cpp">
+      <Filter>06. Component\03. UserComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Number.cpp">
+      <Filter>06. Component\08. UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Macro.h">
@@ -723,6 +729,12 @@
     </ClInclude>
     <ClInclude Include="Component\ParkourTest.h">
       <Filter>06. Component\19.Parkour</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Item.h">
+      <Filter>06. Component\03. UserComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Number.h">
+      <Filter>06. Component\08. UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

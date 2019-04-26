@@ -1,11 +1,13 @@
 #pragma once
-#include "Component/UserComponent.h"
+
 #include "../Client.h"
+#include "Component/Item.h"
+#include "Component/Number.h"
 
 PUN_USING
 
 class CBatteryIcon :
-	public CUserComponent
+	public CItem
 {
 	friend class CGameObject;
 
@@ -17,10 +19,15 @@ private:
 private:
 	CGameObject*	m_pInvenObj;
 	class CInventory*	m_pInven;
+	CGameObject*	m_pNumObj;
+	class CNumber*	m_pNumber;
 	bool	m_bMouseOn;
 	bool	m_bUse;
+	int		m_iCount;
 
 public:
+	virtual void Add(int iCount);
+	virtual void Use();
 	bool	GetUse()	const;
 
 public:

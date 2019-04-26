@@ -57,12 +57,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	CCommonSoundLoader::GetInst()->LoadSoundRandomSeedCnt(TEXT("CommonSound_SoundCnt.csv"));
 
 #ifdef _DEBUG
-	GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("First", "LogoScene");
-	GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("Second", "YH_TEST");
+	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
+	//GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("First", "LogoScene");
+	//GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("Second", "YH_TEST");
 	//GET_SINGLE(CSceneManager)->AddScene<CFirTestScene>("Third", "FirTestScene");
 
 #else
-	GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene");
+	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
+	//GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");
 #endif
 

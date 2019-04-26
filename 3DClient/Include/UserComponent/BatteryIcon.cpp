@@ -13,20 +13,77 @@ CBatteryIcon::CBatteryIcon()	:
 	 m_pInvenObj(nullptr)
 	,m_pInven(nullptr)
 {
-	m_eComType = (COMPONENT_TYPE)UT_ICON;
+	m_eComType = (COMPONENT_TYPE)IT_BATTERY;
 	m_bMouseOn = false;
 	m_bUse = false;
+	m_iCount = 0;
 }
 
 CBatteryIcon::CBatteryIcon(const CBatteryIcon & Icon1)	:
-	CUserComponent(Icon1)
+	CItem(Icon1)
 {
 }
 
 CBatteryIcon::~CBatteryIcon()
 {
+	SAFE_RELEASE(m_pNumber);
+	SAFE_RELEASE(m_pNumObj);
 	SAFE_RELEASE(m_pInvenObj);
 	SAFE_RELEASE(m_pInven);
+}
+
+void CBatteryIcon::Add(int iCount)
+{
+	m_iCount = iCount;
+
+	int	iResult = 0;
+	int iNumber = iCount;
+/*
+	while (iNumber > 0)
+	{
+		iResult = iNumber % 10;
+		iNumber /= 10;
+	}*/
+
+	m_pNumber->SetNumber(iNumber);
+	m_pNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
+
+	Vector3	vIconPos = m_pTransform->GetWorldPos();
+
+	CTransform*	pNumTr = m_pNumObj->GetTransform();
+
+	pNumTr->SetWorldPos(vIconPos.x + 80.f, vIconPos.y, 0.f);
+
+	SAFE_RELEASE(pNumTr);
+}
+
+void CBatteryIcon::Use()
+{
+	--m_iCount;
+
+	if (m_iCount < 0)
+		m_iCount = 0;
+
+
+	int	iResult = 0;
+	int iNumber = m_iCount;
+
+	while (iNumber > 0)
+	{
+		iResult = iNumber % 10;
+		iNumber /= 10;
+	}
+
+	m_pNumber->SetNumber(iResult);
+	m_pNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
+
+	Vector3	vIconPos = m_pTransform->GetWorldPos();
+
+	CTransform*	pNumTr = m_pNumObj->GetTransform();
+
+	pNumTr->SetWorldPos(vIconPos.x + 80.f, vIconPos.y, 0.f);
+
+	SAFE_RELEASE(pNumTr);
 }
 
 bool CBatteryIcon::GetUse() const
@@ -75,6 +132,12 @@ bool CBatteryIcon::Init()
 
 	SAFE_RELEASE(pBody);	
 
+	m_pNumObj = CGameObject::CreateObject("BatteryNumber", m_pLayer);
+	m_pNumber = m_pNumObj->AddComponent<CNumber>("BatteryNumber");
+
+	m_pNumber->SetNumber(0);
+	m_pNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
+
 	return true;
 }
 
@@ -106,7 +169,13 @@ int CBatteryIcon::Update(float fTime)
 			SAFE_RELEASE(pHandycam);
 			SAFE_RELEASE(pHandycamObj);
 
-			m_pObject->SetEnable(false);
+			Use();
+
+			if (m_iCount == 0)
+			{
+				m_pNumObj->SetEnable(false);
+				m_pObject->SetEnable(false);
+			}
 		}
 	}
 

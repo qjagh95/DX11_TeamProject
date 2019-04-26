@@ -27,7 +27,6 @@ private:
 	bool					m_bMouseOn;
 	bool					m_bOnInven;
 	bool					m_bVisible;
-	bool					m_bMouseOnInven;
 	Vector2					m_vMouse;
 	float					m_fItemY;
 

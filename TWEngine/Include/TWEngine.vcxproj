@@ -235,9 +235,11 @@
     <ClInclude Include="Component\FreeCamera.h" />
     <ClInclude Include="Component\Frustum.h" />
     <ClInclude Include="Component\Gizmo.h" />
+    <ClInclude Include="Component\Item.h" />
     <ClInclude Include="Component\LandScape.h" />
     <ClInclude Include="Component\Light.h" />
     <ClInclude Include="Component\Material.h" />
+    <ClInclude Include="Component\Number.h" />
     <ClInclude Include="Component\ParkourTest.h" />
     <ClInclude Include="Component\Particle.h" />
     <ClInclude Include="Component\Renderer.h" />
@@ -380,6 +382,7 @@
     </ClCompile>
     <ClCompile Include="Component\Frustum.cpp" />
     <ClCompile Include="Component\Gizmo.cpp" />
+    <ClCompile Include="Component\Item.cpp" />
     <ClCompile Include="Component\LandScape.cpp" />
     <ClCompile Include="Component\Light.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -390,6 +393,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Component\Number.cpp" />
     <ClCompile Include="Component\ParkourTest.cpp" />
     <ClCompile Include="Component\Particle.cpp" />
     <ClCompile Include="Component\Renderer.cpp">

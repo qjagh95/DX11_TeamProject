@@ -133,6 +133,8 @@ private:
 	PUN::ANIMATIONCALLBACK m_arrAnimCallbacks[16];
 	class CInventory*	m_pInven;
 	class CHandycam*	m_pHandycam;
+	class CDocxInven*	m_pDocxInven;
+	bool		m_bNaviOn;
 	Vector3 m_vInitLocalPos;
 	bool  m_bLoadedOnce		;
 	int	  m_iState			;

@@ -8,6 +8,7 @@
 #include "Input.h"
 #include "Zipper.h"
 #include "Component/ColliderSphere.h"
+#include "Component/Number.h"
 
 CInventory::CInventory() :
 	m_iIndex(0),
@@ -57,6 +58,7 @@ void CInventory::SetVisible()
 {
 	if (m_iFlag == -1)
 	{
+		CSoundManager::GetInst()->SoundPlay("Inven_Open");
 		m_bVisible = true;
 		m_pObject->SetEnable(true);
 
@@ -96,10 +98,6 @@ void CInventory::SetInvenState(INVENTORY_STATE eState)
 	m_eState = eState;
 }
 
-void CInventory::SetMouseOnInven(bool bMouseOnInven)
-{
-	m_bMouseOnInven = bMouseOnInven;
-}
 
 bool CInventory::GetVisible() const
 {
@@ -121,14 +119,26 @@ void CInventory::AddItem(CGameObject * pItem)
 	if (Full())
 		return;
 
-	m_vecItem[m_iIndex] = pItem;
-
-	if (m_pObject->GetEnable() == false)
+	if (!pItem)
 	{
-		m_vecItem[m_iIndex]->SetEnable(false);
+		m_vecItem[m_iIndex] = pItem;
+
+		if (m_pObject->GetEnable() == false)
+		{
+			m_vecItem[m_iIndex]->SetEnable(false);
+		}
+
+		++m_iIndex;
 	}
 
-	++m_iIndex;
+	else
+	{
+		ICON_TYPE	eType;
+		if (pItem->CheckComponentFromType((COMPONENT_TYPE)eType))
+		{
+
+		}
+	}
 }
 
 void CInventory::DeleteItem(CGameObject * pItem)
@@ -156,10 +166,6 @@ const Vector3 CInventory::GetInvenPos() const
 	return m_pTransform->GetWorldPos();
 }
 
-bool CInventory::GetMouseOnInven() const
-{
-	return m_bMouseOnInven;
-}
 
 void CInventory::AfterClone()
 {
@@ -167,6 +173,8 @@ void CInventory::AfterClone()
 
 bool CInventory::Init()
 {
+	CSoundManager::GetInst()->CreateSoundEffect("Inven_Open", TEXT("Zipper_Open.WAV"));
+
 	m_pUILayer = m_pScene->FindLayer("UI");
 
 	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("InventoryRenderer");

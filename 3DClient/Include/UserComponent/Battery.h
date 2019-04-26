@@ -20,6 +20,7 @@ private:
 	bool			m_bMouseOn;
 	bool			m_bUseInven;
 	bool			m_bOnInven;
+	int				m_iCount;
 
 public:
 	virtual void AfterClone();

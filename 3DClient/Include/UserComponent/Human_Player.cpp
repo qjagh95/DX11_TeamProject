@@ -17,6 +17,8 @@
 #include "Inventory.h"
 #include "../CommonSoundLoader.h"
 #include "Handycam.h"
+#include "DocxInven.h"
+#include "NavigationMesh.h"
 
 using namespace PUN;
 
@@ -42,7 +44,8 @@ CHuman_Player::CHuman_Player():
 	m_fCamTakeTime(0.8f),
 	m_fGunTakeTime(1.2f),
 	m_eFootStep(FTSE_DEFAULT),
-	m_pPartCamAnim(nullptr)
+	m_pPartCamAnim(nullptr),
+	m_bNaviOn(true)
 {
 	m_vecIgnoreRightArmKey.reserve(24);
 	//m_vecIgnoreRightArmKey.push_back(33);
@@ -242,6 +245,7 @@ CHuman_Player::~CHuman_Player()
 	SAFE_RELEASE(m_pCamModelObj);
 	SAFE_RELEASE(m_pRootBonePos);
 	SAFE_RELEASE(m_pHandGun);
+	SAFE_RELEASE(m_pDocxInven);
 
 }
 
@@ -249,6 +253,7 @@ bool CHuman_Player::Init()
 {
 	pCamEffManager = CCameraEff::GetInst();
 	pCamEffManager->Init();
+	pCamEffManager->SetFirstPersonViewEnable();
 	
 	PUN::CTransform *pCamera = m_pScene->GetMainCameraTransform();
 	pCamEffManager->SetCamTransform(pCamera);
@@ -270,6 +275,7 @@ bool CHuman_Player::Init()
 	_Input->AddKey("I", 'I');
 	_Input->AddKey("G", 'G');
 	_Input->AddKey("Ctrl", VK_CONTROL);
+	_Input->AddKey("U", 'U');
 
 	AfterClone();
 
@@ -327,6 +333,14 @@ void CHuman_Player::AfterClone()
 	//SAFE_RELEASE(pCamRenderer);
 	SAFE_RELEASE(pHandycamTr);
 	SAFE_RELEASE(pHandycamObj);
+
+	// Document Inventory
+	PUN::CGameObject *pDocxInvObj = CGameObject::CreateObject("DocxInven", m_pLayer);
+
+	m_pDocxInven = pDocxInvObj->AddComponent<CDocxInven>("DocxInven");
+	m_pDocxInven->SetDocxMax(19);
+
+	SAFE_RELEASE(pDocxInvObj);
 
 	//Handycam fake model
 	m_pCamModelObj = PUN::CGameObject::CreateObject("Handycam_model", m_pLayer, true);
@@ -426,7 +440,12 @@ int CHuman_Player::Input(float fTime)
 	}
 
 	//Other Keys
-	
+
+	if (_Input->KeyPress("U"))
+	{
+		m_pDocxInven->SetVisible();
+	}
+
 	if (_Input->KeyPress("I"))
 	{
 		if (m_iState & PSTATUS_ITEM)
@@ -926,6 +945,21 @@ int CHuman_Player::Input(float fTime)
 
 int CHuman_Player::Update(float fTime)
 {
+	CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene,
+		m_pTransform->GetWorldPos());
+
+	if (pMesh)
+	{
+		if (m_bNaviOn)
+		{
+			float	fY = pMesh->GetY(m_pTransform->GetWorldPos());
+
+			Vector3 vPos = m_pTransform->GetWorldPos();
+			vPos.y = fY;
+			cout << "y : " << fY << endl;
+			m_pTransform->SetWorldPos(vPos);
+		}
+	}
 	
 	if (m_iState & PSTATUS_CROUCHING)
 	{
