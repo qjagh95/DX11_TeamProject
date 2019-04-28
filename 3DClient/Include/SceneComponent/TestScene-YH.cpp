@@ -44,30 +44,11 @@ CTestSceneYH::~CTestSceneYH()
 bool CTestSceneYH::Init()
 {
 	CCameraEff::GetInst()->SetFirstPersonViewEnable();
-	//wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
-	//wstr += L"Test.dat";
-	//string filePath = CW2A(wstr.c_str());
-	//m_pScene->Load(filePath);
-	PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
-	_SMgr->SetAudioCoordSize(16.f);
-	//_SMgr->CreateSoundEffect("bgm1", TEXT("SurgeonAttack.wav"));
-	//_SMgr->PlayBgm("bgm1");
-	//
 	
-
-	//PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
-
-	//_SMgr->CreateSoundEffect("bgm1", TEXT("SurgeonAttack.wav"));
-	//_SMgr->SoundPlay("bgm1", ST_BGM);
-
-
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	pCamera->SetNear(0.03f);
-
-	CTransform* pCameraTr = pCamera->GetTransform();
-	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
-	SAFE_RELEASE(pCameraTr);
+		
 
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
@@ -96,95 +77,14 @@ bool CTestSceneYH::Init()
 
 	pTransform = pObject->GetTransform();
 	pTransform->RotationX(90.0f);
-	//pTransform->SetWorldPos(50.0f, 70.0f, 0.0f);
-
-	//CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
-
-	//pArm->EnableMouse();
-	//pArm->SetTarget(pTransform);
-
-	//SAFE_RELEASE(pArm);
+	
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLightLayer);
 
 
-	//CGameObject* pFogObj = CGameObject::CreateObject("FogObj", pDefaultLayer);
-	//pTransform = pFogObj->GetTransform();
-
-	//pTransform->SetWorldScale(50, 50, 50);
-	//pTransform->SetWorldPos(3, 4, 3);
-
-	//SAFE_RELEASE(pTransform);
-
-	//CVolumeFog* pFog = pFogObj->AddComponent<CVolumeFog>("Fog");
-	//pFog->SetFogColor(Vector4(0.2f, 0.2f, 0.2f, 1.0f));
-
-	//SAFE_RELEASE(pFog);
-	//SAFE_RELEASE(pFogObj);
-
-
-	//pObject = CGameObject::CreateObject("Field", pDefaultLayer, true);
-
-	//CField*	pField = pObject->AddComponent<CField>("Field");
-
-	//SAFE_RELEASE(pField);
-
-	//SAFE_RELEASE(pObject);
-
 	
-	//pObject = CGameObject::CreateObject("TestObject", pDefaultLayer, true);
-	//pTransform = pObject->GetTransform();
-
-	////pTransform->SetWorldPos(0.f, 0.f, 0.f);
-	//pTransform->SetWorldPos(1.f, 1.f, 1.f);
-	//pCamera->SetTarget(pObject);
-	//m_pTr = pTransform;
-
-
-
-	//CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
-
-	//SAFE_RELEASE(pTransform);
-	//SAFE_RELEASE(pPlayer);
-	//SAFE_RELEASE(pObject);	
-
-	//pObject = CGameObject::CreateObject("Minion", pDefaultLayer);
-
-
-	////PUN::CSoundSource *pSoundSrc = pObject->AddComponent<PUN::CSoundSource>("Ssource");
-	////const char *pStrName = "heeeeeik";
-	////const TCHAR *pFileName = TEXT("evillaugh.wav");
-	////pSoundSrc->LoadSounds(&pStrName, &pFileName, 1);
-	//////pSoundSrc->SetRadius(1500.f);
-	////pSoundSrc->SetPitch(0, -0.2f);
-	////pSoundSrc->Play(0, true);
-
-	////SAFE_RELEASE(pSoundSrc);
-
-	//CMinion3D*	pMinion = pObject->AddComponent<CMinion3D>("Minion");
-
-	//pMinion->SetTargetTransform(m_pTr);
-
-	//SAFE_RELEASE(pMinion);
-
-	//SAFE_RELEASE(pObject);
-
-	//pObject = CGameObject::CreateObject("HandGun", pDefaultLayer, true);
-	//PUN::CRenderer* renderer = pObject->AddComponent<PUN::CRenderer>("renderer");
-	//pTransform = pObject->GetTransform();
-	//pTransform->SetWorldScale(1.f, 1.f, 1.f);
-	//pTransform->SetWorldPos(0.f, 0.f, 15.f);
-	//pTransform->SetWorldRotX(-90.f);
-	//renderer->SetMesh("gun", TEXT("glock_OnlyFire.FBX"), MESH_PATH);
-
-	//SAFE_RELEASE(pTransform);
-	//SAFE_RELEASE(renderer);
-	//SAFE_RELEASE(pObject);
-
-
-
 	/*CGameObject*	pDecalObj = CGameObject::CreatePrototype("Decal");
 
 	CDecal*	pDecal = pDecalObj->AddComponent<CDecal>("Decal");
@@ -261,69 +161,6 @@ bool CTestSceneYH::Init()
 
 	SAFE_RELEASE(pDecalObj);*/
 
-
-	//CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
-
-	//CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-	//pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
-	//pLight->SetLightType(LT_DIR);
-	//pLight->SetLightDirection(Vector3(0.0f, -1.0f, 0.0f));
-
-	//SAFE_RELEASE(pLight);
-	//SAFE_RELEASE(pLightObj);
-
-	//CGameObject* pLandScapeObj = CGameObject::CreateObject("LandScape", pDefaultLayer);
-	//pTransform = pLandScapeObj->GetTransform();
-
-	//SAFE_RELEASE(pTransform);
-
-	//CLandScape*	pLandScape = pLandScapeObj->AddComponent<CLandScape>("LandScape");
-
-	//pLandScape->CreateLandScape("LandScape", 129, 129, "LandScapeDif",
-	//	TEXT("LandScape/Terrain_Cliff_11.dds"),
-	//	TEXT("LandScape/Terrain_Cliff_11_NRM.bmp"),
-	//	TEXT("LandScape/Terrain_Cliff_11_SPEC.bmp"),
-	//	"LandScape/height2.bmp");
-
-	////GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene,
-	////	"Nav.nav");
-
-	//vector<const TCHAR*> vecSplatName;
-
-	//vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cave_01.dds"));
-	//vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cliff05.dds"));
-	//vecSplatName.push_back(TEXT("LandScape/Terrain_Pebbles_01.dds"));
-	//vecSplatName.push_back(TEXT("LandScape/Terrain_Cliff_15_Large.dds"));
-
-	//pLandScape->AddSplatDifTexture("LandScapeSplatDif",	vecSplatName);
-
-	//vecSplatName.clear();
-	//vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cave_01_NRM.bmp"));
-	//vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cliff05_NRM.bmp"));
-	//vecSplatName.push_back(TEXT("LandScape/Terrain_Pebbles_01_NRM.bmp"));
-	//vecSplatName.push_back(TEXT("LandScape/Terrain_Cliff_15_Large_NRM.bmp"));
-
-	//pLandScape->AddSplatNrmTexture("LandScapeSplatNrm", vecSplatName);
-
-	//vecSplatName.clear();
-	//vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cave_01_SPC.bmp"));
-	//vecSplatName.push_back(TEXT("LandScape/BD_Terrain_Cliff05_SPEC.bmp"));
-	//vecSplatName.push_back(TEXT("LandScape/Terrain_Pebbles_01_SPEC.bmp"));
-	//vecSplatName.push_back(TEXT("LandScape/Terrain_Cliff_15_Large_SPEC.bmp"));
-
-	//pLandScape->AddSplatSpcTexture("LandScapeSplatSpc", vecSplatName);
-
-	//vecSplatName.clear();
-	//vecSplatName.push_back(TEXT("LandScape/RoadAlpha.bmp"));
-	//vecSplatName.push_back(TEXT("LandScape/SandBaseAlpha.bmp"));
-	//vecSplatName.push_back(TEXT("LandScape/StonAlpha.bmp"));
-	//vecSplatName.push_back(TEXT("LandScape/FlowerAlpha.bmp"));
-
-	//pLandScape->AddSplatAlphaTexture("LandScapeSplatAlpha", vecSplatName);
-
-	//SAFE_RELEASE(pLandScape);
-
-	//SAFE_RELEASE(pLandScapeObj);
 
 	//CGameObject*	pParticleObj = CGameObject::CreatePrototype("ExplosionParticle");
 
@@ -636,11 +473,10 @@ bool CTestSceneYH::Init()
 
 	pObject = PUN::CGameObject::CreateObject("hPlayer", pDefaultLayer, true);
 	pTransform = pObject->GetTransform();
-	pTransform->SetWorldScale(0.1f, .1f, .1f);
+	pTransform->SetWorldScale(0.05f, .05f, .05f);
 	//pTransform->SetLocalRotY(180.f);
 	CHuman_Player *pHPlayer = pObject->AddComponent<CHuman_Player>("Player");
-	pHPlayer->LoadData(TEXT("PlayerData.csv"));
-
+	
 	SAFE_RELEASE(pHPlayer);
 
 	SAFE_RELEASE(pTransform);

@@ -17,7 +17,6 @@
 #include "Inventory.h"
 #include "../CommonSoundLoader.h"
 #include "Handycam.h"
-#include "DocxInven.h"
 #include "NavigationMesh.h"
 
 using namespace PUN;
@@ -38,15 +37,22 @@ CHuman_Player::CHuman_Player():
 	m_fGunMinAngleY(-80.f),
 	pCamEffManager(nullptr),
 	m_vCamWorldOffset(0.f, -7.5f, -5.f),
-	m_vCamLocalOffset(0.f, 2.75f, -1.6f),
-	m_vCamCrouchLocalOffset(0.5f, 3.2f,0.25f),
+	m_vCamLocalOffset(0.f, 2.65f, -1.1f),
+	m_vCamCrouchLocalOffset(0.5f, 1.2f,-0.f),
 	m_fItemTakeTimerBuf(0.f),
 	m_fCamTakeTime(0.8f),
 	m_fGunTakeTime(1.2f),
 	m_eFootStep(FTSE_DEFAULT),
 	m_pPartCamAnim(nullptr),
+	m_iPrevDirFlag(0),
+	m_iPrevState(0),
 	m_bNaviOn(true)
 {
+#include "Player_Item_Values.txt"
+#include "Player_Interact_Values.txt"
+#include "Player_Cam_Values.txt"
+#include "Player_Move_Values.txt"
+#include "Player_Weapon_Values.txt"
 	m_vecIgnoreRightArmKey.reserve(24);
 	//m_vecIgnoreRightArmKey.push_back(33);
 	m_vecIgnoreRightArmKey.push_back(34);
@@ -202,6 +208,7 @@ CHuman_Player::CHuman_Player():
 CHuman_Player::CHuman_Player(const CHuman_Player & player):
 	PUN::CUserComponent(player)
 {
+
 	m_bLoadedOnce		   = player.m_bLoadedOnce;
 	m_iState = 1;
 	
@@ -245,19 +252,30 @@ CHuman_Player::~CHuman_Player()
 	SAFE_RELEASE(m_pCamModelObj);
 	SAFE_RELEASE(m_pRootBonePos);
 	SAFE_RELEASE(m_pHandGun);
-	SAFE_RELEASE(m_pDocxInven);
-
+	OnDestroyInteract();
+	OnDestroyInven();
+	OnDestroyCam();
+	OnDestroyMove();
+	OnDestroyWeap();
 }
 
 bool CHuman_Player::Init()
 {
 	pCamEffManager = CCameraEff::GetInst();
 	pCamEffManager->Init();
-	pCamEffManager->SetFirstPersonViewEnable();
 	
+	PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
+	_SMgr->SetAudioCoordSize(8.f);
+
 	PUN::CTransform *pCamera = m_pScene->GetMainCameraTransform();
 	pCamEffManager->SetCamTransform(pCamera);
+
+	CTransform* pCameraTr = pCamera->GetTransform();
+	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
+	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pCamera);
+
+	
 	
 	//Hero - L - Hand, player_cam_hand, 10, 0, 0.0, 0, 0, 0
 	//GET_SINGLE(PUN::CInput)->BindAxis("MoveH", this, &CHuman_Player::Forward);
@@ -275,25 +293,28 @@ bool CHuman_Player::Init()
 	_Input->AddKey("I", 'I');
 	_Input->AddKey("G", 'G');
 	_Input->AddKey("Ctrl", VK_CONTROL);
-	_Input->AddKey("U", 'U');
 
 	AfterClone();
 
-	
+	Init_Move();
+	Init_Cam();
+	Init_Interact();
+	Init_Items();
+	Init_Weapon();
 		
 	return true;
 }
 
 void CHuman_Player::AfterClone()
 {
-
+	
 	m_pTransform->SetLocalRotY(180.f);
 	m_pHeadObj = PUN::CGameObject::CreateObject("Player_Daegari", m_pLayer);
 	m_pHeadObj->SetFrustrumCullUse(false);
 	m_pObject->SetFrustrumCullUse(false);
 
 	PUN::CTransform*	pTr = m_pHeadObj->GetTransform();
-	pTr->SetWorldScale(0.1f, 0.1f, 0.1f);
+	pTr->SetWorldScale(0.05f, 0.05f, 0.05f);
 
 	PUN::CRenderer*	pHeadRenderer = m_pHeadObj->AddComponent<PUN::CRenderer>("WeaponRenderer");
 	pHeadRenderer->SetMesh("head", TEXT("Head.FBX"), MESH_PATH);
@@ -334,19 +355,11 @@ void CHuman_Player::AfterClone()
 	SAFE_RELEASE(pHandycamTr);
 	SAFE_RELEASE(pHandycamObj);
 
-	// Document Inventory
-	PUN::CGameObject *pDocxInvObj = CGameObject::CreateObject("DocxInven", m_pLayer);
-
-	m_pDocxInven = pDocxInvObj->AddComponent<CDocxInven>("DocxInven");
-	m_pDocxInven->SetDocxMax(19);
-
-	SAFE_RELEASE(pDocxInvObj);
-
 	//Handycam fake model
 	m_pCamModelObj = PUN::CGameObject::CreateObject("Handycam_model", m_pLayer, true);
 	pHandycamTr = m_pCamModelObj->GetTransform();
 	//pHandycamTr->SetWorldPos(0.f, 0.f, 0.f);
-	pHandycamTr->SetWorldScale(0.15f, 0.15f, 0.15f);
+	pHandycamTr->SetWorldScale(m_pTransform->GetWorldScale());
 	pHandycamTr->SetLocalRot(-90.f, -60.f, -130.f);
 	PUN::CRenderer *pCamRenderer = m_pCamModelObj->AddComponent<PUN::CRenderer>("renderer");
 	pCamRenderer->SetMesh("cam", TEXT("Handycam.FBX"), MESH_PATH);
@@ -357,17 +370,20 @@ void CHuman_Player::AfterClone()
 
 	m_pHandGun = PUN::CGameObject::CreateObject("Player_Gun", m_pLayer, true);
 	pTr = m_pHandGun->GetTransform();
-	pTr->SetWorldScale(.15f, .15f, .15f);
+	pTr->SetWorldScale(m_pTransform->GetWorldScale() * 1.5f);
 	pTr->SetLocalRot(-10.f, 145.f, 45.f);
 	//pTr->SetWorldPos(0.f, 0.f, 15.f);
 	pCamRenderer = m_pHandGun->AddComponent<PUN::CRenderer>("renderer");
 	pCamRenderer->SetMesh("gun", TEXT("glock_OnlyFire.FBX"), MESH_PATH);
+	//pCamRenderer->SetMesh("gun", TEXT("Enem_Cannibal.FBX"), MESH_PATH);
 	//pCamRenderer->SetMesh("gun", TEXT("Waylon2.msh"));
 	//pCamRenderer->SetMesh("gun", TEXT("shooter_anim.FBX"), MESH_PATH);
 	m_pHandGun->SetEnable(false);
 
 	SAFE_RELEASE(pTr);
 	SAFE_RELEASE(pCamRenderer);
+
+	LoadData(TEXT("PlayerData.csv"));
 }
 
 int CHuman_Player::Input(float fTime)
@@ -440,12 +456,7 @@ int CHuman_Player::Input(float fTime)
 	}
 
 	//Other Keys
-
-	if (_Input->KeyPress("U"))
-	{
-		m_pDocxInven->SetVisible();
-	}
-
+	
 	if (_Input->KeyPress("I"))
 	{
 		if (m_iState & PSTATUS_ITEM)
@@ -467,6 +478,7 @@ int CHuman_Player::Input(float fTime)
 		PUN::CTransform *pCamTrans = m_pScene->GetMainCameraTransform();
 		PUN::CTransform *pHeadTrans = m_pHeadObj->GetTransform();
 
+		//Vector3 vCamPos = pHeadTrans->GetWorldPos();
 		Vector3 vCamPos = pHeadTrans->GetWorldPos() + m_vCamWorldOffset;
 		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * m_vCamLocalOffset.x;
 		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * m_vCamLocalOffset.y;
@@ -496,16 +508,19 @@ int CHuman_Player::Input(float fTime)
 			m_pPartCamAnim->bActivated = true;
 			m_pPartCamAnim->pNextClip = nullptr;
 			m_pPartCamAnim->pCurClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_raise")->second;
+			m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_idle")->second;
 		}
 		else
 		{
 			if ((m_iState & PSTATUS_CAM_TAKING_OFF) == 0)
 			{
 				
-				m_pPartCamAnim->pCurClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_lower")->second;
+				m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_lower")->second;
+				m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("player_stand_idle")->second;
 				//m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_stand_idle")->second;
 				//player_stand_idle
 				m_fItemTakeTimerBuf = 0.f;
+
 				HandyCam_End();
 				m_iState |= PSTATUS_CAM_TAKING_OFF;
 			}
@@ -568,7 +583,7 @@ int CHuman_Player::Input(float fTime)
 	{
 		m_iState |= PSTATUS_CROUCHING;
 		
-		m_pAnimation->ChangeClip("player_stand_to_crouch");
+		//m_pAnimation->ChangeClip("player_stand_to_crouch");
 		m_fTimerBuf_State = 0.f;
 
 		std::string strSitDown = "JacketSitDown";
@@ -585,7 +600,7 @@ int CHuman_Player::Input(float fTime)
 	{
 		m_iState &= ~PSTATUS_CROUCHED;
 		m_iState |= PSTATUS_CROUCHING;
-		m_pAnimation->ChangeClip("player_crouch_to_stand");
+		//m_pAnimation->ChangeClip("player_crouch_to_stand");
 
 		std::string strStandUp = "JacketStandUp";
 
@@ -604,23 +619,23 @@ int CHuman_Player::Input(float fTime)
 		m_iState &= ~PSTATUS_SPRINT;
 		OnCrouching(fTime);
 	}
-		
+
 	if (_Input->KeyPush("W"))
 	{
-		
+
 		m_iState &= ~PSTATUS_STOPMOVE;
-		m_iDirFlag |= PMT_FOWARD;
+		m_iDirFlag |= PMT_FORWARD;
 		if (m_iState & PSTATUS_CROUCHED)
 		{
 			m_pAnimation->ChangeClip("player_crouch_forward");
-			
-			Move(PUN::AXIS_Z, m_fCrouchForwardSpd, fTime);			
+
+			Move(PUN::AXIS_Z, m_fCrouchForwardSpd, fTime);
 		}
 		else
 		{
 			if (m_iState & PSTATUS_SPRINT)
 			{
-				
+
 				m_pAnimation->ChangeClip("player_run_forward");
 				OnSprint(fTime);
 				Move(PUN::AXIS_Z, m_fSprintSpeed, fTime);
@@ -628,11 +643,11 @@ int CHuman_Player::Input(float fTime)
 			else
 			{
 				m_pAnimation->ChangeClip("player_walk_forward");
-				
+
 				Move(PUN::AXIS_Z, m_fFWalkSpeed, fTime);
 			}
 		}
-		
+
 	}
 	else if (_Input->KeyPush("S"))
 	{
@@ -641,7 +656,7 @@ int CHuman_Player::Input(float fTime)
 		m_iDirFlag |= PMT_BACKWARD;
 		if (m_iState & PSTATUS_CROUCHED)
 		{
-			m_pAnimation->ChangeClip("player_crouch_backward");
+			//m_pAnimation->ChangeClip("player_crouch_backward");
 			Move(PUN::AXIS_Z, -m_fCrouchBackSpd, fTime);
 		}
 		else
@@ -649,24 +664,19 @@ int CHuman_Player::Input(float fTime)
 			m_pAnimation->ChangeClip("player_walk_backward");
 			Move(PUN::AXIS_Z, -m_fBackWalkSpeed, fTime);
 		}
-		
+
 	}
 	
 	if (_Input->KeyPush("D"))
 	{
 		m_iDirFlag |= PMT_RIGHT;
-		if (m_iState & PSTATUS_CROUCHING)
-			bBlend = true;
-		else
-			bBlend = false;
-
-		if (_Input->KeyPush("W") || _Input->KeyPush("S"))
-
-			bBlend = true;
-		else
-			bBlend ? bBlend : false;
-
+		
 		m_iState &= ~PSTATUS_STOPMOVE;
+		
+		if (m_iDirFlag & (PMT_FORWARD | PMT_BACKWARD))
+		{
+			bBlend = true;
+		}
 
 		if (m_iState & PSTATUS_CROUCHED)
 		{
@@ -683,17 +693,12 @@ int CHuman_Player::Input(float fTime)
 	else if (_Input->KeyPush("A"))
 	{
 		m_iDirFlag |= PMT_LEFT;
-		if (m_iState & PSTATUS_CROUCHING)
-			bBlend = true;
-		else
-			bBlend = false;
-
-		if (_Input->KeyPush("W") || _Input->KeyPush("S"))
-
-			bBlend = true;
-		else
-			bBlend ? bBlend : false;
 		
+		if (m_iDirFlag & (PMT_FORWARD | PMT_BACKWARD))
+		{
+			bBlend = true;
+		}
+
 		m_iState &= ~PSTATUS_STOPMOVE;
 		if (m_iState & PSTATUS_CROUCHED)
 		{
@@ -714,15 +719,15 @@ int CHuman_Player::Input(float fTime)
 
 		if (m_iState & PSTATUS_STOPMOVE)
 		{
-			m_pAnimation->ChangeClip("player_jump_from_idle");
+			//m_pAnimation->ChangeClip("player_jump_from_idle");
 		}
 		else if (m_iState & PSTATUS_SPRINT)
 		{
-			m_pAnimation->ChangeClip("player_jump_over_from_run");
+			//m_pAnimation->ChangeClip("player_jump_over_from_run");
 		}
 		else
 		{
-			m_pAnimation->ChangeClip("player_jump_over_from_walk");
+			//m_pAnimation->ChangeClip("player_jump_over_from_walk");
 		}
 	}
 
@@ -791,7 +796,7 @@ int CHuman_Player::Input(float fTime)
 				}
 				else
 				{
-					m_pAnimation->ChangeClip("player_walk_forward");
+					//m_pAnimation->ChangeClip("player_walk_forward");
 				}
 			}
 			
@@ -807,78 +812,11 @@ int CHuman_Player::Input(float fTime)
 
 	if (m_iState & PSTATUS_STOPMOVE)
 	{
-		m_vMoveDirection = Vector3::Zero;
-		if (m_iState & PSTATUS_CROUCHED)
-		{
-			if ((m_iState & PSTATUS_CROUCHING) == 0)
-			{
-				if (m_iState & PSTATUS_CAM_ON)
-				{
-					if (m_iState & PSTATUS_CAM_TAKING_ON)
-					{
-						//bBlend = true;
-						
-						m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_crouch_camcorder_raise")->second;
-					}
-					else if (m_iState & PSTATUS_CAM_TAKING_OFF)
-					{
-						//bBlend = true;
-						
-						m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_crouch_camcorder_lower")->second;
-					}
-					else
-					{
-					
-						m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_crouch_camcorder_idle")->second;
-						m_pAnimation->ChangeClip("player_crouch_camcorder_idle");
-					}
-				}
-				else
-				{
-					m_pAnimation->ChangeClip("player_crouch_idle");
-					
-				}
-					
-			}
-			
-		}
-		else
-		{
-			if (m_iState & PSTATUS_CAM_ON)
-			{
-				if (m_iState & PSTATUS_CAM_TAKING_ON)
-				{
-					
-					//bBlend = true;
-					//m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_raise")->second;
-					m_pAnimation->ChangeClip("player_camcorder_raise");
-				}
-				else if (m_iState & PSTATUS_CAM_TAKING_OFF)
-				{
-					
-					//bBlend = true;
-					//m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_lower")->second;
-					m_pAnimation->ChangeClip("player_camcorder_lower");
-				}
-				else
-				{
-					
-					m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_idle")->second;
-					m_pAnimation->ChangeClip("player_camcorder_idle");
-				}
-			}
-			else
-			{
-				m_pAnimation->ChangeClip("player_stand_idle");
-				
-			}
-				
-		}
-		
+		m_vMoveDirection = Vector3::Zero;		
 	}
 	else
 	{
-		if (m_iDirFlag & PMT_FOWARD)
+		if (m_iDirFlag & PMT_FORWARD)
 		{
 			if (m_iState & PSTATUS_SPRINT)
 			{
@@ -903,7 +841,7 @@ int CHuman_Player::Input(float fTime)
 
 		if (m_iDirFlag & PMT_BACKWARD)
 		{
-			if (m_iDirFlag & PMT_FOWARD)
+			if (m_iDirFlag & PMT_FORWARD)
 				m_vMoveDirection.z = 0.f;
 			else
 				m_vMoveDirection.z = 1.f;
@@ -938,6 +876,49 @@ int CHuman_Player::Input(float fTime)
 		}
 	}
 
+	int iStateFlagDiff = m_iPrevState ^ m_iState;
+	int iDirDiff = m_iPrevDirFlag ^ m_iDirFlag;
+	if (iStateFlagDiff & PSTATUS_CROUCHED)
+	{
+		if (m_iState & PSTATUS_CROUCHING)
+		{
+			if (m_iState & PSTATUS_CROUCHED) //지금이 숙이는거
+			{
+				bBlend = true;
+				m_pAnimation->SetDefaultClip("player_crouch_idle");
+				m_pAnimation->ChangeClip("player_stand_to_crouch");
+			}
+			else
+			{
+				bBlend = true;
+				m_pAnimation->SetDefaultClip("player_stand_idle");
+				m_pAnimation->ChangeClip("player_crouch_to_stand");
+			}
+			
+		}
+		
+	}
+
+	else if (iStateFlagDiff & PSTATUS_STOPMOVE)
+	{
+		if (m_iState & PSTATUS_STOPMOVE)
+		{
+			if (m_iState & PSTATUS_CROUCHED)
+			{
+				m_pAnimation->ChangeClip("player_crouch_idle");
+			}
+			else
+			{
+				m_pAnimation->ChangeClip("player_stand_idle");
+			}
+		}
+	}
+
+	Input_Items(fTime);
+	Input_Interact(fTime);
+	Input_Cam(fTime);
+	Input_Move(fTime);
+	WeaponInput(fTime);
 	m_pAnimation->KeepBlendSet(bBlend);
 
 	return 0;
@@ -960,7 +941,6 @@ int CHuman_Player::Update(float fTime)
 			m_pTransform->SetWorldPos(vPos);
 		}
 	}
-	
 	if (m_iState & PSTATUS_CROUCHING)
 	{
 		if (m_iState & PSTATUS_CROUCHED)
@@ -1014,7 +994,12 @@ int CHuman_Player::Update(float fTime)
 
 	pCamEffManager->Update(fTime);
 
-
+	MoveUpdate(fTime);
+	CamUpdate(fTime);
+	InteractUpdate(fTime);
+	ItemUpdate(fTime);
+	
+	WeaponUpdate(fTime);
 
 	return 0;
 }
@@ -1052,6 +1037,15 @@ int CHuman_Player::LateUpdate(float fTime)
 	*/
 	
 	pCamEffManager->LateUpdate(fTime);
+	m_iPrevDirFlag = m_iDirFlag;
+	m_iPrevState = m_iState;
+
+	MoveLateUpdate(fTime);
+	CamLateUpdate(fTime);
+	InteractLateUpdate(fTime);
+	ItemLateUpdate(fTime);
+	WeaponLateUpdate(fTime);
+
 	return 0;
 }
 
@@ -1499,6 +1493,14 @@ FOOTSTEP_ENVIRONMENT CHuman_Player::GetFootStepEnvironment() const
 
 void CHuman_Player::AfterLoad()
 {
+	m_pAnimation->SetDefaultClip("player_stand_idle");
+	m_pAnimation->SetClipOption("player_camcorder_raise", PUN::AO_ONCE_RETURN);
+	m_pAnimation->SetClipOption("player_camcorder_lower", PUN::AO_ONCE_RETURN);
+	m_pAnimation->SetClipOption("player_stand_to_crouch", PUN::AO_ONCE_RETURN);
+	m_pAnimation->SetClipOption("player_crouch_to_stand", PUN::AO_ONCE_RETURN);
+	m_pAnimation->SetClipOption("player_crouch_camcorder_raise", PUN::AO_ONCE_RETURN);
+	m_pAnimation->SetClipOption("player_crouch_camcorder_lower", PUN::AO_ONCE_RETURN);
+
 	//std::vector<int> vecIgnoreBone;
 	PUN::PPARTANIM partAnim = new PUN::PARTANIM;
 	partAnim->vecPartIdx = m_vecIgnoreRightArmKey;
@@ -1507,17 +1509,25 @@ void CHuman_Player::AfterLoad()
 	
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_stand_idle"));
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_camcorder_raise"));
+	partAnim->mapPartClips.find("player_camcorder_raise")->second->eOption = PUN::AO_ONCE_RETURN;
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_camcorder_idle"));
-	
+	//partAnim->pDefaultClip = partAnim->mapPartClips.find("player_camcorder_lower")->second;
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_camcorder_lower"));
-	//partAnim->mapPartClips.find("player_camcorder_lower")->second->eOption = PUN::AO_ONCE_DESTROY;
+	partAnim->mapPartClips.find("player_camcorder_lower")->second->eOption = PUN::AO_ONCE_RETURN;
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_crouch_camcorder_idle"));
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_crouch_camcorder_raise"));
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_crouch_camcorder_lower"));
 	m_pAnimation->AddPartialClip(partAnim);
 
 	m_pPartCamAnim = partAnim;
-	m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("player_stand_idle")->second;
+	m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_idle")->second;
 	//m_pAnimation->SetIgnoreVector(m_vecIgnoreRightArmKey);
 }
 
+
+float CHuman_Player::GetWorlPosY() const {
+	return m_pTransform->GetWorldPos().y;
+};
+Vector3 CHuman_Player::GetWorldPos() const {
+	return m_pTransform->GetWorldPos();
+};

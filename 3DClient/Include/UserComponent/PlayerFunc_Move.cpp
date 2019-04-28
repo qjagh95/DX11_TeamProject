@@ -18,6 +18,14 @@
 #define CROUCH_CLOTHES_BIG 0.2f
 #define CROUCH_CLOTHES_LIGHT 0.5f
 
+bool CHuman_Player::Init_Move() {
+	return true;
+}
+
+void CHuman_Player::OnDestroyMove()
+{
+	
+}
 
 void CHuman_Player::OnCrouching(float fTime) 
 {
@@ -143,4 +151,17 @@ void CHuman_Player::CrouchBackwardMendPos(float fTime)
 void CHuman_Player::CrouchSideMendPos(float fTime)
 {
 
+}
+
+int CHuman_Player::Input_Move(float fTime) 
+{
+	return 0;
+}
+int CHuman_Player::MoveUpdate(float fTime) 
+{
+	return 0;
+}
+int CHuman_Player::MoveLateUpdate(float fTime) 
+{
+	return 0;
 }

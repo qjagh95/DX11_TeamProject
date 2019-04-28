@@ -145,7 +145,7 @@ void CBoneSocket::Update(float fTime, const Matrix& matBone, class CTransform* m
 		vRot.z = RadianToDegree(vRot.z);
 				
 		Vector3 vPos(xmPos);
-
+		//vPos += motherTr->GetLocalPos();
 		Vector3 vWorld = motherTr->GetWorldPos();
 
 		//vPos += motherTr->GetLocalPos();
@@ -157,6 +157,7 @@ void CBoneSocket::Update(float fTime, const Matrix& matBone, class CTransform* m
 		pTransform->SetWorldRot(vRot);
 
 		pTransform->SetWorldPos(vPos);
+		//pTransform->Update(fTime);
 
 	}
 }

@@ -5,6 +5,7 @@
 #include "../PathManager.h"
 #include "../Resource/FbxLoader.h"
 #include "BoneSocket.h"
+#include "../Timer.h"
 
 #define PART_METHOD_1 1
 //#define PART_METHOD_2 1
@@ -261,6 +262,20 @@ void CAnimation::KeepBlendSet(bool on)
 void CAnimation::AddBone(PBONE pBone)
 {
 	m_vecBones.push_back(pBone);
+}
+
+void CAnimation::SetDefaultClip(const std::string & strDefKey)
+{
+	PANIMATIONCLIP pAnim = FindClip(strDefKey);
+	if (pAnim)
+		m_pDefaultClip = pAnim;
+}
+
+void CAnimation::SetClipOption(const std::string& strKey, ANIMATION_OPTION eOpt)
+{
+	PANIMATIONCLIP pAnim = FindClip(strKey);
+	if (pAnim)
+		pAnim->eOption = eOpt;
 }
 
 bool CAnimation::CreateBoneTexture()
@@ -1533,6 +1548,7 @@ int CAnimation::Update(float fTime)
 
 	if (m_pCurClip)
 	{
+		
 		float fBeforeTime = m_fAnimationGlobalTime - fTime;
 
 		if (fBeforeTime < 0.f)
@@ -1567,6 +1583,8 @@ int CAnimation::Update(float fTime)
 	}
 	if (m_pNextClip)
 	{
+		if (m_pCurClip != m_pNextClip)
+			m_fChangeLimitTime = 0.25f;
 		float fBeforeTime = m_fAnimationGlobalTime - fTime;
 		if (fBeforeTime < 0.f)
 		{
@@ -1831,7 +1849,20 @@ int CAnimation::Update(float fTime)
 		m_fAnimationGlobalTime += fTime;
 		m_fClipProgress = m_fAnimationGlobalTime / m_pCurClip->fTimeLength;
 
-
+		if (m_pCurClip->fTimeLength - m_fAnimationGlobalTime < 0.0666666666667f)
+		{
+			switch (m_pCurClip->eOption)
+			{
+			case AO_LOOP:
+				m_pNextClip = m_pCurClip;
+				m_fChangeLimitTime = 0.0625f;
+				break;
+			case AO_ONCE_RETURN:
+				m_pNextClip = m_pDefaultClip;
+				m_fChangeLimitTime = 0.25f;
+				break;
+			}
+		}
 		while (m_fAnimationGlobalTime >= m_pCurClip->fTimeLength)
 		{
 			m_fAnimationGlobalTime -= m_pCurClip->fTimeLength;
@@ -1849,6 +1880,9 @@ int CAnimation::Update(float fTime)
 		int	iStartFrame = m_pCurClip->iStartFrame;
 		int	iEndFrame = m_pCurClip->iEndFrame;
 
+		//첫 프레임과 끝 프레임 위치 사이에 오차가 존재하므로 끝물부터 합성 준비해야 함(쉬벌)
+
+
 		int	iFrameIndex = (int)(fAnimationTime / m_pCurClip->fFrameTime);
 
 		if (m_bEnd)
@@ -1860,6 +1894,13 @@ int CAnimation::Update(float fTime)
 				break;
 			case AO_ONCE_DESTROY:
 				m_pObject->Die();
+			case AO_ONCE_RETURN:
+				m_pNextClip = m_pDefaultClip;
+				m_fAnimationGlobalTime = 0.0f;
+				m_fChangeTime = 0.f;
+				m_fClipProgress = 0.f;
+				
+				iFrameIndex = 0;
 				break;
 			}
 		}
@@ -1932,18 +1973,28 @@ int CAnimation::Update(float fTime)
 	for (; itrPart != itrEnd; ++itrPart)
 	{
 		PPARTANIM part = *itrPart;
+		part->bEnd = false;
 		if (!part->bActivated)
 		{
 			part->fPartAnimationGTime = 0.f;
+			
+			part->fChangeTime = 0.f;
+			part->fClipProgress = 0.f;
 			continue;
 		}
 			
 
 		if (part->mapPartClips.empty())
+		{
+			part->bEnd = true;
+			part->fPartAnimationGTime = 0.f;
+
+			part->fChangeTime = 0.f;
+			part->fClipProgress = 0.f;
 			continue;
-
-		part->bEnd = false;
-
+		}
+			
+		
 		//Run Partial Anim Notify functions
 		if (part->pCurClip)
 		{
@@ -2017,6 +2068,7 @@ int CAnimation::Update(float fTime)
 		//Partial Anim 모션이 변할때
 		if (part->pNextClip)
 		{
+			part->fChangeLimitTime = 0.25f;
 			if (part->pCurClip == nullptr)
 			{
 				part->pCurClip = part->pNextClip;
@@ -2302,6 +2354,20 @@ int CAnimation::Update(float fTime)
 			part->fPartAnimationGTime += fTime;
 			part->fClipProgress = part->fPartAnimationGTime / part->pCurClip->fTimeLength;
 
+			if (part->pCurClip->fTimeLength - part->fPartAnimationGTime < 0.06666666667f)
+			{
+				switch (part->pCurClip->eOption)
+				{
+				case AO_LOOP:
+					part->pNextClip = part->pCurClip;
+					part->fChangeLimitTime = 0.0625f;
+					break;
+				case AO_ONCE_RETURN:
+					part->pNextClip = part->pDefaultClip;
+					part->fChangeLimitTime = 0.25f;
+					break;
+				}
+			}
 
 			while (part->fPartAnimationGTime >= part->pCurClip->fTimeLength)
 			{
@@ -2334,6 +2400,7 @@ int CAnimation::Update(float fTime)
 					break;
 				case AO_ONCE_RETURN:
 					iFrameIndex = 0;
+					part->fPartAnimationGTime = 0.f;
 					part->pCurClip = part->pDefaultClip;
 					break;
 				}
@@ -2457,28 +2524,33 @@ int CAnimation::Update(float fTime)
 		CONTEXT->Unmap(m_pBoneTex, 0);
 	}
 
-	for (size_t i = 0; i < m_vecBones.size(); ++i)
-	{
-		for (size_t j = 0; j < m_vecBones[i]->SocketList.size(); j++)
-		{
-			list<CBoneSocket*>::iterator iter;
-			list<CBoneSocket*>::iterator iterEnd = m_vecBones[i]->SocketList.end();
-			for (iter = m_vecBones[i]->SocketList.begin(); iter != iterEnd; ++iter)
-			{
-				//(*iter)->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
-				(*iter)->Update(fTime, *m_vecBoneMatrix[i], m_pTransform);
-				//m_vecBones[i]->SocketList[j]->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
-
-			}
-		}
-
-	}
+	
 
 	return 0;
 }
 
 int CAnimation::LateUpdate(float fTime)
 {
+	if (m_vecBoneMatrix.size() > 0)
+	{
+		for (size_t i = 0; i < m_vecBones.size(); ++i)
+		{
+			for (size_t j = 0; j < m_vecBones[i]->SocketList.size(); j++)
+			{
+				list<CBoneSocket*>::iterator iter;
+				list<CBoneSocket*>::iterator iterEnd = m_vecBones[i]->SocketList.end();
+				for (iter = m_vecBones[i]->SocketList.begin(); iter != iterEnd; ++iter)
+				{
+					//(*iter)->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
+					(*iter)->Update(fTime, *m_vecBoneMatrix[i], m_pTransform);
+					//m_vecBones[i]->SocketList[j]->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
+
+				}
+			}
+
+		}
+	}
+	
 	return 0;
 }
 

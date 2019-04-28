@@ -1,0 +1,2 @@
+m_bBatteryOut = false;
+m_bBatteryChange = false;

@@ -55,6 +55,15 @@
     <Filter Include="02. UserComponent\07. Interact">
       <UniqueIdentifier>{31cc6127-71d1-4c4a-b677-8773538cb065}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\01. Player\Header_Value">
+      <UniqueIdentifier>{cc9bfc8b-5f86-4190-af8c-7f36e63b2de8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\01. Player\Init_Values">
+      <UniqueIdentifier>{fe1f2d3b-3267-494c-b938-9286e51dddd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\01. Player\Header_Functions">
+      <UniqueIdentifier>{dd67c259-0124-4faa-9043-0ebb16c13481}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -155,6 +164,36 @@
     </ClInclude>
     <ClInclude Include="UserComponent\Document.h">
       <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Player_Cam_Value.hpp">
+      <Filter>02. UserComponent\01. Player\Header_Value</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Player_Interact_Value.hpp">
+      <Filter>02. UserComponent\01. Player\Header_Value</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Player_Item_Value.hpp">
+      <Filter>02. UserComponent\01. Player\Header_Value</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Player_Move_Value.hpp">
+      <Filter>02. UserComponent\01. Player\Header_Value</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Player_Weapon_Value.hpp">
+      <Filter>02. UserComponent\01. Player\Header_Value</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Cam_Func_Header.hpp">
+      <Filter>02. UserComponent\01. Player\Header_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Interact_Func_Header.hpp">
+      <Filter>02. UserComponent\01. Player\Header_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Item_Func_Header.hpp">
+      <Filter>02. UserComponent\01. Player\Header_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Move_Func_Header.hpp">
+      <Filter>02. UserComponent\01. Player\Header_Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Enemies.h">
+      <Filter>02. UserComponent\02. Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +305,12 @@
     <ClCompile Include="UserComponent\Document.cpp">
       <Filter>02. UserComponent\05. Item</Filter>
     </ClCompile>
+    <ClCompile Include="UserComponent\PlayerFunc_Items.cpp">
+      <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Enemies.cpp">
+      <Filter>02. UserComponent\02. Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="3DClient.rc">
@@ -276,5 +321,22 @@
     <Image Include="icon1.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="UserComponent\Player_Cam_Values.txt">
+      <Filter>02. UserComponent\01. Player\Init_Values</Filter>
+    </Text>
+    <Text Include="UserComponent\Player_Interact_Values.txt">
+      <Filter>02. UserComponent\01. Player\Init_Values</Filter>
+    </Text>
+    <Text Include="UserComponent\Player_Item_Values.txt">
+      <Filter>02. UserComponent\01. Player\Init_Values</Filter>
+    </Text>
+    <Text Include="UserComponent\Player_Move_Values.txt">
+      <Filter>02. UserComponent\01. Player\Init_Values</Filter>
+    </Text>
+    <Text Include="UserComponent\Player_Weapon_Values.txt">
+      <Filter>02. UserComponent\01. Player\Init_Values</Filter>
+    </Text>
   </ItemGroup>
 </Project>

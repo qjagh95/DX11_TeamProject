@@ -202,19 +202,29 @@
     <ClInclude Include="UserComponent\Battery.h" />
     <ClInclude Include="UserComponent\BatteryIcon.h" />
     <ClInclude Include="UserComponent\Bed.h" />
+    <ClInclude Include="UserComponent\Cam_Func_Header.hpp" />
     <ClInclude Include="UserComponent\Document.h" />
     <ClInclude Include="UserComponent\DocxInven.h" />
     <ClInclude Include="UserComponent\Door.h" />
+    <ClInclude Include="UserComponent\Enemies.h" />
     <ClInclude Include="UserComponent\Field.h" />
     <ClInclude Include="UserComponent\Ghost.h" />
     <ClInclude Include="UserComponent\Handycam.h" />
     <ClInclude Include="UserComponent\Human_Player.h" />
     <ClInclude Include="UserComponent\Idle.h" />
     <ClInclude Include="UserComponent\InteractiveObj.h" />
+    <ClInclude Include="UserComponent\Interact_Func_Header.hpp" />
     <ClInclude Include="UserComponent\Inventory.h" />
+    <ClInclude Include="UserComponent\Item_Func_Header.hpp" />
     <ClInclude Include="UserComponent\Locker.h" />
     <ClInclude Include="UserComponent\Minion.h" />
+    <ClInclude Include="UserComponent\Move_Func_Header.hpp" />
     <ClInclude Include="UserComponent\Player.h" />
+    <ClInclude Include="UserComponent\Player_Cam_Value.hpp" />
+    <ClInclude Include="UserComponent\Player_Interact_Value.hpp" />
+    <ClInclude Include="UserComponent\Player_Item_Value.hpp" />
+    <ClInclude Include="UserComponent\Player_Move_Value.hpp" />
+    <ClInclude Include="UserComponent\Player_Weapon_Value.hpp" />
     <ClInclude Include="UserComponent\Trace.h" />
     <ClInclude Include="UserComponent\TraceMob.h" />
     <ClInclude Include="UserComponent\Zipper.h" />
@@ -238,6 +248,7 @@
     <ClCompile Include="UserComponent\Document.cpp" />
     <ClCompile Include="UserComponent\DocxInven.cpp" />
     <ClCompile Include="UserComponent\Door.cpp" />
+    <ClCompile Include="UserComponent\Enemies.cpp" />
     <ClCompile Include="UserComponent\Field.cpp" />
     <ClCompile Include="UserComponent\Ghost.cpp" />
     <ClCompile Include="UserComponent\Handycam.cpp" />
@@ -251,6 +262,7 @@
     <ClCompile Include="UserComponent\PlayerFunc_CallBack.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_cam.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Interact.cpp" />
+    <ClCompile Include="UserComponent\PlayerFunc_Items.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Move.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Weapon.cpp" />
     <ClCompile Include="UserComponent\Trace.cpp" />
@@ -273,6 +285,13 @@
     <ProjectReference Include="..\..\TWEngine\Include\TWEngine.vcxproj">
       <Project>{8c2e0787-528d-412a-88d2-cb4a6123eeaa}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="UserComponent\Player_Cam_Values.txt" />
+    <Text Include="UserComponent\Player_Interact_Values.txt" />
+    <Text Include="UserComponent\Player_Item_Values.txt" />
+    <Text Include="UserComponent\Player_Move_Values.txt" />
+    <Text Include="UserComponent\Player_Weapon_Values.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

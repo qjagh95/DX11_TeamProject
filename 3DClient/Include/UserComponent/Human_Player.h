@@ -11,7 +11,7 @@ PUN_USING
 enum PLAYER_MOVE_TAG
 {
 	PMT_NONE,
-	PMT_FOWARD,
+	PMT_FORWARD,
 	PMT_BACKWARD,
 	PMT_LEFT = 4,
 	PMT_RIGHT = 8
@@ -133,12 +133,12 @@ private:
 	PUN::ANIMATIONCALLBACK m_arrAnimCallbacks[16];
 	class CInventory*	m_pInven;
 	class CHandycam*	m_pHandycam;
-	class CDocxInven*	m_pDocxInven;
-	bool		m_bNaviOn;
 	Vector3 m_vInitLocalPos;
-	bool  m_bLoadedOnce		;
-	int	  m_iState			;
+	bool  m_bLoadedOnce;
+	int	  m_iState;
+	int   m_iPrevState;
 	int   m_iDirFlag;
+	int   m_iPrevDirFlag;
 	Vector3 m_vMoveDirection;
 	float m_fItemTakeTimerBuf	;
 	float m_fCamTakeTime		;
@@ -163,28 +163,27 @@ private:
 	float m_fViewMinAngleY		;
 	float m_fGunMaxAngleY		;
 	float m_fGunMinAngleY		;
+	bool  m_bNaviOn;
 	Vector3 m_vCamWorldOffset	;
 	Vector3 m_vCamLocalOffset;
 	Vector3 m_vCamCrouchLocalOffset;
 	Vector3 m_vTracerBuf;
-	//Crouch는 스프린트가 없다
-	/*
-	other csv val
-
-	mesh /anim 
-		strMeshKey
-		strMeshPath
-		strAnimKey
-		strAnimPath
-		strBoneKey
-		strBonePath
-		
-	sound : strKey, strPath, iIndex 순서
-		
-	*/
-
+#include "Player_Item_Value.hpp"
+#include "Player_Interact_Value.hpp"
+#include "Player_Cam_Value.hpp"
+#include "Player_Move_Value.hpp"
+#include "Player_Weapon_Value.hpp"
 
 public:
+	bool Init_Items();
+	bool Init_Interact();
+	bool Init_Cam();
+	bool Init_Move();
+	bool Init_Weapon();
+	
+
+	float GetWorlPosY() const;
+	Vector3 GetWorldPos() const;
 	bool LoadData(const TCHAR *dataPath); //플레이어는 혼자니까 굳이 툴까지 만들어 다룰 필요는 없지만, 데이터 수치 및 리소스는 밖에서 준비해볼 필요가 있어 분리함
 	void Interact(float fTime);
 	void Open_Door_Normal(float fTime);
@@ -217,17 +216,6 @@ public:
 	void SetAnimNotify();
 	const Vector3& GetMoveDirection() const;
 
-	//Animation Notify
-	/*
-	typedef struct PUN_DLL _tagAnimationCallback
-	{
-		int		iAnimationProgress;
-		float	fAnimationProgress;
-		function<void(float)> func;
-		bool	bCall;
-	}ANIMATIONCALLBACK, *PANIMATIONCALLBACK;
-
-	*/
 	void FootStepWalkNormal		(float fTime);
 	void FootStepRun			(float fTime);
 	void FootStepCrouch			(float fTime);
@@ -240,8 +228,13 @@ public:
 	void SetFootStepEnvironment(FOOTSTEP_ENVIRONMENT eEnv);
 	FOOTSTEP_ENVIRONMENT GetFootStepEnvironment() const;
 
-	void LoadArmAnim();
 	void AfterLoad();
+
+	void OnDestroyInven();
+	void OnDestroyInteract();
+	void OnDestroyCam();
+	void OnDestroyMove();
+	void OnDestroyWeap();
 
 	///////////////// 콜백 함수 선언부 //////////////////
 
@@ -256,4 +249,29 @@ public:
 	void RayCallBackEnter(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 	void RayCallBackStay(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 	void RayCallBackLeave(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+
+
+	//모듈화 기본함수
+	int Input_Cam(float fTime);
+	int CamUpdate(float fTime);
+	int CamLateUpdate(float fTime);
+	int Input_Move(float fTime);
+	int MoveUpdate(float fTime);
+	int MoveLateUpdate(float fTime);
+	int Input_Interact(float fTime);
+	int InteractUpdate(float fTime);
+	int InteractLateUpdate(float fTime);
+	int Input_Items(float fTime);
+	int ItemUpdate(float fTime);
+	int ItemLateUpdate(float fTime);
+	int WeaponInput(float fTime);
+	int WeaponUpdate(float fTime);
+	int WeaponLateUpdate(float fTime);
+	
+	//custom public Functions
+#include "Cam_Func_Header.hpp"
+#include "Interact_Func_Header.hpp"
+#include "Item_Func_Header.hpp"
+#include "Move_Func_Header.hpp"
+#include "Weap_Func_Header.hpp"
 };

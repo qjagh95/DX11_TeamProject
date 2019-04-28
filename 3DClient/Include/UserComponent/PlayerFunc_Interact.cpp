@@ -2,6 +2,17 @@
 #include "Human_Player.h"
 #include "Inventory.h"
 
+bool CHuman_Player::Init_Interact()
+{
+
+	return true;
+}
+
+
+void CHuman_Player::OnDestroyInteract()
+{
+}
+
 void CHuman_Player::Interact(float fTime) 
 {
 	
@@ -47,15 +58,17 @@ void CHuman_Player::Exit_Bed(float fTime)
 
 }
 
-void CHuman_Player::Pickup_Item(float fTime)
+int CHuman_Player::Input_Interact(float fTime)
 {
-	
-};
-void CHuman_Player::Open_Item(float fTime)
+
+	return 0;
+}
+
+int CHuman_Player::InteractUpdate(float fTime)
 {
-	m_pInven->SetVisible();
-};
-void CHuman_Player::Close_Item(float fTime) 
+	return 0;
+}
+int CHuman_Player::InteractLateUpdate(float fTime)
 {
-	m_pInven->SetVisible();
-};
+	return 0;
+}

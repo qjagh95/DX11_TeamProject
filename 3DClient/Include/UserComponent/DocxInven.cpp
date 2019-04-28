@@ -1,5 +1,6 @@
 #include "../ClientHeader.h"
 #include "DocxInven.h"
+#include "Resource/ResourcesManager.h"
 
 CDocxInven::CDocxInven() :
 	m_iIndex(0),
@@ -158,7 +159,7 @@ void CDocxInven::AfterClone()
 bool CDocxInven::Init()
 {
 	CSoundManager::GetInst()->CreateSoundEffect("Docx_Open", TEXT("Document_Open.WAV"));
-
+	CResourcesManager::GetInst()->CreateTexture("DocxInven", TEXT("UI/Document/DocxInven.png"));
 	m_pUILayer = m_pScene->FindLayer("UI");
 
 	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("InventoryRenderer");
@@ -175,7 +176,7 @@ bool CDocxInven::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "DocxInven", TEXT("UI/Document/DocxInven.png"));
+	pMaterial->SetDiffuseTex(0, "DocxInven");
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
