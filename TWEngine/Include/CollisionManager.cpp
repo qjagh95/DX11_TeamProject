@@ -380,8 +380,13 @@ void CCollisionManager::Collision(float fTime)
 						// 이전에 충돌되고 있었을 경우
 						else
 						{
-							pCollSrc->OnCollision(pCollDest, fTime);
-							pCollDest->OnCollision(pCollSrc, fTime);
+							if (pCollSrc->GetCallBackFunc() == false && pCollDest->GetCallBackFunc() == false)
+							{
+								pCollSrc->OnCollision(pCollDest, fTime);
+								pCollDest->OnCollision(pCollSrc, fTime);
+								pCollSrc->SetCallBackFunc(true);
+								pCollDest->SetCallBackFunc(true);
+							}
 						}
 					}
 

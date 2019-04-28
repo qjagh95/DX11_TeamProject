@@ -162,9 +162,8 @@ typedef struct PUN_DLL _tagPartialAnim
 	bool				bEnd;
 	float				fPartAnimationGTime;
 	float				fClipProgress= 0.f;
-	float				fChangeTime = 0.f;
+	float				fChangeTime = 0.25f;
 	float				fChangeLimitTime = 0.f;
-	float				fFrameTime = 0.f;
 	int					iFrameMode = 0;
 	Vector3				vBlendScale;
 	Vector4				vBlendRot;
@@ -183,9 +182,8 @@ typedef struct PUN_DLL _tagPartialAnim
 		bEnd(false),
 		fPartAnimationGTime(0.f),
 		fClipProgress(0.f),
-		fChangeTime(0.f),
+		fChangeTime(0.25f),
 		fChangeLimitTime(0.f),
-		fFrameTime(0.f),
 		iFrameMode(0),
 		iRefCnt(1)
 	{}
@@ -262,6 +260,8 @@ public:
 	float GetCurrentClipTime();
 	void KeepBlendSet(bool on);
 	void AddBone(PBONE pBone);
+	void SetDefaultClip(const std::string& strDefKey);
+	void SetClipOption(const std::string& strKey, ANIMATION_OPTION eOpt);
 	bool CreateBoneTexture();
 	void AddClip(ANIMATION_OPTION eOption,
 		struct _tagFbxAnimationClip* pClip);

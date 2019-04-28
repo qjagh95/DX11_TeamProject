@@ -27,7 +27,16 @@ protected:
 	OBJECT_COLLISION_TYPE m_eObjectCollType;
 	string m_MyTypeName;
 	vector<string> m_vecContinueName;
-
+	bool			m_bCallBackFunc;
+public:
+	void SetCallBackFunc(bool _bEnable)
+	{
+		m_bCallBackFunc = _bEnable;
+	}
+	bool GetCallBackFunc() const
+	{
+		return m_bCallBackFunc;
+	}
 public:
 	OBJECT_COLLISION_TYPE GetObjectCollType()
 	{

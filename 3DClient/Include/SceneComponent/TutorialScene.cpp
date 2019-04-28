@@ -84,7 +84,7 @@ bool CTutorialScene::Init()
 	CHuman_Player*	pPlayer = pPlayerObj->AddComponent<CHuman_Player>("Player");
 	//CPlayer*	pPlayer = pPlayerObj->AddComponent<CPlayer>("Player");
 
-	pPlayer->LoadData(TEXT("PlayerData.csv"));
+	//pPlayer->LoadData(TEXT("PlayerData.csv"));
 
 	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
 	pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);

@@ -19,6 +19,7 @@ CCollider::CCollider()
 	m_pDepthDisable = GET_SINGLE(CRenderManager)->FindRenderState(DEPTH_DISABLE);
 	m_vColor = Vector4::Green;
 	m_pWireFrame = nullptr;
+	m_bCallBackFunc = false;
 }
 
 
@@ -251,6 +252,7 @@ void CCollider::Collision(float fTime)
 
 void CCollider::Render(float fTime)
 {
+	m_bCallBackFunc = false;
 	if (CCollisionManager::GetInst()->GetIsShow() == false)
 		return;
 

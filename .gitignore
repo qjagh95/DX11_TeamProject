@@ -590,5 +590,7 @@
 /WinFormEditor/obj/Debug/WinFormEditor.csproj.FileListAbsolute.txt
 /3DClient/bin/MeshData
 /3DClient/bin/Sound
-/WinFormEditor/bin/Debug
-/WinFormEditor/bin/Release
+/WinFormEditor/bin/Debug/Mesh
+/WinFormEditor/bin/Debug/Sound
+/WinFormEditor/bin/Release/Mesh
+/WinFormEditor/bin/Release/Sound
