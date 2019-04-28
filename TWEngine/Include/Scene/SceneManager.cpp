@@ -156,7 +156,7 @@ CScene * CSceneManager::FindScene(const string & KeyName)
 	return FindIter->second;
 }
 
-void CSceneManager::ChangScene(const string & KeyName)
+void CSceneManager::ChangeScene(const string & KeyName)
 {
 	CScene* getScene = FindScene(KeyName);
 
@@ -167,6 +167,16 @@ void CSceneManager::ChangScene(const string & KeyName)
 	}
 
 	m_pCurScene = getScene;
+
+	auto StartIter = CObjectManager::GetInst()->GetMap()->begin();
+	auto EndIter = CObjectManager::GetInst()->GetMap()->end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		StartIter->second->SetScene(m_pCurScene);
+	}
+
+
 	GET_SINGLE(CRenderManager)->SetSkyObject(getScene->GetSkyObjectNonCount());
 }
 
@@ -263,4 +273,30 @@ CGameObject* CSceneManager::FindObject(const string & TagName)
 		return m_pCurScene->FindObject(TagName);
 
 	return NULLPTR;
+}
+
+void CSceneManager::Access()
+{
+	for (size_t i = 1; i < m_vecTemp.size(); i++)
+	{
+		auto StartIter = m_vecTemp[i]->m_LayerList.begin();
+		auto EndIter = m_vecTemp[i]->m_LayerList.end();
+
+		for (; StartIter != EndIter; StartIter++)
+		{
+			if ((*StartIter)->GetTag() == "Default")
+			{
+				auto StartIter1 = CObjectManager::GetInst()->GetMap()->begin();
+				auto EndIter1 = CObjectManager::GetInst()->GetMap()->end();
+
+				for (; StartIter1 != EndIter1; StartIter1++)
+				{
+					if (StartIter1->second->GetScene()->GetTag() == m_vecTemp[i]->GetTag())
+						continue;
+
+					(*StartIter)->GetObjectList()->push_back(StartIter1->second);
+				}
+			}
+		}
+	}
 }

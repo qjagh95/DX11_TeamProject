@@ -342,7 +342,7 @@ int CFirTestScene::Update(float fTime)
 {
 	if (CInput::GetInst()->KeyPress("ChangeScene"))
 	{
-		CSceneManager::GetInst()->ChangScene("Second");
+		CSceneManager::GetInst()->ChangeScene("Second");
 	}
 
 	return 0;

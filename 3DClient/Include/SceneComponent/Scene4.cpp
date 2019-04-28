@@ -51,7 +51,7 @@ void CScene4::Render(float _fTime)
 const string TCHARToString(const TCHAR* _ptsz)
 {
 	// TCHAR -> string º¯È¯
-	int len = wcslen((wchar_t*)_ptsz);
+	int len = (int)wcslen((wchar_t*)_ptsz);
 	char* psz = new char[2 * len + 1];
 	wcstombs(psz, (wchar_t*)_ptsz, 2 * len + 1);
 	string cvtStr = psz;

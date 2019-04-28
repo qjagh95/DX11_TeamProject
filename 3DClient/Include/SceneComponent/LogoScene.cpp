@@ -66,7 +66,7 @@ int CLogoScene::Update(float fTime)
 
 	if (m_fChangeTime >= 10.f)
 	{
-		GET_SINGLE(CSceneManager)->ChangScene("Second");
+		GET_SINGLE(CSceneManager)->ChangeScene("Stage3_BH");
 	}
 
 	return 0;

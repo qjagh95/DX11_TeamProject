@@ -13,111 +13,44 @@ CObjectManager::CObjectManager()
 {
 }
 
-
 CObjectManager::~CObjectManager()
 {
-	Safe_Release_VecList(m_DontDestroyObjList);
-}
-
-void CObjectManager::ChangeScene(CScene * _pScene, class CGameObject* _pObject, const std::string& _strLayerName)
-{
-	CLayer* pLayer = _pScene->FindLayer(_strLayerName);
-
-	pLayer->AddObject(_pObject);
-
-	SAFE_RELEASE(pLayer);
-}
-
-void CObjectManager::ChangeSceneFromDontDestroyObj(CScene* _pScene)
-{
-	std::list<CGameObject*>::iterator Iter;
-	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
-	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
-	{
-		if ((*Iter)->GetTag() == "TestObject")
-		{
-			CCamera* pCamera = _pScene->GetMainCamera();
-
-			pCamera->SetTarget((*Iter));
-
-			SAFE_RELEASE(pCamera);
-		}
-
-		ChangeScene(_pScene, *Iter, (*Iter)->GetLayerName());
-	}
+	Safe_Release_Map(m_DontMap);
 }
 
 void CObjectManager::PushDontDestoryObject(CGameObject* _pObject)
 {
-	if (FindDonDestoryObject(_pObject) != nullptr)
-	{
+	if (FindObject(_pObject->GetTag()) != nullptr)
 		return;
-	}
 
 	_pObject->AddRef();
-	m_DontDestroyObjList.push_back(_pObject);
+	m_DontMap.insert(make_pair(_pObject->GetTag(), _pObject));
 }
 
 bool CObjectManager::RemoveDontDestroyObject(CGameObject * _pObject)
 {
-	std::list<CGameObject*>::iterator Iter;
-	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
-	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
+	CGameObject* getObject = FindObject(_pObject->GetTag());
+
+	if (getObject == NULLPTR)
 	{
-		if (*Iter == _pObject)
-		{
-			SAFE_RELEASE((*Iter));
-			m_DontDestroyObjList.erase(Iter);
-			return true;
-		}
+		TrueAssert(true);
+		return false;
 	}
 
-	return false;
+	m_DontMap.erase(_pObject->GetTag());
+	SAFE_RELEASE(getObject);
+
+	return true;
 }
 
-bool CObjectManager::RemoveDontDestroyObject(const std::string & _strTag)
+CGameObject * CObjectManager::FindObject(const string & KeyName)
 {
-	std::list<CGameObject*>::iterator Iter;
-	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
-	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
-	{
-		if ((*Iter)->GetTag() == _strTag)
-		{
-			SAFE_RELEASE((*Iter));
-			m_DontDestroyObjList.erase(Iter);
-			return true;
-		}
-	}
+	auto FindIter = m_DontMap.find(KeyName);
+	
+	if (FindIter == m_DontMap.end())
+		return NULLPTR;
 
-	return false;
-}
-
-CGameObject * CObjectManager::FindDonDestoryObject(const std::string & _strTag)
-{
-	std::list<CGameObject*>::iterator Iter;
-	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
-	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
-	{
-		if ((*Iter)->GetTag() == _strTag)
-		{
-			return *Iter;
-		}
-	}
-	return nullptr;
-}
-
-CGameObject * CObjectManager::FindDonDestoryObject(CGameObject * _pObject)
-{
-	std::list<CGameObject*>::iterator Iter;
-	std::list<CGameObject*>::iterator EndIter = m_DontDestroyObjList.end();
-	for (Iter = m_DontDestroyObjList.begin(); Iter != EndIter; ++Iter)
-	{
-		if (*Iter == _pObject)
-		{
-			return *Iter;
-		}
-	}
-	return nullptr;
+	return FindIter->second;
 }
 
 bool CObjectManager::Init()

@@ -64,7 +64,7 @@ public:
 	void EraseObjectAll();
 	void GetLayerListObjTag(std::vector<std::string>* _vec);
 	class CGameObject* FindObjectFromIndex(int _idx);
-	const list<CGameObject*>* GetObjectList() const;
+	list<CGameObject*>* GetObjectList();
 	bool ListEmpty()
 	{
 		return m_ObjList.empty();

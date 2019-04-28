@@ -9,6 +9,8 @@ class PUN_DLL CSceneManager
 private:
 	CScene*	m_pCurScene;
 	bool	m_bChange;
+	bool m_bStart;
+
 	CGameObject*	m_pMainCameraObj;
 	CTransform*		m_pMainCameraTr;
 	CCamera*		m_pMainCamera;
@@ -19,12 +21,13 @@ private:
 
 	unordered_map<string, CScene*> m_SceneMap;
 	unordered_map<string, CGameObject*>	m_mapCamera;
+	vector<CScene*> m_vecTemp;
 
 public:
 	class CScene* GetScene()	const;
 	class CScene * GetSceneNonCount() const;
 	CScene* FindScene(const string& KeyName);
-	void ChangScene(const string& KeyName);
+	void ChangeScene(const string& KeyName);
 	void DeleteScene(const string& SceneName);
 
 	CGameObject*	GetMainCameraObj()					const;
@@ -58,6 +61,7 @@ public:
 	void ChangeLayerZOrder(const string& strTag, int iZOrder, bool bCurrent = true);
 	class CLayer* FindLayer(const string& strTag, bool bCurrent = true);
 	CGameObject* FindObject(const string& TagName);
+	void Access();
 
 public:
 	template <typename T>
@@ -74,10 +78,15 @@ public:
 		newScene->AddSceneComponent<T>(ComponentTag);
 		m_SceneMap.insert(make_pair(SceneKeyName, newScene));
 
-		m_pCurScene = m_SceneMap.begin()->second;
+		if(m_bStart == false)
+			m_pCurScene = m_SceneMap.begin()->second;
+
+		m_bStart = true;
 
 		GET_SINGLE(CInput)->ChangeMouseScene(m_pCurScene);
 		GET_SINGLE(CRenderManager)->SetSkyObject(m_pCurScene->GetSkyObjectNonCount());
+
+		m_vecTemp.push_back(newScene);
 	}
 
 private:

@@ -627,9 +627,14 @@ void CLandScape::SaveLandScape(const string& FullPath)
 
 void CLandScape::LoadLandScape(const string& FullPath)
 {
+	string FileName = FullPath;
+	FileName.erase(0, FileName.find_last_of("\\") + 1);
+	FileName.erase(FileName.find_last_of("."), FileName.find_last_of("."));
+
 	string Temp = FullPath;
 	for (int i = 0; i < 3; ++i)
 		Temp.pop_back();
+
 	Temp += "Land";
 
 	FILE* pFile = NULL;
@@ -672,37 +677,19 @@ void CLandScape::LoadLandScape(const string& FullPath)
 	}
 	fclose(pFile);
 
-	//CreateLandScape("TestLandScape", m_iNumX, m_iNumZ, "LandScapeDif", NULLPTR, NULLPTR, NULLPTR, NULLPTR);
-
-	//m_pNavMesh = CNavigationManager3D::GetInst()->CreateNavMesh(m_pScene, FullPath);
-	//for (int i = 0; i < m_vecVtx.size(); ++i)
-	//{
-	//	m_vecVtx[i].vColor = tempvec[i].vColor;
-	//}
-	//for (int i = 0; i < (int)m_iNumZ - 1; ++i)
-	//{
-	//	for (int j = 0; j < (int)m_iNumX - 1; ++j)
-	//	{
-	//		int	iAddr = i * m_iNumX + j;
-
-	//		m_pNavMesh->SetCellCopyVertex(m_vecVtx[iAddr], m_vecVtx[iAddr + 1], m_vecVtx[iAddr + m_iNumX + 1] , iAddr * 2);
-	//		m_pNavMesh->SetCellCopyVertex(m_vecVtx[iAddr], m_vecVtx[iAddr + m_iNumX + 1], m_vecVtx[iAddr + m_iNumX] , (iAddr * 2) + 1);
-	//	}
-	//}
-
-	GET_SINGLE(CResourcesManager)->CreateMesh("TestLandScape", LANDSCAPE_COLOR_SHADER, VERTEX3D_LAYOUT_COLOR,
+	GET_SINGLE(CResourcesManager)->CreateMesh(FileName.c_str(), LANDSCAPE_COLOR_SHADER, VERTEX3D_LAYOUT_COLOR,
 		&m_vecVtx[0], (int)m_vecVtx.size(), sizeof(Vertex3DColor), D3D11_USAGE_DEFAULT,
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &m_vecIdx[0], (int)m_vecIdx.size(),
 		4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
-	m_Mesh = CResourcesManager::GetInst()->FindMeshNonCount("TestLandScape");
+	m_Mesh = CResourcesManager::GetInst()->FindMeshNonCount(FileName.c_str());
 
 	CRenderer*	pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
 
 	if (!pRenderer)
-		pRenderer = m_pObject->AddComponent<CRenderer>("LandScapeRenderer");
+		pRenderer = m_pObject->AddComponent<CRenderer>(FileName + "Renderer");
 
-	pRenderer->SetMesh("TestLandScape");
+	pRenderer->SetMesh(FileName.c_str());
 	//pRenderer->SetRenderState(WIRE_FRAME);
 
 	SAFE_RELEASE(pRenderer);
@@ -710,12 +697,13 @@ void CLandScape::LoadLandScape(const string& FullPath)
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
 	if (!pMaterial)
-		pMaterial = m_pObject->AddComponent<CMaterial>("LandScapeMaterial");
+		pMaterial = m_pObject->AddComponent<CMaterial>(FileName + "Material");
 
 	SAFE_RELEASE(pMaterial);
 
 	m_pNavMesh = GET_SINGLE(CNavigationManager3D)->CreateNavMesh(m_pScene);
-
 	m_pNavMesh->LoadFromFullPath(FullPath.c_str());
 	m_pNavMesh->LoadCell(&m_vecVtx);
+
+	m_pNavMesh = GET_SINGLE(CNavigationManager3D)->CreateNavMesh(NULLPTR);
 }

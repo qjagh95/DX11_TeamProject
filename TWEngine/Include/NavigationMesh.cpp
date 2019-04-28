@@ -168,9 +168,8 @@ void CNavigationMesh::LoadCell(std::vector<Vertex3DColor>* vecColor)
 		m_vecCell[i]->tCopyVertex[2] = &(*vecColor)[m_vecCell[i]->m_iVertexIndex[2]];
 	}
 
-	m_vMax.y = 5000.f;
+	m_vMax.y = 5000.0f;
 	m_vMin.y = -5000.0f;
-
 }
 
 void CNavigationMesh::SetCellCopyVertex(Vertex3DColor & vPos0, Vertex3DColor & vPos1,
@@ -182,7 +181,6 @@ void CNavigationMesh::SetCellCopyVertex(Vertex3DColor & vPos0, Vertex3DColor & v
 	m_vecCell[_idx]->tCopyVertex[0] = &vPos0;
 	m_vecCell[_idx]->tCopyVertex[1] = &vPos1;
 	m_vecCell[_idx]->tCopyVertex[2] = &vPos2;
-
 }
 
 void CNavigationMesh::AddAdj(int iCellIdx, int iAdjIdx)
@@ -587,7 +585,6 @@ float CNavigationMesh::GetY(const Vector3 & vPos)
 					return vIntersect.y;
 			}
 		}
-
 		return 0.f;
 	}
 
@@ -985,6 +982,7 @@ bool CNavigationMesh::RectIntersectPoint(Vector3 vRectMin, Vector3 vRectMax, Vec
 int CNavigationMesh::GetSectionIndex(Vector3 vPos)
 {
 	vPos -= m_vMin;
+
 	vPos /= m_vSectionSize;
 
 	int x, z;

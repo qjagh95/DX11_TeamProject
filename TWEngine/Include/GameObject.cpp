@@ -118,8 +118,10 @@ CGameObject * CGameObject::CreateObject(const string & strTag, CLayer * pLayer,
 	pObj->SetTag(strTag);
 
 	if (bDontDestroy)
+	{
 		pObj->DontDestroyOnLoad();
-
+		pObj->m_isDontDestroy = true;
+	}
 
 	if (!pObj->Init())
 	{
@@ -129,16 +131,6 @@ CGameObject * CGameObject::CreateObject(const string & strTag, CLayer * pLayer,
 
 	if (pLayer)
 	{
-		//if (!bDontDestroy)
-		//	pLayer->AddObject(pObj);
-
-		//else
-		//{
-		//	class CScene* pScene = pLayer->GetScene();
-		//	pObj->SetScene(pScene);
-		//	pObj->SetLayer(pLayer);
-		//	SAFE_RELEASE(pScene);
-		//}
 		pLayer->AddObject(pObj);
 	}
 
@@ -866,7 +858,10 @@ CComponent* CGameObject::AddComponent(CComponent* pCom)
 	if (pCom->GetComponentType() == CT_UI)
 		m_eRenderGroup = RG_UI;
 	else if (pCom->GetComponentType() == CT_LANDSCAPE)
+	{
 		m_eRenderGroup = RG_LANDSCAPE;
+		m_pScene->m_LandObject = pCom->GetGameObjectNonCount();
+	}
 	else if (pCom->GetComponentType() == CT_LIGHT)
 		m_eRenderGroup = RG_LIGHT;
 

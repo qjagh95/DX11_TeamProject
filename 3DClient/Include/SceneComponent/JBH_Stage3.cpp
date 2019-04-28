@@ -18,11 +18,11 @@ JBH_Stage3::~JBH_Stage3()
 
 bool JBH_Stage3::Init()
 {
-	CCameraEff::GetInst()->SetFirstPersonViewEnable();
-
-	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
-	pCamera->SetCameraType(CT_PERSPECTIVE);
+	//CCamera* pCamera = m_pScene->GetMainCameraNonCount();
+	//pCamera->SetCameraType(CT_PERSPECTIVE);
 	//pCamera->SetNear(0.03f);
+	//pCamera->GetTransformNonCount()->SetLocalPos(Vector3(0.f, 5.0f, 5.0f));
+
 	//pCamera->SetCameraInfo(CT_PERSPECTIVE, 1280.0f, 720.0f, 90.0f, 0.03f, 1000.0f);
 	//CFreeCamera* FreeCam = pCamera->AddComponent<CFreeCamera>("FreeCam");
 
@@ -42,12 +42,11 @@ bool JBH_Stage3::Init()
 	Path += "Stage3Nav.nav";
 	Land->LoadLandScape(Path);
 
-	CGameObject* PlayerObject = CGameObject::CreateObject("Player", pDefaultLayer);
+	CGameObject* PlayerObject = CGameObject::CreateObject("Player", pDefaultLayer, true);
 	CHuman_Player* newPlayer = PlayerObject->AddComponent<CHuman_Player>("Player");
 	newPlayer->GetTransformNonCount()->SetWorldPos(Vector3(231.0f, 0.0f, 68.0f));
 	newPlayer->GetTransformNonCount()->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
 	newPlayer->GetTransformNonCount()->SetLocalRot(Vector3(0.0f, 180.0f, 0.0f));
-	newPlayer->LoadData(TEXT("PlayerData.csv"));
 
 	//SAFE_RELEASE(FreeCam);
 	SAFE_RELEASE(newPlayer);
@@ -78,7 +77,7 @@ int JBH_Stage3::Update(float DeltaTime)
 	}
 	else if (CInput::GetInst()->KeyPress("ChangeScene"))
 	{
-		CSceneManager::GetInst()->ChangScene("Third");
+		CSceneManager::GetInst()->ChangeScene("Third");
 	}
 
 	return 0;

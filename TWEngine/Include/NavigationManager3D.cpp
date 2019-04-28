@@ -33,24 +33,24 @@ CNavigationMesh * CNavigationManager3D::CreateNavMesh(CScene * pScene)
 
 	if (!pList)
 	{
-		vector<CNavigationMesh*>	vec;
+		vector<CNavigationMesh*> vec;
 		m_mapNavMesh.insert(make_pair(pScene, vec));
+		
+		auto StartIter = m_mapNavMesh.begin();
+		auto EndIter = m_mapNavMesh.end();
 
-		pList = &m_mapNavMesh.begin()->second;
+		for (; StartIter != EndIter; StartIter++)
+			pList = &StartIter->second;
 	}
 
 	CNavigationMesh*	pMesh = new CNavigationMesh;
-
 	pMesh->Init();
-
+	
 	pList->push_back(pMesh);
-
 	return pMesh;
 }
 
-CNavigationMesh * CNavigationManager3D::CreateNavMesh(
-	CScene * pScene, const char * pFileName, 
-	const string & strPathName)
+CNavigationMesh * CNavigationManager3D::CreateNavMesh(CScene * pScene, const char * pFileName, const string & strPathName)
 {
 	vector<CNavigationMesh*>*	pList = FindNavMeshList(pScene);
 
@@ -105,6 +105,8 @@ CNavigationMesh * CNavigationManager3D::FindNavMesh(class CScene* pScene, const 
 
 		Vector3 vMin = pNavMesh->GetMin();
 		Vector3 vMax = pNavMesh->GetMax();
+		//Vector3 ConvertPos = vPos + pNavMesh->GetOffset();
+		Vector3 ConvertPos = vPos + Vector3(-100.f, 0.0f, 0.0f);
 
 		if (vMin.x <= vPos.x && vPos.x <= vMax.x &&
 			vMin.y <= vPos.y && vPos.y <= vMax.y &&

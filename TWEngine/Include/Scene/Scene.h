@@ -32,6 +32,7 @@ public:
 	void ChangeLayerZOrder(const string& strTag, int iZOrder);
 	void GetLayerTagList(vector<string>* _pVec);
 	CLayer* FindLayer(const string& strTag);
+	CGameObject* m_LandObject;
 
 public:
 	static bool SortLayerZOrder(const CLayer* pSrc, const  CLayer* pDest);

@@ -426,14 +426,14 @@ void CRenderManager::Render3D(float fTime)
 		RenderForward(fTime);
 	else
 	{
-		if (GET_SINGLE(CCore)->m_bEditorMode)
-		{
-			if (GET_SINGLE(CEditManager)->IsNaviEditorMode())
-				RenderNaviEditorMode(fTime);
-			else
-				RenderDeferred(fTime);
-		}
-		else
+		//if (GET_SINGLE(CCore)->m_bEditorMode)
+		//{
+		//	if (GET_SINGLE(CEditManager)->IsNaviEditorMode())
+		//		RenderNaviEditorMode(fTime);
+		//	else
+		//		RenderDeferred(fTime);
+		//}
+		//else
 			RenderDeferred(fTime);
 	}
 

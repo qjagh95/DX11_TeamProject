@@ -9,6 +9,8 @@
 #include "../UserComponent/Field.h"
 #include "Component/Gizmo.h"
 #include "Component/ParkourTest.h"
+#include <NavigationMesh.h>
+
 CRandScapeTestScene::CRandScapeTestScene()
 {
 }
@@ -40,60 +42,52 @@ bool CRandScapeTestScene::Init()
 
 	SAFE_RELEASE(pObject);
 
-	pObject = CGameObject::CreateObject("Field", pDefaultLayer, true);
-
+	pObject = CGameObject::CreateObject("Field", pDefaultLayer);
 	CField*	pField = pObject->AddComponent<CField>("Field");
 
 	SAFE_RELEASE(pField);
-
 	SAFE_RELEASE(pObject);
 
-	pObject = CGameObject::CreateObject("TestObject", pDefaultLayer, true);
+	pObject = CGameObject::CreateObject("TestObject", pDefaultLayer);
 	pTransform = pObject->GetTransform();
 
 	//pTransform->SetWorldPos(0.f, 0.f, 0.f);
 	pTransform->SetWorldPos(1.f, 1.f, 1.f);
 	pCamera->SetTarget(pObject);
 
-	CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
+	//CArm*	pArm = pCamera->AddComponent<CArm>("CameraArm");
 
-	pArm->EnableMouse();
-	pArm->SetTarget(pTransform);
+	//pArm->EnableMouse();
+	//pArm->SetTarget(pTransform);
 
-	SAFE_RELEASE(pArm);
+	//SAFE_RELEASE(pArm);
 	CPlayer*	pPlayer = pObject->AddComponent<CPlayer>("Player");
+	pPlayer->GetTransformNonCount()->SetWorldPos(Vector3(0.0f, 0.0f, 0.0f));
 	SAFE_RELEASE(pPlayer);
 	SAFE_RELEASE(pObject);
 
 	CGameObject* newLand = CGameObject::CreateObject("123", pDefaultLayer);
 	CLandScape* Land = newLand->AddComponent< CLandScape>("123");
 	string Temp = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	Temp += "Nav.nav";
+	Temp += "Stage3Nav.nav";
 	Land->LoadLandScape(Temp);
+
+	//newLand->GetTransformNonCount()->SetWorldPos(Vector3(100.0f, 0.0f, 0.0f));
+	//Land->GetNaviMesh()->SetOffset(Vector3(Vector3(-100.0f, 0.0f, 0.0f)));
 
 	SAFE_RELEASE(newLand);
 	SAFE_RELEASE(Land);
-	//pObject = CGameObject::CreateObject("Minion", pDefaultLayer);
-
-	//CMinion3D*	pMinion = pObject->AddComponent<CMinion3D>("Minion");
-
-	//pMinion->SetTargetTransform(pTransform);
-
-	//SAFE_RELEASE(pMinion);
-
-	//SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pTransform);
 
+	//CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
 
-	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pDefaultLayer, true);
+	//CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
+	//pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
+	//pLight->SetLightType(LT_DIR);
+	//pLight->SetLightDirection(Vector3(1.0f, -1.0f, 1.0f));
 
-	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
-	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
-	pLight->SetLightType(LT_DIR);
-	pLight->SetLightDirection(Vector3(1.0f, -1.0f, 1.0f));
-
-	SAFE_RELEASE(pLight);
-	SAFE_RELEASE(pLightObj);
+	//SAFE_RELEASE(pLight);
+	//SAFE_RELEASE(pLightObj);
 
 	//CGameObject* pLandScapeObj = CGameObject::CreateObject("LandScape", pDefaultLayer);
 	//pTransform = pLandScapeObj->GetTransform();

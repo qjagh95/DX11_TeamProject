@@ -15,6 +15,7 @@ CScene::CScene()
 	m_pSkyMtrl = nullptr;
 	m_LogText = NULLPTR;
 	m_pSceneComponent = NULLPTR;
+	m_LandObject = NULLPTR;
 
 	m_bHeader = false;
 	m_vecInput = NULLPTR;
@@ -177,7 +178,7 @@ bool CScene::Init()
 	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
 	m_LogText = CCore::GetInst()->CreateFileStream(Path, "Scene", "Scene");
 
-	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLightLayer, true);
+	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLightLayer);
 	CTransform* pTr = pLightObj->GetTransform();
 
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
@@ -295,7 +296,6 @@ int CScene::LateUpdate(float fTime)
 {
 	TimeInfo Info = {};
 	Info.Start = clock();
-
 
 	m_pSceneComponent->LateUpdate(fTime);
 
