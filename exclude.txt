@@ -8,3 +8,5 @@
 .dds
 .tga
 .txt
+.wav
+.fbm

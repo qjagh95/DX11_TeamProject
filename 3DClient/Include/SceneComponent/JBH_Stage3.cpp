@@ -3,7 +3,10 @@
 
 #include <Component/Camera.h>
 #include <Component/FreeCamera.h>
+#include <Component/LandScape.h>
+
 #include "../UserComponent/Human_Player.h"
+#include "../CameraEff.h"
 
 JBH_Stage3::JBH_Stage3()
 {
@@ -15,11 +18,13 @@ JBH_Stage3::~JBH_Stage3()
 
 bool JBH_Stage3::Init()
 {
+	CCameraEff::GetInst()->SetFirstPersonViewEnable();
+
 	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	//pCamera->SetNear(0.03f);
 	//pCamera->SetCameraInfo(CT_PERSPECTIVE, 1280.0f, 720.0f, 90.0f, 0.03f, 1000.0f);
-	CFreeCamera* FreeCam = pCamera->AddComponent<CFreeCamera>("FreeCam");
+	//CFreeCamera* FreeCam = pCamera->AddComponent<CFreeCamera>("FreeCam");
 
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
@@ -30,8 +35,25 @@ bool JBH_Stage3::Init()
 	Path += "JBH_Stage3.dat";
 	m_pScene->Load(Path);
 
-	SAFE_RELEASE(FreeCam);
+	CGameObject* NavLandObject = CGameObject::CreateObject("Land", pDefaultLayer);
+	CLandScape* Land = NavLandObject->AddComponent< CLandScape>("Land");
+	
+	Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
+	Path += "Stage3Nav.nav";
+	Land->LoadLandScape(Path);
 
+	CGameObject* PlayerObject = CGameObject::CreateObject("Player", pDefaultLayer);
+	CHuman_Player* newPlayer = PlayerObject->AddComponent<CHuman_Player>("Player");
+	newPlayer->GetTransformNonCount()->SetWorldPos(Vector3(231.0f, 0.0f, 68.0f));
+	newPlayer->GetTransformNonCount()->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
+	newPlayer->GetTransformNonCount()->SetLocalRot(Vector3(0.0f, 180.0f, 0.0f));
+	newPlayer->LoadData(TEXT("PlayerData.csv"));
+
+	//SAFE_RELEASE(FreeCam);
+	SAFE_RELEASE(newPlayer);
+	SAFE_RELEASE(PlayerObject);
+	SAFE_RELEASE(Land);
+	SAFE_RELEASE(NavLandObject);
 	SAFE_RELEASE(pBackLayer);
 	SAFE_RELEASE(pDefaultLayer);
 	SAFE_RELEASE(pUILayer);

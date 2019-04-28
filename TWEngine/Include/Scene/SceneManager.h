@@ -9,6 +9,7 @@ class PUN_DLL CSceneManager
 private:
 	CScene*	m_pCurScene;
 	bool	m_bChange;
+	bool m_bStart;
 	CGameObject*	m_pMainCameraObj;
 	CTransform*		m_pMainCameraTr;
 	CCamera*		m_pMainCamera;
@@ -74,7 +75,10 @@ public:
 		newScene->AddSceneComponent<T>(ComponentTag);
 		m_SceneMap.insert(make_pair(SceneKeyName, newScene));
 
-		m_pCurScene = m_SceneMap.begin()->second;
+		if(m_bStart == false)
+			m_pCurScene = m_SceneMap.begin()->second;
+
+		m_bStart = true;
 
 		GET_SINGLE(CInput)->ChangeMouseScene(m_pCurScene);
 		GET_SINGLE(CRenderManager)->SetSkyObject(m_pCurScene->GetSkyObjectNonCount());

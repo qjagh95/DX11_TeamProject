@@ -12,6 +12,7 @@ CSceneManager::CSceneManager() :
 	m_pCurScene(nullptr),
 	m_bChange(false)
 {
+	m_bStart = false;
 }
 
 CSceneManager::~CSceneManager()
