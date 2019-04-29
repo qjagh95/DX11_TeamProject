@@ -589,6 +589,13 @@
 /WinFormEditor/obj/Debug/WinFormEditor.csproj.CopyComplete
 /WinFormEditor/obj/Debug/WinFormEditor.csproj.FileListAbsolute.txt
 /3DClient/bin/MeshData
-/3DClient/bin
+/3DClient/bin/Sound
 /WinFormEditor/bin/Debug
-/WinFormEditor/bin/Release
+/WinFormEditor/bin/Release/Data
+/WinFormEditor/bin/Release/Mesh
+/WinFormEditor/bin/Release/Sound/commonMusic
+/WinFormEditor/bin/Release/Sound
+/3DClient/bin/Data/TutorialHalf.dat
+/3DClient/bin/Data/HFTest.nav
+/3DClient/bin/Data/HFTest.Land
+/3DClient/bin/Data/HFTest.dat

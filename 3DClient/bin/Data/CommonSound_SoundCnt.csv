@@ -138,3 +138,16 @@ ENEM_Nano_angry,7
 ENEM_Nano_hit,7
 ENEM_Nano_idle,3
 ENEM_Def_move,10
+HURT_blood,6
+HURT_pantL,5
+HURT_pantH,10
+ATK_punch,4
+ATK_knifestab,6
+ATK_knifeL,4
+ATK_knifescrape,9
+ATK_knifestab,3
+ATK_pipeA,5
+ATK_pipeB,4
+ATK_punchhit,5
+ATK_whooshfast,6
+ATK_whooshstrong,2

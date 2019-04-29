@@ -47,11 +47,58 @@ Enemies::~Enemies()
 
 bool Enemies::Init()
 {
+	m_iEnemState = EAS_IDLE;
 	return true;
 }
 
 int Enemies::Update(float fTime)
 {
+	if ((m_iEnemState & EAS_IDLE) | (m_iEnemState & EAS_ALERTED))
+	{
+		int iKeyCnt = CCommonSoundLoader::GetInst()->GetSoundRandomCnt(m_strIdleSndKey);
+
+		bool bIsPlaying = false;
+		std::string key;
+		for (int i = 0; i < iKeyCnt; ++i)
+		{
+			key = m_strIdleSndKey + std::to_string(i + 1);
+			if (m_pSound->GetClipState(key) == PLAYING)
+			{
+				bIsPlaying = true;
+				break;
+			}
+		}
+		if (!bIsPlaying)
+		{
+			int iRand = (rand() % iKeyCnt) + 1;
+			key = m_strIdleSndKey + std::to_string(iRand);
+			m_pSound->Play(key);
+		}
+	}
+	else if (m_iEnemState & EAS_COMBAT)
+	{
+		int iKeyCnt = CCommonSoundLoader::GetInst()->GetSoundRandomCnt(m_strAngerSndKey);
+
+		bool bIsPlaying = false;
+		std::string key;
+		for (int i = 0; i < iKeyCnt; ++i)
+		{
+			key = m_strAngerSndKey + std::to_string(i + 1);
+			if (m_pSound->GetClipState(key) == PLAYING)
+			{
+				bIsPlaying = true;
+				break;
+			}
+		}
+		if (!bIsPlaying)
+		{
+			int iRand = (rand() % iKeyCnt) + 1;
+			key = m_strAngerSndKey + std::to_string(iRand);
+			m_pSound->Play(key);
+		}
+	}
+	
+
 	return 0;
 }
 
@@ -76,8 +123,8 @@ PUN::CGameObject * Enemies::GetInstance(const std::string& strName, int iType, c
 	Enemies *pComp = pGameObject->AddComponent<Enemies>("Enemies");
 	pComp->LoadData(m_strEnemDataPath[iType]);
 	SAFE_RELEASE(pComp);
-
-	return nullptr;
+	
+	return pGameObject;
 }
 
 bool Enemies::LoadData(const std::wstring strPath)
@@ -297,6 +344,7 @@ bool Enemies::LoadData(const std::wstring strPath)
 								if (m_pAnim)
 								{
 									m_pAnim->ChangeClip(strDataBuf);
+									m_pAnim->SetDefaultClip(strDataBuf);
 								}
 							}
 							else if (!strcmp(strDataBuf_1, "m_strIdleSndKey"))
@@ -452,6 +500,8 @@ bool Enemies::LoadData(const std::wstring strPath)
 	}
 
 	fclose(pFile);
+
+	SAFE_RELEASE(pRenderer);
 
 	if (vecSoundKey.size() > 0)
 		m_pSound->LoadSounds(vecSoundKey);

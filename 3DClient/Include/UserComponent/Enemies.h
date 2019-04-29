@@ -65,6 +65,7 @@ private:
 	std::string m_strHitSndKey			;
 	std::string m_strLostSndKey			;
 	std::string m_strDeathSndKey		;
+	std::string m_strDefaultAnimKey		;
 	float		m_fVisionDistance		;
 	float		m_fHearingDistance		;
 	float		m_fWalkSpeed			;
@@ -88,7 +89,6 @@ public:
 	static PUN::CGameObject *GetInstance(const std::string& strName, int iType, class PUN::CLayer* pLayer, bool bDestroy = false);
 	bool LoadData(const std::wstring strPath);
 	int GetState() const;
-
 	bool IsIdle() const;
 	bool IsAlerted() const;
 	bool InCombat() const;
@@ -112,4 +112,8 @@ public:
 	void OnGettingHit(float fTime);
 	void Attack(float fDamage);
 	void OnAttacking(float fTime);
+
+	void AttackSndCallback(float fTime);
+	void FootStepSndCallback(float fTime);
+	void FootStepRunCallback(float fTime);
 };

@@ -12,6 +12,7 @@
 #include <Component/Renderer.h>
 #include <Component/Material.h>
 #include <Component/SoundSource.h>
+#include <SoundManager.h>
 #include <Component/Animation.h>
 #include "Component/Gizmo.h"
 #include "../UserComponent/Door.h"
@@ -23,8 +24,11 @@
 #include "../UserComponent/Battery.h"
 #include "../UserComponent/BatteryIcon.h"
 #include "../CameraEff.h"
+#include "../UserComponent/Enemies.h"
 
-CTestSceneYH::CTestSceneYH()
+CTestSceneYH::CTestSceneYH():
+	m_fAmb1SndTime(10.5f),
+	m_fAmb1Timer(0.f)
 {
 	m_fPlayTime = 0.f;
 	m_bGhostOn = false;
@@ -39,11 +43,20 @@ CTestSceneYH::~CTestSceneYH()
 
 	if (m_bGhostOn)
 		SAFE_RELEASE(m_pGhostTr);
+
+	SAFE_RELEASE(m_pAmb);
 }
 
 bool CTestSceneYH::Init()
-{	
-	CCamera* pCamera = m_pScene->GetMainCamera();		
+{
+	CCameraEff::GetInst()->SetFirstPersonViewEnable();
+	
+	
+
+	CCamera* pCamera = m_pScene->GetMainCamera();
+	pCamera->SetCameraType(CT_PERSPECTIVE);
+	pCamera->SetNear(0.03f);
+		
 
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
@@ -60,27 +73,39 @@ bool CTestSceneYH::Init()
 
 	SAFE_RELEASE(pObject);
 
+	std::vector<std::string> vecAmb;
+
+	vecAmb.push_back("AMB_Ext_loop");
+	vecAmb.push_back("AMB_Fence_wind");
+
+	PUN::CGameObject *pObj = PUN::CGameObject::CreateObject("ambient", pDefaultLayer);
+	m_pAmb = pObj->AddComponent<PUN::CSoundSource>("sound");
+	m_pAmb->LoadSounds(vecAmb);
+	m_pAmb->SetVolume(1, 0.3f);
+
+	SAFE_RELEASE(pObj);
+
+	m_pAmb->Play(0, true);
+
 	CLayer* pLightLayer = m_pScene->FindLayer("Light");
 
 	pObject = CGameObject::CreateObject("SpotLight", pLightLayer);
 
 	CLight* pLight = pObject->AddComponent<CLight>("Light");
-	pLight->SetLightDiffuse(Vector4::White);
+	pLight->SetLightDiffuse(Vector4::Red);
 	pLight->SetLightType(LT_SPOT);
-	pLight->SetLightRange(100.0f);
+	pLight->SetLightRange(75.0f);
 	pLight->SetAngle(45.0f, 60.0f);
 
 	pTransform = pObject->GetTransform();
 	pTransform->RotationX(90.0f);
-	//pTransform->RotationY(90.0f);
-	pTransform->SetWorldPos(50.0f, 70.0f, 0.0f);
-
+	pTransform->SetWorldPos(Vector3(50.f, 75.f, 0.f));
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLightLayer);
 
-	
+
 	
 	/*CGameObject*	pDecalObj = CGameObject::CreatePrototype("Decal");
 
@@ -420,12 +445,15 @@ bool CTestSceneYH::Init()
 	pObject = CGameObject::CreateObject("Door", pDefaultLayer);
 	pTransform = pObject->GetTransform();
 
-	pTransform->SetWorldPos(20.f, 0.f, 0.f);
+	pTransform->SetWorldPos(20.f, 0.f, 25.f);
+	pTransform->SetWorldScale(0.1f, .1f, 0.1f);
 
 	pTransform->RotationY(-90.f);
 	CDoor* pDoor = pObject->AddComponent<CDoor>("door");	
 
-	pDoor->SetOpenTime(20.0f);
+	pTransform->SetWorldPivot(0.5f, .0f, .0f);
+	pDoor->SetOpenTime(1.5f);
+	pDoor->SetCloseTime(1.5f);
 
 	std::string names[3];
 	names[0] = "wood_Door_Open1";
@@ -487,7 +515,42 @@ bool CTestSceneYH::Init()
 	SAFE_RELEASE(pBatteryTr);
 	SAFE_RELEASE(pBattery);
 	SAFE_RELEASE(pBatteryObj);
+	
+	pObject = Enemies::GetInstance("enem1", 0, pDefaultLayer, false);
 
+	pTransform = pObject->GetTransform();
+	pTransform->SetWorldScale(0.05f, .05f, .05f);
+
+	pTransform->SetWorldPos(0.f, 0.f, 5.f);
+
+	SAFE_RELEASE(pObject);
+	SAFE_RELEASE(pTransform);
+
+	PUN::CAnimation *pAnim = nullptr;
+
+	pObject = Enemies::GetInstance("enem2", 1, pDefaultLayer, false);
+	pTransform = pObject->GetTransform();
+	pTransform->SetWorldScale(0.05f, .05f, .05f);
+	pTransform->SetWorldPos(-5.f, 0.f, 5.f);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObject);
+	
+	pObject = Enemies::GetInstance("enem3", 2, pDefaultLayer, false);
+	pTransform = pObject->GetTransform();
+	pTransform->SetWorldScale(0.05f, .05f, .05f);
+	pTransform->SetWorldPos(-10.f, 0.f, 5.f);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObject);
+
+	pObject = Enemies::GetInstance("enem4", 3, pDefaultLayer, false);
+	pTransform = pObject->GetTransform();
+	pTransform->SetWorldScale(0.05f, .05f, .05f);
+	pTransform->SetWorldPos(-15.f, 0.f, 5.f);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pAnim);
+	SAFE_RELEASE(pObject);
+		
+	
 	SAFE_RELEASE(pCamera);
 
 	SAFE_RELEASE(pDefaultLayer);
@@ -500,6 +563,25 @@ bool CTestSceneYH::Init()
 int CTestSceneYH::Update(float fTime)
 {
 	static bool bPush = false;
+
+	PUN::CTransform *pTr = m_pAmb->GetTransform();
+	PUN::CTransform * pCamera = m_pScene->GetMainCameraTransform();
+	pTr->SetWorldPos(pCamera->GetWorldPos());
+	SAFE_RELEASE(pCamera);
+	SAFE_RELEASE(pTr);
+
+	if (m_fAmb1Timer >= m_fAmb1SndTime)
+	{
+		if (m_pAmb->GetClipState(0) != PLAYING)
+		{
+			m_pAmb->Play(1, false);
+		}
+		m_fAmb1Timer = 0.f;
+		
+	}
+	
+	m_fAmb1Timer += fTime;
+
 	if (GetAsyncKeyState('P') & 0x8000)
 	{
 		bPush = true;

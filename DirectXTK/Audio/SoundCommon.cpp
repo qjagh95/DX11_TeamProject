@@ -913,7 +913,7 @@ void SoundEffectInstanceBase::Apply3D(const AudioListener& listener, const Audio
         */
 
         //Version 2 : Play Dominant Track
-        fMinorTrack = matrix[0] * matrix[2];
+        fMinorTrack = matrix[1] * matrix[2];
         matrix[2] = fMinorTrack;
         matrix[1] = fMinorTrack;
        
@@ -939,9 +939,26 @@ void SoundEffectInstanceBase::Apply3D(const AudioListener& listener, const Audio
         matrix[1] = fMinorTrack;
         break;
     case SPEAKER_5POINT1_SURROUND:
-        fMinorTrack = matrix[0] * matrix[2];
-        matrix[2] = fMinorTrack;
+        fMinorTrack = matrix[9] * matrix[10];
+        matrix[9] = fMinorTrack;
+        matrix[10] = fMinorTrack;
+        fMinorTrack = matrix[1] * matrix[2];
         matrix[1] = fMinorTrack;
+        matrix[2] = fMinorTrack;
+        /*
+        matrix[0] = .9f;
+        matrix[1] = 0.f;
+        matrix[2] = 0.f;
+        matrix[3] = .9f;
+        matrix[4] = 0.f;
+        matrix[5] = 0.f;
+        matrix[6] = 0.f;
+        matrix[7] = 0.f;
+        matrix[8] = 1.f;
+        matrix[9] = 0.f;
+        matrix[10] = 0.f;
+        matrix[11] = 1.f;
+        */
         break;
     case SPEAKER_7POINT1_SURROUND:
         fMinorTrack = matrix[0] * matrix[2];

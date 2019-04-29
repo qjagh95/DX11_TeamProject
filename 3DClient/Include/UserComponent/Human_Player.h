@@ -3,6 +3,7 @@
 #include "Component/UserComponent.h"
 #include "Component/Animation.h"
 #include "Component/SoundSource.h"
+#include "Component/Collider.h"
 #include "../CameraEff.h"
 #include "../Client.h"
 
@@ -115,7 +116,7 @@ public:
 private:
 	FOOTSTEP_ENVIRONMENT m_eFootStep;
 	CCameraEff *pCamEffManager;
-	class PUN::CGameObject *m_pHandSocketObj; //테스트용 저장
+	class PUN::CTransform *m_pMovePointer;
 	class PUN::CGameObject *m_pHeadObj;
 	class PUN::CGameObject *m_pHandGun;
 	class PUN::CAnimation *m_pAnimation;
@@ -135,10 +136,11 @@ private:
 	class CHandycam*	m_pHandycam;
 	Vector3 m_vInitLocalPos;
 	bool  m_bLoadedOnce;
+	char  m_cInitLoopFinished;
 	int	  m_iState;
 	int   m_iPrevState;
 	int   m_iDirFlag;
-	int   m_iPrevDirFlag;
+	Vector3 m_vPrevMoveDirection;
 	Vector3 m_vMoveDirection;
 	float m_fItemTakeTimerBuf	;
 	float m_fCamTakeTime		;
@@ -214,6 +216,7 @@ public:
 	void HandyCam_Off(float fTime);
 	void Move(PUN::AXIS axis, float fSpeed, float fTime);
 	void SetAnimNotify();
+	void Render(float fTime);
 	const Vector3& GetMoveDirection() const;
 
 	void FootStepWalkNormal		(float fTime);

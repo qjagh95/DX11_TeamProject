@@ -21,13 +21,15 @@
 
 using namespace PUN;
 
+
+
 CHuman_Player::CHuman_Player():
 	m_pAnimation(nullptr),
 	m_pSound(nullptr),
 	m_fTimerBuf(0.f),
 	m_iState(1),
 	m_fTimerBuf_State(0.f),
-	m_pHandSocketObj(nullptr),
+	m_pMovePointer(nullptr),
 	m_pHeadObj(nullptr),
 	m_fViewMaxAngleY(90.f),
 	m_fViewMinAngleY(-90.f),
@@ -42,9 +44,9 @@ CHuman_Player::CHuman_Player():
 	m_fGunTakeTime(1.2f),
 	m_eFootStep(FTSE_DEFAULT),
 	m_pPartCamAnim(nullptr),
-	m_iPrevDirFlag(0),
 	m_iPrevState(0),
-	m_bNaviOn(true)
+	m_bNaviOn(true),
+	m_cInitLoopFinished(2)
 {
 #include "Player_Item_Values.txt"
 #include "Player_Interact_Values.txt"
@@ -200,7 +202,8 @@ CHuman_Player::CHuman_Player():
 	m_vecIgnoreUppderBodyKey.push_back(55);
 	m_vecIgnoreUppderBodyKey.push_back(56);
 
-
+	m_vPrevMoveDirection = Vector3::Zero;
+	m_vMoveDirection = Vector3::Zero;
 }
 
 CHuman_Player::CHuman_Player(const CHuman_Player & player):
@@ -232,7 +235,7 @@ CHuman_Player::CHuman_Player(const CHuman_Player & player):
 	m_vCamWorldOffset = player.m_vCamWorldOffset;
 
 	pCamEffManager = nullptr;
-	m_pHeadObj = nullptr; m_pAnimation = nullptr; m_pHandSocketObj = nullptr; m_pSound = nullptr;
+	m_pHeadObj = nullptr; m_pAnimation = nullptr; m_pSound = nullptr;
 	m_fTimerBuf = 0.f;
 	m_fTimerBuf_State = 0.f;
 }
@@ -243,7 +246,7 @@ CHuman_Player::~CHuman_Player()
 		pCamEffManager->SetFirstPersonViewEnable();
 	SAFE_RELEASE(m_pAnimation);
 	SAFE_RELEASE(m_pSound);
-	SAFE_RELEASE(m_pHandSocketObj);
+	SAFE_RELEASE(m_pMovePointer);
 	SAFE_RELEASE(m_pHeadObj);
 	SAFE_RELEASE(m_pInven);
 	SAFE_RELEASE(m_pHandycam);
@@ -261,8 +264,13 @@ bool CHuman_Player::Init()
 {
 	pCamEffManager = CCameraEff::GetInst();
 	pCamEffManager->Init();
-	pCamEffManager->SetFirstPersonViewEnable();
 	
+	PUN::CGameObject*pObj = PUN::CGameObject::CreateObject("player_move_point", m_pLayer);
+
+	m_pMovePointer = pObj->GetTransform();
+
+	SAFE_RELEASE(pObj);
+
 	PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
 	_SMgr->SetAudioCoordSize(8.f);
 
@@ -274,8 +282,6 @@ bool CHuman_Player::Init()
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pCamera);
 
-	
-	
 	//Hero - L - Hand, player_cam_hand, 10, 0, 0.0, 0, 0, 0
 	//GET_SINGLE(PUN::CInput)->BindAxis("MoveH", this, &CHuman_Player::Forward);
 	//GET_SINGLE(PUN::CInput)->AddKeyScale("MoveH", DIK_W, 1.f);
@@ -312,6 +318,12 @@ void CHuman_Player::AfterClone()
 	m_pHeadObj->SetFrustrumCullUse(false);
 	m_pObject->SetFrustrumCullUse(false);
 
+	/*
+	PUN::CColliderOBB3D *pOBB = m_pHeadObj->AddComponent<PUN::CColliderOBB3D>("daegari");
+	pOBB->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(1.5f, 1.5f, 1.5f));
+	SAFE_RELEASE(pOBB);
+	*/
+	
 	PUN::CTransform*	pTr = m_pHeadObj->GetTransform();
 	pTr->SetWorldScale(0.05f, 0.05f, 0.05f);
 
@@ -387,14 +399,13 @@ void CHuman_Player::AfterClone()
 
 int CHuman_Player::Input(float fTime)
 {
+	m_pMovePointer->SetWorldPos(m_pTransform->GetWorldPos());
 	m_iDirFlag = 0;
 	m_iState |= PSTATUS_STOPMOVE;
 
 	bool bBlend = false;
 
 	PUN::CInput *_Input = PUN::CInput::GetInst();
-
-
 
 	//Sound
 	m_strFTSKey = strFootStepSndHeader;
@@ -731,80 +742,6 @@ int CHuman_Player::Input(float fTime)
 	}
 
 
-	//회전
-	if ((m_iState & PSTATUS_INACTIVE) == 0)
-	{
-		//PUN::CTransform *pCamTrans = m_pScene->GetMainCameraTransform();
-		PUN::CTransform *pHeadTrans = m_pHeadObj->GetTransform();
-
-		Vector3 vCamPos;
-		vCamPos = pHeadTrans->GetWorldPos() + m_vCamWorldOffset;
-		if (m_iState & PSTATUS_CROUCHED)
-		{
-			//m_fTimerBuf_State
-			if (m_iState & PSTATUS_CROUCHING)
-			{
-				float m_fCrouchRate = m_fTimerBuf_State / m_fStandToCrouchSpeed;
-				Vector3 vecLoc = (m_vCamLocalOffset * (1.f - m_fCrouchRate)) +
-					(m_vCamCrouchLocalOffset * m_fCrouchRate);
-
-				//m_vCamCrouchLocalOffset
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * vecLoc.x;
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * vecLoc.y;
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * vecLoc.z;
-			}
-			else
-			{
-				
-				//m_vCamCrouchLocalOffset
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * m_vCamCrouchLocalOffset.x;
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * m_vCamCrouchLocalOffset.y;
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * m_vCamCrouchLocalOffset.z;
-			}
-		}
-		else
-		{
-			if (m_iState & PSTATUS_CROUCHING)
-			{
-				float m_fCrouchRate = m_fTimerBuf_State / m_fCrouchToStandSpeed;
-				Vector3 vecLoc = (m_vCamCrouchLocalOffset * (1.f - m_fCrouchRate)) +
-					(m_vCamLocalOffset * m_fCrouchRate);
-
-				//m_vCamCrouchLocalOffset
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * vecLoc.x;
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * vecLoc.y;
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * vecLoc.z;
-			}
-			else
-			{
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * m_vCamLocalOffset.x;
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * m_vCamLocalOffset.y;
-				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * m_vCamLocalOffset.z;
-			}
-			
-		}
-
-		//pCamTrans->SetWorldPos(vCamPos);
-
-		if (pCamEffManager->FirstPersonView(m_fViewMaxAngleY, m_fViewMinAngleY, m_pTransform, vCamPos))
-		{
-			if (m_iState & PSTATUS_STOPMOVE)
-			{
-				if (m_iState & PSTATUS_CROUCHED)
-				{
-				}
-				else
-				{
-					//m_pAnimation->ChangeClip("player_walk_forward");
-				}
-			}
-			
-		}
-		
-		//SAFE_RELEASE(pCamTrans);
-		SAFE_RELEASE(pHeadTrans);
-				
-	}
 	
 	
 
@@ -876,7 +813,7 @@ int CHuman_Player::Input(float fTime)
 	}
 
 	int iStateFlagDiff = m_iPrevState ^ m_iState;
-	int iDirDiff = m_iPrevDirFlag ^ m_iDirFlag;
+	
 	if (iStateFlagDiff & PSTATUS_CROUCHED)
 	{
 		if (m_iState & PSTATUS_CROUCHING)
@@ -898,20 +835,141 @@ int CHuman_Player::Input(float fTime)
 		
 	}
 
-	else if (iStateFlagDiff & PSTATUS_STOPMOVE)
+	if (m_iState & PSTATUS_STOPMOVE)
 	{
-		if (m_iState & PSTATUS_STOPMOVE)
+		if (m_iState & PSTATUS_CROUCHED)
 		{
-			if (m_iState & PSTATUS_CROUCHED)
+			m_pAnimation->ChangeClip("player_crouch_idle");
+		}
+		else
+		{
+			m_pAnimation->ChangeClip("player_stand_idle");
+		}
+	}
+
+	PUN::CTransform *pHeadTrans = m_pHeadObj->GetTransform();
+
+	Vector3 vTotMoveDiff;
+	if (m_cInitLoopFinished < 1)
+	{
+		Vector3 vHeadPos = pHeadTrans->GetWorldPos();
+		Vector3 vZdir = m_pTransform->GetWorldAxis(PUN::AXIS_Z);
+		Vector3 vXdir = m_pTransform->GetWorldAxis(PUN::AXIS_X);
+		Vector3 vPos = m_pMovePointer->GetWorldPos();
+		Vector3 vCurrPos = m_pTransform->GetWorldPos();
+
+		//y축 제외 대가리와 몸통 거리를 구하자
+
+		Vector3 vBodytoHead = vHeadPos - vCurrPos;
+		vBodytoHead.y = vCurrPos.y;
+		//pMovePointer를 이 거리만큼 움직여본다
+		m_pMovePointer->Move(vBodytoHead);
+		//이동된 pMovePointer의 거리에서 이전 pMovePointer와 거리 구한다
+		Vector3 vHeadNavPos = m_pMovePointer->GetWorldPos();
+		Vector3 vMovePointerDiff = vHeadNavPos - vPos;
+		//만약 포인터 이동 거리(y제외)가 머리와 몸통 사이보다 거리가 짧으면, 그만큼 못가는거다
+		float fDistPointer = (vMovePointerDiff.x * vMovePointerDiff.x) + (vMovePointerDiff.z * vMovePointerDiff.z);
+		float fDistBtoH = (vBodytoHead.x * vBodytoHead.x) + (vBodytoHead.z * vBodytoHead.z);
+
+		//Move Pointer 초기화
+		m_pMovePointer->SetWorldPos(vPos);
+		if (fDistPointer < fDistBtoH - 0.00001f)
+		{
+			Vector3 vMoveDiff = Vector3(vHeadNavPos.x - vHeadPos.x, 0.f, vHeadNavPos.z - vHeadPos.z);
+
+			if (m_vMoveDirection.z == 2.f)
 			{
-				m_pAnimation->ChangeClip("player_crouch_idle");
+				m_iState ^= PSTATUS_SPRINT;
+				vMoveDiff *= 18.f;
+				m_pAnimation->ChangeClip("player_walk_forward");
+			}
+	
+
+			m_pMovePointer->Move(vMoveDiff);
+		}
+
+		vTotMoveDiff = m_pMovePointer->GetWorldPos() - vCurrPos;
+	}
+	
+	m_pTransform->SetWorldPos(m_pMovePointer->GetWorldPos());
+		
+
+	//회전
+	if ((m_iState & PSTATUS_INACTIVE) == 0)
+	{
+		//PUN::CTransform *pCamTrans = m_pScene->GetMainCameraTransform();
+
+		Vector3 vCamPos;
+		vCamPos = pHeadTrans->GetWorldPos() + m_vCamWorldOffset;
+		if (m_iState & PSTATUS_CROUCHED)
+		{
+			//m_fTimerBuf_State
+			if (m_iState & PSTATUS_CROUCHING)
+			{
+				float m_fCrouchRate = m_fTimerBuf_State / m_fStandToCrouchSpeed;
+				Vector3 vecLoc = (m_vCamLocalOffset * (1.f - m_fCrouchRate)) +
+					(m_vCamCrouchLocalOffset * m_fCrouchRate);
+
+				//m_vCamCrouchLocalOffset
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * vecLoc.x;
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * vecLoc.y;
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * vecLoc.z;
 			}
 			else
 			{
-				m_pAnimation->ChangeClip("player_stand_idle");
+
+				//m_vCamCrouchLocalOffset
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * m_vCamCrouchLocalOffset.x;
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * m_vCamCrouchLocalOffset.y;
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * m_vCamCrouchLocalOffset.z;
 			}
 		}
+		else
+		{
+			if (m_iState & PSTATUS_CROUCHING)
+			{
+				float m_fCrouchRate = m_fTimerBuf_State / m_fCrouchToStandSpeed;
+				Vector3 vecLoc = (m_vCamCrouchLocalOffset * (1.f - m_fCrouchRate)) +
+					(m_vCamLocalOffset * m_fCrouchRate);
+
+				//m_vCamCrouchLocalOffset
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * vecLoc.x;
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * vecLoc.y;
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * vecLoc.z;
+			}
+			else
+			{
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * m_vCamLocalOffset.x;
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * m_vCamLocalOffset.y;
+				vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * m_vCamLocalOffset.z;
+			}
+
+		}
+
+		
+		vCamPos += vTotMoveDiff;
+
+		//pCamTrans->SetWorldPos(vCamPos);
+
+		if (pCamEffManager->FirstPersonView(m_fViewMaxAngleY, m_fViewMinAngleY, m_pTransform, vCamPos))
+		{
+			if (m_iState & PSTATUS_STOPMOVE)
+			{
+				if (m_iState & PSTATUS_CROUCHED)
+				{
+				}
+				else
+				{
+					//m_pAnimation->ChangeClip("player_walk_forward");
+				}
+			}
+
+		}
+		//SAFE_RELEASE(pCamTrans);
+
 	}
+
+	SAFE_RELEASE(pHeadTrans);
 
 	Input_Items(fTime);
 	Input_Interact(fTime);
@@ -999,13 +1057,13 @@ int CHuman_Player::Update(float fTime)
 	ItemUpdate(fTime);
 	
 	WeaponUpdate(fTime);
-
+	//m_pTransform->SetWorldPos(m_pMovePointer->GetWorldPos());
 	return 0;
 }
 
 int CHuman_Player::LateUpdate(float fTime)
 {
-
+	
 	//Mend Pos
 	if (m_iState & PSTATUS_UPDATEPOS)
 	{
@@ -1022,7 +1080,7 @@ int CHuman_Player::LateUpdate(float fTime)
 		
 	}
 	
-
+	
 	/*
 	PUN::CTransform *pCam = m_pScene->GetMainCameraTransform();
 	PUN::CTransform *pTr = m_pHandSocketObj->GetTransform();
@@ -1036,7 +1094,8 @@ int CHuman_Player::LateUpdate(float fTime)
 	*/
 	
 	pCamEffManager->LateUpdate(fTime);
-	m_iPrevDirFlag = m_iDirFlag;
+	
+	m_vPrevMoveDirection = m_vMoveDirection;
 	m_iPrevState = m_iState;
 
 	MoveLateUpdate(fTime);
@@ -1050,6 +1109,18 @@ int CHuman_Player::LateUpdate(float fTime)
 
 void CHuman_Player::Collision(float fTime)
 {
+	int bb = 0;
+}
+
+void CHuman_Player::Render(float fTime)
+{
+	//이동된 MovePointer만큼에 머리의 위치를 뺀다
+	Vector3 vPointerPos = m_pMovePointer->GetWorldPos() - m_pTransform->GetWorldPos();
+	
+	//Vector3 vPos;
+
+	if (m_cInitLoopFinished > 0)
+		--m_cInitLoopFinished;
 }
 
 CHuman_Player * CHuman_Player::Clone()
@@ -1286,6 +1357,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 								if (m_pAnimation)
 								{
 									m_pAnimation->ChangeClip(strDataBuf);
+									m_pAnimation->SetDefaultClip(strDataBuf);
 								}
 							}
 						}
@@ -1437,13 +1509,19 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 
 void CHuman_Player::Move(PUN::AXIS axis, float fSpeed, float fTime)
 {
-	m_pTransform->Move(axis, fSpeed, fTime);
+	//m_pTransform->Move(axis, fSpeed, fTime);
+	Vector3 vAxis = m_pTransform->GetWorldAxis(axis);
+	m_pMovePointer->Move(vAxis, fSpeed, fTime);
+
+	//Vector3 vPos = m_pTransform->GetWorldPos();
+	//vPos += m_pTransform->GetWorldAxis(axis) * fSpeed * fTime;
+	//m_pTransform->SetWorldPos(vPos);
 }
 
 void CHuman_Player::SetAnimNotify()
 {
 	PUN::PANIMATIONCLIP pClip = m_pAnimation->GetAnimClip("player_crouch_forward");
-	m_arrAnimCallbacks[0].fAnimationProgress = 0.95f;
+	m_arrAnimCallbacks[0].fAnimationProgress = 0.933333334f;
 	m_arrAnimCallbacks[0].func = std::bind(&CHuman_Player::CrouchForwardMendPos, this, std::placeholders::_1);
 	pClip->vecCallback.push_back(&(m_arrAnimCallbacks[0]));
 

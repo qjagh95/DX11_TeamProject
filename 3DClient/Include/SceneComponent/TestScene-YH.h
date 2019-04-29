@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene/SceneComponent.h"
+#include <Component/SoundSource.h>
 
 PUN_USING
 
@@ -15,6 +16,10 @@ private:
 	float		m_fPlayTime;
 	float		m_fX;
 	float		m_fY;
+	PUN::CSoundSource *m_pAmb;
+
+	float m_fAmb1Timer;
+	float m_fAmb1SndTime;
 
 public:
 	virtual bool Init();
