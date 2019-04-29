@@ -21,8 +21,6 @@
 
 using namespace PUN;
 
-
-
 CHuman_Player::CHuman_Player():
 	m_pAnimation(nullptr),
 	m_pSound(nullptr),
@@ -272,7 +270,7 @@ bool CHuman_Player::Init()
 	pCamEffManager->SetCamTransform(pCamera);
 
 	CTransform* pCameraTr = pCamera->GetTransform();
-	//pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
+	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pCamera);
 

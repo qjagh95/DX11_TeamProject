@@ -1,18 +1,23 @@
 #pragma once
-#include "Hidable.h"
+#include "Component/UserComponent.h"
 
 PUN_USING
 
-class CLocker :
-	public CHidable
+class CHidable	:
+	public CUserComponent
 {
 	friend class CGameObject;
 
-private:
-	CLocker();
-	CLocker(const CLocker& battery);
-	virtual ~CLocker();
+protected:
+	CHidable();
+	CHidable(const CHidable& battery);
+	virtual ~CHidable();
 
+protected:
+	HIDABLE_TYPE m_eType;
+
+public:
+	HIDABLE_TYPE GetHidableType() const;
 
 public:
 	virtual void AfterClone();
@@ -22,5 +27,6 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CLocker* Clone();
+	virtual CHidable* Clone();
 };
+

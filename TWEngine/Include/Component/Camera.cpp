@@ -243,83 +243,96 @@ int CCamera::Update(float fTime)
 
 int CCamera::LateUpdate(float fTime)
 {
-	//const list<CGameObject*>* pObjList = m_pLightLayer->GetObjectList();
+	CScene* pScene = GET_SINGLE(CSceneManager)->GetScene();
+	CLayer* pLayer = pScene->FindLayer("Light");
 
-	//list<CGameObject*>::const_iterator iter;
-	//list<CGameObject*>::const_iterator iterEnd = pObjList->end();
+	const list<CGameObject*>* pObjList = pLayer->GetObjectList();
 
-	//list<CGameObject*> pList;
+	list<CGameObject*>::const_iterator iter;
+	list<CGameObject*>::const_iterator iterEnd = pObjList->end();
 
-	//pList.clear();
+	list<CGameObject*> pList;
 
-	//for (iter = pObjList->begin(); iter != iterEnd; ++iter)
-	//{
-	//	if (!(*iter)->GetEnable())
-	//		continue;
+	pList.clear();
 
-	//	pList.push_back((*iter));
-	//}
+	for (iter = pObjList->begin(); iter != iterEnd; ++iter)
+	{
+		if (!(*iter)->GetEnable())
+			continue;
 
-	//if (pList.empty())
-	//{
-	//	if (m_bShadow)
-	//		m_bShadow = false;
-	//	return 0;
-	//}
+		pList.push_back((*iter));
+	}
 
-	//CTransform* pTr = nullptr;
-	//CLight* pLight = nullptr;
-	//float fLength = 1000000.0f;
-	//Vector3 vDist;
-	//float fDist = 0.0f;
+	if (pList.empty())
+	{
+		if (m_bShadow)
+			m_bShadow = false;
 
-	//list<CGameObject*>::iterator iter1;
-	//list<CGameObject*>::iterator iter1End = pList.end();
-	//list<CGameObject*>::iterator iter1Find;
+		SAFE_RELEASE(pLayer);
+		SAFE_RELEASE(pScene);
 
-	//for (iter1 = pList.begin(); iter1 != iter1End;)
-	//{
-	//	pTr = (*iter1)->GetTransformNonCount();
+		return 0;
+	}
 
-	//	vDist = pTr->GetWorldPos() - m_pTransform->GetWorldPos();
-	//	fDist = vDist.Length();
+	CTransform* pTr = nullptr;
+	CLight* pLight = nullptr;
+	float fLength = 1000000.0f;
+	Vector3 vDist;
+	float fDist = 0.0f;
 
-	//	if (fDist < fLength)
-	//	{
-	//		SAFE_RELEASE(pLight);
-	//		pLight = (*iter1)->FindComponentFromType<CLight>(CT_LIGHT);
+	list<CGameObject*>::iterator iter1;
+	list<CGameObject*>::iterator iter1End = pList.end();
+	list<CGameObject*>::iterator iter1Find;
 
-	//		if (pLight->GetLightType() != LT_SPOT)
-	//		{
-	//			SAFE_RELEASE(pLight);
-	//			iter1 = pList.erase(iter1);
-	//			if (pList.empty())
-	//				break;
+	for (iter1 = pList.begin(); iter1 != iter1End;)
+	{
+		pTr = (*iter1)->GetTransformNonCount();
 
-	//			continue;
-	//		}
+		vDist = pTr->GetWorldPos() - m_pTransform->GetWorldPos();
+		fDist = vDist.Length();
 
-	//		fLength = fDist;
-	//		iter1Find = iter1;
-	//	}
+		if (fDist < fLength)
+		{
+			SAFE_RELEASE(pLight);
+			pLight = (*iter1)->FindComponentFromType<CLight>(CT_LIGHT);
 
-	//	++iter1;
-	//}
+			if (pLight->GetLightType() != LT_SPOT)
+			{
+				SAFE_RELEASE(pLight);
+				iter1 = pList.erase(iter1);
+				if (pList.empty())
+					break;
 
-	//if (!pLight)
-	//{
-	//	if(m_bShadow)
-	//		m_bShadow = false;
+				continue;
+			}
 
-	//	return 0;
-	//}
+			fLength = fDist;
+			iter1Find = iter1;
+		}
 
-	//if(!m_bShadow)
-	//	m_bShadow = true;
+		++iter1;
+	}
 
-	//m_matShadowVP = pLight->GetShadowVP();
+	if (!pLight)
+	{
+		if(m_bShadow)
+			m_bShadow = false;
 
-	//SAFE_RELEASE(pLight);
+		SAFE_RELEASE(pLayer);
+		SAFE_RELEASE(pScene);
+
+		return 0;
+	}
+
+	if(!m_bShadow)
+		m_bShadow = true;
+
+	m_matShadowVP = pLight->ComputeLightView();
+
+	SAFE_RELEASE(pLight);
+	SAFE_RELEASE(pLayer);
+	SAFE_RELEASE(pScene);
+
 
 	return 0;
 }
@@ -376,7 +389,7 @@ Matrix CCamera::GetShadowVP() const
 
 bool CCamera::IsShadow() const
 {
-	return false;
+	return m_bShadow;
 }
 
 Matrix CCamera::GetVP() const

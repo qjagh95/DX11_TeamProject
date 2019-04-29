@@ -318,6 +318,11 @@ Vector3 CGameObject::GetWorldScale() const
 	return m_pTransform->GetWorldScale();
 }
 
+Vector3 CGameObject::GetWorldAxis(AXIS eAxis) const
+{
+	return m_pTransform->GetWorldAxis(eAxis);
+}
+
 void CGameObject::SetRenderGroup(RENDER_GROUP eGroup)
 {
 	m_eRenderGroup = eGroup;

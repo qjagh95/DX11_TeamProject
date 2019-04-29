@@ -73,13 +73,14 @@ public:
 	{
 		return m_iObjectListIdx;
 	}
-	class CScene* GetScene()	const;
-	class CLayer* GetLayer()	const;
-	string  GetLayerName()		const;
-	int		GetLayerZOrder()	const;
-	Vector3 GetWorldPos()		const;
-	Vector3 GetWorldRot()		const;
-	Vector3 GetWorldScale()		const;
+	class CScene* GetScene()			const;
+	class CLayer* GetLayer()			const;
+	string  GetLayerName()				const;
+	int		GetLayerZOrder()			const;
+	Vector3 GetWorldPos()				const;
+	Vector3 GetWorldRot()				const;
+	Vector3 GetWorldScale()				const;
+	Vector3 GetWorldAxis(AXIS eAxis)	const;
 	bool GetisChild() const { return m_isChild; }
 
 public:

@@ -23,30 +23,31 @@ protected:
 	CDoor(const CDoor& door);
 	~CDoor();
 
+private:
+	int			m_iState;
+	int			m_iDir;
+	float		m_fOpenTime;
+	float		m_fOpenSpeed;
+	float		m_fFastOpenTime;
+	float		m_fFastOpenSpeed;
+	float		m_fDestroyBurstTime;
+	float		m_fAccTime;
+	float		m_fAccRot;
+	float		m_fRot;
+	bool		m_bLock;
+	bool		m_bFastOpen;
+	float		m_fOpenRot;
+	float		m_fCloseRot;
+	DOOR_TYPE	m_eDoorType;
+
+
+	ptrdiff_t	m_pSndComp;
+
 public:
 	bool Init();
 	int Update(float fTime);
 	int LateUpdate(float fTime);
 	void AfterClone();
-
-public:
-	void Open();
-	void Close();
-	void Destroy();
-
-private:
-	int			m_iState;
-	float		m_fOpenTime;
-	float		m_fCloseTime;
-	float		m_fDestroyBurstTime;
-	float		fCurrTimer;
-	bool		m_bLock;
-	Vector3		m_vRotClosed;
-	Vector3		m_vRotOpened;
-	Vector3		m_vOpenDir;
-	DOOR_TYPE	m_eDoorType;
-
-	ptrdiff_t	m_pSndComp;
 
 public:
 	bool IsLock() const;
@@ -56,11 +57,11 @@ public:
 	void SetState(int state);
 
 	float GetOpenTime() const;
-	float GetCloseTime() const;
 	float GetDestroyTime() const;
 
+	void SetOpenRot(float fRot = 90.0f);
 	void SetOpenTime(float time);
-	void SetCloseTime(float time);
+	void SetFastOpenTime(float fTime);
 	void SetDestroyTime(float time);
 
 	bool SetSounds(const std::string strNames[], const TCHAR** strFilePaths);
@@ -73,6 +74,15 @@ public:
 	void OnActStage(float fTime);
 	void OnActLocker(float fTime);
 	void OnActHeavy(float fTime);
+
+	void Open(const Vector3& vDir);
+	void Close();
+
+	void OpenNormal(const Vector3& vDir);
+	void OpenStage(const Vector3& vDir);
+	void OpenLocker(const Vector3& vDir);
+
+	void SetMesh(const string& strMeshKey, const TCHAR* pFileName);
 
 	DOOR_TYPE  GetDoorType() const;
 	void SetDoorType(int iType);

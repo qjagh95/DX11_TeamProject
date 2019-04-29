@@ -39,7 +39,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//wstring FullPath;
 	//FullPath = RootPath + L"FBXBineryExtractor64.exe";
 
-	//sei.lpFile = FullPath.c_str();
+	//sei.lpFile = FullPath.c_str();w
 	//sei.lpParameters = L"";
 	//sei.nShow = SW_SHOW;
 	//sei.fMask = SEE_MASK_NOCLOSEPROCESS;
@@ -55,18 +55,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	CCommonSoundLoader::GetInst()->LoadSoundCSVList(TEXT("CommonSound.csv"));
 	CCommonSoundLoader::GetInst()->LoadSoundRandomSeedCnt(TEXT("CommonSound_SoundCnt.csv"));
+	GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("First", "TutorialScene");
 
 #ifdef _DEBUG
-	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
-	//GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("First", "LogoScene");
+	//GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("First", "TutorialScene");
+	//GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("First", "LogoScene"); 
 	//GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("Second", "YH_TEST");
 	//GET_SINGLE(CSceneManager)->AddScene<CFirTestScene>("Third", "FirTestScene");
 
 #else
-	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
+	//GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");
 #endif
+
+	GET_SINGLE(CSceneManager)->Access();
 
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CFirTestScene>("Fir");

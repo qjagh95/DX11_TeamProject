@@ -38,6 +38,7 @@ public:
 	Vector3 GetWorldPos() const;
 	Vector3 GetWorldRot() const;
 	Vector3 GetWorldScale() const;
+	Vector3 GetWorldAxis(AXIS eAxis) const;
 
 public:
 	// Start함수는 장면이 시작되면서 딱 1번만 호출될 함수이다.

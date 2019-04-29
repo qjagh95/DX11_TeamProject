@@ -182,6 +182,11 @@ CMesh * CRenderer::GetMesh() const
 	return m_pMesh;
 }
 
+Vector3 CRenderer::GetMeshLength() const
+{
+	return m_pMesh->GetLength();
+}
+
 void CRenderer::SetMeshFromFullPath(const string & strKey, const TCHAR * pFullPath)
 {
 	SAFE_RELEASE(m_pMesh);

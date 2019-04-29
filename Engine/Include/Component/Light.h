@@ -63,6 +63,8 @@ public:
 	float GetRange();
 	Vector4 GetLightSpecular();
 
+	Matrix ComputeLightView();
+
 public:
 	virtual void Start();
 	virtual void AfterClone();

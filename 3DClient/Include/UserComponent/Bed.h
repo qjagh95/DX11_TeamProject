@@ -1,10 +1,10 @@
 #pragma once
-#include "Component/UserComponent.h"
+#include "Hidable.h"
 
 PUN_USING
 
 class CBed :
-	public CUserComponent
+	public CHidable
 {
 	friend class CGameObject;
 

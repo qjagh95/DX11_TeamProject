@@ -45,6 +45,7 @@ public:
 	void RenderShadow(float fTime);
 
 	class CMesh* GetMesh() const;
+	Vector3 GetMeshLength() const;
 
 	void SetMeshFromFullPath(const string& strKey, const TCHAR* pFullPath);
 	void SetShader(class CShader* pShader);

@@ -235,6 +235,8 @@ int CSceneManager::Update(float fTime)
 
 int CSceneManager::LateUpdate(float fTime)
 {
+	m_pMainCameraObj->LateUpdate(fTime);
+
 	m_pCurScene->LateUpdate(fTime);
 
 	return 0;

@@ -42,13 +42,8 @@ CTestSceneYH::~CTestSceneYH()
 }
 
 bool CTestSceneYH::Init()
-{
-	CCameraEff::GetInst()->SetFirstPersonViewEnable();
-	
-	CCamera* pCamera = m_pScene->GetMainCamera();
-	pCamera->SetCameraType(CT_PERSPECTIVE);
-	pCamera->SetNear(0.03f);
-		
+{	
+	CCamera* pCamera = m_pScene->GetMainCamera();		
 
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
@@ -70,20 +65,22 @@ bool CTestSceneYH::Init()
 	pObject = CGameObject::CreateObject("SpotLight", pLightLayer);
 
 	CLight* pLight = pObject->AddComponent<CLight>("Light");
-	pLight->SetLightDiffuse(Vector4::Red);
+	pLight->SetLightDiffuse(Vector4::White);
 	pLight->SetLightType(LT_SPOT);
 	pLight->SetLightRange(100.0f);
 	pLight->SetAngle(45.0f, 60.0f);
 
 	pTransform = pObject->GetTransform();
 	pTransform->RotationX(90.0f);
-	
+	//pTransform->RotationY(90.0f);
+	pTransform->SetWorldPos(50.0f, 70.0f, 0.0f);
+
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLightLayer);
 
-
+	
 	
 	/*CGameObject*	pDecalObj = CGameObject::CreatePrototype("Decal");
 
@@ -423,15 +420,12 @@ bool CTestSceneYH::Init()
 	pObject = CGameObject::CreateObject("Door", pDefaultLayer);
 	pTransform = pObject->GetTransform();
 
-	pTransform->SetWorldPos(20.f, 0.f, 25.f);
-	pTransform->SetWorldScale(0.1f, .1f, 0.1f);
+	pTransform->SetWorldPos(20.f, 0.f, 0.f);
 
 	pTransform->RotationY(-90.f);
 	CDoor* pDoor = pObject->AddComponent<CDoor>("door");	
 
-	pTransform->SetWorldPivot(0.5f, .0f, .0f);
-	pDoor->SetOpenTime(1.5f);
-	pDoor->SetCloseTime(1.5f);
+	pDoor->SetOpenTime(20.0f);
 
 	std::string names[3];
 	names[0] = "wood_Door_Open1";

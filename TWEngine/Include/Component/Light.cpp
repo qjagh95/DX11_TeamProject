@@ -106,8 +106,8 @@ void CLight::SetAngle(float fInAngle, float fOutAngle)
 	m_fInAngle = fInAngle;
 	m_fOutAngle = fOutAngle;
 
-	m_tInfo.fInAngle = cosf(DegreeToRadian(fInAngle / 2.f));
-	m_tInfo.fOutAngle = cosf(DegreeToRadian(fOutAngle / 2.f));
+	m_tInfo.fInAngle = cosf(DegreeToRadian(fInAngle * 0.5f));
+	m_tInfo.fOutAngle = cosf(DegreeToRadian(fOutAngle * 0.5f));
 
 	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fOutAngle), m_fWidth / m_fHeight, 0.03f, m_fRange);
 }
@@ -193,6 +193,35 @@ Vector4 CLight::GetLightSpecular()
 	return m_tInfo.vSpc;
 }
 
+Matrix CLight::ComputeLightView()
+{
+	m_matShadowView.Identity();
+
+	Vector3	vLightAxis[AXIS_END];
+
+	for (int i = 0; i < AXIS_END; ++i)
+	{
+		vLightAxis[i] = m_pTransform->GetWorldAxis((AXIS)i);
+		vLightAxis[i].Normalize();
+	}
+
+	Vector3	vLightPos = m_pTransform->GetWorldPos();
+
+	for (int i = 0; i < AXIS_END; ++i)
+		memcpy(&m_matShadowView[i][0], &vLightAxis[i], sizeof(Vector3));
+
+	m_matShadowView.Transpose();
+
+	vLightPos *= -1.f;
+
+	for (int i = 0; i < AXIS_END; ++i)
+		m_matShadowView[3][i] = vLightPos.Dot(vLightAxis[i]);
+
+	m_matShadowVP = m_matShadowView * m_matShadowProj;
+
+	return m_matShadowVP;
+}
+
 void CLight::Start()
 {
 }
@@ -226,30 +255,8 @@ int CLight::Input(float fTime)
 
 	if (m_eLightType == LT_SPOT)
 	{
-		m_matShadowView.Identity();
 
-		Vector3	vLightAxis[AXIS_END];
-
-		for (int i = 0; i < AXIS_END; ++i)
-		{
-			vLightAxis[i] = m_pTransform->GetWorldAxis((AXIS)i);
-			vLightAxis[i].Normalize();
-		}
-
-		Vector3	vLightPos = m_pTransform->GetWorldPos();
-
-		for (int i = 0; i < AXIS_END; ++i)
-			memcpy(&m_matShadowView[i][0], &vLightAxis[i], sizeof(Vector3));
-
-		m_matShadowView.Transpose();
-
-		vLightPos *= -1.f;
-
-		for (int i = 0; i < AXIS_END; ++i)
-			m_matShadowView[3][i] = vLightPos.Dot(vLightAxis[i]);
 	}
-
-	m_matShadowVP = m_matShadowView * m_matShadowProj;
 
 	return 0;
 }

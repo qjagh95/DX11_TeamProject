@@ -210,6 +210,7 @@
     <ClInclude Include="UserComponent\Field.h" />
     <ClInclude Include="UserComponent\Ghost.h" />
     <ClInclude Include="UserComponent\Handycam.h" />
+    <ClInclude Include="UserComponent\Hidable.h" />
     <ClInclude Include="UserComponent\Human_Player.h" />
     <ClInclude Include="UserComponent\Idle.h" />
     <ClInclude Include="UserComponent\InteractiveObj.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="UserComponent\Field.cpp" />
     <ClCompile Include="UserComponent\Ghost.cpp" />
     <ClCompile Include="UserComponent\Handycam.cpp" />
+    <ClCompile Include="UserComponent\Hidable.cpp" />
     <ClCompile Include="UserComponent\Human_Player.cpp" />
     <ClCompile Include="UserComponent\Idle.cpp" />
     <ClCompile Include="UserComponent\InteractiveObj.cpp" />

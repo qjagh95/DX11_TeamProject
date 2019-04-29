@@ -64,6 +64,12 @@
     <Filter Include="02. UserComponent\01. Player\Header_Functions">
       <UniqueIdentifier>{dd67c259-0124-4faa-9043-0ebb16c13481}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\07. Interact\01. Door">
+      <UniqueIdentifier>{ee5c128a-8e39-42da-a59a-3831c6487b78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\07. Interact\02. Hidable">
+      <UniqueIdentifier>{9520f32d-0a3e-481e-972d-7281b62f4d43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -86,9 +92,6 @@
     </ClInclude>
     <ClInclude Include="UserComponent\Minion.h">
       <Filter>02. UserComponent\02. Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\Door.h">
-      <Filter>02. UserComponent\03. Field</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\Field.h">
       <Filter>02. UserComponent\03. Field</Filter>
@@ -153,12 +156,6 @@
     <ClInclude Include="CommonSoundLoader.h">
       <Filter>소스 파일\CommonSound</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Bed.h">
-      <Filter>02. UserComponent\07. Interact</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\Locker.h">
-      <Filter>02. UserComponent\07. Interact</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\DocxInven.h">
       <Filter>02. UserComponent\04. UI</Filter>
     </ClInclude>
@@ -195,6 +192,18 @@
     <ClInclude Include="UserComponent\Enemies.h">
       <Filter>02. UserComponent\02. Monster</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Door.h">
+      <Filter>02. UserComponent\07. Interact\01. Door</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Bed.h">
+      <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Locker.h">
+      <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Hidable.h">
+      <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -214,9 +223,6 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Minion.cpp">
       <Filter>02. UserComponent\02. Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\Door.cpp">
-      <Filter>02. UserComponent\03. Field</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Field.cpp">
       <Filter>02. UserComponent\03. Field</Filter>
@@ -293,12 +299,6 @@
     <ClCompile Include="UserComponent\PlayerFunc_CallBack.cpp">
       <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\Bed.cpp">
-      <Filter>02. UserComponent\07. Interact</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\Locker.cpp">
-      <Filter>02. UserComponent\07. Interact</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\DocxInven.cpp">
       <Filter>02. UserComponent\04. UI</Filter>
     </ClCompile>
@@ -310,6 +310,18 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Enemies.cpp">
       <Filter>02. UserComponent\02. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Door.cpp">
+      <Filter>02. UserComponent\07. Interact\01. Door</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Bed.cpp">
+      <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Locker.cpp">
+      <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Hidable.cpp">
+      <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
