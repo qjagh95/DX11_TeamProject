@@ -12,11 +12,7 @@ public:
 	CItem();
 	CItem(const CItem& item);
 	virtual ~CItem() = 0;
-
-public:
-	virtual void Add(int iCount) = 0;
-	virtual void Use() = 0;
-
+	
 public:
 	virtual void Start();
 	virtual void AfterClone();

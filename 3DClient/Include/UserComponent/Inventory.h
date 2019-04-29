@@ -3,6 +3,7 @@
 #include "../Client.h"
 #include "Component/Collider.h"
 #include "Component/ColliderRect.h"
+#include "Component/Number.h"
 
 PUN_USING
 
@@ -18,8 +19,9 @@ private:
 
 private:
 	vector<class CGameObject*>	m_vecItem;
-	CLayer*					m_pUILayer;
+	vector<class CGameObject*>	m_vecNumber;
 	INVENTORY_STATE			m_eState;
+	ICON_TYPE				m_eType;
 	int						m_iInvenMax;
 	int						m_iFlag;
 	int						m_iIndex;
@@ -32,6 +34,32 @@ private:
 
 private:
 	int				m_iZipCount;
+	int				m_iCount;
+
+private:
+	int		m_iBatteryCnt;
+	int		m_iMedicalKitCnt;
+	int		m_iLunchBoxCnt;
+	int		m_iTabletCnt;
+	int		m_iDaemaCnt;
+
+	class CGameObject*	m_pBatteryNumberObj;
+	class CGameObject*	m_pMedicalKitNumberObj;
+	class CGameObject*	m_pTabletNumberObj;
+	class CGameObject*	m_punchBoxNumberObj;
+	class CGameObject*	m_pDaemaNumberObj;
+
+	class CNumber*	m_pBatteryNumber;
+	class CNumber*	m_pMedicalKitNumber;
+	class CNumber*	m_pTabletNumber;
+	class CNumber*	m_punchBoxNumber;
+	class CNumber*	m_pDaemaNumber;
+
+	bool	m_bBatteryUse;
+	bool	m_bMedicalKitUse;
+	bool	m_bTabletUse;
+	bool	m_bLunchBoxUse;
+	bool	m_bDaemaUse;
 	
 public:
 	void SetInvenMax(int iMax);
@@ -39,17 +67,15 @@ public:
 	void SetVisible();
 	void SetMouseOn(bool bMouseOn);
 	void SetInvenState(INVENTORY_STATE eState);
-	void SetMouseOnInven(bool bMouseOnInven);
 
 public:
 	bool	GetVisible()	const;
 	int		GetInvenMax() const;
 	bool	Full() const;
 	void	AddItem(class CGameObject* pItem);
-	void	DeleteItem(class CGameObject* pItem);
+	void	UseItem(class CGameObject* pItem);
 	INVENTORY_STATE GetInvenState() const;
 	const Vector3 GetInvenPos()	const;
-	bool	GetMouseOnInven()	const;
 
 public:
 	virtual void AfterClone();
@@ -60,17 +86,5 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CInventory* Clone();
-
-public:
-	void Hit(class CCollider* pSrc, class CCollider* pDest, float fTime);
-	void MouseOut(class CCollider* pSrc, class CCollider* pDest, float fTime);
-
-public:
-	void BottomHit(class CCollider* pSrc, class CCollider* pDest, float fTime);
-	void BottomInven(class CCollider* pSrc, class CCollider* pDest, float fTime);
-	void BottomOut(class CCollider* pSrc, class CCollider* pDest, float fTime);
-
-public:
-	void AddInvenList(class CGameObject* pItem);
 };
 

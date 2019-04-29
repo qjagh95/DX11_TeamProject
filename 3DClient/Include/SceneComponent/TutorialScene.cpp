@@ -26,6 +26,8 @@
 #include "../UserComponent/Battery.h"
 #include "../UserComponent/BatteryIcon.h"
 
+#include <NavigationMesh.h>
+
 CTutorialScene::CTutorialScene()
 {
 }
@@ -37,7 +39,7 @@ CTutorialScene::~CTutorialScene()
 bool CTutorialScene::Init()
 {
 	wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
-	wstr += L"Tutorial.dat";
+	wstr += L"TutorialHalf.dat";
 	string filePath = CW2A(wstr.c_str());
 	m_pScene->Load(filePath);
 
@@ -49,47 +51,37 @@ bool CTutorialScene::Init()
 
 	CTransform* pCameraTr = pCamera->GetTransform();
 
-	//CFreeCamera* pFreeCam = pCamera->AddComponent<CFreeCamera>("FreeCamera");
+	/*CFreeCamera* pFreeCam = pCamera->AddComponent<CFreeCamera>("FreeCamera");
 
-	//SAFE_RELEASE(pFreeCam);
+	SAFE_RELEASE(pFreeCam);*/
 	SAFE_RELEASE(pCameraTr);
 
-	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
-	CLayer* pTileLayer = m_pScene->FindLayer("Tile");
 	CLayer*	pUILayer = m_pScene->FindLayer("UI");
 
-
-	CGameObject*	pLandScapeObj = CGameObject::CreateObject("TutorialScape", pDefaultLayer);
+	/*CGameObject*	pLandScapeObj = CGameObject::CreateObject("TutorialScape", pDefaultLayer);
 
 	CLandScape*	pLandScape = pLandScapeObj->AddComponent<CLandScape>("TutorialScape");
 
 	wstring nav = CPathManager::GetInst()->FindPath(DATA_PATH);
-	nav += L"Tutorial.nav";
+	nav += L"HFTest.nav";
 	string navfilePath = CW2A(nav.c_str());
 
 	pLandScape->LoadLandScape(navfilePath);
 
-	CTransform*	pLandScapeTr = pLandScapeObj->GetTransform();
-
-	pLandScapeTr->SetWorldPos(0.f, -70.f, 0.f);
-
-	SAFE_RELEASE(pLandScapeTr);
 	SAFE_RELEASE(pLandScape);
-	SAFE_RELEASE(pLandScapeObj);
-	
+	SAFE_RELEASE(pLandScapeObj);*/	
 
 	CGameObject*	pPlayerObj = CGameObject::CreateObject("Player", pDefaultLayer);
 
 	CHuman_Player*	pPlayer = pPlayerObj->AddComponent<CHuman_Player>("Player");
-	//CPlayer*	pPlayer = pPlayerObj->AddComponent<CPlayer>("Player");
 
 	//pPlayer->LoadData(TEXT("PlayerData.csv"));
 
 	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
 	pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
-	pPlayerTr->SetWorldScale(0.1f, .1f, .1f);
-	pPlayerTr->SetWorldPos(-62.65f, -2.21f, 421.36f);
+	pPlayerTr->SetWorldScale(0.05f, 0.05f, 0.05f);
+	pPlayerTr->SetWorldPos(316.f, 20.f, 748.f);
 
 	SAFE_RELEASE(pPlayerTr);
 	SAFE_RELEASE(pPlayer);
@@ -124,106 +116,13 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLightLayer);
 
-	//////////////////////////////////////////Terrain 배치 //////////////////////////////////////////////////
-	///////////////////////////////X Tile 배치///////////////////////////////////////////////////////
-
-	/*pObject = CGameObject::CreateObject("Daema", pDefaultLayer);
-
-	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("DaemaRenderer");
-
-	pRenderer->SetMesh("Daema", L"Daema.msh");
-
-	SAFE_RELEASE(pRenderer);
-
-	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldPos(0, 0, 0.f);
-	pTransform->SetWorldRot(0.f, 270.f, 0.f);
-	pTransform->SetWorldScale(100.f);
-
-	SAFE_RELEASE(pTransform);
-
-	SAFE_RELEASE(pObject);
-
-	pObject = CGameObject::CreateObject("LunchBox", pDefaultLayer);
-
-	pRenderer = pObject->AddComponent<CRenderer>("LunchBoxRenderer");
-
-	pRenderer->SetMesh("LunchBox", L"LunchBox.msh");
-
-	SAFE_RELEASE(pRenderer);
-
-	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldPos(100, 0, 0.f);
-	pTransform->SetWorldRot(0.f, 270.f, 0.f);
-	pTransform->SetWorldScale(100.f);
-
-	SAFE_RELEASE(pTransform);
-
-	SAFE_RELEASE(pObject);
-
-	pObject = CGameObject::CreateObject("MedicalKit", pDefaultLayer);
-
-	pRenderer = pObject->AddComponent<CRenderer>("MedicalKitRenderer");
-
-	pRenderer->SetMesh("MedicalKit", L"MedicalKit.msh");
-
-	SAFE_RELEASE(pRenderer);
-
-	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldPos(200, 0, 0.f);
-	pTransform->SetWorldRot(0.f, 270.f, 0.f);
-	pTransform->SetWorldScale(100.f);
-
-	SAFE_RELEASE(pTransform);
-
-	SAFE_RELEASE(pObject);
-
-	pObject = CGameObject::CreateObject("Paper", pDefaultLayer);
-
-	pRenderer = pObject->AddComponent<CRenderer>("LPaperRenderer");
-
-	pRenderer->SetMesh("Paper", L"Paper.msh");
-
-	SAFE_RELEASE(pRenderer);
-
-	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldPos(300, 0, 0.f);
-	pTransform->SetWorldRot(0.f, 270.f, 0.f);
-	pTransform->SetWorldScale(100.f);
-
-	SAFE_RELEASE(pTransform);
-
-	SAFE_RELEASE(pObject);
-
-	pObject = CGameObject::CreateObject("Tablet", pDefaultLayer);
-
-	pRenderer = pObject->AddComponent<CRenderer>("TabletRenderer");
-
-	pRenderer->SetMesh("Tablet", L"Tablet.msh");
-
-	SAFE_RELEASE(pRenderer);
-
-	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldPos(400, 0, 0.f);
-	pTransform->SetWorldRot(0.f, 270.f, 0.f);
-	pTransform->SetWorldScale(100.f);
-
-	SAFE_RELEASE(pTransform);
-
-	SAFE_RELEASE(pObject);*/
-
-	/*CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
+	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
 
 	CBattery*	pBattery = pBatteryObj->AddComponent<CBattery>("Battery");
 
 	CTransform*	pBatteryTr = pBatteryObj->GetTransform();
 
-	pBatteryTr->SetWorldPos(-10.f, 5.f, 30.f);
+	pBatteryTr->SetWorldPos(316.f, 20.f, 648.f);
 
 	SAFE_RELEASE(pBatteryTr);
 	SAFE_RELEASE(pBattery);
@@ -235,18 +134,15 @@ bool CTutorialScene::Init()
 
 	pBatteryTr = pBatteryObj->GetTransform();
 
-	pBatteryTr->SetWorldPos(-100.f, 5.f, 10.f);
+	pBatteryTr->SetWorldPos(216.f, 20.f, 748.f);
 
 	SAFE_RELEASE(pBatteryTr);
 	SAFE_RELEASE(pBattery);
-	SAFE_RELEASE(pBatteryObj);*/
-	
+	SAFE_RELEASE(pBatteryObj);	
 
 	SAFE_RELEASE(pCamera);
 
 	SAFE_RELEASE(pDefaultLayer);
-	SAFE_RELEASE(pTileLayer);
-	SAFE_RELEASE(pBackLayer);
 	SAFE_RELEASE(pUILayer);
 
 	return true;

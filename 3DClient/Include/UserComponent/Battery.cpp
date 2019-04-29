@@ -81,24 +81,17 @@ int CBattery::Update(float fTime)
 			{
 				m_bOnInven = true;
 
-
 				m_pInvenObj = CGameObject::FindObject("Inven");
 
 				CGameObject*	pIconObj = CGameObject::CreateObject("Icon_Battery", m_pLayer);
 
 				CBatteryIcon*	pIcon = pIconObj->AddComponent<CBatteryIcon>("Icon_Battery");
 
-				++m_iCount;
-				pIcon->Add(m_iCount);
-
 				m_pInven = m_pInvenObj->FindComponentFromTag<CInventory>("Inven");
 				m_pInven->AddItem(pIconObj);
-				m_pInven->AddInvenList(pIconObj);
 
 				SAFE_RELEASE(pIcon);
-				SAFE_RELEASE(pIconObj);
-
-				//SAFE_RELEASE(m_pInvenObj);
+				SAFE_RELEASE(pIconObj);		
 
 				m_pObject->SetEnable(false);
 				m_bUseInven = true;

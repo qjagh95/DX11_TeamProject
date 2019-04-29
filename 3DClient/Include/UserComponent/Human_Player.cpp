@@ -263,6 +263,7 @@ bool CHuman_Player::Init()
 {
 	pCamEffManager = CCameraEff::GetInst();
 	pCamEffManager->Init();
+	pCamEffManager->SetFirstPersonViewEnable();
 	
 	PUN::CSoundManager *_SMgr = PUN::CSoundManager::GetInst();
 	_SMgr->SetAudioCoordSize(8.f);
@@ -271,7 +272,7 @@ bool CHuman_Player::Init()
 	pCamEffManager->SetCamTransform(pCamera);
 
 	CTransform* pCameraTr = pCamera->GetTransform();
-	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
+	//pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));
 	SAFE_RELEASE(pCameraTr);
 	SAFE_RELEASE(pCamera);
 

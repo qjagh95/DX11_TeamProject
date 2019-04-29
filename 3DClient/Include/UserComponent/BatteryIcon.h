@@ -17,17 +17,10 @@ private:
 	virtual ~CBatteryIcon();
 
 private:
-	CGameObject*	m_pInvenObj;
-	class CInventory*	m_pInven;
-	CGameObject*	m_pNumObj;
-	class CNumber*	m_pNumber;
 	bool	m_bMouseOn;
 	bool	m_bUse;
-	int		m_iCount;
 
 public:
-	virtual void Add(int iCount);
-	virtual void Use();
 	bool	GetUse()	const;
 
 public:

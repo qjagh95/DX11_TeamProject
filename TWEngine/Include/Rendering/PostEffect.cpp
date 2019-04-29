@@ -130,6 +130,7 @@ bool CPostEffect::Init()
 	m_tFinalPassCBInfo.fMiddleGrey = m_fMiddleGrey * m_fMiddleGrey;
 
 	m_tBloomThresholdInfo.fBloomThreshold = 1.1f;
+	m_tBloomInfo.fBloomScale = 1.1f;
 
 	return true;
 }

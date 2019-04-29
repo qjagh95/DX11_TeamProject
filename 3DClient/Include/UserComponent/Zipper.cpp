@@ -63,7 +63,7 @@ bool CZipper::Init()
 		vecClipFrame.push_back(tFrame);
 	}
 
-	pAnimation->AddClip("Inven_Zipper", A2D_ATLAS, AO_ONCE_LAST, 0.5f, vecClipFrame,
+	pAnimation->AddClip("Inven_Zipper", A2D_ATLAS, AO_ONCE_LAST, 0.4f, vecClipFrame,
 		"Zipper_Inven", TEXT("UI/Inven/ZipperAnimate.png"));
 
 	vecClipFrame.clear();

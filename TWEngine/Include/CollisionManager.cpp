@@ -40,7 +40,7 @@ bool CCollisionManager::Init()
 	}
 	else
 	{
-		CreateGroup("Default", Vector3(-200.f, -200.f, -200.f), Vector3(200.f, 200.f, 200.f),
+		CreateGroup("Default", Vector3(-1000.f, -1000.f, -1000.f), Vector3(1000.f, 1000.f, 1000.f),
 			10, 10, 10, CGT_3D);
 	}
 

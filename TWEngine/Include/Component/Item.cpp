@@ -27,7 +27,7 @@ void CItem::AfterClone()
 
 bool CItem::Init()
 {
-	return false;
+	return true;
 }
 
 int CItem::Input(float fTime)

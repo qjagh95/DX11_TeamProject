@@ -46,6 +46,7 @@ bool CCSAdaptFilter::Init()
 	m_pSrcSRV = pUAV->GetShaderResourceView();
 
 	m_iFinalPassRegister = 10;
+	m_pPostEffect->UpdateCBuffer(1);
 
 	return true;
 }

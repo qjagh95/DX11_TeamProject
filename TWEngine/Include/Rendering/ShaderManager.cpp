@@ -318,7 +318,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("PublicCBuffer",	5,	sizeof(PublicCBuffer),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Collider",		7,	sizeof(Vector4),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Animation2D",	8,	sizeof(Animation2DCBuffer), CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
-	CreateCBuffer("Bloom",			8,	sizeof(BloomCB),			CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Bloom",			11,	sizeof(BloomCB),			CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("Button",			9,	sizeof(ButtonCBuffer),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Bar",			9,	sizeof(BarCBuffer),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Fog",			9,	sizeof(FogCBuffer),			CST_VERTEX | CST_PIXEL);
@@ -333,7 +333,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("Adaptation",		3,	sizeof(AdaptationCB),		CST_COMPUTE);
 	CreateCBuffer("BloomThreshold", 4,	sizeof(BloomThresholdCB),	CST_COMPUTE);
 	CreateCBuffer("NaviLandCBuffer", 6, sizeof(NaviLandCBuffer), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("GridCBuffer", 10, sizeof(GridCBuffer), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("GridCBuffer", 4, sizeof(GridCBuffer), CST_VERTEX | CST_PIXEL);
 	
 	return true;
 }

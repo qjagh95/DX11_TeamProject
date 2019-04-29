@@ -42,6 +42,7 @@ bool CCSBloomFilter::Init()
 	m_pDownScaleUAV = m_pDownScale->GetUnorderedAccessView();
 
 	m_iFinalPassRegister = 10;
+	m_pPostEffect->UpdateCBuffer(1);
 
 	return true;
 }

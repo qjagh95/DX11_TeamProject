@@ -212,7 +212,7 @@ bool CRenderManager::Init()
 	m_pFilter[0]->Enable();
 	m_pFilter[1]->Enable();
 
-	//m_tFinalCBuffer.iHDR = 1;
+	m_tFinalCBuffer.iHDR = 1;
 
 	ID3D11Texture2D* pTex = m_pTarget[TARGET_FOG_DEPTH]->GetTexture();
 
@@ -426,14 +426,14 @@ void CRenderManager::Render3D(float fTime)
 		RenderForward(fTime);
 	else
 	{
-		//if (GET_SINGLE(CCore)->m_bEditorMode)
-		//{
-		//	if (GET_SINGLE(CEditManager)->IsNaviEditorMode())
-		//		RenderNaviEditorMode(fTime);
-		//	else
-		//		RenderDeferred(fTime);
-		//}
-		//else
+		if (GET_SINGLE(CCore)->m_bEditorMode)
+		{
+			if (GET_SINGLE(CEditManager)->IsNaviEditorMode())
+				RenderNaviEditorMode(fTime);
+			else
+				RenderDeferred(fTime);
+		}
+		else
 			RenderDeferred(fTime);
 	}
 

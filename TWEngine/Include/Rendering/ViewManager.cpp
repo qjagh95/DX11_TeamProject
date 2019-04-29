@@ -394,13 +394,13 @@ bool CViewManager::CreateUAV()
 		return false;
 	}
 
-	if (!CreateUAV("Temp1", VERTICAL_BLUR_SHADER, 320, 4, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	if (!CreateUAV("Temp1", BLOOM_VERTICAL_BLUR_SHADER, 320, 4, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
 	{
 		TrueAssert(true);
 		return false;
 	}
 
-	if (!CreateUAV("BloomFinal", HORIZONTAL_BLUR_SHADER, 3, 180, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	if (!CreateUAV("BloomFinal", BLOOM_HORIZONTAL_BLUR_SHADER, 3, 180, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
 	{
 		TrueAssert(true);
 		return false;
