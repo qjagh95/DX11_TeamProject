@@ -28,7 +28,7 @@ float4 GetBrushColor(float3 vPos, float4 BasicColor)
         (vPos.z >= g_BrushPos.z - ZRange) &&
         (vPos.z <= g_BrushPos.z + ZRange))
 
-        return g_BrushColor;
+        return float4(0.960784376f, 0.960784376f, 0.862745166f, 1.000000000f);
 
     return BasicColor;
 }

@@ -256,7 +256,9 @@ bool CInput::Init()
 	AddKey("LButton", VK_LBUTTON);
 	AddKey("RButton", VK_RBUTTON);
 	AddKey("MButton", VK_MBUTTON);
-	AddKey("TabButton", VK_TAB);
+	AddKey("TabButton", VK_TAB);	
+	AddKey("NaviDragMode", VK_CONTROL);
+
 	return true;
 }
 

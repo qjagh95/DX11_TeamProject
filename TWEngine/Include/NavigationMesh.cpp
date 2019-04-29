@@ -168,8 +168,9 @@ void CNavigationMesh::LoadCell(std::vector<Vertex3DColor>* vecColor)
 		m_vecCell[i]->tCopyVertex[2] = &(*vecColor)[m_vecCell[i]->m_iVertexIndex[2]];
 	}
 
-	m_vMax.y = 5000.0f;
+	m_vMax.y = 5000.f;
 	m_vMin.y = -5000.0f;
+
 }
 
 void CNavigationMesh::SetCellCopyVertex(Vertex3DColor & vPos0, Vertex3DColor & vPos1,
@@ -181,6 +182,7 @@ void CNavigationMesh::SetCellCopyVertex(Vertex3DColor & vPos0, Vertex3DColor & v
 	m_vecCell[_idx]->tCopyVertex[0] = &vPos0;
 	m_vecCell[_idx]->tCopyVertex[1] = &vPos1;
 	m_vecCell[_idx]->tCopyVertex[2] = &vPos2;
+
 }
 
 void CNavigationMesh::AddAdj(int iCellIdx, int iAdjIdx)
@@ -585,6 +587,7 @@ float CNavigationMesh::GetY(const Vector3 & vPos)
 					return vIntersect.y;
 			}
 		}
+
 		return 0.f;
 	}
 
@@ -635,7 +638,7 @@ float CNavigationMesh::GetY(const Vector3 & vPos)
 	float	fY[3] = {};
 	for (int i = 0; i < 3; ++i)
 	{
-		 fY[i] = m_vecCell[idx + 1]->tCopyVertex[i]->vPos.y;
+		fY[i] = m_vecCell[idx + 1]->tCopyVertex[i]->vPos.y;
 	}
 
 	return fY[0] + (fY[1] - fY[2]) * fX + (fY[2] - fY[0]) * fZ;
@@ -982,7 +985,6 @@ bool CNavigationMesh::RectIntersectPoint(Vector3 vRectMin, Vector3 vRectMax, Vec
 int CNavigationMesh::GetSectionIndex(Vector3 vPos)
 {
 	vPos -= m_vMin;
-
 	vPos /= m_vSectionSize;
 
 	int x, z;
@@ -1304,9 +1306,121 @@ void CNavigationMesh::LandDown(float DeltaTime)
 	}
 }
 
-PNavigationCell CNavigationMesh::GetIndexFromCell(size_t _idx)
+void CNavigationMesh::DragStart()
 {
-	return PNavigationCell();
+	int iSelectNavIndex = CInput::GetInst()->GetiSelectNavIndex();
+
+	if (iSelectNavIndex == -1)
+	{
+		m_iDragStartIndex = -1;
+		return;
+	}
+	m_iDragStartIndex = iSelectNavIndex;
+}
+
+void CNavigationMesh::DragEnd(bool _bIsMove, Vector4 _vColor)
+{
+	int iSelectNavIndex = CInput::GetInst()->GetiSelectNavIndex();
+
+	if (iSelectNavIndex == -1 || m_iDragStartIndex == -1)
+	{
+		return;
+	}
+
+	m_iDragEndIndex = iSelectNavIndex;
+
+	//Vector3 vCenter = m_vecCell[m_iDragStartIndex]->vCenter;
+
+	Vector3 vRectMin = m_vecCell[m_iDragStartIndex]->vCenter;
+	Vector3 vRectMax = m_vecCell[m_iDragEndIndex]->vCenter;
+
+	if (vRectMin.x > vRectMax.x)
+	{
+		float fTemp = vRectMin.x;
+		vRectMin.x = vRectMax.x;
+
+		vRectMax.x = fTemp;
+	}
+
+	if (vRectMin.z > vRectMax.z)
+	{
+		float fTemp = vRectMin.z;
+		vRectMin.z = vRectMax.z;
+
+		vRectMax.z = fTemp;
+	}
+
+
+	int iMaxSection = GetSectionIndex(vRectMax);
+	int iMinSection = GetSectionIndex(vRectMin);
+
+	if (iMinSection < iMaxSection)
+	{
+		if (iMaxSection >= m_iSectionX * m_iSectionZ)
+		{
+			iMaxSection = m_iSectionX * m_iSectionZ - 1;
+		}
+		for (size_t iSection = iMinSection; iSection <= iMaxSection; ++iSection)
+		{
+			for (int x = 0; x < m_pSection[iSection].iSize; ++x)
+			{
+				PNavigationCell	pCell = m_pSection[iSection].pCellList[x];
+
+				bool bCollision = true;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					if (RectIntersectPoint(vRectMin, vRectMax, pCell->vPos[i]) == false)
+					{
+						bCollision = false;
+						break;
+					}
+				}
+
+				if (bCollision)
+				{
+					pCell->bMove = _bIsMove;
+					pCell->tCopyVertex[0]->vColor = _vColor;
+					pCell->tCopyVertex[1]->vColor = _vColor;
+					pCell->tCopyVertex[2]->vColor = _vColor;
+				}
+			}
+		}
+	}
+	else
+	{
+		if (iMinSection >= m_iSectionX * m_iSectionZ)
+		{
+			iMinSection = m_iSectionX * m_iSectionZ - 1;
+		}
+
+		for (size_t iSection = iMaxSection; iSection <= iMinSection; ++iSection)
+		{
+			for (int x = 0; x < m_pSection[iSection].iSize; ++x)
+			{
+				PNavigationCell	pCell = m_pSection[iSection].pCellList[x];
+
+				bool bCollision = true;
+
+				for (int i = 0; i < 3; ++i)
+				{
+					if (RectIntersectPoint(vRectMin, vRectMax, pCell->vPos[i]) == false)
+					{
+						bCollision = false;
+						break;
+					}
+				}
+
+				if (bCollision)
+				{
+					pCell->bMove = _bIsMove;
+					pCell->tCopyVertex[0]->vColor = _vColor;
+					pCell->tCopyVertex[1]->vColor = _vColor;
+					pCell->tCopyVertex[2]->vColor = _vColor;
+				}
+			}
+		}
+	}
 }
 
 void CNavigationMesh::Save(const char * pFileName, const string & strPathKey)
