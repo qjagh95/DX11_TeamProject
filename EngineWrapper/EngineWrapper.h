@@ -68,9 +68,7 @@ namespace EngineWrapper
 		void SetWorldScale(double _dX, double _dY, double _dZ);
 		void SetWorldRotate(double _dX, double _dY, double _dZ);
 		void SetWorldPosition(double _dX, double _dY, double _dZ);
-		/*void ActiveObjSetScale(double _dX, double _dY, double _dZ);
-		void ActiveObjSetRotate(double _dX, double _dY, double _dZ);
-		void ActiveObjSetPosition(double _dX, double _dY, double _dZ);*/
+		void SetWorldPivot(double _dx, double _dy, double _dz);
 		bool FindRendererComponent();
 		bool FindLightComponent();
 		bool IsGizmoClick();
@@ -84,6 +82,7 @@ namespace EngineWrapper
 		String^ GetParentTag();
 		cli::array<float>^ GetLocalTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
 		cli::array<float>^ GetWorldTransform(String^ _strObjectTag, String^ _strLayerTag, int _type);
+		cli::array<float>^ GetWorldPivot(String^ _strObjectTag, String^ _strLayerTag);
 		cli::array<float>^ GetChildWorldPosition(String^ _strParentTag, String^ _strLayerTag);
 
 		void SetLightAmbient(double _dR, double _dG, double _dB)

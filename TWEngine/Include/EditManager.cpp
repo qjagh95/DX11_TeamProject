@@ -466,6 +466,17 @@ void CEditManager::SetWorldPosition(double _dX, double _dY, double _dZ)
 	SAFE_RELEASE(pTransform);
 }
 
+void CEditManager::SetWorldPivot(double _dX, double _dY, double _dZ)
+{
+	if (m_pObject == nullptr)
+	{
+		return;
+	}
+	CTransform* pTransform = m_pObject->GetTransform();
+	pTransform->SetWorldPivot((float)_dX, (float)_dY, (float)_dZ);
+	SAFE_RELEASE(pTransform);
+}
+
 bool CEditManager::FindRenderComponent()
 {
 	if (m_pObject == nullptr)
@@ -609,14 +620,12 @@ vector<Vector3> CEditManager::GetWorldTransform(const string _strObjectTag, cons
 	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
 	if (pLayer == nullptr)
 	{
-		SAFE_RELEASE(pLayer);
 		TrueAssert(true);
 	}
 
 	CGameObject* pObj = pLayer->FindObject(_strObjectTag);
 	if (pObj == nullptr)
 	{
-		SAFE_RELEASE(pObj);
 		SAFE_RELEASE(pLayer);
 		TrueAssert(true);
 	}
@@ -648,6 +657,33 @@ vector<Vector3> CEditManager::GetWorldTransform(const string _strObjectTag, cons
 	SAFE_RELEASE(pLayer);
 
 	return pVecTranform;
+}
+
+vector<Vector3> CEditManager::GetWorldPivot(string _strObjectTag, string _strLayerTag)
+{
+	CLayer* pLayer = m_pScene->FindLayer(_strLayerTag);
+	if (pLayer == nullptr)
+	{
+		TrueAssert(true);
+	}
+
+	CGameObject* pObj = pLayer->FindObject(_strObjectTag);
+	if (pObj == nullptr)
+	{
+		SAFE_RELEASE(pObj);
+		TrueAssert(true);
+	}
+
+	CTransform* pTr = pObj->GetTransform();
+	vector<Vector3> pVecPivot;
+	pVecPivot.reserve(1);
+	pVecPivot.push_back(pTr->GetPivot());
+
+	SAFE_RELEASE(pTr);
+	SAFE_RELEASE(pObj);
+	SAFE_RELEASE(pLayer);
+
+	return pVecPivot;
 }
 
 Vector3 CEditManager::GetChildWorldPosition(const string _strParentTag, const string _strLayerTag)

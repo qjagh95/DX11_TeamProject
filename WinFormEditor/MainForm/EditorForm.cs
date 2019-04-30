@@ -172,8 +172,8 @@ namespace WinFormEditor
             Dictionary<eTransformType, List<TextBox>> dicListTr =
                 new Dictionary<eTransformType, List<TextBox>>();
 
-            List<TextBox> listScaleTr = new List<TextBox>();
-            List<TextBox> listRotateTr = new List<TextBox>();
+            List<TextBox> listScaleTr    = new List<TextBox>();
+            List<TextBox> listRotateTr   = new List<TextBox>();
             List<TextBox> listPositionTr = new List<TextBox>();
 
             if (_eTr == eTransform.T_LOCAL)
@@ -216,9 +216,10 @@ namespace WinFormEditor
             return dicListTr;
         }
 
-        public TextBox GetTB()
+        public TextBox[] GetPivotTextBox()
         {
-            return PositionX;
+            TextBox[] arrTextBox = { PivotX, PivotY, PivotZ };
+            return arrTextBox;
         }
 
         public TextBox GetParentTextBox()
@@ -345,6 +346,9 @@ namespace WinFormEditor
                     float[] arrFWRot   = m_transform.ObjGetWorldTransform(strTag, strLayer, eTransformType.TT_ROTATE);
                     float[] arrFWPos   = m_transform.ObjGetWorldTransform(strTag, strLayer, eTransformType.TT_POSITION);
 
+                    // World Pivot
+                    float[] arrFPivot  = m_transform.ObjGetWorldPivot(strTag, strLayer);
+
                     // 데이터 생성 및 추가
                     ObjectInfo info = new ObjectInfo
                     {
@@ -358,6 +362,7 @@ namespace WinFormEditor
                         vecWScale       = new ObjectInfo.Vector3(arrFWScale),
                         vecWRotate      = new ObjectInfo.Vector3(arrFWRot),
                         vecWPosition    = new ObjectInfo.Vector3(arrFWPos),
+                        vecWPivot       = new ObjectInfo.Vector3(arrFPivot),
                         vecColor        = new ObjectInfo.Vector4(),
 
                         // Member
@@ -640,6 +645,19 @@ namespace WinFormEditor
         public void ReadChildWorldPosition()
         {
             m_transform.ReadChildWorldPosition(TB_ChildPosX, TB_ChildPosY, TB_ChildPosZ);
+        }
+
+        public void SetWorldPivot(object sender, EventArgs e)
+        {
+            ChangeSelectedObject(null, null);
+            if (PivotX.Text != "" && PivotY.Text != "" && PivotZ.Text != "")
+            {
+                if (PivotX.Text != "-" && PivotY.Text != "-" && PivotZ.Text != "-")
+                {
+                    m_transform.ChangeWorldPivot((TextBox)sender, PivotX, PivotY, PivotZ);
+                    ReadChildWorldPosition();
+                }
+            }
         }
 
         /*******************************************************************************************************/

@@ -164,6 +164,7 @@ namespace WinFormEditor
                 vecWScale       = new ObjectInfo.Vector3(),
                 vecWRotate      = new ObjectInfo.Vector3(),
                 vecWPosition    = new ObjectInfo.Vector3(),
+                vecWPivot       = new ObjectInfo.Vector3(),
                 vecColor        = new ObjectInfo.Vector4(),
             };
             m_editForm.GetObjInfo().Add(strObjectTag, info);
@@ -330,6 +331,7 @@ namespace WinFormEditor
             tempData.vecWScale      = new ObjectInfo.Vector3();
             tempData.vecWRotate     = new ObjectInfo.Vector3();
             tempData.vecWPosition   = new ObjectInfo.Vector3();
+            tempData.vecWPivot      = new ObjectInfo.Vector3();
             tempData.vecColor       = new ObjectInfo.Vector4();
             m_editForm.GetObjInfo().Remove(strTag);
 

@@ -107,6 +107,14 @@ namespace WinFormEditor
             dicListTrW[eTransformType.TT_POSITION][0].Text = Convert.ToString(vPos.x);
             dicListTrW[eTransformType.TT_POSITION][1].Text = Convert.ToString(vPos.y);
             dicListTrW[eTransformType.TT_POSITION][2].Text = Convert.ToString(vPos.z);
+
+            // - Pivot
+            float[] arrPivot = ObjGetWorldPivot(strTag, strLayerTag);
+            ObjectInfo.Vector3 vPivot = new ObjectInfo.Vector3(arrPivot[0], arrPivot[1], arrPivot[2]);
+            TextBox[] arrTextBox = m_editForm.GetPivotTextBox();
+            arrTextBox[0].Text = Convert.ToString(vPivot.x);
+            arrTextBox[1].Text = Convert.ToString(vPivot.y);
+            arrTextBox[2].Text = Convert.ToString(vPivot.z);
         }
 
         public float[] ObjGetLocalTransform(string _strTag, string _strLayerTag, eTransformType _type)
@@ -121,6 +129,13 @@ namespace WinFormEditor
             CoreWrapper wrapper = m_editForm.GetWrapper();
             float[] arrFTr = wrapper.GetWorldTransform(_strTag, _strLayerTag, (int)_type);
             return arrFTr;
+        }
+
+        public float[] ObjGetWorldPivot(string _strTag, string _strLayerTag)
+        {
+            CoreWrapper wrapper = m_editForm.GetWrapper();
+            float[] arrFPivot = wrapper.GetWorldPivot(_strTag, _strLayerTag);
+            return arrFPivot;
         }
 
         public void ReadChildWorldPosition(TextBox _x, TextBox _y, TextBox _z)
@@ -154,9 +169,9 @@ namespace WinFormEditor
 
         private void DecimalFormat(ObjectInfo.Vector3 _vec)
         {
-            string cvtVecX = string.Format("{0:0.######}", _vec.x);
-            string cvtVecY = string.Format("{0:0.######}", _vec.y);
-            string cvtVecZ = string.Format("{0:0.######}", _vec.z);
+            string cvtVecX = string.Format("{0:0.####}", _vec.x);
+            string cvtVecY = string.Format("{0:0.####}", _vec.y);
+            string cvtVecZ = string.Format("{0:0.####}", _vec.z);
             _vec.x = (float)Convert.ToDouble(cvtVecX);
             _vec.y = (float)Convert.ToDouble(cvtVecY);
             _vec.z = (float)Convert.ToDouble(cvtVecZ);
@@ -231,6 +246,18 @@ namespace WinFormEditor
                 double posY = Convert.ToDouble(_worldY.Text);
                 double posZ = Convert.ToDouble(_worldZ.Text);
                 wrapper.SetWorldPosition(posX, posY, posZ);
+            }
+        }
+
+        public void ChangeWorldPivot(TextBox _sender, TextBox _worldX, TextBox _worldY, TextBox _worldZ)
+        {
+            if (StringFormCheck(_sender) == true)
+            {
+                CoreWrapper wrapper = m_editForm.GetWrapper();
+                double pivotX = Convert.ToDouble(_worldX.Text);
+                double pivotY = Convert.ToDouble(_worldY.Text);
+                double pivotZ = Convert.ToDouble(_worldZ.Text);
+                wrapper.SetWorldPivot(pivotX, pivotY, pivotZ);
             }
         }
 

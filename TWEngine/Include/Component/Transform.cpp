@@ -777,6 +777,10 @@ void CTransform::Save(BinaryWrite* _pInstBW)
 	_pInstBW->WriteData(worldS);
 	_pInstBW->WriteData(worldR);
 	_pInstBW->WriteData(worldP);
+
+	// World Pivot
+	Vector3 worldPivot = GetPivot();
+	_pInstBW->WriteData(worldPivot);
 }
 
 void CTransform::Load(BinaryRead* _pInstBR)
@@ -796,6 +800,10 @@ void CTransform::Load(BinaryRead* _pInstBR)
 	SetWorldScale(worldS);
 	SetWorldRot(worldR);
 	SetWorldPos(worldP);
+
+	// World Pivot
+	Vector3 worldPivot = _pInstBR->ReadVector3();
+	SetWorldPivot(worldPivot);
 }
 
 void CTransform::SetBoneMatrix(const Matrix& matBone)

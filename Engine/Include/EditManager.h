@@ -103,6 +103,7 @@ public:
 	void SetWorldScale(double _dX, double _dY, double _dZ);
 	void SetWorldRotate(double _dX, double _dY, double _dZ);
 	void SetWorldPosition(double _dX, double _dY, double _dZ);
+	void SetWorldPivot(double _dX, double _dY, double _dZ);
 	bool FindRenderComponent();
 	bool FindLightComponent();
 	void SetGizmoClick(bool _isFlag);
@@ -112,6 +113,7 @@ public:
 	string GetParentTag();
 	vector<Vector3> GetLocalTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
 	vector<Vector3> GetWorldTransform(const string _strObjectTag, const string _strLayerTag, int _eType);
+	vector<Vector3> GetWorldPivot(string _strObjectTag, string _strLayerTag);
 	Vector3 GetChildWorldPosition(const string _strParentTag, const string _strLayerTag);
 	void SetMouseWheel(short _sMouseWheel);
 	void SetGizmoEnable(bool _bEnable);

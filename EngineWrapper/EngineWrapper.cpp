@@ -103,20 +103,10 @@ void CoreWrapper::SetWorldPosition(double _dX, double _dY, double _dZ)
 	PUN::CEditManager::GetInst()->SetWorldPosition(_dX, _dY, _dZ);
 }
 
-//void CoreWrapper::ActiveObjSetScale(double _dX, double _dY, double _dZ)
-//{
-//	PUN::CEditManager::GetInst()->ActiveObjectSetScale(_dX, _dY, _dZ);
-//}
-//
-//void CoreWrapper::ActiveObjSetRotate(double _dX, double _dY, double _dZ)
-//{
-//	PUN::CEditManager::GetInst()->ActiveObjectSetRotate(_dX, _dY, _dZ);
-//}
-//
-//void CoreWrapper::ActiveObjSetPosition(double _dX, double _dY, double _dZ)
-//{
-//	PUN::CEditManager::GetInst()->ActiveObjectSetPosition(_dX, _dY, _dZ);
-//}
+void CoreWrapper::SetWorldPivot(double _dx, double _dy, double _dz)
+{
+	PUN::CEditManager::GetInst()->SetWorldPivot(_dx, _dy, _dz);
+}
 
 bool CoreWrapper::FindRendererComponent()
 {
@@ -205,6 +195,21 @@ cli::array<float>^ CoreWrapper::GetWorldTransform(String^ _strObjectTag, String^
 	arrTransform[2] = pVecTranform[0].z;
 
 	return arrTransform;
+}
+
+cli::array<float>^ CoreWrapper::GetWorldPivot(String^ _strObjectTag, String^ _strLayerTag)
+{
+	vector<Vector3> pVecPivot;
+	string strObjectTag = ConvertMarshal<string, String^>(_strObjectTag);
+	string strLayerTag = ConvertMarshal<string, String^>(_strLayerTag);
+	pVecPivot = PUN::CEditManager::GetInst()->GetWorldPivot(strObjectTag, strLayerTag);
+
+	cli::array<float>^ arrWorldPivot = gcnew cli::array<float>(3);
+	arrWorldPivot[0] = pVecPivot[0].x;
+	arrWorldPivot[1] = pVecPivot[0].y;
+	arrWorldPivot[2] = pVecPivot[0].z;
+
+	return arrWorldPivot;
 }
 
 cli::array<float>^ CoreWrapper::GetChildWorldPosition(String^ _strParentTag, String^ _strLayerTag)

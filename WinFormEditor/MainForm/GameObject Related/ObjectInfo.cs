@@ -18,6 +18,7 @@ namespace WinFormEditor
         public Vector3 vecWScale    { set; get; }
         public Vector3 vecWRotate   { set; get; }
         public Vector3 vecWPosition { set; get; }
+        public Vector3 vecWPivot    { set; get; }
         public Vector4 vecColor     { set; get; }
 
         // Member
