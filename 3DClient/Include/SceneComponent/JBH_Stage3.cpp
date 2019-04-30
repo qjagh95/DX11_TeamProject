@@ -18,11 +18,12 @@ JBH_Stage3::~JBH_Stage3()
 
 bool JBH_Stage3::Init()
 {
-	//CCamera* pCamera = m_pScene->GetMainCameraNonCount();
-	//pCamera->SetCameraType(CT_PERSPECTIVE);
-	//pCamera->SetNear(0.03f);
-	//pCamera->GetTransformNonCount()->SetLocalPos(Vector3(0.f, 5.0f, 5.0f));
+	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
+	pCamera->SetCameraType(CT_PERSPECTIVE);
+	pCamera->SetNear(0.03f);
+	CCameraEff::GetInst()->SetFirstPersonViewEnable();
 
+	//pCamera->GetTransformNonCount()->SetLocalPos(Vector3(0.f, 5.0f, 5.0f));
 	//pCamera->SetCameraInfo(CT_PERSPECTIVE, 1280.0f, 720.0f, 90.0f, 0.03f, 1000.0f);
 	//CFreeCamera* FreeCam = pCamera->AddComponent<CFreeCamera>("FreeCam");
 

@@ -225,6 +225,12 @@ bool CShaderManager::Init()
 	if (!LoadShader(STARLIGHTSCOPE_SHADER, TEXT("StarLight_Scope.fx"), pEntry))
 		return false;
 
+	// Hit Effect
+	pEntry[ST_VERTEX] = (char*)"HitEffectFullScreenVS";
+	pEntry[ST_PIXEL] = (char*)"HitEffectPS";
+	if (!LoadShader(HIT_EFFECT_SHADER, TEXT("HitEffect.fx"), pEntry))
+		return false;
+
 	//Geometry 쉐이더를 쓰는 파이프라인
 
 	pEntry[ST_VERTEX] = (char*)"ParticleVS";
@@ -325,7 +331,6 @@ bool CShaderManager::Init()
 	CreateCBuffer("FinalPass",		9,	sizeof(FinalPassCB),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Particle",		10, sizeof(ParticleCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("HDRSecond",		10, sizeof(HDR2ndPassCB),		CST_VERTEX | CST_PIXEL);
-	//CreateCBuffer("LandScape",		11, sizeof(LandScapeCBuffer),	CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("StarLightScope", 12, sizeof(StarLightScopeCB),	CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("DepthFog",		13, sizeof(DepthFogCBuffer),	CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Blur",			1,	sizeof(BlurCBuffer),		CST_COMPUTE);
@@ -334,6 +339,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("BloomThreshold", 4,	sizeof(BloomThresholdCB),	CST_COMPUTE);
 	CreateCBuffer("NaviLandCBuffer", 6, sizeof(NaviLandCBuffer), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("GridCBuffer", 4, sizeof(GridCBuffer), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("HitEffect", 4, sizeof(HitEffectCB), CST_VERTEX | CST_PIXEL);
 	
 	return true;
 }

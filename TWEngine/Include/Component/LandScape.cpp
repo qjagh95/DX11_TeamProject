@@ -29,6 +29,9 @@ CLandScape::CLandScape() :
 	m_tNaviCBuffer.iBrushZRange = 5;
 	m_tNaviCBuffer.BrushColor = Vector4::Yellow;
 	m_tNaviCBuffer.BrushPos = Vector3(-1.0f, -1.0f, -1.0f);
+	m_tNaviCBuffer.isDrag = false;
+	m_tNaviCBuffer.StartPos = Vector3(-1.0f, -1.0f, -1.0f);
+	m_tNaviCBuffer.EndPos = Vector3(1.0f, 1.0f, 1.0f);
 
 	m_tGridCBuffer.GridLineThickness = 0.5f;
 	m_tGridCBuffer.isVisibleGrid = 1;
@@ -350,6 +353,12 @@ int CLandScape::Update(float fTime)
 		if (CEditManager::GetInst()->IsNaviEditorMode() == true)
 		{
 			CheckSelectIndex(fTime);
+
+			if (KEYHOLD("NaviDragMode") == true)
+			{
+				m_tNaviCBuffer.isDrag = true;
+			}
+
 			if (CInput::GetInst()->KeyPush("LButton") == true && CInput::GetInst()->KeyPush("NaviDragMode") == false)
 			{
 				if (m_isMove)
@@ -357,18 +366,36 @@ int CLandScape::Update(float fTime)
 				else
 					m_pNavMesh->Click(m_isMove);
 			}
+
 			else if (CInput::GetInst()->KeyPress("LButton") == true && CInput::GetInst()->KeyPush("NaviDragMode") == true)
 			{
+				m_tNaviCBuffer.StartPos = m_tNaviCBuffer.BrushPos;
 				m_pNavMesh->DragStart();
 			}
-			else if (CInput::GetInst()->KeyRelease("LButton") == true && CInput::GetInst()->KeyPush("NaviDragMode") == true)
+
+			if (CInput::GetInst()->KeyPress("LButton") == false && CInput::GetInst()->KeyPush("LButton") == false && CInput::GetInst()->KeyRelease("LButton") == false && CInput::GetInst()->KeyPush("NaviDragMode") == true)
+			{
+				m_tNaviCBuffer.StartPos = m_tNaviCBuffer.BrushPos;
+			}
+
+			if (CInput::GetInst()->KeyRelease("LButton") == true && CInput::GetInst()->KeyPush("NaviDragMode") == true)
 			{
 				if (m_isMove)
 					m_pNavMesh->DragEnd(m_isMove, Vector4(0.0f, 1.0f, 0.5f, 1.0f));
 				else
 					m_pNavMesh->DragEnd(m_isMove);
+
+				m_tNaviCBuffer.StartPos = m_tNaviCBuffer.BrushPos;
 			}
 
+			if (m_tNaviCBuffer.isDrag == 1)
+			{
+				if (CInput::GetInst()->KeyRelease("NaviDragMode") == true)
+				{
+					m_tNaviCBuffer.isDrag = false;
+				}
+			}
+			
 			if (CInput::GetInst()->KeyPush("LandUp") == true)
 			{
 				m_pNavMesh->LandUp(fTime);

@@ -70,6 +70,9 @@
     <Filter Include="02. UserComponent\07. Interact\02. Hidable">
       <UniqueIdentifier>{9520f32d-0a3e-481e-972d-7281b62f4d43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\01. Player\Effect">
+      <UniqueIdentifier>{22eb19de-1c76-4d4a-8031-b6e8bc7e71e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -204,6 +207,30 @@
     <ClInclude Include="UserComponent\Hidable.h">
       <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Cigarette.h">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\CigaretteIcon.h">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\HealingPack.h">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\HealingPackIcon.h">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\HitEffectAlpha.h">
+      <Filter>02. UserComponent\01. Player\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\HitEffectAnim.h">
+      <Filter>02. UserComponent\01. Player\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Tablet.h">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\TabletIcon.h">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -322,6 +349,30 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Hidable.cpp">
       <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Cigarette.cpp">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\CigaretteIcon.cpp">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\HealingPack.cpp">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\HealingPackIcon.cpp">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\HitEffectAlpha.cpp">
+      <Filter>02. UserComponent\01. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\HitEffectAnim.cpp">
+      <Filter>02. UserComponent\01. Player\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Tablet.cpp">
+      <Filter>02. UserComponent\05. Item</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\TabletIcon.cpp">
+      <Filter>02. UserComponent\05. Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

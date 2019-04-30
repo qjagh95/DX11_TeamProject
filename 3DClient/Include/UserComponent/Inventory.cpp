@@ -67,8 +67,8 @@ CInventory::~CInventory()
 
 	if (m_bLunchBoxUse)
 	{
-		SAFE_RELEASE(m_punchBoxNumberObj);
-		SAFE_RELEASE(m_punchBoxNumber);
+		SAFE_RELEASE(m_pLunchBoxNumberObj);
+		SAFE_RELEASE(m_pLunchBoxNumber);
 	}
 
 	if (m_bDaemaUse)
@@ -192,21 +192,16 @@ void CInventory::AddItem(CGameObject * pItem)
 		if (m_iBatteryCnt == 0)
 		{
 			m_pBatteryNumberObj = CGameObject::CreateObject("BatteryNumber", m_pLayer);
-
 			m_vecNumber.push_back(m_pBatteryNumberObj);
 
 			m_pBatteryNumber = m_pBatteryNumberObj->AddComponent<CNumber>("BatteryNumber");
-
 			Vector3	vInvenPos = m_pTransform->GetWorldPos();
-			
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
-
-			m_fItemY += 100.f;
+			m_fItemY += 105.f;
 		}
 
 		++m_iBatteryCnt;
-
 		if (m_iBatteryCnt >= 2)
 		{
 			m_vecItem[m_iIndex]->Die();
@@ -216,147 +211,233 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pBatteryNumber->SetNumberPivot(0.5f, 0.5f, 0.f); 
 
 		Vector3	vInvenPos = m_pTransform->GetWorldPos();
-
-		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f, 0.f);
+		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pBatteryNumberObj->GetTransform();
-
 		Vector3	vIconPos = pItemTr->GetWorldPos();
-
 		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
-
 		SAFE_RELEASE(pNumTr);
-		SAFE_RELEASE(pItemTr);
 	}
 
-	else if (strTag == "MedicalKit")
+	else if (strTag == "Icon_MedicalKit")
 	{
+		m_bMedicalKitUse = true;
 		if (m_iMedicalKitCnt == 0)
 		{
-			CTransform*	pItemTr = m_vecItem[m_iIndex]->GetTransform();
+			m_pMedicalKitNumberObj = CGameObject::CreateObject("MedicalKitNumber", m_pLayer);
+			m_vecNumber.push_back(m_pMedicalKitNumberObj);
 
+			m_pMedicalKitNumber = m_pMedicalKitNumberObj->AddComponent<CNumber>("MedicalKitNumber");
 			Vector3	vInvenPos = m_pTransform->GetWorldPos();
-
-			pItemTr->AddParentFlag(TPF_ROT);
-			pItemTr->AddParentFlag(TPF_POS);
-			pItemTr->AddParentFlag(TPF_SCALE);
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
-
-			SAFE_RELEASE(pItemTr);
-			m_fItemY += 100.f;
+			m_fItemY += 105.f;
 		}
-
 		++m_iMedicalKitCnt;
+		if (m_iMedicalKitCnt >= 2)
+		{
+			m_vecItem[m_iIndex]->Die();
+		}
+		m_pMedicalKitNumber->SetNumber(m_iMedicalKitCnt);
+		m_pMedicalKitNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
+
+		Vector3	vInvenPos = m_pTransform->GetWorldPos();
+		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
+		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+
+		CTransform*	pNumTr = m_pMedicalKitNumberObj->GetTransform();
+		Vector3	vIconPos = pItemTr->GetWorldPos();
+		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
+		SAFE_RELEASE(pNumTr);
 	}
 
-	else if(strTag == "LunchBox")
+	else if(strTag == "Icon_LunchBox")
 	{
+		m_bLunchBoxUse = true;
 		if (m_iLunchBoxCnt == 0)
 		{
-			CTransform*	pItemTr = m_vecItem[m_iIndex]->GetTransform();
+			m_pLunchBoxNumberObj = CGameObject::CreateObject("LunchBoxNumber", m_pLayer);
+			m_vecNumber.push_back(m_pLunchBoxNumberObj);
 
+			m_pLunchBoxNumber = m_pLunchBoxNumberObj->AddComponent<CNumber>("BatteryNumber");
 			Vector3	vInvenPos = m_pTransform->GetWorldPos();
-
-			pItemTr->AddParentFlag(TPF_ROT);
-			pItemTr->AddParentFlag(TPF_POS);
-			pItemTr->AddParentFlag(TPF_SCALE);
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
-
-			SAFE_RELEASE(pItemTr);
-			m_fItemY += 100.f;
+			m_fItemY += 105.f;
 		}
 
 		++m_iLunchBoxCnt;
+		if (m_iLunchBoxCnt >= 2)
+		{
+			m_vecItem[m_iIndex]->Die();
+		}
+		m_pLunchBoxNumber->SetNumber(m_iLunchBoxCnt);
+		m_pLunchBoxNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
+
+		Vector3	vInvenPos = m_pTransform->GetWorldPos();
+		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
+		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+
+		CTransform*	pNumTr = m_pLunchBoxNumberObj->GetTransform();
+		Vector3	vIconPos = pItemTr->GetWorldPos();
+		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
+		SAFE_RELEASE(pNumTr);
 	}
 
-	else if (strTag == "Daema")
+	else if (strTag == "Icon_Cigarette")
 	{
+		m_bDaemaUse = true;
 		if (m_iDaemaCnt == 0)
 		{
-			CTransform*	pItemTr = m_vecItem[m_iIndex]->GetTransform();
+			m_pDaemaNumberObj = CGameObject::CreateObject("DaemaNumber", m_pLayer);
+			m_vecNumber.push_back(m_pDaemaNumberObj);
 
+			m_pDaemaNumber = m_pDaemaNumberObj->AddComponent<CNumber>("DaemaNumber");
 			Vector3	vInvenPos = m_pTransform->GetWorldPos();
-
-			pItemTr->AddParentFlag(TPF_ROT);
-			pItemTr->AddParentFlag(TPF_POS);
-			pItemTr->AddParentFlag(TPF_SCALE);
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
-
-			SAFE_RELEASE(pItemTr);
-			m_fItemY += 100.f;
+			m_fItemY += 105.f;
 		}
 
 		++m_iDaemaCnt;
+		if (m_iDaemaCnt >= 2)
+		{
+			m_vecItem[m_iIndex]->Die();
+		}
+		m_pDaemaNumber->SetNumber(m_iDaemaCnt);
+		m_pDaemaNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
+
+		Vector3	vInvenPos = m_pTransform->GetWorldPos();
+		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
+		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+
+		CTransform*	pNumTr = m_pDaemaNumberObj->GetTransform();
+		Vector3	vIconPos = pItemTr->GetWorldPos();
+		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
+		SAFE_RELEASE(pNumTr);
 	}
 
-	else if (strTag == "Tablet")
+	else if (strTag == "Icon_Tablet")
 	{
+		m_bTabletUse = true;
 		if (m_iTabletCnt == 0)
 		{
-			CTransform*	pItemTr = m_vecItem[m_iIndex]->GetTransform();
+			m_pTabletNumberObj = CGameObject::CreateObject("TabletNumber", m_pLayer);
+			m_vecNumber.push_back(m_pTabletNumberObj);
 
+			m_pTabletNumber = m_pTabletNumberObj->AddComponent<CNumber>("TabletNumber");
 			Vector3	vInvenPos = m_pTransform->GetWorldPos();
-
-			pItemTr->AddParentFlag(TPF_ROT);
-			pItemTr->AddParentFlag(TPF_POS);
-			pItemTr->AddParentFlag(TPF_SCALE);
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
-
-			SAFE_RELEASE(pItemTr);
-			m_fItemY += 100.f;
+			m_fItemY += 105.f;
 		}
 
 		++m_iTabletCnt;
+		if (m_iTabletCnt >= 2)
+		{
+			m_vecItem[m_iIndex]->Die();
+		}
+		m_pTabletNumber->SetNumber(m_iTabletCnt);
+		m_pTabletNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
+
+		Vector3	vInvenPos = m_pTransform->GetWorldPos();
+		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
+		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+
+		CTransform*	pNumTr = m_pTabletNumberObj->GetTransform();
+		Vector3	vIconPos = pItemTr->GetWorldPos();
+		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
+		SAFE_RELEASE(pNumTr);
 	}
 
 	if (m_pObject->GetEnable() == false)
 	{
+		for (size_t i = 0; i < m_vecNumber.size(); ++i)
+		{
+			if (m_vecNumber[i] == nullptr)
+				break;
+
+			m_vecNumber[i]->SetEnable(false);
+		}
+
 		m_vecItem[m_iIndex]->SetEnable(false);
 	}	
 
 	++m_iIndex;
+	SAFE_RELEASE(pItemTr);
 }
 
 void CInventory::UseItem(CGameObject * pItem)
 {
-	m_vecItem[m_iIndex] = pItem;
-
-	string strTag = m_vecItem[m_iIndex]->GetTag();
-
+	CGameObject* pFindItem = nullptr;
+	for (size_t i = 0; i < m_vecItem.size(); ++i)
+	{
+		if (m_vecItem[i] == pItem)
+		{
+			pFindItem = m_vecItem[i];
+			break;
+		}
+	}
+	bool isDestroy = false;
+	string strTag = pFindItem->GetTag();
 	if (strTag == "Icon_Battery")
 	{
 		--m_iBatteryCnt;
 		m_pBatteryNumber->SetNumber(m_iBatteryCnt);
-
 		if (m_iBatteryCnt == 0)
 		{
+			isDestroy = true;
 			m_pBatteryNumberObj->Die();
-			m_vecItem[m_iIndex]->Die();
-			m_vecItem[m_iIndex] = nullptr;
-			m_fItemY += 100.f;
-			SAFE_RELEASE(m_vecItem[m_iIndex]);
 		}
 	}
 
-	else if (strTag == "MedicalKit")
+	else if (strTag == "Icon_MedicalKit")
 	{
+		--m_iMedicalKitCnt;
+		if (m_iMedicalKitCnt == 0)
+		{
+			m_pMedicalKitNumberObj->Die();
+			isDestroy = true;
+		}
 	}
 
-	else if (strTag == "LunchBox")
+	else if (strTag == "Icon_LunchBox")
 	{
+		--m_iLunchBoxCnt;
+		if (m_iLunchBoxCnt == 0)
+		{
+			m_pLunchBoxNumberObj->Die();
+			isDestroy = true;
+		}
 	}
 
-	else if (strTag == "Daema")
+	else if (strTag == "Icon_Cigarette")
 	{
+		--m_iDaemaCnt;
+		if (m_iDaemaCnt == 0)
+		{
+			m_pDaemaNumberObj->Die();
+			isDestroy = true;
+		}
 	}
 
-	else if (strTag == "Tablet")
+	else if (strTag == "Icon_Tablet")
 	{
+		--m_iTabletCnt;
+		if (m_iTabletCnt == 0)
+		{
+			m_pTabletNumberObj->Die();
+			isDestroy = true;
+		}
+	}
+
+	if (isDestroy == true)
+	{
+		pFindItem->Die();
+		pFindItem = nullptr;
+		m_fItemY -= 105.f;
+		SAFE_RELEASE(pFindItem);
 	}
 	
 	--m_iIndex;

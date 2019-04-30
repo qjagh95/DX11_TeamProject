@@ -168,6 +168,10 @@ void CDoor::SetOpenTime(float time)
 	m_fOpenSpeed = 1.0f / m_fOpenTime;
 }
 
+void CDoor::SetCloseTime(float fTime)
+{
+}
+
 void CDoor::SetFastOpenTime(float fTime)
 {
 	m_fFastOpenTime = fTime;

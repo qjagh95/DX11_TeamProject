@@ -177,6 +177,8 @@ private:
 	int			m_iSectionZ;
 	Vector3		m_vSectionSize;
 	PNavSection	m_pSection;
+	unsigned int m_iDragStartIndex;
+	unsigned int m_iDragEndIndex;
 
 private:
 	CHeap<PNavigationCell>	m_OpenList;
@@ -231,6 +233,8 @@ public:
 	void Click(bool _bIsMove, Vector4 _vColor = Vector4::Red);
 	void LandUp(float DeltaTime);
 	void LandDown(float DeltaTime);
+	void DragStart();
+	void DragEnd(bool _bIsMove, Vector4 _vColor = Vector4::Red);
 	PNavigationCell GetIndexFromCell(size_t _idx);
 
 public:

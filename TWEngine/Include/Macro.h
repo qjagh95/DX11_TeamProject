@@ -47,6 +47,7 @@
 #define DOWNSCALE_SHADOW_SHADER				"DownScaleShadowShader"
 #define LANDSCAPE_COLOR_SHADER					"LandScapeColorShader"
 #define VERTEX3D_COLOR_SHADER				"Vertex3DShader"
+#define HIT_EFFECT_SHADER					"HitEffectShader"
 
 #define VOLUME_FOG_FIRST_SHADER				"VolumeFogFirstShader"
 #define VOLUME_FOG_SECOND_SHADER			"VolumeFogSecondShader"

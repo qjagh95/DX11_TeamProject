@@ -68,6 +68,7 @@ typedef struct PUN_DLL _tagAnimationClip
 	int					iFrameLength;
 	int					iFrameMode;
 	int					iChangeFrame;
+	int					iFrame;
 	vector<PBONEKEYFRAME>		vecKeyFrame;
 	vector<PANIMATIONCALLBACK>	vecCallback;
 
@@ -81,7 +82,8 @@ typedef struct PUN_DLL _tagAnimationClip
 		iStartFrame(0),
 		iEndFrame(0),
 		iFrameLength(0),
-		fPlayTime(1.f)
+		fPlayTime(1.f),
+		iFrame(0)
 	{
 	}
 
@@ -238,6 +240,7 @@ private:
 	PANIMATIONCLIP			m_pNextClip;
 	bool					m_bKeepBlending;
 	bool					m_bEnd;
+	bool					m_bCurClipEnd;
 	float					m_fAnimationGlobalTime;
 	float					m_fClipProgress;
 	float					m_fChangeTime;
@@ -274,6 +277,8 @@ public:
 	void AddClipFromMultibyte(const char* pFullPath);
 	PANIMATIONCLIP FindClip(const string& strName);
 	bool IsAnimationEnd()	const;
+	bool IsCurAnimEnd() const;
+	bool IsCurAnimEnd(const string& strName) const;
 	PANIMATIONCLIP GetCurrentClip()	const;
 	void GetCurrentKeyFrame(vector<PBONEKEYFRAME>& vecFrame);
 

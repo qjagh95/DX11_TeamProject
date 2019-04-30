@@ -4,12 +4,14 @@ cbuffer NaviLandCBuffer : register(b6)
 {
     float3 g_BrushPos;
     int g_BrushXRange;
-    int g_BrushZRange;
     float4 g_BrushColor;
-    float3 vEmpty;
+    float3 g_StartPos;
+    int g_isDrag;
+    float3 g_EndPos;
+    int g_BrushZRange;
 };
 
-cbuffer GridCBuffer : register(b10)
+cbuffer GridCBuffer : register(b4)
 {
     int g_GridLineSize;
     int g_isVisibleGrid;
@@ -20,17 +22,56 @@ cbuffer GridCBuffer : register(b10)
 
 float4 GetBrushColor(float3 vPos, float4 BasicColor)
 {
-    float XRange = g_BrushXRange * 0.5f;
-    float ZRange = g_BrushZRange * 0.5f;
+    if (g_isDrag == 0)
+    {
+        float XRange = g_BrushXRange * 0.5f;
+        float ZRange = g_BrushZRange * 0.5f;
 
-    if ((vPos.x >= g_BrushPos.x - XRange) &&
+        if ((vPos.x >= g_BrushPos.x - XRange) &&
         (vPos.x <= g_BrushPos.x + XRange) &&
         (vPos.z >= g_BrushPos.z - ZRange) &&
         (vPos.z <= g_BrushPos.z + ZRange))
+            return float4(0.960784376f, 0.960784376f, 0.862745166f, 1.000000000f);
 
-        return g_BrushColor;
+        return BasicColor;
+    }
+    else
+    {
+        float3 Range = g_BrushPos - g_StartPos;
 
-    return BasicColor;
+        if (Range.x > 0.0f)
+        {
+            if (Range.z > 0.0f)
+            {
+                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) && 
+                    (vPos.z <= g_BrushPos.z && vPos.z >= g_StartPos.z))
+                    return float4(1.0f, 1.0f, 0.0f, 1.0f);
+            }
+            else if (Range.z < 0.0f)
+            {
+                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) && 
+                    (vPos.z >= g_BrushPos.z && vPos.z <= g_StartPos.z))
+                    return float4(1.0f, 1.0f, 0.0f, 1.0f);
+            }
+
+        }
+        else if (Range.x < 0.0f)
+        {
+            if (Range.z > 0.0f)
+            {
+                if ((vPos.x >= g_BrushPos.x && vPos.x <= g_StartPos.x) && 
+                    (vPos.z <= g_BrushPos.z && vPos.z >= g_StartPos.z))
+                    return float4(1.0f, 1.0f, 0.0f, 1.0f);
+            }
+            else if (Range.z > 0.0f)
+            {
+                if ((vPos.x >= g_BrushPos.x && vPos.x <= g_StartPos.x) &&
+                    (vPos.z <= g_BrushPos.z && vPos.z <= g_StartPos.z))
+                    return float4(1.0f, 1.0f, 0.0f, 1.0f);
+            }
+        }
+        return BasicColor;
+    }
 }
 
 float4 GetGridColor(float3 vPos)

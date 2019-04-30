@@ -61,6 +61,7 @@ public:
 
 	void SetOpenRot(float fRot = 90.0f);
 	void SetOpenTime(float time);
+	void SetCloseTime(float fTime);
 	void SetFastOpenTime(float fTime);
 	void SetDestroyTime(float time);
 

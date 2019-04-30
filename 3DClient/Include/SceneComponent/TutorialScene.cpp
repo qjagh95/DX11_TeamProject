@@ -25,6 +25,9 @@
 #include "../UserComponent/Human_Player.h"
 #include "../UserComponent/Battery.h"
 #include "../UserComponent/BatteryIcon.h"
+#include "../UserComponent/HealingPack.h"
+#include "../UserComponent/Cigarette.h"
+#include "../UserComponent/Tablet.h"
 
 #include <NavigationMesh.h>
 
@@ -76,16 +79,10 @@ bool CTutorialScene::Init()
 
 	CHuman_Player*	pPlayer = pPlayerObj->AddComponent<CHuman_Player>("Player");
 
-	//pPlayer->LoadData(TEXT("PlayerData.csv"));
-
 	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
 	pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
 	pPlayerTr->SetWorldScale(0.05f, 0.05f, 0.05f);
 	pPlayerTr->SetWorldPos(316.f, 20.f, 748.f);
-
-	SAFE_RELEASE(pPlayerTr);
-	SAFE_RELEASE(pPlayer);
-	SAFE_RELEASE(pPlayerObj);
 
 	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
 	CTransform*	pTransform = pObject->GetTransform();
@@ -115,6 +112,45 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLightLayer);
+	// MedicalKit
+	CGameObject* pObjMedicalKit = CGameObject::CreateObject("MedicalKit", pDefaultLayer);
+	CTransform* pMedicalKitTr = pObjMedicalKit->GetTransform();
+	pMedicalKitTr->SetWorldPos(356.f, 20.f, 650.f);
+	CHealingPack* pUCHealingPack = pObjMedicalKit->AddComponent<CHealingPack>("UC_HealingPack");
+	pUCHealingPack->SetHPAmount(pPlayer->GetMaxHP());
+	pUCHealingPack->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
+	SAFE_RELEASE(pUCHealingPack);
+	SAFE_RELEASE(pMedicalKitTr);
+	SAFE_RELEASE(pObjMedicalKit);
+
+	// Lunch Box
+	CGameObject* pObjLunchBox = CGameObject::CreateObject("LunchBox", pDefaultLayer);
+	CTransform* pLuncBoxTr = pObjLunchBox->GetTransform();
+	pLuncBoxTr->SetWorldPos(400.f, 20.f, 630.f);
+	pUCHealingPack = pObjLunchBox->AddComponent<CHealingPack>("UC_HealingPack");
+	pUCHealingPack->SetHPAmount(1);
+	pUCHealingPack->SetMesh("LunchBox", TEXT("LunchBox.msh"));
+	SAFE_RELEASE(pUCHealingPack);
+	SAFE_RELEASE(pLuncBoxTr);
+	SAFE_RELEASE(pObjLunchBox);
+
+	// Cigarette
+	CGameObject* pObjCigarette = CGameObject::CreateObject("Cigarette", pDefaultLayer);
+	CTransform* pCigaretteTr = pObjCigarette->GetTransform();
+	pCigaretteTr->SetWorldPos(300.f, 20.f, 620.f);
+	CCigarette* pUCCigarette = pObjCigarette->AddComponent<CCigarette>("UC_Cigarette");
+	SAFE_RELEASE(pUCCigarette);
+	SAFE_RELEASE(pCigaretteTr);
+	SAFE_RELEASE(pObjCigarette);
+
+	// Tablet
+	CGameObject* pObjTablet = CGameObject::CreateObject("Tablet", pDefaultLayer);
+	CTransform* pTabletTr = pObjTablet->GetTransform();
+	pTabletTr->SetWorldPos(300.f, 20.f, 600.f);
+	CTablet* pUCTablet = pObjTablet->AddComponent<CTablet>("UC_Tablet");
+	SAFE_RELEASE(pUCTablet);
+	SAFE_RELEASE(pTabletTr);
+	SAFE_RELEASE(pObjTablet);
 
 	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
 
@@ -139,6 +175,10 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pBatteryTr);
 	SAFE_RELEASE(pBattery);
 	SAFE_RELEASE(pBatteryObj);	
+
+	SAFE_RELEASE(pPlayerTr);
+	SAFE_RELEASE(pPlayer);
+	SAFE_RELEASE(pPlayerObj);
 
 	SAFE_RELEASE(pCamera);
 

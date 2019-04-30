@@ -118,7 +118,8 @@ CAnimation::CAnimation() :
 	m_fChangeLimitTime(0.25f),
 	m_fFrameTime(1.f / 30.f),
 	m_iFrameMode(0),
-	m_bKeepBlending(false)
+	m_bKeepBlending(false),
+	m_bCurClipEnd(false)
 {
 	m_eComType = CT_ANIMATION;
 }
@@ -546,6 +547,19 @@ PANIMATIONCLIP CAnimation::FindClip(const string & strName)
 bool CAnimation::IsAnimationEnd() const
 {
 	return m_bEnd;
+}
+
+bool CAnimation::IsCurAnimEnd() const
+{
+	return m_bCurClipEnd;
+}
+
+bool CAnimation::IsCurAnimEnd(const string & strName) const
+{
+	if (m_pCurClip->strName != strName)
+		return false;
+
+	return m_bCurClipEnd;
 }
 
 PANIMATIONCLIP CAnimation::GetCurrentClip() const
@@ -1524,6 +1538,7 @@ bool CAnimation::Init()
 
 int CAnimation::Input(float fTime)
 {
+
 	return 0;
 }
 
@@ -1561,7 +1576,6 @@ int CAnimation::Update(float fTime)
 			{
 				PANIMATIONCALLBACK pCallbackInfo = (*itr);
 				pCallbackInfo->bCall = false;
-
 			}
 		}
 
@@ -1647,8 +1661,8 @@ int CAnimation::Update(float fTime)
 				{
 					m_fChangeTime = m_fChangeLimitTime;
 					bChange = true;
+					
 				}
-
 			}
 
 			float	fAnimationTime = m_fAnimationGlobalTime + m_pCurClip->fStartTime;
@@ -1661,6 +1675,8 @@ int CAnimation::Update(float fTime)
 				m_pNextClip = nullptr;
 				m_fAnimationGlobalTime = 0.f;
 				m_fChangeTime = 0.f;
+				//m_bCurClipEnd = true;
+				//m_pCurClip->iFrame = 0;
 			}
 			else if (!m_bKeepBlending)
 			{
@@ -1736,9 +1752,13 @@ int CAnimation::Update(float fTime)
 				g_iNextFrameIndex = g_iFrameIndex + 1;
 
 				m_pCurClip->iChangeFrame = g_iFrameIndex;
+				m_pCurClip->iFrame = g_iFrameIndex;
 
+				//이부분이 돌리는 건지
 				if (g_iNextFrameIndex > iEndFrame)
+				{
 					g_iNextFrameIndex = iStartFrame;
+				}
 
 				int BoneSize = (int)m_vecBones.size();
 				parallel_for((int)0, BoneSize, [&](int i)
@@ -1850,18 +1870,23 @@ int CAnimation::Update(float fTime)
 		m_fClipProgress = m_fAnimationGlobalTime / m_pCurClip->fTimeLength;
 
 		if (m_pCurClip->fTimeLength - m_fAnimationGlobalTime < 0.0666666666667f)
-		{
-			switch (m_pCurClip->eOption)
+		{		
+			if (!m_bCurClipEnd)
 			{
-			case AO_LOOP:
-				m_pNextClip = m_pCurClip;
-				m_fChangeLimitTime = 0.0625f;
-				break;
-			case AO_ONCE_RETURN:
-				m_pNextClip = m_pDefaultClip;
-				m_fChangeLimitTime = 0.25f;
-				break;
-			}
+				switch (m_pCurClip->eOption)
+				{
+				case AO_LOOP:
+					m_pNextClip = m_pCurClip;
+					m_fChangeLimitTime = 0.0625f;
+					break;
+				case AO_ONCE_RETURN:
+					m_pNextClip = m_pDefaultClip;
+					m_fChangeLimitTime = 0.25f;
+					break;
+				}
+				m_bCurClipEnd = true;
+				m_pCurClip->iFrame = 0;
+			}			
 		}
 		while (m_fAnimationGlobalTime >= m_pCurClip->fTimeLength)
 		{
@@ -1885,8 +1910,11 @@ int CAnimation::Update(float fTime)
 
 		int	iFrameIndex = (int)(fAnimationTime / m_pCurClip->fFrameTime);
 
+		m_pCurClip->iFrame = iFrameIndex;
+
 		if (m_bEnd)
 		{
+
 			switch (m_pCurClip->eOption)
 			{
 			case AO_LOOP:
@@ -1909,9 +1937,14 @@ int CAnimation::Update(float fTime)
 			int	iNextFrameIndex = iFrameIndex + 1;
 
 			m_pCurClip->iChangeFrame = iFrameIndex;
+			m_pCurClip->iFrame = iFrameIndex;
 
 			if (iNextFrameIndex > iEndFrame)
+			{
 				iNextFrameIndex = iStartFrame;
+				//m_bCurClipEnd = true;
+				//m_pCurClip->iFrame = 0;
+			}
 
 			int BoneSize = (int)m_vecBones.size();
 			parallel_for((int)0, BoneSize, [&](int i)
@@ -2522,9 +2555,7 @@ int CAnimation::Update(float fTime)
 
 
 		CONTEXT->Unmap(m_pBoneTex, 0);
-	}
-
-	
+	}	
 
 	return 0;
 }
@@ -2560,6 +2591,7 @@ void CAnimation::Collision(float fTime)
 
 void CAnimation::Render(float fTime)
 {
+	m_bCurClipEnd = false;
 }
 
 CAnimation * CAnimation::Clone()

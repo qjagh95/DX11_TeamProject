@@ -1,1 +1,14 @@
-m_pDocxInven = nullptr;
+m_pDocxInven	= nullptr;
+
+// 무적 효과
+m_invincibility		= false;
+m_invincibilityTime	= 0.f;
+
+// 이속 증가 효과
+m_isAccel		= false;
+m_accelSpeed	= 1.0f;
+m_accelDuration	= 0.0f;
+
+// 체력
+m_playerMaxHP	= 5;
+m_playerHP		= 5;

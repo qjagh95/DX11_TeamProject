@@ -426,6 +426,12 @@ namespace PUN
 		Vector2 vEmpty;
 	}DepthFogCBuffer, *PDepthFogCBuffer;
 
+	typedef struct PUN_DLL _tagHitEffectCB
+	{
+		float fAlpha;
+		Vector3 vEmpty;
+	}HitEffectCB, *PHitEffectCB;
+
 	///////////////////////////////// CONSTANT BUFFER END /////////////////////////////////
 
 
@@ -522,9 +528,12 @@ namespace PUN
 	{
 		Vector3 BrushPos;
 		int iBrushXRange;
-		int iBrushZRange;
 		Vector4 BrushColor;
-		Vector3 vEmpty;
+		Vector3 StartPos;
+		int isDrag;
+		Vector3 EndPos;
+		int iBrushZRange;
+
 	};
 
 	struct PUN_DLL GridCBuffer

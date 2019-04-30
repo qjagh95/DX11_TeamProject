@@ -1,4 +1,5 @@
 #include "Human_Player.h"
+#include "Player_Interact_Value.hpp"
 
 void CHuman_Player::InteractCallBackEnter(CCollider* pSrc,
 	CCollider* pDest, float fTime)
@@ -9,7 +10,15 @@ void CHuman_Player::InteractCallBackEnter(CCollider* pSrc,
 void CHuman_Player::InteractCallBackStay(CCollider * pSrc,
 	CCollider * pDest, float fTime)
 {
-
+	if (pDest->GetColliderID() == UCI_DOOR)
+	{
+		if (KEYDOWN("E"))
+		{
+			m_vTargetDir = pDest->GetWorldAxis(AXIS_Z);
+			
+			ChangeInteractState(IS_HIDE_IN_BED, fTime);
+		}
+	}
 }
 
 void CHuman_Player::InteractCallBackLeave(CCollider * pSrc,

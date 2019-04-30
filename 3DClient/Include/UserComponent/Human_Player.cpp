@@ -18,6 +18,7 @@
 #include "../CommonSoundLoader.h"
 #include "Handycam.h"
 #include "NavigationMesh.h"
+#include "HitEffectAlpha.h"
 
 using namespace PUN;
 
@@ -264,6 +265,7 @@ bool CHuman_Player::Init()
 {
 	pCamEffManager = CCameraEff::GetInst();
 	pCamEffManager->Init();
+	pCamEffManager->SetFirstPersonViewEnable();
 	
 	PUN::CGameObject*pObj = PUN::CGameObject::CreateObject("player_move_point", m_pLayer);
 
@@ -393,6 +395,12 @@ void CHuman_Player::AfterClone()
 
 	SAFE_RELEASE(pTr);
 	SAFE_RELEASE(pCamRenderer);
+
+	CGameObject*	pTestObj = CGameObject::CreateObject("HitEffect", m_pLayer);
+	CHitEffectAlpha*	pTest = pTestObj->AddComponent<CHitEffectAlpha>("HitEffect");
+
+	SAFE_RELEASE(pTest);
+	SAFE_RELEASE(pTestObj);
 
 	LoadData(TEXT("PlayerData.csv"));
 }

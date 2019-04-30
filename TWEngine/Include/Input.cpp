@@ -242,6 +242,9 @@ bool CInput::Init()
 	else
 	{
 		m_pWorldPoint = m_pMouse->AddComponent<CColliderRay>("MouseWorld");
+		m_pWorldPoint->SetMyTypeName("MouseRay");
+		m_pWorldPoint->SetContinueTypeName("Player_Interact");
+
 		((CColliderRay*)m_pWorldPoint)->MouseEnable();
 
 		if (CCore::GetInst()->m_bEditorMode == true)

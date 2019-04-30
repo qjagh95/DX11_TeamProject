@@ -46,13 +46,13 @@ private:
 	class CGameObject*	m_pBatteryNumberObj;
 	class CGameObject*	m_pMedicalKitNumberObj;
 	class CGameObject*	m_pTabletNumberObj;
-	class CGameObject*	m_punchBoxNumberObj;
+	class CGameObject*	m_pLunchBoxNumberObj;
 	class CGameObject*	m_pDaemaNumberObj;
 
 	class CNumber*	m_pBatteryNumber;
 	class CNumber*	m_pMedicalKitNumber;
 	class CNumber*	m_pTabletNumber;
-	class CNumber*	m_punchBoxNumber;
+	class CNumber*	m_pLunchBoxNumber;
 	class CNumber*	m_pDaemaNumber;
 
 	bool	m_bBatteryUse;
