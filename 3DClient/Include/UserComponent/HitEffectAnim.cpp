@@ -25,6 +25,11 @@ CHitEffectAnim::~CHitEffectAnim()
 	SAFE_RELEASE(m_pPlayer);
 }
 
+void CHitEffectAnim::ChangeClip(const string & strName)
+{
+	m_pAnimation->ChangeClip(strName);
+}
+
 void CHitEffectAnim::AfterClone()
 {
 }
@@ -45,7 +50,7 @@ bool CHitEffectAnim::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "HitEffectAnim", TEXT("bloodyrect2.png"));
+	pMaterial->SetDiffuseTex(0, "HitEffectAnim", TEXT("Effect/bloodyrect2.png"));
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
@@ -61,11 +66,20 @@ bool CHitEffectAnim::Init()
 	Clip2DFrame	tFrame = {};
 
 	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(1280.f, 720.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("Hit_Empty", A2D_ATLAS, AO_LOOP, 0.4f, vecClipFrame,
+		"Empty_Hit", TEXT("Effect/HitEffect_Empty.png"));
+
+	vecClipFrame.clear();
+
+	tFrame.vLT = Vector2(0.f, 0.f);
 	tFrame.vRB = Vector2(800.f, 475.f);
 	vecClipFrame.push_back(tFrame);
 
 	m_pAnimation->AddClip("Hit1", A2D_ATLAS, AO_LOOP, 0.4f, vecClipFrame,
-		"1Hit", TEXT("bloodyrect1.png"));
+		"1Hit", TEXT("Effect/bloodyrect1.png"));
 
 	vecClipFrame.clear();
 
@@ -74,7 +88,7 @@ bool CHitEffectAnim::Init()
 	vecClipFrame.push_back(tFrame);	
 
 	m_pAnimation->AddClip("Hit2", A2D_ATLAS, AO_LOOP, 0.4f, vecClipFrame,
-		"2Hit", TEXT("HitEffect2.png"));
+		"2Hit", TEXT("Effect/HitEffect2.png"));
 
 	vecClipFrame.clear();
 
@@ -86,7 +100,7 @@ bool CHitEffectAnim::Init()
 	}
 
 	m_pAnimation->AddClip("Hit_Anim", A2D_ATLAS, AO_LOOP, 0.4f, vecClipFrame,
-		"Anim_Hit", TEXT("HitEffect3.png"));
+		"Anim_Hit", TEXT("Effect/HitEffect3.png"));
 
 	vecClipFrame.clear();
 

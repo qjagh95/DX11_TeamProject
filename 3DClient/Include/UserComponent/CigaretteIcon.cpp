@@ -3,12 +3,15 @@
 #include "Cigarette.h"
 #include "CigaretteIcon.h"
 #include "Human_Player.h"
+#include "BigIcon.h"
 #include <Component/ColliderRect.h>
 
 CCigaretteIcon::CCigaretteIcon() :
 	m_isUseItem(false),
 	m_pCigarette(nullptr)
 {
+	m_eComType = (COMPONENT_TYPE)IT_DAEMA;
+	m_bMouseOn = false;
 }
 
 CCigaretteIcon::CCigaretteIcon(const CCigaretteIcon& _cigaretteIcon)
@@ -23,7 +26,7 @@ bool CCigaretteIcon::Init()
 {
 	// Transform
 	m_pTransform->SetWorldScale(86.f, 94.f, 1.f);
-	m_pTransform->SetWorldPos(600.f, 429.f, 0.f);
+	//m_pTransform->SetWorldPos(600.f, 429.f, 0.f);
 
 	// Renderer, Material
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("IconRendrer");
@@ -42,7 +45,9 @@ bool CCigaretteIcon::Init()
 	CColliderRect* pCollider = AddComponent<CColliderRect>("IconCollider");
 	pCollider->SetCollisionGroup("UI");
 	pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
+	pCollider->SetCollisionCallback(CCT_ENTER, this, &CCigaretteIcon::Hit);
 	pCollider->SetCollisionCallback(CCT_STAY, this, &CCigaretteIcon::HitStay);
+	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CCigaretteIcon::MouseOut);
 	SAFE_RELEASE(pCollider);
 
 	return true;
@@ -55,7 +60,31 @@ int CCigaretteIcon::Input(float _fTime)
 
 int CCigaretteIcon::Update(float _fTime)
 {
+	if (m_bMouseOn)
+	{
+		if (KEYPRESS("LButton"))
+		{
+			CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
+			pBigIconObj->SetEnable(true);
+
+			CBigIcon* pBigIcon = pBigIconObj->FindComponentFromType<CBigIcon>((COMPONENT_TYPE)IT_BIGICON);
+
+			pBigIcon->ChangeClip("Dambae_Detail");
+
+			SAFE_RELEASE(pBigIcon);
+			SAFE_RELEASE(pBigIconObj);
+		}
+	}
+
 	return 0;
+}
+
+void CCigaretteIcon::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	if (pDest->GetTag() == "MouseWindow")
+	{
+		m_bMouseOn = true;
+	}
 }
 
 void CCigaretteIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
@@ -87,5 +116,13 @@ void CCigaretteIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 		pHumanPlayer->SetAccelDuration(10.f);
 		SAFE_RELEASE(pObjPlayer);
 		SAFE_RELEASE(pHumanPlayer);
+	}
+}
+
+void CCigaretteIcon::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	if (pDest->GetTag() == "MouseWindow")
+	{
+		m_bMouseOn = false;
 	}
 }

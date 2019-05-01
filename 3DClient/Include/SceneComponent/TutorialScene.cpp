@@ -42,7 +42,7 @@ CTutorialScene::~CTutorialScene()
 bool CTutorialScene::Init()
 {
 	wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
-	wstr += L"TutorialHalf.dat";
+	wstr += L"TutorialHalf_Pivot.dat";
 	string filePath = CW2A(wstr.c_str());
 	m_pScene->Load(filePath);
 
@@ -112,12 +112,13 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLightLayer);
+
 	// MedicalKit
 	CGameObject* pObjMedicalKit = CGameObject::CreateObject("MedicalKit", pDefaultLayer);
 	CTransform* pMedicalKitTr = pObjMedicalKit->GetTransform();
 	pMedicalKitTr->SetWorldPos(356.f, 20.f, 650.f);
 	CHealingPack* pUCHealingPack = pObjMedicalKit->AddComponent<CHealingPack>("UC_HealingPack");
-	pUCHealingPack->SetHPAmount(pPlayer->GetMaxHP());
+	//pUCHealingPack->SetHPAmount(pPlayer->GetMaxHP());
 	pUCHealingPack->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
 	SAFE_RELEASE(pUCHealingPack);
 	SAFE_RELEASE(pMedicalKitTr);
@@ -174,8 +175,25 @@ bool CTutorialScene::Init()
 
 	SAFE_RELEASE(pBatteryTr);
 	SAFE_RELEASE(pBattery);
-	SAFE_RELEASE(pBatteryObj);	
+	SAFE_RELEASE(pBatteryObj);		
 
+	/*pObject = CGameObject::CreateObject("GroundCap1ex", pDefaultLayer);
+
+	CRenderer* pRenderer = pObject->AddComponent<CRenderer>("GroundCap1Renderer");
+
+	pRenderer->SetMesh("GroundCap1ex", L"GroundCap1ex.msh");
+
+	SAFE_RELEASE(pRenderer);
+
+	pTransform = pObject->GetTransform();
+
+	pTransform->SetWorldPos(20.f, 10.f, 0.f);
+	pTransform->SetWorldRot(0.f, 0.f, 0.f);
+	pTransform->SetWorldScale(0.2f);
+
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObject);
+*/
 	SAFE_RELEASE(pPlayerTr);
 	SAFE_RELEASE(pPlayer);
 	SAFE_RELEASE(pPlayerObj);

@@ -5,20 +5,18 @@
 
 PUN_USING
 
-class CHitEffectAnim :
+class CBigIcon :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CHitEffectAnim();
-	CHitEffectAnim(const CHitEffectAnim& effect);
-	virtual ~CHitEffectAnim();
+	CBigIcon();
+	CBigIcon(const CBigIcon& bigicon);
+	virtual ~CBigIcon();
 
 private:
 	class CAnimation2D*	m_pAnimation;
-	class CGameObject*		m_pPlayerObj;
-	class CHuman_Player*	m_pPlayer;
 
 public:
 	void ChangeClip(const string& strName);
@@ -31,6 +29,6 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CHitEffectAnim* Clone();
+	virtual CBigIcon* Clone();
 };
 

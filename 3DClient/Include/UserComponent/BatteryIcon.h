@@ -19,10 +19,7 @@ private:
 private:
 	bool	m_bMouseOn;
 	bool	m_bUse;
-
-public:
-	bool	GetUse()	const;
-
+	
 public:
 	virtual void AfterClone();
 	virtual bool Init();

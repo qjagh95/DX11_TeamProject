@@ -28,10 +28,13 @@ public:
 
 private:
 	bool m_isUseItem;
+	bool m_bMouseOn;
 
 private:
 	CCigarette* m_pCigarette;
 
 public:
+	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);
 	void HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime);
+	void MouseOut(class CCollider* pSrc, class CCollider* pDest, float fTime);
 };

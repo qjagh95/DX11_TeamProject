@@ -20,12 +20,14 @@ private:
 private:
 	vector<class CGameObject*>	m_vecItem;
 	vector<class CGameObject*>	m_vecNumber;
+	vector<class CGameObject*>	m_vecList;
 	INVENTORY_STATE			m_eState;
 	ICON_TYPE				m_eType;
 	int						m_iInvenMax;
 	int						m_iFlag;
 	int						m_iIndex;
 	int						m_iMoveIndex;
+	int						m_iNumberIndex;
 	bool					m_bMouseOn;
 	bool					m_bOnInven;
 	bool					m_bVisible;
@@ -49,11 +51,20 @@ private:
 	class CGameObject*	m_pLunchBoxNumberObj;
 	class CGameObject*	m_pDaemaNumberObj;
 
+	class CGameObject*	m_pBigIconObj;
+	class CBigIcon*		m_pBigIcon;
+
 	class CNumber*	m_pBatteryNumber;
 	class CNumber*	m_pMedicalKitNumber;
 	class CNumber*	m_pTabletNumber;
 	class CNumber*	m_pLunchBoxNumber;
 	class CNumber*	m_pDaemaNumber;
+
+	Vector3	m_vBatteryIconPos;
+	Vector3	m_vMedicalKitIconPos;
+	Vector3	m_vLunchBoxIconPos;
+	Vector3	m_vDaemaIconPos;
+	Vector3	m_vTabletIconPos;
 
 	bool	m_bBatteryUse;
 	bool	m_bMedicalKitUse;
@@ -67,6 +78,7 @@ public:
 	void SetVisible();
 	void SetMouseOn(bool bMouseOn);
 	void SetInvenState(INVENTORY_STATE eState);
+	int GetItemCountNumber(ICON_TYPE eType) const;
 
 public:
 	bool	GetVisible()	const;
@@ -74,6 +86,7 @@ public:
 	bool	Full() const;
 	void	AddItem(class CGameObject* pItem);
 	void	UseItem(class CGameObject* pItem);
+	void	MoveItem(size_t iIndex);
 	INVENTORY_STATE GetInvenState() const;
 	const Vector3 GetInvenPos()	const;
 

@@ -9,10 +9,12 @@
 #include "Zipper.h"
 #include "Component/ColliderSphere.h"
 #include "Component/Item.h"
+#include "BigIcon.h"
 
 CInventory::CInventory() :
 	m_iIndex(0),
-	m_iMoveIndex(0)
+	m_iMoveIndex(0),
+	m_iNumberIndex(0)
 {
 	m_eComType = (COMPONENT_TYPE)UT_INVENTORY;
 	m_eType = IT_NONE;
@@ -26,6 +28,7 @@ CInventory::CInventory() :
 	m_fItemY = 0.f;
 	m_iZipCount = 0;
 	m_iCount = 0;
+
 
 	m_iBatteryCnt = 0;
 	m_iMedicalKitCnt = 0;
@@ -47,6 +50,9 @@ CInventory::CInventory(const CInventory & inven)	:
 
 CInventory::~CInventory()
 {
+	SAFE_RELEASE(m_pBigIcon);
+	SAFE_RELEASE(m_pBigIconObj);
+
 	if (m_bBatteryUse)
 	{
 		SAFE_RELEASE(m_pBatteryNumberObj);
@@ -87,6 +93,7 @@ CInventory::~CInventory()
 		SAFE_RELEASE(m_vecItem[i]);
 	}
 
+	Safe_Release_VecList(m_vecList);
 	Safe_Release_VecList(m_vecNumber);
 	Safe_Release_VecList(m_vecItem);
 }
@@ -129,6 +136,8 @@ void CInventory::SetVisible()
 	{
 		m_bVisible = false;
 		m_pObject->SetEnable(false);
+		m_pBigIcon->ChangeClip("BigIcon_Empty");
+		m_pBigIconObj->SetEnable(false);
 		m_iZipCount = 0;
 
 		for (size_t i = 0; i < m_vecItem.size(); ++i)
@@ -161,6 +170,32 @@ void CInventory::SetInvenState(INVENTORY_STATE eState)
 	m_eState = eState;
 }
 
+int CInventory::GetItemCountNumber(ICON_TYPE eType) const
+{
+	int iCount = 0;
+
+	switch(eType)
+	{
+	case IT_BATTERY:
+		iCount = m_iBatteryCnt;
+		break;
+	case IT_DAEMA:
+		iCount = m_iDaemaCnt;
+		break;
+	case IT_MEDICALKIT:
+		iCount = m_iMedicalKitCnt;
+		break;
+	case IT_LUNCHBOX:
+		iCount = m_iLunchBoxCnt;
+		break;
+	case IT_TABLET:
+		iCount = m_iTabletCnt;
+		break;
+	}
+
+	return iCount;
+}
+
 bool CInventory::GetVisible() const
 {
 	return m_bVisible;
@@ -183,6 +218,7 @@ void CInventory::AddItem(CGameObject * pItem)
 
 	m_vecItem[m_iIndex] = pItem;
 
+	Vector3	vInvenPos = m_pTransform->GetWorldPos();
 	string strTag = m_vecItem[m_iIndex]->GetTag();
 	CTransform*	pItemTr = m_vecItem[m_iIndex]->GetTransform();
 
@@ -191,13 +227,18 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_bBatteryUse = true;
 		if (m_iBatteryCnt == 0)
 		{
+			CGameObject* pBatteryObj = CGameObject::FindObject("Icon_Battery");
 			m_pBatteryNumberObj = CGameObject::CreateObject("BatteryNumber", m_pLayer);
 			m_vecNumber.push_back(m_pBatteryNumberObj);
+			m_vecList.push_back(pBatteryObj);
+			++m_iNumberIndex;
+			++m_iMoveIndex;
+			SAFE_RELEASE(pBatteryObj);
 
 			m_pBatteryNumber = m_pBatteryNumberObj->AddComponent<CNumber>("BatteryNumber");
-			Vector3	vInvenPos = m_pTransform->GetWorldPos();
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+			m_vBatteryIconPos = pItemTr->GetWorldPos();
 			m_fItemY += 105.f;
 		}
 
@@ -210,13 +251,11 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pBatteryNumber->SetNumber(m_iBatteryCnt);
 		m_pBatteryNumber->SetNumberPivot(0.5f, 0.5f, 0.f); 
 
-		Vector3	vInvenPos = m_pTransform->GetWorldPos();
 		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pBatteryNumberObj->GetTransform();
-		Vector3	vIconPos = pItemTr->GetWorldPos();
-		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
+		pNumTr->SetWorldPos(m_vBatteryIconPos.x + 35.f, m_vBatteryIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -225,13 +264,18 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_bMedicalKitUse = true;
 		if (m_iMedicalKitCnt == 0)
 		{
+			CGameObject*	pMedicalKitObj = CGameObject::FindObject("Icon_MedicalKit");
 			m_pMedicalKitNumberObj = CGameObject::CreateObject("MedicalKitNumber", m_pLayer);
 			m_vecNumber.push_back(m_pMedicalKitNumberObj);
+			m_vecList.push_back(pMedicalKitObj);
+			++m_iNumberIndex;
+			++m_iMoveIndex;
+			SAFE_RELEASE(pMedicalKitObj);
 
 			m_pMedicalKitNumber = m_pMedicalKitNumberObj->AddComponent<CNumber>("MedicalKitNumber");
-			Vector3	vInvenPos = m_pTransform->GetWorldPos();
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+			m_vMedicalKitIconPos = pItemTr->GetWorldPos();
 			m_fItemY += 105.f;
 		}
 		++m_iMedicalKitCnt;
@@ -242,13 +286,11 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pMedicalKitNumber->SetNumber(m_iMedicalKitCnt);
 		m_pMedicalKitNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
 
-		Vector3	vInvenPos = m_pTransform->GetWorldPos();
 		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pMedicalKitNumberObj->GetTransform();
-		Vector3	vIconPos = pItemTr->GetWorldPos();
-		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
+		pNumTr->SetWorldPos(m_vMedicalKitIconPos.x + 35.f, m_vMedicalKitIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -257,13 +299,18 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_bLunchBoxUse = true;
 		if (m_iLunchBoxCnt == 0)
 		{
+			CGameObject*	pLunchBoxObj = CGameObject::FindObject("Icon_LunchBox");
 			m_pLunchBoxNumberObj = CGameObject::CreateObject("LunchBoxNumber", m_pLayer);
 			m_vecNumber.push_back(m_pLunchBoxNumberObj);
+			m_vecList.push_back(pLunchBoxObj);
+			++m_iNumberIndex;
+			++m_iMoveIndex;
+			SAFE_RELEASE(pLunchBoxObj);
 
-			m_pLunchBoxNumber = m_pLunchBoxNumberObj->AddComponent<CNumber>("BatteryNumber");
-			Vector3	vInvenPos = m_pTransform->GetWorldPos();
+			m_pLunchBoxNumber = m_pLunchBoxNumberObj->AddComponent<CNumber>("LunchBoxNumber");
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+			m_vLunchBoxIconPos = pItemTr->GetWorldPos();
 			m_fItemY += 105.f;
 		}
 
@@ -275,13 +322,11 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pLunchBoxNumber->SetNumber(m_iLunchBoxCnt);
 		m_pLunchBoxNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
 
-		Vector3	vInvenPos = m_pTransform->GetWorldPos();
 		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pLunchBoxNumberObj->GetTransform();
-		Vector3	vIconPos = pItemTr->GetWorldPos();
-		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
+		pNumTr->SetWorldPos(m_vLunchBoxIconPos.x + 35.f, m_vLunchBoxIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -290,13 +335,18 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_bDaemaUse = true;
 		if (m_iDaemaCnt == 0)
 		{
+			CGameObject*	pCigaretteObj = CGameObject::FindObject("Icon_Cigarette");
 			m_pDaemaNumberObj = CGameObject::CreateObject("DaemaNumber", m_pLayer);
 			m_vecNumber.push_back(m_pDaemaNumberObj);
+			m_vecList.push_back(pCigaretteObj);
+			++m_iNumberIndex;
+			++m_iMoveIndex;
+			SAFE_RELEASE(pCigaretteObj);
 
 			m_pDaemaNumber = m_pDaemaNumberObj->AddComponent<CNumber>("DaemaNumber");
-			Vector3	vInvenPos = m_pTransform->GetWorldPos();
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+			m_vDaemaIconPos = pItemTr->GetWorldPos();
 			m_fItemY += 105.f;
 		}
 
@@ -308,13 +358,11 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pDaemaNumber->SetNumber(m_iDaemaCnt);
 		m_pDaemaNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
 
-		Vector3	vInvenPos = m_pTransform->GetWorldPos();
 		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pDaemaNumberObj->GetTransform();
-		Vector3	vIconPos = pItemTr->GetWorldPos();
-		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
+		pNumTr->SetWorldPos(m_vDaemaIconPos.x + 35.f, m_vDaemaIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -323,13 +371,18 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_bTabletUse = true;
 		if (m_iTabletCnt == 0)
 		{
+			CGameObject*	pTabletObj = CGameObject::FindObject("Icon_Tablet");
 			m_pTabletNumberObj = CGameObject::CreateObject("TabletNumber", m_pLayer);
 			m_vecNumber.push_back(m_pTabletNumberObj);
+			m_vecList.push_back(pTabletObj);
+			++m_iNumberIndex;
+			++m_iMoveIndex;
+			SAFE_RELEASE(pTabletObj);
 
 			m_pTabletNumber = m_pTabletNumberObj->AddComponent<CNumber>("TabletNumber");
-			Vector3	vInvenPos = m_pTransform->GetWorldPos();
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+			m_vTabletIconPos = pItemTr->GetWorldPos();
 			m_fItemY += 105.f;
 		}
 
@@ -341,13 +394,11 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pTabletNumber->SetNumber(m_iTabletCnt);
 		m_pTabletNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
 
-		Vector3	vInvenPos = m_pTransform->GetWorldPos();
 		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pTabletNumberObj->GetTransform();
-		Vector3	vIconPos = pItemTr->GetWorldPos();
-		pNumTr->SetWorldPos(vIconPos.x + 35.f, vIconPos.y - 15.f, 0.f);
+		pNumTr->SetWorldPos(m_vTabletIconPos.x + 35.f, m_vTabletIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -379,6 +430,7 @@ void CInventory::UseItem(CGameObject * pItem)
 			break;
 		}
 	}
+
 	bool isDestroy = false;
 	string strTag = pFindItem->GetTag();
 	if (strTag == "Icon_Battery")
@@ -434,13 +486,70 @@ void CInventory::UseItem(CGameObject * pItem)
 
 	if (isDestroy == true)
 	{
+		size_t iNum = 0;
+		for (size_t i = 0; i < m_vecList.size(); ++i)
+		{
+			if (m_vecList[i] == pFindItem)
+			{
+				iNum = i;
+
+				vector<CGameObject*>::iterator	iter;
+				vector<CGameObject*>::iterator	iterEnd = m_vecList.end();
+				for (iter = m_vecList.begin(); iter != iterEnd; ++iter)
+				{
+					if ((*iter) == pFindItem)
+					{
+						m_vecList.erase(iter);
+						break;
+					}
+				}
+
+				m_vecNumber[i]->Die();
+
+				vector<CGameObject*>::iterator	iter1;
+				vector<CGameObject*>::iterator	iter1End = m_vecNumber.end();
+				for (iter1 = m_vecNumber.begin(); iter1 != iter1End; ++iter1)
+				{
+					if ((*iter1) == m_vecNumber[i])
+					{
+						m_vecNumber.erase(iter1);
+						break;
+					}
+				}
+
+				--m_iNumberIndex;
+				--m_iMoveIndex;
+
+				for (size_t j = iNum; j < m_iMoveIndex; ++j)
+				{
+					MoveItem(j);
+				}
+			}			
+		}
+
 		pFindItem->Die();
 		pFindItem = nullptr;
 		m_fItemY -= 105.f;
+
 		SAFE_RELEASE(pFindItem);
 	}
-	
+
 	--m_iIndex;
+}
+
+void CInventory::MoveItem(size_t iIndex)
+{
+	CTransform*	pListTr = m_vecList[iIndex]->GetTransform();
+
+	pListTr->SetWorldPos(pListTr->GetWorldPos().x, pListTr->GetWorldPos().y + 105.f, 0.f);
+
+	SAFE_RELEASE(pListTr);
+
+	CTransform*	pNumberTr = m_vecNumber[iIndex]->GetTransform();
+
+	pNumberTr->SetWorldPos(pNumberTr->GetWorldPos().x, pNumberTr->GetWorldPos().y + 105.f, 0.f);
+
+	SAFE_RELEASE(pNumberTr);
 }
 
 INVENTORY_STATE CInventory::GetInvenState() const
@@ -493,6 +602,10 @@ bool CInventory::Init()
 	m_iIndex = 0;
 
 	m_vecItem.resize(20);
+
+	m_pBigIconObj = CGameObject::CreateObject("BigIcon", m_pLayer);
+
+	m_pBigIcon = m_pBigIconObj->AddComponent<CBigIcon>("BigIcon");
 
 	return true;
 }

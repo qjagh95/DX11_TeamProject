@@ -8,6 +8,7 @@
 #include "Input.h"
 #include "Inventory.h"
 #include "Handycam.h"
+#include "BigIcon.h"
 
 CBatteryIcon::CBatteryIcon()	
 {
@@ -23,11 +24,6 @@ CBatteryIcon::CBatteryIcon(const CBatteryIcon & Icon1)	:
 
 CBatteryIcon::~CBatteryIcon()
 {
-}
-
-bool CBatteryIcon::GetUse() const
-{
-	return m_bUse;
 }
 
 void CBatteryIcon::AfterClone()
@@ -58,16 +54,17 @@ bool CBatteryIcon::Init()
 	CTransform*		pTransform = m_pObject->GetTransform();
 
 	pTransform->SetWorldScale(90.f, 29.f, 1.f);
-	pTransform->SetWorldPos(600.f, 429.f, 0.f);
+	//pTransform->SetWorldPos(600.f, 429.f, 0.f);
 
 	SAFE_RELEASE(pTransform);
 
 	CColliderRect* pBody = AddComponent<CColliderRect>("BatteryIconBody");
 
 	pBody->SetCollisionCallback(CCT_ENTER, this, &CBatteryIcon::Hit);
+	pBody->SetCollisionCallback(CCT_LEAVE, this, &CBatteryIcon::MouseOut);
 
 	pBody->SetCollisionGroup("UI");
-	pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
+	pBody->SetInfo(Vector3(0.f, -30.f, 0.f), Vector3(100.f, 70.f, 0.f));
 
 	SAFE_RELEASE(pBody);	
 
@@ -83,6 +80,19 @@ int CBatteryIcon::Update(float fTime)
 {
 	if (m_bMouseOn)
 	{
+		if (KEYPRESS("LButton"))
+		{
+			CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
+			pBigIconObj->SetEnable(true);
+
+			CBigIcon* pBigIcon = pBigIconObj->FindComponentFromType<CBigIcon>((COMPONENT_TYPE)IT_BIGICON);
+
+			pBigIcon->ChangeClip("Battery_Detail");
+
+			SAFE_RELEASE(pBigIcon);
+			SAFE_RELEASE(pBigIconObj);
+		}
+
 		if (KEYPRESS("RButton"))
 		{
 			m_bUse = true;

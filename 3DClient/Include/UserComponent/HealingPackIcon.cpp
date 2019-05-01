@@ -3,12 +3,15 @@
 #include "HealingPack.h"
 #include "HealingPackIcon.h"
 #include "Human_Player.h"
+#include "BigIcon.h"
 #include <Component/ColliderRect.h>
 
 CHealingPackIcon::CHealingPackIcon() :
 	m_isUseItem(false),
 	m_pHealingPack(nullptr)
 {
+	 m_bLunchBoxMouseOn = false;
+	 m_bMedicalKitMouseOn = false;
 }
 
 CHealingPackIcon::CHealingPackIcon(const CHealingPackIcon& _healingPackIcon)
@@ -23,7 +26,7 @@ bool CHealingPackIcon::Init()
 {
 	// Transform
 	m_pTransform->SetWorldScale(90.f, 91.f, 1.f);
-	m_pTransform->SetWorldPos(600.f, 429.f, 0.f);
+	//m_pTransform->SetWorldPos(600.f, 429.f, 0.f);
 
 	// Renderer
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("IconRendrer");
@@ -38,7 +41,9 @@ bool CHealingPackIcon::Init()
 	CColliderRect* pCollider = AddComponent<CColliderRect>("IconCollider");
 	pCollider->SetCollisionGroup("UI");
 	pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
+	pCollider->SetCollisionCallback(CCT_ENTER, this, &CHealingPackIcon::Hit);
 	pCollider->SetCollisionCallback(CCT_STAY, this, &CHealingPackIcon::HitStay);
+	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CHealingPackIcon::MouseOut);
 	SAFE_RELEASE(pCollider);
 
 	return true;
@@ -51,6 +56,26 @@ int CHealingPackIcon::Input(float _fTime)
 
 int CHealingPackIcon::Update(float _fTime)
 {
+	if ((m_bLunchBoxMouseOn == true) || (m_bMedicalKitMouseOn == true))
+	{
+		if (KEYPRESS("LButton"))
+		{
+			CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
+			pBigIconObj->SetEnable(true);
+
+			CBigIcon* pBigIcon = pBigIconObj->FindComponentFromType<CBigIcon>((COMPONENT_TYPE)IT_BIGICON);
+
+			if(m_bMedicalKitMouseOn == true)
+				pBigIcon->ChangeClip("FoodCan_Detail");
+
+			else if (m_bLunchBoxMouseOn == true)
+				pBigIcon->ChangeClip("Cola_Detail");
+
+			SAFE_RELEASE(pBigIcon);
+			SAFE_RELEASE(pBigIconObj);
+		}
+	}
+
 	return 0;
 }
 
@@ -64,22 +89,39 @@ void CHealingPackIcon::SetMaterial()
 	// Material 정보는 m_pHealingPack 객체를 이용하기 때문에 별도로 호출해서 처리한다.
 	// Init 함수에서 m_pHealingPck 객체를 초기화할 수 있는 방법이 없다.
 	CMaterial* pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
-	string strMeshName = m_pHealingPack->GetMeshKey();
-	if (strMeshName == "MedicalKit")
+	string m_strMeshName = m_pHealingPack->GetMeshKey();
+	if (m_strMeshName == "MedicalKit")
 	{
+		m_eComType = (COMPONENT_TYPE)IT_MEDICALKIT;
 		pMaterial->SetDiffuseTex(0, "MedicalKitIcon", TEXT("UI/Icon/FoodCan.png"));
 	}
-	else if (strMeshName == "LunchBox")
+	else if (m_strMeshName == "LunchBox")
 	{
+		m_eComType = (COMPONENT_TYPE)IT_LUNCHBOX;
 		pMaterial->SetDiffuseTex(0, "LaunchBoxIcon", TEXT("UI/Icon/ColaCan.png"));
 	}
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 	SAFE_RELEASE(pMaterial);
 }
 
+void CHealingPackIcon::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	if (pDest->GetTag() == "MouseWindow")
+	{
+		if (m_eComType == (COMPONENT_TYPE)IT_MEDICALKIT)
+		{
+			m_bMedicalKitMouseOn = true;
+		}
+
+		else if (m_eComType == (COMPONENT_TYPE)IT_LUNCHBOX)
+		{
+			m_bLunchBoxMouseOn = true;
+		}
+	}
+}
+
 void CHealingPackIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
-	OutputDebugString(L"Icon Hit Enter\n");
 	if (KEYPRESS("RButton") == true)
 	{
 		if (m_isUseItem == true)
@@ -100,5 +142,21 @@ void CHealingPackIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime
 		pHumanPlayer->RecoveryHP(m_pHealingPack->GetHPAmount());
 		SAFE_RELEASE(pObjPlayer);
 		SAFE_RELEASE(pHumanPlayer);
+	}
+}
+
+void CHealingPackIcon::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	if (pDest->GetTag() == "MouseWindow")
+	{
+		if (m_eComType == (COMPONENT_TYPE)IT_MEDICALKIT)
+		{
+			m_bMedicalKitMouseOn = false;
+		}
+
+		else if (m_eComType == (COMPONENT_TYPE)IT_LUNCHBOX)
+		{
+			m_bLunchBoxMouseOn = false;
+		}
 	}
 }

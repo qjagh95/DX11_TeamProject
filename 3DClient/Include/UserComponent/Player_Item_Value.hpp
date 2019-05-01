@@ -1,4 +1,5 @@
 class CDocxInven*	m_pDocxInven;
+class CAnimation2D*	m_pAnimation2D;
 
 // 무적 효과
 bool	m_invincibility;

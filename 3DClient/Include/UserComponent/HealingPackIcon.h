@@ -28,6 +28,9 @@ public:
 
 private:
 	bool m_isUseItem;
+	bool m_bLunchBoxMouseOn;
+	bool m_bMedicalKitMouseOn;
+	string	m_strMeshName;
 
 private:
 	CHealingPack* m_pHealingPack;
@@ -35,5 +38,9 @@ private:
 public:
 	void SetHealingPackInst(const CHealingPack* _pInst);
 	void SetMaterial();
+
+public:
+	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);
 	void HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime);
+	void MouseOut(class CCollider* pSrc, class CCollider* pDest, float fTime);
 };

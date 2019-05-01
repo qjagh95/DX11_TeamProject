@@ -1,6 +1,7 @@
 #include "Human_Player.h"
 #include "Inventory.h"
 #include "DocxInven.h"
+#include "Component/Animation2D.h"
 #include "Input.h"
 
 bool CHuman_Player::Init_Items()
@@ -22,6 +23,7 @@ bool CHuman_Player::Init_Items()
 void CHuman_Player::OnDestroyInven()
 {
 	SAFE_RELEASE(m_pDocxInven);
+	SAFE_RELEASE(m_pAnimation2D);
 }
 
 int CHuman_Player::Input_Items(float fTime)
@@ -66,6 +68,24 @@ int CHuman_Player::ItemUpdate(float fTime)
 			m_accelDuration = 0.f;
 			OutputDebugString(L"Accelation End\n");
 		}
+	}
+
+	switch (m_playerHP)
+	{
+	case 5:
+		//m_pAnimation2D->ChangeClip("Hit_Empty");
+		break;
+	case 4:
+		//m_pAnimation2D->ChangeClip("Hit1");
+		break;
+	case 3:
+		//m_pAnimation2D->ChangeClip("Hit2");
+		break;
+	case 2:
+		//m_pAnimation2D->ChangeClip("Hit_Anim");
+		break;
+	case 1:
+		break;
 	}
 
 	return 0;

@@ -12,7 +12,7 @@ CHitEffectAlpha::CHitEffectAlpha()
 	m_fElapsedTime = 0.f;
 	m_fPlayTime = 1.f;
 	m_fAlpha = 1.f;
-	m_iFlag = -1.f;
+	m_iFlag = -1;
 }
 
 CHitEffectAlpha::CHitEffectAlpha(const CHitEffectAlpha & effect)	:
@@ -44,7 +44,7 @@ bool CHitEffectAlpha::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "HitEffectAlpha", TEXT("bloodyrect4.png"));
+	pMaterial->SetDiffuseTex(0, "HitEffectAlpha", TEXT("Effect/bloodyrect4.png"));
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
