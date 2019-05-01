@@ -6,14 +6,14 @@ class PUN_DLL BlackBoard
 {
 public:
 	template<typename T>
-	void AddData(const string& VarName, T** Data)
+	void AddData(const string& VarName, T* Data)
 	{
-		T** getData = (T**)FindData(VarName);
+		T* getData = (T*)FindData(VarName);
 
 		if (getData != NULLPTR)
 			return;
 
-		m_DataMap.insert(make_pair(VarName, (void**)Data));
+		m_DataMap.insert(make_pair(VarName, (void*)Data));
 	}
 
 	template<typename T>
@@ -27,7 +27,7 @@ public:
 		return (T*)*FindIter->second;
 	}
 
-	void** FindData(const string& VarName)
+	void* FindData(const string& VarName)
 	{
 		auto FindIter = m_DataMap.find(VarName);
 
@@ -38,7 +38,7 @@ public:
 	}
 
 private:
-	unordered_map<string, void**> m_DataMap;
+	unordered_map<string, void*> m_DataMap;
 
 private:
 	BlackBoard();

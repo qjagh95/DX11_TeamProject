@@ -7,8 +7,8 @@ CUserComponent::CUserComponent()
 {
 }
 
-CUserComponent::CUserComponent(const CUserComponent & com)	:
-	CComponent(com)
+CUserComponent::CUserComponent(const CUserComponent & com)	
+	:CComponent(com)
 {
 }
 

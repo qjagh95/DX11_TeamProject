@@ -2633,7 +2633,7 @@ bool _tagPartialAnim::LoadPartAnimFromExistingClip(PANIMATIONCLIP pAnim)
 
 	if (iRootParentIndex > 0)
 	{
-		int iFrameSize = pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame.size();
+		int iFrameSize = (int)pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame.size();
 		if (iFrameSize > 0)
 		{
 			_newAnim->vecXmRotVector.resize(iFrameSize);

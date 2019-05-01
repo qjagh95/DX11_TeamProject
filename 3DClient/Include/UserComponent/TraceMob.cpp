@@ -16,6 +16,11 @@ TraceMob::TraceMob()
 TraceMob::TraceMob(const TraceMob & CopyData)
 	:CUserComponent(CopyData)
 {
+	//TODO : 
+	//1. 프리스트(턱없는 빢빢이)
+	//2. 모자이크(빤스맨)
+	//3. 나이프 고자
+	//4. 일반 십자가 죽어가는놈.
 }
 
 TraceMob::~TraceMob()

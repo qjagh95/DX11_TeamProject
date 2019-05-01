@@ -332,7 +332,6 @@ public:
 
 	//부분 애니매이션 추가
 
-	float GetClipPlayTime() const;
 
 private:
 	void LoadFbxAnimation(const char* pFullPath);
