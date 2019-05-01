@@ -8,6 +8,8 @@ ST3_Suprise::ST3_Suprise()
 {
 	m_FindDist = 10.0f;
 	m_isDoorOpenMode = false;
+	m_Axis = AX_X;
+	m_Offset = 6.0f;
 }
 
 ST3_Suprise::ST3_Suprise(const ST3_Suprise & CopyData)
@@ -46,7 +48,7 @@ bool ST3_Suprise::Init()
 	m_AniName[SS_DOWN] = "NPCMediumHanging-Looping-01";
 
 	ChangeState(SS_FIND, m_AniName);
-
+	SetOBBCollider(Vector3(1.0f, 10.0f, 1.0f));
 	CSoundManager::Get()->CreateSoundEffect("Suprise", L"music/MUS_Demo_ending.wav");
 
 	return true;
@@ -118,7 +120,18 @@ void ST3_Suprise::FS_FIND(float DeltaTime)
 {
 	if (m_isDoorOpenMode == false)
 	{
-		if (m_pTransform->GetWorldPos().x >= m_TargetTransform->GetWorldPos().x - 6.0f)
-			ChangeState(SS_DOWN, m_AniName);
+		if (m_Axis & AX_X)
+		{
+			if (m_pTransform->GetWorldPos().x >= m_TargetTransform->GetWorldPos().x - m_Offset)
+				ChangeState(SS_DOWN, m_AniName);
+		}
+		else if (m_Axis & AX_Z)
+		{
+			if (m_pTransform->GetWorldPos().z >= m_TargetTransform->GetWorldPos().z - m_Offset)
+				ChangeState(SS_DOWN, m_AniName);
+		}
+	}
+	else
+	{
 	}
 }

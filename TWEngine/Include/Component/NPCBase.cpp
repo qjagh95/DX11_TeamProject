@@ -57,9 +57,19 @@ bool NPCBase::Init()
 	m_Animation = m_pObject->AddComponent<CAnimation>("MonsterAnimation");
 
 	m_HeadCollider = m_pObject->AddComponent<CColliderSphere>("MonsterHead");
+	m_HeadCollider->SetMyTypeName("MonsterHead");
+	m_HeadCollider->SetContinueTypeName("MonsterBodyOBB");
+
 	m_BodyCollider = m_pObject->AddComponent<CColliderSphere>("MonsterBody");
+	m_BodyCollider->SetMyTypeName("MonsterBody");
+	m_HeadCollider->SetContinueTypeName("MonsterBodyOBB");
+
 	m_LegCollider = m_pObject->AddComponent<CColliderSphere>("MonsterLeg");
+	m_LegCollider->SetMyTypeName("MonsterLeg");
+	m_HeadCollider->SetContinueTypeName("MonsterBodyOBB");
+
 	m_BodyOBB = m_pObject->AddComponent< CColliderOBB3D>("MonsterBodyOBB");
+	m_BodyOBB->SetMyTypeName("MonsterBodyOBB");
 
 	m_pTransform->SetWorldScale(Vector3(0.04f, 0.04f, 0.04f));
 
@@ -138,10 +148,23 @@ void NPCBase::ChangeState(int* myStateVar, int ChangeState, string * AniName, CA
 	Animation->ChangeClip(AniName[ChangeState]);
 }
 
-void NPCBase::SetColliderInfo(float HeadRadius, float BodyRadius, float LegRadius, Vector3 OBBLenth)
+void NPCBase::SetLegCollider(float Radius, const Vector3 & Center)
 {
-	m_HeadCollider->SetInfo(Vector3::Zero, HeadRadius);
-	m_BodyCollider->SetInfo(Vector3::Zero, BodyRadius);
-	m_LegCollider->SetInfo(Vector3::Zero, LegRadius);
-	m_BodyOBB->SetInfo(Vector3::Zero, Vector3::Axis, OBBLenth);
+	m_LegCollider->SetInfo(Center, Radius);
 }
+
+void NPCBase::SetBodyCollider(float Radius, const Vector3 & Center)
+{
+	m_BodyCollider->SetInfo(Center, Radius);
+}
+
+void NPCBase::SetHeadCollider(float Radius, const Vector3 & Center)
+{
+	m_HeadCollider->SetInfo(Center, Radius);
+}
+
+void NPCBase::SetOBBCollider(const Vector3 & Length, const Vector3 & Center)
+{
+	m_BodyOBB->SetInfo(Center, Vector3::Axis, Length);
+}
+

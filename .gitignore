@@ -593,4 +593,5 @@
 /3DClient/bin/Sound
 /WinFormEditor/bin/Debug/Data
 /WinFormEditor/bin/Debug/Mesh
-/WinFormEditor/bin/Release
+/WinFormEditor/bin/Release/Data
+/WinFormEditor/bin/Release/Mesh

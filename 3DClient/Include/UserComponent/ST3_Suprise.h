@@ -11,6 +11,12 @@ enum SUPRISE_STATE
 	SS_MAX,
 };
 
+enum AXIS_SUPRISE
+{
+	AX_X = 1,
+	AX_Z,
+};
+
 class ST3_Suprise : public NPCBase
 {
 public:
@@ -24,12 +30,15 @@ public:
 
 	void SetDoorOpenMode(bool Value) { m_isDoorOpenMode = Value; }
 	void SetDoorName(const string& DoorName) { m_DoorName = DoorName; }
+	void SetOffSet(float Value) { if(m_isDoorOpenMode == false) m_Offset = Value; }
 
 private:
 	float m_FindDist;
 	string m_AniName[SS_MAX];
 	bool m_isDoorOpenMode;
 	string m_DoorName;
+	AXIS_SUPRISE m_Axis;
+	float m_Offset;
 
 private:
 	void FS_IDLE(float DeltaTime);
