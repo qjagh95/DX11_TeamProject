@@ -593,8 +593,4 @@
 /3DClient/bin/Sound
 /WinFormEditor/bin/Debug/Data
 /WinFormEditor/bin/Debug/Mesh
-/WinFormEditor/bin/Release/Mesh
-/WinFormEditor/bin/Release/Data/HFTest.Land
-/WinFormEditor/bin/Release/Data/HFTest.dat
-/WinFormEditor/bin/Release/Data/HFTest.nav
-/WinFormEditor/bin/Release/Data/TutorialHalf_Pivot.dat
+/WinFormEditor/bin/Release

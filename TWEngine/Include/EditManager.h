@@ -97,6 +97,10 @@ public:
 	void ChangeObjectTag(const string _strObjectTag);
 	void ChangeObjectInLayer(const string _strLayerTag);
 	void AddComponent(string& _strCompTag);
+	void AddColliderOBB(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ,
+		int iColliderID, const std::string& _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag);
+	void AddColliderSphere(float dCenterX, float dCenterY, float dCenterZ, float fRadius,
+		int iColliderID, const std::string& _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag);
 	void SetLocalScale(double _dX, double _dY, double _dZ);
 	void SetLocalRotate(double _dX, double _dY, double _dZ);
 	void SetLocalPosition(double _dX, double _dY, double _dZ);
@@ -118,6 +122,7 @@ public:
 	void SetMouseWheel(short _sMouseWheel);
 	void SetGizmoEnable(bool _bEnable);
 	void SetPickingColliderEnable(bool _bEnable);
+	void SetColliderEnable(bool _bEnable);
 
 	bool CreateLandScape(int _iX , int _iZ);
 	int GetNaviSelectIndex() const;

@@ -16,7 +16,7 @@
 #include "Component/Camera.h"
 #include "Component/LandScape.h"
 #include "NavigationMesh.h"
-
+#include "Component/ColliderSphere.h"
 
 PUN_USING
 
@@ -404,6 +404,28 @@ void CEditManager::AddComponent(std::string& _strCompTag)
 	}
 }
 
+void CEditManager::AddColliderOBB(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, 
+	float dLengthZ, int iColliderID, const std::string & _strTag , const std::string& _strCollTypeTag , const std::string& _strExceptTypeTag)
+{
+	CColliderOBB3D* pOBB3D = m_pObject->AddComponent<CColliderOBB3D>(_strTag);
+	pOBB3D->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), Vector3::Axis, Vector3(dLengthX, dLengthY, dLengthZ));
+	pOBB3D->SetColliderID(iColliderID);
+	pOBB3D->SetMyTypeName(_strCollTypeTag);
+	pOBB3D->SetContinueTypeName(_strExceptTypeTag);
+	SAFE_RELEASE(pOBB3D);
+}
+
+void CEditManager::AddColliderSphere(float dCenterX, float dCenterY, float dCenterZ, float fRadius,
+	int iColliderID, const std::string & _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag)
+{
+	CColliderSphere* pSphere = m_pObject->AddComponent<CColliderSphere>(_strTag);
+	pSphere->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), fRadius);
+	pSphere->SetColliderID(iColliderID);
+	pSphere->SetMyTypeName(_strCollTypeTag);
+	pSphere->SetContinueTypeName(_strExceptTypeTag);
+	SAFE_RELEASE(pSphere);
+}
+
 void CEditManager::SetLocalScale(double _dX, double _dY, double _dZ)
 {
 	if (m_pObject == nullptr)
@@ -741,8 +763,14 @@ void CEditManager::SetGizmoEnable(bool _bEnable)
 void CEditManager::SetPickingColliderEnable(bool _bEnable)
 {
 	m_pScene->SetPickingColliderEnable(_bEnable);
-	if(m_pObject)
-	m_pObject->SetPickingColliderEnable(false);
+	if (m_pObject)
+		m_pObject->SetPickingColliderEnable(false);
+
+}
+
+void CEditManager::SetColliderEnable(bool _bEnable)
+{
+	m_pScene->SetColliderEnable(_bEnable);
 }
 
 bool CEditManager::CreateLandScape(int _iX, int _iZ)

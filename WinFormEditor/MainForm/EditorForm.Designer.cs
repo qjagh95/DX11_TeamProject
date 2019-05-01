@@ -103,9 +103,43 @@
             this.BT_NaviSave = new System.Windows.Forms.Button();
             this.Effect = new System.Windows.Forms.TabPage();
             this.RenderPage = new System.Windows.Forms.TabPage();
+            this.ColliderPage = new System.Windows.Forms.TabPage();
+            this.LB_ColliderID = new System.Windows.Forms.ListBox();
+            this.label64 = new System.Windows.Forms.Label();
+            this.label63 = new System.Windows.Forms.Label();
+            this.TB_ColliderTag = new System.Windows.Forms.TextBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label55 = new System.Windows.Forms.Label();
+            this.label56 = new System.Windows.Forms.Label();
+            this.TB_SphereRadius = new System.Windows.Forms.TextBox();
+            this.TB_SphereCenterZ = new System.Windows.Forms.TextBox();
+            this.BT_ColliderSphere = new System.Windows.Forms.Button();
+            this.TB_SphereCenterY = new System.Windows.Forms.TextBox();
+            this.label57 = new System.Windows.Forms.Label();
+            this.label58 = new System.Windows.Forms.Label();
+            this.TB_SphereCenterX = new System.Windows.Forms.TextBox();
+            this.label59 = new System.Windows.Forms.Label();
+            this.TB_OBBZLength = new System.Windows.Forms.TextBox();
+            this.TB_OBBYLength = new System.Windows.Forms.TextBox();
+            this.label47 = new System.Windows.Forms.Label();
+            this.TB_OBBXLength = new System.Windows.Forms.TextBox();
+            this.label49 = new System.Windows.Forms.Label();
+            this.label48 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label54 = new System.Windows.Forms.Label();
+            this.label53 = new System.Windows.Forms.Label();
+            this.TB_RelativeCenterZ = new System.Windows.Forms.TextBox();
+            this.BT_ColliderOBB = new System.Windows.Forms.Button();
+            this.TB_RelativeCenterY = new System.Windows.Forms.TextBox();
+            this.label50 = new System.Windows.Forms.Label();
+            this.label52 = new System.Windows.Forms.Label();
+            this.TB_RelativeCenterX = new System.Windows.Forms.TextBox();
+            this.label51 = new System.Windows.Forms.Label();
             this.MshLoad = new System.Windows.Forms.Button();
             this.LB_MeshList = new System.Windows.Forms.ListBox();
             this.GB_Transform = new System.Windows.Forms.GroupBox();
+            this.PositionY = new System.Windows.Forms.TextBox();
+            this.PositionX = new System.Windows.Forms.TextBox();
             this.PivotZ = new System.Windows.Forms.TextBox();
             this.label43 = new System.Windows.Forms.Label();
             this.PivotY = new System.Windows.Forms.TextBox();
@@ -188,8 +222,11 @@
             this.label20 = new System.Windows.Forms.Label();
             this.LPositionX = new System.Windows.Forms.TextBox();
             this.label46 = new System.Windows.Forms.Label();
-            this.PositionX = new System.Windows.Forms.TextBox();
-            this.PositionY = new System.Windows.Forms.TextBox();
+            this.label60 = new System.Windows.Forms.Label();
+            this.TB_CollTypeTag = new System.Windows.Forms.TextBox();
+            this.label61 = new System.Windows.Forms.Label();
+            this.TB_CollExceptTag = new System.Windows.Forms.TextBox();
+            this.CB_ColliderEnable = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -198,6 +235,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.TB_Range)).BeginInit();
             this.Animation.SuspendLayout();
             this.NavigationPage.SuspendLayout();
+            this.ColliderPage.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.GB_Transform.SuspendLayout();
             this.GB_Hierachy.SuspendLayout();
             this.GB_Renderer.SuspendLayout();
@@ -206,7 +246,7 @@
             // 
             // PB_DeviceWindow
             // 
-            this.PB_DeviceWindow.Location = new System.Drawing.Point(6, 24);
+            this.PB_DeviceWindow.Location = new System.Drawing.Point(6, 32);
             this.PB_DeviceWindow.Name = "PB_DeviceWindow";
             this.PB_DeviceWindow.Size = new System.Drawing.Size(1069, 637);
             this.PB_DeviceWindow.TabIndex = 0;
@@ -309,6 +349,7 @@
             this.InspectorTab.Controls.Add(this.NavigationPage);
             this.InspectorTab.Controls.Add(this.Effect);
             this.InspectorTab.Controls.Add(this.RenderPage);
+            this.InspectorTab.Controls.Add(this.ColliderPage);
             this.InspectorTab.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.InspectorTab.Location = new System.Drawing.Point(7, 24);
             this.InspectorTab.Multiline = true;
@@ -340,9 +381,9 @@
             this.LightPage.Controls.Add(this.label22);
             this.LightPage.Controls.Add(this.CB_LightType);
             this.LightPage.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.LightPage.Location = new System.Drawing.Point(4, 26);
+            this.LightPage.Location = new System.Drawing.Point(4, 48);
             this.LightPage.Name = "LightPage";
-            this.LightPage.Size = new System.Drawing.Size(309, 803);
+            this.LightPage.Size = new System.Drawing.Size(309, 781);
             this.LightPage.TabIndex = 5;
             this.LightPage.Text = "Light";
             // 
@@ -570,10 +611,10 @@
             this.Animation.Controls.Add(this.ClipLoad);
             this.Animation.Controls.Add(this.ClipSave);
             this.Animation.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Animation.Location = new System.Drawing.Point(4, 26);
+            this.Animation.Location = new System.Drawing.Point(4, 48);
             this.Animation.Name = "Animation";
             this.Animation.Padding = new System.Windows.Forms.Padding(3);
-            this.Animation.Size = new System.Drawing.Size(309, 803);
+            this.Animation.Size = new System.Drawing.Size(309, 781);
             this.Animation.TabIndex = 0;
             this.Animation.Text = "Animation";
             // 
@@ -796,9 +837,9 @@
             this.NavigationPage.Controls.Add(this.BT_CreateNavi);
             this.NavigationPage.Controls.Add(this.BT_NaviLoad);
             this.NavigationPage.Controls.Add(this.BT_NaviSave);
-            this.NavigationPage.Location = new System.Drawing.Point(4, 26);
+            this.NavigationPage.Location = new System.Drawing.Point(4, 48);
             this.NavigationPage.Name = "NavigationPage";
-            this.NavigationPage.Size = new System.Drawing.Size(309, 803);
+            this.NavigationPage.Size = new System.Drawing.Size(309, 781);
             this.NavigationPage.TabIndex = 6;
             this.NavigationPage.Text = "Navigation";
             // 
@@ -1019,10 +1060,10 @@
             this.Effect.BackColor = System.Drawing.SystemColors.Control;
             this.Effect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.Effect.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Effect.Location = new System.Drawing.Point(4, 26);
+            this.Effect.Location = new System.Drawing.Point(4, 48);
             this.Effect.Name = "Effect";
             this.Effect.Padding = new System.Windows.Forms.Padding(3);
-            this.Effect.Size = new System.Drawing.Size(309, 803);
+            this.Effect.Size = new System.Drawing.Size(309, 781);
             this.Effect.TabIndex = 2;
             this.Effect.Text = "Effect";
             // 
@@ -1031,11 +1072,399 @@
             this.RenderPage.BackColor = System.Drawing.SystemColors.Control;
             this.RenderPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.RenderPage.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.RenderPage.Location = new System.Drawing.Point(4, 26);
+            this.RenderPage.Location = new System.Drawing.Point(4, 48);
             this.RenderPage.Name = "RenderPage";
-            this.RenderPage.Size = new System.Drawing.Size(309, 803);
+            this.RenderPage.Size = new System.Drawing.Size(309, 781);
             this.RenderPage.TabIndex = 4;
             this.RenderPage.Text = "Render";
+            // 
+            // ColliderPage
+            // 
+            this.ColliderPage.BackColor = System.Drawing.SystemColors.Control;
+            this.ColliderPage.Controls.Add(this.TB_OBBZLength);
+            this.ColliderPage.Controls.Add(this.TB_OBBYLength);
+            this.ColliderPage.Controls.Add(this.label47);
+            this.ColliderPage.Controls.Add(this.TB_OBBXLength);
+            this.ColliderPage.Controls.Add(this.label49);
+            this.ColliderPage.Controls.Add(this.label48);
+            this.ColliderPage.Controls.Add(this.label61);
+            this.ColliderPage.Controls.Add(this.TB_CollExceptTag);
+            this.ColliderPage.Controls.Add(this.label60);
+            this.ColliderPage.Controls.Add(this.TB_CollTypeTag);
+            this.ColliderPage.Controls.Add(this.LB_ColliderID);
+            this.ColliderPage.Controls.Add(this.label64);
+            this.ColliderPage.Controls.Add(this.label63);
+            this.ColliderPage.Controls.Add(this.TB_ColliderTag);
+            this.ColliderPage.Controls.Add(this.groupBox3);
+            this.ColliderPage.Controls.Add(this.groupBox2);
+            this.ColliderPage.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.ColliderPage.Location = new System.Drawing.Point(4, 48);
+            this.ColliderPage.Name = "ColliderPage";
+            this.ColliderPage.Size = new System.Drawing.Size(309, 781);
+            this.ColliderPage.TabIndex = 7;
+            this.ColliderPage.Text = "Collider";
+            // 
+            // LB_ColliderID
+            // 
+            this.LB_ColliderID.BackColor = System.Drawing.SystemColors.Control;
+            this.LB_ColliderID.FormattingEnabled = true;
+            this.LB_ColliderID.ItemHeight = 17;
+            this.LB_ColliderID.Items.AddRange(new object[] {
+            "ColliderID_None",
+            "ColliderID_Door",
+            "ColliderID_Parkour",
+            "ColliderID_Bed",
+            "ColliderID_Locker",
+            "ColliderID_Player_Hit",
+            "ColliderID_Player_Ray",
+            "ColliderID_Enemy_Attack",
+            "ColliderID_Enemy_Hit",
+            "ColliderID_Item_Battery",
+            "ColliderID_Item_Weed",
+            "ColliderID_Item_Fak",
+            "ColliderID_Item_Doc"});
+            this.LB_ColliderID.Location = new System.Drawing.Point(9, 155);
+            this.LB_ColliderID.Name = "LB_ColliderID";
+            this.LB_ColliderID.Size = new System.Drawing.Size(260, 140);
+            this.LB_ColliderID.TabIndex = 46;
+            // 
+            // label64
+            // 
+            this.label64.AutoSize = true;
+            this.label64.Location = new System.Drawing.Point(6, 128);
+            this.label64.Name = "label64";
+            this.label64.Size = new System.Drawing.Size(70, 17);
+            this.label64.TabIndex = 45;
+            this.label64.Text = "ColliderID";
+            // 
+            // label63
+            // 
+            this.label63.AutoSize = true;
+            this.label63.Location = new System.Drawing.Point(6, 15);
+            this.label63.Name = "label63";
+            this.label63.Size = new System.Drawing.Size(79, 17);
+            this.label63.TabIndex = 44;
+            this.label63.Text = "ColliderTag";
+            // 
+            // TB_ColliderTag
+            // 
+            this.TB_ColliderTag.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_ColliderTag.Location = new System.Drawing.Point(113, 12);
+            this.TB_ColliderTag.Name = "TB_ColliderTag";
+            this.TB_ColliderTag.Size = new System.Drawing.Size(178, 25);
+            this.TB_ColliderTag.TabIndex = 43;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label55);
+            this.groupBox3.Controls.Add(this.TB_SphereRadius);
+            this.groupBox3.Controls.Add(this.TB_SphereCenterZ);
+            this.groupBox3.Controls.Add(this.BT_ColliderSphere);
+            this.groupBox3.Controls.Add(this.TB_SphereCenterY);
+            this.groupBox3.Controls.Add(this.label57);
+            this.groupBox3.Controls.Add(this.label58);
+            this.groupBox3.Controls.Add(this.label59);
+            this.groupBox3.Controls.Add(this.label56);
+            this.groupBox3.Controls.Add(this.TB_SphereCenterX);
+            this.groupBox3.Location = new System.Drawing.Point(8, 523);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(269, 205);
+            this.groupBox3.TabIndex = 42;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "ColliderSphere";
+            // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(8, 101);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(49, 17);
+            this.label55.TabIndex = 41;
+            this.label55.Text = "Radius";
+            // 
+            // label56
+            // 
+            this.label56.AutoSize = true;
+            this.label56.Location = new System.Drawing.Point(8, 22);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(97, 17);
+            this.label56.TabIndex = 30;
+            this.label56.Text = "RelativeCenter";
+            // 
+            // TB_SphereRadius
+            // 
+            this.TB_SphereRadius.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_SphereRadius.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_SphereRadius.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_SphereRadius.Location = new System.Drawing.Point(89, 95);
+            this.TB_SphereRadius.Name = "TB_SphereRadius";
+            this.TB_SphereRadius.Size = new System.Drawing.Size(87, 25);
+            this.TB_SphereRadius.TabIndex = 44;
+            this.TB_SphereRadius.Text = "0";
+            this.TB_SphereRadius.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // TB_SphereCenterZ
+            // 
+            this.TB_SphereCenterZ.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_SphereCenterZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_SphereCenterZ.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_SphereCenterZ.Location = new System.Drawing.Point(197, 54);
+            this.TB_SphereCenterZ.Name = "TB_SphereCenterZ";
+            this.TB_SphereCenterZ.Size = new System.Drawing.Size(64, 25);
+            this.TB_SphereCenterZ.TabIndex = 40;
+            this.TB_SphereCenterZ.Text = "0";
+            this.TB_SphereCenterZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // BT_ColliderSphere
+            // 
+            this.BT_ColliderSphere.Location = new System.Drawing.Point(98, 159);
+            this.BT_ColliderSphere.Name = "BT_ColliderSphere";
+            this.BT_ColliderSphere.Size = new System.Drawing.Size(163, 34);
+            this.BT_ColliderSphere.TabIndex = 0;
+            this.BT_ColliderSphere.Text = "Add ColliderSphere";
+            this.BT_ColliderSphere.UseVisualStyleBackColor = true;
+            this.BT_ColliderSphere.Click += new System.EventHandler(this.BT_ColliderSphere_Click);
+            // 
+            // TB_SphereCenterY
+            // 
+            this.TB_SphereCenterY.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_SphereCenterY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_SphereCenterY.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_SphereCenterY.Location = new System.Drawing.Point(111, 54);
+            this.TB_SphereCenterY.Name = "TB_SphereCenterY";
+            this.TB_SphereCenterY.Size = new System.Drawing.Size(64, 25);
+            this.TB_SphereCenterY.TabIndex = 38;
+            this.TB_SphereCenterY.Text = "0";
+            this.TB_SphereCenterY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // label57
+            // 
+            this.label57.AutoSize = true;
+            this.label57.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label57.ForeColor = System.Drawing.Color.Black;
+            this.label57.Location = new System.Drawing.Point(182, 60);
+            this.label57.Name = "label57";
+            this.label57.Size = new System.Drawing.Size(14, 13);
+            this.label57.TabIndex = 39;
+            this.label57.Text = "Z";
+            // 
+            // label58
+            // 
+            this.label58.AutoSize = true;
+            this.label58.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label58.ForeColor = System.Drawing.Color.Black;
+            this.label58.Location = new System.Drawing.Point(6, 60);
+            this.label58.Name = "label58";
+            this.label58.Size = new System.Drawing.Size(14, 13);
+            this.label58.TabIndex = 35;
+            this.label58.Text = "X";
+            // 
+            // TB_SphereCenterX
+            // 
+            this.TB_SphereCenterX.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_SphereCenterX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_SphereCenterX.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_SphereCenterX.Location = new System.Drawing.Point(23, 54);
+            this.TB_SphereCenterX.Name = "TB_SphereCenterX";
+            this.TB_SphereCenterX.Size = new System.Drawing.Size(64, 25);
+            this.TB_SphereCenterX.TabIndex = 36;
+            this.TB_SphereCenterX.Text = "0";
+            this.TB_SphereCenterX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // label59
+            // 
+            this.label59.AutoSize = true;
+            this.label59.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label59.ForeColor = System.Drawing.Color.Black;
+            this.label59.Location = new System.Drawing.Point(94, 60);
+            this.label59.Name = "label59";
+            this.label59.Size = new System.Drawing.Size(14, 13);
+            this.label59.TabIndex = 37;
+            this.label59.Text = "Y";
+            // 
+            // TB_OBBZLength
+            // 
+            this.TB_OBBZLength.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_OBBZLength.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_OBBZLength.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_OBBZLength.Location = new System.Drawing.Point(206, 428);
+            this.TB_OBBZLength.Name = "TB_OBBZLength";
+            this.TB_OBBZLength.Size = new System.Drawing.Size(64, 25);
+            this.TB_OBBZLength.TabIndex = 33;
+            this.TB_OBBZLength.Text = "0";
+            this.TB_OBBZLength.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // TB_OBBYLength
+            // 
+            this.TB_OBBYLength.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_OBBYLength.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_OBBYLength.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_OBBYLength.Location = new System.Drawing.Point(120, 428);
+            this.TB_OBBYLength.Name = "TB_OBBYLength";
+            this.TB_OBBYLength.Size = new System.Drawing.Size(64, 25);
+            this.TB_OBBYLength.TabIndex = 31;
+            this.TB_OBBYLength.Text = "0";
+            this.TB_OBBYLength.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label47.ForeColor = System.Drawing.Color.Black;
+            this.label47.Location = new System.Drawing.Point(191, 434);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(14, 13);
+            this.label47.TabIndex = 32;
+            this.label47.Text = "Z";
+            // 
+            // TB_OBBXLength
+            // 
+            this.TB_OBBXLength.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_OBBXLength.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_OBBXLength.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_OBBXLength.Location = new System.Drawing.Point(32, 428);
+            this.TB_OBBXLength.Name = "TB_OBBXLength";
+            this.TB_OBBXLength.Size = new System.Drawing.Size(64, 25);
+            this.TB_OBBXLength.TabIndex = 29;
+            this.TB_OBBXLength.Text = "0";
+            this.TB_OBBXLength.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // label49
+            // 
+            this.label49.AutoSize = true;
+            this.label49.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label49.ForeColor = System.Drawing.Color.Black;
+            this.label49.Location = new System.Drawing.Point(103, 434);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(14, 13);
+            this.label49.TabIndex = 30;
+            this.label49.Text = "Y";
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label48.ForeColor = System.Drawing.Color.Black;
+            this.label48.Location = new System.Drawing.Point(15, 434);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(14, 13);
+            this.label48.TabIndex = 28;
+            this.label48.Text = "X";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label54);
+            this.groupBox2.Controls.Add(this.label53);
+            this.groupBox2.Controls.Add(this.TB_RelativeCenterZ);
+            this.groupBox2.Controls.Add(this.BT_ColliderOBB);
+            this.groupBox2.Controls.Add(this.TB_RelativeCenterY);
+            this.groupBox2.Controls.Add(this.label50);
+            this.groupBox2.Controls.Add(this.label52);
+            this.groupBox2.Controls.Add(this.TB_RelativeCenterX);
+            this.groupBox2.Controls.Add(this.label51);
+            this.groupBox2.Location = new System.Drawing.Point(8, 315);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(269, 205);
+            this.groupBox2.TabIndex = 34;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "ColliderOBB";
+            // 
+            // label54
+            // 
+            this.label54.AutoSize = true;
+            this.label54.Location = new System.Drawing.Point(5, 89);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(51, 17);
+            this.label54.TabIndex = 41;
+            this.label54.Text = "Length";
+            // 
+            // label53
+            // 
+            this.label53.AutoSize = true;
+            this.label53.Location = new System.Drawing.Point(7, 29);
+            this.label53.Name = "label53";
+            this.label53.Size = new System.Drawing.Size(97, 17);
+            this.label53.TabIndex = 30;
+            this.label53.Text = "RelativeCenter";
+            // 
+            // TB_RelativeCenterZ
+            // 
+            this.TB_RelativeCenterZ.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_RelativeCenterZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_RelativeCenterZ.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_RelativeCenterZ.Location = new System.Drawing.Point(196, 57);
+            this.TB_RelativeCenterZ.Name = "TB_RelativeCenterZ";
+            this.TB_RelativeCenterZ.Size = new System.Drawing.Size(64, 25);
+            this.TB_RelativeCenterZ.TabIndex = 40;
+            this.TB_RelativeCenterZ.Text = "0";
+            this.TB_RelativeCenterZ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // BT_ColliderOBB
+            // 
+            this.BT_ColliderOBB.Location = new System.Drawing.Point(97, 166);
+            this.BT_ColliderOBB.Name = "BT_ColliderOBB";
+            this.BT_ColliderOBB.Size = new System.Drawing.Size(163, 34);
+            this.BT_ColliderOBB.TabIndex = 0;
+            this.BT_ColliderOBB.Text = "Add ColliderOBB";
+            this.BT_ColliderOBB.UseVisualStyleBackColor = true;
+            this.BT_ColliderOBB.Click += new System.EventHandler(this.BT_ColliderOBB_Click);
+            // 
+            // TB_RelativeCenterY
+            // 
+            this.TB_RelativeCenterY.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_RelativeCenterY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_RelativeCenterY.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_RelativeCenterY.Location = new System.Drawing.Point(110, 57);
+            this.TB_RelativeCenterY.Name = "TB_RelativeCenterY";
+            this.TB_RelativeCenterY.Size = new System.Drawing.Size(64, 25);
+            this.TB_RelativeCenterY.TabIndex = 38;
+            this.TB_RelativeCenterY.Text = "0";
+            this.TB_RelativeCenterY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // label50
+            // 
+            this.label50.AutoSize = true;
+            this.label50.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label50.ForeColor = System.Drawing.Color.Black;
+            this.label50.Location = new System.Drawing.Point(181, 63);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(14, 13);
+            this.label50.TabIndex = 39;
+            this.label50.Text = "Z";
+            // 
+            // label52
+            // 
+            this.label52.AutoSize = true;
+            this.label52.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label52.ForeColor = System.Drawing.Color.Black;
+            this.label52.Location = new System.Drawing.Point(5, 63);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(14, 13);
+            this.label52.TabIndex = 35;
+            this.label52.Text = "X";
+            // 
+            // TB_RelativeCenterX
+            // 
+            this.TB_RelativeCenterX.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_RelativeCenterX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TB_RelativeCenterX.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.TB_RelativeCenterX.Location = new System.Drawing.Point(22, 57);
+            this.TB_RelativeCenterX.Name = "TB_RelativeCenterX";
+            this.TB_RelativeCenterX.Size = new System.Drawing.Size(64, 25);
+            this.TB_RelativeCenterX.TabIndex = 36;
+            this.TB_RelativeCenterX.Text = "0";
+            this.TB_RelativeCenterX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ColliderKeyPressCheck);
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label51.ForeColor = System.Drawing.Color.Black;
+            this.label51.Location = new System.Drawing.Point(93, 63);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(14, 13);
+            this.label51.TabIndex = 37;
+            this.label51.Text = "Y";
             // 
             // MshLoad
             // 
@@ -1057,7 +1486,7 @@
             this.LB_MeshList.ItemHeight = 17;
             this.LB_MeshList.Location = new System.Drawing.Point(9, 85);
             this.LB_MeshList.Name = "LB_MeshList";
-            this.LB_MeshList.Size = new System.Drawing.Size(278, 106);
+            this.LB_MeshList.Size = new System.Drawing.Size(278, 89);
             this.LB_MeshList.TabIndex = 1;
             this.LB_MeshList.Click += new System.EventHandler(this.BasicMeshClick);
             // 
@@ -1106,6 +1535,32 @@
             this.GB_Transform.TabIndex = 0;
             this.GB_Transform.TabStop = false;
             this.GB_Transform.Text = "World Transform";
+            // 
+            // PositionY
+            // 
+            this.PositionY.BackColor = System.Drawing.SystemColors.Control;
+            this.PositionY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PositionY.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.PositionY.Location = new System.Drawing.Point(127, 96);
+            this.PositionY.Name = "PositionY";
+            this.PositionY.Size = new System.Drawing.Size(64, 25);
+            this.PositionY.TabIndex = 28;
+            this.PositionY.Text = "0";
+            this.PositionY.TextChanged += new System.EventHandler(this.ChangePosition);
+            this.PositionY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            // 
+            // PositionX
+            // 
+            this.PositionX.BackColor = System.Drawing.SystemColors.Control;
+            this.PositionX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PositionX.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.PositionX.Location = new System.Drawing.Point(40, 95);
+            this.PositionX.Name = "PositionX";
+            this.PositionX.Size = new System.Drawing.Size(64, 25);
+            this.PositionX.TabIndex = 42;
+            this.PositionX.Text = "0";
+            this.PositionX.TextChanged += new System.EventHandler(this.ChangePosition);
+            this.PositionX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
             // 
             // PivotZ
             // 
@@ -1683,6 +2138,7 @@
             // 
             // GB_Renderer
             // 
+            this.GB_Renderer.Controls.Add(this.CB_ColliderEnable);
             this.GB_Renderer.Controls.Add(this.TB_SelecteMesh);
             this.GB_Renderer.Controls.Add(this.MshLoad);
             this.GB_Renderer.Controls.Add(this.CB_GizmoEnable);
@@ -1740,7 +2196,7 @@
             // 
             this.FileMesh.AutoSize = true;
             this.FileMesh.ForeColor = System.Drawing.Color.Black;
-            this.FileMesh.Location = new System.Drawing.Point(7, 195);
+            this.FileMesh.Location = new System.Drawing.Point(7, 183);
             this.FileMesh.Name = "FileMesh";
             this.FileMesh.Size = new System.Drawing.Size(91, 17);
             this.FileMesh.TabIndex = 7;
@@ -1764,9 +2220,9 @@
             this.LB_FileMesh.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.LB_FileMesh.FormattingEnabled = true;
             this.LB_FileMesh.ItemHeight = 17;
-            this.LB_FileMesh.Location = new System.Drawing.Point(9, 212);
+            this.LB_FileMesh.Location = new System.Drawing.Point(9, 200);
             this.LB_FileMesh.Name = "LB_FileMesh";
-            this.LB_FileMesh.Size = new System.Drawing.Size(278, 106);
+            this.LB_FileMesh.Size = new System.Drawing.Size(278, 89);
             this.LB_FileMesh.TabIndex = 6;
             this.LB_FileMesh.Click += new System.EventHandler(this.FileMeshClick);
             // 
@@ -2107,31 +2563,50 @@
             this.label46.TabIndex = 29;
             this.label46.Text = "Log";
             // 
-            // PositionX
+            // label60
             // 
-            this.PositionX.BackColor = System.Drawing.SystemColors.Control;
-            this.PositionX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PositionX.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.PositionX.Location = new System.Drawing.Point(40, 95);
-            this.PositionX.Name = "PositionX";
-            this.PositionX.Size = new System.Drawing.Size(64, 25);
-            this.PositionX.TabIndex = 42;
-            this.PositionX.Text = "0";
-            this.PositionX.TextChanged += new System.EventHandler(this.ChangePosition);
-            this.PositionX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.label60.AutoSize = true;
+            this.label60.Location = new System.Drawing.Point(6, 50);
+            this.label60.Name = "label60";
+            this.label60.Size = new System.Drawing.Size(85, 17);
+            this.label60.TabIndex = 48;
+            this.label60.Text = "CollTypeTag";
             // 
-            // PositionY
+            // TB_CollTypeTag
             // 
-            this.PositionY.BackColor = System.Drawing.SystemColors.Control;
-            this.PositionY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.PositionY.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.PositionY.Location = new System.Drawing.Point(127, 96);
-            this.PositionY.Name = "PositionY";
-            this.PositionY.Size = new System.Drawing.Size(64, 25);
-            this.PositionY.TabIndex = 28;
-            this.PositionY.Text = "0";
-            this.PositionY.TextChanged += new System.EventHandler(this.ChangePosition);
-            this.PositionY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPressCheck);
+            this.TB_CollTypeTag.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_CollTypeTag.Location = new System.Drawing.Point(113, 47);
+            this.TB_CollTypeTag.Name = "TB_CollTypeTag";
+            this.TB_CollTypeTag.Size = new System.Drawing.Size(178, 25);
+            this.TB_CollTypeTag.TabIndex = 47;
+            // 
+            // label61
+            // 
+            this.label61.AutoSize = true;
+            this.label61.Location = new System.Drawing.Point(6, 88);
+            this.label61.Name = "label61";
+            this.label61.Size = new System.Drawing.Size(95, 17);
+            this.label61.TabIndex = 50;
+            this.label61.Text = "CollExceptTag";
+            // 
+            // TB_CollExceptTag
+            // 
+            this.TB_CollExceptTag.BackColor = System.Drawing.SystemColors.Control;
+            this.TB_CollExceptTag.Location = new System.Drawing.Point(113, 85);
+            this.TB_CollExceptTag.Name = "TB_CollExceptTag";
+            this.TB_CollExceptTag.Size = new System.Drawing.Size(178, 25);
+            this.TB_CollExceptTag.TabIndex = 49;
+            // 
+            // CB_ColliderEnable
+            // 
+            this.CB_ColliderEnable.AutoSize = true;
+            this.CB_ColliderEnable.ForeColor = System.Drawing.Color.Black;
+            this.CB_ColliderEnable.Location = new System.Drawing.Point(9, 297);
+            this.CB_ColliderEnable.Name = "CB_ColliderEnable";
+            this.CB_ColliderEnable.Size = new System.Drawing.Size(156, 21);
+            this.CB_ColliderEnable.TabIndex = 20;
+            this.CB_ColliderEnable.Text = "ObjectColliderEnable";
+            this.CB_ColliderEnable.UseVisualStyleBackColor = true;
             // 
             // EditorForm
             // 
@@ -2169,6 +2644,12 @@
             this.Animation.PerformLayout();
             this.NavigationPage.ResumeLayout(false);
             this.NavigationPage.PerformLayout();
+            this.ColliderPage.ResumeLayout(false);
+            this.ColliderPage.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.GB_Transform.ResumeLayout(false);
             this.GB_Transform.PerformLayout();
             this.GB_Hierachy.ResumeLayout(false);
@@ -2345,6 +2826,43 @@
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.TextBox PositionX;
         private System.Windows.Forms.TextBox PositionY;
+        private System.Windows.Forms.TabPage ColliderPage;
+        private System.Windows.Forms.TextBox TB_OBBZLength;
+        private System.Windows.Forms.TextBox TB_OBBYLength;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.TextBox TB_OBBXLength;
+        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button BT_ColliderOBB;
+        private System.Windows.Forms.Label label54;
+        private System.Windows.Forms.Label label53;
+        private System.Windows.Forms.TextBox TB_RelativeCenterZ;
+        private System.Windows.Forms.TextBox TB_RelativeCenterY;
+        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.TextBox TB_RelativeCenterX;
+        private System.Windows.Forms.Label label51;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label label55;
+        private System.Windows.Forms.Label label56;
+        private System.Windows.Forms.TextBox TB_SphereRadius;
+        private System.Windows.Forms.TextBox TB_SphereCenterZ;
+        private System.Windows.Forms.Button BT_ColliderSphere;
+        private System.Windows.Forms.TextBox TB_SphereCenterY;
+        private System.Windows.Forms.Label label57;
+        private System.Windows.Forms.Label label58;
+        private System.Windows.Forms.TextBox TB_SphereCenterX;
+        private System.Windows.Forms.Label label59;
+        private System.Windows.Forms.ListBox LB_ColliderID;
+        private System.Windows.Forms.Label label64;
+        private System.Windows.Forms.Label label63;
+        private System.Windows.Forms.TextBox TB_ColliderTag;
+        private System.Windows.Forms.Label label61;
+        private System.Windows.Forms.TextBox TB_CollExceptTag;
+        private System.Windows.Forms.Label label60;
+        private System.Windows.Forms.TextBox TB_CollTypeTag;
+        private System.Windows.Forms.CheckBox CB_ColliderEnable;
     }
 }
 

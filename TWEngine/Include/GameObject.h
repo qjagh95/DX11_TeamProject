@@ -142,6 +142,7 @@ public:
 	void RemoveComponentFromTag(const std::string& _strComTag);
 	void RemoveComponent(CComponent* _pCom);
 	void SetPickingColliderEnable(bool _bEnable);
+	void SetColliderEnable(bool _bEnable);
 public:
 	void Save(FILE* pFile);
 	void Load(FILE* pFile);

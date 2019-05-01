@@ -273,6 +273,30 @@ namespace EngineWrapper
 		{
 			CEditManager::GetInst()->SetPickingColliderEnable(_bEnable);
 		}
+		void ObjectColliderEnable(bool _bEnable)
+		{
+			CEditManager::GetInst()->SetColliderEnable(_bEnable);
+		}
 
+		/////////////////////////////Collider/////////////////////////////////
+		void AddColliderOBB(double dCenterX, double dCenterY, double dCenterZ, double dLengthX, double dLengthY, double dLengthZ,
+			int iColliderID, String ^ _strTag , String ^ _strCollTypeTag , String ^ _strExceptTypeTag)
+		{
+			string strTag = ConvertMarshal<string, String^>(_strTag);
+			string strCollTypeTag = ConvertMarshal<string, String^>(_strCollTypeTag);
+			string strExceptTypeTag = ConvertMarshal<string, String^>(_strExceptTypeTag);
+			CEditManager::GetInst()->AddColliderOBB((float)dCenterX, (float)dCenterY, (float)dCenterZ, (float)dLengthX, (float)dLengthY,
+				(float)dLengthZ, iColliderID, strTag, strCollTypeTag, strExceptTypeTag);
+		}
+
+		void AddColliderSphere(double dCenterX, double dCenterY, double dCenterZ, double dRadius , int iColliderID, String ^ _strTag
+			, String ^ _strCollTypeTag, String ^ _strExceptTypeTag)
+		{
+			string strTag = ConvertMarshal<string, String^>(_strTag);
+			string strCollTypeTag = ConvertMarshal<string, String^>(_strCollTypeTag);
+			string strExceptTypeTag = ConvertMarshal<string, String^>(_strExceptTypeTag);
+			CEditManager::GetInst()->AddColliderSphere((float)dCenterX, (float)dCenterY, (float)dCenterZ,(float)dRadius
+				, iColliderID, strTag, strCollTypeTag, strExceptTypeTag);
+		}
 	};
 }

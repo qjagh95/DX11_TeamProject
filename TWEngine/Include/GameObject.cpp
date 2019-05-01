@@ -1026,6 +1026,17 @@ void CGameObject::SetPickingColliderEnable(bool _bEnable)
 	}
 }
 
+void CGameObject::SetColliderEnable(bool _bEnable)
+{
+	const std::list<CComponent*>* pList = FindComponentsFromType(CT_COLLIDER);
+	std::list<CComponent*>::const_iterator Iter;
+	std::list<CComponent*>::const_iterator EndIter = pList->end();
+	for (Iter = pList->begin(); Iter != EndIter; ++Iter)
+	{
+		(*Iter)->SetEnable(_bEnable);
+	}
+}
+
 void CGameObject::Save(FILE * pFile)
 {
 }

@@ -481,6 +481,20 @@ void CLayer::SetPickingColliderEnable(bool _bEnable)
 	}
 }
 
+void CLayer::SetColliderEnable(bool _bEnable)
+{
+	std::list<CGameObject*>::iterator Iter;
+	std::list<CGameObject*>::iterator EndIter = m_ObjList.end();
+
+	for (Iter = m_ObjList.begin(); Iter != EndIter; ++Iter)
+	{
+		if (strstr((*Iter)->GetTag().c_str() , "Gizmo") == false && strstr((*Iter)->GetTag().c_str() , "Mouse") == false)
+		{
+			(*Iter)->SetColliderEnable(_bEnable);
+		}
+	}
+}
+
 void CLayer::AddObject(CGameObject * pObj, bool _isChild)
 {
 	pObj->SetScene(m_pScene);

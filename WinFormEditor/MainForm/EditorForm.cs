@@ -38,10 +38,13 @@ namespace WinFormEditor
             {
                 m_coreWrapper.Logic();
 
+                m_coreWrapper.ObjectColliderEnable(CB_ColliderEnable.Checked && !CB_PickColliderEnable.Checked);
+                m_coreWrapper.PickingColliderEnable(CB_PickColliderEnable.Checked && !CB_ColliderEnable.Checked);
+
                 // 오브젝트 Picking 검사한다.
                 // Picking을 검사해서, 있다면 한번만 정보를 갱신 한다.
                 // Picking된 오브젝트의 정보(Tag, LayerTag)를 가져온다. 
-                if(m_coreWrapper.IsPicking() == true)
+                if (m_coreWrapper.IsPicking() == true)
                 {
                     m_coreWrapper.SetPickingFalse();
                     m_gameObj.SetPickingObjectInfo(LB_ObjectList, LB_MeshList, LB_FileMesh, TB_SelecteMesh);
@@ -64,6 +67,7 @@ namespace WinFormEditor
                 {
                     TB_TileFlag.Text = "Tile 이동 불가";
                 }
+
 
                 Application.DoEvents();
             }
@@ -553,6 +557,22 @@ namespace WinFormEditor
                 e.Handled = true;
             }
         }
+
+        private void ColliderKeyPressCheck(object sender, KeyPressEventArgs e)
+        {
+            // -, .(소수점), BK(BackSpace, 8번), 0 ~9(숫자)를 제외한 문자는 검사하지 않는다.
+            int changeASCII = Convert.ToInt32(e.KeyChar);
+            if ((changeASCII >= '0' && changeASCII <= '9') ||
+                 changeASCII == '-' || changeASCII == '.' || changeASCII == 8)
+            {
+            }
+            else
+            {
+                // 위 키가 아닌 잘못된 형식의 값은 입력될 수 없다.
+                e.Handled = true;
+            }
+        }
+
 
         private void ChangeScale(object sender, EventArgs e)
         {
@@ -1180,7 +1200,6 @@ namespace WinFormEditor
 
         private void CB_PickColliderEnable_CheckedChanged(object sender, EventArgs e)
         {
-            m_coreWrapper.PickingColliderEnable(CB_PickColliderEnable.Checked);
         }
 
         private void CB_GizmoEnable_CheckedChanged(object sender, EventArgs e)
@@ -1196,6 +1215,141 @@ namespace WinFormEditor
         private void CB_StageSection_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void BT_ColliderOBB_Click(object sender, EventArgs e)
+        {
+            if (LB_ObjectList.SelectedItem == null)
+            {
+                MessageBox.Show("선택된 Object가 없습니다.");
+                return;
+            }
+
+            if (LB_ColliderID.SelectedItem == null || TB_ColliderTag.Text == "" || TB_OBBXLength.Text == ""
+                || TB_OBBYLength.Text == "" || TB_OBBZLength.Text == "")
+            {
+                MessageBox.Show("Collider 생성 값에 잘못된 값이 입력되었습니다..");
+
+                return;
+            }
+
+            double dRelativeCenterX;
+            double dRelativeCenterY;
+            double dRelativeCenterZ;
+            double dXLength;
+            double dYLength;
+            double dZLength;
+
+            if(TB_RelativeCenterX.Text == "")
+            {
+                dRelativeCenterX = 0;
+            }
+            else
+            {
+                dRelativeCenterX = Convert.ToDouble(TB_RelativeCenterX.Text);
+            }
+
+            if (TB_RelativeCenterY.Text == "")
+            {
+                dRelativeCenterY = 0;
+            }
+            else
+            {
+                dRelativeCenterY = Convert.ToDouble(TB_RelativeCenterY.Text);
+            }
+
+
+            if (TB_RelativeCenterZ.Text == "")
+            {
+                dRelativeCenterZ = 0;
+            }
+            else
+            {
+                dRelativeCenterZ = Convert.ToDouble(TB_RelativeCenterX.Text);
+            }
+
+            dXLength = Convert.ToDouble(TB_OBBXLength.Text);
+            dYLength = Convert.ToDouble(TB_OBBYLength.Text);
+            dZLength = Convert.ToDouble(TB_OBBZLength.Text);
+
+            m_coreWrapper.AddColliderOBB(dRelativeCenterX, dRelativeCenterY, dRelativeCenterZ, dXLength, dYLength, dZLength, LB_ColliderID.SelectedIndex,
+                TB_ColliderTag.Text , TB_CollTypeTag.Text , TB_CollExceptTag.Text);
+
+            //////////////////////Clear///////////////////////////////////////////
+            TB_RelativeCenterX.Clear();
+            TB_RelativeCenterY.Clear();
+            TB_RelativeCenterZ.Clear();
+            TB_OBBXLength.Clear();
+            TB_OBBYLength.Clear();
+            TB_OBBZLength.Clear();
+            LB_ColliderID.ClearSelected();
+            TB_ColliderTag.Clear();
+            TB_CollTypeTag.Clear();
+            TB_CollExceptTag.Clear();
+        }
+
+        private void BT_ColliderSphere_Click(object sender, EventArgs e)
+        {
+            if(LB_ObjectList.SelectedItem == null)
+            {
+                MessageBox.Show("선택된 Object가 없습니다.");
+                return;
+            }
+
+            if (LB_ColliderID.SelectedItem == null || TB_ColliderTag.Text == "" || TB_SphereRadius.Text == "")
+            {
+                MessageBox.Show("Collider 생성 값에 잘못된 값이 입력되었습니다..");
+
+                return;
+            }
+
+            double dSphereCenterX;
+            double dSphereCenterY;
+            double dSphereCenterZ;
+            double dRadius;
+
+            dRadius = Convert.ToDouble(TB_SphereRadius.Text);
+
+            if (TB_SphereCenterX.Text == "")
+            {
+                dSphereCenterX = 0;
+            }
+            else
+            {
+                dSphereCenterX = Convert.ToDouble(TB_SphereCenterX.Text);
+            }
+
+            if (TB_SphereCenterY.Text == "")
+            {
+                dSphereCenterY = 0;
+            }
+            else
+            {
+                dSphereCenterY = Convert.ToDouble(TB_SphereCenterY.Text);
+            }
+
+
+            if (TB_SphereCenterZ.Text == "")
+            {
+                dSphereCenterZ = 0;
+            }
+            else
+            {
+                dSphereCenterZ = Convert.ToDouble(TB_SphereCenterZ.Text);
+            }
+
+            m_coreWrapper.AddColliderSphere(dSphereCenterX , dSphereCenterY , dSphereCenterZ , dRadius , LB_ColliderID.SelectedIndex,
+                TB_ColliderTag.Text, TB_CollTypeTag.Text, TB_CollExceptTag.Text);
+
+            //////////////////////Clear///////////////////////////////////////////
+            TB_SphereCenterX.Clear();
+            TB_SphereCenterY.Clear();
+            TB_SphereCenterZ.Clear();
+            TB_SphereRadius.Clear();
+            LB_ColliderID.ClearSelected();
+            TB_ColliderTag.Clear();
+            TB_CollTypeTag.Clear();
+            TB_CollExceptTag.Clear();
         }
     }
 }
