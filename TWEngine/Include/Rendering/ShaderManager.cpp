@@ -338,7 +338,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("Adaptation",		3,	sizeof(AdaptationCB),		CST_COMPUTE);
 	CreateCBuffer("BloomThreshold", 4,	sizeof(BloomThresholdCB),	CST_COMPUTE);
 	CreateCBuffer("NaviLandCBuffer", 6, sizeof(NaviLandCBuffer), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("GridCBuffer", 4, sizeof(GridCBuffer), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("GridCBuffer", 8, sizeof(GridCBuffer), CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("HitEffect", 4, sizeof(HitEffectCB), CST_VERTEX | CST_PIXEL);
 	
 	return true;

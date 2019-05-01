@@ -6,6 +6,7 @@
 #include <Component/LandScape.h>
 
 #include "../UserComponent/Human_Player.h"
+#include "../UserComponent/ST3_Suprise.h"
 #include "../CameraEff.h"
 
 JBH_Stage3::JBH_Stage3()
@@ -21,7 +22,6 @@ bool JBH_Stage3::Init()
 	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	pCamera->SetNear(0.03f);
-	CCameraEff::GetInst()->SetFirstPersonViewEnable();
 
 	//pCamera->GetTransformNonCount()->SetLocalPos(Vector3(0.f, 5.0f, 5.0f));
 	//pCamera->SetCameraInfo(CT_PERSPECTIVE, 1280.0f, 720.0f, 90.0f, 0.03f, 1000.0f);
@@ -45,11 +45,20 @@ bool JBH_Stage3::Init()
 
 	CGameObject* PlayerObject = CGameObject::CreateObject("Player", pDefaultLayer, true);
 	CHuman_Player* newPlayer = PlayerObject->AddComponent<CHuman_Player>("Player");
-	newPlayer->GetTransformNonCount()->SetWorldPos(Vector3(231.0f, 0.0f, 68.0f));
+	newPlayer->GetTransformNonCount()->SetWorldPos(Vector3(238.0f, 0.0f, 68.0f));
 	newPlayer->GetTransformNonCount()->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
-	newPlayer->GetTransformNonCount()->SetLocalRot(Vector3(0.0f, 180.0f, 0.0f));
+	newPlayer->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
+	pCamera->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
+
+	CGameObject* TestNPC = CGameObject::CreateObject("TestCJH", pDefaultLayer);
+	ST3_Suprise* TestMob = TestNPC->AddComponent<ST3_Suprise>("TestCJH");
+	TestMob->GetTransformNonCount()->SetWorldPos(Vector3(200.0f, 20.0f, 68.0f));
+	TestMob->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 180.0f, 0.0f));
+	TestMob->SetTarget(PlayerObject);
 
 	//SAFE_RELEASE(FreeCam);
+	SAFE_RELEASE(TestNPC);
+	SAFE_RELEASE(TestMob);
 	SAFE_RELEASE(newPlayer);
 	SAFE_RELEASE(PlayerObject);
 	SAFE_RELEASE(Land);
@@ -59,28 +68,11 @@ bool JBH_Stage3::Init()
 	SAFE_RELEASE(pUILayer);
 	SAFE_RELEASE(pTileLayer);
 
-	CInput::GetInst()->AddKey("SummonChair", 'G');
-	CInput::GetInst()->AddKey("ChangeScene", VK_SPACE);
-
 	return true;
 }
 
 int JBH_Stage3::Update(float DeltaTime)
 {
-	if (CInput::GetInst()->KeyPress("SummonChair"))
-	{
-		CGameObject* newChair = CGameObject::CreateObject("Chair", m_pScene->FindLayer("Default"));
-		CRenderer* newRenderer = newChair->AddComponent<CRenderer>("Chair");
-		newRenderer->SetMesh("Chair", TEXT("Chair.msh"));
-
-		SAFE_RELEASE(newChair);
-		SAFE_RELEASE(newRenderer);
-	}
-	else if (CInput::GetInst()->KeyPress("ChangeScene"))
-	{
-		CSceneManager::GetInst()->ChangeScene("Third");
-	}
-
 	return 0;
 }
 

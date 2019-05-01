@@ -17,7 +17,7 @@ ST3_Pivot::~ST3_Pivot()
 bool ST3_Pivot::Init()
 {
 	NPCBase::Init();
-
+	
 	CreateBT("SlientTrace");
 	return true;
 }

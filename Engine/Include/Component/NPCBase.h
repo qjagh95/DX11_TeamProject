@@ -1,5 +1,4 @@
 #pragma once
-
 #include "UserComponent.h"
 
 PUN_BEGIN
@@ -8,6 +7,7 @@ class CColliderSphere;
 class CRenderer;
 class BehaviorTree;
 class CNavigationMesh;
+class CColliderOBB3D;
 class PUN_DLL NPCBase : public CUserComponent
 {
 public:
@@ -20,7 +20,7 @@ public:
 	virtual NPCBase* Clone() override;
 	
 	void CreateBT(const string& TreeName, BT_ROOT_CHILD_TYPE Type = BT_SELECTOR);
-	void ChangeState(int State);
+	void ChangeState(int State, string* AniName);
 	static void ChangeState(int* myStateVar, int ChangeState, string* AniName, CAnimation* Animation);
 
 	int GetHP() const { return m_Hp; }
@@ -36,12 +36,14 @@ public:
 	CGameObject* GetTarget() const { return m_Target; }
 	CTransform* GetTargetTransform() const { return m_TargetTransform; }
 
+	void SetColliderInfo(float HeadRadius, float BodyRadius, float LegRadius, Vector3 OBBLenth);
+
 protected:
-	string* m_AniName;
 	string m_CurName;
 	CColliderSphere* m_HeadCollider;
 	CColliderSphere* m_BodyCollider;
 	CColliderSphere* m_LegCollider;
+	CColliderOBB3D* m_BodyOBB;
 	CRenderer* m_Renderer;
 	CAnimation* m_Animation;
 	BehaviorTree* m_BT;

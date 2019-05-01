@@ -19,7 +19,6 @@ bool ST3_SlientTrace::Init()
 {
 	NPCBase::Init();
 
-
 	CreateBT("SlientTrace");
 	return true;
 }

@@ -11,7 +11,7 @@ cbuffer NaviLandCBuffer : register(b6)
     int g_BrushZRange;
 };
 
-cbuffer GridCBuffer : register(b4)
+cbuffer GridCBuffer : register(b8)
 {
     int g_GridLineSize;
     int g_isVisibleGrid;
