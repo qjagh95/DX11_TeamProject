@@ -1,25 +1,23 @@
 #pragma once
-#include "../Client.h"
 #include "Component/UserComponent.h"
+#include "../Client.h"
 #include "Component/Animation2D.h"
 
 PUN_USING
 
-class CDocument :
+class CPhoneMessage :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CDocument();
-	CDocument(const CDocument& doc);
-	virtual ~CDocument();
+	CPhoneMessage();
+	CPhoneMessage(const CPhoneMessage& doc);
+	virtual ~CPhoneMessage();
 
 private:
-	class CAnimation2D*	m_pAnimation;
-
-public:
-	void ChangeClip(const string& strName);
+	CAnimation2D*	m_pAnimation;
+	bool			m_bMouseOn;
 
 public:
 	virtual void AfterClone();
@@ -29,6 +27,9 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CDocument* Clone();
+	virtual CPhoneMessage* Clone();
+public:
+	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);
+	void MouseOut(class CCollider* pSrc, class CCollider* pDest, float fTime);
 };
 

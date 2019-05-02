@@ -18,7 +18,8 @@
 #define CROUCH_CLOTHES_BIG 0.2f
 #define CROUCH_CLOTHES_LIGHT 0.5f
 
-bool CHuman_Player::Init_Move() {
+bool CHuman_Player::Init_Move()
+{
 	return true;
 }
 

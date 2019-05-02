@@ -16,7 +16,8 @@ private:
 
 private:
 	vector<class CGameObject*>	m_vecItem;
-	CLayer*					m_pUILayer;
+	class CGameObject*		m_pDocObj;
+	class CDocument*		m_pDoc;
 	DOCXINVEN_STATE			m_eState;
 	int						m_iDocxMax;
 	int						m_iFlag;
@@ -42,7 +43,6 @@ public:
 	int		GetDocxMax() const;
 	bool	Full() const;
 	void	AddItem(class CGameObject* pItem);
-	void	DeleteItem(class CGameObject* pItem);
 	DOCXINVEN_STATE GetDocxState() const;
 	const Vector3 GetDocxPos()	const;
 	bool	GetMouseOnDocx()	const;
@@ -57,7 +57,5 @@ public:
 	virtual void Render(float fTime);
 	virtual CDocxInven* Clone();
 
-public:
-	void AddDocxList(class CGameObject* pItem);
 };
 

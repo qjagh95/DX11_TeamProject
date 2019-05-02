@@ -79,6 +79,7 @@ public:
 	void SetMouseOn(bool bMouseOn);
 	void SetInvenState(INVENTORY_STATE eState);
 	int GetItemCountNumber(ICON_TYPE eType) const;
+	void SetItemCountNumber(ICON_TYPE eType, int iCount);
 
 public:
 	bool	GetVisible()	const;

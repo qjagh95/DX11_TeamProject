@@ -4,7 +4,7 @@
 CDocument::CDocument()	:
 	m_pAnimation(nullptr)
 {
-
+	m_eComType = (COMPONENT_TYPE)IT_DOCXICON;
 }
 
 CDocument::CDocument(const CDocument & doc)	:
@@ -15,6 +15,11 @@ CDocument::CDocument(const CDocument & doc)	:
 CDocument::~CDocument()
 {
 	SAFE_RELEASE(m_pAnimation);
+}
+
+void CDocument::ChangeClip(const string & strName)
+{
+	m_pAnimation->ChangeClip(strName);
 }
 
 void CDocument::AfterClone()
@@ -43,8 +48,8 @@ bool CDocument::Init()
 	SAFE_RELEASE(pMaterial);
 
 	CTransform*		pTransform = m_pObject->GetTransform();
-	pTransform->SetWorldScale(720.f, 720.f, 1.f);
-	pTransform->SetWorldPos(255.f, 80.f, 1.f);
+	pTransform->SetWorldScale(600.f, 600.f, 1.f);
+	pTransform->SetWorldPos(830.f, 350.f, 1.f);
 	pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	SAFE_RELEASE(pTransform);
@@ -54,9 +59,18 @@ bool CDocument::Init()
 	vector<Clip2DFrame>	vecClipFrame;
 	Clip2DFrame	tFrame = {};
 
-		tFrame.vLT = Vector2(0.f, 0.f);
-		tFrame.vRB = Vector2(720.f, 720.f);
-		vecClipFrame.push_back(tFrame);
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(800, 600);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("Message_Empty", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"Empty_Message", TEXT("UI/Document/MessageEmpty.png"));
+
+	vecClipFrame.clear();
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
+	vecClipFrame.push_back(tFrame);
 
 	m_pAnimation->AddClip("MobileMessage", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
 		"MessageMobile", TEXT("UI/Document/MobileMessage.png"));

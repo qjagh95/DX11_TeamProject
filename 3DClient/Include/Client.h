@@ -29,7 +29,15 @@ enum ICON_TYPE
 	IT_TABLET,
 	IT_KEY,
 	IT_BIGICON,
+	IT_DOCXICON,
 	IT_END
+};
+
+// Document Type
+enum DOCUMENT_TYPE
+{
+	DT_PHONEMESSAGE = IT_END,
+	DT_END
 };
 
 // Inventory State

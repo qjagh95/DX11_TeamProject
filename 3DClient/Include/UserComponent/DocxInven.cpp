@@ -1,6 +1,9 @@
 #include "../ClientHeader.h"
 #include "DocxInven.h"
 #include "Resource/ResourcesManager.h"
+#include "Document.h"
+#include "Inventory.h"
+#include "PhoneMessage.h"
 
 CDocxInven::CDocxInven() :
 	m_iIndex(0),
@@ -24,7 +27,8 @@ CDocxInven::CDocxInven(const CDocxInven & docx)	:
 
 CDocxInven::~CDocxInven()
 {
-	SAFE_RELEASE(m_pUILayer);
+	SAFE_RELEASE(m_pDoc);
+	SAFE_RELEASE(m_pDocObj);
 
 	for (size_t i = 0; i < m_vecItem.size(); ++i)
 	{
@@ -48,7 +52,16 @@ void CDocxInven::SetVisible()
 {
 	if (m_iFlag == -1)
 	{
+		CGameObject*	pInvenObj = CGameObject::FindObject("Inven");
+
+		if (pInvenObj->GetEnable() == true)
+		{
+			pInvenObj->SetEnable(false);
+		}
+		SAFE_RELEASE(pInvenObj);
+
 		CSoundManager::GetInst()->SoundPlay("Docx_Open");
+		PUN::CInput::GetInst()->ShowMouse(true);
 		m_bVisible = true;
 		m_pObject->SetEnable(true);
 
@@ -64,6 +77,9 @@ void CDocxInven::SetVisible()
 	{
 		m_bVisible = false;
 		m_pObject->SetEnable(false);
+		m_pDoc->ChangeClip("Message_Empty");
+		m_pDocObj->SetEnable(false);
+		PUN::CInput::GetInst()->ShowMouse(false);
 
 		for (size_t i = 0; i < m_vecItem.size(); ++i)
 		{
@@ -112,7 +128,17 @@ void CDocxInven::AddItem(CGameObject * pItem)
 	if (Full())
 		return;
 
-	m_vecItem[m_iIndex] = pItem;
+	m_vecItem.push_back(pItem);
+	//m_vecItem[m_iIndex] = pItem;
+
+	CTransform*	pItemTr = m_vecItem[m_iIndex]->GetTransform();
+
+	Vector3	vDocxPos = m_pTransform->GetWorldPos();
+
+	pItemTr->SetWorldPos(vDocxPos.x + 445.f, vDocxPos.y + 562.f - m_fItemY, 0.f);
+	pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+
+	m_fItemY += 85.f;
 
 	if (m_pObject->GetEnable() == false)
 	{
@@ -120,21 +146,7 @@ void CDocxInven::AddItem(CGameObject * pItem)
 	}
 
 	++m_iIndex;
-}
-
-void CDocxInven::DeleteItem(CGameObject * pItem)
-{
-	for (size_t i = 0; i < m_vecItem.size(); ++i)
-	{
-		if (m_vecItem[i] == pItem)
-		{
-			m_vecItem[i] = nullptr;
-			--m_iIndex;
-			--m_iMoveIndex;
-
-			m_fItemY -= 100.f;
-		}
-	}
+	SAFE_RELEASE(pItemTr);
 }
 
 DOCXINVEN_STATE CDocxInven::GetDocxState() const
@@ -160,7 +172,6 @@ bool CDocxInven::Init()
 {
 	CSoundManager::GetInst()->CreateSoundEffect("Docx_Open", TEXT("Document_Open.WAV"));
 	CResourcesManager::GetInst()->CreateTexture("DocxInven", TEXT("UI/Document/DocxInven.png"));
-	m_pUILayer = m_pScene->FindLayer("UI");
 
 	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("InventoryRenderer");
 
@@ -193,7 +204,20 @@ bool CDocxInven::Init()
 	m_iDocxMax = 20;
 	m_iIndex = 0;
 
-	m_vecItem.resize(20);
+	m_pDocObj = CGameObject::CreateObject("Document", m_pLayer);
+	m_pDoc = m_pDocObj->AddComponent<CDocument>("Document");
+	
+	m_pDocObj->SetEnable(false);
+	m_pDoc->ChangeClip("Message_Empty");
+
+	CGameObject*	pPMObj = CGameObject::CreateObject("PhoneMessage", m_pLayer);
+
+	CPhoneMessage*	pPM = pPMObj->AddComponent<CPhoneMessage>("PhoneMessage");
+
+	AddItem(pPMObj);
+
+	SAFE_RELEASE(pPM);
+	SAFE_RELEASE(pPMObj);
 
 	return true;
 }
@@ -223,23 +247,5 @@ void CDocxInven::Render(float fTime)
 
 CDocxInven * CDocxInven::Clone()
 {
-	return nullptr;
-}
-
-void CDocxInven::AddDocxList(CGameObject * pItem)
-{
-	CTransform*	pItemTr = m_vecItem[m_iMoveIndex]->GetTransform();
-
-	Vector3	vDocxPos = m_pTransform->GetWorldPos();
-
-	pItemTr->AddParentFlag(TPF_ROT);
-	pItemTr->AddParentFlag(TPF_POS);
-	pItemTr->AddParentFlag(TPF_SCALE);
-	pItemTr->SetWorldPos(vDocxPos.x + 315.f, vDocxPos.y + 562.f - m_fItemY, 0.f);
-	pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
-
-	SAFE_RELEASE(pItemTr);
-
-	++m_iMoveIndex;
-	m_fItemY += 100.f;
+	return new CDocxInven(*this);
 }

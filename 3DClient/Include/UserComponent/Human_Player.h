@@ -2,6 +2,7 @@
 
 #include "Component/UserComponent.h"
 #include "Component/Animation.h"
+#include "Component/Animation2D.h"
 #include "Component/SoundSource.h"
 #include "Component/Collider.h"
 #include "../CameraEff.h"
@@ -54,6 +55,7 @@ enum PLAYER_STATUS
 	PSTATUS_GUN		= 0x20000,
 	PSTATUS_GUN_TAKING_OFF = 0x40000,
 	PSTATUS_ITEM = 0x80000,
+	PSTATUS_DOCX = 0x90000, // 문서 인벤토리용 Status
 	PSTATUS_UPDATEPOS = 0x100000,
 	PSTATUS_INACTIVE = 0x10000000
 };
@@ -206,6 +208,8 @@ public:
 	void Pickup_Item(float fTime);
 	void Open_Item(float fTime);
 	void Close_Item(float fTime);
+	void Open_Docx(float fTime);
+	void Close_Docx(float fTime);
 	void Pickup_Weapon(float fTime);
 	void Aim_Weapon(float fTime);
 	void Fire_Weapon(float fTime);

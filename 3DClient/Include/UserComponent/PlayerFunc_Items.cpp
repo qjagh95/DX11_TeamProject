@@ -1,7 +1,6 @@
 #include "Human_Player.h"
 #include "Inventory.h"
 #include "DocxInven.h"
-#include "Component/Animation2D.h"
 #include "Input.h"
 
 bool CHuman_Player::Init_Items()
@@ -16,22 +15,28 @@ bool CHuman_Player::Init_Items()
 
 	SAFE_RELEASE(pDocxInvObj);
 
-
 	return true;
 }
 
 void CHuman_Player::OnDestroyInven()
 {
 	SAFE_RELEASE(m_pDocxInven);
-	SAFE_RELEASE(m_pAnimation2D);
 }
 
 int CHuman_Player::Input_Items(float fTime)
 {
-
 	if (PUN::CInput::GetInst()->KeyPress("U"))
 	{
-		m_pDocxInven->SetVisible();
+		if (m_iState & PSTATUS_DOCX)
+		{
+			m_iState ^= (PSTATUS_DOCX | PSTATUS_INACTIVE);
+			Close_Docx(fTime);
+		}
+		else
+		{
+			m_iState |= (PSTATUS_DOCX | PSTATUS_INACTIVE);
+			Open_Docx(fTime);
+		}
 	}
 
 	return 0;
@@ -59,8 +64,7 @@ int CHuman_Player::ItemUpdate(float fTime)
 	{
 		if (m_accelDuration > 0.f)
 		{
-			m_accelDuration -= fTime;
-		}
+ 		}
 		else if (m_accelDuration <= 0.f)
 		{
 			m_isAccel = false;
@@ -106,6 +110,15 @@ void CHuman_Player::Open_Item(float fTime)
 void CHuman_Player::Close_Item(float fTime)
 {
 	m_pInven->SetVisible();
+}
+
+void CHuman_Player::Open_Docx(float fTime)
+{
+	m_pDocxInven->SetVisible();
+}
+void CHuman_Player::Close_Docx(float fTime)
+{
+	m_pDocxInven->SetVisible();
 }
 
 // 무적 효과

@@ -97,7 +97,7 @@ void CCigaretteIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 			return;
 		}
 		m_isUseItem = true;
-
+		cout << "µé¾î¿È" << endl;
 		CGameObject* pObjInventory = CGameObject::FindObject("Inven");
 		CInventory*	pInventory = pObjInventory->FindComponentFromTag<CInventory>("Inven");
 		pInventory->UseItem(m_pObject);

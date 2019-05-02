@@ -396,11 +396,11 @@ void CHuman_Player::AfterClone()
 	SAFE_RELEASE(pTr);
 	SAFE_RELEASE(pCamRenderer);
 
-	CGameObject*	pTestObj = CGameObject::CreateObject("HitEffect", m_pLayer);
+	/*CGameObject*	pTestObj = CGameObject::CreateObject("HitEffect", m_pLayer);
 	CHitEffectAlpha*	pTest = pTestObj->AddComponent<CHitEffectAlpha>("HitEffect");
 
 	SAFE_RELEASE(pTest);
-	SAFE_RELEASE(pTestObj);
+	SAFE_RELEASE(pTestObj);*/
 
 	LoadData(TEXT("PlayerData.csv"));
 }
@@ -480,16 +480,21 @@ int CHuman_Player::Input(float fTime)
 		if (m_iState & PSTATUS_ITEM)
 		{
 			m_iState ^= (PSTATUS_ITEM | PSTATUS_INACTIVE);
-			_Input->ShowMouse(false);
 			Close_Item(fTime);
 		}
 		else
 		{
 			m_iState |= (PSTATUS_ITEM | PSTATUS_INACTIVE);
-			_Input->ShowMouse(true);
 			Open_Item(fTime);
 		}
 	}
+
+	Input_Items(fTime);
+	Input_Interact(fTime);
+	Input_Cam(fTime);
+	Input_Move(fTime);
+	WeaponInput(fTime);
+	m_pAnimation->KeepBlendSet(bBlend);
 
 	if (m_iState & PSTATUS_INACTIVE)
 	{
@@ -978,13 +983,6 @@ int CHuman_Player::Input(float fTime)
 	}
 
 	SAFE_RELEASE(pHeadTrans);
-
-	Input_Items(fTime);
-	Input_Interact(fTime);
-	Input_Cam(fTime);
-	Input_Move(fTime);
-	WeaponInput(fTime);
-	m_pAnimation->KeepBlendSet(bBlend);
 
 	return 0;
 }

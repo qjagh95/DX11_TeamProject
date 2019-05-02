@@ -10,6 +10,7 @@
 #include "Component/ColliderSphere.h"
 #include "Component/Item.h"
 #include "BigIcon.h"
+#include "DocxInven.h"
 
 CInventory::CInventory() :
 	m_iIndex(0),
@@ -93,6 +94,11 @@ CInventory::~CInventory()
 		SAFE_RELEASE(m_vecItem[i]);
 	}
 
+	for (size_t i = 0; i < m_vecList.size(); ++i)
+	{
+		SAFE_RELEASE(m_vecList[i]);
+	}
+
 	Safe_Release_VecList(m_vecList);
 	Safe_Release_VecList(m_vecNumber);
 	Safe_Release_VecList(m_vecItem);
@@ -112,6 +118,15 @@ void CInventory::SetVisible()
 {
 	if (m_iFlag == -1)
 	{
+		CGameObject*	pDoxInvenObj = CGameObject::FindObject("DocxInven");
+
+		if (pDoxInvenObj->GetEnable() == true)
+		{
+			pDoxInvenObj->SetEnable(false);
+		}
+		SAFE_RELEASE(pDoxInvenObj);
+
+		PUN::CInput::GetInst()->ShowMouse(true);
 		CSoundManager::GetInst()->SoundPlay("Inven_Open");
 		m_bVisible = true;
 		m_pObject->SetEnable(true);
@@ -136,6 +151,7 @@ void CInventory::SetVisible()
 	{
 		m_bVisible = false;
 		m_pObject->SetEnable(false);
+		PUN::CInput::GetInst()->ShowMouse(false);
 		m_pBigIcon->ChangeClip("BigIcon_Empty");
 		m_pBigIconObj->SetEnable(false);
 		m_iZipCount = 0;
@@ -194,6 +210,28 @@ int CInventory::GetItemCountNumber(ICON_TYPE eType) const
 	}
 
 	return iCount;
+}
+
+void CInventory::SetItemCountNumber(ICON_TYPE eType, int iCount)
+{
+	switch (eType)
+	{
+	case IT_BATTERY:
+		m_iBatteryCnt = iCount;
+		break;
+	case IT_DAEMA:
+		m_iDaemaCnt = iCount;
+		break;
+	case IT_MEDICALKIT:
+		m_iMedicalKitCnt = iCount;
+		break;
+	case IT_LUNCHBOX:
+		m_iLunchBoxCnt = iCount;
+		break;
+	case IT_TABLET:
+		m_iTabletCnt = iCount;
+		break;
+	}
 }
 
 bool CInventory::GetVisible() const
@@ -512,10 +550,12 @@ void CInventory::UseItem(CGameObject * pItem)
 				{
 					if ((*iter1) == m_vecNumber[i])
 					{
+						SAFE_RELEASE((*iter1));
 						m_vecNumber.erase(iter1);
 						break;
 					}
 				}
+
 
 				--m_iNumberIndex;
 				--m_iMoveIndex;
