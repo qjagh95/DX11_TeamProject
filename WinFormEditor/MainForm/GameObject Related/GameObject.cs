@@ -129,6 +129,15 @@ namespace WinFormEditor
             if (strLayerTag == "Stage")         { _comboBox.SelectedIndex = 0; }
             else if (strLayerTag == "Default")  { _comboBox.SelectedIndex = 1; }
             else if (strLayerTag == "UI")       { _comboBox.SelectedIndex = 3; }
+
+            m_editForm.GetColliderListBox().Items.Clear();
+
+            string[] arrCollTag = m_editForm.m_coreWrapper.GetVecObjCollTag();
+
+            for(int i =0; i<arrCollTag.Length; ++i)
+            {
+                m_editForm.GetColliderListBox().Items.Add(arrCollTag[i].ToString());
+            }
         }
 
         public void CreateObject(ListBox _listBox, bool _isChild = false)

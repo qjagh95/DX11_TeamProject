@@ -19,7 +19,23 @@ bool ST3_SlientTrace::Init()
 {
 	NPCBase::Init();
 
-	CreateBT("SlientTrace");
+	/*
+	1. ÂÑ¾Æ¿À´Â ¸÷.
+	2. Mesh : Cannibal
+	3. bne, anm : Cannibal
+
+	Idle : idle_chase
+	Move(Run) : move_forword_fase
+	Locker search : search_locker
+	¹®ÄçÄç¿­±â : bash_door
+
+	*/
+
+	m_Renderer->SetMesh("Cannibal", TEXT("Cannibal.msh"));
+	m_Animation->LoadBone("Cannibal.bne");
+	m_Animation->Load("Cannibal.anm");
+
+	CreateBT("Slient");
 	return true;
 }
 

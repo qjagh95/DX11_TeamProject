@@ -470,6 +470,21 @@ void CTransform::Rotation(const Vector3 & vRot)
 {
 	m_vWorldRot += vRot;
 
+	if (m_vWorldRot.x > 180.f)
+		m_vWorldRot.x -= 360.f;
+	if (m_vWorldRot.y > 180.f)
+		m_vWorldRot.y -= 360.f;
+	if (m_vWorldRot.z > 180.f)
+		m_vWorldRot.z -= 360.f;
+
+	if (m_vWorldRot.x < -180.f)
+		m_vWorldRot.x += 360.f;
+	if (m_vWorldRot.y < -180.f)
+		m_vWorldRot.y += 360.f;
+	if (m_vWorldRot.z < -180.f)
+		m_vWorldRot.z += 360.f;
+	
+
 	Vector3	vWorldRot = m_vWorldRot + m_vOffsetRot;
 
 	m_matWorldRot.Rotation(vWorldRot);

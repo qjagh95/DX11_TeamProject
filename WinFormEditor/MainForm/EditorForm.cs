@@ -241,6 +241,11 @@ namespace WinFormEditor
             return LB_FileMesh;
         }
 
+        public ListBox GetColliderListBox()
+        {
+            return LB_ColliderList;
+        }
+
         public TextBox GetSelecteMeshNameTextBox()
         {
             return TB_SelecteMesh;
@@ -1275,6 +1280,7 @@ namespace WinFormEditor
             m_coreWrapper.AddColliderOBB(dRelativeCenterX, dRelativeCenterY, dRelativeCenterZ, dXLength, dYLength, dZLength, LB_ColliderID.SelectedIndex,
                 TB_ColliderTag.Text , TB_CollTypeTag.Text , TB_CollExceptTag.Text);
 
+            LB_ColliderList.Items.Add(TB_ColliderTag.Text);
             //////////////////////Clear///////////////////////////////////////////
             TB_RelativeCenterX.Clear();
             TB_RelativeCenterY.Clear();
@@ -1340,6 +1346,7 @@ namespace WinFormEditor
 
             m_coreWrapper.AddColliderSphere(dSphereCenterX , dSphereCenterY , dSphereCenterZ , dRadius , LB_ColliderID.SelectedIndex,
                 TB_ColliderTag.Text, TB_CollTypeTag.Text, TB_CollExceptTag.Text);
+            LB_ColliderList.Items.Add(TB_ColliderTag.Text);
 
             //////////////////////Clear///////////////////////////////////////////
             TB_SphereCenterX.Clear();
@@ -1350,6 +1357,184 @@ namespace WinFormEditor
             TB_ColliderTag.Clear();
             TB_CollTypeTag.Clear();
             TB_CollExceptTag.Clear();
+        }
+
+        private void BT_CollOBBUpdate_Click(object sender, EventArgs e)
+        {
+            if (LB_ObjectList.SelectedItem == null)
+            {
+                MessageBox.Show("선택된 Object가 없습니다.");
+                return;
+            }
+            if(m_coreWrapper.GetCollType() == 4)
+            {
+                MessageBox.Show("선택된 Collider의 Type이 다릅니다.");
+                return;
+
+            }
+            if (LB_ColliderList.SelectedItem == null)
+            {
+                MessageBox.Show("선택된 Collider가 없습니다.");
+                return;
+            }
+            if(TB_OBBXLength.Text == "" || TB_OBBYLength.Text == "" || TB_OBBZLength.Text == "")
+            {
+                MessageBox.Show("Collider Info 값에 잘못된 값이 입력되었습니다..");
+                return;
+            }
+            double dRelativeCenterX;
+            double dRelativeCenterY;
+            double dRelativeCenterZ;
+            double dXLength;
+            double dYLength;
+            double dZLength;
+
+            if (TB_RelativeCenterX.Text == "")
+            {
+                dRelativeCenterX = 0;
+            }
+            else
+            {
+                dRelativeCenterX = Convert.ToDouble(TB_RelativeCenterX.Text);
+            }
+
+            if (TB_RelativeCenterY.Text == "")
+            {
+                dRelativeCenterY = 0;
+            }
+            else
+            {
+                dRelativeCenterY = Convert.ToDouble(TB_RelativeCenterY.Text);
+            }
+
+
+            if (TB_RelativeCenterZ.Text == "")
+            {
+                dRelativeCenterZ = 0;
+            }
+            else
+            {
+                dRelativeCenterZ = Convert.ToDouble(TB_RelativeCenterX.Text);
+            }
+
+            dXLength = Convert.ToDouble(TB_OBBXLength.Text);
+            dYLength = Convert.ToDouble(TB_OBBYLength.Text);
+            dZLength = Convert.ToDouble(TB_OBBZLength.Text);
+
+            m_coreWrapper.SetOBBColliderInfo(dRelativeCenterX, dRelativeCenterY, dRelativeCenterZ, dXLength, dYLength, dZLength);
+        }
+
+        private void BT_CollSphere_Click(object sender, EventArgs e)
+        {
+            if (LB_ObjectList.SelectedItem == null)
+            {
+                MessageBox.Show("선택된 Object가 없습니다.");
+                return;
+            }
+
+            if (m_coreWrapper.GetCollType() == 5)
+            {
+                MessageBox.Show("선택된 Collider의 Type이 다릅니다.");
+                return;
+
+            }
+
+            if (LB_ColliderList.SelectedItem == null)
+            {
+                MessageBox.Show("선택된 Collider가 없습니다.");
+                return;
+            }
+
+            if (TB_SphereRadius.Text == "")
+            {
+                MessageBox.Show("Collider Info 값에 잘못된 값이 입력되었습니다..");
+                return;
+            }
+            double dSphereCenterX;
+            double dSphereCenterY;
+            double dSphereCenterZ;
+            double dRadius;
+
+            dRadius = Convert.ToDouble(TB_SphereRadius.Text);
+
+            if (TB_SphereCenterX.Text == "")
+            {
+                dSphereCenterX = 0;
+            }
+            else
+            {
+                dSphereCenterX = Convert.ToDouble(TB_SphereCenterX.Text);
+            }
+
+            if (TB_SphereCenterY.Text == "")
+            {
+                dSphereCenterY = 0;
+            }
+            else
+            {
+                dSphereCenterY = Convert.ToDouble(TB_SphereCenterY.Text);
+            }
+
+
+            if (TB_SphereCenterZ.Text == "")
+            {
+                dSphereCenterZ = 0;
+            }
+            else
+            {
+                dSphereCenterZ = Convert.ToDouble(TB_SphereCenterZ.Text);
+            }
+
+            m_coreWrapper.SetSphereColliderInfo(dSphereCenterX, dSphereCenterY, dSphereCenterZ, dRadius);
+        }
+
+        private void LB_ColliderList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (LB_ColliderList.SelectedItem == null)
+                return;
+
+            TB_RelativeCenterX.Clear();
+            TB_RelativeCenterY.Clear();
+            TB_RelativeCenterZ.Clear();
+            TB_OBBXLength.Clear();
+            TB_OBBYLength.Clear();
+            TB_OBBZLength.Clear();
+            TB_SphereCenterX.Clear();
+            TB_SphereCenterY.Clear();
+            TB_SphereCenterZ.Clear();
+            TB_SphereRadius.Clear();
+
+            if (m_coreWrapper.FindActiveCollider(LB_ColliderList.SelectedItem.ToString()) == true)
+            {
+                if(m_coreWrapper.GetCollType() == 4) // Sphere
+                {
+                    float[] fArrCenter = m_coreWrapper.GetSphereCenter();
+                    float fRadius = m_coreWrapper.GetSphereRadius();
+
+                    TB_SphereCenterX.Text = Convert.ToString(fArrCenter[0]);
+                    TB_SphereCenterY.Text = Convert.ToString(fArrCenter[1]);
+                    TB_SphereCenterZ.Text = Convert.ToString(fArrCenter[2]);
+                    TB_SphereRadius.Text = Convert.ToString(fRadius);
+                }
+                else if(m_coreWrapper.GetCollType() == 5) // OBB3D
+                {
+                    float[] fArrCenter = m_coreWrapper.GetOBBCenter();
+                    float[] fArrLength = m_coreWrapper.GetOBBLength();
+
+                    TB_RelativeCenterX.Text = Convert.ToString(fArrCenter[0]);
+                    TB_RelativeCenterY.Text = Convert.ToString(fArrCenter[1]);
+                    TB_RelativeCenterZ.Text = Convert.ToString(fArrCenter[2]);
+                    TB_OBBXLength.Text = Convert.ToString(fArrLength[0]);
+                    TB_OBBYLength.Text = Convert.ToString(fArrLength[1]);
+                    TB_OBBZLength.Text = Convert.ToString(fArrLength[2]);
+
+                }
+            }
+        }
+
+        private void LB_ColliderID_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

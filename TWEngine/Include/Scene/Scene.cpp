@@ -611,6 +611,8 @@ void CScene::Load(string _fullPath)
 	{
 		string strLayerTag = instBR.ReadString();
 
+		//if (strLayerTag == "")
+		//	continue;
 		// 레이어를 찾아서 m_LayerList에 없다면 추가한다.
 		CLayer* pLayer = FindLayer(strLayerTag);
 		if (pLayer == nullptr)

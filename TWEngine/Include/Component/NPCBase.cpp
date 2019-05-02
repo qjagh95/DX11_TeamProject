@@ -132,6 +132,7 @@ void NPCBase::CreateBT(const string & TreeName, BT_ROOT_CHILD_TYPE Type)
 	m_BT->AddBoardData("m_MoveSpeed", &m_MoveSpeed);
 	m_BT->AddBoardData("m_TargetDistance", &m_TargetDistance);
 	m_BT->AddBoardData("m_Y", &m_Y);
+
 }
 
 void NPCBase::ChangeState(int State, string* AniName)

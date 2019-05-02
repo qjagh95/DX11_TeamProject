@@ -38,7 +38,8 @@ CEditManager::CEditManager()
 	m_pFreeCamObj(nullptr),
 	m_pNavObject(nullptr),
 	m_LandScape(nullptr),
-	m_isGizmoClick(false)
+	m_isGizmoClick(false),
+	m_pSelectCollider(nullptr)
 {
 }
 
@@ -58,6 +59,7 @@ CEditManager::~CEditManager()
 	SAFE_RELEASE(m_pArm);
 	SAFE_RELEASE(m_pNavObject);
 	SAFE_RELEASE(m_LandScape);
+	SAFE_RELEASE(m_pSelectCollider);
 	Safe_Delete_VecList(m_vecDivideFrame);
 }
 
@@ -76,6 +78,20 @@ void CEditManager::SetArm(CArm * _pArm)
 	{
 		_pArm->AddRef();
 		m_pArm = _pArm;
+	}
+}
+
+void CEditManager::GetObjFromCollTag()
+{
+	m_vecObjCollTag.clear();
+
+	const std::list<CComponent*>* pCollFindList = m_pObject->FindComponentsFromType(CT_COLLIDER);
+	
+	std::list<CComponent*>::const_iterator Iter;
+	std::list<CComponent*>::const_iterator EndIter = pCollFindList->end();
+	for (Iter = pCollFindList->begin(); Iter != EndIter; ++Iter)
+	{
+		m_vecObjCollTag.push_back((*Iter)->GetTag());
 	}
 }
 
@@ -220,6 +236,8 @@ void CEditManager::SetActiveObject(const string _strObjectTag, const string _str
 	m_pYGizmo->SetTarget(m_pObject);
 	m_pZGizmo->SetTarget(m_pObject);
 	m_pObject->AddComponent(m_pEditTest);
+
+	GetObjFromCollTag();
 
 	SAFE_RELEASE(pLayer);
 }
@@ -1235,4 +1253,78 @@ vector<Vector4> CEditManager::GetSpecular()
 
 	vecWpecular.push_back(pLight->GetLightSpecular());
 	return vecWpecular;
+}
+
+bool CEditManager::FindActiveCollider(const std::string & _strTag)
+{
+	if (m_pSelectCollider)
+		SAFE_RELEASE(m_pSelectCollider);
+
+	m_pSelectCollider = m_pObject->FindComponentFromTag<CCollider>(_strTag);
+
+	if (m_pSelectCollider == nullptr)
+		return false;
+
+	return true;
+}
+
+Vector3 CEditManager::GetOBBLength()
+{
+	if (m_pSelectCollider == nullptr)
+	{
+		return Vector3::Zero;
+	}
+	return ((CColliderOBB3D*)m_pSelectCollider)->GetRelativeInfo().vLength;
+}
+
+float CEditManager::GetSphereRadius()
+{
+	if (m_pSelectCollider == nullptr)
+	{
+		return 0.f;
+	}
+	return ((CColliderSphere*)m_pSelectCollider)->GetRelativeInfo().fRadius;
+}
+
+Vector3 CEditManager::GetOBBRelativeCenter()
+{
+	if (m_pSelectCollider == nullptr)
+	{
+		return Vector3::Zero;
+	}
+	return ((CColliderOBB3D*)m_pSelectCollider)->GetRelativeInfo().vCenter;
+}
+
+Vector3 CEditManager::GetSphereCenter()
+{
+	if (m_pSelectCollider == nullptr)
+	{
+		return Vector3::Zero;
+	}
+	return ((CColliderSphere*)m_pSelectCollider)->GetRelativeInfo().vCenter;
+}
+
+int CEditManager::GetCollType() const
+{
+	return (int)m_pSelectCollider->GetColliderType();
+}
+
+void CEditManager::SetSphereColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float fRadius)
+{
+	if (m_pSelectCollider == nullptr)
+	{
+		return;
+	}
+
+	((CColliderSphere*)m_pSelectCollider)->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), fRadius);
+}
+
+void CEditManager::SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ)
+{
+	if (m_pSelectCollider == nullptr)
+	{
+		return;
+	}
+
+	((CColliderOBB3D*)m_pSelectCollider)->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), Vector3::Axis , Vector3(dLengthX , dLengthY , dLengthZ));
 }

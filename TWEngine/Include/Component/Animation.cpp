@@ -7,8 +7,8 @@
 #include "BoneSocket.h"
 #include "../Timer.h"
 
-#define PART_METHOD_1 1
-//#define PART_METHOD_2 1
+//#define PART_METHOD_1 1
+#define PART_METHOD_2 1
 #define ZYX 1
 void to_Euler_Angle(const Vector4 & q, Vector3 & vEuler)
 {
@@ -119,7 +119,8 @@ CAnimation::CAnimation() :
 	m_fFrameTime(1.f / 30.f),
 	m_iFrameMode(0),
 	m_bKeepBlending(false),
-	m_bCurClipEnd(false)
+	m_bCurClipEnd(false),
+	m_bSkipBlending(false)
 {
 	m_eComType = CT_ANIMATION;
 }
@@ -225,15 +226,19 @@ bool CAnimation::AddPartialClip(PPARTANIM partAnim)
 	m_vecPartialAnim.push_back(partAnim);
 	partAnim->fChangeLimitTime = m_fChangeLimitTime;
 	//partAnim->fChangeTime = m_fChangeTime;
-	
+
 	return true;
+}
+
+void CAnimation::SetBlendSkip(bool bOn)
+{
+	m_bSkipBlending = bOn;
 }
 
 PANIMATIONCLIP CAnimation::GetAnimClip(const std::string & strKey)
 {
 	return FindClip(strKey);
 }
-
 
 const Matrix * CAnimation::GetBoneMatrix(int iBoneIdx)
 {
@@ -939,6 +944,103 @@ bool CAnimation::LoadFromFullPath(const char * pFullPath)
 	return true;
 }
 
+bool CAnimation::LoadFileAsClip(const char * clipName, const TCHAR * pFileName)
+{
+	FILE *pFile = nullptr;
+
+	std::wstring str;
+
+	str = PUN::CPathManager::GetInst()->FindPath(MESH_DATA_PATH);
+	str += pFileName;
+
+	_wfopen_s(&pFile, str.c_str(), TEXT("rb"));
+
+	if (!pFile)
+		return false;
+
+	char strBuf[1024] = {};
+
+	fread(strBuf, sizeof(float), 1, pFile);
+	fread(strBuf, sizeof(float), 1, pFile);
+
+	// 애니메이션 클립정보 >> 불필요
+	size_t iCount = 0, iLength = 0;
+	fread(&iCount, sizeof(size_t), 1, pFile);
+
+	char	strDefaultClip[256] = {};
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	fread(strDefaultClip, sizeof(char),
+		iLength, pFile);
+
+	char	strCurClip[256] = {};
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	fread(strCurClip, sizeof(char), iLength, pFile);
+
+	m_strAddClipName.clear();
+
+	for (int l = 0; l < iCount; ++l)
+	{
+		PANIMATIONCLIP	pClip = new ANIMATIONCLIP;
+
+		// 애니메이션 클립 키를 저장한다.
+		char	strClipName[256] = {};
+		fread(&iLength, sizeof(size_t), 1, pFile);
+		fread(strClipName, sizeof(char), iLength, pFile);
+		//std::cout << strClipName << std::endl;
+		m_strAddClipName.push_back(clipName);
+
+		m_mapClip.insert(make_pair(clipName, pClip));
+
+		pClip->strName = clipName;
+		pClip->iChangeFrame = 0;
+
+		fread(&pClip->eOption, sizeof(ANIMATION_OPTION), 1, pFile);
+
+		fread(&pClip->fStartTime, sizeof(float), 1, pFile);
+		fread(&pClip->fEndTime, sizeof(float), 1, pFile);
+		fread(&pClip->fTimeLength, sizeof(float), 1, pFile);
+		fread(&pClip->fFrameTime, sizeof(float), 1, pFile);
+		fread(&pClip->fPlayTime, sizeof(float), 1, pFile);
+		fread(&pClip->iFrameMode, sizeof(int), 1, pFile);
+		fread(&pClip->iStartFrame, sizeof(int), 1, pFile);
+		fread(&pClip->iEndFrame, sizeof(int), 1, pFile);
+		fread(&pClip->iFrameLength, sizeof(int), 1, pFile);
+
+		size_t	iFrameCount = 0;
+
+		fread(&iFrameCount, sizeof(size_t), 1, pFile);
+
+		for (size_t i = 0; i < iFrameCount; ++i)
+		{
+			PBONEKEYFRAME	pBoneKeyFrame = new BONEKEYFRAME;
+			pClip->vecKeyFrame.push_back(pBoneKeyFrame);
+
+			fread(&pBoneKeyFrame->iBoneIndex, sizeof(int), 1,
+				pFile);
+
+			size_t	iBoneFrameCount = 0;
+
+			fread(&iBoneFrameCount, sizeof(size_t), 1, pFile);
+
+			for (size_t j = 0; j < iBoneFrameCount; ++j)
+			{
+				PKEYFRAME	pKeyFrame = new KEYFRAME;
+				pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
+
+				fread(&pKeyFrame->dTime, sizeof(double), 1, pFile);
+				fread(&pKeyFrame->vPos, sizeof(Vector3), 1, pFile);
+				fread(&pKeyFrame->vScale, sizeof(Vector3), 1, pFile);
+				fread(&pKeyFrame->vRot, sizeof(Vector4), 1, pFile);
+			}
+		}
+	}
+
+
+	fclose(pFile);
+
+	return true;
+}
+
 bool CAnimation::SaveBone(const TCHAR * pFileName, const string & strPathKey)
 {
 	char	strFileName[MAX_PATH] = {};
@@ -1563,7 +1665,7 @@ int CAnimation::Update(float fTime)
 
 	if (m_pCurClip)
 	{
-		
+
 		float fBeforeTime = m_fAnimationGlobalTime - fTime;
 
 		if (fBeforeTime < 0.f)
@@ -1661,7 +1763,7 @@ int CAnimation::Update(float fTime)
 				{
 					m_fChangeTime = m_fChangeLimitTime;
 					bChange = true;
-					
+
 				}
 			}
 
@@ -1870,8 +1972,8 @@ int CAnimation::Update(float fTime)
 		m_fClipProgress = m_fAnimationGlobalTime / m_pCurClip->fTimeLength;
 
 		if (m_pCurClip->fTimeLength - m_fAnimationGlobalTime < 0.0666666666667f)
-		{		
-			if (!m_bCurClipEnd)
+		{
+			if (!m_bSkipBlending)
 			{
 				switch (m_pCurClip->eOption)
 				{
@@ -1886,7 +1988,7 @@ int CAnimation::Update(float fTime)
 				}
 				m_bCurClipEnd = true;
 				m_pCurClip->iFrame = 0;
-			}			
+			}
 		}
 		while (m_fAnimationGlobalTime >= m_pCurClip->fTimeLength)
 		{
@@ -1927,7 +2029,7 @@ int CAnimation::Update(float fTime)
 				m_fAnimationGlobalTime = 0.0f;
 				m_fChangeTime = 0.f;
 				m_fClipProgress = 0.f;
-				
+
 				iFrameIndex = 0;
 				break;
 			}
@@ -2010,12 +2112,12 @@ int CAnimation::Update(float fTime)
 		if (!part->bActivated)
 		{
 			part->fPartAnimationGTime = 0.f;
-			
+
 			part->fChangeTime = 0.f;
 			part->fClipProgress = 0.f;
 			continue;
 		}
-			
+
 
 		if (part->mapPartClips.empty())
 		{
@@ -2026,8 +2128,8 @@ int CAnimation::Update(float fTime)
 			part->fClipProgress = 0.f;
 			continue;
 		}
-			
-		
+
+
 		//Run Partial Anim Notify functions
 		if (part->pCurClip)
 		{
@@ -2179,15 +2281,36 @@ int CAnimation::Update(float fTime)
 						}
 
 						XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
-						XMVECTOR vT = DirectX::XMVectorLerp((pCurKey->vPos + vParentMove).Convert(), (pNextKey->vPos + vParentMove).Convert(), fPercent);
-						XMVECTOR vR = DirectX::XMQuaternionSlerp(DirectX::XMQuaternionMultiply(pCurKey->vRot.Convert(), vParentQuat.Convert()),
-							DirectX::XMQuaternionMultiply(pNextKey->vRot.Convert(), vParentQuat.Convert()), fPercent);
+						XMVECTOR vT;
+						//XMVECTOR vT = DirectX::XMVectorLerp((pCurKey->vPos + vParentMove).Convert(), (pNextKey->vPos + vParentMove).Convert(), fPercent);
+						XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(),
+							pNextKey->vRot.Convert(), fPercent);
+						vR = DirectX::XMQuaternionMultiply(vR, vParentQuat.Convert());
+						//회전 매트릭스 구하기
+						XMMATRIX vRotMat = DirectX::XMMatrixRotationQuaternion(vR);
+
+						//방향벡터 구하기 및 표준화
+						Vector3 vRotVector[3] = {};
+						for (int i = 0; i < 3; ++i)
+						{
+							vRotVector[i] = Vector3::Axis[i].TransformNormal(vRotMat);
+							vRotVector[i].Normalize();
+						}
+
+						//pCurKey 와 pNextKey 사이 회전된 위치 구하기
+						Vector3 vCurRotatedPos = vParentMove + (vRotVector[0] * pCurKey->vPos.x)	+ (vRotVector[1] * pCurKey->vPos.y) + (vRotVector[2] * pCurKey->vPos.z);
+						Vector3 vNextRotatedPos = vParentMove + (vRotVector[0] * pNextKey->vPos.x)	+ (vRotVector[1] * pNextKey->vPos.y) + (vRotVector[2] * pNextKey->vPos.z);
+						//Vector3 vCurRotatedPos = vParentMove + pCurKey->vPos;
+						//Vector3 vNextRotatedPos = vParentMove + pNextKey->vPos;
+
+						//최종 vT 구하기
+						vT = DirectX::XMVectorLerp(vCurRotatedPos.Convert(), vNextRotatedPos.Convert(), fPercent);
+						
 						XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 						Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 						//Method 1 end
 #else
 #ifdef PART_METHOD_2
-
 						//Method 2
 						XMVECTOR vRCurr = pCurKey->vRot.Convert();
 						XMVECTOR vRNext = pNextKey->vRot.Convert();
@@ -2198,18 +2321,14 @@ int CAnimation::Update(float fTime)
 						XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 						Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 
-
-						//공전 먼저 한다!
-						XMVECTOR vInvParentRot = DirectX::XMQuaternionSlerp(vRCurr, vRNext, fPercent);
-						//
-						
 						//부모 본 가지고 와서 곱한다
 						if (part->iRootParentIndex > -1)
 						{
-							matBone = matBone * (*m_vecBones[part->iRootParentIndex]->matBone);
+							if(!part->bUseCustomParent)
+								matBone = matBone * (*m_vecBones[part->iRootParentIndex]->matBone);
+							else
+								matBone = matBone * part->matCustomParent;
 						}
-
-						matBone = matBone * Matrix(XMMatrixRotationQuaternion(vInvParentRot));
 
 						//Method 2 end
 
@@ -2336,17 +2455,39 @@ int CAnimation::Update(float fTime)
 						}
 
 						XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
-						XMVECTOR vT = DirectX::XMVectorLerp((pCurKey->vPos + vParentMove).Convert(), (pNextKey->vPos + vParentMove).Convert(), fPercent);
-						vR = DirectX::XMQuaternionSlerp(DirectX::XMQuaternionMultiply(pCurKey->vRot.Convert(), vParentQuat.Convert()),
-							DirectX::XMQuaternionMultiply(pNextKey->vRot.Convert(), vParentQuat.Convert()), fPercent);
+						XMVECTOR vT;
+						//XMVECTOR vT = DirectX::XMVectorLerp((pCurKey->vPos + vParentMove).Convert(), (pNextKey->vPos + vParentMove).Convert(), fPercent);
+						vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(),
+							pNextKey->vRot.Convert(), fPercent);
+						vR = DirectX::XMQuaternionMultiply(vR, vParentQuat.Convert());
+						//회전 매트릭스 구하기
+						XMMATRIX vRotMat = DirectX::XMMatrixRotationQuaternion(vR);
+
+						//방향벡터 구하기 및 표준화
+						Vector3 vRotVector[3] = {};
+						for (int i = 0; i < 3; ++i)
+						{
+							vRotVector[i] = Vector3::Axis[i].TransformNormal(vRotMat);
+							vRotVector[i].Normalize();
+						}
+
+						//pCurKey 와 pNextKey 사이 회전된 위치 구하기
+						Vector3 vCurRotatedPos = vParentMove + (vRotVector[0] * pCurKey->vPos.x)	+ (vRotVector[1] * pCurKey->vPos.y) + (vRotVector[2] * pCurKey->vPos.z);
+						Vector3 vNextRotatedPos = vParentMove + (vRotVector[0] * pNextKey->vPos.x)	+ (vRotVector[1] * pNextKey->vPos.y) + (vRotVector[2] * pNextKey->vPos.z);
+						//Vector3 vCurRotatedPos = vParentMove + pCurKey->vPos;
+						//Vector3 vNextRotatedPos = vParentMove + pNextKey->vPos;
+
+						//최종 vT 구하기
+						vT = DirectX::XMVectorLerp(vCurRotatedPos.Convert(), vNextRotatedPos.Convert(), fPercent);
+						
 						XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 						Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 						//Method 1 end
 #else
 #ifdef PART_METHOD_2
+						//Method 2
 						XMVECTOR vRCurr = pCurKey->vRot.Convert();
 						XMVECTOR vRNext = pNextKey->vRot.Convert();
-
 
 						XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
 						XMVECTOR vT = DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pNextKey->vPos.Convert(), fPercent);
@@ -2355,18 +2496,16 @@ int CAnimation::Update(float fTime)
 						Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 
 
-						//공전 먼저 한다?!?
-						XMVECTOR vInvParentRot = DirectX::XMQuaternionSlerp(vRCurr, vRNext, fPercent);
-						
 						//부모 본 가지고 와서 곱한다
 						if (part->iRootParentIndex > -1)
 						{
-							matBone = matBone * (*m_vecBones[part->iRootParentIndex]->matBone);
+							if (!part->bUseCustomParent)
+								matBone = matBone * (*m_vecBones[part->iRootParentIndex]->matBone);
+							else
+								matBone = matBone * part->matCustomParent;
 						}
-
-						matBone = matBone * Matrix(XMMatrixRotationQuaternion(vInvParentRot));
-						
 						//Method 2 end
+
 #endif
 #endif
 
@@ -2406,7 +2545,7 @@ int CAnimation::Update(float fTime)
 			{
 				part->fPartAnimationGTime -= part->pCurClip->fTimeLength;
 				part->bEnd = true;
-				
+
 				/*for (size_t i = 0; i < m_vecChannel[m_iCurChannel].pClip->m_tInfo.vecCallback.size();	++i)
 				{
 					m_vecChannel[m_iCurChannel].pClip->m_tInfo.vecCallback[i]->bCall = false;
@@ -2489,15 +2628,36 @@ int CAnimation::Update(float fTime)
 					}
 
 					XMVECTOR vS = DirectX::XMVectorLerp(pCurKey->vScale.Convert(), pNextKey->vScale.Convert(), fPercent);
-					XMVECTOR vT = DirectX::XMVectorLerp((pCurKey->vPos + vParentMove).Convert(), (pNextKey->vPos + vParentMove).Convert(), fPercent);
-					XMVECTOR vR = DirectX::XMQuaternionSlerp(DirectX::XMQuaternionMultiply(pCurKey->vRot.Convert(), vParentQuat.Convert()),
-						DirectX::XMQuaternionMultiply(pNextKey->vRot.Convert(), vParentQuat.Convert()), fPercent);
+					XMVECTOR vT;
+					//XMVECTOR vT = DirectX::XMVectorLerp((pCurKey->vPos + vParentMove).Convert(), (pNextKey->vPos + vParentMove).Convert(), fPercent);
+					XMVECTOR vR = DirectX::XMQuaternionSlerp(pCurKey->vRot.Convert(),
+						pNextKey->vRot.Convert(), fPercent);
+					vR = DirectX::XMQuaternionMultiply(vR, vParentQuat.Convert());
+					//회전 매트릭스 구하기
+					XMMATRIX vRotMat = DirectX::XMMatrixRotationQuaternion(vR);
+
+					//방향벡터 구하기 및 표준화
+					Vector3 vRotVector[3] = {};
+					for (int i = 0; i < 3; ++i)
+					{
+						vRotVector[i] = Vector3::Axis[i].TransformNormal(vRotMat);
+						vRotVector[i].Normalize();
+					}
+
+					//pCurKey 와 pNextKey 사이 회전된 위치 구하기
+					Vector3 vCurRotatedPos = vParentMove + (vRotVector[0] * pCurKey->vPos.x)	+ (vRotVector[1] * pCurKey->vPos.y) + (vRotVector[2] * pCurKey->vPos.z);
+					Vector3 vNextRotatedPos = vParentMove + (vRotVector[0] * pNextKey->vPos.x)	+ (vRotVector[1] * pNextKey->vPos.y) + (vRotVector[2] * pNextKey->vPos.z);
+					//Vector3 vCurRotatedPos = vParentMove + pCurKey->vPos;
+					//Vector3 vNextRotatedPos = vParentMove + pNextKey->vPos;
+
+					//최종 vT 구하기
+					vT = DirectX::XMVectorLerp(vCurRotatedPos.Convert(), vNextRotatedPos.Convert(), fPercent);
+					
 					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 					//Method 1 end
 #else
 #ifdef PART_METHOD_2
-
 					//Method 2
 					XMVECTOR vRCurr = pCurKey->vRot.Convert();
 					XMVECTOR vRNext = pNextKey->vRot.Convert();
@@ -2508,18 +2668,16 @@ int CAnimation::Update(float fTime)
 					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 
-					//공전 먼저 한다!
-					XMVECTOR vInvParentRot = DirectX::XMQuaternionSlerp(vRCurr, vRNext, fPercent);
-					
 					//부모 본 가지고 와서 곱한다
 					if (part->iRootParentIndex > -1)
 					{
-						matBone = matBone * (*m_vecBones[part->iRootParentIndex]->matBone);
+						if (!part->bUseCustomParent)
+							matBone = matBone * (*m_vecBones[part->iRootParentIndex]->matBone);
+						else
+							matBone = matBone * part->matCustomParent;
 					}
-					
-					matBone = matBone * Matrix(XMMatrixRotationQuaternion(vInvParentRot));
-
 					//Method 2 end
+
 #endif
 #endif
 
@@ -2555,7 +2713,7 @@ int CAnimation::Update(float fTime)
 
 
 		CONTEXT->Unmap(m_pBoneTex, 0);
-	}	
+	}
 
 	return 0;
 }
@@ -2572,16 +2730,13 @@ int CAnimation::LateUpdate(float fTime)
 				list<CBoneSocket*>::iterator iterEnd = m_vecBones[i]->SocketList.end();
 				for (iter = m_vecBones[i]->SocketList.begin(); iter != iterEnd; ++iter)
 				{
-					//(*iter)->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
 					(*iter)->Update(fTime, *m_vecBoneMatrix[i], m_pTransform);
-					//m_vecBones[i]->SocketList[j]->Update(fTime, *m_vecBoneMatrix[i] * m_pTransform->GetWorldMatrix());
-
 				}
 			}
 
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -2655,7 +2810,7 @@ bool _tagPartialAnim::LoadPartAnimFromExistingClip(PANIMATIONCLIP pAnim)
 		if (iRootParentIndex < 0)
 			continue;
 
-		
+
 		if (pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame.size() > 0)
 		{
 			if (_newAnim->vecXmRotVector.size() < 1)
@@ -2667,32 +2822,35 @@ bool _tagPartialAnim::LoadPartAnimFromExistingClip(PANIMATIONCLIP pAnim)
 			{
 				_newAnim->vecKeyFrame[i]->vecKeyFrame[j] = new KEYFRAME;
 				*(_newAnim->vecKeyFrame[i]->vecKeyFrame[j]) = *(pAnim->vecKeyFrame[iPBI]->vecKeyFrame[j]);
-				_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vPos -= pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vPos;
+				//_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vPos -= pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vPos;
+				
 				//DirectX::XMVECTOR vConjugatedRootRot = DirectX::XMQuaternionInverse(pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vRot.Convert());
+				//_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot = Vector4(DirectX::XMQuaternionMultiply(_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot.Convert(), vConjugatedRootRot));
 				
-				//_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot = Vector4(DirectX::XMQuaternionMultiply(_newAnim->vecXmRotVector[j], _newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot.Convert()));
-				
-				DirectX::XMVECTOR vConjugatedRootRot = DirectX::XMQuaternionInverse(pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vRot.Convert());
-				_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot = Vector4(DirectX::XMQuaternionMultiply(_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot.Convert(), vConjugatedRootRot));
-				
-				//Quaternion Inverse : 쿼터니온 회전을 역전한다
-				//함정 : 쿼터니온의 역전은 오일러 축 회전 순서의 역전 역시 의미한다. 즉 XYZ 축의 회전은 ZYX 축의 회전을 의미한다.
-				//따라서 Conjugate(복소수, Inverse)는 지금 하려는 축 회전의 초기화와는 거리가 멀다
-				//눈물을 머금고 또 오일러 축으로 변환...
-				//Vector3 vParentEulerRot;
-				//Vector3 vEulerRot;
-				//to_Euler_Angle(_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot, vEulerRot);
-				//to_Euler_Angle(pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vRot, vParentEulerRot);
-				//vEulerRot -= vParentEulerRot;
-				//vEulerRot -= Vector3(-1.f, 160.f, -13.f);
-				//vEulerRot = vEulerRot - Vector4(0.f, 0.9848078f, 0.f, 0.1736482f);
-				//Vector4 vQuat;
-				//Vector4 vQuat = Vector4(0.f, 0.9848078f, 0.f, 0.1736482f);
-				//EulertoQuat(vEulerRot, vQuat);
+				//_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vScale /= pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vScale;
+				//세 부분을 따로 나누지 말고, Affine Matrix로 변환한 이후 부모행렬의 역행렬을 구하고 이 값을 다시 Decompose해보자
+				Matrix matParentMatBone;
+				XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 
-				//_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot = vQuat;
+				Matrix matCurrPartBone;
 
-				_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vScale /= pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vScale;
+				matParentMatBone = DirectX::XMMatrixAffineTransformation(pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vScale.Convert()
+					, vZero, pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vRot.Convert(), pAnim->vecKeyFrame[iRootParentIndex]->vecKeyFrame[j]->vPos.Convert());
+
+				matCurrPartBone = DirectX::XMMatrixAffineTransformation(_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vScale.Convert()
+					, vZero, _newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot.Convert(), _newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vPos.Convert());
+
+				matParentMatBone.Inverse();
+				matCurrPartBone *= matParentMatBone;
+
+				XMVECTOR xmVecPos;
+				XMVECTOR xmVecRot;
+				XMVECTOR xmVecScale;
+				DirectX::XMMatrixDecompose(&xmVecScale, &xmVecRot, &xmVecPos, matCurrPartBone.matrix);
+
+				_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vPos = Vector3(xmVecPos);
+				_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vRot = Vector4(xmVecRot);
+				_newAnim->vecKeyFrame[i]->vecKeyFrame[j]->vScale = Vector3(xmVecScale);
 			}
 		}
 
@@ -2825,6 +2983,104 @@ bool _tagPartialAnim::LoadPartAnimFromNewFile(const std::wstring & filePath, con
 				fread(&pKeyFrame->vRot, sizeof(Vector4), 1, pFile);
 			}
 		}
+	}
+
+
+	fclose(pFile);
+
+	return true;
+}
+
+bool _tagPartialAnim::LoadPartClipFromFile(const std::string & strClipKey, std::wstring & filePath, const std::string & strPathTag)
+{
+	FILE *pFile = nullptr;
+
+	std::wstring str;
+
+	str = PUN::CPathManager::GetInst()->FindPath(MESH_DATA_PATH);
+	str += filePath;
+
+	_wfopen_s(&pFile, str.c_str(), TEXT("rb"));
+
+	if (!pFile)
+		return false;
+
+	char strBuf[1024] = {};
+
+	fread(strBuf, sizeof(float), 1, pFile);
+	fread(strBuf, sizeof(float), 1, pFile);
+
+	// 애니메이션 클립정보 >> 불필요
+	size_t iCount = 0, iLength = 0;
+	fread(&iCount, sizeof(size_t), 1, pFile);
+
+	char	strDefaultClip[256] = {};
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	fread(strDefaultClip, sizeof(char),
+		iLength, pFile);
+
+	char	strCurClip[256] = {};
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	fread(strCurClip, sizeof(char), iLength, pFile);
+
+	for (int l = 0; l < iCount; ++l)
+	{
+		PANIMATIONCLIP	pClip = new ANIMATIONCLIP;
+
+		// 애니메이션 클립 키를 저장한다.
+		char	strClipName[256] = {};
+		fread(&iLength, sizeof(size_t), 1, pFile);
+		fread(strClipName, sizeof(char), iLength, pFile);
+		//std::cout << strClipName << std::endl;
+
+		pClip->strName = strClipKey;
+		pClip->iChangeFrame = 0;
+
+		fread(&pClip->eOption, sizeof(ANIMATION_OPTION), 1, pFile);
+
+		fread(&pClip->fStartTime, sizeof(float), 1, pFile);
+		fread(&pClip->fEndTime, sizeof(float), 1, pFile);
+		fread(&pClip->fTimeLength, sizeof(float), 1, pFile);
+		fread(&pClip->fFrameTime, sizeof(float), 1, pFile);
+		fread(&pClip->fPlayTime, sizeof(float), 1, pFile);
+		fread(&pClip->iFrameMode, sizeof(int), 1, pFile);
+		fread(&pClip->iStartFrame, sizeof(int), 1, pFile);
+		fread(&pClip->iEndFrame, sizeof(int), 1, pFile);
+		fread(&pClip->iFrameLength, sizeof(int), 1, pFile);
+
+		size_t	iFrameCount = 0;
+
+		fread(&iFrameCount, sizeof(size_t), 1, pFile);
+
+		for (size_t i = 0; i < iFrameCount; ++i)
+		{
+			PBONEKEYFRAME	pBoneKeyFrame = new BONEKEYFRAME;
+			pClip->vecKeyFrame.push_back(pBoneKeyFrame);
+
+			fread(&pBoneKeyFrame->iBoneIndex, sizeof(int), 1,
+				pFile);
+
+			size_t	iBoneFrameCount = 0;
+
+			fread(&iBoneFrameCount, sizeof(size_t), 1, pFile);
+
+			for (size_t j = 0; j < iBoneFrameCount; ++j)
+			{
+				PKEYFRAME	pKeyFrame = new KEYFRAME;
+				pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
+
+				fread(&pKeyFrame->dTime, sizeof(double), 1, pFile);
+				fread(&pKeyFrame->vPos, sizeof(Vector3), 1, pFile);
+				fread(&pKeyFrame->vScale, sizeof(Vector3), 1, pFile);
+				fread(&pKeyFrame->vRot, sizeof(Vector4), 1, pFile);
+			}
+		}
+
+		//클립이 완성되었으니, 이 클립으로 부분 애니메이션을 만든다
+		LoadPartAnimFromExistingClip(pClip);
+
+		//이제 클립은 무의미하다
+		delete pClip;
 	}
 
 

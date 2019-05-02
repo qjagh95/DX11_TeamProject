@@ -13,6 +13,7 @@
 #include "Component/Light.h"
 #include "Core.h"
 #include "Component/ColliderOBB3D.h"
+#include "Component/ColliderSphere.h"
 PUN_USING
 
 unordered_map<class CScene*, unordered_map<string, CGameObject*>> CGameObject::m_mapPrototype;
@@ -1074,20 +1075,38 @@ void CGameObject::Save(BinaryWrite* _pInstBW)
 	// Transform
 	m_pTransform->Save(_pInstBW);
 
-	// Component Count
-	_pInstBW->WriteData((int)m_ComList.size());
-
-	// Save Component
+	int iSize = 0;
 	list<CComponent*>::iterator   iter;
 	list<CComponent*>::iterator   iterEnd = m_ComList.end();
 	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
 	{
-		// EnumType
 		int iType = (int)((*iter)->m_eComType);
-		_pInstBW->WriteData(iType);
 
 		if (iType == CT_END || (*iter)->GetTag() == "PickingCollider")
 			continue;
+
+		++iSize;
+	}
+	// Component Count
+	_pInstBW->WriteData(iSize);
+
+	// Save Component
+
+	iterEnd = m_ComList.end();
+	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
+	{
+		int iType = (int)((*iter)->m_eComType);
+
+		if (iType == CT_END || (*iter)->GetTag() == "PickingCollider")
+			continue;
+
+		// EnumType
+		_pInstBW->WriteData(iType);
+
+		if (iType == CT_COLLIDER)
+		{
+			_pInstBW->WriteData((int)((CCollider*)(*iter))->m_eCollType);
+		}
 
 		// Call Save Function
 		(*iter)->Save(_pInstBW);
@@ -1102,7 +1121,97 @@ void CGameObject::Save(BinaryWrite* _pInstBW)
 
 void CGameObject::Load(BinaryRead* _pInstBR)
 {
-	// Transform
+	//// Transform
+	//m_pTransform->Load(_pInstBR);
+
+	//// Read Component
+	//CComponent* pComp = nullptr;
+	//int compSize = _pInstBR->ReadInt();
+	//for (size_t i = 0; i < (int)compSize; ++i)
+	//{
+	//	pComp = nullptr;
+	//	int iType = _pInstBR->ReadInt();
+	//	COMPONENT_TYPE eCompType = (COMPONENT_TYPE)iType;
+	//	switch (eCompType)
+	//	{
+	//		case CT_RENDERER:
+	//		{
+	//			// Renderer Component 초기화할 때 Material Component가 자동으로 등록된다.
+	//			pComp = AddComponent<CRenderer>("Renderer");
+	//			break;
+	//		}
+	//		case CT_CAMERA:
+	//		{
+	//			pComp = AddComponent<CCamera>("Camera");
+	//			break;
+	//		}
+	//		case CT_ANIMATION2D:
+	//		{
+	//			break;
+	//		}
+	//		case CT_ANIMATION:
+	//		{
+	//			pComp = AddComponent<CAnimation>("Animation");
+	//			break;
+	//		}
+	//		case CT_COLLIDER:
+	//		{	
+	//			int iCollType = 0;
+	//			_pInstBR->ReadData(iCollType);
+
+	//			switch (iCollType)
+	//			{
+	//			case CT_SPHERE:
+	//			{
+	//				pComp = AddComponent<CColliderSphere>("ColliderSphere");
+	//			}
+	//				break;
+	//			case CT_OBB3D:
+	//			{
+	//				pComp = AddComponent<CColliderOBB3D>("OBB3D");
+	//			}
+	//				break;
+	//			}
+
+	//			break;
+	//		}
+	//		case CT_SOUND:
+	//		{
+	//			break;
+	//		}
+	//		case CT_LIGHT:
+	//		{
+	//			pComp = AddComponent<CLight>("Light");
+	//			break;
+	//		}
+	//		case CT_VOLUMEFOG:
+	//		{
+	//			break;
+	//		}
+	//		case CT_DECAL:
+	//		{
+	//			break;
+	//		}
+	//		case CT_PARTICLE:
+	//		{
+	//			break;
+	//		}
+	//		default:
+	//		{
+	//			break;
+	//		}
+	//	}// end of switch
+
+	//	// Call Load Function
+	//	if (pComp != nullptr)
+	//	{
+	//		pComp->Load(_pInstBR);
+	//	}
+	//	SAFE_RELEASE(pComp);
+	//}
+
+	///////////////////////이전 코드///////////////////////////////////////
+		// Transform
 	m_pTransform->Load(_pInstBR);
 
 	// Read Component
@@ -1115,55 +1224,55 @@ void CGameObject::Load(BinaryRead* _pInstBR)
 		COMPONENT_TYPE eCompType = (COMPONENT_TYPE)iType;
 		switch (eCompType)
 		{
-			case CT_RENDERER:
-			{
-				// Renderer Component 초기화할 때 Material Component가 자동으로 등록된다.
-				pComp = AddComponent<CRenderer>("Renderer");
-				break;
-			}
-			case CT_CAMERA:
-			{
-				pComp = AddComponent<CCamera>("Camera");
-				break;
-			}
-			case CT_ANIMATION2D:
-			{
-				break;
-			}
-			case CT_ANIMATION:
-			{
-				pComp = AddComponent<CAnimation>("Animation");
-				break;
-			}
-			case CT_COLLIDER:
-			{
-				break;
-			}
-			case CT_SOUND:
-			{
-				break;
-			}
-			case CT_LIGHT:
-			{
-				pComp = AddComponent<CLight>("Light");
-				break;
-			}
-			case CT_VOLUMEFOG:
-			{
-				break;
-			}
-			case CT_DECAL:
-			{
-				break;
-			}
-			case CT_PARTICLE:
-			{
-				break;
-			}
-			default:
-			{
-				break;
-			}
+		case CT_RENDERER:
+		{
+			// Renderer Component 초기화할 때 Material Component가 자동으로 등록된다.
+			pComp = AddComponent<CRenderer>("Renderer");
+			break;
+		}
+		case CT_CAMERA:
+		{
+			pComp = AddComponent<CCamera>("Camera");
+			break;
+		}
+		case CT_ANIMATION2D:
+		{
+			break;
+		}
+		case CT_ANIMATION:
+		{
+			pComp = AddComponent<CAnimation>("Animation");
+			break;
+		}
+		case CT_COLLIDER:
+		{
+			break;
+		}
+		case CT_SOUND:
+		{
+			break;
+		}
+		case CT_LIGHT:
+		{
+			pComp = AddComponent<CLight>("Light");
+			break;
+		}
+		case CT_VOLUMEFOG:
+		{
+			break;
+		}
+		case CT_DECAL:
+		{
+			break;
+		}
+		case CT_PARTICLE:
+		{
+			break;
+		}
+		default:
+		{
+			break;
+		}
 		}// end of switch
 
 		// Call Load Function
@@ -1173,6 +1282,7 @@ void CGameObject::Load(BinaryRead* _pInstBR)
 		}
 		SAFE_RELEASE(pComp);
 	}
+
 }
 
 CGameObject* CGameObject::GetParent()

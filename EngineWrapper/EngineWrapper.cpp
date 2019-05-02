@@ -374,3 +374,78 @@ void EngineWrapper::CoreWrapper::SetGridSize(int Value)
 
 	getLand->SetGridLineSize(Value);
 }
+
+cli::array<String^>^ EngineWrapper::CoreWrapper::GetVecObjCollTag()
+{
+	const vector<string>* vecObjCollTag;
+	vecObjCollTag = PUN::CEditManager::GetInst()->GetVecObjCollTag();
+	cli::array<String^>^ arrStrMarshalList = gcnew cli::array<String^>((int)vecObjCollTag->size());
+
+	// Marshaling
+	for (int i = 0; i < (int)vecObjCollTag->size(); ++i)
+	{
+		String^ strMarshal = ConvertMarshal<String^, string>((*vecObjCollTag)[i]);
+		arrStrMarshalList[i] = strMarshal;
+	}
+
+	return arrStrMarshalList;
+}
+
+cli::array<float>^ EngineWrapper::CoreWrapper::GetOBBLength()
+{
+	Vector3 vLength = PUN::CEditManager::GetInst()->GetOBBLength();
+	cli::array<float>^ arrMarshalList = gcnew cli::array<float>(3);
+	arrMarshalList[0] = vLength.x;
+	arrMarshalList[1] = vLength.y;
+	arrMarshalList[2] = vLength.z;
+
+	return arrMarshalList;
+}
+
+float EngineWrapper::CoreWrapper::GetSphereRadius()
+{
+	return CEditManager::GetInst()->GetSphereRadius();
+}
+
+cli::array<float>^ EngineWrapper::CoreWrapper::GetOBBCenter()
+{
+	Vector3 vLength = PUN::CEditManager::GetInst()->GetOBBRelativeCenter();
+	cli::array<float>^ arrMarshalList = gcnew cli::array<float>(3);
+	arrMarshalList[0] = vLength.x;
+	arrMarshalList[1] = vLength.y;
+	arrMarshalList[2] = vLength.z;
+
+	return arrMarshalList;
+}
+
+cli::array<float>^ EngineWrapper::CoreWrapper::GetSphereCenter()
+{
+	Vector3  vLength = PUN::CEditManager::GetInst()->GetSphereCenter();
+	cli::array<float>^ arrMarshalList = gcnew cli::array<float>(3);
+	arrMarshalList[0] = vLength.x;
+	arrMarshalList[1] = vLength.y;
+	arrMarshalList[2] = vLength.z;
+
+	return arrMarshalList;
+}
+
+int EngineWrapper::CoreWrapper::GetCollType()
+{
+	return CEditManager::GetInst()->GetCollType();
+}
+
+bool EngineWrapper::CoreWrapper::FindActiveCollider(String ^ _strTag)
+{
+	string strColliderTag = ConvertMarshal<string, String^>(_strTag);
+	return CEditManager::GetInst()->FindActiveCollider(strColliderTag);
+}
+
+void EngineWrapper::CoreWrapper::SetSphereColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dRadius)
+{
+	PUN::CEditManager::GetInst()->SetSphereColliderInfo((float)dCenterX, (float)dCenterY, (float)dCenterZ, (float)dRadius);
+}
+
+void EngineWrapper::CoreWrapper::SetOBBColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dLengthX, double dLengthY, double dLengthZ)
+{
+	PUN::CEditManager::GetInst()->SetOBB3DColliderInfo((float)dCenterX, (float)dCenterY, (float)dCenterZ, (float)dLengthX, (float)dLengthY, (float)dLengthZ);
+}

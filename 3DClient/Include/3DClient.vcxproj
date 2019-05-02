@@ -202,6 +202,7 @@
     <ClInclude Include="UserComponent\Battery.h" />
     <ClInclude Include="UserComponent\BatteryIcon.h" />
     <ClInclude Include="UserComponent\Bed.h" />
+    <ClInclude Include="UserComponent\BigIcon.h" />
     <ClInclude Include="UserComponent\Cam_Func_Header.hpp" />
     <ClInclude Include="UserComponent\Cigarette.h" />
     <ClInclude Include="UserComponent\CigaretteIcon.h" />
@@ -226,12 +227,17 @@
     <ClInclude Include="UserComponent\Locker.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Move_Func_Header.hpp" />
+    <ClInclude Include="UserComponent\PhoneMessage.h" />
+    <ClInclude Include="UserComponent\Pistol.h" />
     <ClInclude Include="UserComponent\Player.h" />
     <ClInclude Include="UserComponent\Player_Cam_Value.hpp" />
     <ClInclude Include="UserComponent\Player_Interact_Value.hpp" />
     <ClInclude Include="UserComponent\Player_Item_Value.hpp" />
     <ClInclude Include="UserComponent\Player_Move_Value.hpp" />
     <ClInclude Include="UserComponent\Player_Weapon_Value.hpp" />
+    <ClInclude Include="UserComponent\ST3_Pivot.h" />
+    <ClInclude Include="UserComponent\ST3_SlientTrace.h" />
+    <ClInclude Include="UserComponent\ST3_Suprise.h" />
     <ClInclude Include="UserComponent\Tablet.h" />
     <ClInclude Include="UserComponent\TabletIcon.h" />
     <ClInclude Include="UserComponent\Trace.h" />
@@ -254,6 +260,7 @@
     <ClCompile Include="UserComponent\Battery.cpp" />
     <ClCompile Include="UserComponent\BatteryIcon.cpp" />
     <ClCompile Include="UserComponent\Bed.cpp" />
+    <ClCompile Include="UserComponent\BigIcon.cpp" />
     <ClCompile Include="UserComponent\Cigarette.cpp" />
     <ClCompile Include="UserComponent\CigaretteIcon.cpp" />
     <ClCompile Include="UserComponent\Document.cpp" />
@@ -274,6 +281,8 @@
     <ClCompile Include="UserComponent\Inventory.cpp" />
     <ClCompile Include="UserComponent\Locker.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
+    <ClCompile Include="UserComponent\PhoneMessage.cpp" />
+    <ClCompile Include="UserComponent\Pistol.cpp" />
     <ClCompile Include="UserComponent\Player.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_CallBack.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_cam.cpp" />
@@ -281,6 +290,9 @@
     <ClCompile Include="UserComponent\PlayerFunc_Items.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Move.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Weapon.cpp" />
+    <ClCompile Include="UserComponent\ST3_Pivot.cpp" />
+    <ClCompile Include="UserComponent\ST3_SlientTrace.cpp" />
+    <ClCompile Include="UserComponent\ST3_Suprise.cpp" />
     <ClCompile Include="UserComponent\Tablet.cpp" />
     <ClCompile Include="UserComponent\TabletIcon.cpp" />
     <ClCompile Include="UserComponent\Trace.cpp" />

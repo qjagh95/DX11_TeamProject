@@ -282,6 +282,14 @@ void CCollider::Render(float fTime)
 		m_pWireFrame->ResetState();
 }
 
+void CCollider::Save(BinaryWrite * _pInstBW)
+{
+}
+
+void CCollider::Load(BinaryRead * _pInstBR)
+{
+}
+
 void CCollider::OnCollisionEnter(CCollider * pDest, float fTime)
 {
 	list<function<void(CCollider*, CCollider*, float)>>::iterator	iter;

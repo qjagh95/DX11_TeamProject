@@ -176,6 +176,69 @@ CColliderOBB3D * CColliderOBB3D::Clone()
 	return new CColliderOBB3D(*this);
 }
 
+void CColliderOBB3D::Save(BinaryWrite * _pInstBW)
+{
+	//// Save
+	//Tag 历厘
+	_pInstBW->WriteData(m_strTag);
+	//Collider Info 历厘
+	_pInstBW->WriteData(m_tInfo.vCenter);
+	_pInstBW->WriteData(m_tInfo.vAxis[0]);
+	_pInstBW->WriteData(m_tInfo.vAxis[1]);
+	_pInstBW->WriteData(m_tInfo.vAxis[2]);
+	_pInstBW->WriteData(m_tInfo.vLength);
+	_pInstBW->WriteData(m_tRelativeInfo.vCenter);
+	_pInstBW->WriteData(m_tRelativeInfo.vAxis[0]);
+	_pInstBW->WriteData(m_tRelativeInfo.vAxis[1]);
+	_pInstBW->WriteData(m_tRelativeInfo.vAxis[2]);
+	_pInstBW->WriteData(m_tRelativeInfo.vLength);
+	_pInstBW->WriteData(m_strCollisionGroup);
+	_pInstBW->WriteData(m_MyTypeName);
+	
+	int iVecExceptTypeNameSize = m_vecContinueName.size();
+	_pInstBW->WriteData(iVecExceptTypeNameSize);
+
+	for (size_t i = 0; i < iVecExceptTypeNameSize; ++i)
+	{
+		_pInstBW->WriteData(m_vecContinueName[i]);
+	}
+
+	_pInstBW->WriteData((int)m_eColliderID);
+
+}
+
+void CColliderOBB3D::Load(BinaryRead * _pInstBR)
+{
+	//Tag 历厘
+	_pInstBR->ReadData(m_strTag);
+	//Collider Info 历厘
+	_pInstBR->ReadData(m_tInfo.vCenter);
+	_pInstBR->ReadData(m_tInfo.vAxis[0]);
+	_pInstBR->ReadData(m_tInfo.vAxis[1]);
+	_pInstBR->ReadData(m_tInfo.vAxis[2]);
+	_pInstBR->ReadData(m_tInfo.vLength);
+	_pInstBR->ReadData(m_tRelativeInfo.vCenter);
+	_pInstBR->ReadData(m_tRelativeInfo.vAxis[0]);
+	_pInstBR->ReadData(m_tRelativeInfo.vAxis[1]);
+	_pInstBR->ReadData(m_tRelativeInfo.vAxis[2]);
+	_pInstBR->ReadData(m_tRelativeInfo.vLength);
+	_pInstBR->ReadData(m_strCollisionGroup);
+	_pInstBR->ReadData(m_MyTypeName);
+
+	int iVecExceptTypeNameSize = 0;
+	_pInstBR->ReadData(iVecExceptTypeNameSize);
+
+	for (size_t i = 0; i < iVecExceptTypeNameSize; ++i)
+	{
+		string strTemp;
+		_pInstBR->ReadData(strTemp);
+		m_vecContinueName.push_back(strTemp);
+	}
+	int iColliderID = 0;
+	_pInstBR->ReadData(iColliderID);
+	m_eColliderID = ((COLLIDER_ID)iColliderID);
+}
+
 bool CColliderOBB3D::Collision(CCollider * pDest, float fTime)
 {
 	switch (pDest->GetColliderType())

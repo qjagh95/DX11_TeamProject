@@ -298,5 +298,17 @@ namespace EngineWrapper
 			CEditManager::GetInst()->AddColliderSphere((float)dCenterX, (float)dCenterY, (float)dCenterZ,(float)dRadius
 				, iColliderID, strTag, strCollTypeTag, strExceptTypeTag);
 		}
+
+		cli::array<String^>^ GetVecObjCollTag();
+		cli::array<float>^ GetOBBLength();
+		float GetSphereRadius();
+		cli::array<float>^ GetOBBCenter();
+		cli::array<float>^ GetSphereCenter();
+		int GetCollType();
+
+		bool FindActiveCollider(String ^ _strTag);
+		void SetSphereColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dRadius);
+		void SetOBBColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dLengthX, double dLengthY, double dLengthZ);
+
 	};
 }

@@ -123,7 +123,7 @@ typedef struct PUN_DLL _tagPartialClip
 	vector<PANIMATIONCALLBACK>	vecCallback;
 	vector<XMVECTOR> vecXmRotVector;
 
-	_tagPartialClip():
+	_tagPartialClip() :
 		eOption(AO_LOOP),
 		fStartTime(0.f),
 		fEndTime(0.f),
@@ -141,7 +141,7 @@ typedef struct PUN_DLL _tagPartialClip
 		vecXmRotVector.clear();
 	}
 
-	~_tagPartialClip() 
+	~_tagPartialClip()
 	{
 		Safe_Delete_VecList(vecKeyFrame);
 	}
@@ -149,6 +149,7 @@ typedef struct PUN_DLL _tagPartialClip
 
 typedef struct PUN_DLL _tagPartialAnim
 {
+	
 	bool bActivated = false;
 	std::unordered_map<std::string, PPARTCLIP> mapPartClips;
 	std::vector<int> vecPartIdx;
@@ -163,7 +164,7 @@ typedef struct PUN_DLL _tagPartialAnim
 	bool				bKeepBlending = false;
 	bool				bEnd;
 	float				fPartAnimationGTime;
-	float				fClipProgress= 0.f;
+	float				fClipProgress = 0.f;
 	float				fChangeTime = 0.25f;
 	float				fChangeLimitTime = 0.f;
 	int					iFrameMode = 0;
@@ -171,12 +172,15 @@ typedef struct PUN_DLL _tagPartialAnim
 	Vector4				vBlendRot;
 	Vector3				vBlendPos;
 	int					iRefCnt;
+	Matrix				matCustomParent;
+	bool				bUseCustomParent;
 
 	//vecPartIdx, iRootParentIndex가 값이 설정된 이후 실행할 것
 	bool LoadPartAnimFromExistingClip(PANIMATIONCLIP pAnim);
 	bool LoadPartAnimFromNewFile(const std::wstring& filePath, const std::string& strPathTag = MESH_DATA_PATH);
+	bool LoadPartClipFromFile(const std::string& strClipKey, std::wstring& filePath, const std::string& strPathTag = MESH_DATA_PATH);
 
-	_tagPartialAnim():
+	_tagPartialAnim() :
 		pDefaultClip(nullptr),
 		pCurClip(nullptr),
 		pNextClip(nullptr),
@@ -187,9 +191,12 @@ typedef struct PUN_DLL _tagPartialAnim
 		fChangeTime(0.25f),
 		fChangeLimitTime(0.f),
 		iFrameMode(0),
-		iRefCnt(1)
-	{}
-	~_tagPartialAnim() 
+		iRefCnt(1),
+		bUseCustomParent(false)
+	{
+		matCustomParent.Identity();
+	}
+	~_tagPartialAnim()
 	{
 		Safe_Delete_Map(mapPartClips);
 	}
@@ -205,6 +212,7 @@ typedef struct PUN_DLL _tagPartialAnim
 		if (iRefCnt < 1)
 			delete this;
 	}
+
 	/*
 	기존의 ANIMATIONCLIP 의 본들이 전부 부모에서 직접 상속받은 위치를 기반으로 넘어가기 때문에
 	부분 애니메이션을 돌리기 위해서는 이 부모의 행렬의 역행렬들을 곱해줘야 한다.
@@ -229,7 +237,7 @@ public:
 private:
 
 	std::vector<PPARTANIM> m_vecPartialAnim;
-	
+
 	vector<PBONE>		m_vecBones;
 	ID3D11Texture2D*	m_pBoneTex;
 	ID3D11ShaderResourceView*	m_pBoneRV;
@@ -245,20 +253,21 @@ private:
 	float					m_fClipProgress;
 	float					m_fChangeTime;
 	float					m_fChangeLimitTime;
+	bool					m_bSkipBlending;
 	float					m_fFrameTime;
 	int						m_iFrameMode;
 	vector<Matrix*>			m_vecBoneMatrix;
 	Vector3					m_vBlendScale;
 	Vector4					m_vBlendRot;
 	Vector3					m_vBlendPos;
-	
+
 public:
 	const list<string>* GetAddClipName()	const;
 	void GetClipTagList(std::vector<std::string>* _vecstrList);
 public:
 	bool AddPartialClip(PPARTANIM partAnim);
 	PANIMATIONCLIP GetAnimClip(const std::string& strKey);
-	
+	void SetBlendSkip(bool bOn);
 	const Matrix* GetBoneMatrix(int iBoneIdx);
 	float GetCurrentClipTime();
 	void KeepBlendSet(bool on);
@@ -300,6 +309,7 @@ public:
 	bool Load(const char* pFileName, const string& strPathKey = MESH_DATA_PATH);
 	bool LoadFromFullPath(const TCHAR* pFullPath);
 	bool LoadFromFullPath(const char* pFullPath);
+	bool LoadFileAsClip(const char* clipName, const TCHAR* pFileName);
 	bool SaveBone(const TCHAR* pFileName, const string& strPathKey = MESH_PATH);
 	bool SaveBone(const char* pFileName, const string& strPathKey = MESH_PATH);
 	bool SaveBoneFromFullPath(const TCHAR* pFullPath);
@@ -317,9 +327,9 @@ public:
 
 	bool AddSocket(const string& strBoneName, const string& strSocketName);
 	void ClearAllSockets();
-	bool SetSocketObject(const string& strBoneName,	const string& strSocketName, class CGameObject* pObj);
-	bool SetSocketOffset(const string& strBoneName,	const string& strSocketName, const Vector3& vOffset);
-	bool SetSocketOffset(const string& strBoneName,	const string& strSocketName, float x, float y, float z);
+	bool SetSocketObject(const string& strBoneName, const string& strSocketName, class CGameObject* pObj);
+	bool SetSocketOffset(const string& strBoneName, const string& strSocketName, const Vector3& vOffset);
+	bool SetSocketOffset(const string& strBoneName, const string& strSocketName, float x, float y, float z);
 	bool SetSocketRotation(const string& strBoneName, const string& strSocketName, const Vector3& vRot);
 	bool SetSocketRotation(const string& strBoneName, const string& strSocketName, float x, float y, float z);
 	bool SetSocketRotationX(const string& strBoneName, const string& strSocketName, float x);

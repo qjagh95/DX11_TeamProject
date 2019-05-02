@@ -36,6 +36,7 @@ private:
 	class CGizmo*		m_pYGizmo;
 	class CGizmo*		m_pZGizmo;
 	CGameObject*		m_pObject;
+	class CCollider*    m_pSelectCollider;
 	CGameObject*		m_pXGizmoObj;
 	CGameObject*		m_pYGizmoObj;
 	CGameObject*		m_pZGizmoObj;
@@ -51,10 +52,16 @@ private:
 	bool				m_bSelectNaviMove;
 	vector<string>		m_vecstrObjList;
 	vector<struct _tagBoneKeyFrame*> m_vecDivideFrame;
-
+	std::vector<std::string> m_vecObjCollTag;
 public:
 	void SetFreeCamObj(CGameObject* _pObj);
 	void SetArm(class CArm* _pArm);
+public:
+	void GetObjFromCollTag();
+	const std::vector<std::string>* GetVecObjCollTag() const
+	{
+		return &m_vecObjCollTag;
+	}
 
 private:
 	enum eTransformType
@@ -171,6 +178,16 @@ public:
 	vector<Vector4> GetSpecular();
 
 	CLandScape * GetLandScape() const { return m_LandScape; }
+	/////////////////////////////Collider/////////////////////////
+	bool FindActiveCollider(const std::string& _strTag);
+	Vector3 GetOBBLength();
+	float GetSphereRadius();
+	Vector3 GetOBBRelativeCenter();
+	Vector3 GetSphereCenter();
+	int		GetCollType() const;
+	void SetSphereColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float fRadius);
+	void SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ);
+
 };
 
 PUN_END

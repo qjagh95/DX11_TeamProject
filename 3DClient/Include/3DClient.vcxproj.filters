@@ -73,6 +73,18 @@
     <Filter Include="02. UserComponent\01. Player\Effect">
       <UniqueIdentifier>{22eb19de-1c76-4d4a-8031-b6e8bc7e71e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\05. Item\DItem">
+      <UniqueIdentifier>{a2b08e41-8bf9-4b81-95a2-ef5570cea92e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\Icon">
+      <UniqueIdentifier>{94ca95f0-1dee-4c12-96c0-7f5aa9d5eee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\Document">
+      <UniqueIdentifier>{0e195324-f662-41b1-b975-31dcc895bf18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\ST3">
+      <UniqueIdentifier>{79047502-1e1b-41dd-b61c-c68b97523e2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -111,12 +123,6 @@
     <ClInclude Include="UserComponent\Human_Player.h">
       <Filter>02. UserComponent\01. Player</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Battery.h">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\BatteryIcon.h">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\Handycam.h">
       <Filter>02. UserComponent\04. UI</Filter>
     </ClInclude>
@@ -153,17 +159,11 @@
     <ClInclude Include="SceneComponent\RandScapeTestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="SceneComponent\JBH_Stage3.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
     <ClInclude Include="CommonSoundLoader.h">
       <Filter>소스 파일\CommonSound</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\DocxInven.h">
       <Filter>02. UserComponent\04. UI</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\Document.h">
-      <Filter>02. UserComponent\05. Item</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\Player_Cam_Value.hpp">
       <Filter>02. UserComponent\01. Player\Header_Value</Filter>
@@ -207,29 +207,59 @@
     <ClInclude Include="UserComponent\Hidable.h">
       <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Cigarette.h">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\CigaretteIcon.h">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\HealingPack.h">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\HealingPackIcon.h">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\HitEffectAlpha.h">
       <Filter>02. UserComponent\01. Player\Effect</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\HitEffectAnim.h">
       <Filter>02. UserComponent\01. Player\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Battery.h">
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\BatteryIcon.h">
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Cigarette.h">
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\CigaretteIcon.h">
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Document.h">
+      <Filter>02. UserComponent\05. Item\Document</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\HealingPack.h">
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\HealingPackIcon.h">
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Pistol.h">
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
+    </ClInclude>
     <ClInclude Include="UserComponent\Tablet.h">
-      <Filter>02. UserComponent\05. Item</Filter>
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\TabletIcon.h">
-      <Filter>02. UserComponent\05. Item</Filter>
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\BigIcon.h">
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\PhoneMessage.h">
+      <Filter>02. UserComponent\05. Item\Document</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\JBH_Stage3.h">
+      <Filter>01. SceneComponent\ST3</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Pivot.h">
+      <Filter>01. SceneComponent\ST3</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_SlientTrace.h">
+      <Filter>01. SceneComponent\ST3</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Suprise.h">
+      <Filter>01. SceneComponent\ST3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -262,12 +292,6 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Human_Player.cpp">
       <Filter>02. UserComponent\01. Player</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\Battery.cpp">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\BatteryIcon.cpp">
-      <Filter>02. UserComponent\05. Item</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Handycam.cpp">
       <Filter>02. UserComponent\04. UI</Filter>
@@ -317,9 +341,6 @@
     <ClCompile Include="SceneComponent\RandScapeTestScene.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="SceneComponent\JBH_Stage3.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
     <ClCompile Include="CommonSoundLoader.cpp">
       <Filter>소스 파일\CommonSound</Filter>
     </ClCompile>
@@ -328,9 +349,6 @@
     </ClCompile>
     <ClCompile Include="UserComponent\DocxInven.cpp">
       <Filter>02. UserComponent\04. UI</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\Document.cpp">
-      <Filter>02. UserComponent\05. Item</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\PlayerFunc_Items.cpp">
       <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
@@ -350,29 +368,59 @@
     <ClCompile Include="UserComponent\Hidable.cpp">
       <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\Cigarette.cpp">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\CigaretteIcon.cpp">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\HealingPack.cpp">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\HealingPackIcon.cpp">
-      <Filter>02. UserComponent\05. Item</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\HitEffectAlpha.cpp">
       <Filter>02. UserComponent\01. Player\Effect</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\HitEffectAnim.cpp">
       <Filter>02. UserComponent\01. Player\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="UserComponent\Battery.cpp">
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\BatteryIcon.cpp">
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Cigarette.cpp">
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\CigaretteIcon.cpp">
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Document.cpp">
+      <Filter>02. UserComponent\05. Item\Document</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\HealingPack.cpp">
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\HealingPackIcon.cpp">
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Pistol.cpp">
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
+    </ClCompile>
     <ClCompile Include="UserComponent\Tablet.cpp">
-      <Filter>02. UserComponent\05. Item</Filter>
+      <Filter>02. UserComponent\05. Item\DItem</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\TabletIcon.cpp">
-      <Filter>02. UserComponent\05. Item</Filter>
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\BigIcon.cpp">
+      <Filter>02. UserComponent\05. Item\Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\PhoneMessage.cpp">
+      <Filter>02. UserComponent\05. Item\Document</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\JBH_Stage3.cpp">
+      <Filter>01. SceneComponent\ST3</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Pivot.cpp">
+      <Filter>01. SceneComponent\ST3</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_SlientTrace.cpp">
+      <Filter>01. SceneComponent\ST3</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Suprise.cpp">
+      <Filter>01. SceneComponent\ST3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

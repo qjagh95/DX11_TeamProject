@@ -316,6 +316,7 @@ void CHuman_Player::AfterClone()
 {
 	
 	m_pTransform->SetLocalRotY(180.f);
+	m_pTransform->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	m_pHeadObj = PUN::CGameObject::CreateObject("Player_Daegari", m_pLayer);
 	m_pHeadObj->SetFrustrumCullUse(false);
 	m_pObject->SetFrustrumCullUse(false);
@@ -330,7 +331,7 @@ void CHuman_Player::AfterClone()
 	pTr->SetWorldScale(0.05f, 0.05f, 0.05f);
 
 	PUN::CRenderer*	pHeadRenderer = m_pHeadObj->AddComponent<PUN::CRenderer>("WeaponRenderer");
-	pHeadRenderer->SetMesh("head", TEXT("Head.FBX"), MESH_PATH);
+	pHeadRenderer->SetMesh("head", TEXT("Head.msh"));
 	pHeadRenderer->DontRenderMat(true);
 	pHeadRenderer->SetDecalEnable(false);
 
@@ -358,19 +359,14 @@ void CHuman_Player::AfterClone()
 	pHandycamObj->SetFrustrumCullUse(false);
 	m_pHandycam->Release();
 	CTransform*	pHandycamTr = pHandycamObj->GetTransform();
-	//pHandycamTr->SetWorldPos(0.f, 0.f, 0.f);
-	//pHandycamTr->SetWorldPos(0.1f, 0.1f, 0.1f);
-	//PUN::CRenderer *pCamRenderer = pHandycamObj->AddComponent<PUN::CRenderer>("renderer");
-	//pCamRenderer->SetMesh("cam",TEXT("Handycam.FBX"), MESH_PATH);
-	//pHandycamObj->SetEnable(false);
 
-	//SAFE_RELEASE(pCamRenderer);
 	SAFE_RELEASE(pHandycamTr);
 	SAFE_RELEASE(pHandycamObj);
 
 	//Handycam fake model
 	m_pCamModelObj = PUN::CGameObject::CreateObject("Handycam_model", m_pLayer, true);
 	pHandycamTr = m_pCamModelObj->GetTransform();
+	m_pCamModelObj->SetFrustrumCullUse(false);
 	//pHandycamTr->SetWorldPos(0.f, 0.f, 0.f);
 	pHandycamTr->SetWorldScale(m_pTransform->GetWorldScale());
 	pHandycamTr->SetLocalRot(-90.f, -60.f, -130.f);
@@ -382,19 +378,13 @@ void CHuman_Player::AfterClone()
 	SAFE_RELEASE(pHandycamTr);
 
 	m_pHandGun = PUN::CGameObject::CreateObject("Player_Gun", m_pLayer, true);
+	m_pHandGun->SetFrustrumCullUse(false);
 	pTr = m_pHandGun->GetTransform();
 	pTr->SetWorldScale(m_pTransform->GetWorldScale() * 1.5f);
 	pTr->SetLocalRot(-10.f, 145.f, 45.f);
 	//pTr->SetWorldPos(0.f, 0.f, 15.f);
-	pCamRenderer = m_pHandGun->AddComponent<PUN::CRenderer>("renderer");
-	pCamRenderer->SetMesh("gun", TEXT("glock_OnlyFire.FBX"), MESH_PATH);
-	//pCamRenderer->SetMesh("gun", TEXT("Enem_Cannibal.FBX"), MESH_PATH);
-	//pCamRenderer->SetMesh("gun", TEXT("Waylon2.msh"));
-	//pCamRenderer->SetMesh("gun", TEXT("shooter_anim.FBX"), MESH_PATH);
-	m_pHandGun->SetEnable(false);
 
 	SAFE_RELEASE(pTr);
-	SAFE_RELEASE(pCamRenderer);
 
 	/*CGameObject*	pTestObj = CGameObject::CreateObject("HitEffect", m_pLayer);
 	CHitEffectAlpha*	pTest = pTestObj->AddComponent<CHitEffectAlpha>("HitEffect");
@@ -520,37 +510,38 @@ int CHuman_Player::Input(float fTime)
 
 	if (_Input->KeyPress("G"))
 	{
-
-		if ((m_iState & PSTATUS_CAM_ON) == 0)
+		if ((m_iState & PSTATUS_GUN) == 0)
 		{
-			
-			m_fItemTakeTimerBuf = 0.f;
-			m_iState |= PSTATUS_CAM_TAKING_ON;
-			m_iState |= PSTATUS_CAM_ON;
-			m_pCamModelObj->SetEnable(true);
-			m_pPartCamAnim->bActivated = true;
-			m_pPartCamAnim->pNextClip = nullptr;
-			m_pPartCamAnim->pCurClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_raise")->second;
-			m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_idle")->second;
-		}
-		else
-		{
-			if ((m_iState & PSTATUS_CAM_TAKING_OFF) == 0)
+			if ((m_iState & PSTATUS_CAM_ON) == 0)
 			{
 				
-				m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_lower")->second;
-				m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("player_stand_idle")->second;
-				//m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_stand_idle")->second;
-				//player_stand_idle
 				m_fItemTakeTimerBuf = 0.f;
-
-				HandyCam_End();
-				m_iState |= PSTATUS_CAM_TAKING_OFF;
+				m_iState |= PSTATUS_CAM_TAKING_ON;
+				m_iState |= PSTATUS_CAM_ON;
+				m_pCamModelObj->SetEnable(true);
+				m_pPartCamAnim->bActivated = true;
+				m_pPartCamAnim->pNextClip = nullptr;
+				m_pPartCamAnim->pCurClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_raise")->second;
+				m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_idle")->second;
 			}
-			
+			else
+			{
+				if ((m_iState & PSTATUS_CAM_TAKING_OFF) == 0)
+				{
+					
+					m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_lower")->second;
+					m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("player_stand_idle")->second;
+					m_fItemTakeTimerBuf = 0.f;
+	
+					HandyCam_End();
+					m_iState |= PSTATUS_CAM_TAKING_OFF;
+				}
+				
+			}
 		}
-	}
 
+	}
+	
 	if (m_iState & PSTATUS_CAM_ON)
 	{
 		if (m_iState & PSTATUS_CAM_TAKING_ON)
@@ -605,8 +596,6 @@ int CHuman_Player::Input(float fTime)
 	if (_Input->KeyPress("Ctrl"))
 	{
 		m_iState |= PSTATUS_CROUCHING;
-		
-		//m_pAnimation->ChangeClip("player_stand_to_crouch");
 		m_fTimerBuf_State = 0.f;
 
 		std::string strSitDown = "JacketSitDown";
@@ -693,7 +682,7 @@ int CHuman_Player::Input(float fTime)
 	if (_Input->KeyPush("D"))
 	{
 		m_iDirFlag |= PMT_RIGHT;
-		
+
 		m_iState &= ~PSTATUS_STOPMOVE;
 		
 		if (m_iDirFlag & (PMT_FORWARD | PMT_BACKWARD))
@@ -753,10 +742,6 @@ int CHuman_Player::Input(float fTime)
 			//m_pAnimation->ChangeClip("player_jump_over_from_walk");
 		}
 	}
-
-
-	
-	
 
 
 	if (m_iState & PSTATUS_STOPMOVE)
@@ -893,7 +878,7 @@ int CHuman_Player::Input(float fTime)
 			if (m_vMoveDirection.z == 2.f)
 			{
 				m_iState ^= PSTATUS_SPRINT;
-				vMoveDiff *= 18.f;
+				vMoveDiff *= 4.f;
 				m_pAnimation->ChangeClip("player_walk_forward");
 			}
 	
@@ -1507,7 +1492,6 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 		m_pSound->LoadSounds(vecSoundKey);
 
 	SetAnimNotify();
-	//m_pAnimation->SetSocketOffset("Hero-L-Hand", "player_cam_hand", Vector3(5.0f, 10.0f, 0.0f));
 	AfterLoad();
 
 	return true;
@@ -1589,7 +1573,6 @@ void CHuman_Player::AfterLoad()
 	partAnim->vecPartIdx = m_vecIgnoreRightArmKey;
 	partAnim->bActivated = false;
 	partAnim->iRootParentIndex = 6;
-	
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_stand_idle"));
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_camcorder_raise"));
 	partAnim->mapPartClips.find("player_camcorder_raise")->second->eOption = PUN::AO_ONCE_RETURN;
@@ -1600,6 +1583,11 @@ void CHuman_Player::AfterLoad()
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_crouch_camcorder_idle"));
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_crouch_camcorder_raise"));
 	partAnim->LoadPartAnimFromExistingClip(m_pAnimation->FindClip("player_crouch_camcorder_lower"));
+	std::wstring wPath = L"shooter_takegun.anm";
+	partAnim->LoadPartClipFromFile("gun_take", wPath);
+	partAnim->mapPartClips.find("gun_take")->second->eOption = PUN::AO_ONCE_RETURN;
+	wPath = TEXT("shooter_idle.anm");
+	partAnim->LoadPartClipFromFile("gun_idle", wPath);
 	m_pAnimation->AddPartialClip(partAnim);
 
 	m_pPartCamAnim = partAnim;

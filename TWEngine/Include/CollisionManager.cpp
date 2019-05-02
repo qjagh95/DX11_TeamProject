@@ -533,8 +533,12 @@ void CCollisionManager::CollisionMouse2D(CGameObject* pMouseObj,
 					// 이전에 충돌되고 있었을 경우
 					else
 					{
-						pCollSrc->OnCollision(pCollDest, fTime);
-						pCollDest->OnCollision(pCollSrc, fTime);
+						if (pCollSrc->GetCallBackFunc() == false)
+						{
+							pCollSrc->OnCollision(pCollDest, fTime);
+							pCollDest->OnCollision(pCollSrc, fTime);
+							pCollSrc->SetCallBackFunc(true);
+						}
 
 						bMouseCollision = true;
 					}

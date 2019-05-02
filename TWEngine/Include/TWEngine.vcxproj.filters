@@ -180,6 +180,9 @@
     <Filter Include="06. Component\19.Parkour">
       <UniqueIdentifier>{9a91e4da-7893-4259-9f49-f3cab4230235}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. BehaviorTree\NPC">
+      <UniqueIdentifier>{13aea562-b6dc-4a57-8883-65cab5fc5340}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -448,6 +451,9 @@
     </ClCompile>
     <ClCompile Include="Component\Item.cpp">
       <Filter>06. Component\03. UserComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\NPCBase.cpp">
+      <Filter>07. BehaviorTree\NPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -735,6 +741,9 @@
     </ClInclude>
     <ClInclude Include="Component\Item.h">
       <Filter>06. Component\03. UserComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\NPCBase.h">
+      <Filter>07. BehaviorTree\NPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
