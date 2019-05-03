@@ -43,15 +43,16 @@ private:
 	static CGameObject* FindPrototype(class CScene* pScene, const string& strName);
 
 private:
-	class CScene*	m_pScene;
-	class CLayer*	m_pLayer;
-	string			m_strLayerName;
-	RENDER_GROUP	m_eRenderGroup;
-	int				m_iLayerZOrder;
-	int				m_iObjectListIdx;
-	bool			m_isFrustumCull;
-	bool			m_bSave;
+	class CScene*			m_pScene;
+	class CLayer*			m_pLayer;
 	class CColliderOBB3D* m_pPickingCollSphere;
+	int						m_iLayerZOrder;
+	int						m_iObjectListIdx;
+	bool					m_isFrustumCull;
+	bool					m_bSave;
+	string					m_strLayerName;
+	RENDER_GROUP			m_eRenderGroup;
+	STAGE_SECTION_TYPE		m_eSectionType;
 	//bool			m_bUseFrustumCull;
 	
 public:
@@ -80,8 +81,12 @@ public:
 	Vector3 GetWorldPos()				const;
 	Vector3 GetWorldRot()				const;
 	Vector3 GetWorldScale()				const;
+	Vector3 GetWorldMove()				const;
 	Vector3 GetWorldAxis(AXIS eAxis)	const;
 	bool GetisChild() const { return m_isChild; }
+
+	STAGE_SECTION_TYPE GetStageSection() const;
+	void SetStageSection(int eStageSection);
 
 public:
 	void SetRenderGroup(RENDER_GROUP eGroup);

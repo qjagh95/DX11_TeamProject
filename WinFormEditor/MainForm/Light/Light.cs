@@ -87,6 +87,73 @@ namespace WinFormEditor
             m_editForm.AddLogString("Light 컴포넌트가 등록되었습니다.");
         }
 
+        public void Add_6_Way_GlobalLight()
+        {
+            CoreWrapper wrapper = m_editForm.GetWrapper();
+            string[] arrLightTag = wrapper.GetGlobalLightList();
+
+            // Default_GlobalLight_ 6개의 오브젝트를 삭제한다.
+            ListBox objListBox = m_editForm.GetObjectListBox();
+            for (int i = 0; i < arrLightTag.Length; ++i)
+            {
+                string strTag = arrLightTag[i];
+                int findIndex = objListBox.FindString(strTag);
+                if (findIndex != ListBox.NoMatches)
+                {
+                    objListBox.Items.RemoveAt(findIndex);
+                    m_editForm.GetObjInfo().Remove(strTag);
+                }
+            }
+
+            // LightLayer에 Default_GlobalLight_ 오브젝트가 있는지 검사 후 없다면 생성한다.
+            wrapper.CreateDefaultGlobalLight();
+
+            // 추가
+            Transform trInst = m_editForm.GetTransformInst();
+            float[] arrFLScale, arrFLRot, arrFLPos, arrFWScale, arrFWRot, arrFWPos, arrFPivot;
+            for (int i = 0; i < arrLightTag.Length; ++i)
+            {
+                string strTag = arrLightTag[i];
+
+                // Local Transform
+                arrFLScale = trInst.ObjGetLocalTransform(strTag, "Light", eTransformType.TT_SCALE);
+                arrFLRot   = trInst.ObjGetLocalTransform(strTag, "Light", eTransformType.TT_ROTATE);
+                arrFLPos   = trInst.ObjGetLocalTransform(strTag, "Light", eTransformType.TT_POSITION);
+
+                // World Transform
+                arrFWScale = trInst.ObjGetWorldTransform(strTag, "Light", eTransformType.TT_SCALE);
+                arrFWRot   = trInst.ObjGetWorldTransform(strTag, "Light", eTransformType.TT_ROTATE);
+                arrFWPos   = trInst.ObjGetWorldTransform(strTag, "Light", eTransformType.TT_POSITION);
+
+                // World Pivot
+                arrFPivot = trInst.ObjGetWorldPivot(strTag, "Light");
+
+                ObjectInfo info = new ObjectInfo
+                {
+                    strLayerTag     = "Light",
+
+                    // MeshName
+                    meshInfo        = new ObjectInfo.MeshInfo(""),
+
+                    // Vector
+                    vecLScale       = new ObjectInfo.Vector3(arrFLScale),
+                    vecLRotate      = new ObjectInfo.Vector3(arrFLRot),
+                    vecLPosition    = new ObjectInfo.Vector3(arrFLPos),
+                    vecWScale       = new ObjectInfo.Vector3(arrFWScale),
+                    vecWRotate      = new ObjectInfo.Vector3(arrFWRot),
+                    vecWPosition    = new ObjectInfo.Vector3(arrFWPos),
+                    vecWPivot       = new ObjectInfo.Vector3(arrFPivot),
+                    vecColor        = new ObjectInfo.Vector4(),
+                };
+
+                // 오브젝트 정보 추가
+                m_editForm.GetObjInfo().Add(strTag, info);
+
+                // 리스트 박스 아이템 추가
+                objListBox.Items.Add(strTag);
+            }
+        }
+
         public void ChangeLightRange(int _range, TextBox _textBox)
         {
             CoreWrapper wrapper = m_editForm.GetWrapper();

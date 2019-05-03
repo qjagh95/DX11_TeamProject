@@ -2,10 +2,14 @@
 #include "Inventory.h"
 #include "DocxInven.h"
 #include "Input.h"
+#include "Component/ColliderRay.h"
+#include "Component/Renderer.h"
+#include "Component/Material.h"
+#include "Component/Transform.h"
+
 
 bool CHuman_Player::Init_Items()
 {
-
 	PUN::CInput::GetInst()->AddKey("U", 'U');
 
 	PUN::CGameObject *pDocxInvObj = PUN::CGameObject::CreateObject("DocxInven", this->m_pLayer);
@@ -15,12 +19,95 @@ bool CHuman_Player::Init_Items()
 
 	SAFE_RELEASE(pDocxInvObj);
 
+	// 아이템 피킹용 충돌체 생성
+	PUN::CGameObject*	pRayObj = PUN::CGameObject::CreateObject("Ray", this->m_pLayer);
+
+	CRenderer*	pRenderer = pRayObj->AddComponent<CRenderer>("RayRenderer");
+
+	pRenderer->SetMesh("TexRect");
+	pRenderer->SetRenderState(ALPHA_BLEND);
+	pRenderer->SetRenderState(DEPTH_DISABLE);
+	pRenderer->SetDecalEnable(false);
+	pRenderer->Enable2DRenderer();
+
+	pRayObj->SetRenderGroup(RG_UI);
+
+	SAFE_RELEASE(pRenderer);
+
+	CMaterial*	pMaterial = pRayObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pMaterial->SetDiffuseTex(0, "Ray", TEXT("UI/AimOff.png"));
+	pMaterial->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pMaterial);
+
+	m_pRayTr = pRayObj->GetTransform();
+
+	m_pRayTr->SetWorldScale(47.f, 47.f, 1.f);
+	m_pRayTr->SetWorldPivot(0.5f, 0.5f, 0.f);
+	m_pRayTr->SetWorldPos(630.f, 390.f, 0.f);	
+
+	CColliderRay*	pRay = pRayObj->AddComponent<CColliderRay>("RayBody");
+
+	Vector2 vMouse = PUN::CInput::GetInst()->GetMouse3DClient();
+
+	Vector3 vMousePos = Vector3(vMouse.x, vMouse.y, 1.f);
+
+	pRay->SetInfo(vMousePos, Vector3::Axis[AXIS_Z]);
+	pRay->MouseEnable();
+	pRay->SetCollisionCallback(CCT_ENTER, this, &CHuman_Player::RayCallBackEnter);
+	pRay->SetCollisionCallback(CCT_LEAVE, this, &CHuman_Player::RayCallBackLeave);
+	pRay->SetColliderID((COLLIDER_ID)UCI_PLAYER_RAY);
+
+	SAFE_RELEASE(pRay);
+
+	m_pRayAnimation = pRayObj->AddComponent<CAnimation2D>("RayAnimation2D");
+
+	vector<Clip2DFrame>	vecClipFrame;
+	Clip2DFrame	tFrame = {};
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(47.f, 47.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pRayAnimation->AddClip("AimEmpty", A2D_ATLAS, AO_LOOP, 0.5f, vecClipFrame,
+		"EmptyAim", TEXT("UI/AimEmpty.png"));
+
+	vecClipFrame.clear();
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(47.f, 47.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pRayAnimation->AddClip("AimOff", A2D_ATLAS, AO_LOOP, 0.5f, vecClipFrame,
+		"OffAim", TEXT("UI/AimOff.png"));
+
+	vecClipFrame.clear();
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(47.f, 47.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pRayAnimation->AddClip("AimOn", A2D_ATLAS, AO_LOOP, 0.5f, vecClipFrame,
+		"OnAim", TEXT("UI/ImgAimOn.png"));
+
+	vecClipFrame.clear();
+
+	SAFE_RELEASE(pRayObj);
+
 	return true;
+}
+
+void CHuman_Player::ChangeRayAnim(const string& strName)
+{
+	m_pRayAnimation->ChangeClip(strName);
 }
 
 void CHuman_Player::OnDestroyInven()
 {
 	SAFE_RELEASE(m_pDocxInven);
+	SAFE_RELEASE(m_pRayAnimation);
+	SAFE_RELEASE(m_pRayTr);
 }
 
 int CHuman_Player::Input_Items(float fTime)

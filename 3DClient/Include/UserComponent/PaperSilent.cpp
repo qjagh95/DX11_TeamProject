@@ -1,15 +1,15 @@
 #include "../ClientHeader.h"
-#include "Battery.h"
+#include "PaperSilent.h"
 #include "Component/Renderer.h"
 #include "Component/Material.h"
 #include "Component/Transform.h"
 #include "GameObject.h"
-#include "Inventory.h"
+#include "DocxInven.h"
 #include "Component/ColliderSphere.h"
-#include "BatteryIcon.h"
+#include "SilentMessage.h"
 #include "Human_Player.h"
 
-CBattery::CBattery()
+CPaperSilent::CPaperSilent()
 {
 	m_bUseInven = false;
 	m_bMouseOn = false;
@@ -17,63 +17,58 @@ CBattery::CBattery()
 	m_bMotion = false;
 }
 
-CBattery::CBattery(const CBattery & battery)	:
-	CUserComponent(battery)
+CPaperSilent::CPaperSilent(const CPaperSilent & paper)	:
+	CUserComponent(paper)
 {
 }
 
-CBattery::~CBattery()
+CPaperSilent::~CPaperSilent()
 {
 	if (m_bUseInven)
 	{
-		SAFE_RELEASE(m_pInven);
-		SAFE_RELEASE(m_pInvenObj);
+		SAFE_RELEASE(m_pDocxInven);
+		SAFE_RELEASE(m_pDocxInvenObj);
 	}
 }
 
-void CBattery::AfterClone()
+void CPaperSilent::AfterClone()
 {
 }
 
-bool CBattery::Init()
+bool CPaperSilent::Init()
 {
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
-	pRenderer->SetMesh("Battery", TEXT("Battery.msh"));
+	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("SPaperRender");
+	pRenderer->SetMesh("SPaper", TEXT("Paper.msh"));
 
 	SAFE_RELEASE(pRenderer);
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetEmissive(0.f);
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
 
-	CTransform*	pTr = m_pObject->GetTransform();
+	m_pTransform->SetWorldScale(10.f, 10.f, 10.f);
 
-	pTr->SetWorldScale(1.f, 1.f, 1.f);
+	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("SPaperBody");
 
-	SAFE_RELEASE(pTr);
-
-	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("BatteryBody");
-
-	pBody->SetCollisionCallback(CCT_ENTER, this, &CBattery::Hit);
-	pBody->SetCollisionCallback(CCT_LEAVE, this, &CBattery::MouseOut);
-	pBody->SetColliderID((COLLIDER_ID)UCI_ITEM_BATTERY);
+	pBody->SetCollisionCallback(CCT_ENTER, this, &CPaperSilent::Hit);
+	pBody->SetCollisionCallback(CCT_LEAVE, this, &CPaperSilent::MouseOut);
+	pBody->SetColliderID((COLLIDER_ID)UCI_DOC_SILENT);
 
 	pBody->SetInfo(Vector3::Zero, 2.f);
 
 	SAFE_RELEASE(pBody);
-	
+
 	return true;
 }
 
-int CBattery::Input(float fTime)
+int CPaperSilent::Input(float fTime)
 {
 	return 0;
 }
 
-int CBattery::Update(float fTime)
+int CPaperSilent::Update(float fTime)
 {
 	if (m_bMouseOn)
 	{
@@ -83,20 +78,17 @@ int CBattery::Update(float fTime)
 			{
 				m_bOnInven = true;
 
-				m_pInvenObj = CGameObject::FindObject("Inven");
+				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
 
-				CGameObject*	pIconObj = CGameObject::CreateObject("Icon_Battery", m_pLayer);
+				CGameObject*	pSMObj = CGameObject::CreateObject("SilentMessage", m_pLayer);
 
-				CBatteryIcon*	pIcon = pIconObj->AddComponent<CBatteryIcon>("Icon_Battery");
+				CSilentMessage*	pSM = pSMObj->AddComponent<CSilentMessage>("SilentMessage");
 
-				m_pInven = m_pInvenObj->FindComponentFromTag<CInventory>("Inven");
-				m_pInven->AddItem(pIconObj);
+				m_pDocxInven = m_pDocxInvenObj->FindComponentFromTag<CDocxInven>("DocxInven");
+				m_pDocxInven->AddItem(pSMObj);
 
-				SAFE_RELEASE(pIcon);
-				SAFE_RELEASE(pIconObj);		
-
-				m_pObject->SetEnable(false);
-				m_bUseInven = true;
+				SAFE_RELEASE(pSM);
+				SAFE_RELEASE(pSMObj);
 
 				CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
 
@@ -105,11 +97,14 @@ int CBattery::Update(float fTime)
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
+
+				m_pObject->SetEnable(false);
+				m_bUseInven = true;
 			}
 		}
 	}
 
-	if(m_bMotion)
+	if (m_bMotion)
 	{
 		CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
 
@@ -121,34 +116,33 @@ int CBattery::Update(float fTime)
 		SAFE_RELEASE(pPlayer);
 		SAFE_RELEASE(pPlayerObj);
 	}
-
 	return 0;
 }
 
-int CBattery::LateUpdate(float fTime)
+int CPaperSilent::LateUpdate(float fTime)
 {
 	return 0;
 }
 
-void CBattery::Collision(float fTime)
+void CPaperSilent::Collision(float fTime)
 {
 }
 
-void CBattery::Render(float fTime)
+void CPaperSilent::Render(float fTime)
 {
 }
 
-CBattery * CBattery::Clone()
+CPaperSilent * CPaperSilent::Clone()
 {
-	return new CBattery(*this);
+	return new CPaperSilent(*this);
 }
 
-void CBattery::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
+void CPaperSilent::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
 
 	CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
-	
+
 	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
 	Vector3 vPlayerPos = pPlayerTr->GetWorldPos();
 
@@ -168,15 +162,11 @@ void CBattery::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 	SAFE_RELEASE(pPlayerObj);
 }
 
-void CBattery::MouseOn(CCollider * pSrc, CCollider * pDest, float fTime)
-{
-}
-
-void CBattery::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
+void CPaperSilent::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pDest->GetColliderID() == UCI_PLAYER_RAY)
 	{
 		m_bMouseOn = false;
 		m_bMotion = true;
-	}	
+	}
 }

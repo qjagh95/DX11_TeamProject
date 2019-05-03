@@ -327,6 +327,17 @@ namespace WinFormEditor
             }
         }
 
+        private void LoadGlobalLight()
+        {
+            string[] strLightList = m_coreWrapper.GetGlobalLightList();
+
+            // Add Object ListBox
+            for (int i = 0; i < strLightList.Length; ++i)
+            {
+                LB_ObjectList.Items.Add(strLightList[i]);
+            }
+        }
+
         private void LoadObjList()
         {
             m_objInfo.Clear();
@@ -361,8 +372,11 @@ namespace WinFormEditor
                     // 데이터 생성 및 추가
                     ObjectInfo info = new ObjectInfo
                     {
+                        // Member
+                        strLayerTag     = arrLayerTag[i],
+
                         // MeshName
-                        meshInfo = new ObjectInfo.MeshInfo(""),
+                        meshInfo        = new ObjectInfo.MeshInfo(""),
 
                         // Vector
                         vecLScale       = new ObjectInfo.Vector3(arrFLScale),
@@ -373,13 +387,12 @@ namespace WinFormEditor
                         vecWPosition    = new ObjectInfo.Vector3(arrFWPos),
                         vecWPivot       = new ObjectInfo.Vector3(arrFPivot),
                         vecColor        = new ObjectInfo.Vector4(),
-
-                        // Member
-                        strLayerTag     = arrLayerTag[i],
                     };
+
+                    // 오브젝트 정보 추가
                     m_objInfo.Add(arrObjTag[j], info);
 
-                    // 아이템 추가
+                    // 리스트 박스 아이템 추가
                     LB_ObjectList.Items.Add(arrObjTag[j]);
                 }
             }
@@ -478,14 +491,9 @@ namespace WinFormEditor
 
         private void Btn_DeleteObjectClick(object sender, EventArgs e)
         {
-            // 'GlobalLight', 'FreeCamObj' 오브젝트는 삭제 방지
             string strTag = LB_ObjectList.SelectedItem.ToString();
-            if (strTag == "GlobalLight" || strTag == "FreeCamObj")
-            {
-                MessageBox.Show("삭제할 수 없는 오브젝트입니다.");
-                return;
-            }
 
+            // 기타 오브젝트는 자신이 속한 레이어에서 삭제시켜준다.
             EventHandler textChangedEvent = ChangeLayerComboBox;
             EventHandler SelectedIndexChangedEvent = ChangeSelectedObject;
             m_gameObj.DeleteObject(LB_ObjectList, SelectedIndexChangedEvent,
@@ -577,7 +585,6 @@ namespace WinFormEditor
                 e.Handled = true;
             }
         }
-
 
         private void ChangeScale(object sender, EventArgs e)
         {
@@ -707,6 +714,11 @@ namespace WinFormEditor
 
         private void BasicMeshClick(object sender, EventArgs e)
         {
+            if (LB_ObjectList.SelectedItem == null)
+            {
+                return;
+            }
+
             // 포커스 해제
             if (LB_FileMesh.SelectedItem != null)
             {
@@ -726,6 +738,11 @@ namespace WinFormEditor
 
         private void FileMeshClick(object sender, EventArgs e)
         {
+            if (LB_ObjectList.SelectedItem == null)
+            {
+                return;
+            }
+
             if (LB_MeshList.SelectedItem != null)
             {
                 LB_MeshList.SelectedItem = null;
@@ -764,6 +781,12 @@ namespace WinFormEditor
         private void ChangeLightValue(object sender, EventArgs e)
         {
             m_light.ChangeLightRange(TB_Range.Value, TB_RangeValue);
+        }
+
+        private void Btn_Add_6_Way_GlobalLight(object sender, EventArgs e)
+        {
+            // 6개의 전역광(Global Light) 추가
+            m_light.Add_6_Way_GlobalLight();
         }
 
         private void LightWireFrame_OnOff(object sender, EventArgs e)

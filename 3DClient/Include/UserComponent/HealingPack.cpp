@@ -52,6 +52,7 @@ bool CHealingPack::Init()
 	pCollider->SetInfo(Vector3::Zero, 1.5f);
 	pCollider->SetCollisionCallback(CCT_ENTER, this, &CHealingPack::HitEnter);
 	pCollider->SetCollisionCallback(CCT_STAY,  this, &CHealingPack::HitStay);
+	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CHealingPack::MouseOut);
 	SAFE_RELEASE(pCollider);
 
 	/**********************************************************************************************/
@@ -70,6 +71,19 @@ int CHealingPack::Input(float _fTime)
 
 int CHealingPack::Update(float _fTime)
 {
+	if (m_bMotion)
+	{
+		CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
+
+		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
+		pPlayer->ChangeRayAnim("AimOff");
+
+		m_bMotion = false;
+
+		SAFE_RELEASE(pPlayer);
+		SAFE_RELEASE(pPlayerObj);
+	}
+
 	return 0;
 }
 
@@ -97,39 +111,80 @@ int CHealingPack::GetHPAmount()
 
 void CHealingPack::HitEnter(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
-	string strMessage = "Hit Enter : " +  m_pObject->GetTag() + "\n";
+	CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
+
+	CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
+
+	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
+	Vector3 vPlayerPos = pPlayerTr->GetWorldPos();
+
+	float fDist = m_pTransform->GetWorldPos().Distance(vPlayerPos);
+
+	if (fDist < 50.f)
+	{
+		if (_pDest->GetColliderID() == UCI_PLAYER_RAY)
+		{
+			pPlayer->ChangeRayAnim("AimOn");
+			m_bGetItem = true;
+		}
+	}
+
+	SAFE_RELEASE(pPlayerTr);
+	SAFE_RELEASE(pPlayer);
+	SAFE_RELEASE(pPlayerObj);
+	/*string strMessage = "Hit Enter : " +  m_pObject->GetTag() + "\n";
 	std::wstring cvtMessage = std::wstring(strMessage.begin(), strMessage.end());
-	OutputDebugString((cvtMessage.c_str()));
+	OutputDebugString((cvtMessage.c_str()));*/
 }
 
 void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
-	if (KEYPRESS("LButton") == true)
+	if (m_bGetItem)
 	{
-		if (m_isInvenInItem == false)
+		if (KEYPRESS("LButton") == true)
 		{
-			m_isInvenInItem = true;
-
-			// 아이템 아이콘 생성
-			// 'HealingPackIcon' 객체 생성
-			string strIconName = "";
-			if (m_pObject->GetTag() == "MedicalKit")
+			if (m_isInvenInItem == false)
 			{
-				strIconName = "Icon_MedicalKit";
-			}
-			else if (m_pObject->GetTag() == "LunchBox")
-			{
-				strIconName = "Icon_LunchBox";
-			}
-			m_pObjItemIcon = CGameObject::CreateObject(strIconName, m_pLayer);
-			CHealingPackIcon* pHealingPackIcon = m_pObjItemIcon->AddComponent<CHealingPackIcon>(strIconName);
-			pHealingPackIcon->SetHealingPackInst(this);
-			pHealingPackIcon->SetMaterial();
-			m_pInventory->AddItem(m_pObjItemIcon);
-			SAFE_RELEASE(pHealingPackIcon);
+				m_isInvenInItem = true;
 
-			// 게임 화면에서 사라진다.
-			m_pObject->SetEnable(false);
+				// 아이템 아이콘 생성
+				// 'HealingPackIcon' 객체 생성
+				string strIconName = "";
+				if (m_pObject->GetTag() == "MedicalKit")
+				{
+					strIconName = "Icon_MedicalKit";
+				}
+				else if (m_pObject->GetTag() == "LunchBox")
+				{
+					strIconName = "Icon_LunchBox";
+				}
+				m_pObjItemIcon = CGameObject::CreateObject(strIconName, m_pLayer);
+				CHealingPackIcon* pHealingPackIcon = m_pObjItemIcon->AddComponent<CHealingPackIcon>(strIconName);
+				pHealingPackIcon->SetHealingPackInst(this);
+				pHealingPackIcon->SetMaterial();
+				m_pInventory->AddItem(m_pObjItemIcon);
+				SAFE_RELEASE(pHealingPackIcon);
+
+				CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
+
+				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
+				pPlayer->ChangeRayAnim("AimOff");
+
+				SAFE_RELEASE(pPlayer);
+				SAFE_RELEASE(pPlayerObj);
+
+				// 게임 화면에서 사라진다.
+				m_pObject->SetEnable(false);
+			}
 		}
+	}
+}
+
+void CHealingPack::MouseOut(CCollider * _pSrc, CCollider * _pDest, float _fTime)
+{
+	if (_pDest->GetColliderID() == UCI_PLAYER_RAY)
+	{
+		m_bMotion = true;
+		m_bGetItem = false;
 	}
 }

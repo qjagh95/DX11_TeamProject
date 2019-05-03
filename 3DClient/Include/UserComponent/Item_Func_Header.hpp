@@ -18,3 +18,5 @@ void  SetMaxHP();
 int   GetMaxHP();
 void  RecoveryHP(int _hp);
 int   GetHP();
+
+void ChangeRayAnim(const string& strName);

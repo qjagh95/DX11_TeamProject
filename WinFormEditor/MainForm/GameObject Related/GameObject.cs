@@ -295,12 +295,15 @@ namespace WinFormEditor
                 string[] arrObjTag = wrapper.GetSelectLayerObjList(arrLayerTag[i]);
                 for (int j = 0; j < arrObjTag.Length; ++j)
                 {
-                    if (arrObjTag[j] != "GlobalLight" && arrObjTag[j] != "FreeCamObj")
-                    {
-                        objListBox.Items.Remove((string)arrObjTag[j]);
-                        m_editForm.GetObjInfo().Remove(arrObjTag[j]);
-                        wrapper.DeleteObject(arrObjTag[j], arrLayerTag[i]);
-                    }
+                    objListBox.Items.Remove((string)arrObjTag[j]);
+                    m_editForm.GetObjInfo().Remove(arrObjTag[j]);
+                    wrapper.DeleteObject(arrObjTag[j], arrLayerTag[i]);
+                    //if (arrObjTag[j] != "GlobalLight" && arrObjTag[j] != "FreeCamObj")
+                    //{
+                    //    objListBox.Items.Remove((string)arrObjTag[j]);
+                    //    m_editForm.GetObjInfo().Remove(arrObjTag[j]);
+                    //    wrapper.DeleteObject(arrObjTag[j], arrLayerTag[i]);
+                    //}
                 }
             }
             MessageBox.Show("데이터를 전부 삭제했습니다.");

@@ -176,6 +176,8 @@ public:
 	int GetLightType();
 	float GetLightRange();
 	vector<Vector4> GetSpecular();
+	void CreateDefaultGlobalLight();
+	vector<string> GetGlobalLightList();
 
 	CLandScape * GetLandScape() const { return m_LandScape; }
 	/////////////////////////////Collider/////////////////////////

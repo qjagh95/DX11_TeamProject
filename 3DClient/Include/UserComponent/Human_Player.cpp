@@ -49,6 +49,7 @@ CHuman_Player::CHuman_Player():
 	m_bNaviOn(true),
 	m_cInitLoopFinished(2)
 {
+	m_eComType = (COMPONENT_TYPE)UT_PLAYER;
 #include "Player_Item_Values.txt"
 #include "Player_Interact_Values.txt"
 #include "Player_Cam_Values.txt"

@@ -54,6 +54,8 @@ public:
 	void Collision(float fTime);
 	void Render(float fTime);
 	void SetPickingColliderEnable(bool _bEnable);
+	void SetColliderEnable(bool _bEnable);
+
 public:
 	void AddObject(class CGameObject* pObj, bool _isChild = false);
 	class CGameObject* FindObject(const string & strTag);

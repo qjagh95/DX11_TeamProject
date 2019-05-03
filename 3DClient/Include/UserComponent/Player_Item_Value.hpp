@@ -1,4 +1,7 @@
+
 class CDocxInven*	m_pDocxInven;
+CAnimation2D*	m_pRayAnimation;
+CTransform*	m_pRayTr;
 
 // 무적 효과
 bool	m_invincibility;

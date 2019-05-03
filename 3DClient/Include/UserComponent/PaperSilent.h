@@ -1,25 +1,25 @@
 #pragma once
 #include "Component/UserComponent.h"
-#include "../Client.h"
 
 PUN_USING
 
-class CBattery :
+class CPaperSilent :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CBattery();
-	CBattery(const CBattery& battery);
-	virtual ~CBattery();
+	CPaperSilent();
+	CPaperSilent(const CPaperSilent& paper);
+	virtual ~CPaperSilent();
 
 private:
-	CGameObject*	m_pInvenObj;
-	class CInventory*	m_pInven;
+	CGameObject*		m_pDocxInvenObj;
+	class CDocxInven*	m_pDocxInven;
 	bool			m_bMouseOn;
 	bool			m_bUseInven;
 	bool			m_bOnInven;
+	int				m_iCount;
 	bool			m_bMotion;
 
 public:
@@ -30,11 +30,10 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CBattery* Clone();
+	virtual CPaperSilent* Clone();
 
 public:
 	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);
-	void MouseOn(CCollider * pSrc, CCollider * pDest, float fTime);
 	void MouseOut(class CCollider* pSrc, class CCollider* pDest, float fTime);
 };
 

@@ -282,6 +282,25 @@ float CoreWrapper::GetRange()
 	return PUN::CEditManager::GetInst()->GetLightRange();
 }
 
+void CoreWrapper::CreateDefaultGlobalLight()
+{
+	PUN::CEditManager::GetInst()->CreateDefaultGlobalLight();
+}
+
+cli::array<String^>^ CoreWrapper::GetGlobalLightList()
+{
+	vector<string> vecLightTag;
+	vecLightTag = PUN::CEditManager::GetInst()->GetGlobalLightList();
+	cli::array<String^>^ arrGlobalLightTag = gcnew cli::array<String^>((int)vecLightTag.size());
+	for (int i = 0; i < (int)vecLightTag.size(); ++i)
+	{
+		String^ strTag = ConvertMarshal<String^, string>(vecLightTag[i]);
+		arrGlobalLightTag[i] = strTag;
+	}
+
+	return arrGlobalLightTag;
+}
+
 void CoreWrapper::LoadClipFromFullPath(String^ _strFullPath)
 {
 	wstring strFullPath = ConvertMarshal<wstring, String^>(_strFullPath);

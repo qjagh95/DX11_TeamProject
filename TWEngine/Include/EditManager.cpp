@@ -1255,6 +1255,25 @@ vector<Vector4> CEditManager::GetSpecular()
 	return vecWpecular;
 }
 
+void CEditManager::CreateDefaultGlobalLight()
+{
+	m_pScene->CreateDefaultGlobalLight();
+}
+
+vector<string> CEditManager::GetGlobalLightList()
+{
+	vector<string> vecGlobalLightTag;
+	vector<CGameObject*>* vecGlobalLight = m_pScene->GetGlobalLightList();
+	vecGlobalLightTag.reserve(vecGlobalLight->size());
+	for (size_t i = 0; i < (int)vecGlobalLight->size(); ++i)
+	{
+		string strTag = (*vecGlobalLight)[i]->GetTag();
+		vecGlobalLightTag.push_back(strTag);
+	}
+
+	return vecGlobalLightTag;
+}
+
 bool CEditManager::FindActiveCollider(const std::string & _strTag)
 {
 	if (m_pSelectCollider)

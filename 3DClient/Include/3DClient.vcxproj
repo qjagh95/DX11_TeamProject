@@ -227,6 +227,7 @@
     <ClInclude Include="UserComponent\Locker.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Move_Func_Header.hpp" />
+    <ClInclude Include="UserComponent\PaperSilent.h" />
     <ClInclude Include="UserComponent\PhoneMessage.h" />
     <ClInclude Include="UserComponent\Pistol.h" />
     <ClInclude Include="UserComponent\Player.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="UserComponent\Player_Item_Value.hpp" />
     <ClInclude Include="UserComponent\Player_Move_Value.hpp" />
     <ClInclude Include="UserComponent\Player_Weapon_Value.hpp" />
+    <ClInclude Include="UserComponent\SilentMessage.h" />
     <ClInclude Include="UserComponent\ST3_Pivot.h" />
     <ClInclude Include="UserComponent\ST3_SlientTrace.h" />
     <ClInclude Include="UserComponent\ST3_Suprise.h" />
@@ -281,6 +283,7 @@
     <ClCompile Include="UserComponent\Inventory.cpp" />
     <ClCompile Include="UserComponent\Locker.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
+    <ClCompile Include="UserComponent\PaperSilent.cpp" />
     <ClCompile Include="UserComponent\PhoneMessage.cpp" />
     <ClCompile Include="UserComponent\Pistol.cpp" />
     <ClCompile Include="UserComponent\Player.cpp" />
@@ -290,6 +293,7 @@
     <ClCompile Include="UserComponent\PlayerFunc_Items.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Move.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Weapon.cpp" />
+    <ClCompile Include="UserComponent\SilentMessage.cpp" />
     <ClCompile Include="UserComponent\ST3_Pivot.cpp" />
     <ClCompile Include="UserComponent\ST3_SlientTrace.cpp" />
     <ClCompile Include="UserComponent\ST3_Suprise.cpp" />

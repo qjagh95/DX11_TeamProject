@@ -32,6 +32,7 @@ CScene::~CScene()
 
 	CGameObject::DestroyPrototype(this);
 	Safe_Release_VecList(m_LayerList);
+	Safe_Release_VecList(m_vecGlobalLight);
 
 	SAFE_RELEASE(m_pSceneComponent);
 }
@@ -134,64 +135,64 @@ void CScene::Start()
 
 bool CScene::Init()
 {
+	// 레이어 추가
 	AddLayer("Stage", INT_MIN + 1);
 	AddLayer("Default", 0);
 	AddLayer("Light", 50);
 	AddLayer("UI", INT_MAX - 1);
 
+	// ProFile 초기화
 	ProfileInit();
 
-	CLayer* pLightLayer = FindLayer("Light");
+	// 레이어 찾기
 	CLayer*	pLayer = FindLayer("Default");
+	CLayer* pLightLayer = FindLayer("Light");
 
+	// SkyBox
 	m_pSkyObj = CGameObject::CreateObject("Sky");
-
 	m_pSkyObj->SetScene(this);
-
 	CTransform*	pSkyTr = m_pSkyObj->GetTransform();
-
 	pSkyTr->SetWorldScale(100000.f, 100000.f, 100000.f);
 	pSkyTr->Update(0.f);
-
 	SAFE_RELEASE(pSkyTr);
-
-	CRenderer*	pRenderer = m_pSkyObj->AddComponent<CRenderer>("SkyRenderer");
-
+	CRenderer* pRenderer = m_pSkyObj->AddComponent<CRenderer>("SkyRenderer");
 	pRenderer->SetMesh("Sky");
 	pRenderer->SetRenderState(DEPTH_LESSEQUAL);
-	//pRenderer->SetRenderState(DEPTH_DISABLE);
-
 	pRenderer->SetRenderState(CULL_NONE);
-
 	SAFE_RELEASE(pRenderer);
-
 	m_pSkyMtrl = m_pSkyObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
-
 	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
 	m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
 
-	if (CCore::GetInst()->m_bGuiMode == false)
-		m_bHeader = false;
-	else
-		m_bHeader = true;
-
-	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	m_LogText = CCore::GetInst()->CreateFileStream(Path, "Scene", "Scene");
-
+	// Global Light
 	CGameObject* pLightObj = CGameObject::CreateObject("GlobalLight", pLightLayer);
 	CTransform* pTr = pLightObj->GetTransform();
-
 	CLight* pLight = pLightObj->AddComponent<CLight>("GlobalLight");
 	pLight->SetLightColor(Vector4::White, Vector4::White, Vector4::White);
 	pLight->SetLightType(LT_DIR);
-
 	pTr->RotationX(90.0f);
+
+	// Default GlobalLight
+	CreateDefaultGlobalLight();
 
 	SAFE_RELEASE(pTr);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pLightObj);
 	SAFE_RELEASE(pLayer);
 	SAFE_RELEASE(pLightLayer);
+
+	// GUI Mode
+	if (CCore::GetInst()->m_bGuiMode == false)
+	{
+		m_bHeader = false;
+	}
+	else
+	{
+		m_bHeader = true;
+	}
+
+	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
+	m_LogText = CCore::GetInst()->CreateFileStream(Path, "Scene", "Scene");
 
 	return true;
 }
@@ -555,6 +556,62 @@ CGameObject * CScene::CreateCamera(const string & strTag, const Vector3& vPos, C
 void CScene::ChangeCamera(const string & strTag)
 {
 	CSceneManager::GetInst()->ChangeCamera(strTag);
+}
+
+void CScene::CreateDefaultGlobalLight()
+{
+	// GlobalLight Vector 전부 삭제
+	Safe_Release_VecList(m_vecGlobalLight);
+	m_vecGlobalLight.clear();
+
+	// 생성
+	CLayer* pLightLayer = FindLayer("Light");
+	Vector4 vColor = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+	string strLightName[6] =
+	{
+	   "Top", "Bottom", "Left", "Right", "Front", "Back"
+	};
+	Vector3 arrRot[6] =
+	{
+	   Vector3(-90.f,   0.f, 0.f),   // Top
+	   Vector3( 90.f,   0.f, 0.f),	 // Bottom
+	   Vector3(  0.f, -90.f, 0.f),	 // Left
+	   Vector3( -0.f,  90.f, 0.f),   // Right
+	   Vector3::Zero,				 // Front
+	   Vector3(0.f, 180.f, 0.f)		 // Back
+	};
+	string strTag = "";
+	for (size_t i = 0; i < 6; ++i)
+	{
+		strTag = "Default_GlobalLight_" + strLightName[i];
+
+		// 레이어에 있는지 검사한다.
+		if (pLightLayer->FindObject(strTag) == nullptr)
+		{
+			CGameObject* pObjGlobalLight = CGameObject::CreateObject(strTag, pLightLayer);
+			pObjGlobalLight->SetSave(true);
+			CTransform* pLightTr = pObjGlobalLight->GetTransform();
+			pLightTr->SetWorldRot(arrRot[i]);
+			CLight* pLight = pObjGlobalLight->AddComponent<CLight>("GlobalLight");
+			pLight->SetLightType(LT_DIR);
+			pLight->SetLightColor(vColor, vColor, vColor);
+			m_vecGlobalLight.push_back(pObjGlobalLight);
+			SAFE_RELEASE(pLight);
+			SAFE_RELEASE(pLightTr);
+		}
+		else
+		{
+			CGameObject* pObjGlobalLight = FindObject(strTag);
+			m_vecGlobalLight.push_back(pObjGlobalLight);
+			SAFE_RELEASE(pObjGlobalLight);
+		}
+	}
+	SAFE_RELEASE(pLightLayer);
+}
+
+vector<CGameObject*>* CScene::GetGlobalLightList()
+{
+	return &m_vecGlobalLight;
 }
 
 CGameObject * CScene::FindCamera(const string & strTag)

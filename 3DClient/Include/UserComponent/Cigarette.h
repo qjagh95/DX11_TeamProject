@@ -28,6 +28,8 @@ public:
 
 private:
 	bool	m_isInvenInItem;
+	bool	m_bMotion;
+	bool	m_bGetItem;
 
 private:
 	CRenderer*			m_pRenderer;
@@ -36,5 +38,7 @@ private:
 	CGameObject*		m_pObjItemIcon;
 
 public:
+	void Hit(CCollider* _pSrc, CCollider* _pDest, float _fTime);
 	void HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime);
+	void MouseOut(CCollider* _pSrc, CCollider* _pDest, float _fTime);
 };

@@ -7,6 +7,8 @@
 
 CTablet::CTablet() :
 	m_isInvenInItem(false),
+	m_bMotion(false),
+	m_bGetItem(false),
 	m_pRenderer(nullptr),
 	m_pObjInventory(nullptr),
 	m_pInventory(nullptr),
@@ -39,7 +41,10 @@ bool CTablet::Init()
 	// Sphere Collider
 	CColliderSphere* pCollider = m_pObject->AddComponent<CColliderSphere>("Tablet_Collider");
 	pCollider->SetInfo(Vector3::Zero, 1.5f);
+	pCollider->SetCollisionCallback(CCT_ENTER, this, &CTablet::Hit);
 	pCollider->SetCollisionCallback(CCT_STAY, this, &CTablet::HitStay);
+	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CTablet::MouseOut);
+	pCollider->SetColliderID((COLLIDER_ID)UCI_ITEM_TABLET);
 	SAFE_RELEASE(pCollider);
 
 	/**********************************************************************************************/
@@ -58,27 +63,85 @@ int CTablet::Input(float _fTime)
 
 int CTablet::Update(float _fTime)
 {
+	if (m_bMotion)
+	{
+		CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
+
+		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
+		pPlayer->ChangeRayAnim("AimOff");
+
+		m_bMotion = false;
+
+		SAFE_RELEASE(pPlayer);
+		SAFE_RELEASE(pPlayerObj);
+	}
+
 	return 0;
+}
+
+void CTablet::Hit(CCollider * _pSrc, CCollider * _pDest, float _fTime)
+{
+	CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
+
+	CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
+
+	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
+	Vector3 vPlayerPos = pPlayerTr->GetWorldPos();
+
+	float fDist = m_pTransform->GetWorldPos().Distance(vPlayerPos);
+
+	if (fDist < 50.f)
+	{
+		if (_pDest->GetColliderID() == UCI_PLAYER_RAY)
+		{
+			pPlayer->ChangeRayAnim("AimOn");
+			m_bGetItem = true;
+		}
+	}
+
+	SAFE_RELEASE(pPlayerTr);
+	SAFE_RELEASE(pPlayer);
+	SAFE_RELEASE(pPlayerObj);
 }
 
 void CTablet::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
-	if (KEYPRESS("LButton") == true)
+	if (m_bGetItem)
 	{
-		if (m_isInvenInItem == false)
+		if (KEYPRESS("LButton") == true)
 		{
-			m_isInvenInItem = true;
+			if (m_isInvenInItem == false)
+			{
+				m_isInvenInItem = true;
 
-			// 아이템 아이콘 생성
-			// 'HealingPackIcon' 객체 생성
-			string strIconName = "";
-			m_pObjItemIcon = CGameObject::CreateObject("Icon_Tablet", m_pLayer);
-			CTabletIcon* pTabletIcon = m_pObjItemIcon->AddComponent<CTabletIcon>("Icon_Tablet");
-			m_pInventory->AddItem(m_pObjItemIcon);
-			SAFE_RELEASE(pTabletIcon);
+				// 아이템 아이콘 생성
+				// 'HealingPackIcon' 객체 생성
+				string strIconName = "";
+				m_pObjItemIcon = CGameObject::CreateObject("Icon_Tablet", m_pLayer);
+				CTabletIcon* pTabletIcon = m_pObjItemIcon->AddComponent<CTabletIcon>("Icon_Tablet");
+				m_pInventory->AddItem(m_pObjItemIcon);
+				SAFE_RELEASE(pTabletIcon);
 
-			// 게임 화면에서 사라진다.
-			m_pObject->SetEnable(false);
+				CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
+
+				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
+				pPlayer->ChangeRayAnim("AimOff");
+
+				SAFE_RELEASE(pPlayer);
+				SAFE_RELEASE(pPlayerObj);
+
+				// 게임 화면에서 사라진다.
+				m_pObject->SetEnable(false);
+			}
 		}
+	}
+}
+
+void CTablet::MouseOut(CCollider * _pSrc, CCollider * _pDest, float _fTime)
+{
+	if (_pDest->GetColliderID() == UCI_PLAYER_RAY)
+	{
+		m_bMotion = true;
+		m_bGetItem = false;
 	}
 }

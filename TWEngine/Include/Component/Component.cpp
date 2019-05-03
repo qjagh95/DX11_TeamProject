@@ -70,6 +70,11 @@ Vector3 CComponent::GetWorldScale() const
 	return m_pTransform->GetWorldScale();
 }
 
+Vector3 CComponent::GetWorldMove() const
+{
+	return m_pTransform->GetWorldMove();
+}
+
 Vector3 CComponent::GetWorldAxis(AXIS eAxis) const
 {
 	return m_pTransform->GetWorldAxis(eAxis);

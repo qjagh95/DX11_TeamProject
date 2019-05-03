@@ -129,7 +129,6 @@ void CDocxInven::AddItem(CGameObject * pItem)
 		return;
 
 	m_vecItem.push_back(pItem);
-	//m_vecItem[m_iIndex] = pItem;
 
 	CTransform*	pItemTr = m_vecItem[m_iIndex]->GetTransform();
 
@@ -138,7 +137,7 @@ void CDocxInven::AddItem(CGameObject * pItem)
 	pItemTr->SetWorldPos(vDocxPos.x + 445.f, vDocxPos.y + 562.f - m_fItemY, 0.f);
 	pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
-	m_fItemY += 85.f;
+	m_fItemY += 60.f;
 
 	if (m_pObject->GetEnable() == false)
 	{
@@ -146,6 +145,7 @@ void CDocxInven::AddItem(CGameObject * pItem)
 	}
 
 	++m_iIndex;
+
 	SAFE_RELEASE(pItemTr);
 }
 
@@ -192,12 +192,8 @@ bool CDocxInven::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	CTransform*	pTr = m_pObject->GetTransform();
-
-	pTr->SetWorldScale(1280.f, 720.f, 1.f);
-	pTr->SetWorldPivot(0.f, 0.f, 0.f);
-
-	SAFE_RELEASE(pTr);
+	m_pTransform->SetWorldScale(1280.f, 720.f, 1.f);
+	m_pTransform->SetWorldPivot(0.f, 0.f, 0.f);
 
 	m_pObject->SetEnable(false);
 
@@ -206,7 +202,7 @@ bool CDocxInven::Init()
 
 	m_pDocObj = CGameObject::CreateObject("Document", m_pLayer);
 	m_pDoc = m_pDocObj->AddComponent<CDocument>("Document");
-	
+
 	m_pDocObj->SetEnable(false);
 	m_pDoc->ChangeClip("Message_Empty");
 

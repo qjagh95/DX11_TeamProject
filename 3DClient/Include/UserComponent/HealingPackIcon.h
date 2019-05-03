@@ -31,6 +31,7 @@ private:
 	bool m_bLunchBoxMouseOn;
 	bool m_bMedicalKitMouseOn;
 	string	m_strMeshName;
+	CColliderRect* m_pCollider;
 
 private:
 	CHealingPack* m_pHealingPack;

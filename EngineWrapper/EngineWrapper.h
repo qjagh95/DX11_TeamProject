@@ -176,6 +176,8 @@ namespace EngineWrapper
 		int GetLightType();
 		cli::array<float>^ GetSpecular();
 		float GetRange();
+		void CreateDefaultGlobalLight();
+		cli::array<String^>^ GetGlobalLightList();
 
 	// 애니메이션
 	public:

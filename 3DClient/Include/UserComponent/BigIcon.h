@@ -16,7 +16,7 @@ private:
 	virtual ~CBigIcon();
 
 private:
-	class CAnimation2D*	m_pAnimation;
+	CAnimation2D*	m_pAnimation;
 
 public:
 	void ChangeClip(const string& strName);

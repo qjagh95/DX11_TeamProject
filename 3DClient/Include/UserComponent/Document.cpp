@@ -47,12 +47,9 @@ bool CDocument::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	CTransform*		pTransform = m_pObject->GetTransform();
-	pTransform->SetWorldScale(600.f, 600.f, 1.f);
-	pTransform->SetWorldPos(830.f, 350.f, 1.f);
-	pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
-
-	SAFE_RELEASE(pTransform);
+	m_pTransform->SetWorldScale(600.f, 600.f, 1.f);
+	m_pTransform->SetWorldPos(830.f, 350.f, 1.f);
+	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("DocAnimation");
 
@@ -74,6 +71,15 @@ bool CDocument::Init()
 
 	m_pAnimation->AddClip("MobileMessage", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
 		"MessageMobile", TEXT("UI/Document/MobileMessage.png"));
+
+	vecClipFrame.clear();
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("SilentMessage", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"MessageSilent", TEXT("UI/Document/KeepSilence720.png"));
 
 	vecClipFrame.clear();
 

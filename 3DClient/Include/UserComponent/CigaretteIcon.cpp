@@ -48,6 +48,7 @@ bool CCigaretteIcon::Init()
 	pCollider->SetCollisionCallback(CCT_ENTER, this, &CCigaretteIcon::Hit);
 	pCollider->SetCollisionCallback(CCT_STAY, this, &CCigaretteIcon::HitStay);
 	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CCigaretteIcon::MouseOut);
+	pCollider->SetColliderID((COLLIDER_ID)UCI_ITEM_DAMBAE);
 	SAFE_RELEASE(pCollider);
 
 	return true;

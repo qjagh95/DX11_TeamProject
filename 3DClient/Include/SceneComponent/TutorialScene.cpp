@@ -28,6 +28,7 @@
 #include "../UserComponent/HealingPack.h"
 #include "../UserComponent/Cigarette.h"
 #include "../UserComponent/Tablet.h"
+#include "../UserComponent/PaperSilent.h"
 
 #include <NavigationMesh.h>
 
@@ -176,6 +177,18 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pBatteryTr);
 	SAFE_RELEASE(pBattery);
 	SAFE_RELEASE(pBatteryObj);		
+
+	CGameObject*	pPSObj = CGameObject::CreateObject("PaperSilent", pDefaultLayer);
+
+	CPaperSilent*	pPS = pPSObj->AddComponent<CPaperSilent>("PaperSilent");
+
+	CTransform*	pPSTr = pPSObj->GetTransform();
+
+	pPSTr->SetWorldPos(116.f, 2.f, 648.f);
+
+	SAFE_RELEASE(pPSTr);
+	SAFE_RELEASE(pPS);
+	SAFE_RELEASE(pPSObj);
 
 	/*pObject = CGameObject::CreateObject("GroundCap1ex", pDefaultLayer);
 

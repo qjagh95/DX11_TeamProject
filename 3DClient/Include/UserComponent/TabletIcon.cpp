@@ -46,6 +46,7 @@ bool CTabletIcon::Init()
 	pCollider->SetCollisionCallback(CCT_ENTER, this, &CTabletIcon::Hit);
 	pCollider->SetCollisionCallback(CCT_STAY, this, &CTabletIcon::HitStay);
 	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CTabletIcon::MouseOut);
+	pCollider->SetColliderID((COLLIDER_ID)UCI_ITEM_TABLET);
 	SAFE_RELEASE(pCollider);
 
 	return true;

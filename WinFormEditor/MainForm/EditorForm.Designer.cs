@@ -40,6 +40,7 @@
             this.Inspector = new System.Windows.Forms.GroupBox();
             this.InspectorTab = new System.Windows.Forms.TabControl();
             this.LightPage = new System.Windows.Forms.TabPage();
+            this.button2 = new System.Windows.Forms.Button();
             this.TB_RangeValue = new System.Windows.Forms.TextBox();
             this.CB_WireFrame = new System.Windows.Forms.CheckBox();
             this.label34 = new System.Windows.Forms.Label();
@@ -366,6 +367,7 @@
             // 
             this.LightPage.BackColor = System.Drawing.SystemColors.Control;
             this.LightPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.LightPage.Controls.Add(this.button2);
             this.LightPage.Controls.Add(this.TB_RangeValue);
             this.LightPage.Controls.Add(this.CB_WireFrame);
             this.LightPage.Controls.Add(this.label34);
@@ -391,9 +393,20 @@
             this.LightPage.TabIndex = 5;
             this.LightPage.Text = "Light";
             // 
+            // button2
+            // 
+            this.button2.ForeColor = System.Drawing.Color.Black;
+            this.button2.Location = new System.Drawing.Point(7, 50);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(293, 48);
+            this.button2.TabIndex = 48;
+            this.button2.Text = "Add 6-Way GlobalLight\r\n(Top, Bottom, Left, RIght, Front, Back)";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.Btn_Add_6_Way_GlobalLight);
+            // 
             // TB_RangeValue
             // 
-            this.TB_RangeValue.Location = new System.Drawing.Point(247, 210);
+            this.TB_RangeValue.Location = new System.Drawing.Point(247, 200);
             this.TB_RangeValue.Name = "TB_RangeValue";
             this.TB_RangeValue.ReadOnly = true;
             this.TB_RangeValue.Size = new System.Drawing.Size(53, 25);
@@ -403,7 +416,7 @@
             // 
             this.CB_WireFrame.AutoSize = true;
             this.CB_WireFrame.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.CB_WireFrame.Location = new System.Drawing.Point(11, 87);
+            this.CB_WireFrame.Location = new System.Drawing.Point(11, 133);
             this.CB_WireFrame.Name = "CB_WireFrame";
             this.CB_WireFrame.Size = new System.Drawing.Size(143, 21);
             this.CB_WireFrame.TabIndex = 46;
@@ -415,7 +428,7 @@
             // 
             this.label34.AutoSize = true;
             this.label34.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.label34.Location = new System.Drawing.Point(8, 186);
+            this.label34.Location = new System.Drawing.Point(8, 177);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(46, 17);
             this.label34.TabIndex = 45;
@@ -423,7 +436,7 @@
             // 
             // TB_Range
             // 
-            this.TB_Range.Location = new System.Drawing.Point(11, 209);
+            this.TB_Range.Location = new System.Drawing.Point(11, 199);
             this.TB_Range.Maximum = 1000;
             this.TB_Range.Name = "TB_Range";
             this.TB_Range.Size = new System.Drawing.Size(240, 45);
@@ -435,7 +448,7 @@
             this.TB_SpcularPower.BackColor = System.Drawing.SystemColors.Control;
             this.TB_SpcularPower.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_SpcularPower.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_SpcularPower.Location = new System.Drawing.Point(257, 150);
+            this.TB_SpcularPower.Location = new System.Drawing.Point(257, 269);
             this.TB_SpcularPower.Name = "TB_SpcularPower";
             this.TB_SpcularPower.Size = new System.Drawing.Size(43, 25);
             this.TB_SpcularPower.TabIndex = 43;
@@ -447,7 +460,7 @@
             this.label33.AutoSize = true;
             this.label33.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label33.ForeColor = System.Drawing.Color.Blue;
-            this.label33.Location = new System.Drawing.Point(144, 154);
+            this.label33.Location = new System.Drawing.Point(144, 273);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(16, 17);
             this.label33.TabIndex = 42;
@@ -458,7 +471,7 @@
             this.label32.AutoSize = true;
             this.label32.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label32.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.label32.Location = new System.Drawing.Point(79, 154);
+            this.label32.Location = new System.Drawing.Point(79, 273);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(17, 17);
             this.label32.TabIndex = 41;
@@ -469,7 +482,7 @@
             this.label30.AutoSize = true;
             this.label30.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label30.ForeColor = System.Drawing.Color.Black;
-            this.label30.Location = new System.Drawing.Point(208, 155);
+            this.label30.Location = new System.Drawing.Point(208, 274);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(46, 17);
             this.label30.TabIndex = 40;
@@ -480,7 +493,7 @@
             this.label29.AutoSize = true;
             this.label29.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label29.ForeColor = System.Drawing.Color.Red;
-            this.label29.Location = new System.Drawing.Point(15, 155);
+            this.label29.Location = new System.Drawing.Point(15, 274);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(16, 17);
             this.label29.TabIndex = 39;
@@ -491,7 +504,7 @@
             this.TB_SpcularG.BackColor = System.Drawing.SystemColors.Control;
             this.TB_SpcularG.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_SpcularG.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_SpcularG.Location = new System.Drawing.Point(99, 150);
+            this.TB_SpcularG.Location = new System.Drawing.Point(99, 269);
             this.TB_SpcularG.Name = "TB_SpcularG";
             this.TB_SpcularG.Size = new System.Drawing.Size(42, 25);
             this.TB_SpcularG.TabIndex = 38;
@@ -503,7 +516,7 @@
             this.TB_SpcularB.BackColor = System.Drawing.SystemColors.Control;
             this.TB_SpcularB.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_SpcularB.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_SpcularB.Location = new System.Drawing.Point(163, 150);
+            this.TB_SpcularB.Location = new System.Drawing.Point(163, 269);
             this.TB_SpcularB.Name = "TB_SpcularB";
             this.TB_SpcularB.Size = new System.Drawing.Size(42, 25);
             this.TB_SpcularB.TabIndex = 37;
@@ -515,7 +528,7 @@
             this.label28.AutoSize = true;
             this.label28.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label28.ForeColor = System.Drawing.Color.Black;
-            this.label28.Location = new System.Drawing.Point(8, 126);
+            this.label28.Location = new System.Drawing.Point(8, 245);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(60, 17);
             this.label28.TabIndex = 35;
@@ -526,7 +539,7 @@
             this.TB_SpcularR.BackColor = System.Drawing.SystemColors.Control;
             this.TB_SpcularR.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_SpcularR.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_SpcularR.Location = new System.Drawing.Point(34, 150);
+            this.TB_SpcularR.Location = new System.Drawing.Point(34, 269);
             this.TB_SpcularR.Name = "TB_SpcularR";
             this.TB_SpcularR.Size = new System.Drawing.Size(42, 25);
             this.TB_SpcularR.TabIndex = 36;
@@ -549,7 +562,7 @@
             // 
             this.label31.AutoSize = true;
             this.label31.ForeColor = System.Drawing.Color.Black;
-            this.label31.Location = new System.Drawing.Point(8, 107);
+            this.label31.Location = new System.Drawing.Point(8, 160);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(298, 17);
             this.label31.TabIndex = 17;
@@ -570,7 +583,7 @@
             // 
             this.label22.AutoSize = true;
             this.label22.ForeColor = System.Drawing.Color.Black;
-            this.label22.Location = new System.Drawing.Point(8, 59);
+            this.label22.Location = new System.Drawing.Point(8, 108);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(78, 17);
             this.label22.TabIndex = 1;
@@ -584,9 +597,9 @@
             "Direction",
             "Point",
             "Spot"});
-            this.CB_LightType.Location = new System.Drawing.Point(90, 55);
+            this.CB_LightType.Location = new System.Drawing.Point(90, 104);
             this.CB_LightType.Name = "CB_LightType";
-            this.CB_LightType.Size = new System.Drawing.Size(110, 25);
+            this.CB_LightType.Size = new System.Drawing.Size(93, 25);
             this.CB_LightType.TabIndex = 0;
             this.CB_LightType.SelectedIndexChanged += new System.EventHandler(this.CB_LightType_SelectedIndexChanged);
             // 
@@ -2663,7 +2676,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1924, 880);
+            this.ClientSize = new System.Drawing.Size(1947, 880);
             this.Controls.Add(this.label46);
             this.Controls.Add(this.GB_Transform);
             this.Controls.Add(this.groupBox1);
@@ -2916,6 +2929,7 @@
         private System.Windows.Forms.Label label62;
         private System.Windows.Forms.Button BT_CollSphere;
         private System.Windows.Forms.Button BT_CollOBBUpdate;
+        private System.Windows.Forms.Button button2;
     }
 }
 

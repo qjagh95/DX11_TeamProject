@@ -95,15 +95,10 @@ void CLayer::Load(BinaryRead* _pInstBR)
 {
 	m_AllChildList.clear();
 
-	// 오브젝트 목록 개수
-	int objListSize = _pInstBR->ReadInt();
-	if (objListSize == 0)
-		return;
-
 	// 오브젝트 목록
 	list<CGameObject*>::iterator iter;
 	list<CGameObject*>::iterator iterEnd = m_ObjList.end();
-	for (iter = m_ObjList.begin() ; iter != iterEnd; )
+	for (iter = m_ObjList.begin(); iter != iterEnd; )
 	{
 		if ((*iter)->GetSave())
 		{
@@ -114,36 +109,42 @@ void CLayer::Load(BinaryRead* _pInstBR)
 		++iter;
 	}
 
+	// 오브젝트 목록 개수
+	int objListSize = _pInstBR->ReadInt();
+	if (objListSize == 0)
+	{
+		return;
+	}
+
 	if (CCore::GetInst()->m_bEditorMode == true && m_strTag == "Default")
+	{
 		CEditManager::GetInst()->PrivateEditObjSettingLayer();
+	}
 
 	for (int i = 0; i < objListSize; ++i)
 	{
-		CGameObject* newObject = NULLPTR;
-
-		string strObjTag = _pInstBR->ReadString();
-		string strLayerTag = _pInstBR->ReadString();
-		bool isDontDestroy = _pInstBR->ReadBool();
-		bool isEnable = _pInstBR->ReadBool();
+		CGameObject* newObject	= NULLPTR;
+		string strObjTag		= _pInstBR->ReadString();
+		string strLayerTag		= _pInstBR->ReadString();
+		bool isDontDestroy		= _pInstBR->ReadBool();
+		bool isEnable			= _pInstBR->ReadBool();
 
 		// 생성
 		newObject = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
 		newObject->SetEnable(isEnable);
+		
 		// 오브젝트 Load 호출
 		newObject->Load(_pInstBR);
 
 		m_AllChildList.push_back(newObject);
-
 		SAFE_RELEASE(newObject);
 	}
 
 	int AllSize = _pInstBR->ReadInt();
-
 	for (size_t i = 0; i < AllSize; i++)
 	{
 		string ParentTag = _pInstBR->ReadString();
-		string ChildTag = _pInstBR->ReadString();
-
+		string ChildTag  = _pInstBR->ReadString();
 		CGameObject* ParentObject = FindObjectLoadVersion(ParentTag);
 		CGameObject* ChildObject = FindObjectLoadVersion(ChildTag);
 
@@ -151,74 +152,6 @@ void CLayer::Load(BinaryRead* _pInstBR)
 		ParentObject->AddChild(ChildObject, true);
 	}
 	m_AllChildList.clear();
-
-	/*
-	// 오브젝트 목록 개수
-	int objListSize = _pInstBR->ReadInt();
-	if (objListSize == 0)
-		return;
-
-	// 오브젝트 목록
-	Safe_Release_VecList(m_ObjList);
-	m_ObjList.clear();
-
-	if (CCore::GetInst()->m_bEditorMode == true && m_strTag == "Default")
-		CEditManager::GetInst()->PrivateEditObjSettingLayer();
-
-	for (int i = 0; i < objListSize; ++i)
-	{
-		CGameObject* newObject = NULLPTR;
-
-		if (isChild == false)
-		{
-			string strObjTag = _pInstBR->ReadString();
-			string strLayerTag = _pInstBR->ReadString();
-			bool isDontDestroy = _pInstBR->ReadBool();
-			bool isEnable = _pInstBR->ReadBool();
-			bool isParent = _pInstBR->ReadBool();
-			bool isChild = _pInstBR->ReadBool(); _pInstBR->ReadBool();
-			// 생성
-			newObject = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
-			newObject->SetEnable(isEnable);
-			// 오브젝트 Load 호출
-			newObject->Load(_pInstBR);
-			SAFE_RELEASE(newObject);
-		}
-		else
-		{
-			string strObjTag = _pInstBR->ReadString();
-			string strLayerTag = _pInstBR->ReadString();
-			bool isDontDestroy = _pInstBR->ReadBool();
-			bool isEnable = _pInstBR->ReadBool();
-			int ChildSize = _pInstBR->ReadInt();
-
-			// 생성
-			newObject = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
-			newObject->SetEnable(isEnable);
-			// 오브젝트 Load 호출
-			newObject->Load(_pInstBR);
-
-			CGameObject* newChild = NULLPTR;
-
-			for (int i = 0; i < ChildSize; i++)
-			{
-				string strObjTag = _pInstBR->ReadString();
-				string strLayerTag = _pInstBR->ReadString();
-				bool isDontDestroy = _pInstBR->ReadBool();
-				bool isEnable = _pInstBR->ReadBool();
-
-				newChild = CGameObject::CreateObject(strObjTag, this, isDontDestroy);
-				newChild->SetEnable(isEnable);
-				newChild->ChildLoad(_pInstBR);
-				newObject->AddChild(newChild);
-				SAFE_RELEASE(newChild);
-			}
-			SAFE_RELEASE(newObject);
-		}
-	}
-
-	int childSize = _pInstBR->ReadInt();
-	*/
 }
 
 void CLayer::Start()

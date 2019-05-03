@@ -2,8 +2,8 @@
 #include "Inventory.h"
 #include "Component/Renderer.h"
 #include "Component/Material.h"
-#include "Component/ColliderRect.h"
 #include "Component/Transform.h"
+#include "Component/ColliderRect.h"
 #include "GameObject.h"
 #include "Input.h"
 #include "Zipper.h"
@@ -556,7 +556,6 @@ void CInventory::UseItem(CGameObject * pItem)
 					}
 				}
 
-
 				--m_iNumberIndex;
 				--m_iMoveIndex;
 
@@ -628,13 +627,9 @@ bool CInventory::Init()
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
-
-	CTransform*	pTr = m_pObject->GetTransform();
-
-	pTr->SetWorldScale(1280.f, 720.f, 1.f);
-	pTr->SetWorldPivot(0.f, 0.f, 0.f);
-
-	SAFE_RELEASE(pTr);
+	
+	m_pTransform->SetWorldScale(1280.f, 720.f, 1.f);
+	m_pTransform->SetWorldPivot(0.f, 0.f, 0.f);
 
 	m_pObject->SetEnable(false);
 

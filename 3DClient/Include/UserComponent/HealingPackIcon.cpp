@@ -20,6 +20,7 @@ CHealingPackIcon::CHealingPackIcon(const CHealingPackIcon& _healingPackIcon)
 
 CHealingPackIcon::~CHealingPackIcon()
 {
+	SAFE_RELEASE(m_pCollider);
 }
 
 bool CHealingPackIcon::Init()
@@ -38,13 +39,12 @@ bool CHealingPackIcon::Init()
 	SAFE_RELEASE(pRenderer);
 
 	// Collider
-	CColliderRect* pCollider = AddComponent<CColliderRect>("IconCollider");
-	pCollider->SetCollisionGroup("UI");
-	pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
-	pCollider->SetCollisionCallback(CCT_ENTER, this, &CHealingPackIcon::Hit);
-	pCollider->SetCollisionCallback(CCT_STAY, this, &CHealingPackIcon::HitStay);
-	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CHealingPackIcon::MouseOut);
-	SAFE_RELEASE(pCollider);
+	m_pCollider = AddComponent<CColliderRect>("IconCollider");
+	m_pCollider->SetCollisionGroup("UI");
+	m_pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
+	m_pCollider->SetCollisionCallback(CCT_ENTER, this, &CHealingPackIcon::Hit);
+	m_pCollider->SetCollisionCallback(CCT_STAY, this, &CHealingPackIcon::HitStay);
+	m_pCollider->SetCollisionCallback(CCT_LEAVE, this, &CHealingPackIcon::MouseOut);
 
 	return true;
 }
@@ -93,11 +93,13 @@ void CHealingPackIcon::SetMaterial()
 	if (m_strMeshName == "MedicalKit")
 	{
 		m_eComType = (COMPONENT_TYPE)IT_MEDICALKIT;
+		m_pCollider->SetColliderID((COLLIDER_ID)UCI_ITEM_FAK);
 		pMaterial->SetDiffuseTex(0, "MedicalKitIcon", TEXT("UI/Icon/FoodCan.png"));
 	}
 	else if (m_strMeshName == "LunchBox")
 	{
 		m_eComType = (COMPONENT_TYPE)IT_LUNCHBOX;
+		m_pCollider->SetColliderID((COLLIDER_ID)UCI_ITEM_LUNCHBOX);
 		pMaterial->SetDiffuseTex(0, "LaunchBoxIcon", TEXT("UI/Icon/ColaCan.png"));
 	}
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);

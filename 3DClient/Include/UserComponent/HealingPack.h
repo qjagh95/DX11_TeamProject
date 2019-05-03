@@ -29,6 +29,8 @@ public:
 
 private:
 	bool	m_isInvenInItem;
+	bool	m_bMotion;
+	bool	m_bGetItem;
 	int		m_hpAmount;
 	string	m_strMeshKey;
 
@@ -45,4 +47,5 @@ public:
 	const string GetMeshKey();
 	void HitEnter(CCollider* _pSrc, CCollider* _pDest, float _fTime);
 	void HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime);
+	void MouseOut(CCollider* _pSrc, CCollider* _pDest, float _fTime);
 };
