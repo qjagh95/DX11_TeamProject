@@ -42,6 +42,7 @@ public:
 	void SetOBBCollider(const Vector3& Length, const Vector3& Center = Vector3::Zero);
 
 protected:
+	static int m_Count;
 	string m_CurName;
 	CColliderSphere* m_HeadCollider;
 	CColliderSphere* m_BodyCollider;

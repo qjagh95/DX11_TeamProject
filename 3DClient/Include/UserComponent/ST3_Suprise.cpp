@@ -34,6 +34,7 @@ bool ST3_Suprise::Init()
 	
 	Sound/music/MUS_Demo_ending.wav
 
+	간단한 상태처리 라서 FSM사용.
 	*/
 
 	NPCBase::Init();
@@ -56,8 +57,6 @@ bool ST3_Suprise::Init()
 
 int ST3_Suprise::Input(float fTime)
 {
-	NPCBase::Input(fTime);
-
 	return 0;
 }
 
@@ -133,5 +132,7 @@ void ST3_Suprise::FS_FIND(float DeltaTime)
 	}
 	else
 	{
+		//문 열리면 ChangeState
+
 	}
 }

@@ -57,7 +57,7 @@ void CNumber::SetNumber(int iNumber)
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
 	char* pNumberTex = new char[MAX_PATH];
-	sprintf(pNumberTex, "%s%d", "Number", iNumber);
+	sprintf_s(pNumberTex, 255, "%s%d", "Number", iNumber);
 
 	TCHAR* pFileName = new TCHAR[MAX_PATH];
 	memset(pFileName, 0, sizeof(TCHAR) * MAX_PATH);

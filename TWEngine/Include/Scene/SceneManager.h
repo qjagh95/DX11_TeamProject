@@ -6,24 +6,14 @@ class CCamera;
 class CGameObject;
 class PUN_DLL CSceneManager
 {
-private:
-	CScene*	m_pCurScene;
-	bool	m_bChange;
-	bool m_bStart;
-
-	CGameObject*	m_pMainCameraObj;
-	CTransform*		m_pMainCameraTr;
-	CCamera*		m_pMainCamera;
-
-	CGameObject*	m_pUICameraObj;
-	CTransform*		m_pUICameraTr;
-	CCamera*		m_pUICamera;
-
-	unordered_map<string, CScene*> m_SceneMap;
-	unordered_map<string, CGameObject*>	m_mapCamera;
-	vector<CScene*> m_vecTemp;
-
 public:
+	bool Init();
+	int Input(float fTime);
+	int Update(float fTime);
+	int LateUpdate(float fTime);
+	int Collision(float fTime);
+	void Render(float fTime);
+
 	class CScene* GetScene()	const;
 	class CScene * GetSceneNonCount() const;
 	CScene* FindScene(const string& KeyName);
@@ -43,25 +33,17 @@ public:
 	CTransform*		GetUICameraTransform()				const;
 	CTransform *	GetUICameraTransformNonCount()		const;
 
-	CGameObject* CreateCamera(const string& strTag, const Vector3& vPos, CAMERA_TYPE eType,
-		float fWidth, float fHeight, float fViewAngle, float fNear, float fFar);
+	CGameObject* CreateCamera(const string& strTag, const Vector3& vPos, CAMERA_TYPE eType, float fWidth, float fHeight, float fViewAngle, float fNear, float fFar);
 	void ChangeCamera(const string& strTag);
 	CGameObject* FindCamera(const string& TagName);
-
-public:
-	bool Init();
-	int Input(float fTime);
-	int Update(float fTime);
-	int LateUpdate(float fTime);
-	int Collision(float fTime);
-	void Render(float fTime);
-
-public:
 	void AddLayer(const string& strTag, int iZOrder, bool bCurrent = true);
 	void ChangeLayerZOrder(const string& strTag, int iZOrder, bool bCurrent = true);
 	class CLayer* FindLayer(const string& strTag, bool bCurrent = true);
 	CGameObject* FindObject(const string& TagName);
+	void AfterInit();
 	void Access();
+
+	const unordered_map<string, CScene*>* GetSceneMap() { return &m_SceneMap; }
 
 public:
 	template <typename T>
@@ -103,6 +85,23 @@ private:
 
 		return getScene->AddSceneComponent<T>(ComponentTag);
 	}
+
+private:
+	CScene*	m_pCurScene;
+	bool	m_bChange;
+	bool m_bStart;
+
+	CGameObject*	m_pMainCameraObj;
+	CTransform*		m_pMainCameraTr;
+	CCamera*		m_pMainCamera;
+
+	CGameObject*	m_pUICameraObj;
+	CTransform*		m_pUICameraTr;
+	CCamera*		m_pUICamera;
+
+	unordered_map<string, CScene*> m_SceneMap;
+	unordered_map<string, CGameObject*>	m_mapCamera;
+	vector<CScene*> m_vecTemp;
 
 	DECLARE_SINGLE(CSceneManager)
 };

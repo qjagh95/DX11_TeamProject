@@ -33,6 +33,7 @@ public:
 	void GetLayerTagList(vector<string>* _pVec);
 	CLayer* FindLayer(const string& strTag);
 	CGameObject* m_LandObject;
+	void AfterInit();
 
 public:
 	static bool SortLayerZOrder(const CLayer* pSrc, const  CLayer* pDest);
@@ -108,6 +109,7 @@ public:
 	void Save(string _fullPath);
 	void Load(string _fullPath);
 	void SetPickingColliderEnable(bool _bEnable);
+	void SetColliderEnable(bool _bEnable);
 public:
 	void Start();
 	bool Init();

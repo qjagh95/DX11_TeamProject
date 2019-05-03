@@ -16,6 +16,10 @@ void CSceneComponent::Start()
 {
 }
 
+void CSceneComponent::AfterInit()
+{
+}
+
 int CSceneComponent::Input(float fTime)
 {
 	return 0;

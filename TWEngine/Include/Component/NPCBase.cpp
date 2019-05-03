@@ -10,10 +10,13 @@
 #include "../NavigationManager3D.h"
 #include "../BehaviorTree.h"
 
+int NPCBase::m_Count = 0;
+
 PUN_USING
 
 NPCBase::NPCBase()
 {
+	m_Count++;
 	m_Renderer = NULLPTR;
 	m_Animation = NULLPTR;
 	m_BT = NULLPTR;
@@ -120,7 +123,13 @@ NPCBase * NPCBase::Clone()
 
 void NPCBase::CreateBT(const string & TreeName, BT_ROOT_CHILD_TYPE Type)
 {
-	m_BT = BTManager::Get()->CreateBehaviorTree(TreeName, m_pObject, Type);
+	char temp[255] = {};
+	_itoa_s(m_Count, temp,10);
+
+	string Name = TreeName;
+	Name += temp;
+
+	m_BT = BTManager::Get()->CreateBehaviorTree(Name, m_pObject, Type);
 	m_BT->AddBoardData("m_Animation", m_Animation);
 	m_BT->AddBoardData("m_Target", m_Target);
 	m_BT->AddBoardData("m_TargetTransform", m_TargetTransform);

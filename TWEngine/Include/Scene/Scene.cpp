@@ -491,6 +491,11 @@ CLayer * CScene::FindLayer(const string & strTag)
 	return nullptr;
 }
 
+void CScene::AfterInit()
+{
+	m_pSceneComponent->AfterInit();
+}
+
 void CScene::SortLayer()
 {
 	m_LayerList.sort(CScene::SortLayerZOrder);

@@ -71,6 +71,11 @@ bool JBH_Stage3::Init()
 	return true;
 }
 
+void JBH_Stage3::AfterInit()
+{
+	int a = 0;
+}
+
 int JBH_Stage3::Update(float DeltaTime)
 {
 	return 0;

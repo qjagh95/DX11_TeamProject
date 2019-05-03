@@ -146,6 +146,12 @@ CGameObject * CSceneManager::FindCamera(const string & TagName)
 	return iter->second;
 }
 
+void CSceneManager::AfterInit()
+{
+	for (size_t i = 0;  i < m_vecTemp.size(); i++)
+		m_vecTemp[i]->AfterInit();
+}
+
 CScene * CSceneManager::FindScene(const string & KeyName)
 {
 	auto FindIter = m_SceneMap.find(KeyName);
@@ -298,4 +304,6 @@ void CSceneManager::Access()
 			}
 		}
 	}
+
+	AfterInit();
 }

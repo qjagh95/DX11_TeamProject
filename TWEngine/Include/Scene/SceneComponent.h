@@ -16,10 +16,10 @@ protected:
 	class CScene*	m_pScene;
 	class CLayer*	m_pLayer;
 
-
 public:
 	virtual void Start();
 	virtual bool Init() = 0;
+	virtual void AfterInit();
 	virtual int Input(float fTime);
 	virtual int Update(float fTime);
 	virtual int LateUpdate(float fTime);

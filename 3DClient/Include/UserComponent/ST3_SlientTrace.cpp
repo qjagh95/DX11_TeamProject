@@ -31,11 +31,29 @@ bool ST3_SlientTrace::Init()
 
 	*/
 
+	m_AniName[STS_IDLE] = "idle_search_forward";
+	m_AniName[STS_WATE] = "idle_search_forward";
+	m_AniName[STS_RUN] = "move_forword_fast";
+	m_AniName[STS_TRACE] = "move_forword_fast";
+	m_AniName[STS_BASH_DOOR] = "bash_door_loop";
+	m_AniName[STS_BASH_DOOR_OPEN] = "bash_door_end";
+	m_AniName[STS_NORMAL_DOOR_OPEN_LEFT] = "open_door_left_push_close";
+	m_AniName[STS_NORMAL_DOOR_OPEN_RIGHT] = "open_door_right_push_close";
+
+	m_AniName[STS_BED_FIND] = "";
+	m_AniName[STS_DESK_FIND] = "";
+	m_AniName[STS_LOCKER_FIND] = "";
+	m_AniName[STS_HOOK] = "";
+	m_AniName[STS_JAP] = "";
+	m_AniName[STS_HEAD_ATTACK] = "";
+
 	m_Renderer->SetMesh("Cannibal", TEXT("Cannibal.msh"));
 	m_Animation->LoadBone("Cannibal.bne");
 	m_Animation->Load("Cannibal.anm");
 
 	CreateBT("Slient");
+	ChangeState(STS_IDLE, m_AniName);
+
 	return true;
 }
 

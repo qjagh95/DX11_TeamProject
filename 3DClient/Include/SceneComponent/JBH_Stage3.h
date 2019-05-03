@@ -7,6 +7,7 @@ class JBH_Stage3 : public CSceneComponent
 {
 public:
 	bool Init() override;
+	void AfterInit() override;
 	int Update(float DeltaTime) override;
 	int LateUpdate(float DeltaTime) override;
 	void Collision(float DeltaTime) override;
