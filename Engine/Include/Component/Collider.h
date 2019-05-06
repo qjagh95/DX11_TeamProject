@@ -84,8 +84,6 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CCollider* Clone() = 0;
-	virtual void Save(BinaryWrite* _pInstBW);
-	virtual void Load(BinaryRead*  _pInstBR);
 
 public:
 	virtual bool Collision(CCollider* pDest, float fTime) = 0;

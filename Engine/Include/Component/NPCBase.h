@@ -36,13 +36,12 @@ public:
 	CGameObject* GetTarget() const { return m_Target; }
 	CTransform* GetTargetTransform() const { return m_TargetTransform; }
 
-	void SetLegCollider(float Radius, const Vector3& Center = Vector3::Zero);
-	void SetBodyCollider(float Radius,const Vector3& Center = Vector3::Zero);
-	void SetHeadCollider(float Radius,const Vector3& Center = Vector3::Zero);
+	void SetLegCollider(float Radius, const Vector3& Center = Vector3::Zero );
+	void SetBodyCollider(float Radius,const Vector3& Center = Vector3::Zero );
+	void SetHeadCollider(float Radius,const Vector3& Center = Vector3::Zero );
 	void SetOBBCollider(const Vector3& Length, const Vector3& Center = Vector3::Zero);
 
 protected:
-	static int m_Count;
 	string m_CurName;
 	CColliderSphere* m_HeadCollider;
 	CColliderSphere* m_BodyCollider;

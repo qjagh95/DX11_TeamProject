@@ -35,16 +35,10 @@ private:
 	float		m_fAccRot;
 	float		m_fRot;
 	bool		m_bLock;
-	bool		m_bNeedKey;
 	bool		m_bFastOpen;
-	bool		m_bOpen;
 	float		m_fOpenRot;
 	float		m_fCloseRot;
-	Vector3		m_vTeleportPos;
 	DOOR_TYPE	m_eDoorType;
-	string		m_strKeyName;
-	string		m_strTargetDoorKey;
-	string		m_strTargetSceneKey;
 
 
 	ptrdiff_t	m_pSndComp;
@@ -58,12 +52,6 @@ public:
 public:
 	bool IsLock() const;
 	void UnLock();
-	void UnLock(const Vector3& vAxis);
-	void Lock(bool bNeedKey = false, const string& strKeyName = "");
-
-	bool IsOpenFinished() const;
-
-	void SetFastOpen(bool bFastOpen);
 
 	int  GetState() const;
 	void SetState(int state);
@@ -77,12 +65,10 @@ public:
 	void SetFastOpenTime(float fTime);
 	void SetDestroyTime(float time);
 
-	bool SetSounds(const string strNames[], const TCHAR** strFilePaths);
-	bool SetOpenSound		(const string& strKey, const TCHAR* pFileName);
-	bool SetCloseSound		(const string& strKey, const TCHAR* pFileName);
-	bool SetFastOpenSound	(const string& strKey, const TCHAR* pFileName);
-	bool SetLockSound		(const string& strKey, const TCHAR* pFileName);
-	bool SetUnLockSound		(const string& strKey, const TCHAR* pFileName);
+	bool SetSounds(const std::string strNames[], const TCHAR** strFilePaths);
+	bool SetOpenSound(const std::string strKey);
+	bool SetCloseSound(const std::string strKey);
+	bool SetDestroySound(const std::string strKey);
 
 	void OnAct(float fTime);
 	void OnActNormal(float fTime);
@@ -98,13 +84,9 @@ public:
 	void OpenLocker(const Vector3& vDir);
 
 	void SetMesh(const string& strMeshKey, const TCHAR* pFileName);
-	
 
 	DOOR_TYPE  GetDoorType() const;
 	void SetDoorType(int iType);
-	void SetDoorTypeLocker();
-
-	void SetTargetDoor(const string& strSceneKey, const string& strDoorKey, const Vector3& vPos);
 
 	const bool IsOpened() const;
 	const bool IsOnAction() const;

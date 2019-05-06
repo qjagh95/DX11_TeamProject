@@ -319,24 +319,9 @@ Vector3 CGameObject::GetWorldScale() const
 	return m_pTransform->GetWorldScale();
 }
 
-Vector3 CGameObject::GetWorldMove() const
-{
-	return m_pTransform->GetWorldMove();
-}
-
 Vector3 CGameObject::GetWorldAxis(AXIS eAxis) const
 {
 	return m_pTransform->GetWorldAxis(eAxis);
-}
-
-STAGE_SECTION_TYPE CGameObject::GetStageSection() const
-{
-	return m_eSectionType;
-}
-
-void CGameObject::SetStageSection(int eStageSection)
-{
-	m_eSectionType = (STAGE_SECTION_TYPE)eStageSection;
 }
 
 void CGameObject::SetRenderGroup(RENDER_GROUP eGroup)

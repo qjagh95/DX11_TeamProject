@@ -22,7 +22,6 @@ private:
 
 private:
 	list<CLayer*> m_LayerList;
-	vector<CGameObject*> m_vecGlobalLight;
 	CSceneComponent* m_pSceneComponent;
 
 	// ·¹ÀÌ¾î
@@ -74,10 +73,6 @@ public:
 	CGameObject* CreateCamera(const string& strTag, const Vector3& vPos, CAMERA_TYPE eType,
 		float fWidth, float fHeight, float fViewAngle, float fNear, float fFar);
 	void ChangeCamera(const string& strTag);
-
-public:
-	void CreateDefaultGlobalLight();
-	vector<CGameObject*>* GetGlobalLightList();
 
 private:
 	CGameObject* FindCamera(const string& strTag);

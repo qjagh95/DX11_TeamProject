@@ -5,18 +5,12 @@
 #include <Component/Transform.h>
 #include <SoundManager.h>
 #include "Component/ColliderOBB3D.h"
-#include "Scene/SceneManager.h"
-#include "../GameManager.h"
-
-//스테이지 문의 방향은 현재 씬에서 나가는 방향으로 월드 로테이션을 배치
 
 PUN_USING
 
-#define OPEN_SOUND		0
-#define CLOSE_SOUND		1
+#define OPEN_SOUND 0
+#define CLOSE_SOUND 1
 #define FAST_OPEN_SOUND	2
-#define LOCK_SOUND		3
-#define UNLOCK_SOUND	4
 
 
 CDoor::CDoor() :
@@ -26,20 +20,14 @@ CDoor::CDoor() :
 	m_iState(1),
 	m_pSndComp(0),
 	m_bLock(false),
-	m_bFastOpen(false),
-	m_bOpen(false),
-	m_bNeedKey(false),
 	m_iDir(0),
+	m_bFastOpen(false),
 	m_fOpenRot(90.0f),
 	m_fRot(0.0f),
 	m_fAccRot(0.0f),
-	m_fCloseRot(0.0f),
-	m_strKeyName(""),
-	m_strTargetDoorKey(""),
-	m_strTargetSceneKey("")
+	m_fCloseRot(0.0f)
 {
 	m_eDoorType = DOOR_NORMAL;
-	m_eComType = (COMPONENT_TYPE)UT_DOOR;
 }
 
 CDoor::CDoor(const CDoor & door) :
@@ -60,51 +48,42 @@ CDoor::~CDoor()
 
 bool CDoor::Init()
 {
-	CRenderer* pRD = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
-	if (!pRD)
+	CRenderer* pRD = m_pObject->AddComponent<CRenderer>("DoorRenderer");
+	CColliderOBB3D* pOBB = AddComponent<CColliderOBB3D>("DoorBody");
+
+	pRD->SetMesh("Large_Locker_Door", TEXT("Large_Locker_Door.msh"));
+
+	pRD->SetShader(STANDARD_BUMP_SHADER);
+	m_pTransform->SetWorldPivot(0.5f, -0.5f, 0.0f);
+	m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
+	m_pTransform->SetLocalRot(90.0f);
+
+	Vector3 vMeshLength = pRD->GetMeshLength();
+	Vector3 vScale = vMeshLength * GetWorldScale();
+
+	Vector3 vCenter;
+	vCenter.x =vMeshLength.z * 0.5f;
+	vCenter.y =vMeshLength.y * -0.085f;
+	vCenter.z =vMeshLength.x * 0.0f;
+
+
+	//vCenter.x = 30.0f;
+
+	Vector3 vAxis[3];
+	Matrix matLocalRot = m_pTransform->GetLocalRotMatrix();
+
+	//Vector3 vCenter = vScale ; 
+
+	vScale = vScale * 0.5f;
+
+	for (int i = 0; i < 3; ++i)
 	{
-		pRD = m_pObject->AddComponent<CRenderer>("DoorRenderer");
-		pRD->SetMesh("Large_Locker_Door", TEXT("Large_Locker_Door.msh"));
+		vAxis[i] = Vector3::Axis[(AXIS)i];
+		vAxis[i] = vAxis[i].TransformNormal(matLocalRot);
 	}
 
-
-	CColliderOBB3D* pOBB = m_pObject->FindComponentFromType<CColliderOBB3D>(CT_COLLIDER);
-
-	if (!pOBB)
-	{
-		pOBB = m_pObject->AddComponent<CColliderOBB3D>("DoorBody");
-		m_pTransform->SetWorldPivot(0.5f, -0.5f, 0.0f);
-		m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
-		m_pTransform->SetLocalRot(90.0f);
-
-		Vector3 vMeshLength = pRD->GetMeshLength();
-		Vector3 vScale = vMeshLength * GetWorldScale();
-
-		Vector3 vCenter;
-		vCenter.x = vMeshLength.z * 0.5f;
-		vCenter.y = vMeshLength.y * -0.085f;
-		vCenter.z = vMeshLength.x * 0.0f;
-
-
-		//vCenter.x = 30.0f;
-
-		Vector3 vAxis[3];
-		Matrix matLocalRot = m_pTransform->GetLocalRotMatrix();
-
-		//Vector3 vCenter = vScale ; 
-
-		vScale = vScale * 0.5f;
-
-		for (int i = 0; i < 3; ++i)
-		{
-			vAxis[i] = Vector3::Axis[(AXIS)i];
-			vAxis[i] = vAxis[i].TransformNormal(matLocalRot);
-		}
-
-		pOBB->SetInfo(vCenter, vAxis, vScale);
-		pOBB->SetColliderID((COLLIDER_ID)UCI_DOOR);
-	}
-
+	pOBB->SetInfo(vCenter, vAxis, vScale);
+	pOBB->SetColliderID((COLLIDER_ID)UCI_DOOR);
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CDoor::Interact);
 
 	SAFE_RELEASE(pRD);
@@ -113,6 +92,7 @@ bool CDoor::Init()
 	AfterClone();
 
 	m_iState = 1;
+
 	m_fOpenRot = 90.0f;
 	m_fOpenTime = 1.0f;
 	m_fFastOpenTime = 0.1f;
@@ -120,29 +100,14 @@ bool CDoor::Init()
 	m_fFastOpenSpeed = 1.0f / m_fFastOpenTime;
 	m_fOpenSpeed = 1.0f / m_fOpenTime;
 
-	string names[5];
-	names[0] = "wood_Door_Open1";
-	names[1] = "wood_Door_Close1";
-	names[2] = "wood_Door_Bash1";
-	names[3] = "";
-	names[4] = "";
-
-	TCHAR* strPaths[5];
-	strPaths[0] = (TCHAR*)TEXT("WoodenDoor_OPENING_01.wav");
-	strPaths[1] = (TCHAR*)TEXT("WoodenDoor_CLOSING_03.wav");
-	strPaths[2] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
-	strPaths[3] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
-	strPaths[4] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
-
-	SetSounds(names, (const TCHAR**)strPaths);
+	SetDoorType(DOOR_HEAVY);
 
 	return true;
 }
 
 int CDoor::Update(float fTime)
 {
-	if (m_eDoorType != DOOR_HEAVY)
-		OnAct(fTime);
+	OnAct(fTime);
 
 	return 0;
 }
@@ -173,87 +138,6 @@ void CDoor::UnLock()
 	m_bLock = false;
 }
 
-void CDoor::UnLock(const Vector3 & vAxis)
-{
-	if (m_bNeedKey)
-	{
-		/*
-		인벤토리에 unordered_map으로 m_strKeyName을 넣어서 bool값을 찾고
-		리턴된 bool값이 트루라면 키 아이템을 획득한 것으로 간주하고
-		잠금해제.
-
-		태환씨에게 필요한 것 : unordered_map<string, bool>로 변수를 선언하고
-		모든 씬의 열쇠만큼 할당해준다.
-		*/
-		//일단 임시로 GameManager에 함수 만들어 놓음. 태환씨 추가되면 그걸로 바꿀 예정
-		if (GET_SINGLE(CGameManager)->FindKey(m_strKeyName))
-		{
-			m_bLock = false;
-			//잠금해제 사운드 재생
-			PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
-			pSnd->StopClip(UNLOCK_SOUND);
-			pSnd->Play(UNLOCK_SOUND);
-		}
-		else
-		{
-			//잠긴 사운드 재생
-			PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
-			pSnd->StopClip(LOCK_SOUND);
-			pSnd->Play(LOCK_SOUND);
-		}
-	}
-	else
-	{
-		Vector3 vDoorAxis = GetWorldAxis(AXIS_Z);
-		float fAngle = vDoorAxis.Angle(vAxis);
-
-		if (isnan(fAngle))
-			fAngle = 0.0f;
-
-		if (fAngle < 90.0f)
-		{
-			m_bLock = false;
-			//잠금해제 사운드 재생
-			PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
-			pSnd->StopClip(UNLOCK_SOUND);
-			pSnd->Play(UNLOCK_SOUND);
-		}
-		else
-		{
-			//잠긴 사운드 재생
-			PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
-			pSnd->StopClip(LOCK_SOUND);
-			pSnd->Play(LOCK_SOUND);
-		}
-	}
-}
-
-void CDoor::Lock(bool bNeedKey, const string & strKeyName)
-{
-	/*
-	잠금 함수는 열쇠가 있어야 열 수 있는 잠금인지,
-	아니면 반대쪽에서 잠겨있어서 반대쪽 열면 잠금 해제되는 잠금인지를
-	bNeedKey값으로 넣어줘서 처리한다.
-
-	bNeedKey가 true라면 (열쇠로만 문을 열 수 있는 문이라면)
-	Key값을 반드시 정해줘야한다.
-	*/
-
-	m_bLock = true;
-	m_bNeedKey = bNeedKey;
-	m_strKeyName = strKeyName;
-}
-
-bool CDoor::IsOpenFinished() const
-{
-	return m_bOpen;
-}
-
-void CDoor::SetFastOpen(bool bFastOpen)
-{
-	m_bFastOpen = bFastOpen;
-}
-
 int CDoor::GetState() const
 {
 	return 0;
@@ -280,10 +164,7 @@ void CDoor::SetOpenRot(float fRot)
 
 void CDoor::SetOpenTime(float time)
 {
-	//열리는 데에 걸리는 시간을 설정한다.
 	m_fOpenTime = time;
-
-	//시간에 비례한 속도를 구해놓는다.
 	m_fOpenSpeed = 1.0f / m_fOpenTime;
 }
 
@@ -293,10 +174,8 @@ void CDoor::SetCloseTime(float fTime)
 
 void CDoor::SetFastOpenTime(float fTime)
 {
-	//빠르게 열리는 데 걸리는 총 시간을 설정한다.
 	m_fFastOpenTime = fTime;
 
-	//빠르게 열리는 시간에 비례한 열리는 속도를 구해놓는다.
 	m_fFastOpenSpeed = m_fOpenTime * m_fOpenTime / m_fFastOpenTime;
 }
 
@@ -312,10 +191,10 @@ bool CDoor::SetSounds(const std::string strNames[], const TCHAR ** strFilePaths)
 	std::vector<std::string> vecKey;
 	std::vector<std::wstring> vecPath;
 
-	vecKey.resize(5);
-	vecPath.resize(5);
+	vecKey.resize(3);
+	vecPath.resize(3);
 
-	for (char i = 0; i < 5; ++i)
+	for (char i = 0; i < 3; ++i)
 	{
 		vecKey[i] = strNames[i];
 		vecPath[i] = strFilePaths[i];
@@ -326,55 +205,23 @@ bool CDoor::SetSounds(const std::string strNames[], const TCHAR ** strFilePaths)
 	return true;
 }
 
-bool CDoor::SetOpenSound(const std::string& strKey, const TCHAR* pFileName)
+bool CDoor::SetOpenSound(const std::string strKey)
 {
-	PUN::CSoundSource *pSource = (PUN::CSoundSource*)m_pSndComp;
-
-	pSource->LoadSound(OPEN_SOUND, strKey, pFileName);
-
 	return true;
 }
 
-bool CDoor::SetCloseSound(const std::string& strKey, const TCHAR* pFileName)
+bool CDoor::SetCloseSound(const std::string strKey)
 {
-	PUN::CSoundSource *pSource = (PUN::CSoundSource*)m_pSndComp;
-
-	pSource->LoadSound(CLOSE_SOUND, strKey, pFileName);
-
 	return true;
 }
 
-bool CDoor::SetFastOpenSound(const string& strKey, const TCHAR* pFileName)
+bool CDoor::SetDestroySound(const std::string strKey)
 {
-	PUN::CSoundSource *pSource = (PUN::CSoundSource*)m_pSndComp;
-
-	pSource->LoadSound(FAST_OPEN_SOUND, strKey, pFileName);
-
-	return true;
-}
-
-bool CDoor::SetLockSound(const string& strKey, const TCHAR* pFileName)
-{
-	PUN::CSoundSource *pSource = (PUN::CSoundSource*)m_pSndComp;
-
-	pSource->LoadSound(LOCK_SOUND, strKey, pFileName);
-
-	return true;
-}
-
-bool CDoor::SetUnLockSound(const string& strKey, const TCHAR* pFileName)
-{
-	PUN::CSoundSource *pSource = (PUN::CSoundSource*)m_pSndComp;
-
-	pSource->LoadSound(UNLOCK_SOUND, strKey, pFileName);
-
 	return true;
 }
 
 void CDoor::OnAct(float fTime)
 {
-	m_fAccTime += fTime;
-
 	if (m_iState & DOOR_ONACT)
 	{
 		switch (m_eDoorType)
@@ -383,12 +230,12 @@ void CDoor::OnAct(float fTime)
 			OnActNormal(fTime);
 			break;
 
-		case DOOR_STAGE:
-			OnActStage(fTime);
-			break;
-
 		case DOOR_LOCKER:
 			OnActLocker(fTime);
+			break;
+
+		case DOOR_HEAVY:
+
 			break;
 		}
 	}
@@ -396,6 +243,8 @@ void CDoor::OnAct(float fTime)
 
 void CDoor::OnActNormal(float fTime)
 {
+	m_fAccTime += fTime;
+
 	//기본 열리는 시간과 열리는 속도를 설정
 	float fOpenTime = m_fOpenTime;
 	float fOpenSpeed = m_fOpenSpeed;
@@ -436,10 +285,6 @@ void CDoor::OnActNormal(float fTime)
 			//월드 로테이션 값을 설정한다.
 			m_fRot = m_fCloseRot + m_fOpenRot * m_iDir;
 			m_pTransform->SetWorldRotY(m_fRot);
-
-			m_bOpen = true;
-
-			m_fAccTime = 0.0f;
 		}
 		//닫힌 상태라면
 		else
@@ -455,8 +300,6 @@ void CDoor::OnActNormal(float fTime)
 				pSnd->StopClip(CLOSE_SOUND);
 				pSnd->Play(CLOSE_SOUND);
 			}
-
-			m_bOpen = false;
 		}
 	}
 }
@@ -470,23 +313,23 @@ void CDoor::OnActStage(float fTime)
 	//만약 빨리 열기가 참이면
 	if (m_bFastOpen)
 	{
-		//빨리 열리는 값으로 바꾸어 계산
+		//빨리 열리는 값을 설정
 		fOpenTime = m_fFastOpenTime;
 		fOpenSpeed = m_fFastOpenSpeed;
 	}
 
-	//프레임당 열리는 각도 구해주고
+	//최종 열리는 속도 구해주고
 	float fDeltaRot = m_fOpenRot * fTime * fOpenSpeed;
 
 	//누적 각도와 실제 적용 각도를 구해준다.
 	m_fAccRot += fDeltaRot;
 	m_fRot += fDeltaRot * m_iDir;
 
-	//누적 각도가 설정된 최대 열리는 각도가 될 때 까지 실제 적용각도로 문을 회전시킨다.
+	//누적 각도가 90도가 될 때 까지 실제 적용각도로 문을 회전시킨다.
 	if (m_fAccRot < m_fOpenRot)
 		m_pTransform->SetWorldRotY(m_fCloseRot + m_fRot);
 
-	//누적 각도가 최대 각도가 되었다면
+	//누적 각도가 90도가 되었다면
 	else
 	{
 		//XOR 연산으로 ONACT 상태를 제거
@@ -571,6 +414,7 @@ void CDoor::OnActLocker(float fTime)
 
 void CDoor::OnActHeavy(float fTime)
 {
+
 	float fDeltaRot = m_fOpenRot * fTime * m_fOpenSpeed;
 
 	//누적 각도와 실제 적용 각도를 구해준다.
@@ -580,11 +424,6 @@ void CDoor::OnActHeavy(float fTime)
 	//누적 각도가 90도가 될 때 까지 실제 적용각도로 문을 회전시킨다.
 	if (m_fAccRot < m_fOpenRot)
 		m_pTransform->SetWorldRotY(m_fCloseRot + m_fRot);
-	else
-	{
-		if (!m_bOpen)
-			m_bOpen = true;
-	}
 }
 
 void CDoor::Open(const Vector3& vDir)
@@ -627,9 +466,6 @@ void CDoor::Open(const Vector3& vDir)
 
 void CDoor::Close()
 {
-	if (m_fAccTime < 1.0f)
-		return;
-
 	if (m_iState & DOOR_OPEN)
 	{
 		m_iState = DOOR_ONACT | DOOR_CLOSE;
@@ -667,33 +503,14 @@ void CDoor::OpenStage(const Vector3 & vDir)
 
 	float fAngle = vDirZ.Angle(vDir);
 
-	if (isnan(fAngle))
-		fAngle = 1.0f;
-
 	if (fAngle > 90.0f)
-		m_iDir = 1;
-	else
 		m_iDir = -1;
+	else
+		m_iDir = 1;
 
 	if (m_iDir < 0)
 	{
 		//스테이지 전환
-		GET_SINGLE(CSceneManager)->ChangeScene(m_strTargetSceneKey);
-		
-		//대상 문 열기
-		CDoor* pTargetDoor = GET_SINGLE(CGameManager)->FindDoor(m_strTargetSceneKey, m_strTargetDoorKey);
-		Vector3 vDir = pTargetDoor->GetWorldAxis(AXIS_Z);
-
-		Vector3 vInvDir = vDir * -1.0f;
-
-		pTargetDoor->Open(vInvDir);
-		pTargetDoor->SetFastOpen(m_bFastOpen);
-
-		//플레이어가 문여는 애니메이션 하고 앞으로 나아가며 문이 자동으로 닫혀야함
-		GET_SINGLE(CGameManager)->PlayerSpon(m_vTeleportPos, vDir);
-
-		if (m_bFastOpen)
-			m_bFastOpen = false;
 	}
 	else if (m_iDir > 0)
 	{
@@ -728,8 +545,6 @@ void CDoor::SetMesh(const string & strMeshKey, const TCHAR * pFileName)
 	SAFE_RELEASE(pRD);
 }
 
-
-
 DOOR_TYPE CDoor::GetDoorType() const
 {
 	return m_eDoorType;
@@ -739,73 +554,65 @@ void CDoor::SetDoorType(int iType)
 {
 	m_eDoorType = (DOOR_TYPE)iType;
 
-	switch (m_eDoorType)
+	if (m_eDoorType == DOOR_NORMAL)
 	{
-	case DOOR_NORMAL:
-	case DOOR_STAGE:
 		SetOpenRot(90.0f);
-		break;
-
-	case DOOR_LOCKER:
-		SetDoorTypeLocker();
+	}
+	else if (m_eDoorType == DOOR_STAGE)
+	{
 		SetOpenRot(90.0f);
-		break;
+	}
 
-	case DOOR_HEAVY:
+	else if (m_eDoorType == DOOR_LOCKER)
+	{
+		CRenderer* pRD = m_pObject->AddComponent<CRenderer>("DoorRenderer");
+		CColliderOBB3D* pOBB = AddComponent<CColliderOBB3D>("DoorBody");
+
+		pRD->SetMesh("Large_Locker_Door", TEXT("Large_Locker_Door.msh"));
+
+		pRD->SetShader(STANDARD_BUMP_SHADER);
+
+		Vector3 vMeshLength = pRD->GetMeshLength();
+		Vector3 vScale = vMeshLength * GetWorldScale();
+
+		Vector3 vCenter;
+		vCenter.x = vMeshLength.z * 0.5f;
+		vCenter.y = vMeshLength.y * -0.085f;
+		vCenter.z = vMeshLength.x * 0.0f;
+
+
+		//vCenter.x = 30.0f;
+
+		Vector3 vAxis[3];
+		Matrix matLocalRot = m_pTransform->GetLocalRotMatrix();
+
+		//Vector3 vCenter = vScale ; 
+
+		vScale = vScale * 0.5f;
+
+		for (int i = 0; i < 3; ++i)
+		{
+			vAxis[i] = Vector3::Axis[(AXIS)i];
+			vAxis[i] = vAxis[i].TransformNormal(matLocalRot);
+		}
+
+		pOBB->SetInfo(vCenter, vAxis, vScale);
+		pOBB->SetColliderID((COLLIDER_ID)UCI_DOOR);
+		pOBB->SetCollisionCallback(CCT_STAY, this, &CDoor::Interact);
+
+		SAFE_RELEASE(pRD);
+		SAFE_RELEASE(pOBB);
+
+		SetOpenRot(90.0f);
+
+		SAFE_RELEASE(pRD);
+
+	}
+	else if (m_eDoorType == DOOR_HEAVY)
+	{
 		m_iDir = 1;
 		SetOpenRot(60.0f);
-		break;
 	}
-}
-
-void CDoor::SetDoorTypeLocker()
-{
-	CRenderer* pRD = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
-	CColliderOBB3D* pOBB = FindComponentFromType<CColliderOBB3D>(CT_COLLIDER);
-
-	if (!pRD)
-		pRD = m_pObject->AddComponent<CRenderer>("DoorRenderer");
-	if (!pOBB)
-		pOBB = m_pObject->AddComponent<CColliderOBB3D>("DoorBody");
-
-	pRD->SetMesh("Large_Locker_Door", TEXT("Large_Locker_Door.msh"));
-
-	Vector3 vMeshLength = pRD->GetMeshLength();
-	Vector3 vScale = vMeshLength * GetWorldScale();
-
-	Vector3 vCenter;
-	vCenter.x = vMeshLength.z * 0.5f;
-	vCenter.y = vMeshLength.y * -0.085f;
-	vCenter.z = vMeshLength.x * 0.0f;
-	//vCenter.x = 30.0f;
-
-	Vector3 vAxis[3];
-	Matrix matLocalRot = m_pTransform->GetLocalRotMatrix();
-
-	//Vector3 vCenter = vScale ; 
-
-	vScale = vScale * 0.5f;
-
-	for (int i = 0; i < 3; ++i)
-	{
-		vAxis[i] = Vector3::Axis[(AXIS)i];
-		vAxis[i] = vAxis[i].TransformNormal(matLocalRot);
-	}
-
-	pOBB->SetInfo(vCenter, vAxis, vScale);
-	pOBB->SetColliderID((COLLIDER_ID)UCI_DOOR);
-	pOBB->SetCollisionCallback(CCT_STAY, this, &CDoor::Interact);
-
-	SAFE_RELEASE(pRD);
-	SAFE_RELEASE(pOBB);
-}
-
-void CDoor::SetTargetDoor(const string & strSceneKey, const string & strDoorKey, 
-	const Vector3& vPos)
-{
-	m_vTeleportPos = vPos;
-	m_strTargetSceneKey = strSceneKey;
-	m_strTargetDoorKey = strDoorKey;
 }
 
 const bool CDoor::IsOpened() const
@@ -823,42 +630,36 @@ void CDoor::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
-		Vector3 vDir = pDest->GetWorldAxis(AXIS_Z);
-
-		bool bOnAct = m_iState & DOOR_ONACT;
-
-		if (!bOnAct)
+		//화면 상에 텍스트 UI 출력
+		if (m_iState & DOOR_CLOSE)
 		{
-			//화면 상에 텍스트 UI 출력
-			if (m_iState & DOOR_CLOSE)
-			{
-				if (m_fAccTime > 1.0f)
-				{
-					//ex) E : 문열기
-				}					
-			}
-			else if (m_iState & DOOR_OPEN)
-			{
-				//ex) E : 문닫기
-			}
+			//ex) E : 문열기
+		}
+		else if (m_iState & DOOR_OPEN)
+		{
+			//ex) E : 문닫기
 		}
 
 		if (CInput::GetInst()->KeyPress("E"))
 		{
 			if (m_eDoorType != DOOR_HEAVY)
 			{
-				//잠겨잇는 상태라면
 				if (m_bLock)
-					UnLock(vDir);
-				//잠겨있지 않다면
+				{
+					//GameManager에서 키를 가지고 잇는지 확인하고
+					//있다면 잠금해제 후 잠금해제 사운드 재생.
+				}
 				else
 				{
 					bool bAct = m_iState & DOOR_ONACT;
-					//열리거나 닫히는 중이 아니라면
+
 					if (!bAct)
 					{
+						Vector3 vDir = pDest->GetWorldAxis(AXIS_Z);
 						if (m_iState & DOOR_CLOSE)
+						{
 							Open(vDir);
+						}
 						else if (m_iState & DOOR_OPEN)
 							Close();
 					}
@@ -867,20 +668,15 @@ void CDoor::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 		}
 		else if (KEYHOLD("E"))
 		{
-			//문 타입이 DOOR_HEAVY라면
 			if (m_eDoorType == DOOR_HEAVY)
 			{
-				//사실 잠겨있지 않을테지만 아무튼 잠겨있는지 확인하고
 				if (!m_bLock)
 				{
-					//문이 닫혀있는 상태라면
 					if (m_iState & DOOR_CLOSE)
 					{
-						//열리고 있는 중이라고 바꿔준 후 
 						m_iState = DOOR_OPEN | DOOR_ONACT;
 						m_fCloseRot = GetWorldRot().y;
 					}
-					//조금씩 문을 연다
 					OnActHeavy(fTime);
 				}
 			}

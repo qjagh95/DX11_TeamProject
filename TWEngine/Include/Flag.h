@@ -457,8 +457,7 @@ namespace PUN
 		SST_S1_R6,
 		SST_S1_R7,
 		SST_S1_R8,
-		SST_S1_RG,
-		SST_END
+		SST_S1_RG
 	};
 
 	enum COLLIDER_ID

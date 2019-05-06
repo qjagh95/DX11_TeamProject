@@ -21,10 +21,6 @@ public:
 	OBB3DInfo GetInfo()	const;
 	void SetInfo(const Vector3& vCenter, Vector3 vAxis[3],
 		const Vector3& vLength);
-	OBB3DInfo GetRelativeInfo() const
-	{
-		return m_tRelativeInfo;
-	}
 
 public:
 	virtual bool Init();
@@ -34,8 +30,6 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CColliderOBB3D* Clone();
-	virtual void Save(BinaryWrite* _pInstBW);
-	virtual void Load(BinaryRead*  _pInstBR);
 
 public:
 	virtual bool Collision(CCollider* pDest, float fTime);

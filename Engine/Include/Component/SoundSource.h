@@ -39,8 +39,6 @@ namespace PUN
 		bool LoadSounds(const char** arrStr, int iCnt);
 		bool LoadSounds(const char** arrStrName, const TCHAR** arrFilePath, int iCnt, const string& PathKey = SOUND_PATH);
 		bool LoadSounds(const vector<std::string>& vecStrName, const vector<wstring>& vecFilePath, const string& PathKey = SOUND_PATH);
-		bool LoadSound(const string& strName, const TCHAR* pFileName, const string& strPathKey = SOUND_PATH);
-		bool LoadSound(int iIndex, const string& strName, const TCHAR* pFileName, const string& strPathKey = SOUND_PATH);
 
 		float GetRadius() const;
 

@@ -266,57 +266,6 @@ bool PUN::CSoundSource::LoadSounds(const vector<std::string>& vecStrName, const 
 	return true;
 }
 
-bool PUN::CSoundSource::LoadSound(const string & strName, const TCHAR * pFileName, const string & strPathKey)
-{
-	PUN::CSoundManager *pMgr = PUN::CSoundManager::GetInst();
-	std::shared_ptr<DirectX::SoundEffect> sNullPTR;
-
-	pMgr->CreateSoundEffect(strName, pFileName, strPathKey);
-	std::shared_ptr<DirectX::SoundEffect> sPtrSound = pMgr->FindSoundEffect(strName);
-	if (sPtrSound == sNullPTR)
-		return false;
-	std::shared_ptr<DirectX::SoundEffectInstance> sPtrSoundInst
-		= sPtrSound->CreateInstance(SoundEffectInstance_Use3D | SoundEffectInstance_ReverbUseFilters);
-
-	sPtrSoundInst->Apply3D(pMgr->GetMainListener(), m_tAudioEmitter);
-
-	m_vecsPtrSound.push_back(sPtrSoundInst);
-	m_mapSndInstKey.insert(std::make_pair(strName, m_vecsPtrSound.size() - 1));
-	m_vecSndStr.push_back(strName);
-	m_vecsPtrSound_Data.push_back(sPtrSound);
-
-	return true;
-}
-
-bool PUN::CSoundSource::LoadSound(int iIndex, const string & strName, const TCHAR * pFileName, const string & strPathKey)
-{
-	PUN::CSoundManager *pMgr = PUN::CSoundManager::GetInst();
-	std::shared_ptr<DirectX::SoundEffect> sNullPTR;
-
-	pMgr->CreateSoundEffect(strName, pFileName, strPathKey);
-	std::shared_ptr<DirectX::SoundEffect> sPtrSound = pMgr->FindSoundEffect(strName);
-	if (sPtrSound == sNullPTR)
-		return false;
-	std::shared_ptr<DirectX::SoundEffectInstance> sPtrSoundInst
-		= sPtrSound->CreateInstance(SoundEffectInstance_Use3D | SoundEffectInstance_ReverbUseFilters);
-
-	sPtrSoundInst->Apply3D(pMgr->GetMainListener(), m_tAudioEmitter);
-
-	if (iIndex > m_vecsPtrSound.size() - 1)
-	{
-		m_vecsPtrSound.resize(iIndex + 1);
-		m_vecSndStr.resize(iIndex + 1);
-		m_vecsPtrSound_Data.resize(iIndex + 1);
-	}
-
-	m_vecsPtrSound[iIndex] = sPtrSoundInst;
-	m_mapSndInstKey.insert(std::make_pair(strName, iIndex));
-	m_vecSndStr[iIndex] = strName;
-	m_vecsPtrSound_Data[iIndex] = sPtrSound;
-
-	return true;
-}
-
 float PUN::CSoundSource::GetRadius() const
 {
 	return m_tAudioEmitter.InnerRadius;
