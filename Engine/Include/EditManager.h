@@ -36,6 +36,7 @@ private:
 	class CGizmo*		m_pYGizmo;
 	class CGizmo*		m_pZGizmo;
 	CGameObject*		m_pObject;
+	class CCollider*    m_pSelectCollider;
 	CGameObject*		m_pXGizmoObj;
 	CGameObject*		m_pYGizmoObj;
 	CGameObject*		m_pZGizmoObj;
@@ -51,10 +52,16 @@ private:
 	bool				m_bSelectNaviMove;
 	vector<string>		m_vecstrObjList;
 	vector<struct _tagBoneKeyFrame*> m_vecDivideFrame;
-
+	std::vector<std::string> m_vecObjCollTag;
 public:
 	void SetFreeCamObj(CGameObject* _pObj);
 	void SetArm(class CArm* _pArm);
+public:
+	void GetObjFromCollTag();
+	const std::vector<std::string>* GetVecObjCollTag() const
+	{
+		return &m_vecObjCollTag;
+	}
 
 private:
 	enum eTransformType
@@ -97,6 +104,10 @@ public:
 	void ChangeObjectTag(const string _strObjectTag);
 	void ChangeObjectInLayer(const string _strLayerTag);
 	void AddComponent(string& _strCompTag);
+	void AddColliderOBB(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ,
+		int iColliderID, const std::string& _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag);
+	void AddColliderSphere(float dCenterX, float dCenterY, float dCenterZ, float fRadius,
+		int iColliderID, const std::string& _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag);
 	void SetLocalScale(double _dX, double _dY, double _dZ);
 	void SetLocalRotate(double _dX, double _dY, double _dZ);
 	void SetLocalPosition(double _dX, double _dY, double _dZ);
@@ -118,6 +129,7 @@ public:
 	void SetMouseWheel(short _sMouseWheel);
 	void SetGizmoEnable(bool _bEnable);
 	void SetPickingColliderEnable(bool _bEnable);
+	void SetColliderEnable(bool _bEnable);
 
 	bool CreateLandScape(int _iX , int _iZ);
 	int GetNaviSelectIndex() const;
@@ -164,8 +176,20 @@ public:
 	int GetLightType();
 	float GetLightRange();
 	vector<Vector4> GetSpecular();
+	void CreateDefaultGlobalLight();
+	vector<string> GetGlobalLightList();
 
 	CLandScape * GetLandScape() const { return m_LandScape; }
+	/////////////////////////////Collider/////////////////////////
+	bool FindActiveCollider(const std::string& _strTag);
+	Vector3 GetOBBLength();
+	float GetSphereRadius();
+	Vector3 GetOBBRelativeCenter();
+	Vector3 GetSphereCenter();
+	int		GetCollType() const;
+	void SetSphereColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float fRadius);
+	void SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ);
+
 };
 
 PUN_END

@@ -22,23 +22,23 @@ protected:
 	class CTransform*	m_pTransform;
 
 public:
-	class CScene*		GetScene()	const;
-	class CLayer*		GetLayer()	const;
-	class CGameObject*	GetGameObject()	const;
-	class CGameObject * GetGameObjectNonCount() const;
-	class CTransform*	GetTransform()	const;
-	class CTransform * GetTransformNonCount() const;
+	class CScene*		GetScene()				const;
+	class CLayer*		GetLayer()				const;
+	class CGameObject*	GetGameObject()			const;
+	class CGameObject*  GetGameObjectNonCount() const;
+	class CTransform*	GetTransform()			const;
+	class CTransform *  GetTransformNonCount()	const;
 
 protected:
-	COMPONENT_TYPE	m_eComType;
+	COMPONENT_TYPE		m_eComType;
 
 public:
-	COMPONENT_TYPE	GetComponentType()	const;
-
-	Vector3 GetWorldPos() const;
-	Vector3 GetWorldRot() const;
-	Vector3 GetWorldScale() const;
-	Vector3 GetWorldAxis(AXIS eAxis) const;
+	COMPONENT_TYPE	GetComponentType()			const;
+	Vector3 GetWorldPos()						const;
+	Vector3 GetWorldRot()						const;
+	Vector3 GetWorldScale()						const;
+	Vector3 GetWorldMove()						const;
+	Vector3 GetWorldAxis(AXIS eAxis)			const;
 
 public:
 	// Start함수는 장면이 시작되면서 딱 1번만 호출될 함수이다.
