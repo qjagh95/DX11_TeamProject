@@ -56,6 +56,7 @@ enum PLAYER_STATUS
 	PSTATUS_GUN_TAKING_OFF = 0x40000,
 	PSTATUS_ITEM = 0x80000,
 	PSTATUS_DOCX = 0x90000, // 문서 인벤토리용 Status
+	PSTATUS_KEY = 0x95000, // 키 인벤토리용 Status
 	PSTATUS_UPDATEPOS = 0x100000,
 	PSTATUS_INACTIVE = 0x10000000
 };
@@ -210,6 +211,8 @@ public:
 	void Close_Item(float fTime);
 	void Open_Docx(float fTime);
 	void Close_Docx(float fTime);
+	void Open_Key(float fTime);
+	void Close_Key(float fTime);
 	void Pickup_Weapon(float fTime);
 	void Aim_Weapon(float fTime);
 	void Fire_Weapon(float fTime);

@@ -986,7 +986,6 @@ int CHuman_Player::Update(float fTime)
 
 			Vector3 vPos = m_pTransform->GetWorldPos();
 			vPos.y = fY;
-			cout << "y : " << fY << endl;
 			m_pTransform->SetWorldPos(vPos);
 		}
 	}

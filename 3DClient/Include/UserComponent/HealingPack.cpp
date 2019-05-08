@@ -42,7 +42,7 @@ bool CHealingPack::Init()
 {
 	// Transform 
 	//m_pTransform->SetWorldScale(20.f, 20.f, 20.f);
-	m_pTransform->SetWorldScale(100.f, 100.f, 100.f);
+	m_pTransform->SetWorldScale(1.f);
 
 	// Renderer
 	m_pRenderer = m_pObject->AddComponent<CRenderer>("Renderer");

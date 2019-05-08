@@ -188,6 +188,7 @@
     <ClInclude Include="CameraEff.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CommonSoundLoader.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneComponent\FirTestScene.h" />
     <ClInclude Include="SceneComponent\JBH_Stage3.h" />
@@ -224,7 +225,11 @@
     <ClInclude Include="UserComponent\Interact_Func_Header.hpp" />
     <ClInclude Include="UserComponent\Inventory.h" />
     <ClInclude Include="UserComponent\Item_Func_Header.hpp" />
+    <ClInclude Include="UserComponent\KeyBigICon.h" />
+    <ClInclude Include="UserComponent\KeyCard.h" />
+    <ClInclude Include="UserComponent\KeyInven.h" />
     <ClInclude Include="UserComponent\Locker.h" />
+    <ClInclude Include="UserComponent\MasterKey.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Move_Func_Header.hpp" />
     <ClInclude Include="UserComponent\PaperSilent.h" />
@@ -249,6 +254,7 @@
   <ItemGroup>
     <ClCompile Include="CameraEff.cpp" />
     <ClCompile Include="CommonSoundLoader.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SceneComponent\FirTestScene.cpp" />
     <ClCompile Include="SceneComponent\JBH_Stage3.cpp" />
@@ -281,7 +287,11 @@
     <ClCompile Include="UserComponent\Idle.cpp" />
     <ClCompile Include="UserComponent\InteractiveObj.cpp" />
     <ClCompile Include="UserComponent\Inventory.cpp" />
+    <ClCompile Include="UserComponent\KeyBigICon.cpp" />
+    <ClCompile Include="UserComponent\KeyCard.cpp" />
+    <ClCompile Include="UserComponent\KeyInven.cpp" />
     <ClCompile Include="UserComponent\Locker.cpp" />
+    <ClCompile Include="UserComponent\MasterKey.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
     <ClCompile Include="UserComponent\PaperSilent.cpp" />
     <ClCompile Include="UserComponent\PhoneMessage.cpp" />

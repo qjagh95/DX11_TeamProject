@@ -2,7 +2,7 @@
 #include "ColliderRay.h"
 #include "Camera.h"
 #include "Transform.h"
-#include "ColliderOBB.h"
+#include "ColliderOBB3D.h"
 #include "ColliderPoint.h"
 #include "ColliderPixel.h"
 #include "ColliderSphere.h"
@@ -109,6 +109,7 @@ int CColliderRay::LateUpdate(float fTime)
 
 		m_tInfo.vPos = vPos;
 		m_tInfo.vDir = vDir;
+
 		m_tInfo.fDist = -1.f;
 	}
 
@@ -223,6 +224,8 @@ bool CColliderRay::Collision(CCollider * pDest, float fTime)
 	{
 	case CT_SPHERE:
 		return CollisionRayToSphere(m_tInfo, ((CColliderSphere*)pDest)->GetInfo());
+	case CT_OBB3D:
+		return CollisionRayToOBB3D(((CColliderOBB3D*)pDest)->GetInfo(), m_tInfo, pDest->GetTransformNonCount());
 	}
 
 	return false;

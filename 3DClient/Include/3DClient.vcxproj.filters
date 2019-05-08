@@ -97,6 +97,18 @@
     <Filter Include="02. UserComponent\05. Item\03. Document\02. DocIcon">
       <UniqueIdentifier>{da6133fb-dafa-412a-8427-73f001849a87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\05. Item\04. Key">
+      <UniqueIdentifier>{0ec327da-a248-498a-8291-3c892f91967b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\04. Key\01. 3DObject">
+      <UniqueIdentifier>{34da5d0d-aac0-4565-b8eb-a7383ff0d9a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\04. Key\02. KeyIcon">
+      <UniqueIdentifier>{8a34e124-0822-4b74-9c8f-3e7dbced8c27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Manager">
+      <UniqueIdentifier>{c4779955-37d1-4f10-8b21-3cb4cf30a647}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -279,6 +291,21 @@
     <ClInclude Include="UserComponent\SilentMessage.h">
       <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\KeyInven.h">
+      <Filter>02. UserComponent\04. UI\01. Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\KeyBigICon.h">
+      <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\KeyCard.h">
+      <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\MasterKey.h">
+      <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>03. Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -445,6 +472,21 @@
     </ClCompile>
     <ClCompile Include="UserComponent\SilentMessage.cpp">
       <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\KeyInven.cpp">
+      <Filter>02. UserComponent\04. UI\01. Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\KeyBigICon.cpp">
+      <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\KeyCard.cpp">
+      <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\MasterKey.cpp">
+      <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>03. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

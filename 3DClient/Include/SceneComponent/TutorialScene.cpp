@@ -29,7 +29,7 @@
 #include "../UserComponent/Cigarette.h"
 #include "../UserComponent/Tablet.h"
 #include "../UserComponent/PaperSilent.h"
-
+#include "../UserComponent/KeyCard.h"
 #include <NavigationMesh.h>
 
 CTutorialScene::CTutorialScene()
@@ -43,7 +43,7 @@ CTutorialScene::~CTutorialScene()
 bool CTutorialScene::Init()
 {
 	wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
-	wstr += L"TutorialHalf_Pivot.dat";
+	wstr += L"TutorialHalf_6Light.dat";
 	string filePath = CW2A(wstr.c_str());
 	m_pScene->Load(filePath);
 
@@ -63,18 +63,18 @@ bool CTutorialScene::Init()
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
 	CLayer*	pUILayer = m_pScene->FindLayer("UI");
 
-	/*CGameObject*	pLandScapeObj = CGameObject::CreateObject("TutorialScape", pDefaultLayer);
+	CGameObject*	pLandScapeObj = CGameObject::CreateObject("TutorialScape", pDefaultLayer);
 
 	CLandScape*	pLandScape = pLandScapeObj->AddComponent<CLandScape>("TutorialScape");
 
 	wstring nav = CPathManager::GetInst()->FindPath(DATA_PATH);
-	nav += L"HFTest.nav";
+	nav += L"HFTutorial.nav";
 	string navfilePath = CW2A(nav.c_str());
 
 	pLandScape->LoadLandScape(navfilePath);
 
 	SAFE_RELEASE(pLandScape);
-	SAFE_RELEASE(pLandScapeObj);*/	
+	SAFE_RELEASE(pLandScapeObj);	
 
 	CGameObject*	pPlayerObj = CGameObject::CreateObject("Player", pDefaultLayer);
 
@@ -83,7 +83,7 @@ bool CTutorialScene::Init()
 	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
 	pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
 	pPlayerTr->SetWorldScale(0.05f, 0.05f, 0.05f);
-	pPlayerTr->SetWorldPos(316.f, 20.f, 748.f);
+	pPlayerTr->SetWorldPos(316.f, 13.f, 748.f);
 
 	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
 	CTransform*	pTransform = pObject->GetTransform();
@@ -120,7 +120,7 @@ bool CTutorialScene::Init()
 	pMedicalKitTr->SetWorldPos(356.f, 20.f, 650.f);
 	CHealingPack* pUCHealingPack = pObjMedicalKit->AddComponent<CHealingPack>("UC_HealingPack");
 	//pUCHealingPack->SetHPAmount(pPlayer->GetMaxHP());
-	pUCHealingPack->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
+	pUCHealingPack->SetMesh("MedicalKit", TEXT("FoodCan.msh"));
 	SAFE_RELEASE(pUCHealingPack);
 	SAFE_RELEASE(pMedicalKitTr);
 	SAFE_RELEASE(pObjMedicalKit);
@@ -131,7 +131,7 @@ bool CTutorialScene::Init()
 	pLuncBoxTr->SetWorldPos(400.f, 20.f, 630.f);
 	pUCHealingPack = pObjLunchBox->AddComponent<CHealingPack>("UC_HealingPack");
 	pUCHealingPack->SetHPAmount(1);
-	pUCHealingPack->SetMesh("LunchBox", TEXT("LunchBox.msh"));
+	pUCHealingPack->SetMesh("LunchBox", TEXT("ColaCan.msh"));
 	SAFE_RELEASE(pUCHealingPack);
 	SAFE_RELEASE(pLuncBoxTr);
 	SAFE_RELEASE(pObjLunchBox);
@@ -189,6 +189,19 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pPSTr);
 	SAFE_RELEASE(pPS);
 	SAFE_RELEASE(pPSObj);
+
+
+	CGameObject*	pKeyCardObj = CGameObject::CreateObject("KeyCard", pDefaultLayer);
+
+	CKeyCard*	pKeyCard = pKeyCardObj->AddComponent<CKeyCard>("KeyCard");
+
+	CTransform*	pKeyCardTr = pKeyCardObj->GetTransform();
+
+	pKeyCardTr->SetWorldPos(266.f, 20.f, 648.f);
+
+	SAFE_RELEASE(pKeyCardTr);
+	SAFE_RELEASE(pKeyCard);
+	SAFE_RELEASE(pKeyCardObj);
 
 	/*pObject = CGameObject::CreateObject("GroundCap1ex", pDefaultLayer);
 

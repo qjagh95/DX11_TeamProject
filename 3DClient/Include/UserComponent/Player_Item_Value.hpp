@@ -1,4 +1,4 @@
-
+class CKeyInven*	m_pKeyInven;
 class CDocxInven*	m_pDocxInven;
 CAnimation2D*	m_pRayAnimation;
 CTransform*	m_pRayTr;

@@ -1,51 +1,48 @@
 #pragma once
-#include "../Client.h"
 #include "Component/UserComponent.h"
+#include "../Client.h"
 
 PUN_USING
 
-class CDocxInven :
+class CKeyInven :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CDocxInven();
-	CDocxInven(const CDocxInven& docx);
-	virtual ~CDocxInven();
+	CKeyInven();
+	CKeyInven(const CKeyInven& key);
+	virtual ~CKeyInven();
 
 private:
-	vector<class CGameObject*>	m_vecItem;
-	class CGameObject*		m_pDocObj;
-	class CDocument*		m_pDoc;
-	DOCXINVEN_STATE			m_eState;
-	int						m_iDocxMax;
+	vector<class CGameObject*>	m_vecKey;
+	CGameObject*			m_pKeyBigObj;
+	CKeyBigICon*			m_pKeyBig;
+	int						m_iKeyMax;
 	int						m_iFlag;
 	int						m_iIndex;
 	int						m_iMoveIndex;
 	bool					m_bMouseOn;
 	bool					m_bOnDocx;
 	bool					m_bVisible;
-	bool					m_bMouseOnDocx;
+	bool					m_bMouseOnKey;
 	Vector2					m_vMouse;
 	float					m_fItemY;
 
 public:
-	void SetDocxMax(int iMax);
+	void SetKeyMax(int iMax);
 	void SetVisible(bool bVisible);
 	void SetVisible();
 	void SetMouseOn(bool bMouseOn);
-	void SetDocxnState(DOCXINVEN_STATE eState);
-	void SetMouseOnDocx(bool bMouseOnInven);
+	void SetMouseOnKey(bool bMouseOnInven);
 
 public:
 	bool	GetVisible()	const;
-	int		GetDocxMax() const;
+	int		GetKeyMax() const;
 	bool	Full() const;
 	void	AddItem(class CGameObject* pItem);
-	DOCXINVEN_STATE GetDocxState() const;
-	const Vector3 GetDocxPos()	const;
-	bool	GetMouseOnDocx()	const;
+	const Vector3 GetKeyPos()	const;
+	bool	GetMouseOnKey()	const;
 
 public:
 	virtual void AfterClone();
@@ -55,6 +52,6 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CDocxInven* Clone();
+	virtual CKeyInven* Clone();
 };
 

@@ -1,26 +1,21 @@
 #pragma once
 #include "Component/UserComponent.h"
+#include "../Client.h"
 
 PUN_USING
 
-class CPaperSilent :
+class CMasterKey :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CPaperSilent();
-	CPaperSilent(const CPaperSilent& paper);
-	virtual ~CPaperSilent();
+	CMasterKey();
+	CMasterKey(const CMasterKey& key);
+	virtual ~CMasterKey();
 
 private:
-	CGameObject*	m_pDocxInvenObj;
-	class CDocxInven*		m_pDocxInven;
 	bool			m_bMouseOn;
-	bool			m_bUseInven;
-	bool			m_bOnInven;
-	int				m_iCount;
-	bool			m_bMotion;
 
 public:
 	virtual void AfterClone();
@@ -30,7 +25,7 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CPaperSilent* Clone();
+	virtual CMasterKey* Clone();
 
 public:
 	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);

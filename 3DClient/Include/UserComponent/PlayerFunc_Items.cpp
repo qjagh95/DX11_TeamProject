@@ -1,6 +1,7 @@
 #include "Human_Player.h"
 #include "Inventory.h"
 #include "DocxInven.h"
+#include "KeyInven.h"
 #include "Input.h"
 #include "Component/ColliderRay.h"
 #include "Component/Renderer.h"
@@ -11,6 +12,7 @@
 bool CHuman_Player::Init_Items()
 {
 	PUN::CInput::GetInst()->AddKey("U", 'U');
+	PUN::CInput::GetInst()->AddKey("K", 'K');
 
 	PUN::CGameObject *pDocxInvObj = PUN::CGameObject::CreateObject("DocxInven", this->m_pLayer);
 
@@ -18,6 +20,13 @@ bool CHuman_Player::Init_Items()
 	m_pDocxInven->SetDocxMax(19);
 
 	SAFE_RELEASE(pDocxInvObj);
+
+	PUN::CGameObject *pKeyInvObj = PUN::CGameObject::CreateObject("KeyInven", this->m_pLayer);
+
+	m_pKeyInven = pKeyInvObj->AddComponent<CKeyInven>("KeyInven");
+	m_pKeyInven->SetKeyMax(19);
+
+	SAFE_RELEASE(pKeyInvObj);
 
 	// 아이템 피킹용 충돌체 생성
 	PUN::CGameObject*	pRayObj = PUN::CGameObject::CreateObject("Ray", this->m_pLayer);
@@ -105,6 +114,7 @@ void CHuman_Player::ChangeRayAnim(const string& strName)
 
 void CHuman_Player::OnDestroyInven()
 {
+	SAFE_RELEASE(m_pKeyInven);
 	SAFE_RELEASE(m_pDocxInven);
 	SAFE_RELEASE(m_pRayAnimation);
 	SAFE_RELEASE(m_pRayTr);
@@ -123,6 +133,21 @@ int CHuman_Player::Input_Items(float fTime)
 		{
 			m_iState |= (PSTATUS_DOCX | PSTATUS_INACTIVE);
 			Open_Docx(fTime);
+		}
+	}
+
+	if (PUN::CInput::GetInst()->KeyPress("K"))
+	{
+		if (m_iState & PSTATUS_KEY)
+		{
+			m_iState ^= (PSTATUS_KEY | PSTATUS_INACTIVE);
+			Close_Key(fTime);
+		}
+
+		else
+		{
+			m_iState |= (PSTATUS_KEY | PSTATUS_INACTIVE);
+			Open_Key(fTime);
 		}
 	}
 
@@ -206,6 +231,15 @@ void CHuman_Player::Open_Docx(float fTime)
 void CHuman_Player::Close_Docx(float fTime)
 {
 	m_pDocxInven->SetVisible();
+}
+
+void CHuman_Player::Open_Key(float fTime)
+{
+	m_pKeyInven->SetVisible();
+}
+void CHuman_Player::Close_Key(float fTime)
+{
+	m_pKeyInven->SetVisible();
 }
 
 // 무적 효과
