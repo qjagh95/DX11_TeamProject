@@ -269,6 +269,7 @@ public:
 	PANIMATIONCLIP GetAnimClip(const std::string& strKey);
 	void SetBlendSkip(bool bOn);
 	const Matrix* GetBoneMatrix(int iBoneIdx);
+	const PBONE GetBone(int iBoneIdx);
 	float GetCurrentClipTime();
 	void KeepBlendSet(bool on);
 	void AddBone(PBONE pBone);

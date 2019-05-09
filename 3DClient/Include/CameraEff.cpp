@@ -44,8 +44,10 @@ int CCameraEff::Update(float fTime)
 		{
 			itr = m_listUpdateEffects.erase(itr);
 		}
+		if (itr == listItrEnd)
+			break;
 
-		(*itr).funcEffect(fTime, pMainCamTransform);
+		(*itr).funcEffect(fTime, (*itr).fEffectCurrTime, (*itr).fEffectTime, pMainCamTransform);
 		(*itr).fEffectCurrTime += fTime;
 
 		++itr;
@@ -63,8 +65,9 @@ int CCameraEff::LateUpdate(float fTime)
 		{
 			itr = m_listLateUpdateEffects.erase(itr);
 		}
-
-		(*itr).funcEffect(fTime, pMainCamTransform);
+		if (itr == listItrEnd)
+			break;
+		(*itr).funcEffect(fTime, (*itr).fEffectCurrTime, (*itr).fEffectTime, pMainCamTransform);
 		(*itr).fEffectCurrTime += fTime;
 
 		++itr;
@@ -167,8 +170,12 @@ bool CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Bod
 		{
 			GetClientRect(hWnd, &gameWnd);
 			GetWindowRect(hWnd, &windowWnd);
-			int iXCenter = ((gameWnd.right - gameWnd.left) >> 1) + (int)windowWnd.left;
-			int iYCenter = ((gameWnd.bottom - gameWnd.top) >> 1) + (int)windowWnd.top;
+			
+			//윈도우 윗단 제거하기 : ClentRect
+			int iWindowMenuThickness = (int)(windowWnd.bottom - windowWnd.top) - (int)gameWnd.bottom;
+
+			int iXCenter = ((int)windowWnd.left + (int)windowWnd.right) >> 1;
+			int iYCenter = ((gameWnd.bottom - gameWnd.top) >> 1) + (int)windowWnd.top + iWindowMenuThickness;
 
 			SetCursorPos(iXCenter, iYCenter);
 			m_bWndFocused = true;
@@ -176,8 +183,11 @@ bool CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Bod
 	}
 	GetClientRect(hWnd, &gameWnd);
 	GetWindowRect(hWnd, &windowWnd);
-	int iXCenter = ((gameWnd.right - gameWnd.left) >> 1) + (int)windowWnd.left;
-	int iYCenter = ((gameWnd.bottom - gameWnd.top) >> 1 )+ (int)windowWnd.top;
+	//윈도우 윗단 제거하기 : ClentRect
+	int iWindowMenuThickness = (int)(windowWnd.bottom - windowWnd.top) - (int)gameWnd.bottom;
+
+	int iXCenter = ((int)windowWnd.left + (int)windowWnd.right) >> 1;
+	int iYCenter = ((gameWnd.bottom - gameWnd.top) >> 1) + (int)windowWnd.top + iWindowMenuThickness;
 
 	
 	POINT _curMousePoint = {};

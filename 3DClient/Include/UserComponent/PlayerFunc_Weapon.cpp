@@ -91,8 +91,7 @@ int CHuman_Player::WeaponInput(float fTime)
 	{
 		if (!m_pPistol->GetEnable())
 		{
-			m_pHandGun->SetEnable(true);
-			m_pPistol->SetEnable(true);
+			m_pPistol->DrawOut();
 			m_pPartCamAnim->bActivated = true;
 			m_pPartCamAnim->bUseCustomParent = true;
 			m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("gun_take")->second;
@@ -110,11 +109,6 @@ int CHuman_Player::WeaponInput(float fTime)
 		}
 	}
 	
-	
-	return 0;
-}
-int CHuman_Player::WeaponUpdate(float fTime)
-{
 	if (m_pPistol->GetEnable())
 	{
 		//총 휘두르는 팔의 회전
@@ -146,8 +140,9 @@ int CHuman_Player::WeaponUpdate(float fTime)
 		//두 쿼터니언 회전의 사이각 구하기
 		//짜잔 쿼터니언 * 카메라 쿼터니언 = 모가지 쿼터니언
 		//짜잔 쿼터니언 = 모가지 쿼터니언 * 카메라 쿼터니언(Inverse)
-		
-		Vector4 vDiffQuat = Vector4(DirectX::XMQuaternionMultiply(vHeadQuat.Convert(), DirectX::XMQuaternionInverse(vCamQuat.Convert())));
+
+		XMVECTOR xmInversedCamQuat = DirectX::XMQuaternionInverse(vCamQuat.Convert());
+		Vector4 vDiffQuat = Vector4(DirectX::XMQuaternionMultiply(vHeadQuat.Convert(), xmInversedCamQuat));
 		Vector3 vDiffRot;
 
 		toEulerAngle(vDiffQuat, vDiffRot);
@@ -158,38 +153,60 @@ int CHuman_Player::WeaponUpdate(float fTime)
 
 		SAFE_RELEASE(pHeadTr);
 
-		
-		std::cout << "cam rotation : (" << vRot.x << ", " << vRot.y << ", " << vRot.z << ")"<< std::endl;
-		std::cout << "neck rotation : (" << vNeckRot.x << ", " <<vNeckRot.y<< ", " << vNeckRot.z << ")" << std::endl;
-		std::cout << "diff : (" <<  vDiffRot.x << ", " << vDiffRot.y << ", "<< vDiffRot.z << ")" << std::endl;
-		std::cout << "==================================" << std::endl;
-		
-		
+
+		//std::cout << "cam rotation : (" << vRot.x << ", " << vRot.y << ", " << vRot.z << ")"<< std::endl;
+		//std::cout << "neck rotation : (" << vNeckRot.x << ", " <<vNeckRot.y<< ", " << vNeckRot.z << ")" << std::endl;
+		//std::cout << "diff : (" <<  vDiffRot.x << ", " << vDiffRot.y << ", "<< vDiffRot.z << ")" << std::endl;
+		//std::cout << "==================================" << std::endl;
+
+
 		PUN::PANIMATIONCLIP pClip = m_pAnimation->GetCurrentClip();
-		Vector3 vPos = pClip->vecKeyFrame[m_pPartCamAnim->iRootParentIndex]->vecKeyFrame[0]->vPos;
-		Vector4 vQuat = pClip->vecKeyFrame[m_pPartCamAnim->iRootParentIndex]->vecKeyFrame[0]->vRot;
-		Vector3 vScale = pClip->vecKeyFrame[m_pPartCamAnim->iRootParentIndex]->vecKeyFrame[0]->vScale;
-		
+
+		DirectX::XMVECTOR xmPos;
+		DirectX::XMVECTOR xmQuat;
+		DirectX::XMVECTOR xmScale;
+
+		DirectX::XMMatrixDecompose(&xmScale, &xmQuat, &xmPos, m_pAnimation->GetBone(m_pPartCamAnim->iRootParentIndex)->matBone->matrix);
+
+		//Vector3 vPos = pClip->vecKeyFrame[m_pPartCamAnim->iRootParentIndex]->vecKeyFrame[0]->vPos;
+		//Vector4 vQuat = pClip->vecKeyFrame[m_pPartCamAnim->iRootParentIndex]->vecKeyFrame[0]->vRot;
+		//Vector3 vScale = pClip->vecKeyFrame[m_pPartCamAnim->iRootParentIndex]->vecKeyFrame[0]->vScale;
+
+		Vector3 vPos(xmPos);
+		Vector4 vQuat(xmQuat);
+		Vector3 vScale(xmScale);
+
 		Vector3 vEulerDir = Vector3::Zero;
 		Vector4 vDirQuat;
-		
-		if (vRot.x != 0)
-		{
-			vEulerDir.x = -vRot.x;
-		}
+
 
 		//뭬직 남바
 
-		if (fabsf(vDiffRot.y + 8.61f) > 0.f)
-		{
-			vEulerDir.y = DegreeToRadian(vDiffRot.y + 8.61f);
-			//vEulerDir.z = -DegreeToRadian(vDiffRot.z);
-		}
-		
+		vEulerDir.y = DegreeToRadian(vDiffRot.y + 8.61f);
+		EulerToQuat(vEulerDir, vDirQuat);
+		XMVECTOR xmRot = DirectX::XMQuaternionMultiply(xmQuat, vDirQuat.Convert());
+		//xmRot = DirectX::XMQuaternionNormalize(xmRot);
 
+		//x 축 회전은 혹시 또 김벌락이 생길지도 모르니 분리해서 회전
+		//역시 Gimball Lock 때문에 카메라 회전 역시 쿼터니언으로 가진 것을 구해야 한다.
+		//카메라 쿼터니언과 팔뚝 쿼터니언의 사이각
+		//사이각 = 팔뚝 쿼터니언 * 카메라 역전 쿼터니언
+		Vector4 vQuatCamToArm(DirectX::XMQuaternionMultiply(xmQuat, xmInversedCamQuat));
+		Vector3 vRotCamToArm;
+		toEulerAngle(vQuatCamToArm, vRotCamToArm);
+		//std::cout << "팔뚝과 카메라 사이의 사이각 : " << RadianToDegree(vRotCamToArm.y) << std::endl;
+		//팔뚝 역시 회전 이전에는 아래를 향하고 있어서 축이 변경된 것( x축으로 생각하기 쉽지만 사실은 ->y)
+		//김벌락.... 많은 상황에서 회전을 축으로 구분하기 힘들어져버린다....
+		std::cout << "팔뚝과 몸통 사이 사이각 : " << RadianToDegree(vRotCamToArm.y) << std::endl;
+		std::cout << "----Quaternion : (" << vQuatCamToArm.x << ", "
+			<< vQuatCamToArm.y << ", " << vQuatCamToArm.z << ", " << vQuatCamToArm.w << ") \n";
+		vEulerDir.x = -vRotCamToArm.y;
+		vEulerDir.y = 0.f;
+		vEulerDir.z = 0.f;
 		EulerToQuat(vEulerDir, vDirQuat);
 
-		XMVECTOR xmRot = DirectX::XMQuaternionMultiply(vQuat.Convert(), vDirQuat.Convert());
+		xmRot = DirectX::XMQuaternionMultiply(xmRot, vDirQuat.Convert());
+		xmRot = DirectX::XMQuaternionNormalize(xmRot);
 
 		XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 		m_pPartCamAnim->matCustomParent = XMMatrixAffineTransformation(vScale.Convert(), vZero, xmRot, vPos.Convert());
@@ -198,10 +215,17 @@ int CHuman_Player::WeaponUpdate(float fTime)
 		//X회전 : 마우스 높이는 팔에 따로 적용되므로 반드시 얻어내야 함
 		//Z회전 : 엥간하면 몸뚱의의 회전을 그대로 따른다.
 	}
+	return 0;
+}
+int CHuman_Player::WeaponUpdate(float fTime)
+{
+	
 
 	return 0;
 }
 int CHuman_Player::WeaponLateUpdate(float fTime)
 {
+
+
 	return 0;
 }

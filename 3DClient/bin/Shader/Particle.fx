@@ -122,3 +122,137 @@ PS_OUTPUT_SINGLE ParticlePS(GS_OUTPUT_PARTICLE input)
 
     return output;
 }
+
+
+PS_OUTPUT_SINGLE ParticlePS_GreenMat(GS_OUTPUT_PARTICLE input)
+{
+	PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE)0;
+
+	if (g_iAnimation2DEnable == 1)
+	{
+		if (g_iAnimationType == A2D_ATLAS)
+			output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+		else
+			output.vTarget0 = g_DiffuseTexArray.Sample(g_DiffuseSmp, float3(input.vUV, g_iAnimFrame));
+	}
+	else
+		output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+
+	if (output.vTarget0.a == 0.f)
+		clip(-1);
+
+	float2 vDepthUV = input.vProjPos.xy / input.vProjPos.w;
+	vDepthUV.x = vDepthUV.x * 0.5f + 0.5f;
+	vDepthUV.y = vDepthUV.y * -0.5f + 0.5f;
+
+	float4 vDepth = g_GBufferDepth.Sample(g_DiffuseSmp, vDepthUV);
+
+	//알파값 = r + b값 / 2.f, 그린이 1일 때
+	output.vTarget0.a = 1 - output.vTarget0.g;
+	// 뷰 공간의 Z값을 비교하여 거리를 구한다.
+
+	//그린값 : 꼼수로 r + b 만큼 주되, 한쪽으로 쏠려있으면 줄이자
+	output.vTarget0.g = ((output.vTarget0.r + output.vTarget0.b) - abs(2.f * (output.vTarget0.r - output.vTarget0.b))) / 2.f;
+	float fDist = vDepth.w - input.vProjPos.w;
+
+	if (vDepth.w == 0.f)
+		fDist = 1.f;
+	else if (fDist < 0.f)
+		clip(-1);
+	else if (fDist == 0.f)
+		fDist = 0.4f;
+
+	float fAlpha = fDist / 0.4f;
+	fAlpha = min(fAlpha, 1.f);
+
+	output.vTarget0.a *= fAlpha; //거리에 따른 알파 처리
+
+	return output;
+}
+
+PS_OUTPUT_SINGLE ParticlePS_BlueMat(GS_OUTPUT_PARTICLE input)
+{
+	PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE)0;
+
+	if (g_iAnimation2DEnable == 1)
+	{
+		if (g_iAnimationType == A2D_ATLAS)
+			output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+		else
+			output.vTarget0 = g_DiffuseTexArray.Sample(g_DiffuseSmp, float3(input.vUV, g_iAnimFrame));
+	}
+	else
+		output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+
+	if (output.vTarget0.a == 0.f)
+		clip(-1);
+
+	float2 vDepthUV = input.vProjPos.xy / input.vProjPos.w;
+	vDepthUV.x = vDepthUV.x * 0.5f + 0.5f;
+	vDepthUV.y = vDepthUV.y * -0.5f + 0.5f;
+
+	float4 vDepth = g_GBufferDepth.Sample(g_DiffuseSmp, vDepthUV);
+
+	//알파값 = r + g값 / 2.f, 
+	output.vTarget0.a = 1 - output.vTarget0.b;
+	// 뷰 공간의 Z값을 비교하여 거리를 구한다.
+
+	//그린값 : 꼼수로 r + g 만큼 주되, 한쪽으로 쏠려있으면 줄이자
+	output.vTarget0.b = ((output.vTarget0.r + output.vTarget0.g) - abs(2.f * (output.vTarget0.r - output.vTarget0.g))) / 2.f;
+	float fDist = vDepth.w - input.vProjPos.w;
+
+	if (vDepth.w == 0.f)
+		fDist = 1.f;
+	else if (fDist < 0.f)
+		clip(-1);
+	else if (fDist == 0.f)
+		fDist = 0.4f;
+
+	float fAlpha = fDist / 0.4f;
+	fAlpha = min(fAlpha, 1.f);
+
+	output.vTarget0.a *= fAlpha; //거리에 따른 알파 처리
+
+	return output;
+}
+
+PS_OUTPUT_SINGLE ParticlePS_BlackMat(GS_OUTPUT_PARTICLE input)
+{
+	PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE)0;
+
+	if (g_iAnimation2DEnable == 1)
+	{
+		if (g_iAnimationType == A2D_ATLAS)
+			output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+		else
+			output.vTarget0 = g_DiffuseTexArray.Sample(g_DiffuseSmp, float3(input.vUV, g_iAnimFrame));
+	}
+	else
+		output.vTarget0 = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+
+	if (output.vTarget0.a == 0.f)
+		clip(-1);
+
+	float2 vDepthUV = input.vProjPos.xy / input.vProjPos.w;
+	vDepthUV.x = vDepthUV.x * 0.5f + 0.5f;
+	vDepthUV.y = vDepthUV.y * -0.5f + 0.5f;
+
+	float4 vDepth = g_GBufferDepth.Sample(g_DiffuseSmp, vDepthUV);
+
+	//알파값 : 3.0f - 세 개 빛의 총합
+	output.vTarget0.a = (output.vTarget0.r + output.vTarget0.g + output.vTarget0.b) / 3.f;
+	float fDist = vDepth.w - input.vProjPos.w;
+	if (vDepth.w == 0.f)
+		fDist = 1.f;
+	else if (fDist < 0.f)
+		clip(-1);
+	else if (fDist == 0.f)
+		fDist = 0.4f;
+
+	float fAlpha = fDist / 0.4f;
+	fAlpha = min(fAlpha, 1.f);
+
+	output.vTarget0.a *= fAlpha; //거리에 따른 알파 처리
+
+	return output;
+}

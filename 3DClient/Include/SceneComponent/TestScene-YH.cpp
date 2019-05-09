@@ -49,23 +49,18 @@ CTestSceneYH::~CTestSceneYH()
 
 bool CTestSceneYH::Init()
 {
-	CCameraEff::GetInst()->SetFirstPersonViewEnable();
+	//CCameraEff::GetInst()->SetFirstPersonViewEnable();
 	
-	
-
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	pCamera->SetNear(0.03f);
-		
 
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
 	CLayer* pTileLayer = m_pScene->FindLayer("Tile");
 	m_pUILayer = m_pScene->FindLayer("UI");
-
 	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
 	CTransform*	pTransform = pObject->GetTransform();
-
 	pTransform->SetWorldScale(0.3f, 0.3f, 0.1f);
 	pTransform->SetWorldPos(0.f, 0.f, 0.f);
 
@@ -104,8 +99,7 @@ bool CTestSceneYH::Init()
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLightLayer);
-
-
+	
 	
 	/*CGameObject*	pDecalObj = CGameObject::CreatePrototype("Decal");
 
@@ -250,6 +244,7 @@ bool CTestSceneYH::Init()
 
 	//SAFE_RELEASE(pParticleObj);
 
+
 //////////////////////////////////////////Terrain 배치 //////////////////////////////////////////////////
 ///////////////////////////////X Tile 배치///////////////////////////////////////////////////////
 
@@ -272,7 +267,7 @@ bool CTestSceneYH::Init()
 
 	SAFE_RELEASE(pObject);
 
-
+	/*
 	for (int i = 1; i < 6; ++i)
 	{
 		pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
@@ -294,6 +289,9 @@ bool CTestSceneYH::Init()
 
 		SAFE_RELEASE(pObject);
 	}
+	*/
+	
+	/*
 	///////////////////////XCorner 배치////////////////////////////////////
 	pObject = CGameObject::CreateObject("Terrain", pDefaultLayer);
 
@@ -441,7 +439,7 @@ bool CTestSceneYH::Init()
 	SAFE_RELEASE(pObject);
 
 	////////////////////////////////////////////////////////////////////////
-	
+
 	pObject = CGameObject::CreateObject("Door", pDefaultLayer);
 	pTransform = pObject->GetTransform();
 
@@ -449,11 +447,11 @@ bool CTestSceneYH::Init()
 	pTransform->SetWorldScale(0.1f, .1f, 0.1f);
 
 	pTransform->RotationY(-90.f);
-	CDoor* pDoor = pObject->AddComponent<CDoor>("door");	
+	CDoor* pDoor = pObject->AddComponent<CDoor>("door");
 
 	pTransform->SetWorldPivot(0.5f, .0f, .0f);
 	pDoor->SetOpenTime(1.5f);
-	pDoor->SetCloseTime(1.5f);
+	//pDoor->SetCloseTime(1.5f);
 
 	std::string names[3];
 	names[0] = "wood_Door_Open1";
@@ -475,11 +473,11 @@ bool CTestSceneYH::Init()
 
 	SAFE_RELEASE(renderer);
 	SAFE_RELEASE(pTransform);
-	
+
 	SAFE_RELEASE(pObject);
-	
+
 	pObject = PUN::CGameObject::CreateObject("FxxChair", pDefaultLayer);
-	
+
 	PUN::CTransform*	pTr = pObject->GetTransform();
 	pTr->SetWorldScale(0.2f, 0.2f, 0.2f);
 	pTr->SetWorldPos(0.f, 0.f, 25.f);
@@ -493,9 +491,12 @@ bool CTestSceneYH::Init()
 	SAFE_RELEASE(pWeaponRenderer);
 	SAFE_RELEASE(pObject);
 
+	*/
+	
+
 	pObject = PUN::CGameObject::CreateObject("hPlayer", pDefaultLayer, true);
 	pTransform = pObject->GetTransform();
-	pTransform->SetWorldScale(0.05f, .05f, .05f);
+	//pTransform->SetWorldScale(0.0375f, .0375f, .0375f);
 	//pTransform->SetLocalRotY(180.f);
 	CHuman_Player *pHPlayer = pObject->AddComponent<CHuman_Player>("Player");
 	
@@ -504,6 +505,7 @@ bool CTestSceneYH::Init()
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pObject);
 
+	/*
 	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
 
 	CBattery*	pBattery = pBatteryObj->AddComponent<CBattery>("Battery");
@@ -535,6 +537,8 @@ bool CTestSceneYH::Init()
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pObject);
 	
+	
+	
 	pObject = Enemies::GetInstance("enem3", 2, pDefaultLayer, false);
 	pTransform = pObject->GetTransform();
 	pTransform->SetWorldScale(0.05f, .05f, .05f);
@@ -549,7 +553,70 @@ bool CTestSceneYH::Init()
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pAnim);
 	SAFE_RELEASE(pObject);
-		
+	
+	
+	pObject = PUN::CGameObject::CreateObject("gunfire", pDefaultLayer);
+	pRenderer = pObject->AddComponent<PUN::CRenderer>("renderer");
+	pRenderer->SetMesh("pew", TEXT("glock_Fire.FBX"), MESH_PATH);
+	SAFE_RELEASE(pRenderer);
+	pTransform = pObject->GetTransform();
+	pTransform->SetWorldScale(0.05f, .05f, .05f);
+	pTransform->SetWorldPos(-15.f, 0.f, 3.5f);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObject);
+	
+	*/
+	
+	//파티클 만들기
+	CGameObject*	pParticleObj = CGameObject::CreateObject("BloodParticle", pDefaultLayer);
+	CParticle*	pParticle = pParticleObj->AddComponent<CParticle>("Particle");
+	SAFE_RELEASE(pParticle);
+
+	pRenderer = pParticleObj->FindComponentFromType<CRenderer>(PUN::CT_RENDERER);
+	pRenderer->SetMesh("Particle_GreenMat");
+	SAFE_RELEASE(pRenderer);
+	CMaterial*	pParticleMtrl = pParticleObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+	vector<const TCHAR*>	vecExplosionName;
+	vector<Clip2DFrame>	vecFrame;
+	for (int i = 1; i <= 14; ++i)
+	{
+		TCHAR*	pFileName = new TCHAR[MAX_PATH];
+		memset(pFileName, 0, sizeof(TCHAR) * MAX_PATH);
+		wsprintf(pFileName, TEXT("Particles\\Blood1\\Blood%d.png"), i);
+		vecExplosionName.push_back(pFileName);
+
+		Clip2DFrame	tFrame = {};
+		tFrame.vLT = Vector2(0.f, 0.f);
+		tFrame.vRB = Vector2(1.f, 1.f);
+		vecFrame.push_back(tFrame);
+	}
+	pParticleMtrl->SetDiffuseTex(4, "Gun_Blood", vecExplosionName);
+	
+	pParticleMtrl->SetSampler(0, SAMPLER_LINEAR);
+	SAFE_RELEASE(pParticleMtrl);
+	CAnimation2D*	pParticleAnimation = pParticleObj->AddComponent<CAnimation2D>("ParticleAnimation");
+
+	pParticleAnimation->AddClip("Idle", A2D_FRAME, AO_LOOP,
+		0.333334f, vecFrame, "Gun_Blood", vecExplosionName);
+
+	SAFE_RELEASE(pParticleAnimation);
+
+	for (size_t i = 0; i < vecExplosionName.size(); ++i)
+	{
+		SAFE_DELETE_ARRAY(vecExplosionName[i]);
+	}
+
+	vecExplosionName.clear();
+	
+	pTransform = pParticleObj->GetTransform();
+
+	pTransform->SetWorldPos(-50.f, 15.f, 5.f);
+	pTransform->SetWorldScale(6.f, 6.f, 1.f);
+
+	SAFE_RELEASE(pTransform);
+
+	SAFE_RELEASE(pParticleObj);
+	
 	
 	SAFE_RELEASE(pCamera);
 

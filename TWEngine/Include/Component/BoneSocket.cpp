@@ -67,11 +67,29 @@ void toEulerAngle(const Vector4 & q, Vector3 & vEuler)
 #endif
 }
 
+void EulerToQuatZYX(const Vector3& vEuler, Vector4& vQuat)
+{
+	float c1 = cosf(vEuler.x * 0.5f);
+	float c2 = cosf(vEuler.y * 0.5f);
+	float c3 = cosf(vEuler.z * 0.5f);
+	float s1 = sinf(vEuler.x * 0.5f);
+	float s2 = sinf(vEuler.y * 0.5f);
+	float s3 = sinf(vEuler.z * 0.5f);
+
+	vQuat = Vector4(
+		s1 * c2 * c3 - c1 * s2 * s3,
+		c1 * s2 * c3 + s1 * c2 * s3,
+		c1 * c2 * s3 - s1 * s2 * c3,
+		c1 * c2 * c3 + s1 * s2 * s3
+	);
+
+}
 PUN_USING
 
-CBoneSocket::CBoneSocket()
+CBoneSocket::CBoneSocket():
+	m_pObject(nullptr)
 {
-	m_pObject = NULLPTR;
+	//m_pObject = NULLPTR;
 }
 
 CBoneSocket::~CBoneSocket()
@@ -82,28 +100,6 @@ CBoneSocket::~CBoneSocket()
 bool CBoneSocket::Init()
 {
 	return true;
-}
-
-void CBoneSocket::Update(float fTime, const Matrix & matBone)
-{
-	if (m_pObject)
-	{
-		//m_pObject = 의자오브젝트
-	//m_pAniObject = 플레이어 오브젝트
-		if (m_pObject->GetActive() == false)
-			return;
-
-		//if (m_pAniObject->GetActive() == false)
-		//	return;
-
-		Matrix matScale;
-		//matScale.Scaling(m_pAniObject->GetTransformNonCount()->GetWorldScale());
-
-		CTransform*	pTransform = m_pObject->GetTransformNoneCount();
-		pTransform->SetBoneMatrix(matBone * matScale);
-		pTransform->SetLocalRot(m_vRotation);
-		//pTransform->SetWorldPos(m_pAniObject->GetTransformNonCount()->GetWorldPos() + m_vOffset);
-	}
 }
 
 void CBoneSocket::Update(float fTime, const Matrix& matBone, class CTransform* motherTr)
@@ -123,19 +119,35 @@ void CBoneSocket::Update(float fTime, const Matrix& matBone, class CTransform* m
 		DirectX::XMVECTOR xmPos;
 		DirectX::XMVECTOR xmScale;
 
-		DirectX::XMMATRIX xmSized = xmOffset * (matBone * motherTr->GetWorldRotMatrix() * motherTr->GetLocalMatrix()).matrix;
+		PUN::CTransform *pLocalRot = motherTr;
+
+		Matrix matLocalRot = motherTr->GetLocalMatrix();
+
+		DirectX::XMMATRIX xmSized = xmOffset * (matBone * motherTr->GetWorldRotMatrix() * matLocalRot).matrix;
 
 		//느리지만 눈물을 머금구..
 		DirectX::XMMatrixDecompose(&xmScale, &xmRot, &xmPos, xmSized);
 
-		//DirectX::XMVECTOR motherLocalRot = DirectX::XMQuaternionRotationMatrix(motherTr->GetLocalRotMatrix().matrix);
-		//DirectX::XMVECTOR motherWorldRot = DirectX::XMQuaternionRotationMatrix(motherTr->GetWorldRotMatrix().matrix);
-
-		//xmRot = DirectX::XMQuaternionMultiply(motherLocalRot, xmRot);
-		//xmRot = DirectX::XMQuaternionMultiply(xmRot, motherWorldRot);
-		
 		Vector4 vQuat(xmRot);
 		
+		Vector3 vPos(xmPos);
+		
+		Vector3 vWorld = motherTr->GetWorldPos();
+
+		vPos *= motherTr->GetWorldScale();
+		vPos += vWorld;
+		
+		Vector4 vQuat_m_vRotation;
+		Vector3 vRotationRad(DegreeToRadian(m_vRotation.x), DegreeToRadian(m_vRotation.y), DegreeToRadian(m_vRotation.z));
+
+		EulerToQuatZYX(vRotationRad, vQuat_m_vRotation);
+
+		xmRot = DirectX::XMQuaternionMultiply(xmRot, vQuat_m_vRotation.Convert());
+
+		xmRot = DirectX::XMQuaternionNormalize(xmRot);
+
+		xmRot = DirectX::XMQuaternionNormalize(xmRot);
+
 		Vector3 vRot;
 		Vector3 vRotWithLoc;
 		toEulerAngle(Vector4(xmRot), vRot);
@@ -143,22 +155,11 @@ void CBoneSocket::Update(float fTime, const Matrix& matBone, class CTransform* m
 		vRot.x = RadianToDegree(vRot.x);
 		vRot.y = RadianToDegree(vRot.y);
 		vRot.z = RadianToDegree(vRot.z);
-				
-		Vector3 vPos(xmPos);
-		//vPos += motherTr->GetLocalPos();
-		Vector3 vWorld = motherTr->GetWorldPos();
-
-		//vPos += motherTr->GetLocalPos();
-		vPos *= motherTr->GetWorldScale();
-		vPos += vWorld;
-		
-		vRot += m_vRotation;
 		
 		pTransform->SetWorldRot(vRot);
 
 		pTransform->SetWorldPos(vPos);
-		//pTransform->Update(fTime);
-
+		
 	}
 }
 

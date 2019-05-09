@@ -169,6 +169,15 @@ PAnimationClip2D CAnimation2D::FindClip(const string & strName)
 	return iter->second;
 }
 
+void CAnimation2D::CurrentClipJumpToFrame(int iFrame)
+{
+	if (m_pCurClip)
+	{
+		m_pCurClip->fPlayTime = (m_pCurClip->fPlayLimitTime / (float)m_pCurClip->vecFrame.size()) * (float)iFrame;
+		m_pCurClip->iFrame = iFrame;
+	}
+}
+
 void CAnimation2D::Start()
 {
 	CMaterial*	pMaterial = FindComponentFromType<CMaterial>(CT_MATERIAL);
@@ -229,6 +238,13 @@ int CAnimation2D::LateUpdate(float fTime)
 			if (m_pCurClip->eOption == AO_ONCE_LAST)
 			{
 				m_pCurClip->iFrame = (int)m_pCurClip->vecFrame.size() - 1;
+				break;
+			}
+
+			if (m_pCurClip->eOption == AO_ONCE_DISABLE)
+			{
+				m_pCurClip->iFrame = 0;
+				m_pObject->SetEnable(false);
 				break;
 			}
 		}

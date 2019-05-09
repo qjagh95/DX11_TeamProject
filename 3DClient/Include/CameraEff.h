@@ -4,7 +4,7 @@
 
 struct tCameraEffects
 {
-	std::function<void(float, PUN::CTransform*)> funcEffect;
+	std::function<void(float, float, float ,PUN::CTransform*)> funcEffect;
 	float fEffectTime;
 	float fEffectCurrTime = 0.f;
 	std::string strName;
@@ -36,7 +36,9 @@ public:
 	void SetFirstPersonViewEnable();
 	bool IsFirstPersonEnabled() const;
 public:
+	//tCameraEffect -> float(델타타임), float(현재효과시간), float(끝효과시간), Transform(카메라)
 	void AddUpdateEffect(const tCameraEffects& eff);
+	//tCameraEffect -> float(델타타임), float(현재효과시간), float(끝효과시간), Transform(카메라)
 	void AddLateUpdateEffect(const tCameraEffects &eff);
 	void CancelUpdateEff(std::string strName);
 	void CancelLateUpdateEff(std::string strName);

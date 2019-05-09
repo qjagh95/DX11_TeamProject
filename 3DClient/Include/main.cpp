@@ -10,6 +10,8 @@
 #include "SceneComponent/RandScapeTestScene.h"
 #include "CameraEff.h"
 #include "CommonSoundLoader.h"
+#include <Rendering/ShaderManager.h>
+#include <Resource/ResourcesManager.h>
 
 PUN_USING
 
@@ -31,31 +33,35 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//FPS 카메라와 카메라 흔들림 이펙트를 구현하는 매니저 구동
 	CCameraEff::GetInst()->Init();
 
-	//wstring RootPath = CPathManager::GetInst()->FindPath(ROOT_PATH);
-	//SHELLEXECUTEINFO sei;
-	//ZeroMemory(&sei, sizeof(SHELLEXECUTEINFO));
-	//sei.cbSize = sizeof(SHELLEXECUTEINFO);
+	char* pEntry[3] = {};
+	pEntry[ST_VERTEX] = (char*)"ParticleVS";
+	pEntry[ST_PIXEL] = (char*)"ParticlePS_GreenMat";
+	pEntry[ST_GEOMETRY] = (char*)"ParticleGS";
+	if (!GET_SINGLE(CShaderManager)->LoadShader("Particle_GreenMat", TEXT("Particle.fx"), pEntry))
+		return false;
 
-	//wstring FullPath;
-	//FullPath = RootPath + L"FBXBineryExtractor64.exe";
+	Vector3	vParticle;
+	GET_SINGLE(CResourcesManager)->CreateMesh("Particle_GreenMat", "Particle_GreenMat", POS_LAYOUT,
+		&vParticle, 1, sizeof(Vector3), D3D11_USAGE_DEFAULT,
+		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	//sei.lpFile = FullPath.c_str();w
-	//sei.lpParameters = L"";
-	//sei.nShow = SW_SHOW;
-	//sei.fMask = SEE_MASK_NOCLOSEPROCESS;
-	//sei.lpVerb = L"open";
+	pEntry[ST_PIXEL] = (char*)"ParticlePS_BlueMat";
+	if (!GET_SINGLE(CShaderManager)->LoadShader("Particle_BlueMat", TEXT("Particle.fx"), pEntry))
+		return false;
+	GET_SINGLE(CResourcesManager)->CreateMesh("Particle_BlueMat", "Particle_BlueMat", POS_LAYOUT,
+		&vParticle, 1, sizeof(Vector3), D3D11_USAGE_DEFAULT,
+		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	////여기서 해당 프로세스가 종료될때까지 대기시킴.
-	//DWORD result = ShellExecuteEx(&sei);
-	//WaitForSingleObject(sei.hProcess, INFINITE);
-
-	// MainScene 추가
-	//GET_SINGLE(CSceneManager)->AddSceneComponent<CStartScene>("StartScene");
-	//GET_SINGLE(CSceneManager)->AddSceneComponent<CMainScene>("MainScene");
+	pEntry[ST_PIXEL] = (char*)"ParticlePS_BlackMat";
+	if (!GET_SINGLE(CShaderManager)->LoadShader("Particle_BlackMat", TEXT("Particle.fx"), pEntry))
+		return false;
+	GET_SINGLE(CResourcesManager)->CreateMesh("Particle_BlackMat", "Particle_BlackMat", POS_LAYOUT,
+		&vParticle, 1, sizeof(Vector3), D3D11_USAGE_DEFAULT,
+		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	CCommonSoundLoader::GetInst()->LoadSoundCSVList(TEXT("CommonSound.csv"));
 	CCommonSoundLoader::GetInst()->LoadSoundRandomSeedCnt(TEXT("CommonSound_SoundCnt.csv"));
-	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
+	GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("First", "Test");
 
 #ifdef _DEBUG
 	//GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
@@ -74,6 +80,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CFirTestScene>("Fir");
+	
 
     int iRet = CCore::GetInst()->Run();
 

@@ -254,6 +254,11 @@ const Matrix * CAnimation::GetBoneMatrix(int iBoneIdx)
 	return m_vecBoneMatrix[iBoneIdx];
 }
 
+const PBONE CAnimation::GetBone(int iBoneIdx)
+{
+	return m_vecBones[iBoneIdx];
+}
+
 
 float CAnimation::GetCurrentClipTime()
 {
@@ -1345,6 +1350,7 @@ bool CAnimation::AddSocket(const string & strBoneName, const string & strSocketN
 	}
 
 	CBoneSocket* pSocket = new CBoneSocket;
+	
 	pSocket->Init();
 	pSocket->SetName(strSocketName);
 	pBone->SocketList.push_back(pSocket);
