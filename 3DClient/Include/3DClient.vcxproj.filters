@@ -112,8 +112,26 @@
     <Filter Include="01. SceneComponent\ST3\ST3_Slient">
       <UniqueIdentifier>{23aa5247-3415-4819-ad07-f283b2d2d72f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. SceneComponent\ST3\ST3_Slient\Behavior">
-      <UniqueIdentifier>{7edc91ca-35f4-487b-b530-4590ee18e313}</UniqueIdentifier>
+    <Filter Include="02. UserComponent\04. UI\03. Event">
+      <UniqueIdentifier>{bab893be-a3b9-430e-9c71-c6c4896b0b89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\03. Document\01. 3DObject\01. Stage 1">
+      <UniqueIdentifier>{50b2d298-d3fc-46f5-8cc1-688030382c45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\03. Document\02. DocIcon\01. Stage 1">
+      <UniqueIdentifier>{f6b63931-2338-470c-a93b-7baff8d9600f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\03. Document\01. 3DObject\02. Stage 2">
+      <UniqueIdentifier>{e992f407-b0a3-4e4e-9771-98cd0483cc8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\03. Document\02. DocIcon\02. Stage 2">
+      <UniqueIdentifier>{f59117c9-0794-4dd5-86a2-0b1751fa9bb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\03. Document\01. 3DObject\03. Stage 3">
+      <UniqueIdentifier>{defe1a54-3f50-4af6-a561-f47c4e1cedcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\05. Item\03. Document\02. DocIcon\03. Stage 3">
+      <UniqueIdentifier>{d8be62f1-1314-4170-aa3f-684e3b65d07e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -312,41 +330,56 @@
     <ClInclude Include="UserComponent\ST3_SlientTrace.h">
       <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_BashDoor.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\BulletCase.h">
+      <Filter>02. UserComponent\03. Field</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_BashDoorOpen.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\Event.h">
+      <Filter>02. UserComponent\04. UI\03. Event</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_BedFind.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\PaperGenerator.h">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\01. Stage 1</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_DestFind.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\EventMessage.h">
+      <Filter>02. UserComponent\04. UI\03. Event</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_HeadAttack.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\DocxGenerator.h">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\01. Stage 1</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_Hook.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="USerComponent\PaperGongji.h">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\01. Stage 1</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_Idle.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\DocxGongji.h">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\01. Stage 1</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_Jap.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\MessageTH.h">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\01. Stage 1</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_LockerFind.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\PaperMsgTH.h">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\01. Stage 1</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_NormalDoorOpenLeft.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\MessagePlanA.h">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\02. Stage 2</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_NormalDoorOpenRight.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\PaperPlanA.h">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\02. Stage 2</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Slient_Trace.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClInclude Include="UserComponent\DocxTest.h">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\02. Stage 2</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\PaperTest.h">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\02. Stage 2</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\MessageBQ.h">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\03. Stage 3</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\PaperBQ.h">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\03. Stage 3</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\MeesagePL.h">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\03. Stage 3</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\PaperPL.h">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\03. Stage 3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -530,41 +563,56 @@
     <ClCompile Include="UserComponent\ST3_SlientTrace.cpp">
       <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_BashDoor.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\BulletCase.cpp">
+      <Filter>02. UserComponent\03. Field</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_BashDoorOpen.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\Event.cpp">
+      <Filter>02. UserComponent\04. UI\03. Event</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_BedFind.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\PaperGenerator.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\01. Stage 1</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_DestFind.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\EventMessage.cpp">
+      <Filter>02. UserComponent\04. UI\03. Event</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_HeadAttack.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\DocxGenerator.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\01. Stage 1</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_Hook.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\PaperGongji.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\01. Stage 1</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_Idle.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\DocxGongji.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\01. Stage 1</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_Jap.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\MessageTH.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\01. Stage 1</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_LockerFind.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\PaperMsgTH.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\01. Stage 1</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_NormalDoorOpenLeft.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\MessagePlanA.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\02. Stage 2</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_NormalDoorOpenRight.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\PaperPlanA.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\02. Stage 2</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Slient_Trace.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    <ClCompile Include="UserComponent\DocxTest.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\02. Stage 2</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\PaperTest.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\02. Stage 2</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\MessageBQ.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\03. Stage 3</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\PaperBQ.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\03. Stage 3</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\MeesagePL.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\02. DocIcon\03. Stage 3</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\PaperPL.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\03. Stage 3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

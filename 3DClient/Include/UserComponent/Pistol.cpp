@@ -7,7 +7,10 @@
 #include <Component/Material.h>
 #include <Component/ColliderOBB3D.h>
 #include <Component/Light.h>
+#include <Scene/Scene.h>
+#include "BulletCase.h"
 
+int CPistol::iBulletCaseCnt = 10;
 
 CPistol::CPistol() :
 	m_pRay(nullptr),
@@ -22,9 +25,16 @@ CPistol::CPistol() :
 	m_vSmokeSocketOffset(-0.3f, -.2f, -.85f),
 	m_pGunPointFake(nullptr),
 	m_fSmokeTimerBuf(0.f),
-	m_fSmokeTimer(0.85f)
+	m_fSmokeTimer(0.85f),
+	m_iCurrBulletCaseIdx(0)
 {
 	tRecoilEff = {};
+	for (int i = 0; i < iBulletCaseCnt; ++i)
+	{
+		m_arrBulletCases[i] = nullptr;
+	}
+
+	m_fSmokeTimerBuf = m_fSmokeTimer;
 }
 
 CPistol::CPistol(const CPistol & pistol) :
@@ -41,6 +51,12 @@ CPistol::~CPistol()
 	SAFE_RELEASE(m_pMuzzle);
 	SAFE_RELEASE(m_pGunMuzzleFlash);
 	SAFE_RELEASE(m_pGunPointFake);
+
+	for (int i = 0; i < iBulletCaseCnt; ++i)
+	{
+
+		SAFE_RELEASE(m_arrBulletCases[i]);
+	}
 }
 
 bool CPistol::Init()
@@ -79,6 +95,12 @@ int CPistol::Update(float fTime)
 			m_pGunSmoke->SetEnable(true);
 		}
 	}
+
+	return 0;
+}
+
+int CPistol::LateUpdate(float fTime)
+{
 
 	if (m_pGunPointFake)
 	{
@@ -129,11 +151,6 @@ int CPistol::Update(float fTime)
 		SAFE_RELEASE(pMuzzleTrans);
 	}
 
-	return 0;
-}
-
-int CPistol::LateUpdate(float fTime)
-{
 	return 0;
 }
 
@@ -324,6 +341,20 @@ void CPistol::AfterClone()
 
 	tRecoilEff.fEffectTime = 0.125f;
 	tRecoilEff.funcEffect = std::bind(&CPistol::Recoil, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+
+	PUN::CGameObject *pBulletCaseObj = nullptr;
+	std::string strBulletCase = "bulletCase";
+	std::string strBulletCaseIdx;
+	for (int i = 0; i < iBulletCaseCnt; ++i)
+	{
+		strBulletCaseIdx = strBulletCase + std::to_string(i + 1);
+
+		pBulletCaseObj = PUN::CGameObject::CreateObject("BCase_Prot", m_pLayer, true);
+		
+		m_arrBulletCases[i] = pBulletCaseObj->AddComponent<CBulletCase>("bulletCase");
+		pBulletCaseObj->SetEnable(false);
+		SAFE_RELEASE(pBulletCaseObj);
+	}
 }
 
 bool CPistol::Fire()
@@ -354,6 +385,22 @@ bool CPistol::Fire()
 		m_pMuzzle->SetEnable(true);
 		m_pGunMuzzleFlash->SetEnable(true);
 		CCameraEff::GetInst()->AddUpdateEffect(tRecoilEff);
+
+		if (m_arrBulletCases[m_iCurrBulletCaseIdx])
+		{
+			PUN::CTransform *pTrans = m_pGunPointFake->GetTransform();
+			Vector3 vPos = pTrans->GetWorldPos();
+			SAFE_RELEASE(pTrans);
+			
+			pTrans = m_pScene->GetMainCameraTransform();
+			Vector3 vRot = pTrans->GetWorldRot();
+			SAFE_RELEASE(pTrans);
+
+			m_arrBulletCases[m_iCurrBulletCaseIdx]->SetInstance(vPos, vRot);
+		}
+		++m_iCurrBulletCaseIdx;
+		if (m_iCurrBulletCaseIdx >= iBulletCaseCnt)
+			m_iCurrBulletCaseIdx = 0;
 		//น฿ป็
 		return true;
 	}

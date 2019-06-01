@@ -17,6 +17,7 @@ protected:
 	~CPistol();
 
 public:
+	static int	iBulletCaseCnt;
 	bool Init();
 	int Input(float fTime);
 	int Update(float fTime);
@@ -35,6 +36,9 @@ private:
 	PUN::CGameObject *m_pGunSmoke;
 	PUN::CGameObject *m_pGunPointFake;
 	PUN::CGameObject *m_pGunMuzzleFlash;
+
+	class CBulletCase *m_arrBulletCases[10];
+	int		m_iCurrBulletCaseIdx;
 	float m_fFireDmg;
 	float m_fFireReloadSpd;
 	float m_fFireTimer;

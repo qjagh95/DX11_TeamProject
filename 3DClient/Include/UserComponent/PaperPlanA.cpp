@@ -1,15 +1,15 @@
 #include "../ClientHeader.h"
-#include "PaperSilent.h"
+#include "PaperPlanA.h"
 #include "Component/Renderer.h"
 #include "Component/Material.h"
 #include "Component/Transform.h"
 #include "GameObject.h"
 #include "DocxInven.h"
 #include "Component/ColliderSphere.h"
-#include "SilentMessage.h"
+#include "MessagePlanA.h"
 #include "Human_Player.h"
 
-CPaperSilent::CPaperSilent()
+CPaperPlanA::CPaperPlanA()
 {
 	m_bUseInven = false;
 	m_bMouseOn = false;
@@ -17,12 +17,12 @@ CPaperSilent::CPaperSilent()
 	m_bMotion = false;
 }
 
-CPaperSilent::CPaperSilent(const CPaperSilent & paper)	:
+CPaperPlanA::CPaperPlanA(const CPaperPlanA & paper)	:
 	CUserComponent(paper)
 {
 }
 
-CPaperSilent::~CPaperSilent()
+CPaperPlanA::~CPaperPlanA()
 {
 	if (m_bUseInven)
 	{
@@ -31,14 +31,14 @@ CPaperSilent::~CPaperSilent()
 	}
 }
 
-void CPaperSilent::AfterClone()
+void CPaperPlanA::AfterClone()
 {
 }
 
-bool CPaperSilent::Init()
+bool CPaperPlanA::Init()
 {
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("SPaperRender");
-	pRenderer->SetMesh("SPaper", TEXT("Paper.msh"));
+	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("PaperRender");
+	pRenderer->SetMesh("Paper_PlanA", TEXT("Paper.msh"));
 
 	SAFE_RELEASE(pRenderer);
 
@@ -50,11 +50,11 @@ bool CPaperSilent::Init()
 
 	m_pTransform->SetWorldScale(10.f, 10.f, 10.f);
 
-	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("SPaperBody");
+	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("PlanABody");
 
-	pBody->SetCollisionCallback(CCT_ENTER, this, &CPaperSilent::Hit);
-	pBody->SetCollisionCallback(CCT_LEAVE, this, &CPaperSilent::MouseOut);
-	pBody->SetColliderID((COLLIDER_ID)UCI_DOC_SILENT);
+	pBody->SetCollisionCallback(CCT_ENTER, this, &CPaperPlanA::Hit);
+	pBody->SetCollisionCallback(CCT_LEAVE, this, &CPaperPlanA::MouseOut);
+	pBody->SetColliderID((COLLIDER_ID)UCI_DOC_MESSAGEPLANA);
 
 	pBody->SetInfo(Vector3::Zero, 2.f);
 
@@ -63,12 +63,12 @@ bool CPaperSilent::Init()
 	return true;
 }
 
-int CPaperSilent::Input(float fTime)
+int CPaperPlanA::Input(float fTime)
 {
 	return 0;
 }
 
-int CPaperSilent::Update(float fTime)
+int CPaperPlanA::Update(float fTime)
 {
 	if (m_bMouseOn)
 	{
@@ -80,9 +80,9 @@ int CPaperSilent::Update(float fTime)
 
 				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
 
-				CGameObject*	pSMObj = CGameObject::CreateObject("SilentMessage", m_pLayer);
+				CGameObject*	pSMObj = CGameObject::CreateObject("MessagePlanA", m_pLayer);
 
-				CSilentMessage*	pSM = pSMObj->AddComponent<CSilentMessage>("SilentMessage");
+				CMessagePlanA*	pSM = pSMObj->AddComponent<CMessagePlanA>("MessagePlanA");
 
 				m_pDocxInven = m_pDocxInvenObj->FindComponentFromTag<CDocxInven>("DocxInven");
 				m_pDocxInven->AddItem(pSMObj);
@@ -120,25 +120,25 @@ int CPaperSilent::Update(float fTime)
 	return 0;
 }
 
-int CPaperSilent::LateUpdate(float fTime)
+int CPaperPlanA::LateUpdate(float fTime)
 {
 	return 0;
 }
 
-void CPaperSilent::Collision(float fTime)
+void CPaperPlanA::Collision(float fTime)
 {
 }
 
-void CPaperSilent::Render(float fTime)
+void CPaperPlanA::Render(float fTime)
 {
 }
 
-CPaperSilent * CPaperSilent::Clone()
+CPaperPlanA * CPaperPlanA::Clone()
 {
-	return new CPaperSilent(*this);
+	return new CPaperPlanA(*this);
 }
 
-void CPaperSilent::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
+void CPaperPlanA::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
 
@@ -163,7 +163,7 @@ void CPaperSilent::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 	SAFE_RELEASE(pPlayerObj);
 }
 
-void CPaperSilent::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
+void CPaperPlanA::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pDest->GetColliderID() == UCI_PLAYER_RAY)
 	{

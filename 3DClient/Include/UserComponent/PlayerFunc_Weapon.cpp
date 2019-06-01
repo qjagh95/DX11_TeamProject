@@ -152,18 +152,11 @@ int CHuman_Player::WeaponInput(float fTime)
 		vDiffRot.z = RadianToDegree(vDiffRot.z);
 
 		SAFE_RELEASE(pHeadTr);
-
-
-		//std::cout << "cam rotation : (" << vRot.x << ", " << vRot.y << ", " << vRot.z << ")"<< std::endl;
-		//std::cout << "neck rotation : (" << vNeckRot.x << ", " <<vNeckRot.y<< ", " << vNeckRot.z << ")" << std::endl;
-		//std::cout << "diff : (" <<  vDiffRot.x << ", " << vDiffRot.y << ", "<< vDiffRot.z << ")" << std::endl;
-		//std::cout << "==================================" << std::endl;
-
-
+		
 		PUN::PANIMATIONCLIP pClip = m_pAnimation->GetCurrentClip();
 
 		DirectX::XMVECTOR xmPos;
-		DirectX::XMVECTOR xmQuat;
+		DirectX::XMVECTOR xmQuat; //Root Bone 의 쿼터니언
 		DirectX::XMVECTOR xmScale;
 
 		DirectX::XMMatrixDecompose(&xmScale, &xmQuat, &xmPos, m_pAnimation->GetBone(m_pPartCamAnim->iRootParentIndex)->matBone->matrix);
@@ -181,35 +174,18 @@ int CHuman_Player::WeaponInput(float fTime)
 
 
 		//뭬직 남바
-
-		vEulerDir.y = DegreeToRadian(vDiffRot.y + 8.61f);
+		XMVECTOR xmRot;
+		vEulerDir.x = PUN_PI + (DegreeToRadian(vDiffRot.y) * 0.001953125f) + DegreeToRadian(12.f);
+		vEulerDir.y = vRot.x;
+		vEulerDir.z = PUN_PI * (.5f);
+		//vEulerDir.y = DegreeToRadian(vDiffRot.y + 8.61f); //몸통이 시야에 비해 8.61도만큼 약간 돌아가 있다
 		EulerToQuat(vEulerDir, vDirQuat);
-		XMVECTOR xmRot = DirectX::XMQuaternionMultiply(xmQuat, vDirQuat.Convert());
+		//xmRot = DirectX::XMQuaternionMultiply(xmQuat, vDirQuat.Convert());
 		//xmRot = DirectX::XMQuaternionNormalize(xmRot);
 
-		//x 축 회전은 혹시 또 김벌락이 생길지도 모르니 분리해서 회전
-		//역시 Gimball Lock 때문에 카메라 회전 역시 쿼터니언으로 가진 것을 구해야 한다.
-		//카메라 쿼터니언과 팔뚝 쿼터니언의 사이각
-		//사이각 = 팔뚝 쿼터니언 * 카메라 역전 쿼터니언
-		Vector4 vQuatCamToArm(DirectX::XMQuaternionMultiply(xmQuat, xmInversedCamQuat));
-		Vector3 vRotCamToArm;
-		toEulerAngle(vQuatCamToArm, vRotCamToArm);
-		//std::cout << "팔뚝과 카메라 사이의 사이각 : " << RadianToDegree(vRotCamToArm.y) << std::endl;
-		//팔뚝 역시 회전 이전에는 아래를 향하고 있어서 축이 변경된 것( x축으로 생각하기 쉽지만 사실은 ->y)
-		//김벌락.... 많은 상황에서 회전을 축으로 구분하기 힘들어져버린다....
-		std::cout << "팔뚝과 몸통 사이 사이각 : " << RadianToDegree(vRotCamToArm.y) << std::endl;
-		std::cout << "----Quaternion : (" << vQuatCamToArm.x << ", "
-			<< vQuatCamToArm.y << ", " << vQuatCamToArm.z << ", " << vQuatCamToArm.w << ") \n";
-		vEulerDir.x = -vRotCamToArm.y;
-		vEulerDir.y = 0.f;
-		vEulerDir.z = 0.f;
-		EulerToQuat(vEulerDir, vDirQuat);
-
-		xmRot = DirectX::XMQuaternionMultiply(xmRot, vDirQuat.Convert());
-		xmRot = DirectX::XMQuaternionNormalize(xmRot);
 
 		XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
-		m_pPartCamAnim->matCustomParent = XMMatrixAffineTransformation(vScale.Convert(), vZero, xmRot, vPos.Convert());
+		m_pPartCamAnim->matCustomParent = XMMatrixAffineTransformation(vScale.Convert(), vZero, vDirQuat.Convert(), vPos.Convert());
 
 		SAFE_RELEASE(pCamTr);
 		//X회전 : 마우스 높이는 팔에 따로 적용되므로 반드시 얻어내야 함

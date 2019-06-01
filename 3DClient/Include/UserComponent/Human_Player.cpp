@@ -302,6 +302,8 @@ bool CHuman_Player::Init()
 	_Input->AddKey("I", 'I');
 	_Input->AddKey("G", 'G');
 	_Input->AddKey("Ctrl", VK_CONTROL);
+	_Input->AddKey("Tab", VK_TAB);
+	_Input->ShowMouse(false);
 
 	AfterClone();
 
@@ -330,7 +332,7 @@ void CHuman_Player::AfterClone()
 	*/
 
 	PUN::CTransform*	pTr = m_pHeadObj->GetTransform();
-	pTr->SetWorldScale(0.05f, 0.05f, 0.05f);
+	pTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 
 	PUN::CRenderer*	pHeadRenderer = m_pHeadObj->AddComponent<PUN::CRenderer>("WeaponRenderer");
 	pHeadRenderer->SetMesh("head", TEXT("Head.msh"));
@@ -466,17 +468,39 @@ int CHuman_Player::Input(float fTime)
 	}
 
 	//Other Keys
+	if (_Input->KeyPress("Tab"))
+	{
+		if (m_iState & PSTATUS_CAMOUT)
+		{
+			m_iState ^= PSTATUS_CAMOUT;
+			_Input->ShowMouse(false);
+		}
+		else
+		{
+			m_iState |= PSTATUS_CAMOUT;
+			_Input->ShowMouse(true);
+			
+		}
+	}
+
 
 	if (_Input->KeyPress("I"))
 	{
 		if (m_iState & PSTATUS_ITEM)
 		{
 			m_iState ^= (PSTATUS_ITEM | PSTATUS_INACTIVE);
+
+			if ((m_iState & PSTATUS_DOCX) == 0)
+			{
+				_Input->ShowMouse(false);
+			}
+			
 			Close_Item(fTime);
 		}
 		else
 		{
 			m_iState |= (PSTATUS_ITEM | PSTATUS_INACTIVE);
+			_Input->ShowMouse(true);
 			Open_Item(fTime);
 		}
 	}
@@ -506,9 +530,7 @@ int CHuman_Player::Input(float fTime)
 
 		return 1; //Inactive로 인한 종료 1반환
 	}
-	if (_Input->ShowMouse())
-		_Input->ShowMouse(false);
-
+	
 	if (_Input->KeyPress("G"))
 	{
 		if ((m_iState & PSTATUS_GUN) == 0)
@@ -949,21 +971,25 @@ int CHuman_Player::Input(float fTime)
 		vCamPos += vTotMoveDiff;
 
 		//pCamTrans->SetWorldPos(vCamPos);
-
-		if (pCamEffManager->FirstPersonView(m_fViewMaxAngleY, m_fViewMinAngleY, m_pTransform, vCamPos))
+		if ((m_iState & PSTATUS_CAMOUT) == 0)
 		{
-			if (m_iState & PSTATUS_STOPMOVE)
+			if (pCamEffManager->FirstPersonView(m_fViewMaxAngleY, m_fViewMinAngleY, m_pTransform, vCamPos))
 			{
-				if (m_iState & PSTATUS_CROUCHED)
+				if (m_iState & PSTATUS_STOPMOVE)
 				{
-				}
-				else
-				{
-					//m_pAnimation->ChangeClip("player_walk_forward");
-				}
-			}
+					if (m_iState & PSTATUS_CROUCHED)
+					{
 
+					}
+					else
+					{
+						//m_pAnimation->ChangeClip("player_walk_forward");
+					}
+				}
+
+			}
 		}
+		
 		//SAFE_RELEASE(pCamTrans);
 
 	}
@@ -1605,3 +1631,15 @@ float CHuman_Player::GetWorlPosY() const {
 Vector3 CHuman_Player::GetWorldPos() const {
 	return m_pTransform->GetWorldPos();
 };
+
+void CHuman_Player::SetInInteractiveSceneChange(bool bIn)
+{
+	if (bIn)
+		m_iState |= PSTATUS_CHANGESCENE;
+	else
+		m_iState ^= PSTATUS_CHANGESCENE;
+}
+bool CHuman_Player::IsPlayerOnSceneChange()
+{
+	return m_iState & PSTATUS_CHANGESCENE;
+}

@@ -55,10 +55,12 @@ enum PLAYER_STATUS
 	PSTATUS_GUN		= 0x20000,
 	PSTATUS_GUN_TAKING_OFF = 0x40000,
 	PSTATUS_ITEM = 0x80000,
-	PSTATUS_DOCX = 0x90000, // 문서 인벤토리용 Status
-	PSTATUS_KEY = 0x95000, // 키 인벤토리용 Status
 	PSTATUS_UPDATEPOS = 0x100000,
-	PSTATUS_INACTIVE = 0x10000000
+	PSTATUS_DOCX =			0x200000, // 문서 인벤토리용 Status
+	PSTATUS_KEY =			0x400000, // 키 인벤토리용 Status
+	PSTATUS_CAMOUT =		0x800000, //INACTIVE는 아니지만 카메라가 Out될 때
+	PSTATUS_CHANGESCENE =	0x1000000,
+	PSTATUS_INACTIVE =		0x10000000
 };
 
 
@@ -277,6 +279,9 @@ public:
 	int WeaponInput(float fTime);
 	int WeaponUpdate(float fTime);
 	int WeaponLateUpdate(float fTime);
+
+	void SetInInteractiveSceneChange(bool bIn);
+	bool IsPlayerOnSceneChange();
 	
 	//custom public Functions
 #include "Cam_Func_Header.hpp"

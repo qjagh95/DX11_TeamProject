@@ -83,6 +83,74 @@ bool CDocument::Init()
 
 	vecClipFrame.clear();
 
+	// Stage 1
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("Generator_Docx", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"Docx_Generator", TEXT("UI/Document/Stage1/Generator720.png"));
+
+	vecClipFrame.clear();
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("Gongji_Docx", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"Docx_Gongji", TEXT("UI/Document/Stage1/Gongji720.png"));
+
+	vecClipFrame.clear();
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("Message_TH720", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"TH720_Message", TEXT("UI/Document/Stage1/Message_TH720.png"));
+
+	vecClipFrame.clear();
+
+	// Stage 2
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("Plan_A720", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"720Plan_A", TEXT("UI/Document/Stage2/Plan_A720.png"));
+
+	vecClipFrame.clear();
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("TestDocx720", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"720TestDocx", TEXT("UI/Document/Stage2/TestDocx720.png"));
+
+	vecClipFrame.clear();
+
+	// Stage 3
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("BeQuiet720", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"720BeQuiet", TEXT("UI/Document/Stage3/BeQuiet720.png"));
+
+	vecClipFrame.clear();
+
+	tFrame.vLT = Vector2(0.f, 0.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
+	vecClipFrame.push_back(tFrame);
+
+	m_pAnimation->AddClip("Prepare_Lever720", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"720Prepare_Lever", TEXT("UI/Document/Stage3/Prepare_Lever720.png"));
+
+	vecClipFrame.clear();
+
 	return true;
 }
 
