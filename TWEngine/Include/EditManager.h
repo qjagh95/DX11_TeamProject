@@ -189,7 +189,8 @@ public:
 	int		GetCollType() const;
 	void SetSphereColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float fRadius);
 	void SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ);
-
+	//////////////////SetStageSection///////////////////////////////////////
+	void SetStageSection(STAGE_SECTION_TYPE _eType);
 };
 
 PUN_END

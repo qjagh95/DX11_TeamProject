@@ -1237,7 +1237,7 @@ namespace WinFormEditor
 
         private void CB_ChangeStageSection_Click(object sender, EventArgs e)
         {
-
+            m_coreWrapper.SetStageSection(CB_StageSection.SelectedIndex);
         }
 
         private void CB_StageSection_SelectedIndexChanged(object sender, EventArgs e)

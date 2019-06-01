@@ -1347,3 +1347,13 @@ void CEditManager::SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dC
 
 	((CColliderOBB3D*)m_pSelectCollider)->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), Vector3::Axis , Vector3(dLengthX , dLengthY , dLengthZ));
 }
+
+void CEditManager::SetStageSection(STAGE_SECTION_TYPE _eType)
+{
+	if (m_pObject == nullptr)
+	{
+		return;
+	}
+
+	m_pObject->SetStageSection(_eType);
+}

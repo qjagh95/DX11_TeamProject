@@ -56,6 +56,15 @@ private:
 	//bool			m_bUseFrustumCull;
 	
 public:
+	void SetStageSection(int eStageSection);
+	void SetStageSection(STAGE_SECTION_TYPE _eType)
+	{
+		m_eSectionType = _eType;
+	}
+	STAGE_SECTION_TYPE GetStageSection() const
+	{
+		return m_eSectionType;
+	}
 	void SetSave(bool _bSave)
 	{
 		m_bSave = _bSave;
@@ -85,8 +94,6 @@ public:
 	Vector3 GetWorldAxis(AXIS eAxis)	const;
 	bool GetisChild() const { return m_isChild; }
 
-	STAGE_SECTION_TYPE GetStageSection() const;
-	void SetStageSection(int eStageSection);
 
 public:
 	void SetRenderGroup(RENDER_GROUP eGroup);

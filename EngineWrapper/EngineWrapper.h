@@ -312,5 +312,9 @@ namespace EngineWrapper
 		void SetSphereColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dRadius);
 		void SetOBBColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dLengthX, double dLengthY, double dLengthZ);
 
+		void SetStageSection(int _iSection)
+		{
+			CEditManager::GetInst()->SetStageSection((STAGE_SECTION_TYPE)_iSection);
+		}
 	};
 }

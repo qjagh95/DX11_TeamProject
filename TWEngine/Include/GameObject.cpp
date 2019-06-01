@@ -31,6 +31,7 @@ CGameObject::CGameObject() :
 	m_eRenderGroup = RG_NORMAL;
 	m_bSave = true;
 	m_isChild = false;
+	m_eSectionType = SST_END;
 }
 
 CGameObject::CGameObject(const CGameObject & obj)
@@ -327,11 +328,6 @@ Vector3 CGameObject::GetWorldMove() const
 Vector3 CGameObject::GetWorldAxis(AXIS eAxis) const
 {
 	return m_pTransform->GetWorldAxis(eAxis);
-}
-
-STAGE_SECTION_TYPE CGameObject::GetStageSection() const
-{
-	return m_eSectionType;
 }
 
 void CGameObject::SetStageSection(int eStageSection)
@@ -1089,7 +1085,8 @@ void CGameObject::Save(BinaryWrite* _pInstBW)
 
 	// Transform
 	m_pTransform->Save(_pInstBW);
-
+	int iStageSection = (int)m_eSectionType;
+	_pInstBW->WriteData(iStageSection);
 	int iSize = 0;
 	list<CComponent*>::iterator   iter;
 	list<CComponent*>::iterator   iterEnd = m_ComList.end();
@@ -1106,7 +1103,6 @@ void CGameObject::Save(BinaryWrite* _pInstBW)
 	_pInstBW->WriteData(iSize);
 
 	// Save Component
-
 	iterEnd = m_ComList.end();
 	for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
 	{
@@ -1229,6 +1225,9 @@ void CGameObject::Load(BinaryRead* _pInstBR)
 		// Transform
 	m_pTransform->Load(_pInstBR);
 
+	int iStageSection = 0;
+	_pInstBR->ReadData(iStageSection);
+	m_eSectionType = (STAGE_SECTION_TYPE)iStageSection;
 	// Read Component
 	CComponent* pComp = nullptr;
 	int compSize = _pInstBR->ReadInt();
