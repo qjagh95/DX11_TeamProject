@@ -6,6 +6,7 @@ PUN_BEGIN
 
 class BinaryWrite;
 class BinaryRead;
+class CAnimation;
 class PUN_DLL CRenderer :
 	public CComponent
 {
@@ -30,6 +31,18 @@ private:
 	bool				m_bDecalEnable;
 	bool				m_bDontRenderMat;
 	ID3D11ShaderResourceView**  m_pBoneTex;
+	CAnimation* m_pAnimation;
+	string m_BoneName;
+	Matrix m_matBone;
+	Vector3 m_BoneRot;
+
+	bool m_isRotFirstCheck;
+	Vector3 m_RotFirstCheck;
+	Vector3 m_RotLastCheck;
+
+	bool m_isPosFirstCheck;
+	Vector3 m_PosFirstCheck;
+	Vector3 m_PosLastCheck;
 
 public:
 	void SetBoneTexture(ID3D11ShaderResourceView** _pBoneTex);
@@ -43,9 +56,19 @@ public:
 	void SetMesh(const string& strKey, const TCHAR* pFileName,
 		const string& strPathKey = MESH_DATA_PATH);
 	void RenderShadow(float fTime);
+	void SetAnimation(CAnimation* animation) { m_pAnimation = animation;}
+
+	void SetRotCheckStart(bool Value) { m_isRotFirstCheck = Value; }
+	void SetPosCheckStart(bool Value) { m_isPosFirstCheck = Value; }
+	Vector3 GetDiffrentRot() const;
+	float GetDiffrentPosX() const;
+	float GetDiffrentPosY() const;
+	float GetDiffrentPosZ() const;
+	Vector3 GetDiffrentPos() const;
 
 	class CMesh* GetMesh() const;
 	Vector3 GetMeshLength() const;
+	Vector3 GetModelMoveDist();
 
 	void SetMeshFromFullPath(const string& strKey, const TCHAR* pFullPath);
 	void SetShader(class CShader* pShader);
@@ -54,11 +77,14 @@ public:
 	void SetRenderState(const string& strName);
 	void SetDecalEnable(bool bEnable);
 	bool CreateRendererCBuffer(const string& strName, int iSize);
-	void UpdateRendererCBuffer(const string& strName, void* pData,
-		int iSize);
+	void UpdateRendererCBuffer(const string& strName, void* pData, int iSize);
 	void CheckComponent();
 	void DeleteComponentCBuffer(CComponent* pComponent);
 	void UpdateAnimationType(int iType);
+	void SetSelectBoneName(const string& BoneName) { m_BoneName = BoneName; }
+	string GetSelectBoneName() const { return m_BoneName; }
+	Matrix GetSelectBoneMatrix() const { return m_matBone; }
+	Vector3 GetBoneRot() const { return m_BoneRot; }
 
 private:
 	PRendererCBuffer FindRendererCBuffer(const string& strName);

@@ -56,6 +56,9 @@ CRenderer::CRenderer() :
 
 	m_pAnimation = NULLPTR;
 	m_BoneRot = Vector3::One;
+
+	m_isRotFirstCheck = false;
+	m_isPosFirstCheck = false;
 }
 
 CRenderer::CRenderer(const CRenderer & renderer) :
@@ -197,15 +200,39 @@ void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName,
 	}
 }
 
-Vector3 CRenderer::GetDiffrent() const
+Vector3 CRenderer::GetDiffrentRot() const
 {
-	Vector3 ConvertFirst = m_FirstCheck;
-	Vector3 ConvertLast = m_LastCheck;
-
-	ConvertFirst = Vector3(abs(ConvertFirst.x), abs(ConvertFirst.y), abs(ConvertFirst.z));
-	ConvertLast = Vector3(abs(ConvertLast.x), abs(ConvertLast.y), abs(ConvertLast.z));
+	Vector3 ConvertFirst = m_RotFirstCheck;
+	Vector3 ConvertLast = m_RotLastCheck;
+	
+	ConvertFirst = Vector3(fabs(ConvertFirst.x), fabs(ConvertFirst.y), fabs(ConvertFirst.z));
+	ConvertLast = Vector3(fabs(ConvertLast.x), fabs(ConvertLast.y), fabs(ConvertLast.z));
 
 	return Vector3(ConvertFirst + ConvertLast);
+}
+
+float CRenderer::GetDiffrentPosX() const
+{
+	Vector3 Result = m_PosLastCheck - m_PosFirstCheck;
+
+	return Result.x;
+}
+
+float CRenderer::GetDiffrentPosY() const
+{
+	Vector3 Result = m_PosLastCheck - m_PosFirstCheck;
+	return Result.y;
+}
+
+float CRenderer::GetDiffrentPosZ() const
+{
+	Vector3 Result = m_PosLastCheck - m_PosFirstCheck;
+	return Result.z;
+}
+
+Vector3 CRenderer::GetDiffrentPos() const
+{
+	return m_PosLastCheck - m_PosFirstCheck;
 }
 
 CMesh * CRenderer::GetMesh() const
@@ -357,9 +384,6 @@ void CRenderer::CheckComponent()
 			break;
 		case CT_UI:
 			m_b2DRenderer = true;
-			break;
-		case CT_ANIMATION:
-			m_pAnimation = FindComponentFromTypeNonCount<CAnimation>(CT_ANIMATION);
 			break;
 		}
 	}
@@ -517,22 +541,36 @@ int CRenderer::Update(float fTime)
 	m_matBone = *m_pAnimation->GetBone(m_BoneName);
 
 	XMVECTOR xmScale; XMVECTOR xmPos; XMVECTOR xmRot;
-	DirectX::XMMatrixDecompose(&xmScale, &xmRot, &xmPos, m_matBone.matrix);
+	XMMatrixDecompose(&xmScale, &xmRot, &xmPos, m_matBone.matrix);
 
 	Vector4 Qurt = Vector4(xmRot);
+	Vector4 ModelFuckingPos = Vector4(xmPos);
+	ModelFuckingPos.x *= m_pTransform->GetWorldScale().x;
+	ModelFuckingPos.y *= m_pTransform->GetWorldScale().y;
+	ModelFuckingPos.z *= m_pTransform->GetWorldScale().z;
+
 	Vector3 Convert;
 	to_Euler_Angle123(Qurt, Convert);
 
 	m_BoneRot = Vector3(RadianToDegree(Convert.x), RadianToDegree(Convert.y), RadianToDegree(Convert.z));
 
-	if (m_isFirstCheck == true)
+	if (m_isRotFirstCheck == true)
 	{
-		m_FirstCheck = m_BoneRot;
-		m_isFirstCheck = false;
+		m_RotFirstCheck = m_BoneRot;
+		m_isRotFirstCheck = false;
+	}
+
+	if (m_isPosFirstCheck == true)
+	{
+		m_PosFirstCheck = Vector3(ModelFuckingPos.x, ModelFuckingPos.y, ModelFuckingPos.z);
+		m_isPosFirstCheck = false;
 	}
 
 	if (m_pAnimation->IsCurAnimEnd() == true)
-		m_LastCheck = m_BoneRot;
+	{
+		m_RotLastCheck = m_BoneRot;
+		m_PosLastCheck = Vector3(ModelFuckingPos.x, ModelFuckingPos.y, ModelFuckingPos.z);
+	}
 
 	return 0;
 }

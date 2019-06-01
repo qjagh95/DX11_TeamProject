@@ -237,6 +237,7 @@ bool CCore::Init(HINSTANCE hInst, HWND hWnd,
 	GET_SINGLE(CInput)->AddKey("GuiOnOff", VK_F1);
 	GET_SINGLE(CInput)->AddKey("ShaderOptionOnOff", VK_F2);
 	GET_SINGLE(CInput)->AddKey("TreeOnOff", VK_F3);
+	GET_SINGLE(CInput)->AddKey("WireOnOff", VK_F6);
 
 	m_vecInput = AddManagerVector("LogicInput");
 	m_vecUpdate = AddManagerVector("LogicUpdate");
@@ -446,6 +447,7 @@ void CCore::Render(float fTime)
 	GUIOnOff(fTime);
 	ShaderOptionOnOff(fTime);
 	TreeOnOff(fTime);
+	LightWireOnOff();
 }
 
 void CCore::Register(const TCHAR * pClass, int iIconID, int iSmallIconID)
@@ -526,6 +528,12 @@ void CCore::TreeOnOff(float fTime)
 {
 	if (CInput::GetInst()->KeyPress("TreeOnOff"))
 		m_bTreeOnOff ^= true;
+}
+
+void CCore::LightWireOnOff()
+{
+	if (CInput::GetInst()->KeyPress("WireOnOff"))
+		CRenderManager::GetInst()->m_bLightWireFrame ^= true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

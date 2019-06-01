@@ -83,6 +83,7 @@ private:
 	void GUIOnOff(float fTime);
 	void ShaderOptionOnOff(float fTime);
 	void TreeOnOff(float fTime);
+	void LightWireOnOff();
 
 	DECLARE_SINGLE(CCore)
 };

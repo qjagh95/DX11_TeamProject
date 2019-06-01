@@ -4,6 +4,7 @@
 ST3_SlientTrace::ST3_SlientTrace()
 {
 	m_Attack = 0;
+	m_BashCount = 3;
 }
 
 ST3_SlientTrace::ST3_SlientTrace(const ST3_SlientTrace & CopyData)
@@ -40,7 +41,6 @@ bool ST3_SlientTrace::Init()
 	m_AniName[STS_NORMAL_DOOR_OPEN_RIGHT] = "open_door_right_push_close";
 	m_AniName[STS_BED_FIND] = "grap_bed_left";
 	m_AniName[STS_DESK_FIND] = "grap_desk";
-	//m_AniName[STS_DESK_FIND] = "grap_desk";
 	m_AniName[STS_LOCKER_FIND] = "grap_locker";
 	m_AniName[STS_HOOK] = "attack_right";
 	m_AniName[STS_JAP] = "attack_left";
@@ -48,13 +48,13 @@ bool ST3_SlientTrace::Init()
 
 	m_Renderer->SetMesh("Cannibal", TEXT("Cannibal.msh"));
 	m_Renderer->SetSelectBoneName("NPCMedium-Pelvis");
-	m_Renderer->SetCheckStart(true);
+
+	m_Renderer->SetPosCheckStart(true);
 
 	m_Animation->LoadBone("Cannibal.bne");
 	m_Animation->Load("Cannibal.anm");
 
-	//CreateBT("Slient");
-	ChangeState(STS_BED_FIND, m_AniName);
+	ChangeState(STS_BASH_DOOR_OPEN, m_AniName);
 	return true;
 }
 
@@ -71,11 +71,41 @@ int ST3_SlientTrace::Update(float fTime)
 
 	switch (m_State)
 	{
+	case STS_IDLE:
+		FS_IDLE(fTime);
+		break;
+	case STS_TRACE:
+		FS_TRACE(fTime);
+		break;
 	case STS_BED_FIND:
 		FS_BED_FIND(fTime);
 		break;
-	case STS_IDLE:
-		FS_IDLE(fTime);
+	case STS_DESK_FIND:
+		FS_DESK_FIND(fTime);
+		break;
+	case STS_LOCKER_FIND:
+		FS_LOCKER_FIND(fTime);
+		break;
+	case STS_HOOK:
+		FS_HOOK(fTime);
+		break;
+	case STS_JAP:
+		FS_JAP(fTime);
+		break;
+	case STS_HEAD_ATTACK:
+		FS_HEAD_ATTACK(fTime);
+		break;
+	case STS_BASH_DOOR:
+		FS_BASH_DOOR(fTime);
+		break;
+	case STS_BASH_DOOR_OPEN:
+		FS_BASH_DOOR_OPEN(fTime);
+		break;
+	case STS_NORMAL_DOOR_OPEN_LEFT:
+		FS_NORMAL_DOOR_OPEN_LEFT(fTime);
+		break;
+	case STS_NORMAL_DOOR_OPEN_RIGHT:
+		FS_NORMAL_DOOR_OPEN_RIGHT(fTime);
 		break;
 	}
 
@@ -99,25 +129,3 @@ ST3_SlientTrace * ST3_SlientTrace::Clone()
 {
 	return new ST3_SlientTrace(*this);
 }
-
-void ST3_SlientTrace::FS_IDLE(float DeltaTime)
-{
-
-}
-
-void ST3_SlientTrace::FS_BED_FIND(float DeltaTime)
-{
-	if (m_Animation->IsCurAnimEnd() == true)
-	{
-		Vector3 GetRot = m_Renderer->GetDiffrent();
-
-		m_pTransform->RotationY(GetRot.x);
-		//ChangeState(STS_IDLE, m_AniName);
-	}
-}
-
-void ST3_SlientTrace::FS_DESK_FIND(float DeltaTime)
-{
-
-}
-

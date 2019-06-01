@@ -1,6 +1,5 @@
 #pragma once
-
-#include <Component/NPCBase.h>
+#include "NPCBase.h"
 
 PUN_USING
 
@@ -37,12 +36,22 @@ public:
 
 private:
 	void FS_IDLE(float DeltaTime);
+	void FS_TRACE(float DeltaTime);
 	void FS_BED_FIND(float DeltaTime);
 	void FS_DESK_FIND(float DeltaTime);
+	void FS_LOCKER_FIND(float DeltaTime);
+	void FS_HOOK(float DeltaTime);
+	void FS_JAP(float DeltaTime);
+	void FS_HEAD_ATTACK(float DeltaTime);
+	void FS_BASH_DOOR(float DeltaTime);
+	void FS_BASH_DOOR_OPEN(float DeltaTime);
+	void FS_NORMAL_DOOR_OPEN_LEFT(float DeltaTime);
+	void FS_NORMAL_DOOR_OPEN_RIGHT(float DeltaTime);
 
 private:
 	string m_AniName[STS_MAX];
 	int m_Attack;
+	int m_BashCount;
 
 public:
 	ST3_SlientTrace();

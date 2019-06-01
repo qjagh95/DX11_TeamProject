@@ -1,5 +1,5 @@
 #pragma once
-#include <Component/NPCBase.h>
+#include "NPCBase.h"
 
 PUN_USING
 
@@ -11,7 +11,7 @@ enum SUPRISE_STATE
 	SS_MAX,
 };
 
-enum AXIS_SUPRISE
+enum SUPRISE_AXIS
 {
 	AX_X = 1,
 	AX_Z,
@@ -42,7 +42,7 @@ private:
 	string m_AniName[SS_MAX];
 	bool m_isDoorOpenMode;
 	string m_DoorName;
-	AXIS_SUPRISE m_Axis;
+	SUPRISE_AXIS m_Axis;
 	float m_Offset;
 	float m_YOffset;
 

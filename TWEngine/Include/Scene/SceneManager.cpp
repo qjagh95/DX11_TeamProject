@@ -289,18 +289,15 @@ void CSceneManager::Access()
 
 		for (; StartIter != EndIter; StartIter++)
 		{
-			if ((*StartIter)->GetTag() == "Default")
+			auto StartIter1 = CObjectManager::GetInst()->GetMap()->begin();
+			auto EndIter1 = CObjectManager::GetInst()->GetMap()->end();
+
+			for (; StartIter1 != EndIter1; StartIter1++)
 			{
-				auto StartIter1 = CObjectManager::GetInst()->GetMap()->begin();
-				auto EndIter1 = CObjectManager::GetInst()->GetMap()->end();
+				if (StartIter1->second->GetScene()->GetTag() == m_vecTemp[i]->GetTag())
+					continue;
 
-				for (; StartIter1 != EndIter1; StartIter1++)
-				{
-					if (StartIter1->second->GetScene()->GetTag() == m_vecTemp[i]->GetTag())
-						continue;
-
-					(*StartIter)->GetObjectList()->push_back(StartIter1->second);
-				}
+				(*StartIter)->GetObjectList()->push_back(StartIter1->second);
 			}
 		}
 	}

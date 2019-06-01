@@ -52,18 +52,18 @@ bool JBH_Stage3::Init()
 	newPlayer->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
 	pCamera->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
 
-	CGameObject* TestNPC = CGameObject::CreateObject("TestCJH", pDefaultLayer);
-	ST3_Suprise* TestMob = TestNPC->AddComponent<ST3_Suprise>("TestCJH");
-	TestMob->GetTransformNonCount()->SetWorldPos(Vector3(200.0f, 20.0f, 68.0f));
-	TestMob->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
-	TestMob->SetTarget(PlayerObject);
-	TestMob->SetDoorName("TestDoor");
-
 	//CGameObject* TestNPC = CGameObject::CreateObject("TestCJH", pDefaultLayer);
-	//ST3_SlientTrace* TestMob = TestNPC->AddComponent<ST3_SlientTrace>("TestCJH");
-	//TestMob->GetTransformNonCount()->SetWorldPos(Vector3(220.0f, 0.0f, 68.0f));
-	//TestMob->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
+	//ST3_Suprise* TestMob = TestNPC->AddComponent<ST3_Suprise>("TestCJH");
+	//TestMob->GetTransformNonCount()->SetWorldPos(Vector3(200.0f, 20.0f, 68.0f));
+	//TestMob->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
 	//TestMob->SetTarget(PlayerObject);
+	//TestMob->SetDoorName("TestDoor");
+
+	CGameObject* TestNPC = CGameObject::CreateObject("TestCJH", pDefaultLayer);
+	ST3_SlientTrace* TestMob = TestNPC->AddComponent<ST3_SlientTrace>("TestCJH");
+	TestMob->GetTransformNonCount()->SetWorldPos(Vector3(220.0f, 0.0f, 68.0f));
+	TestMob->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
+	TestMob->SetTarget(PlayerObject);
 
 	CGameObject* TestDoorObj = CGameObject::CreateObject("TestCJH123", pDefaultLayer);
 	CDoor* TestDoor = TestDoorObj->AddComponent<CDoor>("TestCJH123");

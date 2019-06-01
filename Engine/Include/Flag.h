@@ -91,6 +91,7 @@ namespace PUN
 		AO_LOOP,
 		AO_ONCE_RETURN,
 		AO_ONCE_DESTROY,
+		AO_ONCE_DISABLE,
 		AO_ONCE_LAST
 	};
 

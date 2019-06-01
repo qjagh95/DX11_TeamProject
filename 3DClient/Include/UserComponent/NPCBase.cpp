@@ -1,18 +1,8 @@
-#include "../EngineHeader.h"
+#include "../ClientHeader.h"
 #include "NPCBase.h"
-
-#include "Renderer.h"
-#include "ColliderOBB3D.h"
-#include "ColliderSphere.h"
-#include "Animation.h"
-#include "Transform.h"
-#include "../NavigationMesh.h"
-#include "../NavigationManager3D.h"
-#include "../BehaviorTree.h"
+#include <BehaviorTree.h>
 
 int NPCBase::m_Count = 0;
-
-PUN_USING
 
 NPCBase::NPCBase()
 {
@@ -59,6 +49,7 @@ bool NPCBase::Init()
 
 	m_Animation = m_pObject->AddComponent<CAnimation>("MonsterAnimation");
 	m_Renderer = m_pObject->AddComponent<CRenderer>("MonsterRenderer");
+	m_Renderer->SetAnimation(m_Animation);
 
 	m_HeadCollider = m_pObject->AddComponent<CColliderSphere>("MonsterHead");
 	m_HeadCollider->SetInfo(Vector3(0.0f, 1.0f, 0.0f), 1.0f);
@@ -77,12 +68,11 @@ bool NPCBase::Init()
 	m_LegCollider->SetContinueTypeName("MonsterBodyOBB");
 	m_LegCollider->SetContinueTypeName("MouseCollider");
 
-	m_BodyOBB = m_pObject->AddComponent< CColliderOBB3D>("MonsterBodyOBB");
+	m_BodyOBB = m_pObject->AddComponent<CColliderOBB3D>("MonsterBodyOBB");
 	m_BodyOBB->SetMyTypeName("MonsterBodyOBB");
 	m_BodyOBB->SetContinueTypeName("MouseCollider");
 
 	m_pTransform->SetWorldScale(Vector3(0.04f, 0.04f, 0.04f));
-
 	m_MyCount = m_Count;
 
 	return true;

@@ -36,9 +36,13 @@ private:
 	Matrix m_matBone;
 	Vector3 m_BoneRot;
 
-	bool m_isFirstCheck;
-	Vector3 m_FirstCheck;
-	Vector3 m_LastCheck;
+	bool m_isRotFirstCheck;
+	Vector3 m_RotFirstCheck;
+	Vector3 m_RotLastCheck;
+
+	bool m_isPosFirstCheck;
+	Vector3 m_PosFirstCheck;
+	Vector3 m_PosLastCheck;
 
 public:
 	void SetBoneTexture(ID3D11ShaderResourceView** _pBoneTex);
@@ -52,9 +56,15 @@ public:
 	void SetMesh(const string& strKey, const TCHAR* pFileName,
 		const string& strPathKey = MESH_DATA_PATH);
 	void RenderShadow(float fTime);
+	void SetAnimation(CAnimation* animation) { m_pAnimation = animation;}
 
-	void SetCheckStart(bool Value) { m_isFirstCheck = Value; }
-	Vector3 GetDiffrent() const;
+	void SetRotCheckStart(bool Value) { m_isRotFirstCheck = Value; }
+	void SetPosCheckStart(bool Value) { m_isPosFirstCheck = Value; }
+	Vector3 GetDiffrentRot() const;
+	float GetDiffrentPosX() const;
+	float GetDiffrentPosY() const;
+	float GetDiffrentPosZ() const;
+	Vector3 GetDiffrentPos() const;
 
 	class CMesh* GetMesh() const;
 	Vector3 GetMeshLength() const;

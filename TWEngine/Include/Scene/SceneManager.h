@@ -55,10 +55,10 @@ public:
 			return;
 
 		newScene = new CScene();
+		m_SceneMap.insert(make_pair(SceneKeyName, newScene));
 		newScene->Init();
 		newScene->SetTag(SceneKeyName);
 		newScene->AddSceneComponent<T>(ComponentTag);
-		m_SceneMap.insert(make_pair(SceneKeyName, newScene));
 
 		if(m_bStart == false)
 			m_pCurScene = m_SceneMap.begin()->second;

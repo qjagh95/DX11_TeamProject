@@ -1,14 +1,15 @@
 #pragma once
-#include "UserComponent.h"
+#include <BehaviorTree.h>
+#include <NavigationMesh.h>
 
-PUN_BEGIN
+#include <Component/UserComponent.h>
+#include <Component/ColliderOBB3D.h>
+#include <Component/ColliderSphere.h>
+#include <Component/Renderer.h>
 
-class CColliderSphere;
-class CRenderer;
-class BehaviorTree;
-class CNavigationMesh;
-class CColliderOBB3D;
-class PUN_DLL NPCBase : public CUserComponent
+PUN_USING
+
+class NPCBase : public CUserComponent
 {
 public:
 	virtual bool Init() override;
@@ -35,6 +36,8 @@ public:
 	void SetTarget(CGameObject* Target) { m_Target = Target, m_TargetTransform = m_Target->GetTransformNonCount(); }
 	CGameObject* GetTarget() const { return m_Target; }
 	CTransform* GetTargetTransform() const { return m_TargetTransform; }
+	void SetMoveingPos(const Vector3& Pos) { m_MovingPos = Pos; }
+	Vector3 GetMovingPos() const { return m_MovingPos; }
 
 	void SetLegCollider(float Radius, const Vector3& Center = Vector3::Zero);
 	void SetBodyCollider(float Radius,const Vector3& Center = Vector3::Zero);
@@ -42,8 +45,6 @@ public:
 	void SetOBBCollider(const Vector3& Length, const Vector3& Center = Vector3::Zero);
 
 protected:
-	static int m_Count;
-	int m_MyCount;
 	string m_CurName;
 	CColliderSphere* m_HeadCollider;
 	CColliderSphere* m_BodyCollider;
@@ -56,8 +57,11 @@ protected:
 	CTransform* m_TargetTransform;
 	CNavigationMesh* m_NaviMesh;
 	list<Vector3> m_PathList;
-	float m_Y;
+	Vector3 m_MovingPos;
 
+	static int m_Count;
+	float m_Y;
+	int m_MyCount;
 	int m_State;
 	int m_PrevState;
 	int m_Hp;
@@ -69,5 +73,3 @@ protected:
 	NPCBase(const NPCBase& CopyData);
 	virtual ~NPCBase();
 };
-
-PUN_END
