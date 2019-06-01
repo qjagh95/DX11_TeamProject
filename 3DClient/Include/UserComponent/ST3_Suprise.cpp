@@ -1,6 +1,8 @@
 #include "../ClientHeader.h"
 #include "ST3_Suprise.h"
-#include <DirectXCollision.h>
+
+#include "../GameManager.h"
+#include "Door.h"
 
 #include <BehaviorTree.h>
 
@@ -10,6 +12,7 @@ ST3_Suprise::ST3_Suprise()
 	m_isDoorOpenMode = false;
 	m_Axis = AX_X;
 	m_Offset = 6.0f;
+	m_YOffset = 5.0f;
 }
 
 ST3_Suprise::ST3_Suprise(const ST3_Suprise & CopyData)
@@ -105,9 +108,9 @@ void ST3_Suprise::FS_IDLE(float DeltaTime)
 
 void ST3_Suprise::FS_DOWN(float DeltaTime)
 {
-	if (m_pTransform->GetWorldPos().y <= 5.0f)
+	if (m_pTransform->GetWorldPos().y <= m_YOffset)
 	{
-		m_pTransform->SetWorldPos(Vector3(m_pTransform->GetWorldPos().x, 5.0f , m_pTransform->GetWorldPos().z));
+		m_pTransform->SetWorldPos(Vector3(m_pTransform->GetWorldPos().x, m_YOffset, m_pTransform->GetWorldPos().z));
 		CSoundManager::Get()->SoundPlay("Suprise");
 		ChangeState(SS_IDLE, m_AniName);
 	}
@@ -132,7 +135,7 @@ void ST3_Suprise::FS_FIND(float DeltaTime)
 	}
 	else
 	{
-		//문 열리면 ChangeState
-
+		if (CGameManager::GetInst()->FindDoor("Second", m_DoorName)->IsOpenFinished() == true)
+			ChangeState(SS_DOWN, m_AniName);
 	}
 }

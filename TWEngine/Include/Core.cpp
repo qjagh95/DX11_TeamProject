@@ -7,6 +7,8 @@
 #include "Resource/Mesh.h"
 #include "Rendering/Shader.h"
 
+#include <DirectXCollision.h>
+
 PUN_USING
 
 DEFINITION_SINGLE(CCore)
@@ -280,6 +282,9 @@ void CCore::Logic()
 {
 	m_pTimer->Update();
 	float fTime = m_pTimer->GetTime();
+
+	if (fTime > 0.5f)
+		fTime = 0.0f;
 
 	Input(fTime);
 	Update(fTime);

@@ -66,16 +66,6 @@ bool CMesh::IsSubset(int iContainer) const
 	return !m_vecMeshContainer[iContainer]->vecIB.empty();
 }
 
-void CMesh::SetMeshFileName(const string& _meshFileName)
-{
-
-}
-
-string CMesh::GetMeshFileName()
-{
-	return string();
-}
-
 string CMesh::GetShaderKey() const
 {
 	return m_strShaderKey;

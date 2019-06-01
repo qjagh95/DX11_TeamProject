@@ -254,11 +254,17 @@ const Matrix * CAnimation::GetBoneMatrix(int iBoneIdx)
 	return m_vecBoneMatrix[iBoneIdx];
 }
 
+Matrix* CAnimation::GetBone(const string& BoneName)
+{
+	int Index = FindBoneIndex(BoneName);
+
+	return m_vecBones[Index]->matBone;
+}
+
 const PBONE CAnimation::GetBone(int iBoneIdx)
 {
 	return m_vecBones[iBoneIdx];
 }
-
 
 float CAnimation::GetCurrentClipTime()
 {
@@ -638,10 +644,10 @@ PBONE CAnimation::FindBone(const string & strBoneName)
 
 int CAnimation::FindBoneIndex(const string & strBoneName)
 {
-	for (size_t i = 0; i < m_vecBones.size(); ++i)
+	for (int i = 0; i < m_vecBones.size(); ++i)
 	{
 		if (m_vecBones[i]->strName == strBoneName)
-			return (int)i;
+			return i;
 	}
 
 	return -1;
@@ -1660,9 +1666,7 @@ int CAnimation::Update(float fTime)
 		m_vecBoneMatrix.resize(m_vecBones.size());
 
 		for (size_t i = 0; i < m_vecBoneMatrix.size(); ++i)
-		{
 			m_vecBoneMatrix[i] = new Matrix;
-		}
 	}
 
 	m_bEnd = false;
@@ -1671,7 +1675,6 @@ int CAnimation::Update(float fTime)
 
 	if (m_pCurClip)
 	{
-
 		float fBeforeTime = m_fAnimationGlobalTime - fTime;
 
 		if (fBeforeTime < 0.f)
@@ -1769,7 +1772,6 @@ int CAnimation::Update(float fTime)
 				{
 					m_fChangeTime = m_fChangeLimitTime;
 					bChange = true;
-
 				}
 			}
 
@@ -1790,7 +1792,6 @@ int CAnimation::Update(float fTime)
 			{
 				parallel_for((int)0, BoneSize, [&](int i)
 				{
-
 					// 키프레임이 없을 경우
 					// 매 클립의 vecKeyFrame -> 본 갯수만큼 있다
 					// parallel_for의 i 번호 : 본 번호
@@ -1965,8 +1966,6 @@ int CAnimation::Update(float fTime)
 					*m_vecBoneMatrix[i] = matBone;
 				});
 			}
-
-
 		}
 
 	}
@@ -2014,8 +2013,6 @@ int CAnimation::Update(float fTime)
 		int	iEndFrame = m_pCurClip->iEndFrame;
 
 		//첫 프레임과 끝 프레임 위치 사이에 오차가 존재하므로 끝물부터 합성 준비해야 함(쉬벌)
-
-
 		int	iFrameIndex = (int)(fAnimationTime / m_pCurClip->fFrameTime);
 
 		m_pCurClip->iFrame = iFrameIndex;
@@ -2104,7 +2101,6 @@ int CAnimation::Update(float fTime)
 				matBone = *m_vecBones[i]->matOffset * matBone;
 				*m_vecBoneMatrix[i] = matBone;
 			});
-
 		}
 	}
 
@@ -2124,7 +2120,6 @@ int CAnimation::Update(float fTime)
 			continue;
 		}
 
-
 		if (part->mapPartClips.empty())
 		{
 			part->bEnd = true;
@@ -2134,7 +2129,6 @@ int CAnimation::Update(float fTime)
 			part->fClipProgress = 0.f;
 			continue;
 		}
-
 
 		//Run Partial Anim Notify functions
 		if (part->pCurClip)
@@ -2520,8 +2514,6 @@ int CAnimation::Update(float fTime)
 						*m_vecBoneMatrix[iBoneIdx] = matBone;
 					});
 				}
-
-
 			}
 
 		}
@@ -2686,12 +2678,10 @@ int CAnimation::Update(float fTime)
 
 #endif
 #endif
-
 					*m_vecBones[iBoneIdx]->matBone = matBone;
 					matBone = *m_vecBones[iBoneIdx]->matOffset * matBone;
 					*m_vecBoneMatrix[iBoneIdx] = matBone;
 				});
-
 			}
 		}
 
@@ -2702,7 +2692,6 @@ int CAnimation::Update(float fTime)
 		}
 	}
 
-
 	if (!m_bEnd)
 	{
 		D3D11_MAPPED_SUBRESOURCE	tMap = {};
@@ -2712,11 +2701,7 @@ int CAnimation::Update(float fTime)
 		Matrix*	pMatrix = (Matrix*)tMap.pData;
 
 		for (size_t i = 0; i < m_vecBoneMatrix.size(); ++i)
-		{
-
 			pMatrix[i] = *m_vecBoneMatrix[i];
-		}
-
 
 		CONTEXT->Unmap(m_pBoneTex, 0);
 	}
@@ -2739,7 +2724,6 @@ int CAnimation::LateUpdate(float fTime)
 					(*iter)->Update(fTime, *m_vecBoneMatrix[i], m_pTransform);
 				}
 			}
-
 		}
 	}
 
@@ -2752,7 +2736,7 @@ void CAnimation::Collision(float fTime)
 
 void CAnimation::Render(float fTime)
 {
-	m_bCurClipEnd = false;
+	m_bCurClipEnd = false; 
 }
 
 CAnimation * CAnimation::Clone()

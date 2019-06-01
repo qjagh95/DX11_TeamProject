@@ -2,6 +2,7 @@
 
 PUN_BEGIN
 
+class BehaviorTree;
 class PUN_DLL BTManager
 {
 public:
@@ -21,12 +22,13 @@ public:
 	void DeleteTree(const string& BTName);
 
 public:
-	class BehaviorTree* CreateBehaviorTree(const string& KeyName, CGameObject* object = NULLPTR, BT_ROOT_CHILD_TYPE eStyle = BT_SELECTOR);
-	class BehaviorTree* FindTree(const string& KeyName);
+	BehaviorTree* CreateBehaviorTree(const string& KeyName, CGameObject* object = NULLPTR, BT_ROOT_CHILD_TYPE eStyle = BT_SELECTOR);
+	BehaviorTree* FindTree(const string& KeyName);
 	void GUIRender();
 
 private:
-	unordered_map<string, class BehaviorTree*> m_TreeMap;
+	unordered_map<string, BehaviorTree*> m_TreeMap;
+
 	static BTManager* m_Instance;
 	vector<string> m_vecItemsName;
 	const char** m_Items;

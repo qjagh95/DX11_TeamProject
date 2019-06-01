@@ -109,6 +109,12 @@
     <Filter Include="03. Manager">
       <UniqueIdentifier>{c4779955-37d1-4f10-8b21-3cb4cf30a647}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. SceneComponent\ST3\ST3_Slient">
+      <UniqueIdentifier>{23aa5247-3415-4819-ad07-f283b2d2d72f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\ST3\ST3_Slient\Behavior">
+      <UniqueIdentifier>{7edc91ca-35f4-487b-b530-4590ee18e313}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -246,9 +252,6 @@
     <ClInclude Include="UserComponent\ST3_Pivot.h">
       <Filter>01. SceneComponent\ST3</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_SlientTrace.h">
-      <Filter>01. SceneComponent\ST3</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\ST3_Suprise.h">
       <Filter>01. SceneComponent\ST3</Filter>
     </ClInclude>
@@ -305,6 +308,45 @@
     </ClInclude>
     <ClInclude Include="GameManager.h">
       <Filter>03. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_SlientTrace.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_BashDoor.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_BashDoorOpen.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_BedFind.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_DestFind.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_HeadAttack.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_Hook.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_Idle.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_Jap.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_LockerFind.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_NormalDoorOpenLeft.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_NormalDoorOpenRight.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient_Trace.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -428,9 +470,6 @@
     <ClCompile Include="UserComponent\ST3_Pivot.cpp">
       <Filter>01. SceneComponent\ST3</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_SlientTrace.cpp">
-      <Filter>01. SceneComponent\ST3</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\ST3_Suprise.cpp">
       <Filter>01. SceneComponent\ST3</Filter>
     </ClCompile>
@@ -487,6 +526,45 @@
     </ClCompile>
     <ClCompile Include="GameManager.cpp">
       <Filter>03. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_SlientTrace.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_BashDoor.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_BashDoorOpen.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_BedFind.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_DestFind.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_HeadAttack.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_Hook.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_Idle.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_Jap.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_LockerFind.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_NormalDoorOpenLeft.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_NormalDoorOpenRight.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient_Trace.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient\Behavior</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

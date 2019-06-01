@@ -28,9 +28,9 @@ public:
 	void Render(float fTime) override;
 	ST3_Suprise* Clone() override;
 
-	void SetDoorOpenMode(bool Value) { m_isDoorOpenMode = Value; }
 	void SetDoorName(const string& DoorName) { m_isDoorOpenMode = true; m_DoorName = DoorName; }
 	void SetOffSet(float Value) { if(m_isDoorOpenMode == false) m_Offset = Value; }
+	void SetYOffset(float Value) { m_YOffset = Value; }
 
 private:
 	void FS_IDLE(float DeltaTime);
@@ -44,6 +44,7 @@ private:
 	string m_DoorName;
 	AXIS_SUPRISE m_Axis;
 	float m_Offset;
+	float m_YOffset;
 
 public:
 	ST3_Suprise();

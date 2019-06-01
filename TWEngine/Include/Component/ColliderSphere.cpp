@@ -133,7 +133,7 @@ void CColliderSphere::Save(BinaryWrite * _pInstBW)
 	_pInstBW->WriteData(m_strCollisionGroup);
 	_pInstBW->WriteData(m_MyTypeName);
 
-	int iVecExceptTypeNameSize = m_vecContinueName.size();
+	int iVecExceptTypeNameSize = (int)m_vecContinueName.size();
 	_pInstBW->WriteData(iVecExceptTypeNameSize);
 
 	for (size_t i = 0; i < iVecExceptTypeNameSize; ++i)

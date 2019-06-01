@@ -9,6 +9,30 @@
 #include "../Rendering/Shader.h"
 #include "../Rendering/RenderState.h"
 
+void to_Euler_Angle123(const Vector4 & q, Vector3 & vEuler)
+{
+	float fSqrQx = q.x * q.x;
+	float fSqrQy = q.y * q.y;
+	float fSqrQz = q.z * q.z;
+	float fSqrQw = q.w * q.w;
+
+	float fSingularityTest = -2.f * ((q.x * q.z) - (q.w * q.y));
+
+	if (fSingularityTest > 0.999998f || fSingularityTest < -0.999998f)
+	{
+		vEuler.y = copysignf(PUN_PI * 0.5f, fSingularityTest);
+	}
+	else
+	{
+		vEuler.y = asinf(fSingularityTest);
+	}
+
+
+	vEuler.z = atan2f(2.f *(q.x * q.y + q.w * q.z), fSqrQw + fSqrQx - fSqrQy - fSqrQz);
+
+	vEuler.x = atan2f(2.f*((q.y*q.z) + (q.w*q.x)), fSqrQw - fSqrQx - fSqrQy + fSqrQz);
+}
+
 PUN_USING
 
 CRenderer::CRenderer() :
@@ -29,8 +53,10 @@ CRenderer::CRenderer() :
 	memset(&m_tComponentCBuffer, 0, sizeof(m_tComponentCBuffer));
 	m_tComponentCBuffer.iDecalEnable = 0;
 	m_tComponentCBuffer.i3DAnimation = 0;
-}
 
+	m_pAnimation = NULLPTR;
+	m_BoneRot = Vector3::One;
+}
 
 CRenderer::CRenderer(const CRenderer & renderer) :
 	CComponent(renderer)
@@ -171,6 +197,17 @@ void CRenderer::SetMesh(const string & strKey, const TCHAR * pFileName,
 	}
 }
 
+Vector3 CRenderer::GetDiffrent() const
+{
+	Vector3 ConvertFirst = m_FirstCheck;
+	Vector3 ConvertLast = m_LastCheck;
+
+	ConvertFirst = Vector3(abs(ConvertFirst.x), abs(ConvertFirst.y), abs(ConvertFirst.z));
+	ConvertLast = Vector3(abs(ConvertLast.x), abs(ConvertLast.y), abs(ConvertLast.z));
+
+	return Vector3(ConvertFirst + ConvertLast);
+}
+
 CMesh * CRenderer::GetMesh() const
 {
 	if (m_pMesh == nullptr)
@@ -185,6 +222,14 @@ CMesh * CRenderer::GetMesh() const
 Vector3 CRenderer::GetMeshLength() const
 {
 	return m_pMesh->GetLength();
+}
+
+Vector3 CRenderer::GetModelMoveDist()
+{
+	Vector3 Min = m_pMesh->GetMin();
+	Vector3 Max = m_pMesh->GetMax();
+
+	return Vector3();
 }
 
 void CRenderer::SetMeshFromFullPath(const string & strKey, const TCHAR * pFullPath)
@@ -312,6 +357,9 @@ void CRenderer::CheckComponent()
 			break;
 		case CT_UI:
 			m_b2DRenderer = true;
+			break;
+		case CT_ANIMATION:
+			m_pAnimation = FindComponentFromTypeNonCount<CAnimation>(CT_ANIMATION);
 			break;
 		}
 	}
@@ -458,6 +506,34 @@ bool CRenderer::Init()
 
 int CRenderer::Update(float fTime)
 {
+	if (m_pAnimation == NULLPTR)
+		return 0;
+
+	if (m_BoneName.empty() == true)
+		return 0;
+
+	Vector3 Temp = Vector3(1.0f, 1.0f, 1.0f);
+
+	m_matBone = *m_pAnimation->GetBone(m_BoneName);
+
+	XMVECTOR xmScale; XMVECTOR xmPos; XMVECTOR xmRot;
+	DirectX::XMMatrixDecompose(&xmScale, &xmRot, &xmPos, m_matBone.matrix);
+
+	Vector4 Qurt = Vector4(xmRot);
+	Vector3 Convert;
+	to_Euler_Angle123(Qurt, Convert);
+
+	m_BoneRot = Vector3(RadianToDegree(Convert.x), RadianToDegree(Convert.y), RadianToDegree(Convert.z));
+
+	if (m_isFirstCheck == true)
+	{
+		m_FirstCheck = m_BoneRot;
+		m_isFirstCheck = false;
+	}
+
+	if (m_pAnimation->IsCurAnimEnd() == true)
+		m_LastCheck = m_BoneRot;
+
 	return 0;
 }
 

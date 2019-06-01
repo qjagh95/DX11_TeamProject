@@ -5,8 +5,12 @@
 #include <Component/FreeCamera.h>
 #include <Component/LandScape.h>
 
+#include "../GameManager.h"
+
 #include "../UserComponent/Human_Player.h"
 #include "../UserComponent/ST3_Suprise.h"
+#include "../UserComponent/ST3_SlientTrace.h"
+#include "../UserComponent/Door.h"
 #include "../CameraEff.h"
 
 JBH_Stage3::JBH_Stage3()
@@ -29,19 +33,17 @@ bool JBH_Stage3::Init()
 
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
-	CLayer* pUILayer = m_pScene->FindLayer("UI");
-	CLayer* pTileLayer = m_pScene->FindLayer("Tile");
 
-	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	Path += "JBH_Stage3.dat";
-	m_pScene->Load(Path);
+	//string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
+	//Path += "JBH_Stage3.dat";
+	//->Load(Path);
 
-	CGameObject* NavLandObject = CGameObject::CreateObject("Land", pDefaultLayer);
-	CLandScape* Land = NavLandObject->AddComponent< CLandScape>("Land");
+	//CGameObject* NavLandObject = CGameObject::CreateObject("Land", pDefaultLayer);
+	//CLandScape* Land = NavLandObject->AddComponent< CLandScape>("Land");
 	
-	Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	Path += "Stage3Nav.nav";
-	Land->LoadLandScape(Path);
+	//Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
+	//Path += "Stage3Nav.nav";
+	//Land->LoadLandScape(Path);
 
 	CGameObject* PlayerObject = CGameObject::CreateObject("Player", pDefaultLayer, true);
 	CHuman_Player* newPlayer = PlayerObject->AddComponent<CHuman_Player>("Player");
@@ -53,27 +55,37 @@ bool JBH_Stage3::Init()
 	CGameObject* TestNPC = CGameObject::CreateObject("TestCJH", pDefaultLayer);
 	ST3_Suprise* TestMob = TestNPC->AddComponent<ST3_Suprise>("TestCJH");
 	TestMob->GetTransformNonCount()->SetWorldPos(Vector3(200.0f, 20.0f, 68.0f));
-	TestMob->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 180.0f, 0.0f));
+	TestMob->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
 	TestMob->SetTarget(PlayerObject);
+	TestMob->SetDoorName("TestDoor");
+
+	//CGameObject* TestNPC = CGameObject::CreateObject("TestCJH", pDefaultLayer);
+	//ST3_SlientTrace* TestMob = TestNPC->AddComponent<ST3_SlientTrace>("TestCJH");
+	//TestMob->GetTransformNonCount()->SetWorldPos(Vector3(220.0f, 0.0f, 68.0f));
+	//TestMob->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
+	//TestMob->SetTarget(PlayerObject);
+
+	CGameObject* TestDoorObj = CGameObject::CreateObject("TestCJH123", pDefaultLayer);
+	CDoor* TestDoor = TestDoorObj->AddComponent<CDoor>("TestCJH123");
+	TestDoorObj->GetTransformNonCount()->SetWorldPos(Vector3(220.0f, 0.0f, 68.0f));
+
+	CGameManager::GetInst()->AddDoor("Second", "TestDoor", TestDoor);
 
 	//SAFE_RELEASE(FreeCam);
 	SAFE_RELEASE(TestNPC);
 	SAFE_RELEASE(TestMob);
 	SAFE_RELEASE(newPlayer);
 	SAFE_RELEASE(PlayerObject);
-	SAFE_RELEASE(Land);
-	SAFE_RELEASE(NavLandObject);
+	//SAFE_RELEASE(Land);
+	//SAFE_RELEASE(NavLandObject);
 	SAFE_RELEASE(pBackLayer);
 	SAFE_RELEASE(pDefaultLayer);
-	SAFE_RELEASE(pUILayer);
-	SAFE_RELEASE(pTileLayer);
 
 	return true;
 }
 
 void JBH_Stage3::AfterInit()
 {
-	int a = 0;
 }
 
 int JBH_Stage3::Update(float DeltaTime)

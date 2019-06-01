@@ -68,13 +68,6 @@ void CTimer::Update()
 
 	if (m_fFPSTime >= 1.0f)
 	{
-#ifdef _DEBUG
-		static char Buffer[255] = {};
-		sprintf_s(Buffer, "Frame : %d", m_iTick);
-
-		SetWindowTextA(CCore::GetInst()->GetWindowHandle(), Buffer);
-#endif
-
 		m_fFPS = m_iTick / m_fFPSTime;
 		m_fFPSTime = 0.f;
 		m_iTick = 0;

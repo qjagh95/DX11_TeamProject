@@ -43,6 +43,7 @@ public:
 
 protected:
 	static int m_Count;
+	int m_MyCount;
 	string m_CurName;
 	CColliderSphere* m_HeadCollider;
 	CColliderSphere* m_BodyCollider;

@@ -434,7 +434,7 @@ bool CResourcesManager::LoadMeshFromFullPath(const string& strName, const TCHAR 
 	}
 
 	pMesh = new CMesh;
-	pMesh->SetMeshFileName(strName);
+	//pMesh->SetMeshFileName(strName);
 	if (!pMesh->LoadMeshFromFullPath(strName, pFullPath))
 	{
 		SAFE_RELEASE(pMesh);
