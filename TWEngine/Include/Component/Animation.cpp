@@ -185,11 +185,21 @@ CAnimation::CAnimation(const CAnimation & anim) :
 CAnimation::~CAnimation()
 {
 	Safe_Delete_VecList(m_vecPartialAnim);
-	Safe_Delete_Map(m_mapClip);
 	Safe_Delete_VecList(m_vecBoneMatrix);
-
 	SAFE_RELEASE(m_pBoneRV);
 	SAFE_RELEASE(m_pBoneTex);
+
+	auto StartIter = m_mapClip.begin();
+	auto EndIter = m_mapClip.end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		for (size_t i = 0; i < StartIter->second->vecCallback.size(); i++)
+			SAFE_DELETE(StartIter->second->vecCallback[i]);
+
+		SAFE_DELETE(StartIter->second);
+	}
+
 
 	for (size_t i = 0; i < m_vecBones.size(); ++i)
 	{
@@ -1691,70 +1701,76 @@ int CAnimation::Update(float fTime)
 
 	if (m_pCurClip)
 	{
+		m_pCurClip->iFrame++;
+
 		float fBeforeTime = m_fAnimationGlobalTime - fTime;
 
 		if (fBeforeTime < 0.f)
 		{
 			fBeforeTime = 0.f;
 
-			std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pCurClip->vecCallback.end();
-			for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pCurClip->vecCallback.begin();
-				itr != itrEnd; ++itr)
-			{
-				PANIMATIONCALLBACK pCallbackInfo = (*itr);
-				pCallbackInfo->bCall = false;
-			}
+			//std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pCurClip->vecCallback.end();
+			//for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pCurClip->vecCallback.begin();
+			//	itr != itrEnd; ++itr)
+			//{
+			//	PANIMATIONCALLBACK pCallbackInfo = (*itr);
+			//	pCallbackInfo->bCall = false;
+			//}
 		}
 
-		std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pCurClip->vecCallback.end();
-		for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pCurClip->vecCallback.begin();
-			itr != itrEnd; ++itr)
-		{
-			PANIMATIONCALLBACK pCallbackInfo = (*itr);
-			float fActivateTime = m_pCurClip->fEndTime * pCallbackInfo->fAnimationProgress;
-			if (pCallbackInfo->bCall)
-				continue;
+		//std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pCurClip->vecCallback.end();
+		//for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pCurClip->vecCallback.begin();
+		//	itr != itrEnd; ++itr)
+		//{
+		//	PANIMATIONCALLBACK pCallbackInfo = (*itr);
+		//	float fActivateTime = m_pCurClip->fEndTime * pCallbackInfo->fAnimationProgress;
+		//	if (pCallbackInfo->bCall)
+		//		continue;
 
-			if (fActivateTime > fBeforeTime && fActivateTime <= m_fAnimationGlobalTime)
-			{
-				pCallbackInfo->func(fTime);
-				pCallbackInfo->bCall = true;
-			}
-		}
+		//	if (fActivateTime > fBeforeTime && fActivateTime <= m_fAnimationGlobalTime)
+		//	{
+		//		pCallbackInfo->func(fTime);
+		//		pCallbackInfo->bCall = true;
+		//	}
+		//}
+
+
 	}
+
 	if (m_pNextClip)
 	{
 		if (m_pCurClip != m_pNextClip)
 			m_fChangeLimitTime = 0.25f;
+
 		float fBeforeTime = m_fAnimationGlobalTime - fTime;
 		if (fBeforeTime < 0.f)
 		{
 			fBeforeTime = 0.f;
 
-			std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pNextClip->vecCallback.end();
-			for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pNextClip->vecCallback.begin();
-				itr != itrEnd; ++itr)
-			{
-				PANIMATIONCALLBACK pCallbackInfo = (*itr);
-				pCallbackInfo->bCall = false;
+			//std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pNextClip->vecCallback.end();
+			//for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pNextClip->vecCallback.begin();
+			//	itr != itrEnd; ++itr)
+			//{
+			//	PANIMATIONCALLBACK pCallbackInfo = (*itr);
+			//	pCallbackInfo->bCall = false;
 
-			}
+			//}
 		}
 
 		std::vector<PANIMATIONCALLBACK>::iterator itrEnd = m_pNextClip->vecCallback.end();
 		for (std::vector<PANIMATIONCALLBACK>::iterator itr = m_pNextClip->vecCallback.begin();
 			itr != itrEnd; ++itr)
 		{
-			PANIMATIONCALLBACK pCallbackInfo = (*itr);
-			float fActivateTime = m_pNextClip->fEndTime * pCallbackInfo->fAnimationProgress;
-			if (pCallbackInfo->bCall)
-				continue;
+			//PANIMATIONCALLBACK pCallbackInfo = (*itr);
+			//float fActivateTime = m_pNextClip->fEndTime * pCallbackInfo->fAnimationProgress;
+			//if (pCallbackInfo->bCall)
+			//	continue;
 
-			if (fActivateTime > fBeforeTime && fActivateTime <= m_fAnimationGlobalTime)
-			{
-				pCallbackInfo->func(fTime);
-				pCallbackInfo->bCall = true;
-			}
+			//if (fActivateTime > fBeforeTime && fActivateTime <= m_fAnimationGlobalTime)
+			//{
+			//	pCallbackInfo->func(fTime);
+			//	pCallbackInfo->bCall = true;
+			//}
 		}
 	}
 	//Notify end
@@ -1774,6 +1790,7 @@ int CAnimation::Update(float fTime)
 		{
 			m_bCurClipStart = true;
 			m_pCurClip = m_pNextClip;
+			m_pCurClip->iFrame = 0;
 			m_pNextClip = nullptr;
 			m_fAnimationGlobalTime = 0.f;
 			m_fChangeTime = 0.f;
@@ -2183,7 +2200,6 @@ int CAnimation::Update(float fTime)
 
 		if (m_bEnd)
 		{
-
 			switch (m_pCurClip->eOption)
 			{
 			case AO_LOOP:
@@ -2317,16 +2333,16 @@ int CAnimation::Update(float fTime)
 			for (std::vector<PANIMATIONCALLBACK>::iterator itr = part->pCurClip->vecCallback.begin();
 				itr != itrEnd; ++itr)
 			{
-				PANIMATIONCALLBACK pCallbackInfo = (*itr);
-				float fActivateTime = part->pCurClip->fEndTime * pCallbackInfo->fAnimationProgress;
-				if (pCallbackInfo->bCall)
-					continue;
+				//PANIMATIONCALLBACK pCallbackInfo = (*itr);
+				//float fActivateTime = part->pCurClip->fEndTime * pCallbackInfo->fAnimationProgress;
+				//if (pCallbackInfo->bCall)
+				//	continue;
 
-				if (fActivateTime > fBeforeTime && fActivateTime <= part->fPartAnimationGTime)
-				{
-					pCallbackInfo->func(fTime);
-					pCallbackInfo->bCall = true;
-				}
+				//if (fActivateTime > fBeforeTime && fActivateTime <= part->fPartAnimationGTime)
+				//{
+				//	pCallbackInfo->func(fTime);
+				//	pCallbackInfo->bCall = true;
+				//}
 			}
 		}
 		if (part->pNextClip)
@@ -2350,16 +2366,16 @@ int CAnimation::Update(float fTime)
 			for (std::vector<PANIMATIONCALLBACK>::iterator itr = part->pNextClip->vecCallback.begin();
 				itr != itrEnd; ++itr)
 			{
-				PANIMATIONCALLBACK pCallbackInfo = (*itr);
-				float fActivateTime = part->pNextClip->fEndTime * pCallbackInfo->fAnimationProgress;
-				if (pCallbackInfo->bCall)
-					continue;
+				//PANIMATIONCALLBACK pCallbackInfo = (*itr);
+				//float fActivateTime = part->pNextClip->fEndTime * pCallbackInfo->fAnimationProgress;
+				//if (pCallbackInfo->bCall)
+				//	continue;
 
-				if (fActivateTime > fBeforeTime && fActivateTime <= part->fPartAnimationGTime)
-				{
-					pCallbackInfo->func(fTime);
-					pCallbackInfo->bCall = true;
-				}
+				//if (fActivateTime > fBeforeTime && fActivateTime <= part->fPartAnimationGTime)
+				//{
+				//	pCallbackInfo->func(fTime);
+				//	pCallbackInfo->bCall = true;
+				//}
 			}
 		}
 		//Partial Anim Notify end
@@ -2870,6 +2886,12 @@ int CAnimation::Update(float fTime)
 		CONTEXT->Unmap(m_pBoneTex, 0);
 	}
 
+	for (size_t i = 0; i < m_pCurClip->vecCallback.size(); i++)
+	{
+		if (m_pCurClip->iFrame == m_pCurClip->vecCallback[i]->SelectIndex)
+			m_pCurClip->vecCallback[i]->func(fTime);
+	}
+
 	return 0;
 }
 
@@ -3251,4 +3273,20 @@ void _tagAnimationClip::SetRootTransformBone(int idx)
 void _tagAnimationClip::UseRootTransformBone(bool bOn)
 {
 	bUpdateRootTransform = bOn;
+}
+
+
+void CAnimation::SetCallback(const string& ClipName, int Frame, void(*pFunc)(float))
+{
+	PANIMATIONCLIP getClip = FindClip(ClipName);
+
+	if (getClip == NULLPTR)
+		return;
+
+	PANIMATIONCALLBACK newCallback = new ANIMATIONCALLBACK();
+	newCallback->SelectIndex = Frame;
+	newCallback->func = bind(pFunc, placeholders::_1);
+	newCallback->bCall = true;
+
+	getClip->vecCallback.push_back(newCallback);
 }

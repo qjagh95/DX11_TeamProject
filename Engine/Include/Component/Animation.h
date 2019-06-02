@@ -48,16 +48,24 @@ typedef struct PUN_DLL _tagBoneKeyFrame
 
 typedef struct PUN_DLL _tagAnimationCallback
 {
-	int		iAnimationProgress;
-	float	fAnimationProgress;
+	int SelectIndex;
 	function<void(float)> func;
 	bool	bCall;
+
+	_tagAnimationCallback()
+	{
+		SelectIndex = -1;
+		bCall = false;
+	}
+
 }ANIMATIONCALLBACK, *PANIMATIONCALLBACK;
 
 typedef struct PUN_DLL _tagAnimationClip
 {
 	ANIMATION_OPTION	eOption;
 	string				strName;
+	bool				bUpdateRootTransform;
+	int					iRootTransformBoneIdx;
 	float				fStartTime;
 	float				fEndTime;
 	float				fTimeLength;
@@ -83,7 +91,9 @@ typedef struct PUN_DLL _tagAnimationClip
 		iEndFrame(0),
 		iFrameLength(0),
 		fPlayTime(1.f),
-		iFrame(0)
+		iFrame(0),
+		bUpdateRootTransform(false),
+		iRootTransformBoneIdx(-1)
 	{
 	}
 
@@ -102,6 +112,9 @@ typedef struct PUN_DLL _tagAnimationClip
 		vecKeyFrame.clear();
 		//Safe_Delete_VecList(vecCallback);
 	}
+
+	void SetRootTransformBone(int idx);
+	void UseRootTransformBone(bool bOn);
 }ANIMATIONCLIP, *PANIMATIONCLIP;
 
 
@@ -262,10 +275,14 @@ private:
 	Vector4					m_vBlendRot;
 	Vector3					m_vBlendPos;
 
+	bool					m_bRootBoneTransformChange;
+	Vector3					m_vRootBonePosBuf;
+	Vector3					m_vRootBoneRotBuf;
+	Vector3					m_vArrRootBoneAxis[3];
+
 public:
 	const list<string>* GetAddClipName()	const;
 	void GetClipTagList(std::vector<std::string>* _vecstrList);
-public:
 	bool AddPartialClip(PPARTANIM partAnim);
 	PANIMATIONCLIP GetAnimClip(const std::string& strKey);
 	void SetBlendSkip(bool bOn);
@@ -295,10 +312,28 @@ public:
 	PANIMATIONCLIP GetCurrentClip()	const;
 	void GetCurrentKeyFrame(vector<PBONEKEYFRAME>& vecFrame);
 
+	void SetCallback(const string& ClipName, int Frame, void(*pFunc)(float));
+	template <typename T>
+	void SetCallback(const string& ClipName, T* Object, int Frame, void(T::*pFunc)(float))
+	{
+		PANIMATIONCLIP getClip = FindClip(ClipName);
+
+		if (getClip == NULLPTR)
+			return;
+
+		PANIMATIONCALLBACK newCallback = new ANIMATIONCALLBACK();
+		newCallback->SelectIndex = Frame;
+		newCallback->func = bind(pFunc, Object, placeholders::_1);
+		newCallback->bCall = true;
+
+		getClip->vecCallback.push_back(newCallback);
+	}
+
 public:
 	void ChangeClipKey(const string& strOrigin, const string& strChange);
 	PBONE FindBone(const string& strBoneName);
 	int FindBoneIndex(const string& strBoneName);
+	void SetClipUseBoneTransform(const string& strClipName, const string& strBoneName);
 	Matrix GetBoneMatrix(const string& strBoneName);
 	bool ChangeClip(const string& strClip);
 	ID3D11ShaderResourceView** GetBoneTexture();

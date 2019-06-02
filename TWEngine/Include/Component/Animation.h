@@ -48,10 +48,16 @@ typedef struct PUN_DLL _tagBoneKeyFrame
 
 typedef struct PUN_DLL _tagAnimationCallback
 {
-	int		iAnimationProgress;
-	float	fAnimationProgress;
+	int SelectIndex;
 	function<void(float)> func;
 	bool	bCall;
+
+	_tagAnimationCallback()
+	{
+		SelectIndex = -1;
+		bCall = false;
+	}
+
 }ANIMATIONCALLBACK, *PANIMATIONCALLBACK;
 
 typedef struct PUN_DLL _tagAnimationClip
@@ -277,7 +283,6 @@ private:
 public:
 	const list<string>* GetAddClipName()	const;
 	void GetClipTagList(std::vector<std::string>* _vecstrList);
-public:
 	bool AddPartialClip(PPARTANIM partAnim);
 	PANIMATIONCLIP GetAnimClip(const std::string& strKey);
 	void SetBlendSkip(bool bOn);
@@ -306,6 +311,23 @@ public:
 	bool IsCurAnimStart() const;
 	PANIMATIONCLIP GetCurrentClip()	const;
 	void GetCurrentKeyFrame(vector<PBONEKEYFRAME>& vecFrame);
+
+	void SetCallback(const string& ClipName, int Frame, void(*pFunc)(float));
+	template <typename T>
+	void SetCallback(const string& ClipName, T* Object, int Frame, void(T::*pFunc)(float))
+	{
+		PANIMATIONCLIP getClip = FindClip(ClipName);
+
+		if (getClip == NULLPTR)
+			return;
+
+		PANIMATIONCALLBACK newCallback = new ANIMATIONCALLBACK();
+		newCallback->SelectIndex = Frame;
+		newCallback->func = bind(pFunc, Object, placeholders::_1);
+		newCallback->bCall = true;
+
+		getClip->vecCallback.push_back(newCallback);
+	}
 
 public:
 	void ChangeClipKey(const string& strOrigin, const string& strChange);

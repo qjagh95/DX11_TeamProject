@@ -11,7 +11,7 @@ ST3_Slient::ST3_Slient()
 	m_Attack = 1;
 	m_TraceDist = 5.0f;
 	m_BashCount = 3;
-	m_MoveSpeed = 20.0f;
+	m_MoveSpeed = 22.5f;
 	m_WateTime = 2.0f; 
 	m_WateTimeVar = 0.0f;
 	m_PlayerState = 0;
@@ -72,7 +72,14 @@ bool ST3_Slient::Init()
 	m_3DSound->LoadSound("Engry3", L"enemies\\Enemies_def_angry3.wav");
 	m_3DSound->LoadSound("Engry4", L"enemies\\Enemies_def_angry4.wav");
 	m_3DSound->LoadSound("Engry5", L"enemies\\Enemies_def_angry5.wav");
+
+	m_3DSound->LoadSound("Walk1", L"player\\FootStep\\FTS_CARPET_WALK_01.wav");
+	m_3DSound->LoadSound("Walk2", L"player\\FootStep\\FTS_CARPET_WALK_02.wav");
+
 	m_3DSound->GetTransformNonCount()->SetWorldPos(Vector3(67.0f, 0.0f, 155.0f));
+
+	m_Animation->SetCallback(m_AniName[STS_USER_TRACE], this, 8, &ST3_Slient::Walk1Sound);
+	m_Animation->SetCallback(m_AniName[STS_USER_TRACE], this, 19, &ST3_Slient::Walk2Sound);
 
 	return true;
 }
@@ -87,6 +94,7 @@ int ST3_Slient::Input(float DeltaTime)
 int ST3_Slient::Update(float DeltaTime)
 {
 	NPCBase::Update(DeltaTime);
+
 	m_3DSoundObject->GetTransformNonCount()->SetWorldPos(m_pTransform->GetWorldPos());
 	m_PlayerState = m_TargetPlayer->GetState();
 
@@ -160,6 +168,30 @@ ST3_Slient * ST3_Slient::Clone()
 	return new ST3_Slient(*this);
 }
 
+void ST3_Slient::Walk1Sound(float DeltaTime)
+{
+	string temp = "Walk1";
+	m_3DSound->Play(temp);
+}
+
+void ST3_Slient::Walk2Sound(float DeltaTime)
+{
+	string temp = "Walk2";
+	m_3DSound->Play(temp);
+}
+
+void ST3_Slient::BashSound(float DeltaTime)
+{
+}
+
+void ST3_Slient::PlayerStateCheck(float DeltaTime)
+{
+	//if (true)
+
+	//if(!m_PlayerState & )
+	//ChangeState(STS_USER_TRACE, m_AniName);
+}
+
 void ST3_Slient::FS_IDLE(float DeltaTime)
 {
 	//어차피 한번하고 안들어옴
@@ -189,9 +221,11 @@ void ST3_Slient::FS_USER_TRACE(float DeltaTime)
 
 void ST3_Slient::FS_CAN_TRACE(float DeltaTime)
 {
+	Vector3 myPos = m_CenterDownCenter;
+	CNavigationMesh* getMesh = CNavigationManager3D::GetInst()->FindNavMesh(m_pScene, m_pObject->GetTransformNonCount()->GetWorldPos());
+
 	if (m_PathFind == false)
 	{
-		CNavigationMesh* getMesh = CNavigationManager3D::GetInst()->FindNavMesh(m_pScene, m_pObject->GetTransformNonCount()->GetWorldPos());
 		getMesh->FindPath(m_pTransform->GetWorldPos(), m_MovingPos);
 
 		m_PathFind = true;
@@ -202,22 +236,37 @@ void ST3_Slient::FS_CAN_TRACE(float DeltaTime)
 		m_MovePos = m_PathList.front();
 	}
 
+	Vector3 Dir = m_MovePos - myPos;
+	Dir.Normalize();
+
+	myPos += Dir * m_MoveSpeed * DeltaTime;
+	bool bMove = true;
+
+	if (getMesh->CheckCell(myPos) == false)
+		bMove = false;
+
+	if (bMove == true)
+	{
+		//두점사이 각도로 처리
+		float Atan = atan2(m_MovePos.x - m_CenterDownCenter.x, m_MovePos.z - m_CenterDownCenter.z);
+		float Angle = RadianToDegree(Atan);
+		Angle += 180.0f;
+
+		m_pTransform->SetWorldRotY(Angle);
+		m_pTransform->Move(Dir, m_MoveSpeed, DeltaTime);
+	}
+
 	if (m_PathList.empty())
 		m_PathFind = false;
 	else
 	{
-		m_MovePos = m_PathList.front();
-		m_PathList.pop_front();
+		//여기조건찾아야함.
+		if (((myPos.x <= m_MovePos.x + 1.0f) && (myPos.x >= m_MovePos.x - 1.0f)) && (myPos.z <= m_MovePos.z + 1.0f && myPos.z >= m_MovePos.z - 1.0f))
+		{
+			m_MovePos = m_PathList.front();
+			m_PathList.pop_front();
+		}
 	}
-
-	Vector3 movePos = m_MovePos;
-	movePos.Normalize();
-
-	Vector3 Dir = movePos - m_pTransform->GetWorldPos();
-	Dir.Normalize();
-
-	m_pTransform->Move(Vector3(Dir.x, 0.0f, Dir.z), m_MoveSpeed, DeltaTime);
-	//m_pTransform->SetWorldRotY(Angle);
 
 	if (m_TargetDistance <= 55.0f)
 	{
@@ -272,13 +321,17 @@ void ST3_Slient::FS_CAN_TRACE(float DeltaTime)
 		m_3DSound->StopClip(4);
 	}
 
-	float Distance = m_pTransform->GetWorldPos().GetDistance(m_MovingPos);
+	float Distance = myPos.GetDistance(m_MovingPos);
 
-	if (Distance < 1.0f)
+	if (Distance < 0.1f)
 	{
-		m_pTransform->SetWorldRotY(0.0f);
+		m_pTransform->SetWorldRotY(-90.0f);
 		ChangeState(STS_BASH_DOOR, m_AniName);
 	}
+
+	/*
+	플레이어 StateCheck
+	*/
 }
 
 void ST3_Slient::FS_SUPRISE_TRACE(float DeltaTime)
@@ -380,7 +433,7 @@ void ST3_Slient::FS_CAN_WATE(float DeltaTime)
 	if (m_WateTime <= m_WateTimeVar)
 	{
 		m_WateTimeVar = 0.0f;
-		m_MovingPos = Vector3(38.0f, 0.0f, 55.0f);
+		m_MovingPos = Vector3(39.0f, 0.0f, 55.0f);
 		m_PathFind = false;
 		ChangeState(STS_CAN_TRACE, m_AniName);
 	}
@@ -388,12 +441,6 @@ void ST3_Slient::FS_CAN_WATE(float DeltaTime)
 
 void ST3_Slient::FS_BASH_DOOR(float DeltaTime)
 {
-	if (m_TargetDistance < 50.0f)
-	{
-		if(m_PlayerState & 0x00)
-		{
-			//브금체인지 코드
-			ChangeState(STS_USER_TRACE, m_AniName);
-		}
-	}
+	if (m_TargetDistance <= 50.0f)
+		PlayerStateCheck(DeltaTime);
 }

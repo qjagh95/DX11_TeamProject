@@ -195,7 +195,6 @@ void BinaryRead::ReadData(string & Data)
 
 void BinaryRead::ReadData(std::string & _Data, int _iSize)
 {
-	size_t DataLen;
 	char getData[255] = {};
 
 	m_ReadFile.read(getData, _iSize);

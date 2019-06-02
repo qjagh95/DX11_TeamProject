@@ -53,6 +53,12 @@ private:
 	void FS_BASH_DOOR_OPEN(float DeltaTime) {}
 	void FS_NORMAL_DOOR_OPEN_LEFT(float DeltaTime) {}
 	void FS_NORMAL_DOOR_OPEN_RIGHT(float DeltaTime) {}
+	
+	void Walk1Sound(float DeltaTime);
+	void Walk2Sound(float DeltaTime);
+	void BashSound(float DeltaTime);
+
+	void PlayerStateCheck(float DeltaTime);
 
 private:
 	string m_AniName[STS_MAX];

@@ -408,19 +408,18 @@ void CTransform::Move(const Vector3 & vMove)
 {
 	Vector3	vPos = m_vWorldPos + vMove;
 
-	CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene,
-		vPos);
+	//CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene,	vPos);
 
-	bool	bMove = true;
+	//bool	bMove = true;
 
-	if (pMesh)
-	{
-		if (!pMesh->CheckCell(vPos))
-			bMove = false;
-	}
+	//if (pMesh)
+	//{
+	//	if (!pMesh->CheckCell(vPos))
+	//		bMove = false;
+	//}
 
-	if (!bMove)
-		return;
+	//if (!bMove)
+	//	return;
 
 	m_vWorldRelativePos += vMove;
 	m_vWorldPos += vMove;

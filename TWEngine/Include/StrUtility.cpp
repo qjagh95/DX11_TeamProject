@@ -28,7 +28,7 @@ const string CStrUtility::TCHARToString(const TCHAR* _ptsz)
 const TCHAR* CStrUtility::StringToTCHAR(const string& _str)
 {
 	const char* all = _str.c_str();
-	int len = 1 + strlen(all);
+	int len = (int)(1 + strlen(all));
 	wchar_t* t = new wchar_t[len];
 	if (NULL == t) throw std::bad_alloc();
 	mbstowcs(t, all, len);

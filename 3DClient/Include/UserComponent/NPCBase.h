@@ -65,6 +65,39 @@ protected:
 	list<Vector3> m_PathList;
 	Vector3 m_MovingPos;
 
+	Vector3 m_WorldPos;
+	Vector3 m_MeshLenght;
+
+	Vector3 m_FrontCenter;
+	Vector3 m_FrontCenterLeft;
+	Vector3 m_FrontCenterRight;
+	Vector3 m_FrontUpCenter;
+	Vector3 m_FrontUpLeft;
+	Vector3 m_FrontUpRight;
+	Vector3 m_FrontDownCenter;
+	Vector3 m_FrontDownLeft;
+	Vector3 m_FrontDownRight;
+
+	Vector3 m_CenterCenter;
+	Vector3 m_CenterCenterLeft;
+	Vector3 m_CenterCenterRight;
+	Vector3 m_CenterUpCenter;
+	Vector3 m_CenterUpLeft;
+	Vector3 m_CenterUpRight;
+	Vector3 m_CenterDownCenter;
+	Vector3 m_CenterDownLeft;
+	Vector3 m_CenterDownRight;
+
+	Vector3 m_BackCenter;
+	Vector3 m_BackCenterLeft;
+	Vector3 m_BackCenterRight;
+	Vector3 m_BackUpCenter;
+	Vector3 m_BackUpCenterLeft;
+	Vector3 m_BackUpCenterRight;
+	Vector3 m_BackDownCenter;
+	Vector3 m_BackDownCenterLeft;
+	Vector3 m_BackDownCenterRight;
+
 	static int m_Count;
 	float m_Y;
 	int m_MyCount;

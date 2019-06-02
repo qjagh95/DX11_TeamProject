@@ -213,6 +213,9 @@ public:
 
 		for (iter = m_ComList.begin(); iter != iterEnd; ++iter)
 		{
+			if (!*iter)
+				continue;
+
 			if ((*iter)->GetComponentType() == eType)
 			{
 				(*iter)->AddRef();

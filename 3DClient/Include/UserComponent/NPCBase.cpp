@@ -18,6 +18,7 @@ NPCBase::NPCBase()
 	m_BodyOBB = NULLPTR;
 	m_Target = NULLPTR;
 
+	m_MeshLenght = 0.0f;
 	m_State = 0;
 	m_PrevState = 0;
 	m_Hp = 1;
@@ -91,6 +92,41 @@ int NPCBase::Input(float fTime)
 
 int NPCBase::Update(float DeltaTime)
 {
+	m_MeshLenght = m_Renderer->GetMeshLength() * m_pTransform->GetWorldScale();
+	m_WorldPos = m_pTransform->GetWorldPos();
+
+	Vector3 LenghtHelf = m_MeshLenght * 0.5f;
+
+	m_FrontCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y + LenghtHelf.y, m_WorldPos.z - LenghtHelf.z);
+	m_FrontCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y + LenghtHelf.y, m_WorldPos.z - LenghtHelf.z);
+	m_FrontCenterRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y + LenghtHelf.y, m_WorldPos.z - LenghtHelf.z);
+	m_FrontUpCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y + m_MeshLenght.y, m_WorldPos.z - LenghtHelf.z);
+	m_FrontUpLeft = Vector3(m_WorldPos.x, m_WorldPos.y + m_MeshLenght.y, m_WorldPos.z - LenghtHelf.z);
+	m_FrontUpRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y + m_MeshLenght.y, m_WorldPos.z - LenghtHelf.z);
+	m_FrontDownCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y, m_WorldPos.z - LenghtHelf.z);
+	m_FrontDownLeft = m_WorldPos;
+	m_FrontDownRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y, m_WorldPos.z - LenghtHelf.z);
+
+	m_CenterCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y + LenghtHelf.y, m_WorldPos.z + LenghtHelf.z);
+	m_CenterCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y + LenghtHelf.y, m_WorldPos.z + LenghtHelf.z);
+	m_CenterCenterRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y + LenghtHelf.y, m_WorldPos.z + LenghtHelf.z);
+	m_CenterUpCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y + m_MeshLenght.y, m_WorldPos.z + LenghtHelf.z);
+	m_CenterUpLeft = Vector3(m_WorldPos.x, m_WorldPos.y + m_MeshLenght.y, m_WorldPos.z + LenghtHelf.z);
+	m_CenterUpRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y + m_MeshLenght.y, m_WorldPos.z + LenghtHelf.z);
+	m_CenterDownCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y, m_WorldPos.z + LenghtHelf.z);
+	m_CenterDownLeft = Vector3(m_WorldPos.x, m_WorldPos.y, m_WorldPos.z + LenghtHelf.z);
+	m_CenterDownRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y, m_WorldPos.z + LenghtHelf.z);
+
+	m_BackCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y + LenghtHelf.y, m_WorldPos.z + LenghtHelf.z);
+	m_BackCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y + LenghtHelf.y, m_WorldPos.z + LenghtHelf.z);
+	m_BackCenterRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y + LenghtHelf.y, m_WorldPos.z + LenghtHelf.z);
+	m_BackUpCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y + m_MeshLenght.y, m_WorldPos.z + m_MeshLenght.z);
+	m_BackUpCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y + m_MeshLenght.y, m_WorldPos.z + m_MeshLenght.z);
+	m_BackUpCenterRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y + m_MeshLenght.y, m_WorldPos.z + m_MeshLenght.z);
+	m_BackDownCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y, m_WorldPos.z + m_MeshLenght.z);
+	m_BackDownCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y, m_WorldPos.z + m_MeshLenght.z);
+	m_BackDownCenterRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y, m_WorldPos.z + m_MeshLenght.z);
+
 	if (m_Target != NULLPTR)
 		m_TargetDistance = m_pObject->GetTransformNonCount()->GetWorldPos().Distance(m_TargetTransform->GetWorldPos());
 
