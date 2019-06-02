@@ -38,6 +38,8 @@ bool CBed::Init()
 	CRenderer* pRD = m_pObject->AddComponent<CRenderer>("BedRenderer");
 	pRD->SetMesh("bed", TEXT("Bed_No_Sheet.msh"));
 
+	
+
 	m_pTransform->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	m_pTransform->SetLocalRot(0.f, -90.f, 0.f);
 	//m_pTransform->SetWorldPivot(0.5f, 0.f, 0.5f);
@@ -49,6 +51,23 @@ bool CBed::Init()
 	SAFE_RELEASE(pCol);
 
 	SAFE_RELEASE(pRD);
+
+	std::string matressStr = "matress_";
+	matressStr += GetTag();
+	PUN::CGameObject *pMatress = PUN::CGameObject::CreateObject(matressStr, m_pLayer);
+
+	pRD = pMatress->AddComponent<PUN::CRenderer>("renderer");
+	pRD->SetMesh("matress", TEXT("matress.msh"));
+	SAFE_RELEASE(pRD);
+
+	
+	PUN::CTransform *pTR = pMatress->GetTransform();
+	pTR->SetWorldScale(.1f, .10f, .0825f);
+	pTR->SetLocalPos(0.f, 18.f, 15.f);
+
+	SAFE_RELEASE(pTR);
+	m_pObject->AddChild(pMatress);
+	SAFE_RELEASE(pMatress);
 
 	AfterClone();
 

@@ -5,11 +5,13 @@
 #include "Component/ColliderOBB3D.h"
 CParkour::CParkour()
 {
+	m_eComType = (PUN::COMPONENT_TYPE)UT_JUMPOVER;
 }
 
 CParkour::CParkour(const CParkour & _Parkour)
 	:CUserComponent(_Parkour)
 {
+	m_eComType = (PUN::COMPONENT_TYPE)UT_JUMPOVER;
 }
 
 CParkour::~CParkour()

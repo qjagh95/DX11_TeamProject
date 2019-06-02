@@ -5,6 +5,7 @@
 #include "Door.h"
 #include "Locker.h"
 #include "Bed.h"
+#include "Parkour.h"
 
 
 void CHuman_Player::InteractCallBackEnter(CCollider* pSrc,
@@ -46,6 +47,17 @@ void CHuman_Player::InteractCallBackStay(CCollider * pSrc,
 			Interact_With_Door(pDoor, fTime);
 			SAFE_RELEASE(pDoor);
 		}
+
+		if (pDest->GetColliderID() == UCI_PARKOUR)
+		{
+			CParkour *pParkour = pDestObj->FindComponentFromType<CParkour>((PUN::COMPONENT_TYPE)UT_JUMPOVER);
+
+			if (pParkour)
+			{
+				Interact_With_VaultObj(pParkour, fTime);
+				SAFE_RELEASE(pParkour);
+			}
+		}
 	}
 
 
@@ -55,6 +67,10 @@ void CHuman_Player::InteractCallBackStay(CCollider * pSrc,
 void CHuman_Player::InteractCallBackLeave(CCollider * pSrc,
 	CCollider * pDest, float fTime)
 {
+	//즉시종료시 호출하지 않음
+	if (fTime == 0.f)
+		return;
+	
 	PUN::CGameObject *pDestObj = pDest->GetGameObject();
 
 	if (pDestObj)
@@ -88,6 +104,17 @@ void CHuman_Player::InteractCallBackLeave(CCollider * pSrc,
 			pDestObj->SetFrustrumCullUse(false);
 			Interact_Exit_Door(pDoor, fTime);
 			SAFE_RELEASE(pDoor);
+		}
+
+		if (pDest->GetColliderID() == UCI_PARKOUR)
+		{
+			CParkour *pParkour = pDestObj->FindComponentFromType<CParkour>((PUN::COMPONENT_TYPE)UT_JUMPOVER);
+
+			if (pParkour)
+			{
+				Interact_Exit_VaultObj(pParkour, fTime);
+				SAFE_RELEASE(pParkour);
+			}
 		}
 	}
 

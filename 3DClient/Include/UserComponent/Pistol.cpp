@@ -91,7 +91,7 @@ int CPistol::Update(float fTime)
 		if (m_fSmokeTimerBuf > m_fSmokeTimer)
 		{
 			PUN::CAnimation2D* pPartAnim = m_pGunSmoke->FindComponentFromType<PUN::CAnimation2D>(PUN::CT_ANIMATION2D);
-			//pPartAnim->CurrentClipJumpToFrame(0);
+			pPartAnim->CurrentClipJumpToFrame(0);
 			SAFE_RELEASE(pPartAnim);
 			m_pGunSmoke->SetEnable(true);
 		}

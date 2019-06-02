@@ -110,11 +110,12 @@ public:
 	float GetAudioCoordSize() const;
 	void SetAudioCoordSize(float fSize);
 	bool ForgetSound(const std::string strKey);
+	bool GetIsPlayingBGM() const { return m_sPtrCurrentBgmTrack->GetState() == PLAYING; }
 	
 	void PlayBgm(const std::string& strKey, const wstring& wstrFileName,
 		bool bEnableTransition = true,
-		bool bDeleteFormerBgmFromMem = false,
 		bool bLoop = true,
+		bool bDeleteFormerBgmFromMem = false,
 		const string& PathKey = SOUND_PATH); //현재 bgm이 m_SoundEffectMap에 없을 경우 올라감
 	void PlayBgm(const std::string& strKey,
 		bool bEnableTransition = true,

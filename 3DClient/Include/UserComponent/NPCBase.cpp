@@ -82,8 +82,6 @@ bool NPCBase::Init()
 
 int NPCBase::Input(float fTime)
 {
-	m_NaviMesh = CNavigationManager3D::GetInst()->FindNavMesh(m_pScene, m_pTransform->GetWorldPos());
-
 	if (m_NaviMesh != NULLPTR)
 		m_Y = m_NaviMesh->GetY(m_pTransform->GetWorldPos());
 
@@ -126,6 +124,8 @@ int NPCBase::Update(float DeltaTime)
 	m_BackDownCenter = Vector3(m_WorldPos.x + LenghtHelf.x, m_WorldPos.y, m_WorldPos.z + m_MeshLenght.z);
 	m_BackDownCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y, m_WorldPos.z + m_MeshLenght.z);
 	m_BackDownCenterRight = Vector3(m_WorldPos.x + m_MeshLenght.x, m_WorldPos.y, m_WorldPos.z + m_MeshLenght.z);
+
+	m_NaviMesh = CNavigationManager3D::GetInst()->FindNavMesh(m_pScene, m_CenterDownCenter);
 
 	if (m_Target != NULLPTR)
 		m_TargetDistance = m_pObject->GetTransformNonCount()->GetWorldPos().Distance(m_TargetTransform->GetWorldPos());

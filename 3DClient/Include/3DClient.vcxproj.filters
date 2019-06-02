@@ -396,6 +396,9 @@
     <ClInclude Include="SceneComponent\Scene4_DG.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Parkour.h">
+      <Filter>02. UserComponent\03. Field</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -637,6 +640,9 @@
     </ClCompile>
     <ClCompile Include="SceneComponent\Scene4_DG.cpp">
       <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Parkour.cpp">
+      <Filter>02. UserComponent\03. Field</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

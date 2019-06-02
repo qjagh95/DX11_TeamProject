@@ -27,6 +27,7 @@
 #include "../UserComponent/Enemies.h"
 #include "../UserComponent/Bed.h"
 #include "../UserComponent/Locker.h"
+#include "../UserComponent/Parkour.h"
 
 CTestSceneYH::CTestSceneYH():
 	m_fAmb1SndTime(10.5f),
@@ -53,7 +54,7 @@ CTestSceneYH::~CTestSceneYH()
 bool CTestSceneYH::Init()
 {
 	//CCameraEff::GetInst()->SetFirstPersonViewEnable();
-	
+	//PUN::CSoundManager::GetInst()->PlayBgm(TEXT("Zipper_Open.WAV"), true);
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	pCamera->SetNear(0.03f);
@@ -640,9 +641,18 @@ bool CTestSceneYH::Init()
 	CLocker* pLocker = pObj->AddComponent<CLocker>("locker");
 
 	SAFE_RELEASE(pLocker);
-
 	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pObj);
 
+	//넘을 책상
+	pObj = CGameObject::CreateObject("vault_desk", pDefaultLayer);
+	pTransform = pObj->GetTransform();
+	pTransform->SetWorldPos(Vector3(-15.f, 0.f, 5.f));
+	CParkour *pParkour = pObj->AddComponent<CParkour>("vault");
+	
+
+	SAFE_RELEASE(pParkour);
+	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pObj);
 
 	SAFE_RELEASE(pCamera);

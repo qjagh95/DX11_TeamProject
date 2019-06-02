@@ -20,6 +20,7 @@ CCollider::CCollider()
 	m_vColor = Vector4::Green;
 	m_pWireFrame = nullptr;
 	m_bCallBackFunc = false;
+	m_vecStayingColliders.clear();
 }
 
 
@@ -27,7 +28,7 @@ CCollider::CCollider(const CCollider & com) :
 	CComponent(com)
 {
 	*this = com;
-
+	m_vecStayingColliders.clear();
 	m_pLayout = com.m_pLayout;
 	m_pMesh = com.m_pMesh;
 	m_pShader = com.m_pShader;
@@ -233,6 +234,7 @@ bool CCollider::Init()
 
 int CCollider::Input(float fTime)
 {
+	
 	return 0;
 }
 
@@ -252,6 +254,7 @@ void CCollider::Collision(float fTime)
 
 void CCollider::Render(float fTime)
 {
+	m_vecStayingColliders.clear();
 	m_bCallBackFunc = false;
 
 	if (CCollisionManager::GetInst()->GetIsShow() == false)

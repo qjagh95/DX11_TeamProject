@@ -27,8 +27,20 @@ protected:
 	OBJECT_COLLISION_TYPE m_eObjectCollType;
 	string m_MyTypeName;
 	vector<string> m_vecContinueName;
+	vector<CCollider*> m_vecStayingColliders;
 	bool			m_bCallBackFunc;
 public:
+
+	vector<CCollider*>* GetStayingColliders()
+	{
+		return &m_vecStayingColliders;
+	}
+
+	void AddStayingColliders(CCollider* pDestCol)
+	{
+		m_vecStayingColliders.push_back(pDestCol);
+	}
+
 	void SetCallBackFunc(bool _bEnable)
 	{
 		m_bCallBackFunc = _bEnable;

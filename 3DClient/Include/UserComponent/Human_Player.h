@@ -80,7 +80,8 @@ enum PLAYER_STATUS
 	PSTATUS_LOCKER		=		0x1000000,
 	PSTATUS_TURNING		=		0x2000000,
 	PSTATUS_INACTIVE =			0x4000000,
-	PSTATUS_FALLING		=		0x8000000
+	PSTATUS_FALLING		=		0x8000000,
+	PSTATUS_VAULT		=		0x10000000
 };
 
 
@@ -160,6 +161,8 @@ private:
 	unsigned int   m_iDirFlag;
 	Vector3 m_vPrevMoveDirection;
 	Vector3 m_vMoveDirection;
+	Vector3 m_vVelocity;
+	Vector3 m_vPrevWorldPos;
 	unsigned int m_iPlayingVoiceNumber;
 	PLAYER_VOICE_TYPE m_ePlayingVoiceType;
 	float m_fItemTakeTimerBuf	;

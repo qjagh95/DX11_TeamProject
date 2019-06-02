@@ -6,6 +6,8 @@ PUN_USING
 enum SILENT_TRACE_STATE
 {
 	STS_IDLE,
+	STS_WALK,
+	STS_WALK_IDLE,
 	STS_SUPRISE_TRACE,
 	STS_USER_TRACE,
 	STS_CAN_TRACE,
@@ -39,6 +41,8 @@ public:
 
 private:
 	void FS_IDLE(float DeltaTime);
+	void FS_WALK(float DeltaTime);
+	void FS_WALK_IDLE(float DeltaTime);
 	void FS_USER_TRACE(float DeltaTime);
 	void FS_CAN_TRACE(float DeltaTime);
 	void FS_SUPRISE_TRACE(float DeltaTime);
@@ -47,9 +51,9 @@ private:
 	void FS_BED_FIND(float DeltaTime) {}
 	void FS_DESK_FIND(float DeltaTime) {}
 	void FS_LOCKER_FIND(float DeltaTime) {}
-	void FS_HOOK(float DeltaTime) {}
-	void FS_JAP(float DeltaTime) {}
-	void FS_HEAD_ATTACK(float DeltaTime) {}
+	void FS_HOOK(float DeltaTime);
+	void FS_JAP(float DeltaTime);
+	void FS_HEAD_ATTACK(float DeltaTime);
 	void FS_BASH_DOOR_OPEN(float DeltaTime) {}
 	void FS_NORMAL_DOOR_OPEN_LEFT(float DeltaTime) {}
 	void FS_NORMAL_DOOR_OPEN_RIGHT(float DeltaTime) {}
@@ -57,8 +61,10 @@ private:
 	void Walk1Sound(float DeltaTime);
 	void Walk2Sound(float DeltaTime);
 	void BashSound(float DeltaTime);
+	void BashMobSound(float DeltaTime);
 
 	void PlayerStateCheck(float DeltaTime);
+	void DoorCheck();
 
 private:
 	string m_AniName[STS_MAX];
@@ -70,9 +76,16 @@ private:
 	Vector3 m_MovePos;
 
 	int m_PlayerState;
+	float m_FindTime;
+	float m_FindTimeVar;
 
 	CGameObject* m_3DSoundObject;
 	CSoundSource* m_3DSound;
+
+	CGameObject* m_AttackBoxObject;
+	CColliderOBB3D* m_AttackBox;
+
+	bool m_isDoorColl;
 
 public:
 	ST3_Slient();

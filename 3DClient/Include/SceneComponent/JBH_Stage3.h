@@ -37,6 +37,7 @@ private:
 	int m_PlayerState;
 	int m_PlayerSection;
 	bool m_SupriseSound;
+	bool m_isChangeBGM;
 
 	float m_CanDelayTime;
 	float m_CanDelayTimeVar;

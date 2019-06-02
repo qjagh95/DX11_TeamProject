@@ -339,8 +339,8 @@ bool CSoundManager::ForgetSound(const std::string strKey)
 }
 
 void CSoundManager::PlayBgm(const std::string & strKey, const wstring & wstrFileName,
-	bool bEnableTransition, bool bDeleteFormerBgmFromMem,
-	bool bLoop,
+	bool bEnableTransition, bool bLoop,
+	bool bDeleteFormerBgmFromMem,
 	const string& PathKey)
 {
 	if (strKey == m_strCurrBGMName)
@@ -399,8 +399,8 @@ void CSoundManager::PlayBgm(const std::string & strKey, const wstring & wstrFile
 	
 }
 
-void CSoundManager::PlayBgm(const std::string & strKey, bool bEnableTransition, bool bDeleteFormerBgmFromMem
-	, bool bLoop)
+void CSoundManager::PlayBgm(const std::string & strKey, bool bEnableTransition, bool bLoop,
+	bool bDeleteFormerBgmFromMem)
 {
 	m_iFlushFlag = 0x000;
 	if (strKey == m_strCurrBGMName)
@@ -411,11 +411,8 @@ void CSoundManager::PlayBgm(const std::string & strKey, bool bEnableTransition, 
 		StopBgm(bEnableTransition);
 	}
 
-
 	m_sPtrPrevBgmTrack = m_sPtrCurrentBgmTrack;
-
 	m_sPtrCurrentBgmTrack = _bgm->CreateInstance();
-	
 
 	if (bEnableTransition)
 	{
@@ -446,7 +443,8 @@ void CSoundManager::PlayBgm(const std::string & strKey, bool bEnableTransition, 
 }
 
 void CSoundManager::PlayBgm(const wstring & wstrFileName, bool bEnableTransition,
-	bool bDeleteFormerBgmFromMem, bool bLoop, const string& PathKey)
+	bool bLoop,
+	bool bDeleteFormerBgmFromMem, const string& PathKey)
 {
 	const TCHAR* pPath = CPathManager::GetInst()->FindPath(PathKey);
 	wstring	FullPath;

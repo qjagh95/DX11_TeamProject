@@ -27,8 +27,9 @@ JBH_Stage3::JBH_Stage3()
 	m_SlientMode = false;
 	m_SupriseSound = false;
 	m_isCanDrop = false;
+	m_isChangeBGM = false;
 
-	m_CanDelayTime = 6.0f;
+	m_CanDelayTime = 4.0f;
 	m_CanDelayTimeVar = 0.0f;
 }
 
@@ -48,6 +49,7 @@ bool JBH_Stage3::Init()
 
 	m_DoorMap = CGameManager::GetInst()->GetDoorMap(m_pScene);
 	CSoundManager::GetInst()->CreateSoundEffect("CamSuprise", L"music/10-AI NPC CHASE INTRO 3.wav");
+	CSoundManager::GetInst()->CreateSoundEffect("TraceBGM", L"music\\10-AI NPC CHASE LOOP 3 (Full).wav");
 
 	return true;
 }
@@ -82,6 +84,24 @@ int JBH_Stage3::Update(float DeltaTime)
 		m_SlientMode = true;
 
 	SupriseSound(DeltaTime);
+
+
+	if (m_ChaceNPC->GetState() == STS_USER_TRACE || m_ChaceNPC->GetState() == STS_JAP || m_ChaceNPC->GetState() == STS_HOOK || m_ChaceNPC->GetState() == STS_HEAD_ATTACK)
+	{
+		if (m_isChangeBGM == false)
+		{
+			CSoundManager::GetInst()->PlayBgm(L"music\\10-AI NPC CHASE LOOP 3 (Full).wav");
+			m_isChangeBGM = true;
+		}
+	}
+	else
+	{
+		if (m_isChangeBGM = true)
+		{
+			CSoundManager::GetInst()->PlayBgm(L"SurgeonAttack.wav");
+			m_isChangeBGM = false;
+		}
+	}
 
 	return 0;
 }
@@ -124,9 +144,12 @@ void JBH_Stage3::BasicInit()
 	m_Player->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
 	pCamera->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
 
-	CSoundManager::GetInst()->CreateSoundEffect("ST3BGM", L"ambient/Whisper.wav");
+	CSoundManager::GetInst()->CreateSoundEffect("ST3BGM", L"SurgeonAttack.wav");
 	CSoundManager::GetInst()->CreateSoundEffect("GlassBracking", L"GlassBracking.wav");
-	//CSoundManager::GetInst()->PlayBgm("ST3BGM");
+
+	CSoundManager::GetInst()->PlayBgm("ST3BGM");
+	CSoundManager::GetInst()->SetBgmVolume(0.5f);
+	CSoundManager::GetInst()->SetTransitionTime(2.0f);
 
 	SAFE_RELEASE(Land);
 	SAFE_RELEASE(NavLandObject);
@@ -140,6 +163,7 @@ void JBH_Stage3::DoorInit()
 	CGameObject* StartDoorObj = CGameObject::CreateObject("StartDoor", pDefaultLayer);
 	CDoor* StartDoor = StartDoorObj->AddComponent<CDoor>("StartDoor");
 	StartDoor->GetTransformNonCount()->SetWorldPos(Vector3(231.0f, 0.0f, 65.4f));
+	StartDoor->GetTransformNonCount()->SetLocalRotY(-90.0f);
 	StartDoor->GetTransformNonCount()->SetWorldRotY(90.0f);
 	//StartDoor->SetAutoClose(true);
 

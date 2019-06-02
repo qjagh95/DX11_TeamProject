@@ -380,12 +380,32 @@ void CCollisionManager::Collision(float fTime)
 						// 이전에 충돌되고 있었을 경우
 						else
 						{
-							if (pCollSrc->GetCallBackFunc() == false && pCollDest->GetCallBackFunc() == false)
+							const std::vector<CCollider*> *pVecSrcStayingColliders
+								= pCollSrc->GetStayingColliders();
+
+							std::vector<CCollider*>::const_iterator itr;
+							std::vector<CCollider*>::const_iterator itrEnd
+								= pVecSrcStayingColliders->cend();
+
+							bool bAlreadyCalled = false;
+
+							for (itr = pVecSrcStayingColliders->cbegin();
+								itr != itrEnd; ++itr)
+							{
+								if (*itr == pCollDest)
+								{
+									bAlreadyCalled = true;
+									break;
+								}
+							}
+
+							if (!bAlreadyCalled)
 							{
 								pCollSrc->OnCollision(pCollDest, fTime);
 								pCollDest->OnCollision(pCollSrc, fTime);
 								pCollSrc->SetCallBackFunc(true);
 								pCollDest->SetCallBackFunc(true);
+								pCollSrc->AddStayingColliders(pCollDest);
 							}
 						}
 					}
@@ -533,11 +553,28 @@ void CCollisionManager::CollisionMouse2D(CGameObject* pMouseObj,
 					// 이전에 충돌되고 있었을 경우
 					else
 					{
-						if (pCollSrc->GetCallBackFunc() == false)
+						const std::vector<CCollider*> *pVecSrcStayingColliders;
+
+						std::vector<CCollider*>::const_iterator itr;
+						std::vector<CCollider*>::const_iterator itrEnd
+							= pVecSrcStayingColliders->cend();
+
+						bool bAlreadyCalled = false;
+
+						for (itr = pVecSrcStayingColliders->cbegin();
+							itr != itrEnd; ++itr)
+						{
+							if (*itr == pCollDest)
+							{
+								bAlreadyCalled = true;
+								break;
+							}
+						}
+						if (!bAlreadyCalled)
 						{
 							pCollSrc->OnCollision(pCollDest, fTime);
 							pCollDest->OnCollision(pCollSrc, fTime);
-							pCollSrc->SetCallBackFunc(true);
+							pCollSrc->AddStayingColliders(pCollDest);
 						}
 
 						bMouseCollision = true;

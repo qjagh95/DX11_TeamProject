@@ -253,6 +253,7 @@
     <ClInclude Include="UserComponent\PaperPlanA.h" />
     <ClInclude Include="UserComponent\PaperSilent.h" />
     <ClInclude Include="UserComponent\PaperTest.h" />
+    <ClInclude Include="UserComponent\Parkour.h" />
     <ClInclude Include="UserComponent\PhoneMessage.h" />
     <ClInclude Include="UserComponent\Pistol.h" />
     <ClInclude Include="UserComponent\Player.h" />
@@ -334,6 +335,7 @@
     <ClCompile Include="UserComponent\PaperPlanA.cpp" />
     <ClCompile Include="UserComponent\PaperSilent.cpp" />
     <ClCompile Include="UserComponent\PaperTest.cpp" />
+    <ClCompile Include="UserComponent\Parkour.cpp" />
     <ClCompile Include="UserComponent\PhoneMessage.cpp" />
     <ClCompile Include="UserComponent\Pistol.cpp" />
     <ClCompile Include="UserComponent\Player.cpp" />

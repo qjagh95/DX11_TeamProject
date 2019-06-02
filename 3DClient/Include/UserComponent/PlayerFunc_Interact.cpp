@@ -6,6 +6,7 @@
 #include "Scene/SceneManager.h"
 #include "Door.h"
 #include "Locker.h"
+#include "Parkour.h"
 #include "../GameManager.h"
 
 static float fx;
@@ -17,26 +18,27 @@ bool CHuman_Player::Init_Interact()
 {
 	CRenderer* pRD = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
 
-	CColliderOBB3D* pOBB = m_pObject->AddComponent<CColliderOBB3D>("Player_Interact");
+	CColliderOBB3D* pOBB = nullptr;
+	pOBB = m_pObject->AddComponent<CColliderOBB3D>("Player_Interact");
 	pOBB->SetMyTypeName("Player_Interact");
 	pOBB->SetContinueTypeName("MouseRay");
-
+	
 	pOBB->SetColliderID(UCI_PLAYER_INTERACT);
-
+	
 	CMesh* pMesh = pRD->GetMesh();
-
+	
 	Vector3 vScale = pMesh->GetLength();
-
+	
 	Vector3 vMax = pMesh->GetMax();
 	Vector3 vMin = pMesh->GetMin();
-
+	
 	Vector3 vLength;
-
+	
 	vLength.x = 1.0f;
 	vLength.y = fabs(vMax.y - vMin.y);
 	vLength.z = fabs(vMax.z - vMin.z);
-
-	pOBB->SetInfo(Vector3(0.0f, 0.0f, 20.0f), Vector3::Axis, vLength * 0.05f);
+	
+	pOBB->SetInfo(Vector3(0.0f, 0.0f, 25.0f), Vector3::Axis, vLength * 0.05f);
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CHuman_Player::InteractCallBackEnter);
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CHuman_Player::InteractCallBackStay);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CHuman_Player::InteractCallBackLeave);
@@ -109,11 +111,23 @@ void CHuman_Player::Hide_Locker(float fTime)
 	if (m_pAnimation->GetCurrentClip()->strName == "player_locker_inside_idle")
 	{
 		HidingMotionEnd(fTime);
+		
+	}
+	else
+	{
+		if (m_pAnimation->GetCurrentClip()->fTimeLength - m_pAnimation->GetCurrentClipTime() < 0.06667f)
+		{
+			PUN::CRenderer *pRend = FindComponentFromType<PUN::CRenderer>(PUN::CT_RENDERER);
+			pRend->DontRenderMat(true);
+			SAFE_RELEASE(pRend);
+		}
+		
 	}
 }
 void CHuman_Player::Hiding_Locker(float fTime)
 {
 	m_pAnimation->ChangeClip("player_locker_inside_idle");
+
 }
 void CHuman_Player::Exit_Locker(float fTime)
 {
@@ -124,6 +138,12 @@ void CHuman_Player::Exit_Locker(float fTime)
 		{
 			HidingMotionEnd(fTime);
 		}
+	}
+	else
+	{
+		PUN::CRenderer *pRend = FindComponentFromType<PUN::CRenderer>(PUN::CT_RENDERER);
+		pRend->DontRenderMat(false);
+		SAFE_RELEASE(pRend);
 	}
 }
 void CHuman_Player::Hide_Bed(float fTime)
@@ -729,161 +749,42 @@ void CHuman_Player::Interact_Exit_Bed(class CBed *pBed, float fTime)
 	CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
 }
 
-void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime)
+void CHuman_Player::Interact_With_VaultObj(class CParkour* pVObj, float fTime)
 {
-	CHuman_Player *pHuman = pDest->FindComponentFromType<CHuman_Player>((PUN::COMPONENT_TYPE)UT_PLAYER);
-	if (pHuman)
+	PUN::CTransform *pTR = pVObj->GetTransform();
+
+	float fVObjRotY = pTR->GetWorldRot().y;
+	fVObjRotY += 180.f;
+
+	if (fVObjRotY >= 180.f)
+		fVObjRotY -= 360.f;
+
+	Vector3 vBodyRot = m_pTransform->GetWorldRot();
+
+	float fAngleDiff = fabsf(vBodyRot.y - fVObjRotY);
+
+	SAFE_RELEASE(pTR);
+
+	if (fAngleDiff < 60.f || fAngleDiff > 120.f)
 	{
-		SAFE_RELEASE(pHuman);
-		return;
-	}
+		if ((m_iState & PSTATUS_VAULT) == 0)
+			CGameManager::GetInst()->ChangeNoticeClip("Button_Space_Parkour");
 
-	if (m_iState & PSTATUS_BED)
-		return;
-	if (m_iState & PSTATUS_LOCKER)
-		return;
-
-	PUN::CColliderOBB3D * pSrcCol = dynamic_cast<PUN::CColliderOBB3D*>(pSrc);
-	PUN::CColliderOBB3D * pDestCol = dynamic_cast<PUN::CColliderOBB3D*>(pDest);
-
-	if (!pDestCol)
-		return;
-	if (!pSrcCol)
-		return;
-
-	PUN::CTransform *pSrcTr = pSrcCol->GetTransform();
-	PUN::CTransform *pDestTr = pDestCol->GetTransform();
-
-	PUN::OBB3DInfo _tDestInfo = pDestCol->GetInfo();
-	PUN::OBB3DInfo _tSrcInfo = pSrcCol->GetInfo();
-
-	//콜라이더 가운데 위치 알아내기
-	Vector3 vDestCenter = pDestTr->GetWorldPos() + _tDestInfo.vCenter;
-	Vector3 vSrcCenter = pSrcTr->GetWorldPos() + _tSrcInfo.vCenter;
-
-	SAFE_RELEASE(pSrcTr);
-	SAFE_RELEASE(pDestTr);
-	//두 콜라이더 사이의 방향벡터 구하기
-	Vector3 vVectorDiffUnNorm = vDestCenter - vSrcCenter;//vSrcCenter에서 vDestCenter
-	Vector3 vVectorDiff = vVectorDiffUnNorm;
-	vVectorDiff.Normalize();
-	float fMagnitude = 1.f;
-	if(vVectorDiff.x != 0.f)
-		fMagnitude = vVectorDiffUnNorm.x / vVectorDiff.x;
-	else if(vVectorDiff.y != 0.f)
-		fMagnitude = vVectorDiffUnNorm.y / vVectorDiff.y;
-	else if(vVectorDiff.z != 0.f)
-		fMagnitude = vVectorDiffUnNorm.z / vVectorDiff.z;
-	//pDest-> 방향벡터 쪽으로 최소값 가지는 정점 구하기
-
-	float fVectorDotMax = FLT_MAX;
-	float fVectorDotBuf = 0.f;
-	
-	for (char i = 0; i < 8; ++i)
-	{
-		switch(i)
+		if (PUN::CInput::GetInst()->KeyPress("Space"))
 		{
-		case 0:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 1:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 2:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 3:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 4:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 5:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 6:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 7:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z *-0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
+			m_iState |= PSTATUS_VAULT;
+			m_pAnimation->ChangeClip("player_jump_over_from_walk");
 		}
 	}
-
-	Vector3 vDestPoint = vVectorDiffUnNorm * (fVectorDotMax / fMagnitude);
-	//pSrc-> 방향벡터 쪽으로 최대값 가지는 정점 구하기
-	fVectorDotMax = -FLT_MAX;
-	for (char i = 0; i < 8; ++i)
+	else
 	{
-		switch (i)
-		{
-		case 0:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 1:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 2:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 3:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 4:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 5:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 6:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		case 7:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z *-0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
-		}
+		CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
 	}
 
-	Vector3 vSrcPoint = (vVectorDiffUnNorm * (fVectorDotMax / fMagnitude));
-
-	//두 정점 사이를 0으로 만드는 벡터값 구하기
-	Vector3 vRes = vDestPoint - vSrcPoint;
-	vRes.y = 0.f;
-
-	vRes /= fMagnitude;
-	//그만큼 밀기
-
-	PlayerMove(vRes);
+}
+void CHuman_Player::Interact_Exit_VaultObj(class CParkour* pVObj, float fTime)
+{
+	CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
+	if (m_iState & PSTATUS_VAULT)
+		m_iState ^= PSTATUS_VAULT;
 }

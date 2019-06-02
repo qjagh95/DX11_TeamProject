@@ -270,7 +270,7 @@ int CCore::Run()
 		else
 		{
 			if (m_bGuiMode == true)
-				GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
+				GUIManager::Get()->ImGuiBegin("Rendering Options");
 
 			Logic();
 		}
