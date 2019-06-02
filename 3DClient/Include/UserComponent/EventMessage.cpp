@@ -4,6 +4,7 @@
 CEventMessage::CEventMessage()
 {
 	m_pAnimation = nullptr;
+	m_bPlay = false;
 }
 
 CEventMessage::CEventMessage(const CEventMessage & eventmsg)	:
@@ -20,6 +21,21 @@ CEventMessage::~CEventMessage()
 void CEventMessage::ChangeClip(const string & strName)
 {
 	m_pAnimation->ChangeClip(strName);
+}
+
+void CEventMessage::SetVisible(bool bEnable)
+{
+	m_bPlay = bEnable;
+
+	if (m_bPlay)
+	{
+		m_pObject->SetEnable(true);
+	}
+
+	else
+	{
+		m_pObject->SetEnable(false);
+	}
 }
 
 void CEventMessage::AfterClone()
@@ -47,7 +63,7 @@ bool CEventMessage::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(468.f, 88.f, 1.f);
+	m_pTransform->SetWorldPos(520.f, 500.f, 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("EMAnimation");
@@ -87,7 +103,7 @@ bool CEventMessage::Init()
 	vecClipFrame.push_back(tFrame);
 
 	m_pAnimation->AddClip("Press_Shift", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"G_Press", TEXT("UI/Tutorial/Press_Shift_new.png"));
+		"Shift_Press", TEXT("UI/Tutorial/Press_Shift_new.png"));
 
 	vecClipFrame.clear();
 

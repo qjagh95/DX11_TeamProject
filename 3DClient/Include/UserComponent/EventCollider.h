@@ -22,6 +22,14 @@ private:
 	CGameObject*	m_pMessageObj;
 	class CEventMessage*	m_pMessage;
 
+	bool m_bCtrl;
+	bool m_bG;
+	bool m_bShift;
+	bool m_bMission;
+	bool m_bPlay;
+
+	float m_fActiveTime;
+
 public:
 	virtual void AfterClone();
 	virtual bool Init();

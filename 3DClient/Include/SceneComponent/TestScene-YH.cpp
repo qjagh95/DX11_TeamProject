@@ -25,6 +25,7 @@
 #include "../UserComponent/BatteryIcon.h"
 #include "../CameraEff.h"
 #include "../UserComponent/Enemies.h"
+#include "../UserComponent/Bed.h" 
 
 CTestSceneYH::CTestSceneYH():
 	m_fAmb1SndTime(10.5f),
@@ -617,7 +618,17 @@ bool CTestSceneYH::Init()
 
 	SAFE_RELEASE(pParticleObj);
 	
+	pObj = CGameObject::CreateObject("bed_test", pDefaultLayer);
 	
+	pTransform = pObj->GetTransform();
+	pTransform->SetWorldPos(15.f, 0.f, 10.f);
+	SAFE_RELEASE(pTransform);
+	CBed *pBed = pObj->AddComponent<CBed>("bed");
+
+	SAFE_RELEASE(pBed);
+
+	SAFE_RELEASE(pObj);
+
 	SAFE_RELEASE(pCamera);
 
 	SAFE_RELEASE(pDefaultLayer);

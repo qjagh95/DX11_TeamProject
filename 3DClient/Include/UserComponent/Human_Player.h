@@ -45,7 +45,7 @@ enum PLAYER_STATUS
 	PSTATUS_CROUCHING = 0x80,
 	PSTATUS_CROUCHED= 0x100,
 	PSTATUS_INBED = 0x200,
-	PSTATUS_BEDINTERACT = 0x400,
+	PSTATUS_HIDEINTERACT = 0x400,
 	PSTATUS_DOOR_OPEN = 0x800,
 	PSTATUS_DOOR_CLOSE = 0x1000,
 	PSTATUS_CAM_TAKING_ON = 0x2000,
@@ -60,6 +60,8 @@ enum PLAYER_STATUS
 	PSTATUS_KEY =			0x400000, // 키 인벤토리용 Status
 	PSTATUS_CAMOUT =		0x800000, //INACTIVE는 아니지만 카메라가 Out될 때
 	PSTATUS_CHANGESCENE =	0x1000000,
+	PSTATUS_LOCKER		=	0x2000000,
+	PSTATUS_TURNING		=	0x4000000,
 	PSTATUS_INACTIVE =		0x10000000
 };
 
@@ -87,10 +89,11 @@ protected:
 	CHuman_Player();
 	CHuman_Player(const CHuman_Player& player);
 	~CHuman_Player();
-
+	static CHuman_Player *m_pInst;
 	
 
 public:
+	static CHuman_Player* GetPlayer();
 	bool Init();
 	void AfterClone();
 	int Input(float fTime);
@@ -111,7 +114,7 @@ public:
 	void PSTATUS_CROUCHING(float DeltaTime);
 	void PSTATUS_CROUCHED(float DeltaTime);
 	void PSTATUS_INBED(float DeltaTime);
-	void PSTATUS_BEDINTERACT(float DeltaTime);
+	void PSTATUS_HIDEINTERACT(float DeltaTime);
 	void PSTATUS_DOOR_OPEN(float DeltaTime);
 	void PSTATUS_DOOR_CLOSE(float DeltaTime);
 	void PSTATUS_CAM_ON(float DeltaTime);
@@ -142,9 +145,9 @@ private:
 	Vector3 m_vInitLocalPos;
 	bool  m_bLoadedOnce;
 	char  m_cInitLoopFinished;
-	int	  m_iState;
-	int   m_iPrevState;
-	int   m_iDirFlag;
+	unsigned int	  m_iState;
+	unsigned int   m_iPrevState;
+	unsigned int   m_iDirFlag;
 	Vector3 m_vPrevMoveDirection;
 	Vector3 m_vMoveDirection;
 	float m_fItemTakeTimerBuf	;
@@ -170,6 +173,10 @@ private:
 	float m_fViewMinAngleY		;
 	float m_fGunMaxAngleY		;
 	float m_fGunMinAngleY		;
+	float m_fMaxHideLockerAngleX;
+	float m_fMaxHideLockerAngleY;
+	float m_fMaxHideBedAngleX;
+	float m_fMaxHideBedAngleY;
 	bool  m_bNaviOn;
 	Vector3 m_vCamWorldOffset	;
 	Vector3 m_vCamLocalOffset;
@@ -180,7 +187,9 @@ private:
 #include "Player_Cam_Value.hpp"
 #include "Player_Move_Value.hpp"
 #include "Player_Weapon_Value.hpp"
-
+private:
+	void InputMove(float fTime, bool& bBlend);
+	void InputRot(float fTime, PUN::CTransform *pHeadTrans, Vector3& vTotMoveDiff);
 public:
 	bool Init_Items();
 	bool Init_Interact();
@@ -193,6 +202,7 @@ public:
 	Vector3 GetWorldPos() const;
 	bool LoadData(const TCHAR *dataPath); //플레이어는 혼자니까 굳이 툴까지 만들어 다룰 필요는 없지만, 데이터 수치 및 리소스는 밖에서 준비해볼 필요가 있어 분리함
 	void Interact(float fTime);
+	
 	void Open_Door_Normal(float fTime);
 	void Close_Door_Normal(float fTime);
 	void Open_Door_Fast(float fTime);
@@ -262,8 +272,8 @@ public:
 	void RayCallBackStay(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 	void RayCallBackLeave(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 
-	int GetState() const { return m_iState; }
-	void SetState(PLAYER_STATUS State) { m_iState = State; }
+	unsigned int GetState() const { return m_iState; }
+	void SetState(unsigned int State) { m_iState = State; }
 
 	//모듈화 기본함수
 	int Input_Cam(float fTime);
@@ -285,6 +295,11 @@ public:
 	void SetInInteractiveSceneChange(bool bIn);
 	bool IsPlayerOnSceneChange();
 	
+	
+	void InputRot_Interact(float fTime);
+
+	bool IsHidingInBed();
+	bool IsHiddenInBed();
 	//custom public Functions
 #include "Cam_Func_Header.hpp"
 #include "Interact_Func_Header.hpp"
@@ -292,3 +307,5 @@ public:
 #include "Move_Func_Header.hpp"
 #include "Weap_Func_Header.hpp"
 };
+
+#define _PLAYER CHuman_Player::GetPlayer()

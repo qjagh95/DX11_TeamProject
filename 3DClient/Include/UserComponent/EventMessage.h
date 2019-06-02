@@ -17,9 +17,11 @@ private:
 
 private:
 	CAnimation2D*	m_pAnimation;
+	bool	m_bPlay;
 
 public:
 	void ChangeClip(const string& strName);
+	void SetVisible(bool bEnable);
 
 public:
 	virtual void AfterClone();

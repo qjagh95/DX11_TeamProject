@@ -137,8 +137,12 @@ int CPistol::LateUpdate(float fTime)
 
 		SAFE_RELEASE(pObjTrans);
 
+		PUN::CTransform *pCamTrans = m_pScene->GetMainCameraTransform();
+		Vector3 vCamRot = pCamTrans->GetWorldRot();
+
+		SAFE_RELEASE(pCamTrans);
 		pObjTrans = m_pGunMuzzleFlash->GetTransform();
-		pObjTrans->SetWorldRot(vLocRot);
+		pObjTrans->SetWorldRot(vCamRot);
 		pObjTrans->SetWorldPos(vGunMuzzleOffset);
 
 		SAFE_RELEASE(pObjTrans);
@@ -322,8 +326,9 @@ void CPistol::AfterClone()
 	PUN::CLight *pLight = m_pGunMuzzleFlash->AddComponent<PUN::CLight>("muzzleFlash");
 	pLight->SetLightDiffuse(Vector4(1.f, 0.75f, 0.25f, 0.75f));
 	pLight->SetLightSpcular(Vector4(0.8f, 0.8f, 0.8f, 0.8f));
-	pLight->SetLightType(PUN::LT_POINT);
-	pLight->SetLightRange(200.f);
+	pLight->SetLightType(PUN::LT_SPOT);
+	pLight->SetLightRange(250.f);
+	pLight->SetAngle(60.f, 100.f);
 	SAFE_RELEASE(pLight);
 	
 	m_pGunMuzzleFlash->SetEnable(false);

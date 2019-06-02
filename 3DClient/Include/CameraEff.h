@@ -45,7 +45,7 @@ public:
 	void DeleteAllCurrEff();
 	void SetCamMainPos(const Vector3& vPos);
 	void SetCamMainRot(const Vector3& vRot);
-	bool FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Body = nullptr, const Vector3& vEyePos = Vector3::Zero, const Vector3 &vEyeRot = Vector3::Zero);
+	float FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Body = nullptr, const Vector3& vEyePos = Vector3::Zero, const Vector3 &vEyeRot = Vector3::Zero);
 
 public:
 	void SetCamTransform(PUN::CTransform *pMainCamTr);

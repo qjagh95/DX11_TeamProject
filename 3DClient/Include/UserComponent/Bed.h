@@ -1,5 +1,6 @@
 #pragma once
 #include "Hidable.h"
+#include <Component/ColliderOBB3D.h>
 
 PUN_USING
 
@@ -15,6 +16,7 @@ private:
 
 
 public:
+	static float fPlayerLocalOffsetY;
 	virtual void AfterClone();
 	virtual bool Init();
 	virtual int	Input(float fTime);
@@ -23,5 +25,7 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CBed* Clone();
+	void OnCollisionWithPlayer(PUN::CCollider *pSrc, PUN::CCollider *pDest, float fTime);
+	void OnCollisionExitWithPlayer(PUN::CCollider *pSrc, PUN::CCollider *pDest, float fTime);
 };
 

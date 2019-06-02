@@ -148,10 +148,10 @@ void CCameraEff::SetCamMainRot(const Vector3 & vRot)
 		pMainCamTransform->SetWorldRot(vRot);
 }
 
-bool CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Body, const Vector3& vEyePos, const Vector3 &vEyeRot)
+float CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Body, const Vector3& vEyePos, const Vector3 &vEyeRot)
 {
 	if (!m_bUseFirstPersonView)
-		return false;
+		return 0.f;
 
 	if (pMainCamTransform)
 	{
@@ -189,7 +189,6 @@ bool CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Bod
 	int iXCenter = ((int)windowWnd.left + (int)windowWnd.right) >> 1;
 	int iYCenter = ((gameWnd.bottom - gameWnd.top) >> 1) + (int)windowWnd.top + iWindowMenuThickness;
 
-	
 	POINT _curMousePoint = {};
 	GetCursorPos(&_curMousePoint);
 
@@ -198,37 +197,36 @@ bool CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Bod
 
 	int iTag = iXPoint | iYPoint;
 
-	if (iTag)
+	if (pMainCamTransform)
 	{
-		SetCursorPos(iXCenter, iYCenter);
-		Vector3 vCamRot;
+		Vector3 vCamRot = pMainCamTransform->GetWorldRot();
+		Vector3 vBodRot = _Body->GetWorldRot();
 
-		if (pMainCamTransform)
+		if (iTag)
 		{
-			
-			vCamRot = pMainCamTransform->GetWorldRot();
-
+			SetCursorPos(iXCenter, iYCenter);
 			float fValueW = 180.f / PUN::CDevice::GetInst()->GetResolution().iWidth;
 			float fValueH = 180.f / PUN::CDevice::GetInst()->GetResolution().iHeight;
-
-
 			float fAngleX = ((float)iXPoint) * fValueW;
 			float fAngleY = ((float)iYPoint) * fValueH;
-
 			_Body->RotationY(fAngleX);
 
-			pMainCamTransform->RotationY(fAngleX);
+			Vector3 vCamRot = _Body->GetWorldRot();
+			vCamRot.x = pMainCamTransform->GetWorldRot().x;
+			vCamRot.z = 0.f;
+			pMainCamTransform->SetWorldRot(vCamRot);
 			float fNewAngleY = fAngleY + vCamRot.x;
 			if (fNewAngleY < fYMax && fNewAngleY > fYMin)
 			{
 				pMainCamTransform->RotationX(fAngleY);
 			}
+
+			return fAngleX;
 		}
-		
-		return true;
+
 	}
 
-	return false;
+	return 0.f;
 }
 
 void CCameraEff::SetCamTransform(PUN::CTransform * pMainCamTr)

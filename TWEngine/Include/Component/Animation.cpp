@@ -120,11 +120,13 @@ CAnimation::CAnimation() :
 	m_iFrameMode(0),
 	m_bKeepBlending(false),
 	m_bCurClipEnd(false),
-	m_bSkipBlending(false)
+	m_bSkipBlending(false),
+	m_bRootBoneTransformChange(false)
 {
 	m_eComType = CT_ANIMATION;
 	m_bCurClipStart = false;
 }
+
 
 CAnimation::CAnimation(const CAnimation & anim) :
 	CComponent(anim)
@@ -656,6 +658,15 @@ int CAnimation::FindBoneIndex(const string & strBoneName)
 	}
 
 	return -1;
+}
+
+void CAnimation::SetClipUseBoneTransform(const string & strClipName, const string & strBoneName)
+{
+	PANIMATIONCLIP pClip = FindClip(strClipName);
+	int iBoneIdx = FindBoneIndex(strBoneName);
+
+	pClip->bUpdateRootTransform = true;
+	pClip->iRootTransformBoneIdx = iBoneIdx;
 }
 
 Matrix CAnimation::GetBoneMatrix(const string & strBoneName)
@@ -1711,13 +1722,11 @@ int CAnimation::Update(float fTime)
 			}
 		}
 	}
-
 	if (m_pNextClip)
 	{
 		if (m_pCurClip != m_pNextClip)
 			m_fChangeLimitTime = 0.25f;
 		float fBeforeTime = m_fAnimationGlobalTime - fTime;
-
 		if (fBeforeTime < 0.f)
 		{
 			fBeforeTime = 0.f;
@@ -1738,7 +1747,6 @@ int CAnimation::Update(float fTime)
 		{
 			PANIMATIONCALLBACK pCallbackInfo = (*itr);
 			float fActivateTime = m_pNextClip->fEndTime * pCallbackInfo->fAnimationProgress;
-
 			if (pCallbackInfo->bCall)
 				continue;
 
@@ -1772,7 +1780,7 @@ int CAnimation::Update(float fTime)
 		}
 		else
 		{
-			m_bCurClipStart = false;
+		m_bCurClipStart = false;
 			m_fChangeTime += fTime;
 
 			bool	bChange = false;
@@ -1791,19 +1799,79 @@ int CAnimation::Update(float fTime)
 
 			if (bChange)
 			{
-				m_bCurClipStart = true;
+				//모션 관련 변환
+				
+				if (m_bRootBoneTransformChange)
+				{
+					if (m_pCurClip->bUpdateRootTransform)
+					{
+						int iSize = (int)m_pCurClip->vecKeyFrame.size();
+						for (int i = 0; i < iSize; ++i)
+						{
+							if (i == m_pCurClip->iRootTransformBoneIdx)
+							{
+								////합성된 트랜스폼만큼 월드 트랜스폼을 이동시켜주자
+								//PKEYFRAME pCurKey = m_pCurClip->vecKeyFrame[i]
+								//	->vecKeyFrame[m_pCurClip->vecKeyFrame[i]->vecKeyFrame.size() - 1];
+								//Vector3 vChangedPosLocal = pCurKey->vPos * -1.f;
+								//vChangedPosLocal *= m_pTransform->GetWorldScale(); //월드스케일만큼 곱하기
+								//Vector3 vChangedPos;
+								//vChangedPos += m_vArrRootBoneAxis[0] * vChangedPosLocal.x;
+								////vChangedPos += m_vArrRootBoneAxis[1] * vChangedPosLocal.y; //y축은 건들지 말자 : ㅈ된다
+								//vChangedPos += m_vArrRootBoneAxis[2] * vChangedPosLocal.z;
+								//vChangedPos += m_vRootBonePosBuf;
+								//
+								//Vector3 vBufRotRad;
+								//vBufRotRad.x = DegreeToRadian(m_vRootBoneRotBuf.x);
+								//vBufRotRad.y = DegreeToRadian(m_vRootBoneRotBuf.y);
+								//vBufRotRad.z = DegreeToRadian(m_vRootBoneRotBuf.z);
+								//Vector4 vBufQuat;
+								//
+								//EulertoQuat(vBufRotRad, vBufQuat);
+								//
+								//Vector4 vRotCurr(DirectX::XMQuaternionNormalize(DirectX::XMQuaternionMultiply(pCurKey->vRot.Convert(), vBufQuat.Convert())));
+								//
+								//Vector3 vRotTot;
+								//
+								//to_Euler_Angle(vRotCurr, vRotTot);
+								//vRotTot.x = RadianToDegree(vRotTot.x);
+								//vRotTot.y = RadianToDegree(vRotTot.y);
+								//vRotTot.z = RadianToDegree(vRotTot.z);
+								//
+								//vRotTot.x = 0.f;
+								//vRotTot.z = 0.f;
+								//
+								//m_pTransform->SetWorldPos(vChangedPos);
+								//m_pTransform->SetWorldRot(vRotTot);
+								break;
+							}
+						}
+						
+					}
+
+					//초기화
+					m_bRootBoneTransformChange = false;
+					m_vArrRootBoneAxis[AXIS_X] = m_pTransform->GetWorldAxis(AXIS_X);
+					m_vArrRootBoneAxis[AXIS_Y] = m_pTransform->GetWorldAxis(AXIS_Y);
+					m_vArrRootBoneAxis[AXIS_Z] = m_pTransform->GetWorldAxis(AXIS_Z);
+					m_vRootBonePosBuf = m_pTransform->GetWorldPos();
+					m_vRootBoneRotBuf = m_pTransform->GetWorldRot();
+				}
+				
+				
 
 				m_pCurClip = m_pNextClip;
 				m_pNextClip = nullptr;
 				m_fAnimationGlobalTime = 0.f;
 				m_fChangeTime = 0.f;
+
+
+				m_bRootBoneTransformChange = false;
 				//m_bCurClipEnd = true;
 				//m_pCurClip->iFrame = 0;
 			}
 			else if (!m_bKeepBlending)
 			{
-				m_bCurClipStart = false;
-
 				parallel_for((int)0, BoneSize, [&](int i)
 				{
 					// 키프레임이 없을 경우
@@ -1848,13 +1916,89 @@ int CAnimation::Update(float fTime)
 					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 
+
+					if (m_pCurClip->bUpdateRootTransform)
+					{
+						if (!m_bRootBoneTransformChange)
+						{
+							m_bRootBoneTransformChange = true;
+							m_vRootBonePosBuf = m_pTransform->GetWorldPos();
+							m_vRootBoneRotBuf = m_pTransform->GetWorldRot();
+							m_vArrRootBoneAxis[0] = m_pTransform->GetWorldAxis(AXIS_X);
+							m_vArrRootBoneAxis[1] = m_pTransform->GetWorldAxis(AXIS_Y);
+							m_vArrRootBoneAxis[2] = m_pTransform->GetWorldAxis(AXIS_Z);
+						}
+						if (i == m_pCurClip->iRootTransformBoneIdx)
+						{
+							//합성된 트랜스폼만큼 월드 트랜스폼을 이동시켜주자
+							
+							Vector3 vChangedPosLocal(vT);
+							vChangedPosLocal = vChangedPosLocal - pCurKey->vPos;
+							vChangedPosLocal *= m_pTransform->GetWorldScale(); //월드스케일만큼 곱하기
+							Vector3 vChangedPos;
+							vChangedPos += m_vArrRootBoneAxis[0] * vChangedPosLocal.x;
+							//vChangedPos += m_vArrRootBoneAxis[1] * vChangedPosLocal.y;
+							vChangedPos += m_vArrRootBoneAxis[2] * vChangedPosLocal.z;
+							vChangedPos += m_vRootBonePosBuf;
+							
+							//Vector3 vBufRotRad;
+							//vBufRotRad.x = DegreeToRadian(m_vRootBoneRotBuf.x);
+							//vBufRotRad.y = DegreeToRadian(m_vRootBoneRotBuf.y);
+							//vBufRotRad.z = DegreeToRadian(m_vRootBoneRotBuf.z);
+							//Vector4 vBufQuat;
+							//
+							//EulertoQuat(vBufRotRad, vBufQuat);
+							//
+							//Vector4 vQuatCurr(vR);
+							//DirectX::XMVECTOR xmInvRotCurr = DirectX::XMQuaternionInverse(vQuatCurr.Convert());
+							//
+							//Vector4 vRotCurr(DirectX::XMQuaternionMultiply(pCurKey->vRot.Convert(), xmInvRotCurr));
+							//
+							//vRotCurr = Vector4(DirectX::XMQuaternionNormalize(DirectX::XMQuaternionMultiply(vRotCurr.Convert(), vBufQuat.Convert())));
+							//
+							//Vector3 vRotTot;
+							//
+							//to_Euler_Angle(vRotCurr, vRotTot);
+							//vRotTot.x = RadianToDegree(vRotTot.x);
+							//vRotTot.y = RadianToDegree(vRotTot.y);
+							//vRotTot.z = RadianToDegree(vRotTot.z);
+
+							//vRotTot.x = 0.f;
+							//vRotTot.z = 0.f;
+
+							m_pTransform->SetWorldPos(vChangedPos);
+							//m_pTransform->SetWorldRot(vRotTot);
+							
+
+							//5월 7일 노트 : 트랜스폼 이동 후의 애니메이션 역시 변해버린 트랜스폼 정보를 가지고 있을 확률이 높다
+							//m_bRootBoneTransformChange 가 true인 녀석들의 0번 프레임은 기본 자세인 경우가 절대적이다
+							//PKEYFRAME pZeroKey = m_pCurClip->vecKeyFrame[i]->vecKeyFrame[0];
+							//Vector3 vPosDiffZeroToLast(DirectX::XMVectorLerp(pCurKey->vPos.Convert(), pZeroKey->vPos.Convert(), fPercent));
+							//vPosDiffZeroToLast *= m_pTransform->GetWorldScale();
+							//Vector3 vChangedPos;
+							//vChangedPos += m_vArrRootBoneAxis[0] * vPosDiffZeroToLast.x;
+							////vChangedPos += m_vArrRootBoneAxis[1] * vPosDiffZeroToLast.y;
+							//vChangedPos += m_vArrRootBoneAxis[2] * vPosDiffZeroToLast.z;
+							//vChangedPos += m_vRootBonePosBuf;
+							//m_pTransform->SetWorldPos(vChangedPos);
+						}
+					}
+					else
+					{
+						m_bRootBoneTransformChange = false;
+						m_vRootBonePosBuf = m_pTransform->GetWorldPos();
+						m_vRootBoneRotBuf = m_pTransform->GetWorldRot();
+					}
+
+
 					*m_vecBones[i]->matBone = matBone;
 					matBone = *m_vecBones[i]->matOffset * matBone;
 					*m_vecBoneMatrix[i] = matBone;
 				});
 			}
-			else //m_pNextClip != nullptr
+			else //m_pNextClip != nullptr, m_bKeep true
 			{
+				m_bRootBoneTransformChange = false;
 				m_fAnimationGlobalTime += fTime;
 				m_fClipProgress = m_fAnimationGlobalTime / m_pCurClip->fTimeLength;
 
@@ -1988,6 +2132,7 @@ int CAnimation::Update(float fTime)
 	else
 	{
 		m_bCurClipStart = false;
+		m_bRootBoneTransformChange = false;
 		m_fAnimationGlobalTime += fTime;
 		m_fClipProgress = m_fAnimationGlobalTime / m_pCurClip->fTimeLength;
 
@@ -3092,4 +3237,14 @@ bool _tagPartialAnim::LoadPartClipFromFile(const std::string & strClipKey, std::
 	fclose(pFile);
 
 	return true;
+}
+
+void _tagAnimationClip::SetRootTransformBone(int idx)
+{
+	iRootTransformBoneIdx = idx;
+}
+
+void _tagAnimationClip::UseRootTransformBone(bool bOn)
+{
+	bUpdateRootTransform = bOn;
 }

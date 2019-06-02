@@ -12,6 +12,12 @@ CEventCollider::CEventCollider()	:
 	m_pMessage(nullptr)
 {
 	m_eComType = (COMPONENT_TYPE)UT_EVENTBOX;
+	m_bCtrl = false;
+	m_bG = false;
+	m_bShift = false;
+	m_bMission = false;
+	m_bPlay = false;
+	m_fActiveTime = 0.f;
 }
 
 CEventCollider::CEventCollider(const CEventCollider & ebox)	:
@@ -35,26 +41,22 @@ void CEventCollider::AfterClone()
 
 bool CEventCollider::Init()
 {
-	m_pMessageObj = CGameObject::CreateObject("EventMessage", m_pLayer);
+	/*CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("ECRender");
 
-	m_pMessageObj->SetEnable(false);
+	SAFE_RELEASE(pRenderer);
 
-	m_pMessage = m_pMessageObj->AddComponent<CEventMessage>("EventMessage");
+	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	m_pMessage->ChangeClip("Message_Empty");
+	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
-	CTransform*	pMessageTr = m_pMessageObj->GetTransform();
-
-	pMessageTr->SetWorldPos(520.f, 600.f, 0.f);
-	
-	SAFE_RELEASE(pMessageTr);
+	SAFE_RELEASE(pMaterial);*/
 
 	// Ctrl Ű
 	m_pPressCtrlObj = CGameObject::CreateObject("PressCtrl", m_pLayer);
 
 	CTransform*	pPressCtrlTr = m_pPressCtrlObj->GetTransform();
 
-	pPressCtrlTr->SetWorldPos(300.f, 20.f, 700.f);
+	pPressCtrlTr->SetWorldPos(300.f, 4.f, 735.f);
 
 	SAFE_RELEASE(pPressCtrlTr);
 
@@ -71,7 +73,7 @@ bool CEventCollider::Init()
 
 	CTransform*	pPressGTr = m_pPressGObj->GetTransform();
 
-	pPressGTr->SetWorldPos(320.f, 20.f, 700.f);
+	pPressGTr->SetWorldPos(320.f, 13.f, 700.f);
 
 	SAFE_RELEASE(pPressGTr);
 
@@ -88,6 +90,8 @@ bool CEventCollider::Init()
 
 	CTransform*	pPressShiftTr = m_pPressShiftObj->GetTransform();
 
+	pPressShiftTr->SetWorldPos(340.f, 3.f, 730.f);
+
 	SAFE_RELEASE(pPressShiftTr);
 
 	pOBB = m_pPressShiftObj->AddComponent<CColliderOBB3D>("PressShiftBody");
@@ -103,7 +107,7 @@ bool CEventCollider::Init()
 
 	CTransform*	pMissionTr = m_pPressMissionObj->GetTransform();
 
-	pMissionTr->SetWorldPos(350.f, 20.f, 700.f);
+	pMissionTr->SetWorldPos(350.f, 3.f, 730.f);
 
 	SAFE_RELEASE(pMissionTr);
 
@@ -115,6 +119,20 @@ bool CEventCollider::Init()
 
 	SAFE_RELEASE(pOBB);
 
+	m_pMessageObj = CGameObject::CreateObject("EventMessage", m_pLayer);
+	m_pMessage = m_pMessageObj->AddComponent<CEventMessage>("EventMessage");
+
+	//m_pMessageObj->SetEnable(false);	
+
+	m_pMessage->ChangeClip("Message_Empty");
+	
+	CTransform*	pMsgTr = m_pMessageObj->GetTransform();
+
+	pMsgTr->SetWorldScale(468.f, 88.f, 1.f);
+	pMsgTr->SetWorldPos(630.f, 600.f, 0.f);
+
+	SAFE_RELEASE(pMsgTr);
+
 	return true;
 }
 
@@ -125,6 +143,46 @@ int CEventCollider::Input(float fTime)
 
 int CEventCollider::Update(float fTime)
 {
+	if (m_bCtrl)
+	{
+		m_pMessage->SetVisible(true);
+		m_pMessage->ChangeClip("Press_Ctrl");
+		m_bPlay = true;
+	}
+
+	else if (m_bG)
+	{
+		m_pMessage->SetVisible(true);
+		m_pMessage->ChangeClip("Press_G");
+		m_bPlay = true;
+	}
+
+	else if (m_bShift)
+	{
+		m_pMessage->SetVisible(true);
+		m_pMessage->ChangeClip("Press_Shift");
+		m_bPlay = true;
+	}
+
+	else if (m_bMission)
+	{
+		m_pMessage->SetVisible(true);
+		m_pMessage->ChangeClip("Tutorial_Mission");
+		m_bPlay = true;
+	}
+
+	if (m_bPlay)
+	{
+		m_fActiveTime += fTime;
+
+		if (m_fActiveTime >= 5.f)
+		{
+			m_fActiveTime = 0.f;
+			m_bPlay = false;
+			m_pMessage->SetVisible(false);
+		}
+	}
+
 	return 0;
 }
 
@@ -150,18 +208,22 @@ void CEventCollider::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pSrc->GetTag() == "PressCtrlBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
+		m_bCtrl = true;
 	}
 
 	if (pSrc->GetTag() == "PressGBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
+		m_bG = true;
 	}
 
 	if (pSrc->GetTag() == "PressShiftBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
+		m_bShift = true;
 	}
 
 	if (pSrc->GetTag() == "MissionBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
+		m_bMission = true;
 	}
 }
 
@@ -169,17 +231,21 @@ void CEventCollider::Out(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pSrc->GetTag() == "PressCtrlBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
+		m_bCtrl = false;
 	}
 
 	if (pSrc->GetTag() == "PressGBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
+		m_bG = false;
 	}
 
 	if (pSrc->GetTag() == "PressShiftBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
+		m_bShift = false;
 	}
 
 	if (pSrc->GetTag() == "MissionBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
+		m_bMission = false;
 	}
 }

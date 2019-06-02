@@ -61,6 +61,11 @@ bool CHuman_Player::Init_Interact()
 	if (!m_pCameraTr)
 		return false;
 
+	m_pAnimation->SetClipUseBoneTransform("player_enter_bed_left_stand", "Hero-Pelvis");
+	m_pAnimation->SetClipUseBoneTransform("player_enter_bed_right_stand", "Hero-Pelvis");
+	m_pAnimation->SetClipUseBoneTransform("player_exit_bed_left", "Hero-Pelvis");
+	m_pAnimation->SetClipUseBoneTransform("player_exit_bed_right", "Hero-Pelvis");
+	
 	return true;
 }
 
@@ -76,6 +81,7 @@ void CHuman_Player::Interact(float fTime)
 {
 	
 }
+
 void CHuman_Player::Open_Door_Normal(float fTime)
 {
 	
@@ -106,81 +112,74 @@ void CHuman_Player::Exit_Locker(float fTime)
 }
 void CHuman_Player::Hide_Bed(float fTime)
 {
-	m_eTempPlayerState = (PLAYER_STATUS)m_iState;
-	m_iState = PSTATUS_NONE;
+	//m_eTempPlayerState = (PLAYER_STATUS)m_iState;
+	//m_iState = PSTATUS_NONE;
+	
+	float fAngle = m_pTransform->GetWorldRot().y - m_vTargetDir.y;
 
-	Vector3 vAxisZ = m_pCameraTr->GetWorldAxis(AXIS_Z);
-	float fAngle = vAxisZ.Angle(m_vTargetDir);
-
-	if (isnan(fAngle))
-		fAngle = 1.0f;
-
-	Vector3 vAxisY = vAxisZ.Cross(m_vTargetDir);
-
-	if (vAxisY.y < 0.0f)
-		fAngle *= -1.0f;
-
-	if (fAngle > 45.0f && fAngle < 135.0f)
-	{
-		m_pAnimation->ChangeClip("player_enter_bed_right_stand");
-		m_iRotDir = -1;
-	}
-	else if (fAngle < -45.0f && fAngle > -135.0f)
+	if (fAngle > 0.f && fAngle <= 180.0f)
 	{
 		m_pAnimation->ChangeClip("player_enter_bed_left_stand");
+		m_iRotDir = -1;
+	}
+	else if (fAngle <= .0f && fAngle > -180.0f)
+	{
+		m_pAnimation->ChangeClip("player_enter_bed_right_stand");
 		m_iRotDir = 1;
 	}
 	else
 	{
-		m_iState = m_eTempPlayerState;
+		//m_iState = m_eTempPlayerState; //이거 누구냐....
 		return;
 	}
 	
-	m_fDestRotY = fAngle;
-	m_fDestRotX = m_pCameraTr->GetWorldRot().x;
-	m_fAccRotX = 0.0f;
-	m_fAccRotY = 0.0f;
+	//m_fDestRotY = fAngle;
+	//m_fDestRotX = m_pCameraTr->GetWorldRot().x;
+	//m_fAccRotX = 0.0f;
+	//m_fAccRotY = 0.0f;
 
-
-	PANIMATIONCLIP pClip = m_pAnimation->GetCurrentClip();
-	m_fAnimPlayTime = 1.0f / pClip->fPlayTime;
+	if (m_pAnimation->GetCurrentClip()->strName.find("player_enter_bed") != std::string::npos)
+	{
+		if (m_pAnimation->GetCurrentClipTime() > 0.8f)
+		{
+			HidingMotionEnd(fTime);
+		}
+	}
+	
+	//PANIMATIONCLIP pClip = m_pAnimation->GetCurrentClip();
+	//m_fAnimPlayTime = 1.0f / pClip->fPlayTime;
+	
 }
+
 
 void CHuman_Player::Hiding_Bed(float fTime)
 {
 	m_pAnimation->ChangeClip("player_bed_idle");
-	m_fViewMaxAngleY = 10;
-	m_fViewMinAngleY = -10;
+	
 }
 void CHuman_Player::Exit_Bed(float fTime) 
 {
-	Vector3 vAxisZ = GetWorldAxis(AXIS_Z);
-	float fAngle = vAxisZ.Angle(m_vTargetDir);
-
-	if (isnan(fAngle))
-		fAngle = 1.0f;
-
-	Vector3 vAxisY = vAxisZ.Cross(m_vTargetDir);
-
-	if (vAxisY.y < 0.0f)
-		fAngle *= -1.0f;
-
-	if (fAngle > 0.0f)
+	if (m_iRotDir == 1) //left
 	{
-		m_pAnimation->ChangeClip("player_exit_bed_right");
-		m_iRotDir = 1;
+		m_pAnimation->ChangeClip("player_exit_bed_right"); //들어온 데로 나와야 되는데 방향이 반대다?
 	}
-	else if (fAngle < 0.0f)
+	else if (m_iRotDir == -1)
 	{
 		m_pAnimation->ChangeClip("player_exit_bed_left");
-		m_iRotDir = -1;
 	}
+	//m_pAnimation->ChangeClip("player_exit_bed_left");
+	//m_fDestRotY = fAngle;
+	//m_fAccRotY = 0.0f;
 
-	m_fDestRotY = fAngle;
-	m_fAccRotY = 0.0f;
-
-	m_fViewMaxAngleY = 90;
-	m_fViewMinAngleY = -90;
+	if (m_pAnimation->GetCurrentClip()->strName.find("player_exit_bed") != std::string::npos)
+	{
+		if (m_pAnimation->GetCurrentClipTime() > 0.8f)
+		{
+			HidingMotionEnd(fTime);
+		}
+	}
+	//m_fViewMaxAngleY = 90;
+	//m_fViewMinAngleY = -90;
 }
 
 void CHuman_Player::CheckInteractState(float fTime)
@@ -233,7 +232,7 @@ void CHuman_Player::StateHideInBed(float fTime)
 	else
 	{
 		float fDeltaRotX = m_fDestRotX * m_fAnimPlayTime * fTime;
-;		float fDeltaRotY = m_fDestRotY * m_fAnimPlayTime * fTime;
+		float fDeltaRotY = m_fDestRotY * m_fAnimPlayTime * fTime;
 
 		m_fAccRotX += fDeltaRotX;
 		m_fAccRotY += fDeltaRotY;
@@ -251,8 +250,8 @@ void CHuman_Player::StateHidingBed(float fTime)
 	{
 	}
 
-	if (KEYDOWN("E"))
-		ChangeInteractState(IS_GET_OUT_BED, fTime);
+	//if (KEYDOWN("E"))
+	//	ChangeInteractState(IS_GET_OUT_BED, fTime);
 }
 
 void CHuman_Player::StateGetOutBed(float fTime)
@@ -296,6 +295,11 @@ int CHuman_Player::Input_Interact(float fTime)
 
 int CHuman_Player::InteractUpdate(float fTime)
 {
+
+	//Vector3 vTestPos = m_pTransform->GetWorldPos();
+	//std::cout << "test position : (" << vTestPos.x << ", " << vTestPos.y << ", " << vTestPos.z << ")" << std::endl;
+
+
 	return 0;
 }
 
@@ -327,4 +331,133 @@ int CHuman_Player::InteractLateUpdate(float fTime)
 	//}
 
 	return 0;
+}
+
+void CHuman_Player::HidingMotionEnd(float fTime) 
+{
+	m_iState ^= PSTATUS_HIDEINTERACT;
+};
+
+void CHuman_Player::InputRot_Interact(float fTime)
+{
+	//락커나 침대 안에 있는 경우
+	if (m_iState & PSTATUS_INBED)
+	{
+		//각도 버퍼 얻어오기
+		Vector3 vRot = m_pTransform->GetWorldRot();
+		
+		float vYdiff = vRot.y - m_vTargetDir.y;
+
+		if (m_iState & PSTATUS_HIDEINTERACT)
+		{
+			if (vYdiff > m_fMaxHideBedAngleX)
+			{
+				float fSpeed = m_fMaxHideBedAngleX * fTime * 128.f;
+				if (vRot.y + fSpeed > m_vTargetDir.y + m_fMaxHideBedAngleX)
+				{
+					fSpeed = m_vTargetDir.y + m_fMaxHideBedAngleX - vRot.y;
+				}
+				vYdiff = fSpeed + m_fMaxHideBedAngleX;
+			}
+			else if (vYdiff < -m_fMaxHideBedAngleX)
+			{
+				float fSpeed = -m_fMaxHideBedAngleX * fTime * 128.f;
+				if (vRot.y + fSpeed < m_vTargetDir.y - m_fMaxHideBedAngleX)
+				{
+					fSpeed = m_vTargetDir.y - m_fMaxHideBedAngleX - vRot.y;
+				}
+				vYdiff = fSpeed - m_fMaxHideBedAngleX;
+			}
+
+			vRot.y = m_vTargetDir.y + vYdiff;
+
+			m_pTransform->SetWorldRot(vRot);
+		}
+		else
+		{
+			if (vYdiff > m_fMaxHideBedAngleX)
+			{
+				vYdiff = m_fMaxHideBedAngleX;
+				vRot.y = m_vTargetDir.y + vYdiff;
+
+				m_pTransform->SetWorldRot(vRot);
+			}
+			else if (vYdiff < -m_fMaxHideBedAngleX)
+			{
+				vYdiff = -m_fMaxHideBedAngleX;
+				vRot.y = m_vTargetDir.y + vYdiff;
+
+				m_pTransform->SetWorldRot(vRot);
+			}
+
+			
+		}
+		
+		PUN::CTransform *pCamera = m_pScene->GetMainCameraTransform();
+		Vector3 vCamRot = pCamera->GetWorldRot();
+		if (vCamRot.x < -m_fMaxHideBedAngleY)
+		{
+			float fSpeed = m_fMaxHideBedAngleY * fTime * 16.f;
+
+			if (vCamRot.x + fSpeed > -m_fMaxHideBedAngleY)
+			{
+				vCamRot.x = -m_fMaxHideBedAngleY;
+			}
+			else
+			{
+				vCamRot.x += fSpeed;
+			}
+		}
+		else if (vCamRot.x > m_fMaxHideBedAngleY)
+		{
+			float fSpeed = m_fMaxHideBedAngleY * fTime * 16.f;
+
+			if (vCamRot.x - fSpeed < m_fMaxHideBedAngleY)
+			{
+				vCamRot.x = m_fMaxHideBedAngleY;
+			}
+			else
+			{
+				vCamRot.x -= fSpeed;
+			}
+		}
+
+		vCamRot.y = vRot.y;
+		pCamera->SetWorldRot(vCamRot);
+
+
+		SAFE_RELEASE(pCamera);
+	}
+	else if (m_iState & PSTATUS_LOCKER)
+	{
+		//각도 버퍼 얻어오기
+		Vector3 vRot = m_pTransform->GetWorldRot();
+		//Y 축의 각도 차이 얻어오기
+		Vector3 vItemRot = m_vTargetDir.Angle(vItemRot);
+
+		float vYdiff = vRot.y - vItemRot.y;
+
+		if (vYdiff > m_fMaxHideBedAngleX)
+		{
+			vYdiff = m_fMaxHideLockerAngleX;
+		}
+		else if (vYdiff < -m_fMaxHideBedAngleX)
+		{
+			vYdiff = -m_fMaxHideLockerAngleX;
+		}
+
+		vRot.y = vItemRot.y + vYdiff;
+
+		m_pTransform->SetWorldRot(vRot);
+		PUN::CTransform *pCamera = m_pScene->GetMainCameraTransform();
+		Vector3 vCamRot = pCamera->GetWorldRot();
+		vCamRot.y = vRot.y;
+		pCamera->SetWorldRot(vCamRot);
+		SAFE_RELEASE(pCamera);
+	}
+}
+
+void CHuman_Player::SetInteractRotationVector(const Vector3& vec)
+{
+	m_vTargetDir = vec;
 }

@@ -37,6 +37,7 @@
 #include "../UserComponent/PaperBQ.h"
 #include "../UserComponent/PaperPL.h"
 #include "../UserComponent/KeyCard.h"
+#include "../UserComponent/EventCollider.h"
 #include <NavigationMesh.h>
 
 CTutorialScene::CTutorialScene()
@@ -131,6 +132,14 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pDoorTr);
 	SAFE_RELEASE(pDoor);
 	SAFE_RELEASE(pDoorObj);
+
+
+	CGameObject*	pEventObj = CGameObject::CreateObject("EventCollider", pDefaultLayer);
+
+	CEventCollider*	pEvent = pEventObj->AddComponent<CEventCollider>("EventCollider");
+
+	SAFE_RELEASE(pEvent);
+	SAFE_RELEASE(pEventObj);
 
 	// MedicalKit
 	//CGameObject* pObjMedicalKit = CGameObject::CreateObject("MedicalKit", pDefaultLayer);

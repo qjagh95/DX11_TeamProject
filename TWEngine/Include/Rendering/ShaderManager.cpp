@@ -224,13 +224,7 @@ bool CShaderManager::Init()
 	pEntry[ST_PIXEL] = (char*)"StarLightScopePS";
 	if (!LoadShader(STARLIGHTSCOPE_SHADER, TEXT("StarLight_Scope.fx"), pEntry))
 		return false;
-
-	// Hit Effect
-	//pEntry[ST_VERTEX] = (char*)"HitEffectFullScreenVS";
-	//pEntry[ST_PIXEL] = (char*)"HitEffectPS";
-	//if (!LoadShader(HIT_EFFECT_SHADER, TEXT("HitEffect.fx"), pEntry))
-	//	return false;
-
+	
 	//Geometry 쉐이더를 쓰는 파이프라인
 
 	pEntry[ST_VERTEX] = (char*)"ParticleVS";
@@ -330,7 +324,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("Bar",			 9,	 sizeof(BarCBuffer),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Fog",			 9,	 sizeof(FogCBuffer),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("FinalPass",		 9,	 sizeof(FinalPassCB),			CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Particle",		 10, sizeof(ParticleCBuffer),		CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Particle",		 4, sizeof(ParticleCBuffer),		CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("HDRSecond",		 10, sizeof(HDR2ndPassCB),			CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Bloom",			 11, sizeof(BloomCB),				CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("StarLightScope",  12, sizeof(StarLightScopeCB),		CST_VERTEX | CST_PIXEL);
