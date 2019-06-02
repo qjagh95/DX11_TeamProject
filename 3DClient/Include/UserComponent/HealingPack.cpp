@@ -177,6 +177,8 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
 
+				GET_SINGLE(CGameManager)->AddChangedListItemObj(m_pObject);
+
 				// 게임 화면에서 사라진다.
 				m_pObject->SetEnable(false);
 			}

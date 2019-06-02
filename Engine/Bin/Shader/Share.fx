@@ -511,7 +511,7 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
     vR = normalize(vR);
 
 	tInfo.vDif = vMtrlDif * g_vLightDif * max(0, fRamb) * fIntensity;
-    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(vR, vViewNormal)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
+    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(vR, ToCamera)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
     tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
 
 	return tInfo;

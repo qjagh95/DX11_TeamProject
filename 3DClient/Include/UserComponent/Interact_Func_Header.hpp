@@ -16,3 +16,5 @@ void Interact_Exit_Door(class CDoor *pDoor, float fTime);
 
 void Interact_With_Bed(class CBed *pBed, float fTime);
 void Interact_Exit_Bed(class CBed *pBed, float fTime);
+
+void Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime);

@@ -101,14 +101,8 @@ int CKeyCard::Update(float fTime)
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
 
-				CGameObject*	pDoorObj = CGameObject::FindObject("TutorialDoor");
-
-				CDoor*	pDoor = pDoorObj->FindComponentFromTag<CDoor>("TutorialDoor");
-
-				pDoor->UnLock();
-
-				SAFE_RELEASE(pDoor);
-				SAFE_RELEASE(pDoorObj);
+				GET_SINGLE(CGameManager)->AddKey(m_pObject->GetTag(), m_pObject);
+				GET_SINGLE(CGameManager)->AddChangedListItemObj(m_pObject);
 
 				m_pObject->SetEnable(false);
 				m_bUseInven = true;

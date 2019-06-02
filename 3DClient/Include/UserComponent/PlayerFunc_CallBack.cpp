@@ -86,7 +86,7 @@ void CHuman_Player::InteractCallBackLeave(CCollider * pSrc,
 		if (pDoor)
 		{
 			pDestObj->SetFrustrumCullUse(false);
-			Interact_With_Door(pDoor, fTime);
+			Interact_Exit_Door(pDoor, fTime);
 			SAFE_RELEASE(pDoor);
 		}
 	}

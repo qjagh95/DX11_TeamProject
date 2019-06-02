@@ -7,6 +7,7 @@
 #include "Component/ColliderRect.h"
 #include "Document.h"
 #include "DocxInven.h"
+#include "../GameManager.h"
 
 CDocxGenerator::CDocxGenerator()
 {

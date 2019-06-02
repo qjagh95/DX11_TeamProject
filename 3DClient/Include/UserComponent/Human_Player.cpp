@@ -21,9 +21,6 @@
 #include "HitEffectAlpha.h"
 #include "Locker.h"
 
-
-
-
 static const char* strFootStepSndHeader = "FTS_";
 static const char* strWalkSndHeader = "Walk";
 static const char* strRunSndHeader = "Run";
@@ -1439,7 +1436,12 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 	m_pAnimation->SetSocketObject("Hero-R-Hand", "camhand", m_pCamModelObj);
 
 	PUN::CGameObject *pRoot = PUN::CGameObject::CreateObject("PlayerRoot", m_pLayer, true);
-	m_pAnimation->SetSocketObject("Hero-Pelvis", "root", pRoot);
+
+	PUN::CColliderOBB3D *pCol = pRoot->AddComponent<PUN::CColliderOBB3D>("geom");
+	pCol->SetInfo(Vector3(0.f, -.5f, 0.1f), Vector3::Axis, Vector3(1.25f, 2.4f, 1.6f));
+	pCol->SetCollisionCallback(PUN::CCT_STAY, this, &CHuman_Player::Geometry_Push);
+	SAFE_RELEASE(pCol);
+	m_pAnimation->SetSocketObject("Hero-Spine2", "root", pRoot);
 
 	m_pRootBonePos = pRoot->GetTransform();
 
@@ -2168,3 +2170,4 @@ void CHuman_Player::SetBreathIntensity(float fBreath)
 {
 	m_fBreathIntensity = fBreath;
 }
+

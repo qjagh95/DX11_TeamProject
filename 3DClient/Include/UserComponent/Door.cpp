@@ -173,6 +173,11 @@ bool CDoor::IsLock() const
 void CDoor::UnLock()
 {
 	m_bLock = false;
+	PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
+	pSnd->StopClip(UNLOCK_SOUND);
+	pSnd->Play(UNLOCK_SOUND);
+
+	GET_SINGLE(CGameManager)->AddChangedListDoor(this);
 }
 
 void CDoor::UnLock(const Vector3 & vAxis)
@@ -192,9 +197,7 @@ void CDoor::UnLock(const Vector3 & vAxis)
 		{
 			m_bLock = false;
 			//잠금해제 사운드 재생
-			PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
-			pSnd->StopClip(UNLOCK_SOUND);
-			pSnd->Play(UNLOCK_SOUND);
+			UnLock();
 		}
 		else
 		{
@@ -214,11 +217,14 @@ void CDoor::UnLock(const Vector3 & vAxis)
 
 		if (fAngle < 90.0f)
 		{
-			m_bLock = false;
-			//잠금해제 사운드 재생
-			PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
-			pSnd->StopClip(UNLOCK_SOUND);
-			pSnd->Play(UNLOCK_SOUND);
+			UnLock();
+
+			if (m_eDoorType == DOOR_STAGE)
+			{
+				CDoor* pTargetDoor = GET_SINGLE(CGameManager)->FindDoor(m_strTargetSceneKey, m_strTargetDoorKey);
+
+				pTargetDoor->UnLock();
+			}
 		}
 		else
 		{

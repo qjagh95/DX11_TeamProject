@@ -25,7 +25,7 @@ class CGameManager
 	unordered_map<CScene*, unordered_map<string, class CDoor*>*>	m_mapDoor;
 	unordered_map<CScene*, unordered_map<string, CLight*>*>			m_mapLight;
 	unordered_map<CScene*, unordered_map<string, CGameObject*>*>	m_mapItemObj;
-	unordered_map<string, PDoorKeyInfo>								m_mapKey;
+	unordered_map<string, CGameObject*>								m_mapKey;
 	vector<CLight*>													m_vecLight[SST_END];
 	
 	list<CGameObject*>												m_ChangedItemObjList;
@@ -42,13 +42,18 @@ public:
 	bool Init();
 	bool AfterInit();
 
-	void AddKey(const string& strKeyName);
+	void AddKey(const string& strKeyName, CGameObject* pObj);
 	void AddDoor(CScene* pScene, const string& strDoorObjTag, CDoor* pDoor);
 	void AddDoor(const string& strSceneKey, const string& strDoorObjTag, CDoor* pDoor);
 	void AddItemObject(CScene* pScene, const string& strItemObjTag, CGameObject* pObj);
 	void AddItemObject(const string& strSceneKey, const string& strItemObjTag, CGameObject* pObj);
 	void AddLight(CLight* pLight);
 	void AddToEachContainer();
+
+	void AddChangedListDoor(CDoor* pDoor);
+	void AddChangedListItemObj(CGameObject* pObj);
+	void AddChangedListLight(CLight* pLight);
+
 	unordered_map<string, class CDoor*>* GetDoorMap(CScene* Scene);
 	unordered_map<string, class CLight*>* GetLightMap(CScene* Scene);
 	unordered_map<string, class CGameObject*>* GetItemObjectMap(CScene* Scene);
@@ -75,6 +80,15 @@ public:
 
 	void BlinkAllSceneLight(float fLimitTime, float fDeltaTime,
 		const Vector4& vColor, bool bFinalTurnOn);
+
+	void BlinkAllSectionLight(STAGE_SECTION_TYPE eSectionType, float fLimitTime, float fDeltaTime,
+		const Vector4& vColor, bool bFinalTurnOn);
+
+	void BlinkLight(string strSceneKey, string strLightKey, float fLimitTime, float fDeltaTime,
+		const Vector4& vColor, bool bFinalTurnOn);
+	void BlinkLight(CScene* pScene, string strLightKey, float fLimitTime, float fDeltaTime,
+		const Vector4& vColor, bool bFinalTurnOn);
+	
 	
 
 	DECLARE_SINGLE(CGameManager)

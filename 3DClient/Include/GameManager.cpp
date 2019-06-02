@@ -38,6 +38,7 @@ CGameManager::CGameManager()
 	m_pPlayer = NULLPTR;
 	m_pPlayerTr = NULLPTR;
 	m_pPlayerObj = NULLPTR;
+	m_mapKey.clear();
 }
 
 CGameManager::~CGameManager()
@@ -173,8 +174,14 @@ bool CGameManager::AfterInit()
 	return false;
 }
 
-void CGameManager::AddKey(const string & strKeyName)
+void CGameManager::AddKey(const string & strKeyName, CGameObject* pObj)
 {
+	unordered_map<string, CGameObject*>::iterator iter = m_mapKey.find(strKeyName);
+
+	if (iter == m_mapKey.end())
+		return;
+
+	m_mapKey.insert(make_pair(strKeyName, pObj));
 }
 
 void CGameManager::AddDoor(CScene * pScene, const string & strDoorObjTag, CDoor * pDoor)
@@ -299,7 +306,7 @@ void CGameManager::AddToEachContainer()
 				AddItemObject(iter->second, (*iterObj)->GetTag(), (*iterObj));
 
 			if (strstr((*iterObj)->GetTag().c_str(), "Key") != nullptr)
-				AddKey((*iterObj)->GetTag());
+				AddKey((*iterObj)->GetTag(), (*iterObj));
 		}
 
 		pList = pLightLayer->GetObjectList();
@@ -321,6 +328,48 @@ void CGameManager::AddToEachContainer()
 		SAFE_RELEASE(pDefaultLayer);
 		SAFE_RELEASE(pLightLayer);
 	}
+}
+
+void CGameManager::AddChangedListDoor(CDoor* pDoor)
+{
+	list<CDoor*>::iterator iter;
+	list<CDoor*>::iterator iterEnd = m_ChangedDoorList.end();
+
+	for (iter = m_ChangedDoorList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter) == pDoor)
+			return;
+	}
+
+	m_ChangedDoorList.push_back(pDoor);
+}
+
+void CGameManager::AddChangedListItemObj(CGameObject * pObj)
+{
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = m_ChangedItemObjList.end();
+
+	for (iter = m_ChangedItemObjList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter) == pObj)
+			return;
+	}
+
+	m_ChangedItemObjList.push_back(pObj);
+}
+
+void CGameManager::AddChangedListLight(CLight * pLight)
+{
+	list<CLight*>::iterator iter;
+	list<CLight*>::iterator iterEnd = m_ChangedLightList.end();
+
+	for (iter = m_ChangedLightList.begin(); iter != iterEnd; ++iter)
+	{
+		if ((*iter) == pLight)
+			return;
+	}
+
+	m_ChangedLightList.push_back(pLight);
 }
 
 unordered_map<string, class CDoor*>* CGameManager::GetDoorMap(CScene * Scene)
@@ -355,14 +404,12 @@ unordered_map<string, class CGameObject*>* CGameManager::GetItemObjectMap(CScene
 
 bool CGameManager::FindKey(const string & strKeyName)
 {
-	unordered_map<string, PDoorKeyInfo>::iterator iter = m_mapKey.find(strKeyName);
+	unordered_map<string, CGameObject*>::iterator iter = m_mapKey.find(strKeyName);
 
 	if (iter == m_mapKey.end())
 		return false;
 
-	PDoorKeyInfo pKeyInfo = iter->second;
-
-	return pKeyInfo->bKey;
+	return true;
 }
 
 CDoor* CGameManager::FindDoor(CScene * pScene, const string & strDoorKey)
@@ -475,6 +522,9 @@ void CGameManager::SaveCheckPoint()
 	string strFileName = "CheckPoint.cpd";
 	BinaryWrite pInstBW(strFileName);
 
+	CScene* pScene = GET_SINGLE(CSceneManager)->GetSceneNonCount();
+	
+	string strSceneKey = pScene->GetTag();
 	Vector3 vPos = m_pPlayerTr->GetWorldPos();
 	Vector3 vRot = m_pPlayerTr->GetWorldRot();
 	CGameObject* pObj = nullptr;
@@ -556,13 +606,12 @@ void CGameManager::SaveCheckPoint()
 	//delete pInstBW;
 }
 
-
-
 void CGameManager::LoadCheckPoint()
 {
 	string strFileName = "CheckPoint.cpd";
 	BinaryRead pInstBR(strFileName);
 
+	string strSceneKey = pInstBR.ReadString();
 	Vector3 vPos = pInstBR.ReadVector3();
 	Vector3 vRot = pInstBR.ReadVector3();
 
@@ -613,18 +662,21 @@ void CGameManager::LoadCheckPoint()
 		m_ChangedItemObjList.push_back(pObj);
 	}
 
-
+	GET_SINGLE(CSceneManager)->ChangeScene(strSceneKey);
+	PlayerSpon(vPos, vRot);
+	CTransform* pTr = m_pCamera->GetTransformNonCount();
+	pTr->SetWorldRot(vRot);
 }
 
 void CGameManager::Update(float fTime)
 {
-	if (KEYDOWN("F9"))
-		SaveCheckPoint();
+	CalculateShadowLight();
 }
 
 void CGameManager::CalculateShadowLight()
 {
 	int iSection = m_pPlayerObj->GetStageSection();
+
 	if (m_vecLight[iSection].empty())
 	{
 		m_pCamera->NoShadow();
@@ -666,9 +718,48 @@ void CGameManager::BlinkAllSceneLight(float fLimitTime, float fDeltaTime,
 	unordered_map<string, CLight*>::iterator iterEnd = mapLight->end();
 
 	for (iter = mapLight->begin(); iter != iterEnd; ++iter)
+	{
+		if (iter->second->IsTurnOn() != bFinalTurnOn)
+			AddChangedListLight(iter->second);
+
 		iter->second->StartBlink(fLimitTime, fDeltaTime, vColor, bFinalTurnOn);
+	}
 
 	SAFE_RELEASE(pScene);
+}
+
+void CGameManager::BlinkAllSectionLight(STAGE_SECTION_TYPE eSectionType, float fLimitTime, float fDeltaTime, const Vector4 & vColor, bool bFinalTurnOn)
+{
+	if (!m_vecLight[eSectionType].empty())
+	{
+		for (int i = 0; i < m_vecLight[eSectionType].size(); ++i)
+		{
+			if (m_vecLight[eSectionType][i]->IsTurnOn() != bFinalTurnOn)
+				AddChangedListLight(m_vecLight[eSectionType][i]);
+			
+			m_vecLight[eSectionType][i]->StartBlink(fLimitTime, fDeltaTime, vColor, bFinalTurnOn);
+		}
+	}
+}
+
+void CGameManager::BlinkLight(string strSceneKey, string strLightKey, float fLimitTime, float fDeltaTime, const Vector4 & vColor, bool bFinalTurnOn)
+{
+	CLight* pLight = FindLight(strSceneKey, strLightKey);
+
+	if (pLight->IsTurnOn() != bFinalTurnOn)
+		AddChangedListLight(pLight);
+
+	pLight->StartBlink(fLimitTime, fDeltaTime, vColor, bFinalTurnOn);
+}
+
+void CGameManager::BlinkLight(CScene * pScene, string strLightKey, float fLimitTime, float fDeltaTime, const Vector4 & vColor, bool bFinalTurnOn)
+{
+	CLight* pLight = FindLight(pScene, strLightKey);
+
+	if (pLight->IsTurnOn() != bFinalTurnOn)
+		AddChangedListLight(pLight);
+
+	pLight->StartBlink(fLimitTime, fDeltaTime, vColor, bFinalTurnOn);
 }
 
 

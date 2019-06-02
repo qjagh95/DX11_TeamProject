@@ -728,3 +728,162 @@ void CHuman_Player::Interact_Exit_Bed(class CBed *pBed, float fTime)
 {
 	CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
 }
+
+void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime)
+{
+	CHuman_Player *pHuman = pDest->FindComponentFromType<CHuman_Player>((PUN::COMPONENT_TYPE)UT_PLAYER);
+	if (pHuman)
+	{
+		SAFE_RELEASE(pHuman);
+		return;
+	}
+
+	if (m_iState & PSTATUS_BED)
+		return;
+	if (m_iState & PSTATUS_LOCKER)
+		return;
+
+	PUN::CColliderOBB3D * pSrcCol = dynamic_cast<PUN::CColliderOBB3D*>(pSrc);
+	PUN::CColliderOBB3D * pDestCol = dynamic_cast<PUN::CColliderOBB3D*>(pDest);
+
+	if (!pDestCol)
+		return;
+	if (!pSrcCol)
+		return;
+
+	PUN::CTransform *pSrcTr = pSrcCol->GetTransform();
+	PUN::CTransform *pDestTr = pDestCol->GetTransform();
+
+	PUN::OBB3DInfo _tDestInfo = pDestCol->GetInfo();
+	PUN::OBB3DInfo _tSrcInfo = pSrcCol->GetInfo();
+
+	//콜라이더 가운데 위치 알아내기
+	Vector3 vDestCenter = pDestTr->GetWorldPos() + _tDestInfo.vCenter;
+	Vector3 vSrcCenter = pSrcTr->GetWorldPos() + _tSrcInfo.vCenter;
+
+	SAFE_RELEASE(pSrcTr);
+	SAFE_RELEASE(pDestTr);
+	//두 콜라이더 사이의 방향벡터 구하기
+	Vector3 vVectorDiffUnNorm = vDestCenter - vSrcCenter;//vSrcCenter에서 vDestCenter
+	Vector3 vVectorDiff = vVectorDiffUnNorm;
+	vVectorDiff.Normalize();
+	float fMagnitude = 1.f;
+	if(vVectorDiff.x != 0.f)
+		fMagnitude = vVectorDiffUnNorm.x / vVectorDiff.x;
+	else if(vVectorDiff.y != 0.f)
+		fMagnitude = vVectorDiffUnNorm.y / vVectorDiff.y;
+	else if(vVectorDiff.z != 0.f)
+		fMagnitude = vVectorDiffUnNorm.z / vVectorDiff.z;
+	//pDest-> 방향벡터 쪽으로 최소값 가지는 정점 구하기
+
+	float fVectorDotMax = FLT_MAX;
+	float fVectorDotBuf = 0.f;
+	
+	for (char i = 0; i < 8; ++i)
+	{
+		switch(i)
+		{
+		case 0:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * 0.5f));
+			if (fVectorDotBuf < fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 1:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * -0.5f));
+			if (fVectorDotBuf < fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 2:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z * 0.5f));
+			if (fVectorDotBuf < fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 3:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z * -0.5f));
+			if (fVectorDotBuf < fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 4:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * 0.5f));
+			if (fVectorDotBuf < fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 5:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * -0.5f));
+			if (fVectorDotBuf < fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 6:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z * 0.5f));
+			if (fVectorDotBuf < fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 7:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z *-0.5f));
+			if (fVectorDotBuf < fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		}
+	}
+
+	Vector3 vDestPoint = vVectorDiffUnNorm * (fVectorDotMax / fMagnitude);
+	//pSrc-> 방향벡터 쪽으로 최대값 가지는 정점 구하기
+	fVectorDotMax = -FLT_MAX;
+	for (char i = 0; i < 8; ++i)
+	{
+		switch (i)
+		{
+		case 0:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * 0.5f));
+			if (fVectorDotBuf > fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 1:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * -0.5f));
+			if (fVectorDotBuf > fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 2:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z * 0.5f));
+			if (fVectorDotBuf > fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 3:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z * -0.5f));
+			if (fVectorDotBuf > fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 4:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * 0.5f));
+			if (fVectorDotBuf > fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 5:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * -0.5f));
+			if (fVectorDotBuf > fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 6:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z * 0.5f));
+			if (fVectorDotBuf > fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		case 7:
+			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z *-0.5f));
+			if (fVectorDotBuf > fVectorDotMax)
+				fVectorDotMax = fVectorDotBuf;
+			break;
+		}
+	}
+
+	Vector3 vSrcPoint = (vVectorDiffUnNorm * (fVectorDotMax / fMagnitude));
+
+	//두 정점 사이를 0으로 만드는 벡터값 구하기
+	Vector3 vRes = vDestPoint - vSrcPoint;
+	vRes.y = 0.f;
+
+	vRes /= fMagnitude;
+	//그만큼 밀기
+
+	PlayerMove(vRes);
+}

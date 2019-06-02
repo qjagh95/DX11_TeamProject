@@ -90,7 +90,9 @@ int CBattery::Update(float fTime)
 				m_pInven->AddItem(pIconObj);
 
 				SAFE_RELEASE(pIcon);
-				SAFE_RELEASE(pIconObj);		
+				SAFE_RELEASE(pIconObj);
+
+				GET_SINGLE(CGameManager)->AddChangedListItemObj(m_pObject);
 
 				m_pObject->SetEnable(false);
 				m_bUseInven = true;
@@ -103,6 +105,8 @@ int CBattery::Update(float fTime)
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
+
+
 			}
 		}
 	}

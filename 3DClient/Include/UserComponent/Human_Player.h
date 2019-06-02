@@ -318,6 +318,8 @@ public:
 	bool IsHidingInLocker();
 	bool IsHiddenInLocker();
 
+	
+
 	class CInventory *GetInv();
 	//custom public Functions
 #include "Cam_Func_Header.hpp"

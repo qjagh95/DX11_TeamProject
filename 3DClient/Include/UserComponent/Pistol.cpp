@@ -90,8 +90,8 @@ int CPistol::Update(float fTime)
 
 		if (m_fSmokeTimerBuf > m_fSmokeTimer)
 		{
-			PUN::CAnimation2D *pPartAnim = m_pGunSmoke->FindComponentFromType<PUN::CAnimation2D>(PUN::CT_ANIMATION2D);
-			pPartAnim->CurrentClipJumpToFrame(0);
+			PUN::CAnimation2D* pPartAnim = m_pGunSmoke->FindComponentFromType<PUN::CAnimation2D>(PUN::CT_ANIMATION2D);
+			//pPartAnim->CurrentClipJumpToFrame(0);
 			SAFE_RELEASE(pPartAnim);
 			m_pGunSmoke->SetEnable(true);
 		}
@@ -395,7 +395,7 @@ bool CPistol::Fire()
 			fInten += 0.15f;
 
 		_PLAYER->SetBreathIntensity(fInten);
-		std::cout << "intensity set to " << fInten << std::endl;
+		//std::cout << "intensity set to " << fInten << std::endl;
 
 		m_pSnd->Play(iRand);
 		//m_pGunSmoke->SetEnable(true);
