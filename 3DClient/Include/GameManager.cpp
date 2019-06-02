@@ -5,6 +5,7 @@
 #include "UserComponent/Door.h"
 #include "UserComponent/Human_Player.h"
 #include "BinaryWriter.h"
+#include "UserComponent/NoticeMessage.h"
 
 DEFINITION_SINGLE(CGameManager)
 
@@ -37,6 +38,7 @@ CGameManager::CGameManager()
 
 CGameManager::~CGameManager()
 {
+	SAFE_RELEASE(m_pNotice);
 	SAFE_RELEASE(m_pCamera);
 	SAFE_RELEASE(m_pPlayer);
 	SAFE_RELEASE(m_pPlayerTr);
@@ -53,7 +55,7 @@ CGameManager::~CGameManager()
 		mapDoor->clear();
 		SAFE_DELETE(mapDoor);
 	}
-	m_mapDoor.clear();	
+	m_mapDoor.clear();
 
 	unordered_map<CScene*, unordered_map<string, CGameObject*>*>::iterator iterItem;
 	unordered_map<CScene*, unordered_map<string, CGameObject*>*>::iterator iterItemEnd = m_mapItemObj.end();
@@ -80,7 +82,7 @@ CGameManager::~CGameManager()
 		SAFE_DELETE(mapLightObj);
 	}
 	m_mapLight.clear();
-	
+
 	for (int i = 0; i < SST_END; ++i)
 	{
 		m_vecLight[i].clear();
@@ -125,7 +127,11 @@ bool CGameManager::Init()
 
 	CScene* pScene = GET_SINGLE(CSceneManager)->GetScene();
 	CLayer* pLayer = pScene->FindLayer("Default");
-	
+
+	//pCamEffManager = CCameraEff::GetInst();
+	//pCamEffManager->Init();
+	//pCamEffManager->SetFirstPersonViewEnable();
+
 	if (!pLayer)
 		return false;
 
@@ -134,10 +140,19 @@ bool CGameManager::Init()
 	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
 	m_pPlayerTr = m_pPlayerObj->GetTransform();
+	m_pPlayerTr->SetWorldRot(0.f, 180.f, 0.f);
 	m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
 	m_pPlayerTr->SetWorldScale(0.05f, 0.05f, 0.05f);
-	//m_pPlayerTr->SetWorldPos(316.f, 20.f, 748.f);
-	m_pPlayerTr->SetWorldPos(0.0f, 0.0f, 0.0f);
+	m_pPlayerTr->SetWorldPos(316.f, 20.f, 748.f);
+	//m_pPlayerTr->SetWorldPos(0.0f, 0.0f, 0.0f);	
+
+	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer);
+
+	m_pNotice = pNoticeObj->AddComponent<CNoticeMessage>("NoticeMessage");
+
+	m_pNotice->ChangeClip("Button_Empty");
+
+	SAFE_RELEASE(pNoticeObj);
 
 	AddToEachContainer();
 
@@ -148,8 +163,6 @@ bool CGameManager::Init()
 
 	return true;
 }
-
-
 
 bool CGameManager::AfterInit()
 {
@@ -242,7 +255,7 @@ void CGameManager::AddLight(CLight * pLight)
 void CGameManager::AddToEachContainer()
 {
 	const unordered_map<string, CScene*>* mapScene = GET_SINGLE(CSceneManager)->GetSceneMap();
-	
+
 	unordered_map<string, CScene*>::const_iterator iter;
 	unordered_map<string, CScene*>::const_iterator iterEnd = mapScene->end();
 
@@ -266,12 +279,12 @@ void CGameManager::AddToEachContainer()
 		//레이어의 오브젝트 리스트를 받아와서
 		pList = pDefaultLayer->GetObjectList();
 		iterObjEnd = pList->end();
-		
+
 		//순회하며 각 컴포넌트가 있는 지 확인하여 각 컨테이너에 넣어준다.
 		for (iterObj = pList->begin(); iterObj != iterObjEnd; ++iterObj)
 		{
 			pDoor = (*iterObj)->FindComponentFromType<CDoor>((COMPONENT_TYPE)UT_DOOR);
-			
+
 			if (pDoor)
 			{
 				AddDoor(iter->second, (*iterObj)->GetTag(), pDoor);
@@ -284,7 +297,7 @@ void CGameManager::AddToEachContainer()
 			if (strstr((*iterObj)->GetTag().c_str(), "Key") != nullptr)
 				AddKey((*iterObj)->GetTag());
 		}
-		
+
 		pList = pLightLayer->GetObjectList();
 		iterObjEnd = pList->end();
 
@@ -294,8 +307,8 @@ void CGameManager::AddToEachContainer()
 
 			if (pLight)
 			{
-				if(pLight->GetLightType() == LT_SPOT)
-					AddLight(pLight);				
+				if (pLight->GetLightType() == LT_SPOT)
+					AddLight(pLight);
 
 				SAFE_RELEASE(pLight);
 			}
@@ -438,6 +451,11 @@ void CGameManager::PlayerSpon(const Vector3 & vPos, const Vector3 & vRot)
 	m_pPlayerTr->SetWorldPos(vPos);
 }
 
+void CGameManager::ChangeNoticeClip(const string & strName)
+{
+	m_pNotice->ChangeClip(strName);
+}
+
 void CGameManager::SaveCheckPoint()
 {
 	/*
@@ -449,7 +467,7 @@ void CGameManager::SaveCheckPoint()
 	6. 보스가 뒤지셨는지?
 	*/
 	// 파일 객체(ofstream) 생성
-	
+
 	string strFileName = "CheckPoint.cpd";
 	BinaryWrite pInstBW(strFileName);
 
@@ -470,10 +488,10 @@ void CGameManager::SaveCheckPoint()
 	for (iterDoor = m_ChangedDoorList.begin(); iterDoor != iterDoorEnd; ++iterDoor)
 	{
 		pObj = (*iterDoor)->GetGameObject();
-		
+
 		string strSceneName = pObj->GetScene()->GetTag();
-		string strName		= pObj->GetTag();		
-		bool   bLock		= (*iterDoor)->IsLock();
+		string strName = pObj->GetTag();
+		bool   bLock = (*iterDoor)->IsLock();
 
 		pInstBW.WriteData(strSceneName);
 		pInstBW.WriteData(strName);
@@ -493,8 +511,8 @@ void CGameManager::SaveCheckPoint()
 		pObj = (*iterLight)->GetGameObject();
 
 		string  strSceneName = pObj->GetScene()->GetTag();
-		string  strName		 = pObj->GetTag();
-		Vector4 vColor		 = (*iterLight)->GetLightColor();
+		string  strName = pObj->GetTag();
+		Vector4 vColor = (*iterLight)->GetLightColor();
 
 		pInstBW.WriteData(strSceneName);
 		pInstBW.WriteData(strName);
@@ -512,13 +530,13 @@ void CGameManager::SaveCheckPoint()
 	for (iterItem = m_ChangedItemObjList.begin(); iterItem != iterItemEnd; ++iterItem)
 	{
 		string strSceneName = pObj->GetScene()->GetTag();
-		string strName		= (*iterItem)->GetTag();
-		bool   bEnable		= (*iterItem)->GetEnable();
+		string strName = (*iterItem)->GetTag();
+		bool   bEnable = (*iterItem)->GetEnable();
 
 		pInstBW.WriteData(strSceneName);
 		pInstBW.WriteData(strName);
 		pInstBW.WriteData(bEnable);
-	}	
+	}
 
 
 
@@ -553,13 +571,13 @@ void CGameManager::LoadCheckPoint()
 	for (int i = 0; i < iCount; ++i)
 	{
 		string strSceneName = pInstBR.ReadString();
-		string strName		= pInstBR.ReadString();
-		bool   bLock		= pInstBR.ReadBool();
+		string strName = pInstBR.ReadString();
+		bool   bLock = pInstBR.ReadBool();
 
 		pDoor = FindDoor(strSceneName, strName);
 		if (!bLock)
 			pDoor->UnLock();
-		
+
 		m_ChangedDoorList.push_back(pDoor);
 	}
 
@@ -568,8 +586,8 @@ void CGameManager::LoadCheckPoint()
 	for (int i = 0; i < iCount; ++i)
 	{
 		string  strSceneName = pInstBR.ReadString();
-		string  strName		 = pInstBR.ReadString();
-		Vector4 vColor		 = pInstBR.ReadVector4();
+		string  strName = pInstBR.ReadString();
+		Vector4 vColor = pInstBR.ReadVector4();
 
 		pLight = FindLight(strSceneName, strName);
 		pLight->SetLightColor(vColor, vColor, vColor);
@@ -582,8 +600,8 @@ void CGameManager::LoadCheckPoint()
 	for (int i = 0; i < iCount; ++i)
 	{
 		string strSceneName = pInstBR.ReadString();
-		string strName		= pInstBR.ReadString();
-		bool   bEnable		= pInstBR.ReadBool();
+		string strName = pInstBR.ReadString();
+		bool   bEnable = pInstBR.ReadBool();
 
 		pObj = FindItemObject(strSceneName, strName);
 		pObj->SetEnable(bEnable);
@@ -615,7 +633,7 @@ void CGameManager::CalculateShadowLight()
 	Vector3 vDist = vLightPos - vPlayerPos;
 	float	fMinDist = vDist.Length();
 	float	fDist;
-	
+
 	for (int i = 1; i < m_vecLight[iSection].size(); ++i)
 	{
 		vLightPos = m_vecLight[iSection][i]->GetWorldPos();
@@ -632,7 +650,7 @@ void CGameManager::CalculateShadowLight()
 	m_pCamera->SetShadowVP(pLight->ComputeLightView());
 }
 
-void CGameManager::BlinkAllSceneLight(float fLimitTime, float fDeltaTime, 
+void CGameManager::BlinkAllSceneLight(float fLimitTime, float fDeltaTime,
 	const Vector4 & vColor, bool bFinalTurnOn)
 {
 	CScene* pScene = GET_SINGLE(CSceneManager)->GetScene();
@@ -643,9 +661,10 @@ void CGameManager::BlinkAllSceneLight(float fLimitTime, float fDeltaTime,
 	unordered_map<string, CLight*>::iterator iter;
 	unordered_map<string, CLight*>::iterator iterEnd = mapLight->end();
 
-	for (iter = mapLight->begin();iter != iterEnd; ++iter)
+	for (iter = mapLight->begin(); iter != iterEnd; ++iter)
 		iter->second->StartBlink(fLimitTime, fDeltaTime, vColor, bFinalTurnOn);
 
 	SAFE_RELEASE(pScene);
 }
+
 

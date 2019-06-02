@@ -4,6 +4,7 @@
 #include "HealingPackIcon.h"
 #include "Human_Player.h"
 #include <Component/ColliderSphere.h>
+#include "../GameManager.h"
 
 CHealingPack::CHealingPack() :
 	m_isInvenInItem(false),
@@ -77,6 +78,7 @@ int CHealingPack::Update(float _fTime)
 
 		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 		pPlayer->ChangeRayAnim("AimOff");
+		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
 
 		m_bMotion = false;
 
@@ -125,6 +127,7 @@ void CHealingPack::HitEnter(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 		if (_pDest->GetColliderID() == UCI_PLAYER_RAY)
 		{
 			pPlayer->ChangeRayAnim("AimOn");
+			GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_F_Pickup");
 			m_bGetItem = true;
 		}
 	}
@@ -141,7 +144,7 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
 	if (m_bGetItem)
 	{
-		if (KEYUP("LButton") == true)
+		if (KEYUP("F") == true)
 		{
 			if (m_isInvenInItem == false)
 			{
@@ -169,6 +172,7 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 
 				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 				pPlayer->ChangeRayAnim("AimOff");
+				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);

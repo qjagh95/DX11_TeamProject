@@ -58,7 +58,7 @@ bool CEventMessage::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "EventMessage", TEXT("UI/Tutorial/Press_Ctrl_new.png"));
+	pMaterial->SetDiffuseTex(0, "EventMessage", TEXT("UI/Tutorial/Message_Empty.png"));
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);

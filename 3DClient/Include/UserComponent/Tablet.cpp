@@ -4,6 +4,7 @@
 #include "TabletIcon.h"
 #include "Human_Player.h"
 #include <Component/ColliderSphere.h>
+#include "../GameManager.h"
 
 CTablet::CTablet() :
 	m_isInvenInItem(false),
@@ -69,6 +70,7 @@ int CTablet::Update(float _fTime)
 
 		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 		pPlayer->ChangeRayAnim("AimOff");
+		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
 
 		m_bMotion = false;
 
@@ -95,6 +97,7 @@ void CTablet::Hit(CCollider * _pSrc, CCollider * _pDest, float _fTime)
 		if (_pDest->GetColliderID() == UCI_PLAYER_RAY)
 		{
 			pPlayer->ChangeRayAnim("AimOn");
+			GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_F_Pickup");
 			m_bGetItem = true;
 		}
 	}
@@ -108,7 +111,7 @@ void CTablet::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
 	if (m_bGetItem)
 	{
-		if (KEYUP("LButton") == true)
+		if (KEYUP("F") == true)
 		{
 			if (m_isInvenInItem == false)
 			{
@@ -126,6 +129,7 @@ void CTablet::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 
 				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 				pPlayer->ChangeRayAnim("AimOff");
+				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);

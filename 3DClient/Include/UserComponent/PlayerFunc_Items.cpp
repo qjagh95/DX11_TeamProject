@@ -11,6 +11,7 @@
 
 bool CHuman_Player::Init_Items()
 {
+	PUN::CInput::GetInst()->AddKey("F", 'F');
 	PUN::CInput::GetInst()->AddKey("U", 'U');
 	PUN::CInput::GetInst()->AddKey("K", 'K');
 

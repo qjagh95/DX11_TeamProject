@@ -84,57 +84,29 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pLandScape);
 	SAFE_RELEASE(pLandScapeObj);	
 
-	CGameObject*	pPlayerObj = CGameObject::CreateObject("Player", pDefaultLayer, true);
+	CGameObject*	pKeyCardObj = CGameObject::CreateObject("KeyCard", pDefaultLayer);
 
-	CHuman_Player*	pPlayer = pPlayerObj->AddComponent<CHuman_Player>("Player");
+	CKeyCard*	pKeyCard = pKeyCardObj->AddComponent<CKeyCard>("KeyCard");
 
-	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
+	CTransform*	pKeyCardTr = pKeyCardObj->GetTransform();
 
-	pPlayerTr->SetWorldRot(0.f, 180.f, 0.f);
-	pPlayerTr->SetWorldPos(316.f, 13.f, 748.f);
+	pKeyCardTr->SetWorldPos(112.f, 17.f, 621.f);
 
-	SAFE_RELEASE(pPlayerTr);
-	SAFE_RELEASE(pPlayer);
-	SAFE_RELEASE(pPlayerObj);
-
-	/*CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
-	CTransform*	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldScale(0.3f, 0.3f, 0.1f);
-	pTransform->SetWorldPos(0.f, 0.f, 0.f);
-
-	SAFE_RELEASE(pTransform);
-
-	SAFE_RELEASE(pObject);
-
-	CLayer* pLightLayer = m_pScene->FindLayer("Light");
-
-	pObject = CGameObject::CreateObject("SpotLight", pLightLayer);
-
-	CLight* pLight = pObject->AddComponent<CLight>("Light");
-	pLight->SetLightDiffuse(Vector4::White);
-	pLight->SetLightType(LT_DIR);
-	pLight->SetLightRange(100.0f);
-	pLight->SetAngle(45.0f, 60.0f);
-
-	pTransform = pObject->GetTransform();
-	pTransform->RotationX(90.0f);
-	pTransform->SetWorldPos(50.0f, 70.0f, 0.0f);
-
-	SAFE_RELEASE(pTransform);
-	SAFE_RELEASE(pLight);
-	SAFE_RELEASE(pObject);
-	SAFE_RELEASE(pLightLayer);*/
+	SAFE_RELEASE(pKeyCardTr);
+	SAFE_RELEASE(pKeyCard);
+	SAFE_RELEASE(pKeyCardObj);
 
 	CGameObject*	pDoorObj = CGameObject::CreateObject("TutorialDoor", pDefaultLayer);
 
 	CDoor*	pDoor = pDoorObj->AddComponent<CDoor>("TutorialDoor");
 
+	pDoor->Lock(true, "MasterKey");
+
 	CTransform*	pDoorTr = pDoorObj->GetTransform();
 
 	pDoorTr->SetWorldPos(304.5f, 29.2f, 557.3f);
-	pDoorTr->SetLocalRot(0.f, 90.f, 0.f);
-	//pDoorTr->SetWorldRot(0.f, 180.f, 0.f);
+	//pDoorTr->SetLocalRot(0.f, 90.f, 0.f);
+	pDoorTr->SetWorldRot(0.f, 180.f, 0.f);
 
 	SAFE_RELEASE(pDoorTr);
 	SAFE_RELEASE(pDoor);
@@ -191,19 +163,7 @@ bool CTutorialScene::Init()
 	//SAFE_RELEASE(pUCTablet);
 	//SAFE_RELEASE(pTabletTr);
 	//SAFE_RELEASE(pObjTablet);		
-
-	CGameObject*	pKeyCardObj = CGameObject::CreateObject("KeyCard", pDefaultLayer);
-
-	CKeyCard*	pKeyCard = pKeyCardObj->AddComponent<CKeyCard>("KeyCard");
-
-	CTransform*	pKeyCardTr = pKeyCardObj->GetTransform();
-
-	pKeyCardTr->SetWorldPos(112.f, 17.f, 621.f);
-
-	SAFE_RELEASE(pKeyCardTr);
-	SAFE_RELEASE(pKeyCard);
-	SAFE_RELEASE(pKeyCardObj);
-
+	
 	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
 
 	CBattery*	pBattery = pBatteryObj->AddComponent<CBattery>("Battery");
@@ -215,6 +175,24 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pBatteryTr);
 	SAFE_RELEASE(pBattery);
 	SAFE_RELEASE(pBatteryObj);	
+
+	/*CGameObject*	pBushObject = CGameObject::CreateObject("Bush", pDefaultLayer);
+
+	CRenderer*	pBushRenderer = pBushObject->AddComponent<CRenderer>("BushRenderer");
+
+	pBushRenderer->SetMesh("Bush", L"JojiBush.fbx", MESH_PATH);
+
+	SAFE_RELEASE(pBushRenderer);
+
+	CTransform*	pBushTransform = pBushObject->GetTransform();
+
+	pBushTransform->SetWorldPos(316.f,5.f, 700.f);
+	pBushTransform->SetWorldRot(0.f, 90.f, 0.f);
+	pBushTransform->SetWorldScale(0.2f);
+
+	SAFE_RELEASE(pBushTransform);
+
+	SAFE_RELEASE(pBushObject);*/
 
 	SAFE_RELEASE(pCamera);
 

@@ -20,6 +20,7 @@ class CGameManager
 	CGameObject*			m_pPlayerObj;
 	CTransform*				m_pPlayerTr;
 	class CHuman_Player*	m_pPlayer;
+	class CNoticeMessage*	m_pNotice;
 
 	unordered_map<CScene*, unordered_map<string, class CDoor*>*>	m_mapDoor;
 	unordered_map<CScene*, unordered_map<string, CLight*>*>			m_mapLight;
@@ -64,6 +65,7 @@ public:
 	CTransform*		GetPlayerTr()	const;
 	CHuman_Player*	GetPlayer()		const;
 	void PlayerSpon(const Vector3& vPos, const Vector3& vRot);
+	void ChangeNoticeClip(const string& strName);
 
 	void SaveCheckPoint();
 	void LoadCheckPoint();

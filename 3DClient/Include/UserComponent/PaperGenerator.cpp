@@ -8,6 +8,7 @@
 #include "Component/ColliderSphere.h"
 #include "DocxGenerator.h"
 #include "Human_Player.h"
+#include "../GameManager.h"
 
 CPaperGenerator::CPaperGenerator()
 {
@@ -75,7 +76,7 @@ int CPaperGenerator::Update(float fTime)
 	{
 		if (!m_bOnInven)
 		{
-			if (KEYPRESS("LButton"))
+			if (KEYUP("F"))
 			{
 				m_bOnInven = true;
 
@@ -95,6 +96,7 @@ int CPaperGenerator::Update(float fTime)
 
 				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 				pPlayer->ChangeRayAnim("AimOff");
+				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
@@ -111,6 +113,7 @@ int CPaperGenerator::Update(float fTime)
 
 		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 		pPlayer->ChangeRayAnim("AimOff");
+		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
 
 		m_bMotion = false;
 
@@ -156,6 +159,7 @@ void CPaperGenerator::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 		{
 			m_bMouseOn = true;
 			pPlayer->ChangeRayAnim("AimOn");
+			GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_F_Pickup");
 		}
 	}
 

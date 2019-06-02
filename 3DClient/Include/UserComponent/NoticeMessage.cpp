@@ -44,13 +44,13 @@ bool CNoticeMessage::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "NM", TEXT("UI/Notice/Button_G.png"));
+	pMaterial->SetDiffuseTex(0, "NM", TEXT("UI/Notice/Button_Empty.png"));
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(307.f, 108.f, 1.f);
-	//m_pTransform->SetWorldPos(507.f, 108.f, 1.f);
+	m_pTransform->SetWorldScale(200.f, 100.f, 1.f);
+	m_pTransform->SetWorldPos(723.f, 351.f, 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("NMAnimation");
@@ -68,38 +68,38 @@ bool CNoticeMessage::Init()
 	vecClipFrame.clear();
 
 	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(307.f, 108.f);
+	tFrame.vRB = Vector2(200.f, 100.f);
 	vecClipFrame.push_back(tFrame);
 
-	m_pAnimation->AddClip("Button_E_Close", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"Close_Button", TEXT("UI/Notice/Button_E_Close.png"));
+	m_pAnimation->AddClip("Button_E_Door", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"Close_Button", TEXT("UI/Door_Info.png"));
 
 	vecClipFrame.clear();
 
 	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(307.f, 108.f);
+	tFrame.vRB = Vector2(200.f, 100.f);
 	vecClipFrame.push_back(tFrame);
 
-	m_pAnimation->AddClip("Button_E_Open", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"Open_Button", TEXT("UI/Notice/Button_E_Open.png"));
+	m_pAnimation->AddClip("Button_E_Hide", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"Close_Button", TEXT("UI/Hide_Info.png"));
 
 	vecClipFrame.clear();
 
 	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(307.f, 108.f);
+	tFrame.vRB = Vector2(200.f, 100.f);
 	vecClipFrame.push_back(tFrame);
 
-	m_pAnimation->AddClip("Button_F", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"F_Button", TEXT("UI/Notice/Button_F.png"));
+	m_pAnimation->AddClip("Button_F_Pickup", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"F_Button", TEXT("UI/PickUp_Info.png"));
 
 	vecClipFrame.clear();
 
 	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(307.f, 108.f);
+	tFrame.vRB = Vector2(200.f, 100.f);
 	vecClipFrame.push_back(tFrame);
 
-	m_pAnimation->AddClip("Button_G", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"G_Button", TEXT("UI/Notice/Button_G.png"));
+	m_pAnimation->AddClip("Button_Space_Parkour", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
+		"Space_Button", TEXT("UI/Vault_Info.png"));
 
 	vecClipFrame.clear();
 

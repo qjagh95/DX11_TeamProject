@@ -324,9 +324,6 @@
     <ClInclude Include="GameManager.h">
       <Filter>03. Manager</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\ST3_SlientTrace.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\BulletCase.h">
       <Filter>02. UserComponent\03. Field</Filter>
     </ClInclude>
@@ -395,6 +392,9 @@
     </ClInclude>
     <ClInclude Include="SceneComponent\Stage1Scene.h">
       <Filter>01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Slient.h">
+      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -566,9 +566,6 @@
     <ClCompile Include="GameManager.cpp">
       <Filter>03. Manager</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_SlientTrace.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\BulletCase.cpp">
       <Filter>02. UserComponent\03. Field</Filter>
     </ClCompile>
@@ -626,9 +623,6 @@
     <ClCompile Include="UserComponent\ST3_See.cpp">
       <Filter>01. SceneComponent\ST3\ST3_See</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\ST3_SlientState.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\NPCBase.cpp">
       <Filter>01. SceneComponent\ST3</Filter>
     </ClCompile>
@@ -640,6 +634,9 @@
     </ClCompile>
     <ClCompile Include="SceneComponent\Stage1Scene.cpp">
       <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Slient.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

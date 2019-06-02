@@ -266,13 +266,13 @@ bool CEventCollider::SetTutorial()
 
 	CTransform*	pTriggerTr = m_pTriggerObj->GetTransform();
 
-	pTriggerTr->SetWorldPos(309.f, 28.f, 549.f);
+	pTriggerTr->SetWorldPos(309.f, 28.f, 542.f);
 
 	SAFE_RELEASE(pTriggerTr);
 
 	pOBB = m_pTriggerObj->AddComponent<CColliderOBB3D>("TriggerBody");
 
-	pOBB->SetInfo(2.5f, Vector3::Axis, 2.5f);
+	pOBB->SetInfo(2.5f, Vector3::Axis, Vector3(10.f, 2.5f, 2.5f));
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CEventCollider::Hit);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CEventCollider::Out);
 
@@ -282,13 +282,13 @@ bool CEventCollider::SetTutorial()
 
 	pTriggerTr = pNextObj->GetTransform();
 
-	pTriggerTr->SetWorldPos(309.f, -1028.f, 549.f);
+	pTriggerTr->SetWorldPos(309.f, -1028.f, 545.f);
 
 	SAFE_RELEASE(pTriggerTr);
 
 	pOBB = pNextObj->AddComponent<CColliderOBB3D>("NextSceneBody");
 
-	pOBB->SetInfo(2.5f, Vector3::Axis, 2.5f);
+	pOBB->SetInfo(2.5f, Vector3::Axis, Vector3(10.f, 2.5f, 2.5f));
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CEventCollider::Hit);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CEventCollider::Out);
 
