@@ -199,14 +199,15 @@ namespace PUN
 		int		iFocus;
 		int		iDecalEnable;
 		int		i3DAnimation;
-
-		Vector2 vEmpty;
+		float	fBumpScale;
+		float	fEmpty;
 
 		_tagComponentCBuffer() :
 			iTextureAnimation2D(0),
 			iDeffered(1),
 			iFocus(0),
-			iDecalEnable(1)
+			iDecalEnable(1),
+			fBumpScale(0.0f)
 		{
 		}
 	}ComponentCBuffer, *PComponentCBuffer;

@@ -167,19 +167,20 @@ cbuffer Component	: register(b2)
     int     g_iFocus;
     int     g_iDecalEnable;
     int     g_i3DAnimation;
-    float2  vEmpty12312435;
+    float   g_fBumpScale;
+    float   g_vComponentEmpty;
 }
 
 cbuffer Public : register(b5)
 {
-    float g_DeltaTime;
-    float g_PlusedDeltaTime;
-    int g_isDeferred;
-    int g_isWireFrame;
-    float2 g_cameraNearFar;
-    float2 g_ViewPortSize;
-    int g_iSSAOEnable;
-    float3 g_empty;
+    float   g_DeltaTime;
+    float   g_PlusedDeltaTime;
+    int     g_isDeferred;
+    int     g_isWireFrame;
+    float2  g_cameraNearFar;
+    float2  g_ViewPortSize;
+    int     g_iSSAOEnable;
+    float3  g_empty;
 }
 
 cbuffer Light	: register(b3)
@@ -199,8 +200,8 @@ cbuffer Light	: register(b3)
 
 cbuffer RimLight : register(b4)
 {
-    float3 g_vRimColor;
-    float g_fRimPower;
+    float3  g_vRimColor;
+    float   g_fRimPower;
 }
 
 #define	RENDER_FORWARD	    0
@@ -236,9 +237,9 @@ static const float3 LUM_FACTOR = float3(0.299, 0.587, 0.114);
 
 cbuffer FinalPassConstants : register(b10)
 {
-    float g_fMiddleGrey;
-    float g_fLumWhiteSqr;
-    float2 fEmpty;
+    float   g_fMiddleGrey;
+    float   g_fLumWhiteSqr;
+    float2  fEmpty;
 }
 
 struct _tagLightInfo

@@ -1235,40 +1235,40 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 	m_pTarget[TARGET_STARLIGHT_SCOPE]->ResetShader(0);
 
-	// HitEffect Shader
+	//// HitEffect Shader
 
-	SetHitEffectAlpha(m_fHitEffectAlpha, _fTime);
+	//SetHitEffectAlpha(m_fHitEffectAlpha, _fTime);
 
-	// 셰이더 진입점 설정
-	m_pShader[SHADER_HIT_EFFECT]->SetShader();
+	//// 셰이더 진입점 설정
+	//m_pShader[SHADER_HIT_EFFECT]->SetShader();
 
-	// 셰이더에서 사용할 자원을 넘겨준다.
-	// - FINAL_TARGET(렌더 타겟), TARET_DEPTH을 SRV(Texture2D)로 연결시킨다.
-	m_pTarget[TARGET_FINAL]->SetShader(0);
-	m_pTarget[TARGET_DEPTH]->SetShader(2);
+	//// 셰이더에서 사용할 자원을 넘겨준다.
+	//// - FINAL_TARGET(렌더 타겟), TARET_DEPTH을 SRV(Texture2D)로 연결시킨다.
+	//m_pTarget[TARGET_FINAL]->SetShader(0);
+	//m_pTarget[TARGET_DEPTH]->SetShader(2);
 
-	// OM 단계에서 출력을 위한 자원인 RTV(StarLightScope)를 연결시킨다.
-	m_pTarget[TARGET_HITEFFECT]->ClearTarget();
-	m_pTarget[TARGET_HITEFFECT]->SetTarget();
+	//// OM 단계에서 출력을 위한 자원인 RTV(StarLightScope)를 연결시킨다.
+	//m_pTarget[TARGET_HITEFFECT]->ClearTarget();
+	//m_pTarget[TARGET_HITEFFECT]->SetTarget();
 
-	// 렌더링 파이프라인 시작
-	CDevice::GetInst()->GetContext()->Draw(4, 0);
+	//// 렌더링 파이프라인 시작
+	//CDevice::GetInst()->GetContext()->Draw(4, 0);
 
-	// Reset SRV, RTV
-	m_pTarget[TARGET_FINAL]->ResetShader(0);
-	m_pTarget[TARGET_DEPTH]->ResetShader(2);
-	m_pTarget[TARGET_HITEFFECT]->ResetTarget();
+	//// Reset SRV, RTV
+	//m_pTarget[TARGET_FINAL]->ResetShader(0);
+	//m_pTarget[TARGET_DEPTH]->ResetShader(2);
+	//m_pTarget[TARGET_HITEFFECT]->ResetTarget();
 
-	// 풀 스크린 출력
-	m_pShader[SHADER_FULL_SCREEN]->SetShader();
-	m_pTarget[TARGET_HITEFFECT]->SetShader(0);
-	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
-	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
-	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
-	CDevice::GetInst()->GetContext()->Draw(4, 0);
-	m_pState[STATE_DEPTH_DISABLE]->ResetState();
-	m_pTarget[TARGET_HITEFFECT]->ResetShader(0);
+	//// 풀 스크린 출력
+	//m_pShader[SHADER_FULL_SCREEN]->SetShader();
+	//m_pTarget[TARGET_HITEFFECT]->SetShader(0);
+	//CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
+	//CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	//CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
+	//CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	//CDevice::GetInst()->GetContext()->Draw(4, 0);
+	//m_pState[STATE_DEPTH_DISABLE]->ResetState();
+	//m_pTarget[TARGET_HITEFFECT]->ResetShader(0);
 }
 
 void CRenderManager::RenderShadowMap(float fTime)

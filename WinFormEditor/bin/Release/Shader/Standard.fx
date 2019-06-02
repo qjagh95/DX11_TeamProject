@@ -200,7 +200,9 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 	{
 		float4 vNormalCol = g_NormalTex.Sample(g_DiffuseSmp, input.vUV);
 
-		vNormalCol.xyz = vNormalCol.xyz * 2.f - 1.f;
+        vNormalCol.xyz = vNormalCol.xyz * 2.f - 1.f;
+
+        vNormal = normalize(lerp(float3(0.0f, 0.0f, 1.0f), vNormalCol.xyz, g_fBumpScale));
 
 		float3x3	mat =
 		{
@@ -209,8 +211,9 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 			input.vNormal
 		};
 
-		vNormal = normalize(mul(vNormalCol.xyz, mat));
-	}
+		//vNormal = normalize(mul(vNormalCol.xyz, mat));
+        vNormal = normalize(mul(vNormal, mat));
+    }
 
     if (g_isDeferred == RENDER_FORWARD)
     {

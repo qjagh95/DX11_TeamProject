@@ -106,6 +106,8 @@ private:
 	void RenderNaviEditorMode(float fTime);
 	void UpdateTransform();
 	void UpdateShadowTransform();
+	void SetBumpScale(float fScale, float fTime);
+	void SetBumpScaleNone();
 };
 
 PUN_END

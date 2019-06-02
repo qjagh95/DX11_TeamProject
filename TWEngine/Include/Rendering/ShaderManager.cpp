@@ -226,10 +226,10 @@ bool CShaderManager::Init()
 		return false;
 
 	// Hit Effect
-	pEntry[ST_VERTEX] = (char*)"HitEffectFullScreenVS";
-	pEntry[ST_PIXEL] = (char*)"HitEffectPS";
-	if (!LoadShader(HIT_EFFECT_SHADER, TEXT("HitEffect.fx"), pEntry))
-		return false;
+	//pEntry[ST_VERTEX] = (char*)"HitEffectFullScreenVS";
+	//pEntry[ST_PIXEL] = (char*)"HitEffectPS";
+	//if (!LoadShader(HIT_EFFECT_SHADER, TEXT("HitEffect.fx"), pEntry))
+	//	return false;
 
 	//Geometry 쉐이더를 쓰는 파이프라인
 
@@ -316,30 +316,29 @@ bool CShaderManager::Init()
 		return false;
 
 	// 상수버퍼 만들기
-	CreateCBuffer("Transform",		0,	sizeof(TransformCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
-	CreateCBuffer("Material",		1,	sizeof(Material),			CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
-	CreateCBuffer("Component",		2,	sizeof(ComponentCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
-	CreateCBuffer("Light",			3,	sizeof(LightInfo),			CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("RimLight",		4,	 sizeof(RimLightInfo),		CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("PublicCBuffer",	5,	sizeof(PublicCBuffer),		CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Collider",		7,	sizeof(Vector4),			CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Animation2D",	8,	sizeof(Animation2DCBuffer), CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
-	CreateCBuffer("Bloom",			11,	sizeof(BloomCB),			CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
-	CreateCBuffer("Button",			9,	sizeof(ButtonCBuffer),		CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Bar",			9,	sizeof(BarCBuffer),			CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Fog",			9,	sizeof(FogCBuffer),			CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("FinalPass",		9,	sizeof(FinalPassCB),		CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Particle",		10, sizeof(ParticleCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
-	CreateCBuffer("HDRSecond",		10, sizeof(HDR2ndPassCB),		CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("StarLightScope", 12, sizeof(StarLightScopeCB),	CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("DepthFog",		13, sizeof(DepthFogCBuffer),	CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("Blur",			1,	sizeof(BlurCBuffer),		CST_COMPUTE);
-	CreateCBuffer("HDRFirst",		2,	sizeof(HDR1stPassCB),		CST_COMPUTE);
-	CreateCBuffer("Adaptation",		3,	sizeof(AdaptationCB),		CST_COMPUTE);
-	CreateCBuffer("BloomThreshold", 4,	sizeof(BloomThresholdCB),	CST_COMPUTE);
-	CreateCBuffer("NaviLandCBuffer", 6, sizeof(NaviLandCBuffer), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("GridCBuffer", 8, sizeof(GridCBuffer), CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("HitEffect", 4, sizeof(HitEffectCB), CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Transform",		 0,	 sizeof(TransformCBuffer),		CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Material",		 1,	 sizeof(Material),				CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Component",		 2,	 sizeof(ComponentCBuffer),		CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Light",			 3,	 sizeof(LightInfo),				CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("RimLight",		 4,	 sizeof(RimLightInfo),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("PublicCBuffer",	 5,	 sizeof(PublicCBuffer),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("NaviLandCBuffer", 6,  sizeof(NaviLandCBuffer),		CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Collider",		 7,	 sizeof(Vector4),				CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("GridCBuffer",	 8,  sizeof(GridCBuffer),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Animation2D",	 8,	 sizeof(Animation2DCBuffer),	CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("Button",			 9,	 sizeof(ButtonCBuffer),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Bar",			 9,	 sizeof(BarCBuffer),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Fog",			 9,	 sizeof(FogCBuffer),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("FinalPass",		 9,	 sizeof(FinalPassCB),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Particle",		 10, sizeof(ParticleCBuffer),		CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("HDRSecond",		 10, sizeof(HDR2ndPassCB),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Bloom",			 11, sizeof(BloomCB),				CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
+	CreateCBuffer("StarLightScope",  12, sizeof(StarLightScopeCB),		CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("DepthFog",		 13, sizeof(DepthFogCBuffer),		CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("Blur",			 1,	 sizeof(BlurCBuffer),			CST_COMPUTE);
+	CreateCBuffer("HDRFirst",		 2,	 sizeof(HDR1stPassCB),			CST_COMPUTE);
+	CreateCBuffer("Adaptation",		 3,	 sizeof(AdaptationCB),			CST_COMPUTE);
+	CreateCBuffer("BloomThreshold",  4,	 sizeof(BloomThresholdCB),		CST_COMPUTE);
 	
 	return true;
 }

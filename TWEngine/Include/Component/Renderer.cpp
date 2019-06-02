@@ -53,6 +53,7 @@ CRenderer::CRenderer() :
 	memset(&m_tComponentCBuffer, 0, sizeof(m_tComponentCBuffer));
 	m_tComponentCBuffer.iDecalEnable = 0;
 	m_tComponentCBuffer.i3DAnimation = 0;
+	m_tComponentCBuffer.fBumpScale = 0.0f;
 
 	m_pAnimation = NULLPTR;
 	m_BoneRot = Vector3::One;
@@ -525,11 +526,23 @@ bool CRenderer::Init()
 	if (CCore::GetInst()->m_bEditorMode)
 		SetRenderState(CULL_NONE);
 
+#ifdef DEBUG
+	CInput::GetInst()->AddKey("KEY_K", 'K');
+#endif
+
 	return true;
 }
 
 int CRenderer::Update(float fTime)
 {
+#ifdef DEBUG
+	short sDir = CInput::GetInst()->GetWheelDir();
+	SetBumpScale(20.0f * sDir, fTime);
+
+	if (KEYDOWN("KEY_K"))
+		SetBumpScaleNone();
+#endif
+
 	if (m_pAnimation == NULLPTR)
 		return 0;
 
@@ -834,4 +847,14 @@ void CRenderer::UpdateShadowTransform()
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform", &tCBuffer);
 
 	SAFE_RELEASE(pMainCamera);
+}
+
+void CRenderer::SetBumpScale(float fScale, float fTime)
+{
+	m_tComponentCBuffer.fBumpScale += fScale * fTime;
+}
+
+void CRenderer::SetBumpScaleNone()
+{
+	m_tComponentCBuffer.fBumpScale = 0.0f;
 }
