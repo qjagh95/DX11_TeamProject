@@ -34,7 +34,7 @@ bool CLocker::Init()
 	m_vRelativePos = Vector3(-28.0f, 15.0f, 24.0f);
 
 	CRenderer* pRD = m_pObject->AddComponent<CRenderer>("LockerRenderer");
-	CCollider* pOBB = m_pObject->AddComponent<CColliderOBB3D>("LockerBody");
+	CColliderOBB3D* pOBB = m_pObject->AddComponent<CColliderOBB3D>("LockerBody");
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CLocker::Interact);
 
 	pRD->SetMesh("Large_Locker", TEXT("Large_Locker.msh"));
@@ -42,6 +42,26 @@ bool CLocker::Init()
 	m_pTransform->SetLocalRotY(90.0f);
 	//m_pTransform->SetWorldPivot(0.0f, 0.0f, 0.0f);
 	m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
+
+	Vector3 vMeshLength = pRD->GetMeshLength();
+	Vector3 vScale = vMeshLength * GetWorldScale();
+	Vector3 vCenter;
+	vCenter.x = vMeshLength.z * 0.0f;
+	vCenter.y = vMeshLength.y * 0.5f;
+	vCenter.z = vMeshLength.x * 0.0f;
+
+	Vector3 vAxis[3];
+	Matrix matLocalRot = m_pTransform->GetLocalRotMatrix();
+
+	vScale = vScale * 0.5f;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		vAxis[i] = Vector3::Axis[(AXIS)i];
+		vAxis[i] = vAxis[i].TransformNormal(matLocalRot);
+	}
+
+	pOBB->SetInfo(vCenter, vAxis, vScale);
 
 	CGameObject* pObj = CGameObject::CreateObject("LockerDoorObj");
 	CTransform* pTr = pObj->GetTransform();
