@@ -330,9 +330,6 @@
     <ClInclude Include="UserComponent\BulletCase.h">
       <Filter>02. UserComponent\03. Field</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Event.h">
-      <Filter>02. UserComponent\04. UI\03. Event</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\PaperGenerator.h">
       <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\01. Stage 1</Filter>
     </ClInclude>
@@ -389,6 +386,12 @@
     </ClInclude>
     <ClInclude Include="UserComponent\NPCBase.h">
       <Filter>01. SceneComponent\ST3</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\EventCollider.h">
+      <Filter>02. UserComponent\04. UI\03. Event</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\NoticeMessage.h">
+      <Filter>02. UserComponent\04. UI\03. Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -566,9 +569,6 @@
     <ClCompile Include="UserComponent\BulletCase.cpp">
       <Filter>02. UserComponent\03. Field</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\Event.cpp">
-      <Filter>02. UserComponent\04. UI\03. Event</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\PaperGenerator.cpp">
       <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\01. Stage 1</Filter>
     </ClCompile>
@@ -628,6 +628,12 @@
     </ClCompile>
     <ClCompile Include="UserComponent\NPCBase.cpp">
       <Filter>01. SceneComponent\ST3</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\EventCollider.cpp">
+      <Filter>02. UserComponent\04. UI\03. Event</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\NoticeMessage.cpp">
+      <Filter>02. UserComponent\04. UI\03. Event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

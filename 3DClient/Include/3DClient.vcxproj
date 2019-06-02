@@ -215,7 +215,7 @@
     <ClInclude Include="UserComponent\DocxTest.h" />
     <ClInclude Include="UserComponent\Door.h" />
     <ClInclude Include="UserComponent\Enemies.h" />
-    <ClInclude Include="UserComponent\Event.h" />
+    <ClInclude Include="UserComponent\EventCollider.h" />
     <ClInclude Include="UserComponent\EventMessage.h" />
     <ClInclude Include="UserComponent\Field.h" />
     <ClInclude Include="UserComponent\Ghost.h" />
@@ -242,6 +242,7 @@
     <ClInclude Include="UserComponent\MessageTH.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Move_Func_Header.hpp" />
+    <ClInclude Include="UserComponent\NoticeMessage.h" />
     <ClInclude Include="UserComponent\NPCBase.h" />
     <ClInclude Include="UserComponent\PaperBQ.h" />
     <ClInclude Include="UserComponent\PaperGenerator.h" />
@@ -297,7 +298,7 @@
     <ClCompile Include="UserComponent\DocxTest.cpp" />
     <ClCompile Include="UserComponent\Door.cpp" />
     <ClCompile Include="UserComponent\Enemies.cpp" />
-    <ClCompile Include="UserComponent\Event.cpp" />
+    <ClCompile Include="UserComponent\EventCollider.cpp" />
     <ClCompile Include="UserComponent\EventMessage.cpp" />
     <ClCompile Include="UserComponent\Field.cpp" />
     <ClCompile Include="UserComponent\Ghost.cpp" />
@@ -321,6 +322,7 @@
     <ClCompile Include="UserComponent\MessagePlanA.cpp" />
     <ClCompile Include="UserComponent\MessageTH.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
+    <ClCompile Include="UserComponent\NoticeMessage.cpp" />
     <ClCompile Include="UserComponent\NPCBase.cpp" />
     <ClCompile Include="UserComponent\PaperBQ.cpp" />
     <ClCompile Include="UserComponent\PaperGenerator.cpp" />

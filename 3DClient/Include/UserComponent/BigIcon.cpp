@@ -90,20 +90,20 @@ bool CBigIcon::Init()
 	vecClipFrame.clear();
 
 	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(800.f, 600.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
 	vecClipFrame.push_back(tFrame);
 
 	m_pAnimation->AddClip("Cola_Detail", A2D_ATLAS, AO_LOOP, 0.5f, vecClipFrame,
-		"DeTail_Cola", TEXT("UI/Icon/Cola_Detail.png"));
+		"DeTail_Cola", TEXT("UI/Icon/lunchbox_Detail.png"));
 
 	vecClipFrame.clear();
 
 	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(800.f, 600.f);
+	tFrame.vRB = Vector2(720.f, 720.f);
 	vecClipFrame.push_back(tFrame);
 
 	m_pAnimation->AddClip("FoodCan_Detail", A2D_ATLAS, AO_LOOP, 0.5f, vecClipFrame,
-		"DeTail_FoodCan", TEXT("UI/Icon/FoodCan_Detail.png"));
+		"DeTail_FoodCan", TEXT("UI/Icon/MedicalKit_Detail.png"));
 
 	vecClipFrame.clear();
 

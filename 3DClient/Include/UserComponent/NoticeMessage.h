@@ -1,19 +1,19 @@
 #pragma once
-#include "Component/UserComponent.h"
+#include "Component\UserComponent.h"
 #include "../Client.h"
 #include "Component/Animation2D.h"
 
 PUN_USING
 
-class CEventMessage :
+class CNoticeMessage :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CEventMessage();
-	CEventMessage(const CEventMessage& eventmsg);
-	virtual ~CEventMessage();
+	CNoticeMessage();
+	CNoticeMessage(const CNoticeMessage& notice);
+	virtual ~CNoticeMessage();
 
 private:
 	CAnimation2D*	m_pAnimation;
@@ -29,6 +29,6 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CEventMessage* Clone();
+	virtual CNoticeMessage* Clone();
 };
 
