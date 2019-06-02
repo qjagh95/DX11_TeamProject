@@ -257,6 +257,11 @@ namespace WinFormEditor
             return TB_SelecteMesh;
         }
 
+        public ComboBox GetLightComboBox()
+        {
+            return CB_LightType;
+        }
+
         public Dictionary<string, ObjectInfo> GetObjInfo()
         {
             return m_objInfo;

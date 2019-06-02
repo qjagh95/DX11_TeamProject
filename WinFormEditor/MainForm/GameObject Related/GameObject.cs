@@ -113,6 +113,11 @@ namespace WinFormEditor
             {
                 m_editForm.GetAddLightComponentBtn().BackColor = Color.LawnGreen;
                 m_editForm.GetLightInst().SetLightToolsEnable(true);
+
+                // Light Type Tag를 받아온다.
+                ComboBox lightComboBox = m_editForm.GetLightComboBox();
+                eLightType lightType = (eLightType)wrapper.GetLightType();
+                lightComboBox.SelectedIndex = (int)lightType;
             }
             else
             {
