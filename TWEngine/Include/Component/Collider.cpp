@@ -253,6 +253,7 @@ void CCollider::Collision(float fTime)
 void CCollider::Render(float fTime)
 {
 	m_bCallBackFunc = false;
+
 	if (CCollisionManager::GetInst()->GetIsShow() == false)
 		return;
 

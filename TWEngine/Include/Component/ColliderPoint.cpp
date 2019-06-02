@@ -72,6 +72,8 @@ void CColliderPoint::Collision(float fTime)
 
 void CColliderPoint::Render(float fTime)
 {
+	m_bCallBackFunc = false;
+
 	if (CCollisionManager::GetInst()->GetIsShow() == false)
 		return;
 

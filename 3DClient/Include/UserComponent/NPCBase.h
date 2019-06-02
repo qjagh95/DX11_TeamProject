@@ -73,6 +73,7 @@ protected:
 	int m_Hp;
 	float m_TargetDistance;
 	float m_MoveSpeed;
+	bool m_PathFind;
 
 protected:
 	NPCBase();

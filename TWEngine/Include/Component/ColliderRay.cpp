@@ -175,6 +175,8 @@ void CColliderRay::Collision(float fTime)
 
 void CColliderRay::Render(float fTime)
 {
+	m_bCallBackFunc = false;
+
 #ifdef _DEBUG
 	/*Matrix	matPos, matScale;
 	matPos.Translation(m_tInfo.vCenter);

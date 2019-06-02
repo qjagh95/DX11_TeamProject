@@ -1,4 +1,5 @@
 #pragma once
+#include <Component/SoundSource.h>
 #include "NPCBase.h"
 
 PUN_USING
@@ -21,11 +22,11 @@ class ST3_Suprise : public NPCBase
 {
 public:
 	bool Init() override;
-	int Input(float fTime) override;
-	int Update(float fTime) override;
-	int LateUpdate(float fTime) override;
-	void Collision(float fTime) override;
-	void Render(float fTime) override;
+	int Input(float DeltaTime) override;
+	int Update(float DeltaTime) override;
+	int LateUpdate(float DeltaTime) override;
+	void Collision(float DeltaTime) override;
+	void Render(float DeltaTime) override;
 	ST3_Suprise* Clone() override;
 
 	void SetDoorName(const string& DoorName) { m_isDoorOpenMode = true; m_DoorName = DoorName; }
@@ -45,6 +46,9 @@ private:
 	SUPRISE_AXIS m_Axis;
 	float m_Offset;
 	float m_YOffset;
+
+	CGameObject* m_3DSoundObject;
+	CSoundSource* m_3DSound;
 
 public:
 	ST3_Suprise();

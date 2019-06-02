@@ -93,6 +93,7 @@ void CColliderOBB::Collision(float fTime)
 
 void CColliderOBB::Render(float fTime)
 {
+	
 	if (CCollisionManager::GetInst()->GetIsShow() == false)
 		return;
 

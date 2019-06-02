@@ -127,6 +127,8 @@ void CColliderOBB3D::Collision(float fTime)
 
 void CColliderOBB3D::Render(float fTime)
 {
+	m_bCallBackFunc = false;
+
 	if (CCollisionManager::GetInst()->GetIsShow() == false)
 		return;
 
@@ -163,8 +165,7 @@ void CColliderOBB3D::Render(float fTime)
 	tCBuffer.matWV.Transpose();
 	tCBuffer.matWVP.Transpose();
 
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform",
-		&tCBuffer);
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("Transform", &tCBuffer);
 
 	SAFE_RELEASE(pMainCamera);
 

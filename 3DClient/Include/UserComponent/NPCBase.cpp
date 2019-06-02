@@ -24,6 +24,7 @@ NPCBase::NPCBase()
 	m_TargetDistance = 0.0f;
 	m_MoveSpeed = 5.0f;
 	m_Y = 0.0f;
+	m_PathFind = false;
 	m_CurName = "None";
 }
 
