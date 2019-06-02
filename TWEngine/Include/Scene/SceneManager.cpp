@@ -181,6 +181,18 @@ void CSceneManager::ChangeScene(const string & KeyName)
 		StartIter->second->SetScene(m_pCurScene);
 
 	GET_SINGLE(CRenderManager)->SetSkyObject(getScene->GetSkyObjectNonCount());
+
+	m_bChange = true;
+}
+
+void CSceneManager::SetChange(bool bChange)
+{
+	m_bChange = bChange;
+}
+
+bool CSceneManager::GetChange() const
+{
+	return m_bChange;
 }
 
 void CSceneManager::DeleteScene(const string & SceneName)

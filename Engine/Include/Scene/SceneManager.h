@@ -18,6 +18,8 @@ public:
 	class CScene * GetSceneNonCount() const;
 	CScene* FindScene(const string& KeyName);
 	void ChangeScene(const string& KeyName);
+	void SetChange(bool bChange);
+	bool GetChange()	const;
 	void DeleteScene(const string& SceneName);
 
 	CGameObject*	GetMainCameraObj()					const;

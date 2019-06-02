@@ -3,6 +3,7 @@
 #include "SceneComponent/MainScene.h"
 #include "SceneComponent/TutorialScene.h"
 #include "SceneComponent/FirTestScene.h"
+#include "SceneComponent/Stage1Scene.h"
 #include "SceneComponent/JBH_Stage3.h"
 #include "SceneComponent/TestScene.h"
 #include "SceneComponent/TestScene-YH.h"
@@ -12,6 +13,7 @@
 #include "CommonSoundLoader.h"
 #include <Rendering/ShaderManager.h>
 #include <Resource/ResourcesManager.h>
+#include "GameManager.h"
 
 PUN_USING
 
@@ -27,6 +29,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		true))
 	{
 		CCore::DestroyInst();
+		DESTROY_SINGLE(CGameManager);
 		return 0;
 	}
 
@@ -61,7 +64,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	CCommonSoundLoader::GetInst()->LoadSoundCSVList(TEXT("CommonSound.csv"));
 	CCommonSoundLoader::GetInst()->LoadSoundRandomSeedCnt(TEXT("CommonSound_SoundCnt.csv"));
-	GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("First", "Test");
+	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "Test");
+	GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
+	
 
 #ifdef _DEBUG
 	//GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
@@ -78,12 +83,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	GET_SINGLE(CSceneManager)->Access();
 
+	if (!GET_SINGLE(CGameManager)->Init())
+		return 0;
+
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene");
 	//GET_SINGLE(CSceneManager)->AddSceneComponent<CFirTestScene>("Fir");
 	
 
     int iRet = CCore::GetInst()->Run();
 
+	DESTROY_SINGLE(CGameManager);
 	CCore::DestroyInst();
 	CCameraEff::DestroyInst();
 	CCommonSoundLoader::DestroyInst();

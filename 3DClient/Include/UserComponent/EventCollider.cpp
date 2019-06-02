@@ -136,6 +136,12 @@ int CEventCollider::Update(float fTime)
 			pTr->SetWorldPos(vPlayerPos);
 
 			GET_SINGLE(CRenderManager)->SetFadeAmount(0.001f, fTime);
+
+			GET_SINGLE(CSceneManager)->ChangeScene("Stage1"); 
+
+			pTr->SetWorldPos(0.f);
+
+			m_bNext = false;
 		}
 
 		SAFE_RELEASE(pTr);
@@ -282,13 +288,13 @@ bool CEventCollider::SetTutorial()
 
 	pTriggerTr = pNextObj->GetTransform();
 
-	pTriggerTr->SetWorldPos(309.f, -1028.f, 545.f);
+	pTriggerTr->SetWorldPos(309.f, -1028.f, 544.f);
 
 	SAFE_RELEASE(pTriggerTr);
 
 	pOBB = pNextObj->AddComponent<CColliderOBB3D>("NextSceneBody");
 
-	pOBB->SetInfo(2.5f, Vector3::Axis, Vector3(10.f, 2.5f, 2.5f));
+	pOBB->SetInfo(2.5f, Vector3::Axis, Vector3(30.f, 5.f, 50.f));
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CEventCollider::Hit);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CEventCollider::Out);
 

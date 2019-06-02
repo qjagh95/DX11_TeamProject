@@ -209,7 +209,7 @@ bool CResourcesManager::Init()
 		D3D11_PRIMITIVE_TOPOLOGY_LINELIST, iBoxIdx,
 		24, 4, D3D11_USAGE_DEFAULT,
 		DXGI_FORMAT_R32_UINT);
-
+	
 	Vector3	vDecalBox[8] =
 	{
 		Vector3(-0.5f, 0.5f, -0.5f),
@@ -229,6 +229,13 @@ bool CResourcesManager::Init()
 	};
 
 	CreateMesh("VolumeBox", DECAL_SHADER, POS_LAYOUT,
+		vDecalBox, 8, sizeof(Vector3),
+		D3D11_USAGE_DEFAULT,
+		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, iSSDBoxIdx,
+		36, 4, D3D11_USAGE_DEFAULT,
+		DXGI_FORMAT_R32_UINT);
+
+	CreateMesh("SkyBox", "Sky", POS_LAYOUT,
 		vDecalBox, 8, sizeof(Vector3),
 		D3D11_USAGE_DEFAULT,
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, iSSDBoxIdx,

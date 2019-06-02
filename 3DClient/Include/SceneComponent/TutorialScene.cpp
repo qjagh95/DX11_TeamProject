@@ -63,9 +63,9 @@ bool CTutorialScene::Init()
 
 	CTransform* pCameraTr = pCamera->GetTransform();
 
-	/*CFreeCamera* pFreeCam = pCamera->AddComponent<CFreeCamera>("FreeCamera");
+	//CFreeCamera* pFreeCam = pCamera->AddComponent<CFreeCamera>("FreeCamera");
 
-	SAFE_RELEASE(pFreeCam);*/
+	//SAFE_RELEASE(pFreeCam);
 	SAFE_RELEASE(pCameraTr);
 
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
@@ -176,23 +176,23 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pBattery);
 	SAFE_RELEASE(pBatteryObj);	
 
-	/*CGameObject*	pBushObject = CGameObject::CreateObject("Bush", pDefaultLayer);
+	/*CGameObject*	pBushObject = CGameObject::CreateObject("csssBush", pDefaultLayer);
 
 	CRenderer*	pBushRenderer = pBushObject->AddComponent<CRenderer>("BushRenderer");
 
-	pBushRenderer->SetMesh("Bush", L"JojiBush.fbx", MESH_PATH);
+	pBushRenderer->SetMesh("csssBush", L"Ext_GroundCap-02.fbx", MESH_PATH);
 
 	SAFE_RELEASE(pBushRenderer);
 
 	CTransform*	pBushTransform = pBushObject->GetTransform();
 
-	pBushTransform->SetWorldPos(316.f,5.f, 700.f);
+	pBushTransform->SetWorldPos(316.f,10.f, 700.f);
 	pBushTransform->SetWorldRot(0.f, 90.f, 0.f);
-	pBushTransform->SetWorldScale(0.2f);
+	pBushTransform->SetWorldScale(0.08f);
 
 	SAFE_RELEASE(pBushTransform);
 
-	SAFE_RELEASE(pBushObject);*/
+	SAFE_RELEASE(pBushObject);	*/
 
 	SAFE_RELEASE(pCamera);
 
