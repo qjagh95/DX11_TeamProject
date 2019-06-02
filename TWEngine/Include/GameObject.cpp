@@ -14,6 +14,7 @@
 #include "Core.h"
 #include "Component/ColliderOBB3D.h"
 #include "Component/ColliderSphere.h"
+#include "Component/Decal.h"
 PUN_USING
 
 unordered_map<class CScene*, unordered_map<string, CGameObject*>> CGameObject::m_mapPrototype;
@@ -540,6 +541,7 @@ bool CGameObject::Init()
 
 			float fLength[3] = { 3.f , 3.f, 3.f };
 			m_pPickingCollSphere->SetInfo(Vector3::Zero, Vector3::Axis, fLength);
+			m_pPickingCollSphere->SetSave(false);
 		}
 	}
 
@@ -1095,7 +1097,7 @@ void CGameObject::Save(BinaryWrite* _pInstBW)
 	{
 		int iType = (int)((*iter)->m_eComType);
 
-		if (iType == CT_END || (*iter)->GetTag() == "PickingCollider")
+		if ((*iter)->GetSave() == false)
 			continue;
 
 		++iSize;
@@ -1109,7 +1111,7 @@ void CGameObject::Save(BinaryWrite* _pInstBW)
 	{
 		int iType = (int)((*iter)->m_eComType);
 
-		if (iType == CT_END || (*iter)->GetTag() == "PickingCollider")
+		if ((*iter)->GetSave() == false)
 			continue;
 
 		// EnumType
@@ -1206,6 +1208,7 @@ void CGameObject::Load(BinaryRead* _pInstBR)
 			}
 			case CT_DECAL:
 			{
+				pComp = AddComponent<CDecal>("Decal");
 				break;
 			}
 			case CT_PARTICLE:
@@ -1336,7 +1339,7 @@ void CGameObject::ChildSave(BinaryWrite * _pInstBW)
 		int iType = (int)((*iter)->m_eComType);
 		_pInstBW->WriteData(iType);
 
-		if (iType == CT_END || (*iter)->GetTag() == "PickingCollider")
+		if ((*iter)->GetSave() == false)
 			continue;
 
 		// Call Save Function

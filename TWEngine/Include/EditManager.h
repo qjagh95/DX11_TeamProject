@@ -46,7 +46,7 @@ private:
 	class CEditTest*	m_pEditTest;
 	class CLandScape*	m_LandScape;
 	CAnimation*			m_pAnimation;
-
+	class CDecal*	    m_pDecal;
 	bool				m_isGizmoClick;
 	bool				m_bNaviEditorMode;
 	bool				m_bSelectNaviMove;
@@ -191,6 +191,19 @@ public:
 	void SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ, bool _bMeshScale);
 	//////////////////SetStageSection///////////////////////////////////////
 	void SetStageSection(STAGE_SECTION_TYPE _eType);
+
+	/////////////////Decal/////////////////////////////////////////////////
+	void AddDecalComponent();
+	void AddDecalDiffuseTex(const std::string& _strTag , const std::wstring& _strFileName);
+	void AddDecalNormalTex(const std::string& _strTag, const std::wstring& _strFileName);
+	void AddDecalSpecularTex(const std::string& _strTag, const std::wstring& _strFileName);
+	const string& GetDecalDiffuseTag();
+	const string& GetDecalNormalTag();
+	const string& GetDecalSpecularTag();
+	private:
+	std::string m_strDecalDiffuseTag;
+	std::string m_strDecalNormalTag;
+	std::string m_strDecalSpecularTag;
 };
 
 PUN_END

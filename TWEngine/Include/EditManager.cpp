@@ -17,6 +17,7 @@
 #include "Component/LandScape.h"
 #include "NavigationMesh.h"
 #include "Component/ColliderSphere.h"
+#include "Component/Decal.h"
 
 PUN_USING
 
@@ -39,7 +40,8 @@ CEditManager::CEditManager()
 	m_pNavObject(nullptr),
 	m_LandScape(nullptr),
 	m_isGizmoClick(false),
-	m_pSelectCollider(nullptr)
+	m_pSelectCollider(nullptr),
+	m_pDecal(nullptr)
 {
 }
 
@@ -61,6 +63,7 @@ CEditManager::~CEditManager()
 	SAFE_RELEASE(m_LandScape);
 	SAFE_RELEASE(m_pSelectCollider);
 	Safe_Delete_VecList(m_vecDivideFrame);
+	SAFE_RELEASE(m_pDecal);
 }
 
 void CEditManager::SetFreeCamObj(CGameObject * _pObj)
@@ -125,6 +128,7 @@ bool CEditManager::Init()
 
 	m_pEditTest = new CEditTest;
 	m_pEditTest->Init();
+	m_pEditTest->SetSave(false);
 
 	SAFE_RELEASE(pLayer);
 
@@ -240,6 +244,28 @@ void CEditManager::SetActiveObject(const string _strObjectTag, const string _str
 	GetObjFromCollTag();
 
 	SAFE_RELEASE(pLayer);
+
+	if (m_pDecal)
+	{
+		SAFE_RELEASE(m_pDecal);
+	}
+
+
+	CDecal* pDecal = m_pObject->FindComponentFromType<CDecal>(CT_DECAL);
+
+	if (pDecal)
+	{
+		m_pDecal = pDecal;
+		m_strDecalDiffuseTag = pDecal->GetDiffuseTexTag();
+		m_strDecalNormalTag = pDecal->GetNormalTexTag();
+		m_strDecalSpecularTag = pDecal->GetSpecTexTag();
+	}
+	else
+	{
+		m_strDecalDiffuseTag = "None";
+		m_strDecalNormalTag = "None";
+		m_strDecalSpecularTag = "None";
+	}
 }
 
 void CEditManager::SetActiveObject(CGameObject * _pObject)
@@ -271,10 +297,13 @@ void CEditManager::SetActiveObject(CGameObject * _pObject)
 
 		SAFE_RELEASE(pPickOBB);
 	}
+
+
 	m_pXGizmo->SetTarget(m_pObject);
 	m_pYGizmo->SetTarget(m_pObject);
 	m_pZGizmo->SetTarget(m_pObject);
 	m_pObject->AddComponent(m_pEditTest);
+
 }
 
 vector<string> CEditManager::GetActiveObjectInfo()
@@ -1468,4 +1497,117 @@ void CEditManager::SetStageSection(STAGE_SECTION_TYPE _eType)
 	}
 
 	m_pObject->SetStageSection(_eType);
+}
+
+void CEditManager::AddDecalComponent()
+{
+	if (m_pObject == nullptr)
+	{
+		MessageBox(WINDOWHANDLE, L"현재 선택된 Object가 없습니다.", L"", MB_OK);
+		return;
+	}
+
+	if (m_pObject->CheckComponentFromType(CT_DECAL) == true)
+	{
+		MessageBox(WINDOWHANDLE, L"현재 선택된 Object에 Decal Component가 있습니다.", L"", MB_OK);
+		return;
+	}
+
+	CDecal* pDecal = m_pObject->AddComponent<CDecal>("Decal");
+
+	SAFE_RELEASE(pDecal);
+}
+
+void CEditManager::AddDecalDiffuseTex(const std::string& _strTag, const std::wstring & _strFileName)
+{
+	if (m_pObject == nullptr)
+	{
+		MessageBox(WINDOWHANDLE, L"현재 선택된 Object가 없습니다.", L"", MB_OK);
+		return;
+	}
+
+	CDecal* pDecal = m_pObject->FindComponentFromType<CDecal>(CT_DECAL);
+
+	if (pDecal == nullptr)
+	{
+		MessageBox(WINDOWHANDLE, L"현재 선택된 Object에 Decal Component가 없습니다.", L"", MB_OK);
+		return;
+	}
+	CMaterial* pDecalMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pDecalMaterial->SetDiffuseTex(0, _strTag, _strFileName.c_str());
+	pDecalMaterial->SetSampler(0, SAMPLER_LINEAR);
+	pDecal->SetDiffuseTexTag(_strTag);
+	m_strDecalDiffuseTag = _strTag;
+
+	SAFE_RELEASE(pDecalMaterial);
+	SAFE_RELEASE(pDecal);
+}
+
+void CEditManager::AddDecalNormalTex(const std::string& _strTag, const std::wstring & _strFileName)
+{
+	if (m_pObject == nullptr)
+	{
+		MessageBox(WINDOWHANDLE, L"현재 선택된 Object가 없습니다.", L"", MB_OK);
+		return;
+	}
+
+	CDecal* pDecal = m_pObject->FindComponentFromType<CDecal>(CT_DECAL);
+
+	if (pDecal == nullptr)
+	{
+		MessageBox(WINDOWHANDLE, L"현재 선택된 Object에 Decal Component가 없습니다.", L"", MB_OK);
+		return;
+	}
+
+	CMaterial* pDecalMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pDecalMaterial->SetNormalTex(1, _strTag, _strFileName.c_str());
+	pDecalMaterial->SetNormalSampler(0, SAMPLER_LINEAR);
+	pDecal->SetNormalTexTag(_strTag);
+	m_strDecalNormalTag = _strTag;
+
+	SAFE_RELEASE(pDecalMaterial);
+	SAFE_RELEASE(pDecal);
+}
+
+void CEditManager::AddDecalSpecularTex(const std::string& _strTag, const std::wstring & _strFileName)
+{
+	if (m_pObject == nullptr)
+	{
+		MessageBox(WINDOWHANDLE, L"현재 선택된 Object가 없습니다.", L"", MB_OK);
+		return;
+	}
+
+	CDecal* pDecal = m_pObject->FindComponentFromType<CDecal>(CT_DECAL);
+
+	if (pDecal == nullptr)
+	{
+		MessageBox(WINDOWHANDLE, L"현재 선택된 Object에 Decal Component가 없습니다.", L"", MB_OK);
+		return;
+	}
+
+	CMaterial* pDecalMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pDecalMaterial->SetSpecularTex(2, _strTag, _strFileName.c_str());
+	pDecalMaterial->SetSpecularSampler(0, SAMPLER_LINEAR);
+	pDecal->SetSpecTexTag(_strTag);
+	m_strDecalSpecularTag = _strTag;
+	SAFE_RELEASE(pDecalMaterial);
+	SAFE_RELEASE(pDecal);
+}
+
+const string & CEditManager::GetDecalDiffuseTag()
+{
+	return m_strDecalDiffuseTag;
+}
+
+const string & CEditManager::GetDecalNormalTag()
+{
+	return m_strDecalNormalTag;
+}
+
+const string & CEditManager::GetDecalSpecularTag()
+{
+	return m_strDecalSpecularTag;
 }

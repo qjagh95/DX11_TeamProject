@@ -193,6 +193,16 @@ void BinaryRead::ReadData(string & Data)
 	Data = getData;
 }
 
+void BinaryRead::ReadData(std::string & _Data, int _iSize)
+{
+	size_t DataLen;
+	char getData[255] = {};
+
+	m_ReadFile.read(getData, _iSize);
+
+	_Data = getData;
+}
+
 void BinaryRead::ReadData(wstring & Data)
 {
 	size_t DataLen;

@@ -145,6 +145,17 @@
             this.label52 = new System.Windows.Forms.Label();
             this.TB_RelativeCenterX = new System.Windows.Forms.TextBox();
             this.label51 = new System.Windows.Forms.Label();
+            this.DecalPage = new System.Windows.Forms.TabPage();
+            this.BT_AddDecal = new System.Windows.Forms.Button();
+            this.BT_AddSpecularTex = new System.Windows.Forms.Button();
+            this.BT_AddNormalTex = new System.Windows.Forms.Button();
+            this.BT_AddDiffuseTex = new System.Windows.Forms.Button();
+            this.label67 = new System.Windows.Forms.Label();
+            this.TB_DecalSpecular = new System.Windows.Forms.TextBox();
+            this.label66 = new System.Windows.Forms.Label();
+            this.TB_DecalNormal = new System.Windows.Forms.TextBox();
+            this.label65 = new System.Windows.Forms.Label();
+            this.TB_DecalDiffuse = new System.Windows.Forms.TextBox();
             this.MshLoad = new System.Windows.Forms.Button();
             this.LB_MeshList = new System.Windows.Forms.ListBox();
             this.GB_Transform = new System.Windows.Forms.GroupBox();
@@ -244,6 +255,7 @@
             this.ColliderPage.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.DecalPage.SuspendLayout();
             this.GB_Transform.SuspendLayout();
             this.GB_Hierachy.SuspendLayout();
             this.GB_Renderer.SuspendLayout();
@@ -356,6 +368,7 @@
             this.InspectorTab.Controls.Add(this.Effect);
             this.InspectorTab.Controls.Add(this.RenderPage);
             this.InspectorTab.Controls.Add(this.ColliderPage);
+            this.InspectorTab.Controls.Add(this.DecalPage);
             this.InspectorTab.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.InspectorTab.Location = new System.Drawing.Point(7, 24);
             this.InspectorTab.Multiline = true;
@@ -1099,6 +1112,7 @@
             // ColliderPage
             // 
             this.ColliderPage.BackColor = System.Drawing.SystemColors.Control;
+            this.ColliderPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ColliderPage.Controls.Add(this.CB_MeshScale);
             this.ColliderPage.Controls.Add(this.LB_ColliderList);
             this.ColliderPage.Controls.Add(this.label62);
@@ -1580,6 +1594,121 @@
             this.label51.Size = new System.Drawing.Size(14, 13);
             this.label51.TabIndex = 37;
             this.label51.Text = "Y";
+            // 
+            // DecalPage
+            // 
+            this.DecalPage.BackColor = System.Drawing.SystemColors.Control;
+            this.DecalPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.DecalPage.Controls.Add(this.BT_AddDecal);
+            this.DecalPage.Controls.Add(this.BT_AddSpecularTex);
+            this.DecalPage.Controls.Add(this.BT_AddNormalTex);
+            this.DecalPage.Controls.Add(this.BT_AddDiffuseTex);
+            this.DecalPage.Controls.Add(this.label67);
+            this.DecalPage.Controls.Add(this.TB_DecalSpecular);
+            this.DecalPage.Controls.Add(this.label66);
+            this.DecalPage.Controls.Add(this.TB_DecalNormal);
+            this.DecalPage.Controls.Add(this.label65);
+            this.DecalPage.Controls.Add(this.TB_DecalDiffuse);
+            this.DecalPage.ForeColor = System.Drawing.Color.Black;
+            this.DecalPage.Location = new System.Drawing.Point(4, 48);
+            this.DecalPage.Name = "DecalPage";
+            this.DecalPage.Size = new System.Drawing.Size(309, 781);
+            this.DecalPage.TabIndex = 8;
+            this.DecalPage.Text = "Decal";
+            // 
+            // BT_AddDecal
+            // 
+            this.BT_AddDecal.Location = new System.Drawing.Point(6, 274);
+            this.BT_AddDecal.Name = "BT_AddDecal";
+            this.BT_AddDecal.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.BT_AddDecal.Size = new System.Drawing.Size(275, 41);
+            this.BT_AddDecal.TabIndex = 9;
+            this.BT_AddDecal.Text = "Add Decal Component";
+            this.BT_AddDecal.UseVisualStyleBackColor = true;
+            this.BT_AddDecal.Click += new System.EventHandler(this.BT_AddDecal_Click);
+            // 
+            // BT_AddSpecularTex
+            // 
+            this.BT_AddSpecularTex.Location = new System.Drawing.Point(6, 221);
+            this.BT_AddSpecularTex.Name = "BT_AddSpecularTex";
+            this.BT_AddSpecularTex.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.BT_AddSpecularTex.Size = new System.Drawing.Size(275, 41);
+            this.BT_AddSpecularTex.TabIndex = 8;
+            this.BT_AddSpecularTex.Text = "Add Decal Specular Tex";
+            this.BT_AddSpecularTex.UseVisualStyleBackColor = true;
+            this.BT_AddSpecularTex.Click += new System.EventHandler(this.BT_AddSpecularTex_Click);
+            // 
+            // BT_AddNormalTex
+            // 
+            this.BT_AddNormalTex.Location = new System.Drawing.Point(6, 170);
+            this.BT_AddNormalTex.Name = "BT_AddNormalTex";
+            this.BT_AddNormalTex.Size = new System.Drawing.Size(275, 41);
+            this.BT_AddNormalTex.TabIndex = 7;
+            this.BT_AddNormalTex.Text = "Add Decal Normal Tex";
+            this.BT_AddNormalTex.UseVisualStyleBackColor = true;
+            this.BT_AddNormalTex.Click += new System.EventHandler(this.BT_AddNormalTex_Click);
+            // 
+            // BT_AddDiffuseTex
+            // 
+            this.BT_AddDiffuseTex.Location = new System.Drawing.Point(6, 119);
+            this.BT_AddDiffuseTex.Name = "BT_AddDiffuseTex";
+            this.BT_AddDiffuseTex.Size = new System.Drawing.Size(275, 41);
+            this.BT_AddDiffuseTex.TabIndex = 6;
+            this.BT_AddDiffuseTex.Text = "Add Decal Diffuse Tex";
+            this.BT_AddDiffuseTex.UseVisualStyleBackColor = true;
+            this.BT_AddDiffuseTex.Click += new System.EventHandler(this.BT_AddDiffuseTex_Click);
+            // 
+            // label67
+            // 
+            this.label67.AutoSize = true;
+            this.label67.Location = new System.Drawing.Point(3, 78);
+            this.label67.Name = "label67";
+            this.label67.Size = new System.Drawing.Size(107, 17);
+            this.label67.TabIndex = 5;
+            this.label67.Text = "SpecularTexture";
+            // 
+            // TB_DecalSpecular
+            // 
+            this.TB_DecalSpecular.Location = new System.Drawing.Point(116, 73);
+            this.TB_DecalSpecular.Name = "TB_DecalSpecular";
+            this.TB_DecalSpecular.ReadOnly = true;
+            this.TB_DecalSpecular.Size = new System.Drawing.Size(165, 25);
+            this.TB_DecalSpecular.TabIndex = 4;
+            // 
+            // label66
+            // 
+            this.label66.AutoSize = true;
+            this.label66.Location = new System.Drawing.Point(3, 47);
+            this.label66.Name = "label66";
+            this.label66.Size = new System.Drawing.Size(101, 17);
+            this.label66.TabIndex = 3;
+            this.label66.Text = "NormalTexture";
+            // 
+            // TB_DecalNormal
+            // 
+            this.TB_DecalNormal.Location = new System.Drawing.Point(116, 42);
+            this.TB_DecalNormal.Name = "TB_DecalNormal";
+            this.TB_DecalNormal.ReadOnly = true;
+            this.TB_DecalNormal.Size = new System.Drawing.Size(165, 25);
+            this.TB_DecalNormal.TabIndex = 2;
+            // 
+            // label65
+            // 
+            this.label65.AutoSize = true;
+            this.label65.Location = new System.Drawing.Point(3, 16);
+            this.label65.Name = "label65";
+            this.label65.Size = new System.Drawing.Size(100, 17);
+            this.label65.TabIndex = 1;
+            this.label65.Text = "DiffuseTexture";
+            // 
+            // TB_DecalDiffuse
+            // 
+            this.TB_DecalDiffuse.Location = new System.Drawing.Point(116, 11);
+            this.TB_DecalDiffuse.Name = "TB_DecalDiffuse";
+            this.TB_DecalDiffuse.ReadOnly = true;
+            this.TB_DecalDiffuse.Size = new System.Drawing.Size(165, 25);
+            this.TB_DecalDiffuse.TabIndex = 0;
+            this.TB_DecalDiffuse.TextChanged += new System.EventHandler(this.TB_DecalDiffuse_TextChanged);
             // 
             // MshLoad
             // 
@@ -2714,6 +2843,7 @@
             this.Text = "MotherFatherChildren";
             this.TransparencyKey = System.Drawing.Color.Gray;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Delete);
+            this.Load += new System.EventHandler(this.EditorForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).EndInit();
             this.GB_Scene.ResumeLayout(false);
             this.Inspector.ResumeLayout(false);
@@ -2731,6 +2861,8 @@
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.DecalPage.ResumeLayout(false);
+            this.DecalPage.PerformLayout();
             this.GB_Transform.ResumeLayout(false);
             this.GB_Transform.PerformLayout();
             this.GB_Hierachy.ResumeLayout(false);
@@ -2950,6 +3082,17 @@
         private System.Windows.Forms.Button BT_CollOBBUpdate;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox CB_MeshScale;
+        private System.Windows.Forms.TabPage DecalPage;
+        private System.Windows.Forms.Button BT_AddDecal;
+        private System.Windows.Forms.Button BT_AddSpecularTex;
+        private System.Windows.Forms.Button BT_AddNormalTex;
+        private System.Windows.Forms.Button BT_AddDiffuseTex;
+        private System.Windows.Forms.Label label67;
+        private System.Windows.Forms.TextBox TB_DecalSpecular;
+        private System.Windows.Forms.Label label66;
+        private System.Windows.Forms.TextBox TB_DecalNormal;
+        private System.Windows.Forms.Label label65;
+        private System.Windows.Forms.TextBox TB_DecalDiffuse;
     }
 }
 

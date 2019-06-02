@@ -5,6 +5,7 @@ PUN_USING
 
 CComponent::CComponent()
 {
+	m_bSave = true;
 }
 
 CComponent::CComponent(const CComponent & com)

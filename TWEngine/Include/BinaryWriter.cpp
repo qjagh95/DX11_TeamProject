@@ -88,6 +88,11 @@ void BinaryWrite::WriteData(const string & Data)
 	m_WriteFile.write(Data.c_str(), Datalen);
 }
 
+void BinaryWrite::WriteData(const std::string & _Data, int _iSize)
+{
+	m_WriteFile.write(_Data.c_str(), _iSize);
+}
+
 void BinaryWrite::WriteData(const wstring & Data)
 {
 	wstring Temp = Data.c_str();

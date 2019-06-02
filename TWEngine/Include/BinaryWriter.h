@@ -11,10 +11,10 @@ public:
 	void WriteData(const Vector3& Data);
 	void WriteData(const Vector4& Data);
 	void WriteData(const string& Data);
+	void WriteData(const std::string& _Data, int _iSize);
 	void WriteData(const wstring& Data);
 	void WriteData(const char* Data);
 	void WriteData(const wchar_t* Data);
-
 private:
 	ofstream m_WriteFile;
 

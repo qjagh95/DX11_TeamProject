@@ -68,6 +68,9 @@ namespace WinFormEditor
                     TB_TileFlag.Text = "Tile 이동 불가";
                 }
 
+                TB_DecalDiffuse.Text = m_coreWrapper.GetDecalDiffuseTag();
+                TB_DecalNormal.Text = m_coreWrapper.GetDecalNormalTag();
+                TB_DecalSpecular.Text = m_coreWrapper.GetDecalSpecularTag();
 
                 Application.DoEvents();
             }
@@ -116,6 +119,9 @@ namespace WinFormEditor
             // Connection Run Funtion
             CB_GizmoEnable.Checked = true;
             CB_PickColliderEnable.Checked = true;
+            TB_DecalDiffuse.Text = "None";
+            TB_DecalNormal.Text = "None";
+            TB_DecalSpecular.Text = "None";
 
             Application.Idle += Run;
         }
@@ -1556,6 +1562,80 @@ namespace WinFormEditor
         }
 
         private void LB_ColliderID_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BT_AddDiffuseTex_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+            string curDirectory = Directory.GetCurrentDirectory();
+            string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
+            path += "\\3DClient\\bin\\Texture";
+            openFile.InitialDirectory = path;
+            openFile.Title = "파일 불러오기";
+            openFile.FileName = ".png";
+            openFile.Filter = "데이터 파일(*.png) | *.png; | 모든 파일(*.*) | *.*";
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                // 불러오기 성공
+                String FileName = Path.GetFileName(openFile.FileName);
+                m_coreWrapper.AddDecalDiffuseTex(FileName);
+                // 데이터 로드
+            }
+        }
+
+        private void BT_AddNormalTex_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+            string curDirectory = Directory.GetCurrentDirectory();
+            string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
+            path += "\\3DClient\\bin\\Texture";
+            openFile.InitialDirectory = path;
+            openFile.Title = "파일 불러오기";
+            openFile.FileName = ".png";
+            openFile.Filter = "데이터 파일(*.png) | *.png; | 모든 파일(*.*) | *.*";
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                // 불러오기 성공
+                String FileName = Path.GetFileName(openFile.FileName);
+                m_coreWrapper.AddDecalNormalTex(FileName);
+
+                // 데이터 로드
+            }
+        }
+
+        private void BT_AddSpecularTex_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+            string curDirectory = Directory.GetCurrentDirectory();
+            string path = Directory.GetParent(curDirectory).Parent.Parent.FullName;
+            path += "\\3DClient\\bin\\Texture";
+            openFile.InitialDirectory = path;
+            openFile.Title = "파일 불러오기";
+            openFile.FileName = ".png";
+            openFile.Filter = "데이터 파일(*.png) | *.png; | 모든 파일(*.*) | *.*";
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                // 불러오기 성공
+                String FileName = Path.GetFileName(openFile.FileName);
+                m_coreWrapper.AddDecalSpecularTex(FileName);
+
+                // 데이터 로드
+            }
+        }
+
+        private void BT_AddDecal_Click(object sender, EventArgs e)
+        {
+            m_coreWrapper.AddDecalComponent();
+        }
+
+        private void TB_DecalDiffuse_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void EditorForm_Load(object sender, EventArgs e)
         {
 
         }

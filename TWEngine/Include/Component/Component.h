@@ -88,6 +88,18 @@ public:
 	{
 		return m_pObject->FindComponentFromTypeNonCount<T>(eType);
 	}
+protected:
+	bool m_bSave;
+
+public:
+	void SetSave(bool _bEnable)
+	{
+		m_bSave = _bEnable;
+	}
+	bool GetSave() const
+	{
+		return m_bSave;
+	}
 };
 
 PUN_END

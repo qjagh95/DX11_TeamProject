@@ -316,5 +316,72 @@ namespace EngineWrapper
 		{
 			CEditManager::GetInst()->SetStageSection((STAGE_SECTION_TYPE)_iSection);
 		}
+
+		//////////////////////////////Decal/////////////////////////////////////////
+		void AddDecalComponent()
+		{
+			CEditManager::GetInst()->AddDecalComponent();
+		}
+
+		void AddDecalDiffuseTex(String ^ _strFileTag)
+		{
+			string strTag = ConvertMarshal<string, String^>(_strFileTag);
+			for (int i = 0; i < 4; ++i)
+			{
+				strTag.pop_back();
+			}
+
+			wstring strFileName = ConvertMarshal<wstring, String^>(_strFileTag);
+
+			CEditManager::GetInst()->AddDecalDiffuseTex(strTag, strFileName);
+		}
+
+		void AddDecalNormalTex(String ^ _strFileTag)
+		{
+			string strTag = ConvertMarshal<string, String^>(_strFileTag);
+			for (int i = 0; i < 4; ++i)
+			{
+				strTag.pop_back();
+			}
+
+			wstring strFileName = ConvertMarshal<wstring, String^>(_strFileTag);
+
+			CEditManager::GetInst()->AddDecalNormalTex(strTag, strFileName);
+		}
+
+
+		void AddDecalSpecularTex(String ^ _strFileTag)
+		{
+			string strTag = ConvertMarshal<string, String^>(_strFileTag);
+			for (int i = 0; i < 4; ++i)
+			{
+				strTag.pop_back();
+			}
+
+			wstring strFileName = ConvertMarshal<wstring, String^>(_strFileTag);
+
+			CEditManager::GetInst()->AddDecalSpecularTex(strTag, strFileName);
+		}
+		
+		String ^ GetDecalDiffuseTag()
+		{
+			string strtemp = CEditManager::GetInst()->GetDecalDiffuseTag();
+			String^ strTag = ConvertMarshal<String^, string>(strtemp);
+			return strTag;
+		}
+
+		String ^ GetDecalNormalTag()
+		{
+			string strtemp = CEditManager::GetInst()->GetDecalNormalTag();
+			String^ strTag = ConvertMarshal<String^, string>(strtemp);
+			return strTag;
+		}
+
+		String ^ GetDecalSpecularTag()
+		{
+			string strtemp = CEditManager::GetInst()->GetDecalSpecularTag();
+			String^ strTag = ConvertMarshal<String^, string>(strtemp);
+			return strTag;
+		}
 	};
 }
