@@ -655,7 +655,7 @@ void CDoor::OpenNormal(const Vector3 & vDir)
 
 		float fAngle = vDirZ.Angle(vDir);
 
-		if (fAngle > 90.0f)
+		if (fAngle < 90.0f)
 			m_iDir = 1;
 		else
 			m_iDir = -1;

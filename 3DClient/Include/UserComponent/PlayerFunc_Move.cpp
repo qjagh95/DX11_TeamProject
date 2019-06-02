@@ -141,17 +141,7 @@ void CHuman_Player::FootStepFallDownHigh(float fTime)
 void CHuman_Player::CrouchForwardMendPos(float fTime)
 {
 	//std::cout << "hahahaha" << std::endl;
-	m_vTracerBuf = m_pRootBonePos->GetWorldPos();
-}
-
-void CHuman_Player::CrouchBackwardMendPos(float fTime)
-{
-
-}
-
-void CHuman_Player::CrouchSideMendPos(float fTime)
-{
-
+	//m_vTracerBuf = m_pRootBonePos->GetWorldPos();
 }
 
 int CHuman_Player::Input_Move(float fTime) 

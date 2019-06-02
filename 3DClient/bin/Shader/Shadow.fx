@@ -28,6 +28,13 @@ PS_OUTPUT_SINGLE ShadowMapPS(VS_OUTPUT_SHADOW input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
 
+    float2 vProj = input.vProjPos.xy / input.vProjPos.w;
+
+    float fDist = sqrt(vProj.x * vProj.x + vProj.y * vProj.y);
+    
+    if (fDist > 1.0f)
+        clip(-1);
+
     output.vTarget0.rgb = (float3) (input.vProjPos.z / input.vProjPos.w);
     output.vTarget0.a = input.vProjPos.w;
 

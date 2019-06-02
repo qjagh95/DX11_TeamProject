@@ -167,8 +167,8 @@ cbuffer Component	: register(b2)
     int     g_iFocus;
     int     g_iDecalEnable;
     int     g_i3DAnimation;
+    int     g_iAlphaEnable;
     float   g_fBumpScale;
-    float   g_vComponentEmpty;
 }
 
 cbuffer Public : register(b5)

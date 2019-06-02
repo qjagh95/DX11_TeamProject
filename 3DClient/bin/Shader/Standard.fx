@@ -198,9 +198,11 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 
     float4 vColor = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
 
-    if(vColor.a == 0.0f)
-        clip(-1);
-
+    if(g_iAlphaEnable == 1)
+    {
+        if (vColor.a == 0.0f)
+            clip(-1);
+    }
 
 	if (g_vMtrlDif.w == 1.f)
 	{
@@ -225,7 +227,7 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
     {
         _tagLightInfo tLight = ComputeLight(input.vViewPos, vNormal, input.vUV);
 
-        output.vAlbedo = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV) * (tLight.vDif + tLight.vAmb) + tLight.vSpc;
+        output.vAlbedo = vColor * (tLight.vDif + tLight.vAmb) + tLight.vSpc;
     }
     else if(g_isDeferred == RENDER_DEFERRED)
     {
@@ -238,7 +240,7 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
             output.vBinormal.w = 1.f;
         }
 
-		output.vAlbedo = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+        output.vAlbedo = vColor;
 		output.vNormal.xyz = vNormal;
 		output.vNormal.w = g_vMtrlSpc.w;
 		output.vDepth.r = (input.vProjPos.z / input.vProjPos.w);

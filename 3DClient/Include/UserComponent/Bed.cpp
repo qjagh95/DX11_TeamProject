@@ -90,7 +90,7 @@ void CBed::OnCollisionWithPlayer(PUN::CCollider * pSrc, PUN::CCollider * pDest, 
 	if (pPlayer)
 	{
 		unsigned int iPlayerState = pPlayer->GetState();
-		if (iPlayerState & PSTATUS_INBED) 
+		if (iPlayerState & PSTATUS_BED) 
 		{
 			if ((iPlayerState & PSTATUS_HIDEINTERACT) == 0)
 			{
@@ -183,10 +183,12 @@ void CBed::OnCollisionWithPlayer(PUN::CCollider * pSrc, PUN::CCollider * pDest, 
 
 			if ((iPlayerState &PSTATUS_HIDEINTERACT) == 0)
 			{
-				if ((iPlayerState & PSTATUS_INBED) == 0)
+				if ((iPlayerState & PSTATUS_BED) == 0)
 				{
-					iPlayerState |= PSTATUS_INBED;
+					iPlayerState |= PSTATUS_BED;
 					iPlayerState |= PSTATUS_HIDEINTERACT;
+					//iPlayerState ^= PSTATUS_CROUCHED;
+					//iPlayerState |= PSTATUS_CROUCHING;
 
 					pPlayer->SetInteractRotationVector(m_pTransform->GetWorldRot());
 					pPlayer->SetState(iPlayerState);
@@ -212,7 +214,7 @@ void CBed::OnCollisionExitWithPlayer(PUN::CCollider * pSrc, PUN::CCollider * pDe
 	if (pPlayer)
 	{
 		unsigned int iPlayerState = pPlayer->GetState();
-		if (iPlayerState & PSTATUS_INBED) //여러 가지 이유로 침대 안에 있는데 콜라이더만 삐져나올 경우
+		if (iPlayerState & PSTATUS_BED) //여러 가지 이유로 침대 안에 있는데 콜라이더만 삐져나올 경우
 		{
 			PUN::CTransform *pTr = pPlayer->GetTransform();
 			PUN::CTransform *pBedTr = pSrc->GetTransform();

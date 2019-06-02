@@ -18,31 +18,35 @@ private:
 	virtual ~CRenderer();
 
 private:
-	TransformCBuffer	m_tTransformCBuffer;
-	class CMesh*		m_pMesh;
-	class CShader*		m_pShader;
-	ID3D11InputLayout*	m_pLayout;
-	string				m_strLayoutKey;
-	class CMaterial*	m_pMaterial;
-	class CRenderState*	m_pRenderState[RS_END];
-	unordered_map<string, PRendererCBuffer>	m_mapCBuffer;
-	ComponentCBuffer	m_tComponentCBuffer;
 	bool				m_b2DRenderer;
 	bool				m_bDecalEnable;
 	bool				m_bDontRenderMat;
+	bool				m_bAlphaEnable;
+	string				m_strLayoutKey;
+	string				m_BoneName;
+	Matrix				m_matBone;
+	Vector3				m_BoneRot;
+
+	bool				m_isRotFirstCheck;
+	Vector3				m_RotFirstCheck;
+	Vector3				m_RotLastCheck;
+
+	bool				m_isPosFirstCheck;
+	Vector3				m_PosFirstCheck;
+	Vector3				m_PosLastCheck;
+
+	CAnimation*			m_pAnimation;
+	class CMesh*		m_pMesh;
+	class CShader*		m_pShader;
+	class CMaterial*	m_pMaterial;
+	class CRenderState*	m_pRenderState[RS_END];
+	ID3D11InputLayout*	m_pLayout;
 	ID3D11ShaderResourceView**  m_pBoneTex;
-	CAnimation* m_pAnimation;
-	string m_BoneName;
-	Matrix m_matBone;
-	Vector3 m_BoneRot;
 
-	bool m_isRotFirstCheck;
-	Vector3 m_RotFirstCheck;
-	Vector3 m_RotLastCheck;
+	TransformCBuffer	m_tTransformCBuffer;
+	ComponentCBuffer	m_tComponentCBuffer;
 
-	bool m_isPosFirstCheck;
-	Vector3 m_PosFirstCheck;
-	Vector3 m_PosLastCheck;
+	unordered_map<string, PRendererCBuffer>	m_mapCBuffer;
 
 public:
 	void SetBoneTexture(ID3D11ShaderResourceView** _pBoneTex);
@@ -76,6 +80,7 @@ public:
 	void SetInputLayout(const string& strKey);
 	void SetRenderState(const string& strName);
 	void SetDecalEnable(bool bEnable);
+	void SetAlphaEnable(bool bEnable);
 	bool CreateRendererCBuffer(const string& strName, int iSize);
 	void UpdateRendererCBuffer(const string& strName, void* pData, int iSize);
 	void CheckComponent();

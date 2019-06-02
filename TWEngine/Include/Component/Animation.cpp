@@ -1872,6 +1872,19 @@ int CAnimation::Update(float fTime)
 			}
 			else if (!m_bKeepBlending)
 			{
+				if (m_pCurClip->bUpdateRootTransform)
+				{
+					if (!m_bRootBoneTransformChange)
+					{
+						m_bRootBoneTransformChange = true;
+						m_vRootBonePosBuf = m_pTransform->GetWorldPos();
+						m_vRootBoneRotBuf = m_pTransform->GetWorldRot();
+						m_vArrRootBoneAxis[0] = m_pTransform->GetWorldAxis(AXIS_X);
+						m_vArrRootBoneAxis[1] = m_pTransform->GetWorldAxis(AXIS_Y);
+						m_vArrRootBoneAxis[2] = m_pTransform->GetWorldAxis(AXIS_Z);
+					}
+				}
+				
 				parallel_for((int)0, BoneSize, [&](int i)
 				{
 					// 키프레임이 없을 경우
@@ -1916,18 +1929,9 @@ int CAnimation::Update(float fTime)
 					XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 					Matrix	matBone = XMMatrixAffineTransformation(vS, vZero, vR, vT);
 
-
 					if (m_pCurClip->bUpdateRootTransform)
 					{
-						if (!m_bRootBoneTransformChange)
-						{
-							m_bRootBoneTransformChange = true;
-							m_vRootBonePosBuf = m_pTransform->GetWorldPos();
-							m_vRootBoneRotBuf = m_pTransform->GetWorldRot();
-							m_vArrRootBoneAxis[0] = m_pTransform->GetWorldAxis(AXIS_X);
-							m_vArrRootBoneAxis[1] = m_pTransform->GetWorldAxis(AXIS_Y);
-							m_vArrRootBoneAxis[2] = m_pTransform->GetWorldAxis(AXIS_Z);
-						}
+						
 						if (i == m_pCurClip->iRootTransformBoneIdx)
 						{
 							//합성된 트랜스폼만큼 월드 트랜스폼을 이동시켜주자

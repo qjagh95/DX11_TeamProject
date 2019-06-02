@@ -15,6 +15,8 @@ CLocker::CLocker()
 
 CLocker::CLocker(const CLocker & battery)
 {
+	*this = battery;
+
 }
 
 CLocker::~CLocker()
@@ -31,7 +33,7 @@ bool CLocker::Init()
 	// »ó´ë ÁÂÇ¥
 	//-28 108 28.8 * scale
 
-	m_vRelativePos = Vector3(-28.0f, 15.0f, 24.0f);
+	m_vRelativePos = Vector3(-31.f, 10.f, 24.5f);
 
 	CRenderer* pRD = m_pObject->AddComponent<CRenderer>("LockerRenderer");
 	CColliderOBB3D* pOBB = m_pObject->AddComponent<CColliderOBB3D>("LockerBody");
@@ -41,7 +43,7 @@ bool CLocker::Init()
 
 	m_pTransform->SetLocalRotY(90.0f);
 	//m_pTransform->SetWorldPivot(0.0f, 0.0f, 0.0f);
-	m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
+	m_pTransform->SetWorldScale(0.055f, 0.034f, 0.05f);
 
 	Vector3 vMeshLength = pRD->GetMeshLength();
 	Vector3 vScale = vMeshLength * GetWorldScale();
@@ -68,9 +70,12 @@ bool CLocker::Init()
 	m_pDoor = pObj->AddComponent<CDoor>("LockerDoor");
 
 	m_pDoor->SetDoorType(DOOR_LOCKER);
+	m_pDoor->SetOpenTime(1.2f);
 	m_pObject->AddChild(pObj);
 
 	pTr->SetWorldPos(m_vRelativePos * pTr->GetWorldScale());
+	pTr->SetWorldScale(0.055f, 0.0345f, 0.05f);
+	//pTr->SetWorldRot(0.f, 90.f, 0.f);
 
 	SAFE_RELEASE(pOBB);
 	SAFE_RELEASE(pTr);
@@ -105,15 +110,23 @@ void CLocker::Render(float fTime)
 
 CLocker * CLocker::Clone()
 {
-	return nullptr;
+	return new CLocker(*this);
 }
 
 void CLocker::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 {
+	PUN::CGameObject *pDoorObj = m_pDoor->GetGameObject();
+	pDoorObj->SetFrustrumCullUse(false);
+	SAFE_RELEASE(pDoorObj);
 	int iID = pDest->GetColliderID();
 	if (iID == UCI_PLAYER_INTERACT)
 	{
-		if(KEYDOWN("E"))
+		if (KEYDOWN("E"))
+		{
 			m_pDoor->Open(pDest->GetWorldAxis(AXIS_Z));
+
+
+		}
+			
 	}
 }

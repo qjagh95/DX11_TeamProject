@@ -51,9 +51,10 @@ CRenderer::CRenderer() :
 		SetRenderState(DEPTH_DISABLE);
 
 	memset(&m_tComponentCBuffer, 0, sizeof(m_tComponentCBuffer));
-	m_tComponentCBuffer.iDecalEnable = 0;
+	m_tComponentCBuffer.iDecalEnable = 1;
 	m_tComponentCBuffer.i3DAnimation = 0;
 	m_tComponentCBuffer.fBumpScale = 0.0f;
+	m_tComponentCBuffer.iAlphaEnable = 0;
 
 	m_pAnimation = NULLPTR;
 	m_BoneRot = Vector3::One;
@@ -332,6 +333,16 @@ void CRenderer::SetDecalEnable(bool bEnable)
 		m_tComponentCBuffer.iDecalEnable = 0;
 	else
 		m_tComponentCBuffer.iDecalEnable = 1;
+}
+
+void CRenderer::SetAlphaEnable(bool bEnable)
+{
+	m_bAlphaEnable = bEnable;
+
+	if (m_bAlphaEnable)
+		m_tComponentCBuffer.iAlphaEnable = 1;
+	else
+		m_tComponentCBuffer.iAlphaEnable = 0;
 }
 
 bool CRenderer::CreateRendererCBuffer(const string & strName, int iSize)

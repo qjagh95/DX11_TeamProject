@@ -18,7 +18,7 @@ anim,Hero-01_AS.anm
 string,DefaultAnimClip,player_stand_idle
 socket,Hero-R-Hand,camhand,-57,107.5,-10.5,0,0,0
 socket,Hero-Neck,daegari,0,155,12.5,0,0,0
-socket,Hero-Root,root,0,0,0,0,0,0
+socket,Hero-Pelvis,root,0,0,0,0,0,0
 socket,Hero-R-Hand,gun,-57.5,108,-25,0,0,0
 sound,otSoft1
 sound,otSoft2

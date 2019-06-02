@@ -210,11 +210,11 @@ float CCameraEff::FirstPersonView(float fYMax, float fYMin, PUN::CTransform *_Bo
 			float fAngleX = ((float)iXPoint) * fValueW;
 			float fAngleY = ((float)iYPoint) * fValueH;
 			_Body->RotationY(fAngleX);
-
-			Vector3 vCamRot = _Body->GetWorldRot();
-			vCamRot.x = pMainCamTransform->GetWorldRot().x;
-			vCamRot.z = 0.f;
-			pMainCamTransform->SetWorldRot(vCamRot);
+			pMainCamTransform->RotationY(fAngleX);
+			//Vector3 vCamRot = _Body->GetWorldRot();
+			//vCamRot.x = pMainCamTransform->GetWorldRot().x;
+			//vCamRot.z = 0.f;
+			//pMainCamTransform->SetWorldRot(vCamRot);
 			float fNewAngleY = fAngleY + vCamRot.x;
 			if (fNewAngleY < fYMax && fNewAngleY > fYMin)
 			{

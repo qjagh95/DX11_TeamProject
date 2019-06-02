@@ -7,3 +7,5 @@ void StateHideInBed(float fTime);
 void StateHidingBed(float fTime);
 void StateGetOutBed(float fTime);
 void HidingMotionEnd(float fTime);
+
+void Interact_With_Locker(class CLocker *pLocker, float fTime);

@@ -467,10 +467,12 @@ void CGameManager::SaveCheckPoint()
 	6. 보스가 뒤지셨는지?
 	*/
 	// 파일 객체(ofstream) 생성
-
 	string strFileName = "CheckPoint.cpd";
 	BinaryWrite pInstBW(strFileName);
 
+	CScene* pScene = GET_SINGLE(CSceneManager)->GetSceneNonCount();
+	
+	string strSceneKey = pScene->GetTag();
 	Vector3 vPos = m_pPlayerTr->GetWorldPos();
 	Vector3 vRot = m_pPlayerTr->GetWorldRot();
 	CGameObject* pObj = nullptr;
@@ -559,6 +561,7 @@ void CGameManager::LoadCheckPoint()
 	string strFileName = "CheckPoint.cpd";
 	BinaryRead pInstBR(strFileName);
 
+	string  strSceneKey = pInstBR.ReadString();
 	Vector3 vPos = pInstBR.ReadVector3();
 	Vector3 vRot = pInstBR.ReadVector3();
 
@@ -609,7 +612,15 @@ void CGameManager::LoadCheckPoint()
 		m_ChangedItemObjList.push_back(pObj);
 	}
 
+	GET_SINGLE(CSceneManager)->ChangeScene(strSceneKey);
 
+	CTransform* pTr = m_pCamera->GetTransform();
+	
+	m_pPlayerTr->SetWorldPos(vPos);
+	m_pPlayerTr->SetWorldRot(vRot);
+	pTr->SetWorldRot(vRot);
+
+	SAFE_RELEASE(pTr);
 }
 
 void CGameManager::Update(float fTime)

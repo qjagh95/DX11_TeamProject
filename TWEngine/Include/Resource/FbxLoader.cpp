@@ -402,6 +402,8 @@ void CFbxLoader::LoadUV(FbxMesh * pMesh, PFBXMESHCONTAINER pContainer,
 
 	int	iUVIndex = iUVID;
 
+	FbxVector2	vUV;
+
 	if (pUV->GetMappingMode() == FbxGeometryElement::eByControlPoint)
 	{
 		switch (pUV->GetReferenceMode())
@@ -413,6 +415,10 @@ void CFbxLoader::LoadUV(FbxMesh * pMesh, PFBXMESHCONTAINER pContainer,
 			iUVIndex = pUV->GetIndexArray().GetAt(iControlIndex);
 			break;
 		}
+		vUV = pUV->GetDirectArray().GetAt(iUVIndex);
+
+		pContainer->vecUV[iControlIndex].x = (float)(vUV.mData[0] - (int)vUV.mData[0]);
+		pContainer->vecUV[iControlIndex].y = (float)(1.f - (vUV.mData[1] - (int)vUV.mData[1]));
 	}
 
 	else if (pUV->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
@@ -428,12 +434,12 @@ void CFbxLoader::LoadUV(FbxMesh * pMesh, PFBXMESHCONTAINER pContainer,
 		default:
 			break; // other reference modes not shown here!
 		}
+
+		vUV = pUV->GetDirectArray().GetAt(iUVIndex);
+
+		pContainer->vecUV[iControlIndex].x = (float)(vUV.mData[0]);
+		pContainer->vecUV[iControlIndex].y = (float)(vUV.mData[1]);
 	}
-
-	FbxVector2	vUV = pUV->GetDirectArray().GetAt(iUVIndex);
-
-	pContainer->vecUV[iControlIndex].x = (float)(vUV.mData[0] - (int)vUV.mData[0]);
-	pContainer->vecUV[iControlIndex].y = (float)(1.f - (vUV.mData[1] - (int)vUV.mData[1]));
 }
 
 void CFbxLoader::LoadTangent(FbxMesh * pMesh, PFBXMESHCONTAINER pContainer, int iVtxID, int iControlIndex)

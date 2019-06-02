@@ -4,6 +4,7 @@
 #include "Component/ColliderOBB3D.h"
 #include "Resource/Mesh.h"
 #include "Scene/SceneManager.h"
+#include "Locker.h"
 
 static float fx;
 static float fy;
@@ -65,6 +66,8 @@ bool CHuman_Player::Init_Interact()
 	m_pAnimation->SetClipUseBoneTransform("player_enter_bed_right_stand", "Hero-Pelvis");
 	m_pAnimation->SetClipUseBoneTransform("player_exit_bed_left", "Hero-Pelvis");
 	m_pAnimation->SetClipUseBoneTransform("player_exit_bed_right", "Hero-Pelvis");
+	m_pAnimation->SetClipUseBoneTransform("player_exit_bed_left_crouch", "Hero-Pelvis");
+	m_pAnimation->SetClipUseBoneTransform("player_exit_bed_right_crouch", "Hero-Pelvis");
 	
 	return true;
 }
@@ -100,31 +103,57 @@ void CHuman_Player::Close_Door_Fast(float fTime)
 }
 void CHuman_Player::Hide_Locker(float fTime)
 {
-
+	if (m_pAnimation->GetCurrentClip()->strName == "player_locker_inside_idle")
+	{
+		HidingMotionEnd(fTime);
+	}
 }
 void CHuman_Player::Hiding_Locker(float fTime)
 {
-
+	m_pAnimation->ChangeClip("player_locker_inside_idle");
 }
 void CHuman_Player::Exit_Locker(float fTime)
 {
-
+	m_pAnimation->ChangeClip("player_locker_exit");
+	if (m_pAnimation->GetCurrentClip()->strName == "player_locker_exit")
+	{
+		if (m_pAnimation->GetCurrentClip()->fTimeLength - m_pAnimation->GetCurrentClipTime() < 0.3f)
+		{
+			HidingMotionEnd(fTime);
+		}
+	}
 }
 void CHuman_Player::Hide_Bed(float fTime)
 {
 	//m_eTempPlayerState = (PLAYER_STATUS)m_iState;
 	//m_iState = PSTATUS_NONE;
-	
+
 	float fAngle = m_pTransform->GetWorldRot().y - m_vTargetDir.y;
 
 	if (fAngle > 0.f && fAngle <= 180.0f)
 	{
-		m_pAnimation->ChangeClip("player_enter_bed_left_stand");
+		if (m_iState & PSTATUS_CROUCHED)
+		{
+			m_pAnimation->ChangeClip("player_enter_bed_left");
+		}
+		else
+		{
+			m_pAnimation->ChangeClip("player_enter_bed_left_stand");
+		}
+		
 		m_iRotDir = -1;
 	}
 	else if (fAngle <= .0f && fAngle > -180.0f)
 	{
-		m_pAnimation->ChangeClip("player_enter_bed_right_stand");
+		if (m_iState & PSTATUS_CROUCHED)
+		{
+			m_pAnimation->ChangeClip("player_enter_bed_right");
+		}
+		else
+		{
+			m_pAnimation->ChangeClip("player_enter_bed_right_stand");
+		}
+		
 		m_iRotDir = 1;
 	}
 	else
@@ -156,16 +185,40 @@ void CHuman_Player::Hiding_Bed(float fTime)
 {
 	m_pAnimation->ChangeClip("player_bed_idle");
 	
+	if (m_iState & PSTATUS_CROUCHED)
+	{
+		m_iState ^= PSTATUS_CROUCHED;
+		m_iState |= PSTATUS_CROUCHING;
+	}
 }
 void CHuman_Player::Exit_Bed(float fTime) 
 {
+	PUN::CInput *_Input = PUN::CInput::GetInst();
 	if (m_iRotDir == 1) //left
 	{
-		m_pAnimation->ChangeClip("player_exit_bed_right"); //들어온 데로 나와야 되는데 방향이 반대다?
+		if (_Input->KeyPush("Ctrl"))
+		{
+			m_pAnimation->ChangeClip("player_exit_bed_right_crouch"); //들어온 데로 나와야 되는데 방향이 반대다?
+
+		}
+		else
+		{
+
+			m_pAnimation->ChangeClip("player_exit_bed_right"); //들어온 데로 나와야 되는데 방향이 반대다?
+		}
 	}
 	else if (m_iRotDir == -1)
 	{
-		m_pAnimation->ChangeClip("player_exit_bed_left");
+		if (_Input->KeyPush("Ctrl"))
+		{
+			m_pAnimation->ChangeClip("player_exit_bed_left_crouch"); //들어온 데로 나와야 되는데 방향이 반대다?
+
+		}
+		else
+		{
+			m_pAnimation->ChangeClip("player_exit_bed_left");
+		}
+		
 	}
 	//m_pAnimation->ChangeClip("player_exit_bed_left");
 	//m_fDestRotY = fAngle;
@@ -295,10 +348,17 @@ int CHuman_Player::Input_Interact(float fTime)
 
 int CHuman_Player::InteractUpdate(float fTime)
 {
-
+	
 	//Vector3 vTestPos = m_pTransform->GetWorldPos();
 	//std::cout << "test position : (" << vTestPos.x << ", " << vTestPos.y << ", " << vTestPos.z << ")" << std::endl;
+	if (m_iState & PSTATUS_LOCKER)
+	{
+		if (m_iState & PSTATUS_HIDEINTERACT)
+		{
 
+		}
+	}
+	
 
 	return 0;
 }
@@ -335,13 +395,45 @@ int CHuman_Player::InteractLateUpdate(float fTime)
 
 void CHuman_Player::HidingMotionEnd(float fTime) 
 {
-	m_iState ^= PSTATUS_HIDEINTERACT;
+	if (m_iState & PSTATUS_HIDEINTERACT) 
+	{
+		m_iState ^= PSTATUS_HIDEINTERACT;
+	}
+	else if (m_iState & PSTATUS_HIDEINTERACT_OUT)
+	{
+		m_iState ^= PSTATUS_HIDEINTERACT_OUT;
+		if (m_iState & PSTATUS_BED)
+		{
+			
+			m_iState ^= PSTATUS_BED;
+		}
+		else if (m_iState & PSTATUS_LOCKER)
+		{
+			if ((m_iState & PSTATUS_CAMOUT) == 0)
+			{
+				if (m_pScene)
+				{
+					PUN::CTransform *pCamTr = m_pScene->GetMainCameraTransform();
+
+					Vector3 vCamRot = pCamTr->GetWorldRot();
+					Vector3 vWorldRot = m_pTransform->GetWorldRot();
+
+					vCamRot.y = vWorldRot.y;
+
+					pCamTr->SetWorldRot(vCamRot);
+
+					SAFE_RELEASE(pCamTr);
+				}
+			}
+			m_iState ^= PSTATUS_LOCKER;
+		}
+	}
 };
 
 void CHuman_Player::InputRot_Interact(float fTime)
 {
 	//락커나 침대 안에 있는 경우
-	if (m_iState & PSTATUS_INBED)
+	if (m_iState & PSTATUS_BED)
 	{
 		//각도 버퍼 얻어오기
 		Vector3 vRot = m_pTransform->GetWorldRot();
@@ -430,34 +522,131 @@ void CHuman_Player::InputRot_Interact(float fTime)
 	}
 	else if (m_iState & PSTATUS_LOCKER)
 	{
-		//각도 버퍼 얻어오기
-		Vector3 vRot = m_pTransform->GetWorldRot();
-		//Y 축의 각도 차이 얻어오기
-		Vector3 vItemRot = m_vTargetDir.Angle(vItemRot);
-
-		float vYdiff = vRot.y - vItemRot.y;
-
-		if (vYdiff > m_fMaxHideBedAngleX)
+		if (m_iState & (PSTATUS_HIDEINTERACT | PSTATUS_HIDEINTERACT_OUT))
 		{
-			vYdiff = m_fMaxHideLockerAngleX;
+			int aa = 0;
 		}
-		else if (vYdiff < -m_fMaxHideBedAngleX)
+		else
 		{
-			vYdiff = -m_fMaxHideLockerAngleX;
+			//각도 버퍼 얻어오기
+			Vector3 vRot = m_pTransform->GetWorldRot();
+
+			float vYdiff = vRot.y - m_vTargetDir.y;
+			if (vYdiff > m_fMaxHideBedAngleX)
+			{
+				vYdiff = m_fMaxHideBedAngleX;
+				vRot.y = m_vTargetDir.y + vYdiff;
+
+				m_pTransform->SetWorldRot(vRot);
+			}
+			else if (vYdiff < -m_fMaxHideBedAngleX)
+			{
+				vYdiff = -m_fMaxHideBedAngleX;
+				vRot.y = m_vTargetDir.y + vYdiff;
+
+				m_pTransform->SetWorldRot(vRot);
+			}
+			PUN::CTransform *pCamera = m_pScene->GetMainCameraTransform();
+			Vector3 vCamRot = pCamera->GetWorldRot();
+			if (vCamRot.x < -m_fMaxHideBedAngleY)
+			{
+				float fSpeed = m_fMaxHideBedAngleY * fTime * 16.f;
+
+				if (vCamRot.x + fSpeed > -m_fMaxHideBedAngleY)
+				{
+					vCamRot.x = -m_fMaxHideBedAngleY;
+				}
+				else
+				{
+					vCamRot.x += fSpeed;
+				}
+			}
+			else if (vCamRot.x > m_fMaxHideBedAngleY)
+			{
+				float fSpeed = m_fMaxHideBedAngleY * fTime * 16.f;
+
+				if (vCamRot.x - fSpeed < m_fMaxHideBedAngleY)
+				{
+					vCamRot.x = m_fMaxHideBedAngleY;
+				}
+				else
+				{
+					vCamRot.x -= fSpeed;
+				}
+			}
+
+			vCamRot.y = vRot.y;
+			pCamera->SetWorldRot(vCamRot);
+
+
+			SAFE_RELEASE(pCamera);
 		}
-
-		vRot.y = vItemRot.y + vYdiff;
-
-		m_pTransform->SetWorldRot(vRot);
-		PUN::CTransform *pCamera = m_pScene->GetMainCameraTransform();
-		Vector3 vCamRot = pCamera->GetWorldRot();
-		vCamRot.y = vRot.y;
-		pCamera->SetWorldRot(vCamRot);
-		SAFE_RELEASE(pCamera);
+		
 	}
 }
 
 void CHuman_Player::SetInteractRotationVector(const Vector3& vec)
 {
 	m_vTargetDir = vec;
+}
+
+void  CHuman_Player::Interact_With_Locker(CLocker *pLocker, float fTime) 
+{
+	//this >> 존내 잘 들어온다
+	PUN::CInput *_Input = PUN::CInput::GetInst();
+
+	if (m_iState & PSTATUS_LOCKER)
+	{
+		if (m_iState & (PSTATUS_HIDEINTERACT | PSTATUS_HIDEINTERACT_OUT))
+		{
+			
+		}
+		else
+		{
+			if (m_pAnimation->GetCurrentClip()->strName == "player_locker_inside_idle")
+			{
+				PUN::CTransform *pLockerTr = pLocker->GetTransform();
+
+				Vector3 vLockerPos = pLockerTr->GetWorldPos();
+
+				Vector3 vLockerZ = pLockerTr->GetWorldAxis(PUN::AXIS_Z);
+				vLockerPos += (vLockerZ * (-1.05f));
+
+				m_pTransform->SetWorldPos(vLockerPos);
+
+				SAFE_RELEASE(pLockerTr);
+			}
+			
+		}
+		
+	}
+	if (_Input->KeyRelease("E"))
+	{
+
+		if (m_iState & PSTATUS_LOCKER)
+		{
+
+		}
+		else
+		{
+
+			m_iState |= (PSTATUS_HIDEINTERACT | PSTATUS_LOCKER);
+
+			if (m_iState & PSTATUS_CROUCHED)
+			{
+				m_iState ^= PSTATUS_CROUCHED;
+			}
+
+			if (m_iState & PSTATUS_CROUCHING)
+			{
+				m_iState ^= PSTATUS_CROUCHING;
+			}
+			//
+			m_pAnimation->ChangeClip("player_locker_hide");
+			m_pAnimation->SetDefaultClip("player_locker_inside_idle");
+		}
+
+	}
+
+
 }

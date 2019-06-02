@@ -39,30 +39,29 @@ enum PLAYER_STATUS
 	PSTATUS_WOUNDED = 2,
 	PSTATUS_WALK = 4,
 	PSTATUS_SPRINT = 8,
-	PSTATUS_STOPMOVE = 0x10,
-	PSTATUS_ONAIR = 0x20,
-	PSTATUS_JUMPED = 0x40,
-	PSTATUS_CROUCHING = 0x80,
-	PSTATUS_CROUCHED= 0x100,
-	PSTATUS_INBED = 0x200,
-	PSTATUS_HIDEINTERACT = 0x400,
-	PSTATUS_DOOR_OPEN = 0x800,
-	PSTATUS_DOOR_CLOSE = 0x1000,
-	PSTATUS_CAM_TAKING_ON = 0x2000,
-	PSTATUS_CAM_ON = 0x4000,
-	PSTATUS_CAM_TAKING_OFF = 0x8000,
-	PSTATUS_GUN_TAKING_ON = 0x10000,
-	PSTATUS_GUN		= 0x20000,
-	PSTATUS_GUN_TAKING_OFF = 0x40000,
-	PSTATUS_ITEM = 0x80000,
-	PSTATUS_UPDATEPOS = 0x100000,
-	PSTATUS_DOCX =			0x200000, // 문서 인벤토리용 Status
-	PSTATUS_KEY =			0x400000, // 키 인벤토리용 Status
-	PSTATUS_CAMOUT =		0x800000, //INACTIVE는 아니지만 카메라가 Out될 때
-	PSTATUS_CHANGESCENE =	0x1000000,
-	PSTATUS_LOCKER		=	0x2000000,
-	PSTATUS_TURNING		=	0x4000000,
-	PSTATUS_INACTIVE =		0x10000000
+	PSTATUS_STOPMOVE =			0x10,
+	PSTATUS_CROUCHING =			0x20,
+	PSTATUS_CROUCHED=			0x40,
+	PSTATUS_BED =				0x80,
+	PSTATUS_HIDEINTERACT =		0x100,
+	PSTATUS_HIDEINTERACT_OUT =	0x200,
+	PSTATUS_DOOR_OPEN =			0x400,
+	PSTATUS_DOOR_CLOSE =		0x800,
+	PSTATUS_CAM_TAKING_ON =		0x1000,
+	PSTATUS_CAM_ON =			0x2000,
+	PSTATUS_CAM_TAKING_OFF =	0x4000,
+	PSTATUS_GUN_TAKING_ON =		0x8000,
+	PSTATUS_GUN			=		0x10000,
+	PSTATUS_GUN_TAKING_OFF =	0x20000,
+	PSTATUS_ITEM =				0x40000,
+	PSTATUS_UPDATEPOS =			0x80000,
+	PSTATUS_DOCX =				0x100000, // 문서 인벤토리용 Status
+	PSTATUS_KEY =				0x200000, // 키 인벤토리용 Status
+	PSTATUS_CAMOUT =			0x400000, //INACTIVE는 아니지만 카메라가 Out될 때
+	PSTATUS_CHANGESCENE =		0x800000,
+	PSTATUS_LOCKER		=		0x1000000,
+	PSTATUS_TURNING		=		0x2000000,
+	PSTATUS_INACTIVE =			0x4000000
 };
 
 
@@ -113,7 +112,7 @@ public:
 	void PSTATUS_JUMPED(float DeltaTime);
 	void PSTATUS_CROUCHING(float DeltaTime);
 	void PSTATUS_CROUCHED(float DeltaTime);
-	void PSTATUS_INBED(float DeltaTime);
+	void PSTATUS_BED(float DeltaTime);
 	void PSTATUS_HIDEINTERACT(float DeltaTime);
 	void PSTATUS_DOOR_OPEN(float DeltaTime);
 	void PSTATUS_DOOR_CLOSE(float DeltaTime);
@@ -139,7 +138,7 @@ private:
 
 	PUN::PPARTANIM m_pPartCamAnim;
 
-	PUN::ANIMATIONCALLBACK m_arrAnimCallbacks[16];
+	PUN::ANIMATIONCALLBACK m_arrAnimCallbacks[8];
 	class CInventory*	m_pInven;
 	class CHandycam*	m_pHandycam;
 	Vector3 m_vInitLocalPos;
@@ -181,7 +180,7 @@ private:
 	Vector3 m_vCamWorldOffset	;
 	Vector3 m_vCamLocalOffset;
 	Vector3 m_vCamCrouchLocalOffset;
-	Vector3 m_vTracerBuf;
+	
 #include "Player_Item_Value.hpp"
 #include "Player_Interact_Value.hpp"
 #include "Player_Cam_Value.hpp"
@@ -244,8 +243,6 @@ public:
 	void FootStepFallDownLow	(float fTime);
 	void FootStepFallDownHigh	(float fTime);
 	void CrouchForwardMendPos	(float fTime);
-	void CrouchBackwardMendPos	(float fTime);
-	void CrouchSideMendPos		(float fTime);
 
 	void SetFootStepEnvironment(FOOTSTEP_ENVIRONMENT eEnv);
 	FOOTSTEP_ENVIRONMENT GetFootStepEnvironment() const;
@@ -300,6 +297,8 @@ public:
 
 	bool IsHidingInBed();
 	bool IsHiddenInBed();
+
+	class CInventory *GetInv();
 	//custom public Functions
 #include "Cam_Func_Header.hpp"
 #include "Interact_Func_Header.hpp"
