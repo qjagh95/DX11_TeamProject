@@ -3,6 +3,38 @@
 #include "Component/UserComponent.h"
 #include "Component/Collider.h"
 
+/*
+Door 클래스를 사용하려는 자들은 들으라
+
+ - 일반 문을 달아 놓기 위해서는 로컬 Y를 90도 회전시켜놓아야 한다
+
+툴에서 배치하는 자들이여, 월드 포지션과 로테이션 스케일만을 조정하라.
+
+피봇은 자동으로 맞춰질지니,
+
+기본으로 문 메쉬는 Wood_Door_Right_01.msh를 사용하고 있으니
+
+수정하고자 하는 자, 바꿔도 좋다. 단, Right로 되어있는 메쉬를 사용해야 할 것이다.
+
+ - 스테이지 문을 배치하려는 자들이여
+
+SetDoorType(DOOR_STAGE) 함수를 호출하라. 그리고 현재 스테이지에서 밖으로 나가는 방향을 Z방향으로 맞추라
+
+스테이지를 바꾸기 위해서는 SetTargetDoor함수를 호출해야 할 것이다.
+
+넣어줘야할 인자로는 Scene의 이름, 대상 Door의 이름, 그리고 해당 문앞에서 등장할 위치가 있다.
+
+해당 스테이지 작업자와 협의하여 작성해야할 것이라.
+
+ - 잠긴 문을 배치하려는 자들이여
+
+ Lock함수를 호출하라
+
+ 인자로는 열쇠가 있어야 열릴 수 있는 지에 대한 boolean값과 열쇠 이름이 있다.
+
+ 만약 반대편에서 잠겨있는 문의 경우 첫번째 인자를 false로 두고 string은 넣지 않아도 된다.
+*/
+
 enum DOOR_STATE {
 
 	DOOR_CLOSE = 1,
@@ -96,6 +128,8 @@ public:
 	void OpenNormal(const Vector3& vDir);
 	void OpenStage(const Vector3& vDir);
 	void OpenLocker(const Vector3& vDir);
+
+	void OpenFast(const Vector3& vDir);
 
 	void SetMesh(const string& strMeshKey, const TCHAR* pFileName);
 	

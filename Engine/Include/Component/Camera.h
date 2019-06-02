@@ -47,7 +47,9 @@ public:
 	Matrix GetShadowViewMatrix() const;
 	Matrix GetShadowProjMatrix() const;
 	Matrix GetShadowVP() const;
+	void SetShadowVP(const Matrix& matShadowVP);
 	bool IsShadow()	const;
+	void NoShadow();
 	void SetFrustumCulling(bool Value) { m_bFrustum = Value; }
 	bool GetFrustumCulling() const { return m_bFrustum; }
 

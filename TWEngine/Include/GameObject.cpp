@@ -25,7 +25,8 @@ CGameObject::CGameObject() :
 	m_isFrustumCull(false),
 	m_pPickingCollSphere(nullptr),
 	m_bUseFrustumCull(true),
-	m_isDontDestroy(false)
+	m_isDontDestroy(false),
+	m_eSectionType((STAGE_SECTION_TYPE)0)
 {
 	SetTag("GameObject");
 	m_eRenderGroup = RG_NORMAL;

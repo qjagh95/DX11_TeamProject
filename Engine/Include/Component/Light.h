@@ -28,6 +28,16 @@ private:
 	float			m_fWidth;
 	float			m_fHeight;
 	int				m_iRim;
+	
+	bool			m_bBlink;
+	bool			m_bTurnOn;
+	bool			m_bBlinkFinalTurnOn;
+	float			m_fLimitTime;
+	float			m_fAccTime;
+	float			m_fCheckTime;
+	float			m_fDeltaTime;
+	Vector4			m_vChangeColor;
+	Vector4			m_vOriginColor;
 
 	Matrix			m_matShadowView;
 	Matrix			m_matShadowProj;
@@ -36,8 +46,9 @@ private:
 public:
 	LIGHT_TYPE  GetLightType()	const;
 	LightInfo	GetLightInfo()	const;
+	Vector4		GetLightColor() const;
 	Matrix		GetShadowVP()	const;
-
+	bool		IsTurnOn()		const;
 public:
 	void Save(BinaryWrite* _pInstBW);
 	void Load(BinaryRead*  _pInstBR);
@@ -59,6 +70,9 @@ public:
 	void SetRimColor(float x, float y, float z);
 	void SetRimPower(float fRimPower);
 	void UpdateLightCBuffer();
+
+	void StartBlink(float fLimitTime, float fDeltaTime, const Vector4& vColor, bool bFinalTurnOn = true);
+	void Blink(float fTime);
 
 	float GetRange();
 	Vector4 GetLightSpecular();

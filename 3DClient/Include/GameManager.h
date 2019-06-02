@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene/Scene.h"
 #include "Component/Light.h"
+#include "Component/Camera.h"
 
 PUN_USING
 
@@ -14,38 +15,63 @@ class CGameManager
 {
 	Vector3					m_vSponPos;
 	Vector3					m_vSponRot;
+
+	CCamera*				m_pCamera;
 	CGameObject*			m_pPlayerObj;
 	CTransform*				m_pPlayerTr;
 	class CHuman_Player*	m_pPlayer;
 
-	unordered_map<CScene*, unordered_map<string, class CDoor*>*> m_mapDoor;
-	unordered_map<CScene*, unordered_map<string, CLight*>>		m_mapLight;
-	unordered_map<CScene*, unordered_map<string, CGameObject*>> m_mapItemObj;
-	unordered_map<string, PDoorKeyInfo>							m_mapKey;
-	vector<vector<CGameObject*>>								m_vecLight;
+	unordered_map<CScene*, unordered_map<string, class CDoor*>*>	m_mapDoor;
+	unordered_map<CScene*, unordered_map<string, CLight*>*>			m_mapLight;
+	unordered_map<CScene*, unordered_map<string, CGameObject*>*>	m_mapItemObj;
+	unordered_map<string, PDoorKeyInfo>								m_mapKey;
+	vector<CLight*>													m_vecLight[SST_END];
+	
+	list<CGameObject*>												m_ChangedItemObjList;
+	list<CDoor*>													m_ChangedDoorList;
+	list<CLight*>													m_ChangedLightList;
+
+// String Convert
+public:
+	const string TCHARToString(const TCHAR* _ptsz);
+	const TCHAR* StringToTCHAR(const string& _str);
 
 public:
+	bool PostInit();
 	bool Init();
+	bool AfterInit();
+
 	void AddKey(const string& strKeyName);
 	void AddDoor(CScene* pScene, const string& strDoorObjTag, CDoor* pDoor);
 	void AddDoor(const string& strSceneKey, const string& strDoorObjTag, CDoor* pDoor);
 	void AddItemObject(CScene* pScene, const string& strItemObjTag, CGameObject* pObj);
 	void AddItemObject(const string& strSceneKey, const string& strItemObjTag, CGameObject* pObj);
-	void AddLight(CScene* pScene, const string& strDoorObjTag, CLight* pLight);
-	void AddLight(const string& strSceneKey, const string& strLightObjTag, CLight* pLight);
+	void AddLight(CLight* pLight);
+	void AddToEachContainer();
 
 	bool			FindKey(const string& strKeyName);
 	CDoor*			FindDoor(CScene* pScene, const string& strDoorKey);
 	CDoor*			FindDoor(const string& strSceneKey, const string& strDoorKey);
-	CLight*			FindLight(CScene* pScene, const string& strLightKey);
-	CLight*			FindLight(const string& strSceneKey, const string& strLightKey);
 	CGameObject*	FindItemObject(CScene* pScene, const string& strItemObjKey);
 	CGameObject*	FindItemObject(const string& strSceneKey, const string& strItemObjKey);
+	CLight*			FindLight(CScene* pScene, const string& strLightObj);
+	CLight*			FindLight(const string& strSceneKey, const string& strLightObj);
 
+	
+	CTransform*		GetPlayerTr()	const;
+	CHuman_Player*	GetPlayer()		const;
 	void PlayerSpon(const Vector3& vPos, const Vector3& vRot);
 
-	void SaveCheckPoint(const Vector3& vPos, const Vector3& vRot);
+	void SaveCheckPoint();
 	void LoadCheckPoint();
+
+	void Update(float fTime);
+	void CalculateShadowLight();
+
+	void BlinkAllSceneLight(float fLimitTime, float fDeltaTime,
+		const Vector4& vColor, bool bFinalTurnOn);
+	
 
 	DECLARE_SINGLE(CGameManager)
 };
+

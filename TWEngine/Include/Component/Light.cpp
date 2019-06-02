@@ -6,12 +6,22 @@
 
 PUN_USING
 
-CLight::CLight()
+CLight::CLight() :
+	m_fAccTime(0.0f),
+	m_fLimitTime(0.0f),
+	m_fCheckTime(0.0f),
+	m_fDeltaTime(0.0f),
+	m_bBlink(false),
+	m_bBlinkFinalTurnOn(false),
+	m_bTurnOn(true)
 {
 	m_tInfo.vDif = Vector4::White;
 	m_tInfo.vAmb = Vector4(0.2f, 0.2f, 0.2f, 1.f);
 	m_tInfo.vSpc = Vector4::White;
 	m_tInfo.fFallOff = 0.0f;
+	m_vOriginColor = Vector4::White;
+	m_vChangeColor = Vector4::Black;
+
 	m_iRim = -1;
 	m_eComType = CT_LIGHT;
 }
@@ -36,9 +46,19 @@ LightInfo CLight::GetLightInfo() const
 	return m_tInfo;
 }
 
+Vector4 CLight::GetLightColor() const
+{	
+	return m_tInfo.vDif;
+}
+
 Matrix CLight::GetShadowVP() const
 {
 	return m_matShadowVP;
+}
+
+bool CLight::IsTurnOn() const
+{
+	return m_bTurnOn;
 }
 
 void CLight::Save(BinaryWrite * _pInstBW)
@@ -82,6 +102,8 @@ void CLight::Load(BinaryRead * _pInstBR)
 	m_tInfo.fOutAngle = fOutAngle;
 	m_tInfo.fFallOff = fFallOff;
 	m_tInfo.iRimLight = iRimLight;
+
+	m_vOriginColor = vDif;
 }
 
 void CLight::SetLightType(LIGHT_TYPE eType)
@@ -117,6 +139,8 @@ void CLight::SetLightColor(const Vector4 & vDif, const Vector4 & vAmb, const Vec
 	m_tInfo.vDif = vDif;
 	m_tInfo.vAmb = vAmb;
 	m_tInfo.vSpc = vSpc;
+
+	m_vOriginColor = vDif;
 }
 
 void CLight::SetLightAmbient(const Vector4 & vAmb)
@@ -127,6 +151,7 @@ void CLight::SetLightAmbient(const Vector4 & vAmb)
 void CLight::SetLightDiffuse(const Vector4 & vDif)
 {
 	m_tInfo.vDif = vDif;
+	m_vOriginColor = vDif;
 }
 
 void CLight::SetLightSpcular(const Vector4 & vSpc)
@@ -181,6 +206,56 @@ void CLight::UpdateLightCBuffer()
 {
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Light", &m_tInfo);
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("RimLight", &m_tRimInfo);
+}
+
+void CLight::StartBlink(float fLimitTime, float fDeltaTime, const Vector4 & vColor, bool bFinalTurnOn)
+{
+	m_fLimitTime = fLimitTime;
+	m_fDeltaTime = fDeltaTime;
+	m_fCheckTime = 0.0f;
+	m_fAccTime = 0.0f;
+	m_vChangeColor = vColor;
+	m_bBlink = true;
+	m_bBlinkFinalTurnOn = bFinalTurnOn;
+}
+
+void CLight::Blink(float fTime)
+{
+	if (m_bBlink)
+	{
+		m_fAccTime += fTime;
+		
+		if (m_fAccTime < m_fLimitTime)
+		{
+			if (m_fAccTime - m_fCheckTime > m_fDeltaTime)
+			{	
+				if (m_bTurnOn)
+				{
+					SetLightColor(m_vOriginColor, m_vOriginColor, m_vOriginColor);
+					m_bTurnOn = true;
+				}
+				else
+				{
+					SetLightColor(m_vChangeColor, m_vChangeColor, m_vChangeColor);
+					m_bTurnOn = false;
+				}
+			}
+		}
+		else
+		{
+			m_bBlink = false;
+			if (m_bBlinkFinalTurnOn)
+			{
+				SetLightColor(m_vOriginColor, m_vOriginColor, m_vOriginColor);
+				m_bTurnOn = true;
+			}
+			else
+			{
+				SetLightColor(m_vChangeColor, m_vChangeColor, m_vChangeColor);
+				m_bTurnOn = false;
+			}
+		}
+	}
 }
 
 float CLight::GetRange()
@@ -253,40 +328,18 @@ int CLight::Input(float fTime)
 
 	m_tInfo.vDir = m_pTransform->GetWorldAxis(AXIS_Z);
 
-	if (m_eLightType == LT_SPOT)
-	{
-
-	}
-
 	return 0;
 }
 
 int CLight::Update(float fTime)
 {
-
+	Blink(fTime);
 
 	return 0;
 }
 
 int CLight::LateUpdate(float fTime)
 {
-
-	//SetRimColor(1.f, 1.f, 1.f);
-	//SetRimPower(3.f);
-
-	//static bool bPush = false;
-	//if (GetAsyncKeyState('R') & 0x8000)
-	//{
-	//	bPush = true;
-	//}
-
-	//else if (bPush)
-	//{
-	//	bPush = false;
-	//	m_iRim *= -1;
-
-	//	SetRimLight(m_iRim);
-	//}
 
 	return 0;
 }

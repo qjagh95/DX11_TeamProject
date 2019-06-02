@@ -5,6 +5,7 @@
 #include "Component/Renderer.h"
 #include "Component/Material.h"
 #include "Component/Transform.h"
+#include "Component/ColliderOBB3D.h"
 
 CLocker::CLocker()
 {
@@ -18,6 +19,7 @@ CLocker::CLocker(const CLocker & battery)
 
 CLocker::~CLocker()
 {
+	SAFE_RELEASE(m_pDoor);
 }
 
 void CLocker::AfterClone()
@@ -26,23 +28,33 @@ void CLocker::AfterClone()
 
 bool CLocker::Init()
 {
-	CRenderer* pRD = m_pObject->AddComponent<CRenderer>("BedRenderer");
-	pRD->SetMesh("LockerLarge", TEXT("LockerLarge.msh"));
+	// »ó´ë ÁÂÇ¥
+	//-28 108 28.8 * scale
 
+	m_vRelativePos = Vector3(-28.0f, 15.0f, 24.0f);
+
+	CRenderer* pRD = m_pObject->AddComponent<CRenderer>("LockerRenderer");
+	CCollider* pOBB = m_pObject->AddComponent<CColliderOBB3D>("LockerBody");
+	pOBB->SetCollisionCallback(CCT_STAY, this, &CLocker::Interact);
+
+	pRD->SetMesh("Large_Locker", TEXT("Large_Locker.msh"));
+
+	m_pTransform->SetLocalRotY(90.0f);
+	//m_pTransform->SetWorldPivot(0.0f, 0.0f, 0.0f);
 	m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
 
 	CGameObject* pObj = CGameObject::CreateObject("LockerDoorObj");
-	CDoor* pDoor = pObj->AddComponent<CDoor>("LockerDoor");
 	CTransform* pTr = pObj->GetTransform();
+	m_pDoor = pObj->AddComponent<CDoor>("LockerDoor");
 
-	pDoor->SetDoorType(DOOR_LOCKER);
-
+	m_pDoor->SetDoorType(DOOR_LOCKER);
 	m_pObject->AddChild(pObj);
 
-	SAFE_RELEASE(pTr);
-	SAFE_RELEASE(pDoor);
-	SAFE_RELEASE(pObj);
+	pTr->SetWorldPos(m_vRelativePos * pTr->GetWorldScale());
 
+	SAFE_RELEASE(pOBB);
+	SAFE_RELEASE(pTr);
+	SAFE_RELEASE(pObj);
 	SAFE_RELEASE(pRD);
 
 	return true;
@@ -74,4 +86,14 @@ void CLocker::Render(float fTime)
 CLocker * CLocker::Clone()
 {
 	return nullptr;
+}
+
+void CLocker::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	int iID = pDest->GetColliderID();
+	if (iID == UCI_PLAYER_INTERACT)
+	{
+		if(KEYDOWN("E"))
+			m_pDoor->Open(pDest->GetWorldAxis(AXIS_Z));
+	}
 }
