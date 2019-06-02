@@ -72,7 +72,7 @@ bool CNoticeMessage::Init()
 	vecClipFrame.push_back(tFrame);
 
 	m_pAnimation->AddClip("Button_E_Door", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"Close_Button", TEXT("UI/Door_Info.png"));
+		"Door_Button", TEXT("UI/Door_Info.png"));
 
 	vecClipFrame.clear();
 
@@ -81,7 +81,7 @@ bool CNoticeMessage::Init()
 	vecClipFrame.push_back(tFrame);
 
 	m_pAnimation->AddClip("Button_E_Hide", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"Close_Button", TEXT("UI/Hide_Info.png"));
+		"Hide_Button", TEXT("UI/Hide_Info.png"));
 
 	vecClipFrame.clear();
 

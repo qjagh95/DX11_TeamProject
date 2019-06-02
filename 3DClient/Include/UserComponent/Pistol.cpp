@@ -9,6 +9,7 @@
 #include <Component/Light.h>
 #include <Scene/Scene.h>
 #include "BulletCase.h"
+#include "Human_Player.h"
 
 int CPistol::iBulletCaseCnt = 10;
 
@@ -147,10 +148,14 @@ int CPistol::LateUpdate(float fTime)
 
 		SAFE_RELEASE(pObjTrans);
 
-		if (!m_pMuzzle->GetEnable())
+		if (m_fFireTimer >= m_fFireReloadSpd * 0.125f)
 		{
-			m_pGunMuzzleFlash->SetEnable(false);
+			if (m_pMuzzle->GetEnable())
+			{
+				m_pGunMuzzleFlash->SetEnable(false);
+			}
 		}
+		
 
 		SAFE_RELEASE(pMuzzleTrans);
 	}
@@ -383,6 +388,14 @@ bool CPistol::Fire()
 		{
 			m_pSnd->StopClip(iRand);
 		}
+
+		float fInten = _PLAYER->GetBreathIntensity();
+		
+		if(fInten < 2.f)
+			fInten += 0.15f;
+
+		_PLAYER->SetBreathIntensity(fInten);
+		std::cout << "intensity set to " << fInten << std::endl;
 
 		m_pSnd->Play(iRand);
 		//m_pGunSmoke->SetEnable(true);

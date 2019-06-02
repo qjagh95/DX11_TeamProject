@@ -4,12 +4,13 @@
 #include "Component/ColliderOBB3D.h"
 #include "Resource/Mesh.h"
 #include "Scene/SceneManager.h"
+#include "Door.h"
 #include "Locker.h"
+#include "../GameManager.h"
 
 static float fx;
 static float fy;
 static float fz;
-
 
 
 bool CHuman_Player::Init_Interact()
@@ -36,7 +37,9 @@ bool CHuman_Player::Init_Interact()
 	vLength.z = fabs(vMax.z - vMin.z);
 
 	pOBB->SetInfo(Vector3(0.0f, 0.0f, 20.0f), Vector3::Axis, vLength * 0.05f);
+	pOBB->SetCollisionCallback(CCT_ENTER, this, &CHuman_Player::InteractCallBackEnter);
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CHuman_Player::InteractCallBackStay);
+	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CHuman_Player::InteractCallBackLeave);
 
 	SAFE_RELEASE(pMesh);
 	SAFE_RELEASE(pOBB);
@@ -594,19 +597,33 @@ void  CHuman_Player::Interact_With_Locker(CLocker *pLocker, float fTime)
 {
 	//this >> 존내 잘 들어온다
 	PUN::CInput *_Input = PUN::CInput::GetInst();
-
+	PUN::CTransform *pLockerTr = pLocker->GetTransform();
 	if (m_iState & PSTATUS_LOCKER)
 	{
+		
 		if (m_iState & (PSTATUS_HIDEINTERACT | PSTATUS_HIDEINTERACT_OUT))
 		{
-			
+			if (m_iState & PSTATUS_HIDEINTERACT)
+			{
+				if (m_pAnimation->GetCurrentClip()->strName == "player_locker_hide")
+				{
+					if (m_pAnimation->GetCurrentClip()->fPlayTime + 0.25f < m_pAnimation->GetCurrentClip()->fEndTime)
+					{
+						Vector3 vLockerAxisZ = pLockerTr->GetWorldAxis(PUN::AXIS_Z);
+						Vector3 vOpenPos = pLockerTr->GetWorldPos() + (vLockerAxisZ * 2.75f);
+						m_pTransform->SetWorldPos(vOpenPos);
+					}
+				}
+				
+			}
+			//pLocker->OpenDoor();
 		}
 		else
 		{
+
 			if (m_pAnimation->GetCurrentClip()->strName == "player_locker_inside_idle")
 			{
-				PUN::CTransform *pLockerTr = pLocker->GetTransform();
-
+				
 				Vector3 vLockerPos = pLockerTr->GetWorldPos();
 
 				Vector3 vLockerZ = pLockerTr->GetWorldAxis(PUN::AXIS_Z);
@@ -614,39 +631,100 @@ void  CHuman_Player::Interact_With_Locker(CLocker *pLocker, float fTime)
 
 				m_pTransform->SetWorldPos(vLockerPos);
 
-				SAFE_RELEASE(pLockerTr);
+				
 			}
 			
 		}
+				
+	}
+	else
+	{
+		float fLockerRotY = pLockerTr->GetWorldRot().y;
+		fLockerRotY += 180.f;
+
+		if (fLockerRotY > 180.f)
+			fLockerRotY -= 360.f;
+
+		Vector3 vBodyRot = m_pTransform->GetWorldRot();
+
+		float fAngleDiff = vBodyRot.y - fLockerRotY;
+
+		if (fAngleDiff > 180.f)
+			fAngleDiff -= 360.f;
+		else if (fAngleDiff < -180.f)
+			fAngleDiff += 360.f;
+
+		if (fabsf(fAngleDiff) <= 45.f)
+		{
+			
+			if (_Input->KeyRelease("E"))
+			{
+				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+				if (m_iState & PSTATUS_LOCKER)
+				{
+					
+				}
+				else
+				{
+					pLocker->OpenDoor();
+					m_pHidingLocker = pLocker;
+					m_iState |= (PSTATUS_HIDEINTERACT | PSTATUS_LOCKER);
+
+					if (m_iState & PSTATUS_CROUCHED)
+					{
+						m_iState ^= PSTATUS_CROUCHED;
+					}
+
+					if (m_iState & PSTATUS_CROUCHING)
+					{
+						m_iState ^= PSTATUS_CROUCHING;
+					}
+					//
+					m_pAnimation->ChangeClip("player_locker_hide");
+					m_pAnimation->SetDefaultClip("player_locker_inside_idle");
+
+				}
+
+			}
+			else
+			{
+				CGameManager::GetInst()->ChangeNoticeClip("Button_E_Hide");
+			}
+		}
+
 		
 	}
-	if (_Input->KeyRelease("E"))
+	
+
+	SAFE_RELEASE(pLockerTr);
+}
+
+void CHuman_Player::Interact_Exit_Locker(CLocker *pLocker, float fTime)
+{
+	CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
+}
+void CHuman_Player::Interact_With_Door(CDoor *pDoor, float fTime)
+{
+	PUN::CGameObject *pDoorObj = pDoor->GetGameObject();
+
+	if (!pDoorObj->GetParent())
 	{
-
-		if (m_iState & PSTATUS_LOCKER)
-		{
-
-		}
-		else
-		{
-
-			m_iState |= (PSTATUS_HIDEINTERACT | PSTATUS_LOCKER);
-
-			if (m_iState & PSTATUS_CROUCHED)
-			{
-				m_iState ^= PSTATUS_CROUCHED;
-			}
-
-			if (m_iState & PSTATUS_CROUCHING)
-			{
-				m_iState ^= PSTATUS_CROUCHING;
-			}
-			//
-			m_pAnimation->ChangeClip("player_locker_hide");
-			m_pAnimation->SetDefaultClip("player_locker_inside_idle");
-		}
-
+		CGameManager::GetInst()->ChangeNoticeClip("Button_E_Door");
 	}
 
+	SAFE_RELEASE(pDoorObj);
+}
+void CHuman_Player::Interact_Exit_Door(CDoor *pDoor, float fTime)
+{
+	CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
+}
 
+void CHuman_Player::Interact_With_Bed(class CBed *pBed, float fTime)
+{
+	if((m_iState & PSTATUS_BED) == 0)
+		CGameManager::GetInst()->ChangeNoticeClip("Button_E_Hide");
+}
+void CHuman_Player::Interact_Exit_Bed(class CBed *pBed, float fTime)
+{
+	CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
 }

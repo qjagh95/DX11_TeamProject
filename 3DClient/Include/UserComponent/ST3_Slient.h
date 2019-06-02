@@ -42,19 +42,17 @@ private:
 	void FS_USER_TRACE(float DeltaTime);
 	void FS_CAN_TRACE(float DeltaTime);
 	void FS_SUPRISE_TRACE(float DeltaTime);
-	void FS_BED_FIND(float DeltaTime);
-	void FS_DESK_FIND(float DeltaTime);
-	void FS_LOCKER_FIND(float DeltaTime);
-	void FS_HOOK(float DeltaTime);
-	void FS_JAP(float DeltaTime);
-	void FS_HEAD_ATTACK(float DeltaTime);
 	void FS_BASH_DOOR(float DeltaTime);
-	void FS_BASH_DOOR_OPEN(float DeltaTime);
-	void FS_NORMAL_DOOR_OPEN_LEFT(float DeltaTime);
-	void FS_NORMAL_DOOR_OPEN_RIGHT(float DeltaTime);
 	void FS_CAN_WATE(float DeltaTime);
-
-	void PlayerStateCheck(float DeltaTime) {}
+	void FS_BED_FIND(float DeltaTime) {}
+	void FS_DESK_FIND(float DeltaTime) {}
+	void FS_LOCKER_FIND(float DeltaTime) {}
+	void FS_HOOK(float DeltaTime) {}
+	void FS_JAP(float DeltaTime) {}
+	void FS_HEAD_ATTACK(float DeltaTime) {}
+	void FS_BASH_DOOR_OPEN(float DeltaTime) {}
+	void FS_NORMAL_DOOR_OPEN_LEFT(float DeltaTime) {}
+	void FS_NORMAL_DOOR_OPEN_RIGHT(float DeltaTime) {}
 
 private:
 	string m_AniName[STS_MAX];
@@ -64,6 +62,8 @@ private:
 	float m_WateTime;
 	float m_WateTimeVar;
 	Vector3 m_MovePos;
+
+	int m_PlayerState;
 
 	CGameObject* m_3DSoundObject;
 	CSoundSource* m_3DSound;

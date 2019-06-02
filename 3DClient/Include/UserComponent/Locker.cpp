@@ -118,6 +118,9 @@ void CLocker::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 	PUN::CGameObject *pDoorObj = m_pDoor->GetGameObject();
 	pDoorObj->SetFrustrumCullUse(false);
 	SAFE_RELEASE(pDoorObj);
+
+	/*
+	
 	int iID = pDest->GetColliderID();
 	if (iID == UCI_PLAYER_INTERACT)
 	{
@@ -129,4 +132,11 @@ void CLocker::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 		}
 			
 	}
+	*/
+	
+}
+
+void CLocker::OpenDoor()
+{
+	m_pDoor->Open(Vector3::Zero);
 }

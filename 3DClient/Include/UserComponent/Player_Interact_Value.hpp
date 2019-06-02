@@ -19,3 +19,4 @@ Vector3 m_vTargetDir;
 CGameObject* m_pCameraObj;
 CTransform* m_pCameraTr;
 PLAYER_STATUS m_eTempPlayerState;
+class CLocker *m_pHidingLocker;

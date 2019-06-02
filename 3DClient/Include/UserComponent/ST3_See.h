@@ -14,11 +14,11 @@ class ST3_See : public NPCBase
 {
 public:
 	bool Init() override;
-	int Input(float fTime) override;
-	int Update(float fTime) override;
-	int LateUpdate(float fTime) override;
-	void Collision(float fTime) override;
-	void Render(float fTime) override;
+	int Input(float DeltaTime) override;
+	int Update(float DeltaTime) override;
+	int LateUpdate(float DeltaTime) override;
+	void Collision(float DeltaTime) override;
+	void Render(float DeltaTime) override;
 	ST3_See* Clone() override;
 	
 	void FS_SEE(float DeltaTime);

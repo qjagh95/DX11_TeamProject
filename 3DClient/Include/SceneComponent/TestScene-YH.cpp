@@ -25,11 +25,13 @@
 #include "../UserComponent/BatteryIcon.h"
 #include "../CameraEff.h"
 #include "../UserComponent/Enemies.h"
-#include "../UserComponent/Bed.h" 
+#include "../UserComponent/Bed.h"
+#include "../UserComponent/Locker.h"
 
 CTestSceneYH::CTestSceneYH():
 	m_fAmb1SndTime(10.5f),
-	m_fAmb1Timer(0.f)
+	m_fAmb1Timer(0.f),
+	m_bInitUpdate(false)
 {
 	m_fPlayTime = 0.f;
 	m_bGhostOn = false;
@@ -495,16 +497,16 @@ bool CTestSceneYH::Init()
 	*/
 	
 
-	pObject = PUN::CGameObject::CreateObject("hPlayer", pDefaultLayer, true);
-	pTransform = pObject->GetTransform();
+	//pObject = PUN::CGameObject::CreateObject("hPlayer", pDefaultLayer, true);
+	//pTransform = pObject->GetTransform();
 	//pTransform->SetWorldScale(0.0375f, .0375f, .0375f);
 	//pTransform->SetLocalRotY(180.f);
-	CHuman_Player *pHPlayer = pObject->AddComponent<CHuman_Player>("Player");
+	//CHuman_Player *pHPlayer = pObject->AddComponent<CHuman_Player>("Player");
 	
-	SAFE_RELEASE(pHPlayer);
+	//SAFE_RELEASE(pHPlayer);
 
-	SAFE_RELEASE(pTransform);
-	SAFE_RELEASE(pObject);
+	//SAFE_RELEASE(pTransform);
+	//SAFE_RELEASE(pObject);
 
 	/*
 	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
@@ -618,6 +620,7 @@ bool CTestSceneYH::Init()
 
 	SAFE_RELEASE(pParticleObj);
 	
+	//¼ûÀ» Ä§´ë
 	pObj = CGameObject::CreateObject("bed_test", pDefaultLayer);
 	
 	pTransform = pObj->GetTransform();
@@ -626,6 +629,19 @@ bool CTestSceneYH::Init()
 	CBed *pBed = pObj->AddComponent<CBed>("bed");
 
 	SAFE_RELEASE(pBed);
+
+	SAFE_RELEASE(pObj);
+
+	//Locker
+	pObj = CGameObject::CreateObject("locker_test", pDefaultLayer);
+	pTransform = pObj->GetTransform();
+	pTransform->SetWorldPos(Vector3(-20.f, 0.f, 5.f));
+
+	CLocker* pLocker = pObj->AddComponent<CLocker>("locker");
+
+	SAFE_RELEASE(pLocker);
+
+	SAFE_RELEASE(pTransform);
 
 	SAFE_RELEASE(pObj);
 
@@ -640,6 +656,17 @@ bool CTestSceneYH::Init()
 
 int CTestSceneYH::Update(float fTime)
 {
+	if (!m_bInitUpdate)
+	{
+		if (_PLAYER)
+		{
+			PUN::CTransform *pPlayerTR = _PLAYER->GetTransform();
+			pPlayerTR->SetWorldPos(Vector3::Zero);
+			SAFE_RELEASE(pPlayerTR);
+			m_bInitUpdate = true;
+		}
+	}
+
 	static bool bPush = false;
 
 	PUN::CTransform *pTr = m_pAmb->GetTransform();

@@ -19,6 +19,24 @@ enum PLAYER_MOVE_TAG
 	PMT_RIGHT = 8
 };
 
+enum PLAYER_VOICE_TYPE
+{
+	PVT_NONE,
+	PVT_STEALTH,
+	PVT_CRAWL,
+	PVT_LOW,
+	PVT_MED,
+	PVT_HIGH,
+	PVT_SAFE,
+	PVT_RUN,
+	PVT_FALL,
+	PVT_LAND,
+	PVT_CHOKE,
+	PVT_HURT,
+	PVT_HIT,
+	PVT_DIE
+};
+
 enum PLAYER_DATA_TYPE 
 {
 	PDT_NONE,
@@ -61,23 +79,9 @@ enum PLAYER_STATUS
 	PSTATUS_CHANGESCENE =		0x800000,
 	PSTATUS_LOCKER		=		0x1000000,
 	PSTATUS_TURNING		=		0x2000000,
-	PSTATUS_INACTIVE =			0x4000000
+	PSTATUS_INACTIVE =			0x4000000,
+	PSTATUS_FALLING		=		0x8000000
 };
-
-
-static const char* strFootStepSndHeader			= "FTS_";
-static const char* strWalkSndHeader				= "Walk";
-static const char* strRunSndHeader				= "Run";
-static const char* strLandSndHeader				= "Land";
-static const char* strMatConcreteSndHeader		= "Concrete_";
-static const char* strMatWoodSndHeader			= "Wood_";
-static const char* strMatThinWoodSndHeader		= "ThinWood_";
-static const char* strMatSmallWaterSndHeader	= "Smallwater_";
-static const char* strMatHeavySndHeader			= "MtrlHeavy_";
-static const char* strMatLightSndHeader			= "MtrlLight_";
-static const char* strMatGrassSndHeader			= "Grass_";
-static const char* strMatBloodSndHeader			= "Blood_";
-static const char* strMatCarpetSndHeader		= "Carpet_";
 
 
 class CHuman_Player : public PUN::CUserComponent
@@ -99,6 +103,11 @@ public:
 	int Update(float fTime);
 	int LateUpdate(float fTime);
 	void Collision(float fTime);
+	PLAYER_VOICE_TYPE GetVoiceType() const;
+	void SetVoiceType(PLAYER_VOICE_TYPE eVoiceType);
+	void VoiceSound(float fTime);
+	void GetHit(int iDamage);
+
 	CHuman_Player *Clone();
 	
 	/*
@@ -121,6 +130,8 @@ public:
 	*/
 
 private:
+	float m_fBreathIntensity;
+	PLAYER_VOICE_TYPE m_eVoiceType;
 	FOOTSTEP_ENVIRONMENT m_eFootStep;
 	CCameraEff *pCamEffManager;
 	class PUN::CTransform *m_pMovePointer;
@@ -149,6 +160,8 @@ private:
 	unsigned int   m_iDirFlag;
 	Vector3 m_vPrevMoveDirection;
 	Vector3 m_vMoveDirection;
+	unsigned int m_iPlayingVoiceNumber;
+	PLAYER_VOICE_TYPE m_ePlayingVoiceType;
 	float m_fItemTakeTimerBuf	;
 	float m_fCamTakeTime		;
 	float m_fGunTakeTime		;
@@ -201,6 +214,9 @@ public:
 	Vector3 GetWorldPos() const;
 	bool LoadData(const TCHAR *dataPath); //플레이어는 혼자니까 굳이 툴까지 만들어 다룰 필요는 없지만, 데이터 수치 및 리소스는 밖에서 준비해볼 필요가 있어 분리함
 	void Interact(float fTime);
+
+	float GetBreathIntensity() const;
+	void SetBreathIntensity(float fBreath);
 	
 	void Open_Door_Normal(float fTime);
 	void Close_Door_Normal(float fTime);
@@ -233,6 +249,8 @@ public:
 	void HandyCam_Using(float fTime);
 	void HandyCam_Off(float fTime);
 	void Move(PUN::AXIS axis, float fSpeed, float fTime);
+	void PlayerMove(const Vector3& vMove);
+	void PlayerRot(const Vector3& vRot);
 	void SetAnimNotify();
 	void Render(float fTime);
 	const Vector3& GetMoveDirection() const;
@@ -297,6 +315,8 @@ public:
 
 	bool IsHidingInBed();
 	bool IsHiddenInBed();
+	bool IsHidingInLocker();
+	bool IsHiddenInLocker();
 
 	class CInventory *GetInv();
 	//custom public Functions

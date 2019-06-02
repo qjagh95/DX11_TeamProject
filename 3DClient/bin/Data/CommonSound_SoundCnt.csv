@@ -41,7 +41,7 @@ FTS_Concrete_Land,3
 FTS_Concrete_Ledge,5
 FTS_Concrete_Run_Alt,6
 FTS_Concrete_Run,8
-FTS_Concrete_Walk,14
+FTS_Concrete_Walk,13
 FTS_Crunch,15
 FTS_DeepWater_Walk,4
 FTS_Grass_Land,5
@@ -151,3 +151,16 @@ ATK_pipeB,4
 ATK_punchhit,5
 ATK_whooshfast,6
 ATK_whooshstrong,2
+PlayerBreath_H,5
+PlayerBreath_L,10
+PlayerBreath_M,10
+PlayerBreath_Safe,8
+PlayerBreath_Stealth,10
+Player_Hurt,6
+Player_Choke,8
+Player_Crawl,6
+Player_Die,6
+Player_Hit,6
+Player_Land,2
+Player_Run,8
+Player_Fall,3

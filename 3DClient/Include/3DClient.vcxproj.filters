@@ -195,9 +195,6 @@
     <ClInclude Include="SceneComponent\TestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="SceneComponent\Scene4.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
     <ClInclude Include="SceneComponent\TutorialScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
@@ -396,6 +393,9 @@
     <ClInclude Include="UserComponent\ST3_Slient.h">
       <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent\Scene4_DG.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -456,9 +456,6 @@
       <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\TestScene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\Scene4.cpp">
       <Filter>01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\TutorialScene.cpp">
@@ -637,6 +634,9 @@
     </ClCompile>
     <ClCompile Include="UserComponent\ST3_Slient.cpp">
       <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\Scene4_DG.cpp">
+      <Filter>01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

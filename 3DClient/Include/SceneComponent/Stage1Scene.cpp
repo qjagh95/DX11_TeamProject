@@ -64,7 +64,7 @@ bool CStage1Scene::Init()
 	pObject = CGameObject::CreateObject("TestObject", pDefaultLayer);
 	pTransform = pObject->GetTransform();
 	pTransform->SetWorldPos(1.f, 1.f, 1.f);
-	pCamera->SetTarget(pObject);
+	//pCamera->SetTarget(pObject);
 
 	CGameObject* newLand = CGameObject::CreateObject("Stage1Navi", pDefaultLayer);
 	CLandScape* Land = newLand->AddComponent< CLandScape>("Stage1Navi");

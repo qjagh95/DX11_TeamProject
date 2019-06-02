@@ -77,6 +77,44 @@ bool CEventCollider::Init()
 
 int CEventCollider::Input(float fTime)
 {
+	if (m_bTrigger)
+	{
+		CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
+
+		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromTag<CHuman_Player>("Player");
+
+		pPlayer->SetNaviY(false);
+
+		CTransform*	pTr = pPlayerObj->GetTransform();
+
+		Vector3 vAxisMove = Vector3::Axis[AXIS_Y]* (-300.f * fTime);
+		pPlayer->PlayerMove(vAxisMove);
+		unsigned int iState = pPlayer->GetState();
+		iState |= PSTATUS_FALLING;
+		pPlayer->SetState(iState);
+
+		if (m_bNext)
+		{
+			m_bTrigger = false;
+			Vector3 vPlayerPos = pTr->GetWorldPos();
+			pTr->SetWorldPos(vPlayerPos);
+			unsigned int iState = pPlayer->GetState();
+			iState ^= PSTATUS_FALLING;
+			pPlayer->SetState(iState);
+			GET_SINGLE(CRenderManager)->SetFadeAmount(0.001f, fTime);
+
+			GET_SINGLE(CSceneManager)->ChangeScene("Stage1"); 
+
+			pTr->SetWorldPos(0.f);
+
+			m_bNext = false;
+		}
+
+		SAFE_RELEASE(pTr);
+		SAFE_RELEASE(pPlayer);
+		SAFE_RELEASE(pPlayerObj);
+	}
+	
 	return 0;
 }
 
@@ -116,38 +154,7 @@ int CEventCollider::Update(float fTime)
 		}
 	}
 
-	if (m_bTrigger)
-	{
-		CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
-
-		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromTag<CHuman_Player>("Player");
-
-		pPlayer->SetNaviY(false);
-
-		CTransform*	pTr = pPlayerObj->GetTransform();
-
-		pTr->Move(Vector3::Axis[AXIS_Y], -300.f, fTime);
-
-
-		if (m_bNext)
-		{
-			m_bTrigger = false;
-			Vector3 vPlayerPos = pTr->GetWorldPos();
-			pTr->SetWorldPos(vPlayerPos);
-
-			GET_SINGLE(CRenderManager)->SetFadeAmount(0.001f, fTime);
-
-			GET_SINGLE(CSceneManager)->ChangeScene("Stage1"); 
-
-			pTr->SetWorldPos(0.f);
-
-			m_bNext = false;
-		}
-
-		SAFE_RELEASE(pTr);
-		SAFE_RELEASE(pPlayer);
-		SAFE_RELEASE(pPlayerObj);
-	}
+	
 
 	if (m_bPlay)
 	{

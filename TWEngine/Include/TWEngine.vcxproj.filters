@@ -180,6 +180,9 @@
     <Filter Include="06. Component\19.Parkour">
       <UniqueIdentifier>{9a91e4da-7893-4259-9f49-f3cab4230235}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Core\13.StringUtility">
+      <UniqueIdentifier>{7c4695e5-540b-41fa-a9f9-ad873c77ac72}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -448,6 +451,9 @@
     </ClCompile>
     <ClCompile Include="Component\Item.cpp">
       <Filter>06. Component\03. UserComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="StrUtility.cpp">
+      <Filter>01. Core\13.StringUtility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -735,6 +741,9 @@
     </ClInclude>
     <ClInclude Include="Component\Item.h">
       <Filter>06. Component\03. UserComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="StrUtility.h">
+      <Filter>01. Core\13.StringUtility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

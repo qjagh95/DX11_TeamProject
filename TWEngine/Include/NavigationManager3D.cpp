@@ -106,8 +106,6 @@ CNavigationMesh * CNavigationManager3D::FindNavMesh(class CScene* pScene, const 
 
 		Vector3 vMin = pNavMesh->GetMin();
 		Vector3 vMax = pNavMesh->GetMax();
-		//Vector3 ConvertPos = vPos + pNavMesh->GetOffset();
-		Vector3 ConvertPos = vPos + Vector3(-100.f, 0.0f, 0.0f);
 
 		if (vMin.x <= vPos.x && vPos.x <= vMax.x &&
 			vMin.y <= vPos.y && vPos.y <= vMax.y &&

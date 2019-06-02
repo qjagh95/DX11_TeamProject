@@ -20,6 +20,7 @@ private:
 
 	float m_fAmb1Timer;
 	float m_fAmb1SndTime;
+	bool		m_bInitUpdate;
 
 public:
 	virtual bool Init();

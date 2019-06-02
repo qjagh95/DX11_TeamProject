@@ -61,6 +61,7 @@ bool CHuman_Player::Init_Weapon()
 	return true;
 }
 
+
 void CHuman_Player::OnDestroyWeap()
 {
 	SAFE_RELEASE(m_pPistol);

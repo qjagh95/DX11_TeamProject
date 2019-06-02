@@ -126,6 +126,43 @@ union MATH_DLL Vector3
 	bool operator != (float ValArr[3]) const;
 	bool operator != (int ValArr[3]) const;
 
+
+	bool operator <= (const Vector3& vec)	const;
+	bool operator <= (const Vector3* vec)	const;
+	bool operator <= (const XMVECTOR& Xmvec) const;
+	bool operator <= (const XMFLOAT3& XmFloat) const;
+	bool operator <= (float Val) const;
+	bool operator <= (int Val) const;
+	bool operator <= (float ValArr[3]) const;
+	bool operator <= (int ValArr[3]) const;
+
+	bool operator >= (const Vector3& vec)	const;
+	bool operator >= (const Vector3* vec)	const;
+	bool operator >= (const XMVECTOR& Xmvec) const;
+	bool operator >= (const XMFLOAT3& XmFloat) const;
+	bool operator >= (float Val) const;
+	bool operator >= (int Val) const;
+	bool operator >= (float ValArr[3]) const;
+	bool operator >= (int ValArr[3]) const;
+
+	bool operator > (const Vector3& vec)	const;
+	bool operator > (const Vector3* vec)	const;
+	bool operator > (const XMVECTOR& Xmvec) const;
+	bool operator > (const XMFLOAT3& XmFloat) const;
+	bool operator > (float Val) const;
+	bool operator > (int Val) const;
+	bool operator > (float ValArr[3]) const;
+	bool operator > (int ValArr[3]) const;
+
+	bool operator < (const Vector3& vec)	const;
+	bool operator < (const Vector3* vec)	const;
+	bool operator < (const XMVECTOR& Xmvec) const;
+	bool operator < (const XMFLOAT3& XmFloat) const;
+	bool operator < (float Val) const;
+	bool operator < (int Val) const;
+	bool operator < (float ValArr[3]) const;
+	bool operator < (int ValArr[3]) const;
+
 	//벡터의 크기를 구해주는 함수
 	float Length() const;
 	//노말라이즈

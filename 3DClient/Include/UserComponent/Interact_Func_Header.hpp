@@ -9,3 +9,10 @@ void StateGetOutBed(float fTime);
 void HidingMotionEnd(float fTime);
 
 void Interact_With_Locker(class CLocker *pLocker, float fTime);
+void Interact_Exit_Locker(class CLocker *pLocker, float fTime);
+
+void Interact_With_Door(class CDoor *pDoor, float fTime);
+void Interact_Exit_Door(class CDoor *pDoor, float fTime);
+
+void Interact_With_Bed(class CBed *pBed, float fTime);
+void Interact_Exit_Bed(class CBed *pBed, float fTime);

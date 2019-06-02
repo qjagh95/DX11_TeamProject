@@ -24,7 +24,7 @@ const string CGameManager::TCHARToString(const TCHAR* _ptsz)
 const TCHAR* CGameManager::StringToTCHAR(const string& _str)
 {
 	const char* all = _str.c_str();
-	int len = 1 + strlen(all);
+	int len = (int)(1 + strlen(all));
 	wchar_t* t = new wchar_t[len];
 	if (NULL == t) throw std::bad_alloc();
 	mbstowcs(t, all, len);
@@ -33,8 +33,12 @@ const TCHAR* CGameManager::StringToTCHAR(const string& _str)
 
 CGameManager::CGameManager()
 {
+	m_pNotice = NULLPTR;
+	m_pCamera = NULLPTR;
+	m_pPlayer = NULLPTR;
+	m_pPlayerTr = NULLPTR;
+	m_pPlayerObj = NULLPTR;
 }
-
 
 CGameManager::~CGameManager()
 {
@@ -140,12 +144,12 @@ bool CGameManager::Init()
 	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
 	m_pPlayerTr = m_pPlayerObj->GetTransform();
-	m_pPlayerTr->SetWorldRot(0.f, 180.f, 0.f);
+	//m_pPlayerTr->SetWorldRot(0.f, 180.f, 0.f);
 	m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
-	m_pPlayerTr->SetWorldScale(0.05f, 0.05f, 0.05f);
+	m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	m_pPlayerTr->SetWorldPos(316.f, 20.f, 748.f);
 	//m_pPlayerTr->SetWorldPos(0.0f, 0.0f, 0.0f);	
-
+	m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
 	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer);
 
 	m_pNotice = pNoticeObj->AddComponent<CNoticeMessage>("NoticeMessage");
@@ -467,12 +471,10 @@ void CGameManager::SaveCheckPoint()
 	6. 보스가 뒤지셨는지?
 	*/
 	// 파일 객체(ofstream) 생성
+
 	string strFileName = "CheckPoint.cpd";
 	BinaryWrite pInstBW(strFileName);
 
-	CScene* pScene = GET_SINGLE(CSceneManager)->GetSceneNonCount();
-	
-	string strSceneKey = pScene->GetTag();
 	Vector3 vPos = m_pPlayerTr->GetWorldPos();
 	Vector3 vRot = m_pPlayerTr->GetWorldRot();
 	CGameObject* pObj = nullptr;
@@ -481,7 +483,7 @@ void CGameManager::SaveCheckPoint()
 	pInstBW.WriteData(vPos);
 	pInstBW.WriteData(vRot);
 
-	int iCount = m_ChangedDoorList.size();
+	int iCount = (int)m_ChangedDoorList.size();
 	pInstBW.WriteData(iCount);
 
 	list<CDoor*>::iterator iterDoor;
@@ -502,7 +504,7 @@ void CGameManager::SaveCheckPoint()
 		SAFE_RELEASE(pObj);
 	}
 
-	iCount = m_ChangedLightList.size();
+	iCount = (int)m_ChangedLightList.size();
 	pInstBW.WriteData(iCount);
 
 	list<CLight*>::iterator iterLight;
@@ -523,7 +525,7 @@ void CGameManager::SaveCheckPoint()
 		SAFE_RELEASE(pObj);
 	}
 
-	iCount = m_ChangedItemObjList.size();
+	iCount = (int)m_ChangedItemObjList.size();
 	pInstBW.WriteData(iCount);
 
 	list<CGameObject*>::iterator iterItem;
@@ -561,7 +563,6 @@ void CGameManager::LoadCheckPoint()
 	string strFileName = "CheckPoint.cpd";
 	BinaryRead pInstBR(strFileName);
 
-	string  strSceneKey = pInstBR.ReadString();
 	Vector3 vPos = pInstBR.ReadVector3();
 	Vector3 vRot = pInstBR.ReadVector3();
 
@@ -612,15 +613,7 @@ void CGameManager::LoadCheckPoint()
 		m_ChangedItemObjList.push_back(pObj);
 	}
 
-	GET_SINGLE(CSceneManager)->ChangeScene(strSceneKey);
 
-	CTransform* pTr = m_pCamera->GetTransform();
-	
-	m_pPlayerTr->SetWorldPos(vPos);
-	m_pPlayerTr->SetWorldRot(vRot);
-	pTr->SetWorldRot(vRot);
-
-	SAFE_RELEASE(pTr);
 }
 
 void CGameManager::Update(float fTime)

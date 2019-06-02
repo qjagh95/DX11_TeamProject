@@ -30,4 +30,5 @@ public:
 	virtual CLocker* Clone();
 
 	void Interact(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+	void OpenDoor();
 };

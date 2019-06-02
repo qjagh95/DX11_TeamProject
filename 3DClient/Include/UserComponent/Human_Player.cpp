@@ -19,6 +19,56 @@
 #include "Handycam.h"
 #include "NavigationMesh.h"
 #include "HitEffectAlpha.h"
+#include "Locker.h"
+
+
+
+
+static const char* strFootStepSndHeader = "FTS_";
+static const char* strWalkSndHeader = "Walk";
+static const char* strRunSndHeader = "Run";
+static const char* strLandSndHeader = "Land";
+static const char* strMatConcreteSndHeader = "Concrete_";
+static const char* strMatWoodSndHeader = "Wood_";
+static const char* strMatThinWoodSndHeader = "ThinWood_";
+static const char* strMatSmallWaterSndHeader = "Smallwater_";
+static const char* strMatHeavySndHeader = "MtrlHeavy_";
+static const char* strMatLightSndHeader = "MtrlLight_";
+static const char* strMatGrassSndHeader = "Grass_";
+static const char* strMatBloodSndHeader = "Blood_";
+static const char* strMatCarpetSndHeader = "Carpet_";
+
+static const char* strVoiceStealth = "PlayerBreath_Stealth";
+static const char* strVoiceBreathLow = "PlayerBreath_L";
+static const char* strVoiceBreathMedium = "PlayerBreath_M";
+static const char* strVoiceBreathHigh = "PlayerBreath_H";
+static const char* strVoiceBreathSafe = "PlayerBreath_Safe";
+static const char* strVoiceHurt = "Player_Hurt";
+static const char* strVoiceChoke = "Player_Choke";
+static const char* strVoiceCrawl = "Player_Crawl";
+static const char* strVoiceHit = "Player_Hit";
+static const char* strVoiceLand = "Player_Land";
+static const char* strVoiceRun = "Player_Run";
+static const char* strVoiceFall = "Player_Fall";
+static const char* strVoiceDie = "Player_Die";
+
+static const char* strVoices[14] =
+{
+	nullptr,
+	strVoiceStealth,
+	strVoiceCrawl,
+	strVoiceBreathLow,
+	strVoiceBreathMedium,
+	strVoiceBreathHigh,
+	strVoiceBreathSafe,
+	strVoiceRun,
+	strVoiceFall,
+	strVoiceLand,
+	strVoiceChoke,
+	strVoiceHurt,
+	strVoiceHit,
+	strVoiceDie
+};
 
 using namespace PUN;
 
@@ -47,13 +97,17 @@ CHuman_Player::CHuman_Player() :
 	m_fGunTakeTime(1.2f),
 	m_eFootStep(FTSE_DEFAULT),
 	m_pPartCamAnim(nullptr),
+	m_fBreathIntensity(0.f),
 	m_iPrevState(0),
 	m_bNaviOn(true),
 	m_cInitLoopFinished(2),
 	m_fMaxHideBedAngleY(15.f),
 	m_fMaxHideBedAngleX(20.f),
 	m_fMaxHideLockerAngleY(80.f),
-	m_fMaxHideLockerAngleX(15.f)
+	m_fMaxHideLockerAngleX(15.f),
+	m_eVoiceType(PVT_NONE),
+	m_ePlayingVoiceType(PVT_NONE),
+	m_iPlayingVoiceNumber(0)
 {
 	m_pInst = this;
 	m_eComType = (COMPONENT_TYPE)UT_PLAYER;
@@ -407,6 +461,24 @@ void CHuman_Player::AfterClone()
 
 int CHuman_Player::Input(float fTime)
 {
+
+	if (m_fBreathIntensity > 0.f)
+	{
+		if (m_fBreathIntensity < 0.25f)
+			m_eVoiceType = PVT_LOW;
+		else if (m_fBreathIntensity < 0.5f)
+			m_eVoiceType = PVT_MED;
+		else
+			m_eVoiceType = PVT_HIGH;
+
+		m_fBreathIntensity -= fTime * 0.125f;
+	}
+	else
+	{
+		m_fBreathIntensity = 0.f;
+		m_eVoiceType = PVT_LOW;
+	}
+	
 	if (m_iState & PSTATUS_CAMOUT)
 	{
 		m_iState ^= PSTATUS_TURNING;
@@ -641,6 +713,9 @@ int CHuman_Player::Input(float fTime)
 			m_iState |= PSTATUS_HIDEINTERACT_OUT;
 			if(m_iState & PSTATUS_HIDEINTERACT)
 				m_iState ^= PSTATUS_HIDEINTERACT;
+			if (m_pHidingLocker)
+				m_pHidingLocker->OpenDoor();
+
 			m_pAnimation->SetDefaultClip("player_stand_idle");
 		}
 		//else
@@ -708,8 +783,19 @@ int CHuman_Player::Input(float fTime)
 				return PSTATUS_LOCKER | PSTATUS_HIDEINTERACT_OUT;
 			}
 		}
+		else if (m_iState & PSTATUS_FALLING)
+		{
+			m_eVoiceType = PVT_FALL;
+			m_pAnimation->ChangeClip("player_falling_forward_loop");
+			m_eVoiceType = PVT_FALL;
+			if (pHeadTrans)
+				InputRot(fTime, pHeadTrans, vTotMoveDiff);
+			SAFE_RELEASE(pHeadTrans);
+			return PSTATUS_FALLING;
+		}
 		
 	}
+	
 
 	CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene,
 		m_pTransform->GetWorldPos());
@@ -771,6 +857,9 @@ int CHuman_Player::Input(float fTime)
 			if (m_vMoveDirection.z == 2.f)
 			{
 				m_iState ^= PSTATUS_SPRINT;
+				m_fBreathIntensity += fTime;
+				if (m_fBreathIntensity > 8.f)
+					m_fBreathIntensity = 8.f;
 				vMoveDiff *= 4.f;
 				m_pAnimation->ChangeClip("player_walk_forward");
 			}
@@ -799,11 +888,16 @@ int CHuman_Player::Input(float fTime)
 
 int CHuman_Player::Update(float fTime)
 {
-	
+	if ((m_iState & PSTATUS_LOCKER) || (m_iState & PSTATUS_BED))
+	{
+		m_eVoiceType = PVT_STEALTH;
+	}
+
 	if (m_iState & PSTATUS_CROUCHING)
 	{
 		if (m_iState & PSTATUS_CROUCHED)
 		{
+			m_eVoiceType = PVT_STEALTH;
 			if (m_fTimerBuf_State < m_fStandToCrouchSpeed)
 			{
 				m_fTimerBuf_State += fTime;
@@ -873,7 +967,7 @@ int CHuman_Player::Update(float fTime)
 	}
 
 
-
+	VoiceSound(fTime);
 	pCamEffManager->Update(fTime);
 
 	MoveUpdate(fTime);
@@ -905,6 +999,64 @@ int CHuman_Player::LateUpdate(float fTime)
 void CHuman_Player::Collision(float fTime)
 {
 	int bb = 0;
+}
+
+PLAYER_VOICE_TYPE CHuman_Player::GetVoiceType() const
+{
+	return m_eVoiceType;
+}
+
+void CHuman_Player::SetVoiceType(PLAYER_VOICE_TYPE eVoiceType)
+{
+	m_eVoiceType = eVoiceType;
+}
+
+void CHuman_Player::VoiceSound(float fTime)
+{
+	std::string strStopVoiceKey;
+
+	if (m_ePlayingVoiceType != PVT_NONE)
+	{
+		strStopVoiceKey = strVoices[m_ePlayingVoiceType];
+		strStopVoiceKey += std::to_string(m_iPlayingVoiceNumber);
+		if (m_ePlayingVoiceType == m_eVoiceType)
+		{
+			if (m_pSound->GetClipState(strStopVoiceKey) == PLAYING)
+			{
+				return;
+			}
+		}
+		else
+		{
+			
+
+			m_pSound->StopClip(strStopVoiceKey, false);
+		}
+		
+	}
+
+	std::string strVoiceKey;
+	CCommonSoundLoader* cLoader = CCommonSoundLoader::GetInst();
+	unsigned int iTypeCnt = 1;
+	
+	strVoiceKey = strVoices[m_eVoiceType];
+	iTypeCnt = cLoader->GetSoundRandomCnt(strVoiceKey);
+
+	if (iTypeCnt > 1)
+	{
+		iTypeCnt = (rand() % iTypeCnt) + 1;
+		strVoiceKey += std::to_string(iTypeCnt);
+	}
+	m_pSound->Play(strVoiceKey);
+
+	m_iPlayingVoiceNumber = iTypeCnt;
+
+	m_ePlayingVoiceType = m_eVoiceType;
+}
+
+void CHuman_Player::GetHit(int iDamage)
+{
+	m_playerHP -= iDamage;
 }
 
 void CHuman_Player::Render(float fTime)
@@ -1306,8 +1458,60 @@ void CHuman_Player::Move(PUN::AXIS axis, float fSpeed, float fTime)
 {
 	
 	Vector3 vAxis = m_pTransform->GetWorldAxis(axis);
-	m_pMovePointer->Move(vAxis, fSpeed, fTime);
 
+	if (m_isAccel)
+	{
+		float fMultiSpeed = m_accelSpeed * fSpeed;
+		m_pMovePointer->Move(vAxis, fMultiSpeed, fTime);
+	}
+	else
+	{
+		m_pMovePointer->Move(vAxis, fSpeed, fTime);
+	}
+
+}
+
+void CHuman_Player::PlayerMove(const Vector3& vMove)
+{
+	m_pTransform->Move(vMove);
+	m_pMovePointer->Move(vMove);
+	PUN::CTransform *pHead = m_pHeadObj->GetTransform();
+	pHead->Move(vMove);
+	SAFE_RELEASE(pHead);
+
+	if (m_pScene)
+	{
+		if ((m_iState & PSTATUS_CAMOUT) == 0)
+		{
+			PUN::CTransform *pMainCam = m_pScene->GetMainCameraTransform();
+			
+			Vector3 vCamPos = pMainCam->GetWorldPos();
+			vCamPos += (vMove * 1024.f);
+			pMainCam->SetWorldPos(vCamPos);
+
+			SAFE_RELEASE(pMainCam);
+		}
+	}
+}
+
+void CHuman_Player::PlayerRot(const Vector3& vRot)
+{
+	m_pTransform->Rotation(vRot);
+	m_pMovePointer->Rotation(vRot);
+	PUN::CTransform *pHead = m_pHeadObj->GetTransform();
+	pHead->Rotation(vRot);
+	SAFE_RELEASE(pHead);
+
+	if (m_pScene)
+	{
+		if ((m_iState & PSTATUS_CAMOUT) == 0)
+		{
+			PUN::CTransform *pMainCam = m_pScene->GetMainCameraTransform();
+			pMainCam->Rotation(vRot);
+
+			SAFE_RELEASE(pMainCam);
+		}
+	}
 }
 
 void CHuman_Player::SetAnimNotify()
@@ -1606,6 +1810,7 @@ void CHuman_Player::InputMove(float fTime, bool& bBlend)
 			if (m_iState & PSTATUS_SPRINT)
 			{
 				m_vMoveDirection.z = 2.f;
+				m_eVoiceType = PVT_RUN;
 			}
 
 			else
@@ -1649,6 +1854,7 @@ void CHuman_Player::InputMove(float fTime, bool& bBlend)
 		if (m_iState & PSTATUS_CROUCHED)
 		{
 			m_vMoveDirection * 0.5f;
+			m_eVoiceType = PVT_CRAWL;
 			OnCrouchWalk(fTime);
 		}
 		else
@@ -1701,6 +1907,7 @@ void CHuman_Player::InputMove(float fTime, bool& bBlend)
 
 void CHuman_Player::InputRot(float fTime, PUN::CTransform *pHeadTrans, Vector3& vTotMoveDiff)
 {
+	
 	Vector3 vCamPos;
 	vCamPos = pHeadTrans->GetWorldPos() + m_vCamWorldOffset;
 	
@@ -1926,4 +2133,38 @@ CInventory *CHuman_Player::GetInv()
 CHuman_Player* CHuman_Player::GetPlayer()
 {
 	return m_pInst;
+}
+
+bool CHuman_Player::IsHidingInLocker()
+{
+	if (m_iState & PSTATUS_HIDEINTERACT)
+	{
+		if (m_iState & PSTATUS_LOCKER)
+			return true;
+	}
+	return false;
+}
+bool CHuman_Player::IsHiddenInLocker()
+{
+	if (m_iState & PSTATUS_LOCKER)
+	{
+		if (m_iState & PSTATUS_HIDEINTERACT)
+			return false;
+		else if (m_iState & PSTATUS_HIDEINTERACT_OUT)
+			return false;
+		else
+			return true;
+	}
+	return false;
+}
+
+
+float CHuman_Player::GetBreathIntensity() const
+{
+	return m_fBreathIntensity;
+}
+
+void CHuman_Player::SetBreathIntensity(float fBreath)
+{
+	m_fBreathIntensity = fBreath;
 }

@@ -301,6 +301,7 @@
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="EngineHeader.h" />
+    <ClInclude Include="StrUtility.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TimerManager.h" />
     <ClInclude Include="Types.h" />
@@ -578,6 +579,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StrUtility.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
   </ItemGroup>

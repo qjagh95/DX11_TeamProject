@@ -36,7 +36,7 @@ JBH_Stage3::~JBH_Stage3()
 {
 	SAFE_RELEASE(m_Player);
 	SAFE_RELEASE(m_PlayerObject);
-	
+
 	SAFE_RELEASE(m_ChaceObject);
 	SAFE_RELEASE(m_ChaceNPC);
 }
@@ -48,8 +48,7 @@ bool JBH_Stage3::Init()
 
 	m_DoorMap = CGameManager::GetInst()->GetDoorMap(m_pScene);
 	CSoundManager::GetInst()->CreateSoundEffect("CamSuprise", L"music/10-AI NPC CHASE INTRO 3.wav");
-	CSoundManager::GetInst()->CreateSoundEffect("CanRolling", L"CanRolling.wav");
-	
+
 	return true;
 }
 
@@ -70,7 +69,7 @@ void JBH_Stage3::AfterInit()
 		pLight->SetLightColor(vDarkColor, vDarkColor, vDarkColor);
 		SAFE_RELEASE(pLight);
 	}
-
+	SAFE_RELEASE(pLayer);
 	NPCInit();
 }
 
@@ -126,8 +125,8 @@ void JBH_Stage3::BasicInit()
 	pCamera->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
 
 	CSoundManager::GetInst()->CreateSoundEffect("ST3BGM", L"ambient/Whisper.wav");
-	CSoundManager::GetInst()->CreateSoundEffect("CanSound", L"CanRolling.wav");
-	CSoundManager::GetInst()->PlayBgm("ST3BGM");
+	CSoundManager::GetInst()->CreateSoundEffect("GlassBracking", L"GlassBracking.wav");
+	//CSoundManager::GetInst()->PlayBgm("ST3BGM");
 
 	SAFE_RELEASE(Land);
 	SAFE_RELEASE(NavLandObject);
@@ -142,7 +141,7 @@ void JBH_Stage3::DoorInit()
 	CDoor* StartDoor = StartDoorObj->AddComponent<CDoor>("StartDoor");
 	StartDoor->GetTransformNonCount()->SetWorldPos(Vector3(231.0f, 0.0f, 65.4f));
 	StartDoor->GetTransformNonCount()->SetWorldRotY(90.0f);
-	StartDoor->SetAutoClose(true);
+	//StartDoor->SetAutoClose(true);
 
 	CGameObject* FirstRoomDoorObj = CGameObject::CreateObject("FirstRoomDoor", pDefaultLayer);
 	CDoor* FirstRoomDoor = FirstRoomDoorObj->AddComponent<CDoor>("FirstRoomDoor");
@@ -220,20 +219,21 @@ void JBH_Stage3::NPCInit()
 	m_PlayerObject = pDefaultLayer->FindObjectNonCount("Player");
 
 	m_ChaceObject = CGameObject::CreateObject("ChaceMonster", pDefaultLayer);
-	ST3_Slient* m_ChaceNPC = m_ChaceObject->AddComponent<ST3_Slient>("ChaceMonster");
+	m_ChaceNPC = m_ChaceObject->AddComponent<ST3_Slient>("ChaceMonster");
 	m_ChaceNPC->GetTransformNonCount()->SetWorldPos(Vector3(36.5f, 0.0f, 11.0f));
 	m_ChaceNPC->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
 	m_ChaceNPC->SetTarget(m_PlayerObject);
 
 	CGameObject* SupriseObject = CGameObject::CreateObject("Suprise", pDefaultLayer);
 	ST3_Suprise* Suprise = SupriseObject->AddComponent<ST3_Suprise>("Suprise");
-	Suprise->GetTransformNonCount()->SetWorldPos(Vector3(150.0f, 30.0f, 15.0f));
+	Suprise->GetTransformNonCount()->SetWorldPos(Vector3(155.0f, 30.0f, 11.0f));
 	Suprise->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 180.0f, 0.0f));
 	Suprise->SetTarget(m_PlayerObject);
 	Suprise->SetDoorName("MidDoor");
 
 	SAFE_RELEASE(SupriseObject);
 	SAFE_RELEASE(Suprise);
+	SAFE_RELEASE(pDefaultLayer);
 }
 
 void JBH_Stage3::SupriseSound(float DeltaTime)
@@ -247,7 +247,7 @@ void JBH_Stage3::SupriseSound(float DeltaTime)
 			if (m_CanDelayTime <= m_CanDelayTimeVar)
 			{
 				m_isCanDrop = true;
-				CSoundManager::GetInst()->SoundPlay("CanRolling");
+				CSoundManager::GetInst()->SoundPlay("GlassBracking");
 			}
 		}
 	}

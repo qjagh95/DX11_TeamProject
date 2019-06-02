@@ -32,40 +32,40 @@ bool ST3_See::Init()
 	return true;
 }
 
-int ST3_See::Input(float fTime)
+int ST3_See::Input(float DeltaTime)
 {
-	NPCBase::Input(fTime);
+	NPCBase::Input(DeltaTime);
 
 	return 0;
 }
 
-int ST3_See::Update(float fTime)
+int ST3_See::Update(float DeltaTime)
 {
-	NPCBase::Update(fTime);
+	NPCBase::Update(DeltaTime);
 
 	switch (m_State)
 	{
 	case SES_SEE:
-		FS_SEE(fTime);
+		FS_SEE(DeltaTime);
 		break;
 	case SES_BASH:
-		FS_BASH(fTime);
+		FS_BASH(DeltaTime);
 		break;
 	}
 
 	return 0;
 }
 
-int ST3_See::LateUpdate(float fTime)
+int ST3_See::LateUpdate(float DeltaTime)
 {
 	return 0;
 }
 
-void ST3_See::Collision(float fTime)
+void ST3_See::Collision(float DeltaTime)
 {
 }
 
-void ST3_See::Render(float fTime)
+void ST3_See::Render(float DeltaTime)
 {
 }
 
