@@ -48,6 +48,9 @@ public:
 	void AddItemObject(const string& strSceneKey, const string& strItemObjTag, CGameObject* pObj);
 	void AddLight(CLight* pLight);
 	void AddToEachContainer();
+	unordered_map<string, class CDoor*>* GetDoorMap(CScene* Scene);
+	unordered_map<string, class CLight*>* GetLightMap(CScene* Scene);
+	unordered_map<string, class CGameObject*>* GetItemObjectMap(CScene* Scene);
 
 	bool			FindKey(const string& strKeyName);
 	CDoor*			FindDoor(CScene* pScene, const string& strDoorKey);

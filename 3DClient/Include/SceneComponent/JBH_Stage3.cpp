@@ -15,10 +15,15 @@
 
 JBH_Stage3::JBH_Stage3()
 {
+	m_PlayerState = 0;
+	m_Player = NULLPTR;
+	m_PlayerObject = NULLPTR;
 }
 
 JBH_Stage3::~JBH_Stage3()
 {
+	SAFE_RELEASE(m_Player);
+	SAFE_RELEASE(m_PlayerObject);
 }
 
 bool JBH_Stage3::Init()
@@ -34,22 +39,22 @@ bool JBH_Stage3::Init()
 	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
 
-	//string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	//Path += "JBH_Stage3.dat";
-	//->Load(Path);
+	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
+	Path += "JBH_Stage3.dat";
+	m_pScene->Load(Path);
 
-	//CGameObject* NavLandObject = CGameObject::CreateObject("Land", pDefaultLayer);
-	//CLandScape* Land = NavLandObject->AddComponent< CLandScape>("Land");
+	CGameObject* NavLandObject = CGameObject::CreateObject("Land", pDefaultLayer);
+	CLandScape* Land = NavLandObject->AddComponent< CLandScape>("Land");
 	
-	//Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	//Path += "Stage3Nav.nav";
-	//Land->LoadLandScape(Path);
+	Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
+	Path += "Stage3Nav.nav";
+	Land->LoadLandScape(Path);
 
-	CGameObject* PlayerObject = CGameObject::CreateObject("Player", pDefaultLayer, true);
-	CHuman_Player* newPlayer = PlayerObject->AddComponent<CHuman_Player>("Player");
-	newPlayer->GetTransformNonCount()->SetWorldPos(Vector3(238.0f, 0.0f, 68.0f));
-	newPlayer->GetTransformNonCount()->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
-	newPlayer->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
+	m_PlayerObject = CGameObject::CreateObject("Player", pDefaultLayer, true);
+	m_Player = m_PlayerObject->AddComponent<CHuman_Player>("Player");
+	m_Player->GetTransformNonCount()->SetWorldPos(Vector3(238.0f, 0.0f, 68.0f));
+	m_Player->GetTransformNonCount()->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
+	m_Player->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
 	pCamera->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
 
 	//CGameObject* TestNPC = CGameObject::CreateObject("TestCJH", pDefaultLayer);
@@ -63,33 +68,40 @@ bool JBH_Stage3::Init()
 	ST3_SlientTrace* TestMob = TestNPC->AddComponent<ST3_SlientTrace>("TestCJH");
 	TestMob->GetTransformNonCount()->SetWorldPos(Vector3(220.0f, 0.0f, 68.0f));
 	TestMob->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
-	TestMob->SetTarget(PlayerObject);
+	TestMob->SetTarget(m_PlayerObject);
 
-	CGameObject* TestDoorObj = CGameObject::CreateObject("TestCJH123", pDefaultLayer);
-	CDoor* TestDoor = TestDoorObj->AddComponent<CDoor>("TestCJH123");
-	TestDoorObj->GetTransformNonCount()->SetWorldPos(Vector3(220.0f, 0.0f, 68.0f));
+	CGameObject* StartDoorObj = CGameObject::CreateObject("StartDoor", pDefaultLayer);
+	CDoor* StartDoor = StartDoorObj->AddComponent<CDoor>("StartDoor");
+	StartDoor->GetTransformNonCount()->SetWorldPos(Vector3(220.0f, 0.0f, 68.0f));
+	StartDoor->GetTransformNonCount()->SetLocalRotY(90.0f);
 
-	CGameManager::GetInst()->AddDoor("Second", "TestDoor", TestDoor);
+	CGameManager::GetInst()->AddDoor("Second", "StartDoor", StartDoor);
 
+	SAFE_RELEASE(StartDoorObj);
+	SAFE_RELEASE(StartDoor);
 	//SAFE_RELEASE(FreeCam);
 	SAFE_RELEASE(TestNPC);
 	SAFE_RELEASE(TestMob);
-	SAFE_RELEASE(newPlayer);
-	SAFE_RELEASE(PlayerObject);
-	//SAFE_RELEASE(Land);
-	//SAFE_RELEASE(NavLandObject);
+	SAFE_RELEASE(Land);
+	SAFE_RELEASE(NavLandObject);
 	SAFE_RELEASE(pBackLayer);
 	SAFE_RELEASE(pDefaultLayer);
+
+	m_DoorMap = CGameManager::GetInst()->GetDoorMap(m_pScene);
 
 	return true;
 }
 
 void JBH_Stage3::AfterInit()
 {
+
 }
 
 int JBH_Stage3::Update(float DeltaTime)
 {
+	m_PlayerState = m_Player->GetState();
+	m_PlayerSection = m_PlayerObject->GetStageSection();
+
 	return 0;
 }
 

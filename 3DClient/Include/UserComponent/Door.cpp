@@ -41,6 +41,7 @@ CDoor::CDoor() :
 	m_strTargetSceneKey("")
 {
 	m_eDoorType = DOOR_NORMAL;
+	m_iSection = SST_END;
 	m_eComType = (COMPONENT_TYPE)UT_DOOR;
 }
 
@@ -244,6 +245,11 @@ void CDoor::Lock(bool bNeedKey, const string & strKeyName)
 	m_bLock = true;
 	m_bNeedKey = bNeedKey;
 	m_strKeyName = strKeyName;
+}
+
+void CDoor::ChangeObjectSection(CGameObject* Object)
+{
+	Object->SetStageSection(m_iSection);
 }
 
 bool CDoor::IsOpenFinished() const

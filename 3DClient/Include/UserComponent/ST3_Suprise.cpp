@@ -36,8 +36,6 @@ bool ST3_Suprise::Init()
 	NPCMediumHanging-Looping-01
 	
 	Sound/music/MUS_Demo_ending.wav
-
-	간단한 상태처리 라서 FSM사용.
 	*/
 
 	NPCBase::Init();

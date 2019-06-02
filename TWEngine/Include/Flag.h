@@ -459,6 +459,13 @@ namespace PUN
 		SST_S1_R7,
 		SST_S1_R8,
 		SST_S1_RG,
+		STT_S3_R1,
+		STT_S3_R2,
+		STT_S3_R3,
+		STT_S3_R4,
+		STT_S3_R5,
+		STT_S3_R6,
+		STT_S3_R7,
 		SST_END
 	};
 

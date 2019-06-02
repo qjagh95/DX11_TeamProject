@@ -3,6 +3,8 @@
 
 PUN_USING
 
+class CHuman_Player;
+class CDoor;
 class JBH_Stage3 : public CSceneComponent
 {
 public:
@@ -12,6 +14,14 @@ public:
 	int LateUpdate(float DeltaTime) override;
 	void Collision(float DeltaTime) override;
 	void Render(float DeltaTime) override;
+
+private:
+	CHuman_Player* m_Player;
+	CGameObject* m_PlayerObject;
+	int m_PlayerState;
+	int m_PlayerSection;
+
+	unordered_map<string, CDoor*>* m_DoorMap;
 
 public:
 	JBH_Stage3();

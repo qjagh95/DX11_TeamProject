@@ -123,8 +123,8 @@ CAnimation::CAnimation() :
 	m_bSkipBlending(false)
 {
 	m_eComType = CT_ANIMATION;
+	m_bCurClipStart = false;
 }
-
 
 CAnimation::CAnimation(const CAnimation & anim) :
 	CComponent(anim)
@@ -576,6 +576,11 @@ bool CAnimation::IsCurAnimEnd(const string & strName) const
 		return false;
 
 	return m_bCurClipEnd;
+}
+
+bool CAnimation::IsCurAnimStart() const
+{
+	return m_bCurClipStart;
 }
 
 PANIMATIONCLIP CAnimation::GetCurrentClip() const
@@ -1706,11 +1711,13 @@ int CAnimation::Update(float fTime)
 			}
 		}
 	}
+
 	if (m_pNextClip)
 	{
 		if (m_pCurClip != m_pNextClip)
 			m_fChangeLimitTime = 0.25f;
 		float fBeforeTime = m_fAnimationGlobalTime - fTime;
+
 		if (fBeforeTime < 0.f)
 		{
 			fBeforeTime = 0.f;
@@ -1731,6 +1738,7 @@ int CAnimation::Update(float fTime)
 		{
 			PANIMATIONCALLBACK pCallbackInfo = (*itr);
 			float fActivateTime = m_pNextClip->fEndTime * pCallbackInfo->fAnimationProgress;
+
 			if (pCallbackInfo->bCall)
 				continue;
 
@@ -1756,6 +1764,7 @@ int CAnimation::Update(float fTime)
 	{
 		if (m_pCurClip == nullptr)
 		{
+			m_bCurClipStart = true;
 			m_pCurClip = m_pNextClip;
 			m_pNextClip = nullptr;
 			m_fAnimationGlobalTime = 0.f;
@@ -1763,6 +1772,7 @@ int CAnimation::Update(float fTime)
 		}
 		else
 		{
+			m_bCurClipStart = false;
 			m_fChangeTime += fTime;
 
 			bool	bChange = false;
@@ -1781,6 +1791,8 @@ int CAnimation::Update(float fTime)
 
 			if (bChange)
 			{
+				m_bCurClipStart = true;
+
 				m_pCurClip = m_pNextClip;
 				m_pNextClip = nullptr;
 				m_fAnimationGlobalTime = 0.f;
@@ -1790,6 +1802,8 @@ int CAnimation::Update(float fTime)
 			}
 			else if (!m_bKeepBlending)
 			{
+				m_bCurClipStart = false;
+
 				parallel_for((int)0, BoneSize, [&](int i)
 				{
 					// 키프레임이 없을 경우
@@ -1973,6 +1987,7 @@ int CAnimation::Update(float fTime)
 	// 기존 모션이 계속 동작될때
 	else
 	{
+		m_bCurClipStart = false;
 		m_fAnimationGlobalTime += fTime;
 		m_fClipProgress = m_fAnimationGlobalTime / m_pCurClip->fTimeLength;
 

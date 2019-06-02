@@ -309,6 +309,36 @@ void CGameManager::AddToEachContainer()
 
 }
 
+unordered_map<string, class CDoor*>* CGameManager::GetDoorMap(CScene * Scene)
+{
+	unordered_map<CScene*, unordered_map<string, class CDoor*>*>::iterator FindIter = m_mapDoor.find(Scene);
+
+	if (FindIter == m_mapDoor.end())
+		return NULLPTR;
+
+	return FindIter->second;
+}
+
+unordered_map<string, class CLight*>* CGameManager::GetLightMap(CScene * Scene)
+{
+	unordered_map<CScene*, unordered_map<string, class CLight*>>::iterator FindIter = m_mapLight.find(Scene);
+
+	if (FindIter == m_mapLight.end())
+		return NULLPTR;
+
+	return &FindIter->second;
+}
+
+unordered_map<string, class CGameObject*>* CGameManager::GetItemObjectMap(CScene * Scene)
+{
+	unordered_map<CScene*, unordered_map<string, CGameObject*>>::iterator FindIter = m_mapItemObj.find(Scene);
+
+	if (FindIter == m_mapItemObj.end())
+		return NULLPTR;
+
+	return &FindIter->second;
+}
+
 bool CGameManager::FindKey(const string & strKeyName)
 {
 	unordered_map<string, PDoorKeyInfo>::iterator iter = m_mapKey.find(strKeyName);

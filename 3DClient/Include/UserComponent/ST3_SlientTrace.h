@@ -53,6 +53,8 @@ private:
 	int m_Attack;
 	int m_BashCount;
 
+	float m_TraceDist;
+
 public:
 	ST3_SlientTrace();
 	ST3_SlientTrace(const ST3_SlientTrace& CopyData);

@@ -1,6 +1,5 @@
 #include "../ClientHeader.h"
 #include "NPCBase.h"
-#include <BehaviorTree.h>
 
 int NPCBase::m_Count = 0;
 
@@ -9,6 +8,7 @@ NPCBase::NPCBase()
 	m_MyCount = 0;
 	m_Count++;
 	m_Renderer = NULLPTR;
+	m_TargetPlayer = NULLPTR;
 	m_Animation = NULLPTR;
 	m_BT = NULLPTR;
 	m_NaviMesh = NULLPTR;
@@ -47,6 +47,8 @@ bool NPCBase::Init()
 {
 	m_pObject->SetFrustrumCullUse(true);
 
+	m_pObject->GetStageSection();
+
 	m_Animation = m_pObject->AddComponent<CAnimation>("MonsterAnimation");
 	m_Renderer = m_pObject->AddComponent<CRenderer>("MonsterRenderer");
 	m_Renderer->SetAnimation(m_Animation);
@@ -80,7 +82,7 @@ bool NPCBase::Init()
 
 int NPCBase::Input(float fTime)
 {
-	m_NaviMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene, m_pTransform->GetWorldPos());
+	m_NaviMesh = CNavigationManager3D::GetInst()->FindNavMesh(m_pScene, m_pTransform->GetWorldPos());
 
 	if (m_NaviMesh != NULLPTR)
 		m_Y = m_NaviMesh->GetY(m_pTransform->GetWorldPos());
@@ -88,13 +90,13 @@ int NPCBase::Input(float fTime)
 	return 0;
 }
 
-int NPCBase::Update(float fTime)
+int NPCBase::Update(float DeltaTime)
 {
 	if (m_Target != NULLPTR)
 		m_TargetDistance = m_pObject->GetTransformNonCount()->GetWorldPos().Distance(m_TargetTransform->GetWorldPos());
 
 	if (m_BT != NULLPTR)
-		m_BT->Update(fTime);
+		m_BT->Update(DeltaTime);
 
 	if (m_Hp <= 0)
 		m_pObject->Die();
@@ -102,16 +104,16 @@ int NPCBase::Update(float fTime)
 	return 0;
 }
 
-int NPCBase::LateUpdate(float fTime)
+int NPCBase::LateUpdate(float DeltaTime)
 {
 	return 0;
 }
 
-void NPCBase::Collision(float fTime)
+void NPCBase::Collision(float DeltaTime)
 {
 }
 
-void NPCBase::Render(float fTime)
+void NPCBase::Render(float DeltaTime)
 {
 }
 
@@ -123,7 +125,7 @@ NPCBase * NPCBase::Clone()
 void NPCBase::CreateBT(const string & TreeName, BT_ROOT_CHILD_TYPE Type)
 {
 	char temp[255] = {};
-	_itoa_s(m_Count, temp,10);
+	_itoa_s(m_Count, temp, 10);
 
 	string Name = TreeName;
 	Name += temp;
@@ -140,7 +142,6 @@ void NPCBase::CreateBT(const string & TreeName, BT_ROOT_CHILD_TYPE Type)
 	m_BT->AddBoardData("m_MoveSpeed", &m_MoveSpeed);
 	m_BT->AddBoardData("m_TargetDistance", &m_TargetDistance);
 	m_BT->AddBoardData("m_Y", &m_Y);
-
 }
 
 void NPCBase::ChangeState(int State, string* AniName)
@@ -155,6 +156,13 @@ void NPCBase::ChangeState(int* myStateVar, int ChangeState, string * AniName, CA
 {
 	*myStateVar = ChangeState;
 	Animation->ChangeClip(AniName[ChangeState]);
+}
+
+void NPCBase::SetTarget(CGameObject * Target)
+{
+	m_Target = Target;
+	m_TargetTransform = m_Target->GetTransformNonCount();
+	m_TargetPlayer = m_Target->FindComponentFromTagNonCount<CHuman_Player>("Player");
 }
 
 void NPCBase::SetLegCollider(float Radius, const Vector3 & Center)
@@ -176,4 +184,3 @@ void NPCBase::SetOBBCollider(const Vector3 & Length, const Vector3 & Center)
 {
 	m_BodyOBB->SetInfo(Center, Vector3::Axis, Length);
 }
-

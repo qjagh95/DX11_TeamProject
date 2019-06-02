@@ -24,9 +24,13 @@ public:
 	void FS_SEE(float DeltaTime);
 	void FS_BASH(float DeltaTime);
 
+	void SetTurnRotY(float Value) { m_TurnRotY = Value; }
+	float GetTurnRot() const { return m_TurnRotY; }
+
 private:
 	string m_AniName[SES_MAX];
 	float m_SeeDist;
+	float m_TurnRotY;
 
 public:
 	ST3_See();

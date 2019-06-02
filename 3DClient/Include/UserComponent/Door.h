@@ -77,9 +77,8 @@ private:
 	string		m_strKeyName;
 	string		m_strTargetDoorKey;
 	string		m_strTargetSceneKey;
-
-
 	ptrdiff_t	m_pSndComp;
+	STAGE_SECTION_TYPE m_iSection;
 
 public:
 	bool Init();
@@ -92,6 +91,10 @@ public:
 	void UnLock();
 	void UnLock(const Vector3& vAxis);
 	void Lock(bool bNeedKey = false, const string& strKeyName = "");
+
+	void SetStageSection(STAGE_SECTION_TYPE Section) { m_iSection = Section; }
+	STAGE_SECTION_TYPE GetStageSection() const { return m_iSection; }
+	void ChangeObjectSection(CGameObject* Object);
 
 	bool IsOpenFinished() const;
 
@@ -132,7 +135,6 @@ public:
 	void OpenFast(const Vector3& vDir);
 
 	void SetMesh(const string& strMeshKey, const TCHAR* pFileName);
-	
 
 	DOOR_TYPE  GetDoorType() const;
 	void SetDoorType(int iType);

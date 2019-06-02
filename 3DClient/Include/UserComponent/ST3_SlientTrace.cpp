@@ -4,6 +4,8 @@
 ST3_SlientTrace::ST3_SlientTrace()
 {
 	m_Attack = 0;
+	m_TraceDist = 5.0f;
+
 	m_BashCount = 3;
 }
 
@@ -25,12 +27,6 @@ bool ST3_SlientTrace::Init()
 	1. ÂÑ¾Æ¿À´Â ¸÷.
 	2. Mesh : Cannibal
 	3. bne, anm : Cannibal
-
-	Idle : idle_chase
-	Move(Run) : move_forword_fase
-	Locker search : search_locker
-	¹®ÄçÄç¿­±â : bash_door
-
 	*/
 
 	m_AniName[STS_IDLE] = "idle_search_forward";
@@ -49,12 +45,11 @@ bool ST3_SlientTrace::Init()
 	m_Renderer->SetMesh("Cannibal", TEXT("Cannibal.msh"));
 	m_Renderer->SetSelectBoneName("NPCMedium-Pelvis");
 
-	m_Renderer->SetPosCheckStart(true);
-
 	m_Animation->LoadBone("Cannibal.bne");
-	m_Animation->Load("Cannibal.anm");
+	m_Animation->Load("enem_def_2.anm");
 
-	ChangeState(STS_BASH_DOOR_OPEN, m_AniName);
+	ChangeState(STS_IDLE, m_AniName);
+
 	return true;
 }
 

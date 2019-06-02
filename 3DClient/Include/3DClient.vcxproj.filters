@@ -133,6 +133,12 @@
     <Filter Include="02. UserComponent\05. Item\03. Document\02. DocIcon\03. Stage 3">
       <UniqueIdentifier>{d8be62f1-1314-4170-aa3f-684e3b65d07e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. SceneComponent\ST3\ST3_Suprise">
+      <UniqueIdentifier>{0fb77a95-aa21-493e-8b22-17fabb3ae361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\ST3\ST3_See">
+      <UniqueIdentifier>{19f2e8e9-6f26-4d1c-969e-3f3d36ae02f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -264,15 +270,6 @@
     <ClInclude Include="UserComponent\Tablet.h">
       <Filter>02. UserComponent\05. Item\01. 3DItem</Filter>
     </ClInclude>
-    <ClInclude Include="SceneComponent\JBH_Stage3.h">
-      <Filter>01. SceneComponent\ST3</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Pivot.h">
-      <Filter>01. SceneComponent\ST3</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\ST3_Suprise.h">
-      <Filter>01. SceneComponent\ST3</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\DocxInven.h">
       <Filter>02. UserComponent\04. UI\01. Inventory</Filter>
     </ClInclude>
@@ -380,6 +377,18 @@
     </ClInclude>
     <ClInclude Include="UserComponent\PaperPL.h">
       <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\03. Stage 3</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\JBH_Stage3.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_Suprise.h">
+      <Filter>01. SceneComponent\ST3\ST3_Suprise</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ST3_See.h">
+      <Filter>01. SceneComponent\ST3\ST3_See</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\NPCBase.h">
+      <Filter>01. SceneComponent\ST3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -497,15 +506,6 @@
     <ClCompile Include="UserComponent\Tablet.cpp">
       <Filter>02. UserComponent\05. Item\01. 3DItem</Filter>
     </ClCompile>
-    <ClCompile Include="SceneComponent\JBH_Stage3.cpp">
-      <Filter>01. SceneComponent\ST3</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Pivot.cpp">
-      <Filter>01. SceneComponent\ST3</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\ST3_Suprise.cpp">
-      <Filter>01. SceneComponent\ST3</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\DocxInven.cpp">
       <Filter>02. UserComponent\04. UI\01. Inventory</Filter>
     </ClCompile>
@@ -613,6 +613,21 @@
     </ClCompile>
     <ClCompile Include="UserComponent\PaperPL.cpp">
       <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\03. Stage 3</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\JBH_Stage3.cpp">
+      <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_Suprise.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Suprise</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_See.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_See</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST3_SlientState.cpp">
+      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\NPCBase.cpp">
+      <Filter>01. SceneComponent\ST3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

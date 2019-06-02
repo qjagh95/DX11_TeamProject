@@ -249,6 +249,7 @@ private:
 	bool					m_bKeepBlending;
 	bool					m_bEnd;
 	bool					m_bCurClipEnd;
+	bool					m_bCurClipStart;
 	float					m_fAnimationGlobalTime;
 	float					m_fClipProgress;
 	float					m_fChangeTime;
@@ -290,6 +291,7 @@ public:
 	bool IsAnimationEnd()	const;
 	bool IsCurAnimEnd() const;
 	bool IsCurAnimEnd(const string& strName) const;
+	bool IsCurAnimStart() const;
 	PANIMATIONCLIP GetCurrentClip()	const;
 	void GetCurrentKeyFrame(vector<PBONEKEYFRAME>& vecFrame);
 

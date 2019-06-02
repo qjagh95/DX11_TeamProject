@@ -242,6 +242,7 @@
     <ClInclude Include="UserComponent\MessageTH.h" />
     <ClInclude Include="UserComponent\Minion.h" />
     <ClInclude Include="UserComponent\Move_Func_Header.hpp" />
+    <ClInclude Include="UserComponent\NPCBase.h" />
     <ClInclude Include="UserComponent\PaperBQ.h" />
     <ClInclude Include="UserComponent\PaperGenerator.h" />
     <ClInclude Include="USerComponent\PaperGongji.h" />
@@ -259,7 +260,7 @@
     <ClInclude Include="UserComponent\Player_Move_Value.hpp" />
     <ClInclude Include="UserComponent\Player_Weapon_Value.hpp" />
     <ClInclude Include="UserComponent\SilentMessage.h" />
-    <ClInclude Include="UserComponent\ST3_Pivot.h" />
+    <ClInclude Include="UserComponent\ST3_See.h" />
     <ClInclude Include="UserComponent\ST3_SlientTrace.h" />
     <ClInclude Include="UserComponent\ST3_Suprise.h" />
     <ClInclude Include="UserComponent\Tablet.h" />
@@ -320,6 +321,7 @@
     <ClCompile Include="UserComponent\MessagePlanA.cpp" />
     <ClCompile Include="UserComponent\MessageTH.cpp" />
     <ClCompile Include="UserComponent\Minion.cpp" />
+    <ClCompile Include="UserComponent\NPCBase.cpp" />
     <ClCompile Include="UserComponent\PaperBQ.cpp" />
     <ClCompile Include="UserComponent\PaperGenerator.cpp" />
     <ClCompile Include="UserComponent\PaperGongji.cpp" />
@@ -338,7 +340,8 @@
     <ClCompile Include="UserComponent\PlayerFunc_Move.cpp" />
     <ClCompile Include="UserComponent\PlayerFunc_Weapon.cpp" />
     <ClCompile Include="UserComponent\SilentMessage.cpp" />
-    <ClCompile Include="UserComponent\ST3_Pivot.cpp" />
+    <ClCompile Include="UserComponent\ST3_See.cpp" />
+    <ClCompile Include="UserComponent\ST3_SlientState.cpp" />
     <ClCompile Include="UserComponent\ST3_SlientTrace.cpp" />
     <ClCompile Include="UserComponent\ST3_Suprise.cpp" />
     <ClCompile Include="UserComponent\Tablet.cpp" />

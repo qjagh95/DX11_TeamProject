@@ -809,7 +809,7 @@
     <FxCompile Include="..\Bin\Shader\NaviLandScape.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\HitEffect.fx">
+    <FxCompile Include="..\..\3DClient\bin\Shader\HitEffect.fx">
       <Filter>03. Rendering\01. Shader\01. HLSL\02. Rendering</Filter>
     </FxCompile>
   </ItemGroup>

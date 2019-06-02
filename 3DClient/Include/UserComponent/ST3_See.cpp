@@ -4,6 +4,7 @@
 ST3_See::ST3_See()
 {
 	m_SeeDist = 8.0f;
+	m_TurnRotY = 0.0f;
 }
 
 ST3_See::ST3_See(const ST3_See & CopyData)
@@ -79,7 +80,11 @@ void ST3_See::FS_SEE(float DeltaTime)
 	m_pTransform->SetWorldRotY(Angle);
 
 	if (m_TargetDistance >= m_SeeDist)
+	{
+		//임의 숫자/
+		m_pTransform->SetWorldRotY(m_TurnRotY);
 		ChangeState(SES_BASH, m_AniName);
+	}
 }
 
 void ST3_See::FS_BASH(float DeltaTime)

@@ -1,23 +1,25 @@
 #pragma once
+#include <Component/UserComponent.h>
+
 #include <BehaviorTree.h>
 #include <NavigationMesh.h>
 
-#include <Component/UserComponent.h>
 #include <Component/ColliderOBB3D.h>
 #include <Component/ColliderSphere.h>
 #include <Component/Renderer.h>
 
 PUN_USING
 
+class CHuman_Player;
 class NPCBase : public CUserComponent
 {
 public:
 	virtual bool Init() override;
-	virtual int Input(float fTime) override;
-	virtual int Update(float fTime) override;
-	virtual int LateUpdate(float fTime) override;
-	virtual void Collision(float fTime) override;
-	virtual void Render(float fTime) override;
+	virtual int Input(float DeltaTime) override;
+	virtual int Update(float DeltaTime) override;
+	virtual int LateUpdate(float DeltaTime) override;
+	virtual void Collision(float DeltaTime) override;
+	virtual void Render(float DeltaTime) override;
 	virtual NPCBase* Clone() override;
 	
 	void CreateBT(const string& TreeName, BT_ROOT_CHILD_TYPE Type = BT_SELECTOR);
@@ -33,7 +35,7 @@ public:
 	void SetMoveSpeed(float Value) { m_MoveSpeed = Value; }
 	float GetMoveSpeed() const { return m_MoveSpeed; }
 
-	void SetTarget(CGameObject* Target) { m_Target = Target, m_TargetTransform = m_Target->GetTransformNonCount(); }
+	void SetTarget(CGameObject* Target);
 	CGameObject* GetTarget() const { return m_Target; }
 	CTransform* GetTargetTransform() const { return m_TargetTransform; }
 	void SetMoveingPos(const Vector3& Pos) { m_MovingPos = Pos; }
@@ -43,6 +45,9 @@ public:
 	void SetBodyCollider(float Radius,const Vector3& Center = Vector3::Zero);
 	void SetHeadCollider(float Radius,const Vector3& Center = Vector3::Zero);
 	void SetOBBCollider(const Vector3& Length, const Vector3& Center = Vector3::Zero);
+
+	int GetState() const { return m_State; }
+	void SetState(int State) { m_State = State; }
 
 protected:
 	string m_CurName;
@@ -55,6 +60,7 @@ protected:
 	BehaviorTree* m_BT;
 	CGameObject* m_Target;
 	CTransform* m_TargetTransform;
+	CHuman_Player* m_TargetPlayer;
 	CNavigationMesh* m_NaviMesh;
 	list<Vector3> m_PathList;
 	Vector3 m_MovingPos;

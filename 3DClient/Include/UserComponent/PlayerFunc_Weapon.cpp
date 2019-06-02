@@ -172,9 +172,7 @@ int CHuman_Player::WeaponInput(float fTime)
 		Vector3 vEulerDir = Vector3::Zero;
 		Vector4 vDirQuat;
 
-
 		//¹¾Á÷ ³²¹Ù
-		XMVECTOR xmRot;
 		vEulerDir.x = PUN_PI + (DegreeToRadian(vDiffRot.y) * 0.001953125f) + DegreeToRadian(12.f);
 		vEulerDir.y = vRot.x;
 		vEulerDir.z = PUN_PI * (.5f);
@@ -182,7 +180,6 @@ int CHuman_Player::WeaponInput(float fTime)
 		EulerToQuat(vEulerDir, vDirQuat);
 		//xmRot = DirectX::XMQuaternionMultiply(xmQuat, vDirQuat.Convert());
 		//xmRot = DirectX::XMQuaternionNormalize(xmRot);
-
 
 		XMVECTOR vZero = DirectX::XMVectorSet(0.f, 0.f, 0.f, 1.f);
 		m_pPartCamAnim->matCustomParent = XMMatrixAffineTransformation(vScale.Convert(), vZero, vDirQuat.Convert(), vPos.Convert());
@@ -195,13 +192,9 @@ int CHuman_Player::WeaponInput(float fTime)
 }
 int CHuman_Player::WeaponUpdate(float fTime)
 {
-	
-
 	return 0;
 }
 int CHuman_Player::WeaponLateUpdate(float fTime)
 {
-
-
 	return 0;
 }
