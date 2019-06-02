@@ -367,7 +367,8 @@ namespace PUN
 		int			iDepthFog;
 		int			iBloom;
 		int			iAdaptation;
-		Vector2		vEmpty;
+		float		fFadeAmount;
+		float		vEmpty;
 
 		_tagFinalPassCBuffer() :
 			iHDR(0),
@@ -375,7 +376,8 @@ namespace PUN
 			iMotionBlur(0),
 			iDepthFog(0),
 			iBloom(0),
-			iAdaptation(0)
+			iAdaptation(0),
+			fFadeAmount(1)
 		{
 		}
 
@@ -427,11 +429,6 @@ namespace PUN
 		Vector2 vEmpty;
 	}DepthFogCBuffer, *PDepthFogCBuffer;
 
-	typedef struct PUN_DLL _tagHitEffectCB
-	{
-		float fAlpha;
-		Vector3 vEmpty;
-	}HitEffectCB, *PHitEffectCB;
 
 	///////////////////////////////// CONSTANT BUFFER END /////////////////////////////////
 

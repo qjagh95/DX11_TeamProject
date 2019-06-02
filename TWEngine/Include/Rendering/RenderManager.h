@@ -69,7 +69,6 @@ private:
 	FinalPassCB					m_tFinalCBuffer;
 	StarLightScopeCB			m_tStarLightScope;
 	DepthFogCBuffer				m_tDepthFogCBuffer;
-	HitEffectCB					m_tHitEffectCBuffer;
 
 	// Magic Number 찾는 용도의 변수들
 	class CPostEffect*	m_pPostEffect;
@@ -94,7 +93,6 @@ private:
 	float				m_fDepthFogStart;
 	float				m_fDepthFogEnd;
 	float				m_fOnOff;
-	float				m_fHitEffectAlpha;
 
 public:
 	GAME_MODE GetGameMode()	const;
@@ -124,8 +122,7 @@ public:
 	void SetAdaptValue(float fAdaptation, float fTime, bool bOnOff = false);
 	void SetBloomValue(float fBloomScale, bool bOnOff = false);
 	void SetBloomValue(float fBloomScale, float fTime, bool bOnOff = false);
-	void SetHitEffectAlpha(float fAlpha, bool bOnOff = false);
-	void SetHitEffectAlpha(float fAlpha, float fTime, bool bOnOff = false);
+	void SetFadeAmount(float fFadeAmount, float fTime);
 
 public:
 	void AddRenderObj(class CGameObject* pObj);

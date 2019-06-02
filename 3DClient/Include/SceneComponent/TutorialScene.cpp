@@ -84,15 +84,20 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pLandScape);
 	SAFE_RELEASE(pLandScapeObj);	
 
-	CGameObject*	pPlayerObj = CGameObject::CreateObject("Player", pDefaultLayer);
+	CGameObject*	pPlayerObj = CGameObject::CreateObject("Player", pDefaultLayer, true);
 
 	CHuman_Player*	pPlayer = pPlayerObj->AddComponent<CHuman_Player>("Player");
 
 	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
-	pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
+
+	pPlayerTr->SetWorldRot(0.f, 180.f, 0.f);
 	pPlayerTr->SetWorldPos(316.f, 13.f, 748.f);
 
-	CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
+	SAFE_RELEASE(pPlayerTr);
+	SAFE_RELEASE(pPlayer);
+	SAFE_RELEASE(pPlayerObj);
+
+	/*CGameObject* pObject = CGameObject::CreateObject("Pyramid", pDefaultLayer);
 	CTransform*	pTransform = pObject->GetTransform();
 
 	pTransform->SetWorldScale(0.3f, 0.3f, 0.1f);
@@ -119,7 +124,7 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pLight);
 	SAFE_RELEASE(pObject);
-	SAFE_RELEASE(pLightLayer);
+	SAFE_RELEASE(pLightLayer);*/
 
 	CGameObject*	pDoorObj = CGameObject::CreateObject("TutorialDoor", pDefaultLayer);
 
@@ -127,16 +132,20 @@ bool CTutorialScene::Init()
 
 	CTransform*	pDoorTr = pDoorObj->GetTransform();
 
-	pDoorTr->SetWorldPos(306.f, 30.f, 556.f);
+	pDoorTr->SetWorldPos(304.5f, 29.2f, 557.3f);
+	pDoorTr->SetLocalRot(0.f, 90.f, 0.f);
+	//pDoorTr->SetWorldRot(0.f, 180.f, 0.f);
 
 	SAFE_RELEASE(pDoorTr);
 	SAFE_RELEASE(pDoor);
 	SAFE_RELEASE(pDoorObj);
 
-
 	CGameObject*	pEventObj = CGameObject::CreateObject("EventCollider", pDefaultLayer);
 
 	CEventCollider*	pEvent = pEventObj->AddComponent<CEventCollider>("EventCollider");
+
+	pEvent->SetTutorial();
+	pEvent->NoticeCamera();
 
 	SAFE_RELEASE(pEvent);
 	SAFE_RELEASE(pEventObj);
@@ -147,7 +156,8 @@ bool CTutorialScene::Init()
 	//pMedicalKitTr->SetWorldPos(356.f, 20.f, 650.f);
 	//CHealingPack* pUCHealingPack = pObjMedicalKit->AddComponent<CHealingPack>("UC_HealingPack");
 	////pUCHealingPack->SetHPAmount(pPlayer->GetMaxHP());
-	//pUCHealingPack->SetMesh("MedicalKit", TEXT("FoodCan.msh"));
+	//pUCHealingPack->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
+	//pMedicalKitTr->SetWorldScale(10.f);
 	//SAFE_RELEASE(pUCHealingPack);
 	//SAFE_RELEASE(pMedicalKitTr);
 	//SAFE_RELEASE(pObjMedicalKit);
@@ -156,9 +166,10 @@ bool CTutorialScene::Init()
 	//CGameObject* pObjLunchBox = CGameObject::CreateObject("LunchBox", pDefaultLayer);
 	//CTransform* pLuncBoxTr = pObjLunchBox->GetTransform();
 	//pLuncBoxTr->SetWorldPos(400.f, 20.f, 630.f);
+	//pLuncBoxTr->SetWorldScale(100.f);
 	//pUCHealingPack = pObjLunchBox->AddComponent<CHealingPack>("UC_HealingPack");
 	//pUCHealingPack->SetHPAmount(1);
-	//pUCHealingPack->SetMesh("LunchBox", TEXT("ColaCan.msh"));
+	//pUCHealingPack->SetMesh("LunchBox", TEXT("LunchBox.msh"));
 	//SAFE_RELEASE(pUCHealingPack);
 	//SAFE_RELEASE(pLuncBoxTr);
 	//SAFE_RELEASE(pObjLunchBox);
@@ -179,154 +190,31 @@ bool CTutorialScene::Init()
 	//CTablet* pUCTablet = pObjTablet->AddComponent<CTablet>("UC_Tablet");
 	//SAFE_RELEASE(pUCTablet);
 	//SAFE_RELEASE(pTabletTr);
-	//SAFE_RELEASE(pObjTablet);
+	//SAFE_RELEASE(pObjTablet);		
 
-	//CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
+	CGameObject*	pKeyCardObj = CGameObject::CreateObject("KeyCard", pDefaultLayer);
 
-	//CBattery*	pBattery = pBatteryObj->AddComponent<CBattery>("Battery");
+	CKeyCard*	pKeyCard = pKeyCardObj->AddComponent<CKeyCard>("KeyCard");
 
-	//CTransform*	pBatteryTr = pBatteryObj->GetTransform();
+	CTransform*	pKeyCardTr = pKeyCardObj->GetTransform();
 
-	//pBatteryTr->SetWorldPos(316.f, 20.f, 648.f);
+	pKeyCardTr->SetWorldPos(112.f, 17.f, 621.f);
 
-	//SAFE_RELEASE(pBatteryTr);
-	//SAFE_RELEASE(pBattery);
-	//SAFE_RELEASE(pBatteryObj);
+	SAFE_RELEASE(pKeyCardTr);
+	SAFE_RELEASE(pKeyCard);
+	SAFE_RELEASE(pKeyCardObj);
 
-	//pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
+	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
 
-	//pBattery = pBatteryObj->AddComponent<CBattery>("Battery");
+	CBattery*	pBattery = pBatteryObj->AddComponent<CBattery>("Battery");
 
-	//pBatteryTr = pBatteryObj->GetTransform();
+	CTransform*	pBatteryTr = pBatteryObj->GetTransform();
 
-	//pBatteryTr->SetWorldPos(216.f, 20.f, 748.f);
+	pBatteryTr->SetWorldPos(108.f, 17.f, 619.f);
 
-	//SAFE_RELEASE(pBatteryTr);
-	//SAFE_RELEASE(pBattery);
-	//SAFE_RELEASE(pBatteryObj);			
-
-	//CGameObject*	pPSObj = CGameObject::CreateObject("PaperGenerator", pDefaultLayer);
-
-	//CPaperGenerator* pPGS = pPSObj->AddComponent<CPaperGenerator>("PaperGenerator");
-
-	//CTransform*	pPSTr = pPSObj->GetTransform();
-
-	//pPSTr->SetWorldPos(316.f, 20.f, 698.f);
-	//pPSTr->SetWorldRot(0.f, 180.f, 0.f);
-
-	//SAFE_RELEASE(pPSTr);
-	//SAFE_RELEASE(pPGS);
-	//SAFE_RELEASE(pPSObj);
-
-	//pPSObj = CGameObject::CreateObject("PaperGongji", pDefaultLayer);
-
-	//CPaperGongji* pGS = pPSObj->AddComponent<CPaperGongji>("PaperGongji");
-
-	//pPSTr = pPSObj->GetTransform();
-
-	//pPSTr->SetWorldPos(326.f, 20.f, 698.f);
-	//pPSTr->SetWorldRot(0.f, 180.f, 0.f);
-
-	//SAFE_RELEASE(pPSTr);
-	//SAFE_RELEASE(pGS);
-	//SAFE_RELEASE(pPSObj);
-
-	//pPSObj = CGameObject::CreateObject("PaperMsgTH", pDefaultLayer);
-
-	//CPaperMsgTH* pMS = pPSObj->AddComponent<CPaperMsgTH>("PaperMsgTH");
-
-	//pPSTr = pPSObj->GetTransform();
-
-	//pPSTr->SetWorldPos(306.f, 20.f, 698.f);
-	//pPSTr->SetWorldRot(0.f, 180.f, 0.f);
-
-	//SAFE_RELEASE(pPSTr);
-	//SAFE_RELEASE(pMS);
-	//SAFE_RELEASE(pPSObj);
-
-	//pPSObj = CGameObject::CreateObject("PaperPlanA", pDefaultLayer);
-
-	//CPaperPlanA* pMPS = pPSObj->AddComponent<CPaperPlanA>("PaperPlanA");
-
-	//pPSTr = pPSObj->GetTransform();
-
-	//pPSTr->SetWorldPos(316.f, 20.f, 698.f);
-	//pPSTr->SetWorldRot(0.f, 180.f, 0.f);
-
-	//SAFE_RELEASE(pPSTr);
-	//SAFE_RELEASE(pMPS);
-	//SAFE_RELEASE(pPSObj);
-
-	//pPSObj = CGameObject::CreateObject("PaperTest", pDefaultLayer);
-
-	//CPaperTest* pMTS = pPSObj->AddComponent<CPaperTest>("PaperTest");
-
-	//pPSTr = pPSObj->GetTransform();
-
-	//pPSTr->SetWorldPos(306.f, 30.f, 698.f);
-	//pPSTr->SetWorldRot(0.f, 180.f, 0.f);
-
-	//SAFE_RELEASE(pPSTr);
-	//SAFE_RELEASE(pMTS);
-	//SAFE_RELEASE(pPSObj);
-
-	//pPSObj = CGameObject::CreateObject("PaperBQ", pDefaultLayer);
-
-	//CPaperBQ* pMBS = pPSObj->AddComponent<CPaperBQ>("PaperBQ");
-
-	//pPSTr = pPSObj->GetTransform();
-
-	//pPSTr->SetWorldPos(306.f, 20.f, 658.f);
-	//pPSTr->SetWorldRot(0.f, 180.f, 0.f);
-
-	//SAFE_RELEASE(pPSTr);
-	//SAFE_RELEASE(pMBS);
-	//SAFE_RELEASE(pPSObj);
-
-	//pPSObj = CGameObject::CreateObject("PaperPL", pDefaultLayer);
-
-	//CPaperPL* pMLS = pPSObj->AddComponent<CPaperPL>("PaperPL");
-
-	//pPSTr = pPSObj->GetTransform();
-
-	//pPSTr->SetWorldPos(306.f, 30.f, 668.f);
-	//pPSTr->SetWorldRot(0.f, 180.f, 0.f);
-
-	//SAFE_RELEASE(pPSTr);
-	//SAFE_RELEASE(pMLS);
-	//SAFE_RELEASE(pPSObj);
-
-	//CGameObject*	pKeyCardObj = CGameObject::CreateObject("KeyCard", pDefaultLayer);
-
-	//CKeyCard*	pKeyCard = pKeyCardObj->AddComponent<CKeyCard>("KeyCard");
-
-	//CTransform*	pKeyCardTr = pKeyCardObj->GetTransform();
-
-	//pKeyCardTr->SetWorldPos(266.f, 20.f, 648.f);
-
-	//SAFE_RELEASE(pKeyCardTr);
-	//SAFE_RELEASE(pKeyCard);
-	//SAFE_RELEASE(pKeyCardObj);
-
-	/*pObject = CGameObject::CreateObject("Fileex", pDefaultLayer);
-
-	CRenderer* pssRenderer = pObject->AddComponent<CRenderer>("ff1Renderer");
-
-	pssRenderer->SetMesh("Fileex", L"FileEx.fbx", MESH_PATH);
-
-	SAFE_RELEASE(pssRenderer);
-
-	pTransform = pObject->GetTransform();
-
-	pTransform->SetWorldPos(266.f, 20.f, 648.f);
-	pTransform->SetWorldScale(1.f);
-
-	SAFE_RELEASE(pTransform);
-	SAFE_RELEASE(pObject);*/
-
-	SAFE_RELEASE(pPlayerTr);
-	SAFE_RELEASE(pPlayer);
-	SAFE_RELEASE(pPlayerObj);
+	SAFE_RELEASE(pBatteryTr);
+	SAFE_RELEASE(pBattery);
+	SAFE_RELEASE(pBatteryObj);	
 
 	SAFE_RELEASE(pCamera);
 

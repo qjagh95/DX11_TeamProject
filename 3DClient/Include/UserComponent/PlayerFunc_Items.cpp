@@ -54,7 +54,7 @@ bool CHuman_Player::Init_Items()
 
 	m_pRayTr->SetWorldScale(47.f, 47.f, 1.f);
 	m_pRayTr->SetWorldPivot(0.5f, 0.5f, 0.f);
-	m_pRayTr->SetWorldPos(630.f, 390.f, 0.f);	
+	m_pRayTr->SetWorldPos(640.f, 353.f, 0.f);	
 
 	CColliderRay*	pRay = pRayObj->AddComponent<CColliderRay>("RayBody");
 

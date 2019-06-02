@@ -45,11 +45,8 @@ bool CZipper::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	CTransform*		pTransform = m_pObject->GetTransform();
-	pTransform->SetWorldScale(120.f, 510.f, 1.f);
-	pTransform->SetWorldPos(255.f, 80.f, 1.f);
-
-	SAFE_RELEASE(pTransform);
+	m_pTransform->SetWorldScale(120.f, 510.f, 1.f);
+	m_pTransform->SetWorldPos(255.f, 80.f, 1.f);
 
 	CAnimation2D*	pAnimation = m_pObject->AddComponent<CAnimation2D>("ZipperAnimation");
 

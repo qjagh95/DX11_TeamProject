@@ -196,6 +196,12 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 
 	float3	vNormal = input.vNormal;
 
+    float4 vColor = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
+
+    if(vColor.a == 0.0f)
+        clip(-1);
+
+
 	if (g_vMtrlDif.w == 1.f)
 	{
 		float4 vNormalCol = g_NormalTex.Sample(g_DiffuseSmp, input.vUV);

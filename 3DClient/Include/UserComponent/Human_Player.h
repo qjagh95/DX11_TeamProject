@@ -197,7 +197,7 @@ public:
 	bool Init_Move();
 	bool Init_Weapon();
 	
-
+	void SetNaviY(bool bEnable) { m_bNaviOn = bEnable; }
 	float GetWorlPosY() const;
 	Vector3 GetWorldPos() const;
 	bool LoadData(const TCHAR *dataPath); //플레이어는 혼자니까 굳이 툴까지 만들어 다룰 필요는 없지만, 데이터 수치 및 리소스는 밖에서 준비해볼 필요가 있어 분리함

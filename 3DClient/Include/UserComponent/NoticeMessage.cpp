@@ -50,6 +50,7 @@ bool CNoticeMessage::Init()
 	SAFE_RELEASE(pMaterial);
 
 	m_pTransform->SetWorldScale(307.f, 108.f, 1.f);
+	//m_pTransform->SetWorldPos(507.f, 108.f, 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("NMAnimation");

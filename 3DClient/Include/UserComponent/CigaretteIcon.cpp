@@ -63,7 +63,7 @@ int CCigaretteIcon::Update(float _fTime)
 {
 	if (m_bMouseOn)
 	{
-		if (KEYPRESS("LButton"))
+		if (KEYUP("LButton"))
 		{
 			CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
 			pBigIconObj->SetEnable(true);
@@ -91,7 +91,7 @@ void CCigaretteIcon::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 void CCigaretteIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
 	OutputDebugString(L"Icon Hit Enter\n");
-	if (KEYPRESS("RButton") == true)
+	if (KEYUP("RButton") == true)
 	{
 		if (m_isUseItem == true)
 		{

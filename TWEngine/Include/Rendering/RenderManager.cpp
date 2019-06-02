@@ -68,14 +68,13 @@ CRenderManager::CRenderManager() :
 	m_fOnOff = 1.f;
 
 	m_fMiddleGrey = 0.863f;
-	m_fLumWhite = 1.53f;
+	m_fLumWhite = 5.53f;
 	m_fAdaptation = 3.f;
 	m_fBloomThreshold = 1.1f;
 	m_fBloomScale = 0.74f;
 
 	m_fDepthFogEnd = 100.f;
 	m_fDepthFogStart = 0.f;
-	m_fHitEffectAlpha = 1.f;
 
 	m_vDepthFogColor = Vector4(0.2f, 0.2f, 0.2f, 1.f);
 
@@ -1606,30 +1605,11 @@ void CRenderManager::SetBloomValue(float fBloomScale, float fTime, bool bOnOff)
 	pFilter->SetBloomScale(m_fBloomScale);
 }
 
-void CRenderManager::SetHitEffectAlpha(float fAlpha, bool bOnOff)
+void CRenderManager::SetFadeAmount(float fFadeAmount, float fTime)
 {
-	m_fHitEffectAlpha = fAlpha;
+	m_tFinalCBuffer.fFadeAmount = fFadeAmount;
 
-	if (bOnOff == false)
-		m_tHitEffectCBuffer.fAlpha = 1.f;
-
-	else if (bOnOff == true)
-		m_tHitEffectCBuffer.fAlpha = m_fHitEffectAlpha;
-
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("HitEffect", &m_tHitEffectCBuffer);
-}
-
-void CRenderManager::SetHitEffectAlpha(float fAlpha, float fTime, bool bOnOff)
-{
-	m_fHitEffectAlpha = fAlpha;
-
-	if (bOnOff == false)
-		m_tHitEffectCBuffer.fAlpha = 1.f;
-
-	else if (bOnOff == true)
-		m_tHitEffectCBuffer.fAlpha = m_fHitEffectAlpha;
-
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("HitEffect", &m_tHitEffectCBuffer);
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass", &m_tFinalCBuffer);
 }
 
 void CRenderManager::SetBloomValue(float fBloomScale, bool bOnOff)

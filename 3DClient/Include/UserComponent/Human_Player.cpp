@@ -277,7 +277,7 @@ bool CHuman_Player::Init()
 	pCamEffManager->Init();
 	pCamEffManager->SetFirstPersonViewEnable();
 
-	PUN::CGameObject*pObj = PUN::CGameObject::CreateObject("player_move_point", m_pLayer, true);
+	PUN::CGameObject*	pObj = PUN::CGameObject::CreateObject("player_move_point", m_pLayer, true);
 
 	m_pMovePointer = pObj->GetTransform();
 
@@ -326,7 +326,6 @@ bool CHuman_Player::Init()
 
 void CHuman_Player::AfterClone()
 {
-
 	m_pTransform->SetLocalRotY(180.f);
 	m_pTransform->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	m_pHeadObj = PUN::CGameObject::CreateObject("Player_Daegari", m_pLayer, true);
@@ -351,18 +350,12 @@ void CHuman_Player::AfterClone()
 	SAFE_RELEASE(pHeadRenderer);
 
 	// Inventory
-	PUN::CGameObject *pInvObj = CGameObject::CreateObject("Inven", m_pLayer, true);
+	PUN::CGameObject* pInvObj = CGameObject::CreateObject("Inven", m_pLayer, true);
 
 	m_pInven = pInvObj->AddComponent<CInventory>("Inven");
 	m_pInven->SetInvenMax(19);
 
-	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
-
-	pMaterial = pInvObj->AddComponent<CMaterial>("Inven");
-	pMaterial->SetDiffuseTex(0, "Inventory", TEXT("UI/Inven/InvenBack.png"));
-
 	SAFE_RELEASE(pInvObj);
-	SAFE_RELEASE(pMaterial);
 
 	// Handycam
 	PUN::CGameObject *pHandycamObj = CGameObject::CreateObject("Handycam", m_pLayer, true);
@@ -398,17 +391,13 @@ void CHuman_Player::AfterClone()
 
 	SAFE_RELEASE(pTr);
 
-	/*CGameObject*	pTestObj = CGameObject::CreateObject("HitEffect", m_pLayer);
-	CHitEffectAlpha*	pTest = pTestObj->AddComponent<CHitEffectAlpha>("HitEffect");
-
-	SAFE_RELEASE(pTest);
-	SAFE_RELEASE(pTestObj);*/
-
 	LoadData(TEXT("PlayerData.csv"));
 }
 
 int CHuman_Player::Input(float fTime)
 {
+	Vector3 vPPos = m_pTransform->GetWorldPos();
+
 	if (m_iState & PSTATUS_CAMOUT)
 	{
 		m_iState ^= PSTATUS_TURNING;
@@ -530,7 +519,7 @@ int CHuman_Player::Input(float fTime)
 	if (m_iState & PSTATUS_INACTIVE)
 	{
 		PUN::CTransform *pCamTrans = m_pScene->GetMainCameraTransform();
-		PUN::CTransform *pHeadTrans = m_pHeadObj->GetTransform();
+		//PUN::CTransform *pHeadTrans = m_pHeadObj->GetTransform();
 
 		//Vector3 vCamPos = pHeadTrans->GetWorldPos();
 		Vector3 vCamPos = pHeadTrans->GetWorldPos() + m_vCamWorldOffset;
@@ -738,8 +727,7 @@ int CHuman_Player::Input(float fTime)
 }
 
 int CHuman_Player::Update(float fTime)
-{
-	
+{	
 	CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene,
 		m_pTransform->GetWorldPos());
 
@@ -1389,7 +1377,6 @@ void CHuman_Player::AfterLoad()
 	m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("player_camcorder_idle")->second;
 	//m_pAnimation->SetIgnoreVector(m_vecIgnoreRightArmKey);
 }
-
 
 float CHuman_Player::GetWorlPosY() const {
 	return m_pTransform->GetWorldPos().y;

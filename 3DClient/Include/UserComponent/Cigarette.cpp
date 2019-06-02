@@ -32,7 +32,7 @@ bool CCigarette::Init()
 {
 	// Trasnform 
 	//m_pTransform->SetWorldScale(40.f, 40.f, 40.f);
-	m_pTransform->SetWorldScale(100.f, 100.f, 100.f);
+	m_pTransform->SetWorldScale(10.f, 10.f, 10.f);
 	m_pTransform->SetWorldRotX(180.f);
 
 	// Renderer
@@ -41,7 +41,7 @@ bool CCigarette::Init()
 	
 	// Sphere Collider
 	CColliderSphere* pCollider = m_pObject->AddComponent<CColliderSphere>("Cigarette_Collider");
-	pCollider->SetInfo(Vector3::Zero, 1.5f);
+	pCollider->SetInfo(Vector3::Zero, 1.f);
 	pCollider->SetCollisionCallback(CCT_ENTER,  this, &CCigarette::Hit);
 	pCollider->SetCollisionCallback(CCT_STAY, this, &CCigarette::HitStay);
 	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CCigarette::MouseOut);
@@ -109,7 +109,7 @@ void CCigarette::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
 	if (m_bGetItem)
 	{
-		if (KEYPRESS("LButton") == true)
+		if (KEYUP("LButton") == true)
 		{
 			if (m_isInvenInItem == false)
 			{

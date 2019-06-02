@@ -61,7 +61,7 @@ int CTabletIcon::Update(float _fTime)
 {
 	if (m_bMouseOn)
 	{
-		if (KEYPRESS("LButton"))
+		if (KEYUP("LButton"))
 		{
 			CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
 
@@ -89,7 +89,7 @@ void CTabletIcon::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 void CTabletIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
 	OutputDebugString(L"Icon Hit Enter\n");
-	if (KEYPRESS("RButton") == true)
+	if (KEYUP("RButton") == true)
 	{
 		if (m_isUseItem == true)
 		{

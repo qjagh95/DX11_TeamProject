@@ -48,7 +48,7 @@ bool CKeyCard::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(1.f);
+	m_pTransform->SetWorldScale(0.1f);
 
 	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("KeyCardBody");
 
@@ -56,7 +56,7 @@ bool CKeyCard::Init()
 	pBody->SetCollisionCallback(CCT_LEAVE, this, &CKeyCard::MouseOut);
 	pBody->SetColliderID((COLLIDER_ID)UCI_ITEM_KEY);
 
-	pBody->SetInfo(Vector3::Zero, 2.f);
+	pBody->SetInfo(Vector3::Zero, 1.f);
 
 	SAFE_RELEASE(pBody);
 

@@ -118,14 +118,6 @@ void CInventory::SetVisible()
 {
 	if (m_iFlag == -1)
 	{
-		CGameObject*	pDoxInvenObj = CGameObject::FindObject("DocxInven");
-
-		if (pDoxInvenObj->GetEnable() == true)
-		{
-			pDoxInvenObj->SetEnable(false);
-		}
-		SAFE_RELEASE(pDoxInvenObj);
-
 		PUN::CInput::GetInst()->ShowMouse(true);
 		CSoundManager::GetInst()->SoundPlay("Inven_Open");
 		m_bVisible = true;

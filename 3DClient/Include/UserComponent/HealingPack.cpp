@@ -41,15 +41,15 @@ TCHAR* stringToTCHAR(string& _string)
 bool CHealingPack::Init()
 {
 	// Transform 
-	//m_pTransform->SetWorldScale(20.f, 20.f, 20.f);
-	m_pTransform->SetWorldScale(1.f);
+	m_pTransform->SetWorldScale(20.f, 20.f, 20.f);
+	//m_pTransform->SetWorldScale(10.f);
 
 	// Renderer
 	m_pRenderer = m_pObject->AddComponent<CRenderer>("Renderer");
 
 	// Sphere Collider
 	CColliderSphere* pCollider = m_pObject->AddComponent<CColliderSphere>("HealingPack_Collider");
-	pCollider->SetInfo(Vector3::Zero, 1.5f);
+	pCollider->SetInfo(Vector3::Zero, 1.f);
 	pCollider->SetCollisionCallback(CCT_ENTER, this, &CHealingPack::HitEnter);
 	pCollider->SetCollisionCallback(CCT_STAY,  this, &CHealingPack::HitStay);
 	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CHealingPack::MouseOut);
@@ -141,7 +141,7 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
 	if (m_bGetItem)
 	{
-		if (KEYPRESS("LButton") == true)
+		if (KEYUP("LButton") == true)
 		{
 			if (m_isInvenInItem == false)
 			{

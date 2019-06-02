@@ -58,7 +58,7 @@ int CHealingPackIcon::Update(float _fTime)
 {
 	if ((m_bLunchBoxMouseOn == true) || (m_bMedicalKitMouseOn == true))
 	{
-		if (KEYPRESS("LButton"))
+		if (KEYUP("LButton"))
 		{
 			CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
 			pBigIconObj->SetEnable(true);
@@ -124,7 +124,7 @@ void CHealingPackIcon::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 
 void CHealingPackIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
-	if (KEYPRESS("RButton") == true)
+	if (KEYUP("RButton") == true)
 	{
 		if (m_isUseItem == true)
 		{

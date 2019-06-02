@@ -49,11 +49,7 @@ bool CBattery::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	CTransform*	pTr = m_pObject->GetTransform();
-
-	pTr->SetWorldScale(1.f, 1.f, 1.f);
-
-	SAFE_RELEASE(pTr);
+	m_pTransform->SetWorldScale(0.1f);
 
 	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("BatteryBody");
 
@@ -61,7 +57,7 @@ bool CBattery::Init()
 	pBody->SetCollisionCallback(CCT_LEAVE, this, &CBattery::MouseOut);
 	pBody->SetColliderID((COLLIDER_ID)UCI_ITEM_BATTERY);
 
-	pBody->SetInfo(Vector3::Zero, 2.f);
+	pBody->SetInfo(Vector3::Zero, 1.f);
 
 	SAFE_RELEASE(pBody);
 	
@@ -79,7 +75,7 @@ int CBattery::Update(float fTime)
 	{
 		if (!m_bOnInven)
 		{
-			if (KEYPRESS("LButton"))
+			if (KEYUP("LButton"))
 			{
 				m_bOnInven = true;
 

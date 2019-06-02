@@ -32,7 +32,7 @@ bool CTablet::Init()
 {
 	// Trasnform 
 	//m_pTransform->SetWorldScale(20.f, 20.f, 20.f);
-	m_pTransform->SetWorldScale(100.f, 100.f, 100.f);
+	m_pTransform->SetWorldScale(66.f);
 
 	// Renderer
 	m_pRenderer = m_pObject->AddComponent<CRenderer>("Renderer");
@@ -40,7 +40,7 @@ bool CTablet::Init()
 
 	// Sphere Collider
 	CColliderSphere* pCollider = m_pObject->AddComponent<CColliderSphere>("Tablet_Collider");
-	pCollider->SetInfo(Vector3::Zero, 1.5f);
+	pCollider->SetInfo(Vector3::Zero, 1.f);
 	pCollider->SetCollisionCallback(CCT_ENTER, this, &CTablet::Hit);
 	pCollider->SetCollisionCallback(CCT_STAY, this, &CTablet::HitStay);
 	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CTablet::MouseOut);
@@ -108,7 +108,7 @@ void CTablet::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 {
 	if (m_bGetItem)
 	{
-		if (KEYPRESS("LButton") == true)
+		if (KEYUP("LButton") == true)
 		{
 			if (m_isInvenInItem == false)
 			{

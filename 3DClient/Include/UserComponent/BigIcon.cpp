@@ -59,11 +59,8 @@ bool CBigIcon::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	CTransform*		pTransform = m_pObject->GetTransform();
-	pTransform->SetWorldScale(800.f, 600.f, 1.f);
-	pTransform->SetWorldPos(350.f, 80.f, 0.f);
-
-	SAFE_RELEASE(pTransform);
+	m_pTransform->SetWorldScale(800.f, 600.f, 1.f);
+	m_pTransform->SetWorldPos(350.f, 80.f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("BigIconAnimation");
 

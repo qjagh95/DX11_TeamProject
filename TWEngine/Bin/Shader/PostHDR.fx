@@ -38,7 +38,8 @@ cbuffer FinalPass : register(b9)
     int     g_iDepthFog;
     int     g_iBloom;
     int     g_iAdaptation;
-    float2  g_Empty;
+    float   g_fFadeAmount;
+    float   g_Empty1234141241;
 }
 
 cbuffer DepthFog : register(b13)
@@ -108,25 +109,8 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
     if (g_iHDR == 1 || g_iAdaptation == 1)
         vColor = ToneMapping(vColor);
 
-    output.vTarget0 = float4(vColor, 1.f);
+    output.vTarget0 = float4(vColor, 1.f) * g_fFadeAmount;
 
     // LDR °ª Ãâ·Â
-    return output;
-}
-
-cbuffer FadeCBuffer : register(b11)
-{
-    float g_fFadeAmount;
-    float3 vEmpty1245134123213;
-}
-
-PS_OUTPUT_SINGLE FadePS(VS_OUTPUT_TEX input)
-{
-    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
-
-    float4 vColor = g_DiffuseTex.Sample(g_DiffuseSmp, input.vUV);
-    
-    output.vTarget0 = vColor * g_fFadeAmount;
-
     return output;
 }

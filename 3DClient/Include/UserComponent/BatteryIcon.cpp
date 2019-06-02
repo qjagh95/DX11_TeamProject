@@ -51,12 +51,7 @@ bool CBatteryIcon::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	CTransform*		pTransform = m_pObject->GetTransform();
-
-	pTransform->SetWorldScale(90.f, 29.f, 1.f);
-	//pTransform->SetWorldPos(600.f, 429.f, 0.f);
-
-	SAFE_RELEASE(pTransform);
+	m_pTransform->SetWorldScale(90.f, 29.f, 1.f);
 
 	CColliderRect* pBody = AddComponent<CColliderRect>("BatteryIconBody");
 
@@ -80,7 +75,7 @@ int CBatteryIcon::Update(float fTime)
 {
 	if (m_bMouseOn)
 	{
-		if (KEYPRESS("LButton"))
+		if (KEYUP("LButton"))
 		{
 			CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
 			pBigIconObj->SetEnable(true);
@@ -93,7 +88,7 @@ int CBatteryIcon::Update(float fTime)
 			SAFE_RELEASE(pBigIconObj);
 		}
 
-		if (KEYPRESS("RButton"))
+		if (KEYUP("RButton"))
 		{
 			m_bUse = true;
 			CGameObject*	pInvenObj = CGameObject::FindObject("Inven");

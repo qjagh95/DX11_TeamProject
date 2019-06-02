@@ -52,14 +52,6 @@ void CDocxInven::SetVisible()
 {
 	if (m_iFlag == -1)
 	{
-		CGameObject*	pInvenObj = CGameObject::FindObject("Inven");
-
-		if (pInvenObj->GetEnable() == true)
-		{
-			pInvenObj->SetEnable(false);
-		}
-		SAFE_RELEASE(pInvenObj);
-
 		CSoundManager::GetInst()->SoundPlay("Docx_Open");
 		PUN::CInput::GetInst()->ShowMouse(true);
 		m_bVisible = true;
