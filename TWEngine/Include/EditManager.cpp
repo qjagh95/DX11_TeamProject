@@ -1379,7 +1379,7 @@ void CEditManager::SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dC
 		SAFE_RELEASE(pMesh);
 	}
 
-	((CColliderOBB3D*)m_pSelectCollider)->SetInfo(Vector3(fLengthX, fLengthY, fLengthZ), Vector3::Axis , Vector3(dLengthX , dLengthY , dLengthZ));
+	((CColliderOBB3D*)m_pSelectCollider)->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), Vector3::Axis , Vector3(fLengthX, fLengthY, fLengthZ));
 }
 
 void CEditManager::AddColliderOBB(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY,
@@ -1417,7 +1417,7 @@ void CEditManager::AddColliderOBB(float dCenterX, float dCenterY, float dCenterZ
 	}
 
 	CColliderOBB3D* pOBB3D = m_pObject->AddComponent<CColliderOBB3D>(_strTag);
-	pOBB3D->SetInfo(Vector3(fLengthX, fLengthY, fLengthZ), Vector3::Axis, Vector3(dLengthX, dLengthY, dLengthZ));
+	pOBB3D->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), Vector3::Axis, Vector3(fLengthX, fLengthY, fLengthZ));
 	pOBB3D->SetColliderID(iColliderID);
 	pOBB3D->SetMyTypeName(_strCollTypeTag);
 	pOBB3D->SetContinueTypeName(_strExceptTypeTag);

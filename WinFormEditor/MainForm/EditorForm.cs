@@ -1293,7 +1293,7 @@ namespace WinFormEditor
             }
             else
             {
-                dRelativeCenterZ = Convert.ToDouble(TB_RelativeCenterX.Text);
+                dRelativeCenterZ = Convert.ToDouble(TB_RelativeCenterZ.Text);
             }
 
             dXLength = Convert.ToDouble(TB_OBBXLength.Text);
@@ -1437,7 +1437,7 @@ namespace WinFormEditor
             }
             else
             {
-                dRelativeCenterZ = Convert.ToDouble(TB_RelativeCenterX.Text);
+                dRelativeCenterZ = Convert.ToDouble(TB_RelativeCenterZ.Text);
             }
 
             dXLength = Convert.ToDouble(TB_OBBXLength.Text);

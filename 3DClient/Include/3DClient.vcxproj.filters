@@ -393,6 +393,9 @@
     <ClInclude Include="UserComponent\NoticeMessage.h">
       <Filter>02. UserComponent\04. UI\03. Event</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent\Stage1Scene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -634,6 +637,9 @@
     </ClCompile>
     <ClCompile Include="UserComponent\NoticeMessage.cpp">
       <Filter>02. UserComponent\04. UI\03. Event</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\Stage1Scene.cpp">
+      <Filter>01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -105,6 +105,7 @@
             this.Effect = new System.Windows.Forms.TabPage();
             this.RenderPage = new System.Windows.Forms.TabPage();
             this.ColliderPage = new System.Windows.Forms.TabPage();
+            this.CB_MeshScale = new System.Windows.Forms.CheckBox();
             this.LB_ColliderList = new System.Windows.Forms.ListBox();
             this.label62 = new System.Windows.Forms.Label();
             this.TB_OBBZLength = new System.Windows.Forms.TextBox();
@@ -112,7 +113,6 @@
             this.label47 = new System.Windows.Forms.Label();
             this.TB_OBBXLength = new System.Windows.Forms.TextBox();
             this.label49 = new System.Windows.Forms.Label();
-            this.label48 = new System.Windows.Forms.Label();
             this.label61 = new System.Windows.Forms.Label();
             this.TB_CollExceptTag = new System.Windows.Forms.TextBox();
             this.label60 = new System.Windows.Forms.Label();
@@ -141,6 +141,7 @@
             this.BT_ColliderOBB = new System.Windows.Forms.Button();
             this.TB_RelativeCenterY = new System.Windows.Forms.TextBox();
             this.label50 = new System.Windows.Forms.Label();
+            this.label48 = new System.Windows.Forms.Label();
             this.label52 = new System.Windows.Forms.Label();
             this.TB_RelativeCenterX = new System.Windows.Forms.TextBox();
             this.label51 = new System.Windows.Forms.Label();
@@ -232,7 +233,6 @@
             this.label20 = new System.Windows.Forms.Label();
             this.LPositionX = new System.Windows.Forms.TextBox();
             this.label46 = new System.Windows.Forms.Label();
-            this.CB_MeshScale = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -1124,6 +1124,16 @@
             this.ColliderPage.TabIndex = 7;
             this.ColliderPage.Text = "Collider";
             // 
+            // CB_MeshScale
+            // 
+            this.CB_MeshScale.AutoSize = true;
+            this.CB_MeshScale.Location = new System.Drawing.Point(8, 341);
+            this.CB_MeshScale.Name = "CB_MeshScale";
+            this.CB_MeshScale.Size = new System.Drawing.Size(133, 21);
+            this.CB_MeshScale.TabIndex = 53;
+            this.CB_MeshScale.Text = "MeshScaleEnable";
+            this.CB_MeshScale.UseVisualStyleBackColor = true;
+            // 
             // LB_ColliderList
             // 
             this.LB_ColliderList.BackColor = System.Drawing.SystemColors.Control;
@@ -1202,17 +1212,6 @@
             this.label49.TabIndex = 30;
             this.label49.Text = "Y";
             // 
-            // label48
-            // 
-            this.label48.AutoSize = true;
-            this.label48.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.label48.ForeColor = System.Drawing.Color.Black;
-            this.label48.Location = new System.Drawing.Point(5, 124);
-            this.label48.Name = "label48";
-            this.label48.Size = new System.Drawing.Size(14, 13);
-            this.label48.TabIndex = 28;
-            this.label48.Text = "X";
-            // 
             // label61
             // 
             this.label61.AutoSize = true;
@@ -1260,12 +1259,19 @@
             "ColliderID_Locker",
             "ColliderID_Player_Hit",
             "ColliderID_Player_Ray",
+            "ColliderID_Player_Interact",
             "ColliderID_Enemy_Attack",
+            "ColliderID_Enemy_Interact",
             "ColliderID_Enemy_Hit",
             "ColliderID_Item_Battery",
-            "ColliderID_Item_Weed",
+            "ColliderID_Item_Dambae",
+            "ColliderID_Item_LunchBox",
+            "ColliderID_Item_Tablet",
             "ColliderID_Item_Fak",
-            "ColliderID_Item_Doc"});
+            "ColliderID_Item_Key",
+            "ColliderID_Item_Document",
+            "ColliderID_Item_Duct",
+            "ColliderID_Item_Section"});
             this.LB_ColliderID.Location = new System.Drawing.Point(9, 143);
             this.LB_ColliderID.Name = "LB_ColliderID";
             this.LB_ColliderID.Size = new System.Drawing.Size(260, 72);
@@ -1529,6 +1535,17 @@
             this.label50.Size = new System.Drawing.Size(14, 13);
             this.label50.TabIndex = 39;
             this.label50.Text = "Z";
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.label48.ForeColor = System.Drawing.Color.Black;
+            this.label48.Location = new System.Drawing.Point(5, 124);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(14, 13);
+            this.label48.TabIndex = 28;
+            this.label48.Text = "X";
             // 
             // label52
             // 
@@ -2671,16 +2688,6 @@
             this.label46.Size = new System.Drawing.Size(31, 17);
             this.label46.TabIndex = 29;
             this.label46.Text = "Log";
-            // 
-            // CB_MeshScale
-            // 
-            this.CB_MeshScale.AutoSize = true;
-            this.CB_MeshScale.Location = new System.Drawing.Point(8, 341);
-            this.CB_MeshScale.Name = "CB_MeshScale";
-            this.CB_MeshScale.Size = new System.Drawing.Size(133, 21);
-            this.CB_MeshScale.TabIndex = 53;
-            this.CB_MeshScale.Text = "MeshScaleEnable";
-            this.CB_MeshScale.UseVisualStyleBackColor = true;
             // 
             // EditorForm
             // 
