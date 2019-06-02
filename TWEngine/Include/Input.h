@@ -31,7 +31,7 @@ private:
 	class CTransform*		m_pMouseTr;
 	bool					m_bShowCursor;
 	class CCollider*		m_pWorldPoint;
-	unordered_map<string, KeyInfo*> m_KeyMap;
+	unordered_multimap<string, KeyInfo*> m_KeyMap;
 	KeyInfo* m_NewKey;
 	bool m_bFocus;
 	bool m_bRenderMouse;

@@ -262,6 +262,8 @@ public:
 	void RayCallBackStay(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 	void RayCallBackLeave(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 
+	int GetState() const { return m_iState; }
+	void SetState(PLAYER_STATUS State) { m_iState = State; }
 
 	//모듈화 기본함수
 	int Input_Cam(float fTime);

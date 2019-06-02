@@ -82,6 +82,12 @@ public:
 	{
 		return m_pObject->FindComponentFromType<T>(eType);
 	}
+
+	template <typename T>
+	T* FindComponentFromTypeNonCount(COMPONENT_TYPE eType)
+	{
+		return m_pObject->FindComponentFromTypeNonCount<T>(eType);
+	}
 };
 
 PUN_END

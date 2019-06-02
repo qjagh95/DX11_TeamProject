@@ -669,7 +669,12 @@ void CLandScape::LoadLandScape(const string& FullPath)
 	string Temp = FullPath;
 	for (int i = 0; i < 3; ++i)
 		Temp.pop_back();
+
 	Temp += "Land";
+
+	string FileName = FullPath;
+	FileName.erase(FileName.find_last_of("."), FileName.find_last_of("."));
+	FileName.erase(0, FileName.find_last_of("\\") + 1);
 
 	FILE* pFile = NULL;
 
@@ -729,19 +734,19 @@ void CLandScape::LoadLandScape(const string& FullPath)
 	//	}
 	//}
 
-	GET_SINGLE(CResourcesManager)->CreateMesh("TestLandScape", LANDSCAPE_COLOR_SHADER, VERTEX3D_LAYOUT_COLOR,
+	GET_SINGLE(CResourcesManager)->CreateMesh(FileName, LANDSCAPE_COLOR_SHADER, VERTEX3D_LAYOUT_COLOR,
 		&m_vecVtx[0], (int)m_vecVtx.size(), sizeof(Vertex3DColor), D3D11_USAGE_DEFAULT,
 		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &m_vecIdx[0], (int)m_vecIdx.size(),
 		4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
-	m_Mesh = CResourcesManager::GetInst()->FindMeshNonCount("TestLandScape");
+	m_Mesh = CResourcesManager::GetInst()->FindMeshNonCount(FileName);
 
 	CRenderer*	pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
 
 	if (!pRenderer)
-		pRenderer = m_pObject->AddComponent<CRenderer>("LandScapeRenderer");
+		pRenderer = m_pObject->AddComponent<CRenderer>(FileName + "Renderer");
 
-	pRenderer->SetMesh("TestLandScape");
+	pRenderer->SetMesh(FileName);
 	//pRenderer->SetRenderState(WIRE_FRAME);
 
 	SAFE_RELEASE(pRenderer);
@@ -749,7 +754,7 @@ void CLandScape::LoadLandScape(const string& FullPath)
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
 	if (!pMaterial)
-		pMaterial = m_pObject->AddComponent<CMaterial>("LandScapeMaterial");
+		pMaterial = m_pObject->AddComponent<CMaterial>(FileName + "Material");
 
 	SAFE_RELEASE(pMaterial);
 

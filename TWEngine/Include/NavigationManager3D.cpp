@@ -56,19 +56,20 @@ CNavigationMesh * CNavigationManager3D::CreateNavMesh(CScene * pScene, const cha
 
 	if (!pList)
 	{
-		vector<CNavigationMesh*>	vec;
+		vector<CNavigationMesh*> vec;
 		m_mapNavMesh.insert(make_pair(pScene, vec));
 
-		pList = &m_mapNavMesh.begin()->second;
+		auto StartIter = m_mapNavMesh.begin();
+		auto EndIter = m_mapNavMesh.end();
+
+		for (; StartIter != EndIter; StartIter++)
+			pList = &StartIter->second;
 	}
 
 	CNavigationMesh*	pMesh = new CNavigationMesh;
-
 	pMesh->Init();
-	pMesh->Load(pFileName, strPathName);
 
 	pList->push_back(pMesh);
-
 	return pMesh;
 }
 

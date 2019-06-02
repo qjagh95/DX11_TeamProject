@@ -4,28 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28307.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. Client", "01. Client", "{335577E0-5F7E-4871-8963-21E06E1416B1}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\2\DX11_3D\.gitignore = ..\..\2\DX11_3D\.gitignore
-		..\..\2\DX11_3D\3DClient = ..\..\2\DX11_3D\3DClient
-		..\..\2\DX11_3D\3DGame.sln = ..\..\2\DX11_3D\3DGame.sln
-		..\..\2\DX11_3D\Copy.bat = ..\..\2\DX11_3D\Copy.bat
-		..\..\2\DX11_3D\Directory.Build.props = ..\..\2\DX11_3D\Directory.Build.props
-		..\..\2\DX11_3D\DirectXTK = ..\..\2\DX11_3D\DirectXTK
-		..\..\2\DX11_3D\EditorCopy.bat = ..\..\2\DX11_3D\EditorCopy.bat
-		..\..\2\DX11_3D\Engine = ..\..\2\DX11_3D\Engine
-		..\..\2\DX11_3D\EngineWrapper = ..\..\2\DX11_3D\EngineWrapper
-		..\..\2\DX11_3D\exclude.txt = ..\..\2\DX11_3D\exclude.txt
-		..\..\2\DX11_3D\ImGui = ..\..\2\DX11_3D\ImGui
-		..\..\2\DX11_3D\Math = ..\..\2\DX11_3D\Math
-		..\..\2\DX11_3D\MathCopy.bat = ..\..\2\DX11_3D\MathCopy.bat
-		..\..\2\DX11_3D\Mathlib = ..\..\2\DX11_3D\Mathlib
-		..\..\2\DX11_3D\Outlast_ANm-npc_med.xlsx = ..\..\2\DX11_3D\Outlast_ANm-npc_med.xlsx
-		..\..\2\DX11_3D\player_Anim_Bones.xlsx = ..\..\2\DX11_3D\player_Anim_Bones.xlsx
-		..\..\2\DX11_3D\TWEngine = ..\..\2\DX11_3D\TWEngine
-		..\..\2\DX11_3D\WinFormEditor = ..\..\2\DX11_3D\WinFormEditor
-		..\..\2\DX11_3D\싸운드엑쎌.xlsx = ..\..\2\DX11_3D\싸운드엑쎌.xlsx
-		..\..\2\DX11_3D\필독.txt = ..\..\2\DX11_3D\필독.txt
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02. Engine", "02. Engine", "{A897DE09-5ED2-4B93-B760-B4AAC482495E}"
 EndProject

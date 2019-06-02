@@ -47,8 +47,6 @@ bool NPCBase::Init()
 {
 	m_pObject->SetFrustrumCullUse(true);
 
-	m_pObject->GetStageSection();
-
 	m_Animation = m_pObject->AddComponent<CAnimation>("MonsterAnimation");
 	m_Renderer = m_pObject->AddComponent<CRenderer>("MonsterRenderer");
 	m_Renderer->SetAnimation(m_Animation);

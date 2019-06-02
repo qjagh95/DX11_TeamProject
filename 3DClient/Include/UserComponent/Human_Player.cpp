@@ -269,7 +269,7 @@ bool CHuman_Player::Init()
 	pCamEffManager->Init();
 	pCamEffManager->SetFirstPersonViewEnable();
 
-	PUN::CGameObject*pObj = PUN::CGameObject::CreateObject("player_move_point", m_pLayer);
+	PUN::CGameObject*pObj = PUN::CGameObject::CreateObject("player_move_point", m_pLayer, true);
 
 	m_pMovePointer = pObj->GetTransform();
 

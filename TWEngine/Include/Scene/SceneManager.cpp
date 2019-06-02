@@ -297,7 +297,8 @@ void CSceneManager::Access()
 				if (StartIter1->second->GetScene()->GetTag() == m_vecTemp[i]->GetTag())
 					continue;
 
-				(*StartIter)->GetObjectList()->push_back(StartIter1->second);
+				if ((*StartIter)->GetTag() == StartIter1->second->GetLayer()->GetTag())
+					(*StartIter)->GetObjectList()->push_back(StartIter1->second);
 			}
 		}
 	}
