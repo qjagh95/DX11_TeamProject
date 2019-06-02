@@ -282,23 +282,23 @@ namespace EngineWrapper
 
 		/////////////////////////////Collider/////////////////////////////////
 		void AddColliderOBB(double dCenterX, double dCenterY, double dCenterZ, double dLengthX, double dLengthY, double dLengthZ,
-			int iColliderID, String ^ _strTag , String ^ _strCollTypeTag , String ^ _strExceptTypeTag)
+			int iColliderID, String ^ _strTag , String ^ _strCollTypeTag , String ^ _strExceptTypeTag , bool _bMeshScaleEnable)
 		{
 			string strTag = ConvertMarshal<string, String^>(_strTag);
 			string strCollTypeTag = ConvertMarshal<string, String^>(_strCollTypeTag);
 			string strExceptTypeTag = ConvertMarshal<string, String^>(_strExceptTypeTag);
 			CEditManager::GetInst()->AddColliderOBB((float)dCenterX, (float)dCenterY, (float)dCenterZ, (float)dLengthX, (float)dLengthY,
-				(float)dLengthZ, iColliderID, strTag, strCollTypeTag, strExceptTypeTag);
+				(float)dLengthZ, iColliderID, strTag, strCollTypeTag, strExceptTypeTag , _bMeshScaleEnable);
 		}
 
 		void AddColliderSphere(double dCenterX, double dCenterY, double dCenterZ, double dRadius , int iColliderID, String ^ _strTag
-			, String ^ _strCollTypeTag, String ^ _strExceptTypeTag)
+			, String ^ _strCollTypeTag, String ^ _strExceptTypeTag, bool _bMeshScaleEnable)
 		{
 			string strTag = ConvertMarshal<string, String^>(_strTag);
 			string strCollTypeTag = ConvertMarshal<string, String^>(_strCollTypeTag);
 			string strExceptTypeTag = ConvertMarshal<string, String^>(_strExceptTypeTag);
 			CEditManager::GetInst()->AddColliderSphere((float)dCenterX, (float)dCenterY, (float)dCenterZ,(float)dRadius
-				, iColliderID, strTag, strCollTypeTag, strExceptTypeTag);
+				, iColliderID, strTag, strCollTypeTag, strExceptTypeTag , _bMeshScaleEnable);
 		}
 
 		cli::array<String^>^ GetVecObjCollTag();
@@ -309,8 +309,8 @@ namespace EngineWrapper
 		int GetCollType();
 
 		bool FindActiveCollider(String ^ _strTag);
-		void SetSphereColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dRadius);
-		void SetOBBColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dLengthX, double dLengthY, double dLengthZ);
+		void SetSphereColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dRadius, bool _bMeshScaleEnable);
+		void SetOBBColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dLengthX, double dLengthY, double dLengthZ, bool _bMeshScaleEnable);
 
 		void SetStageSection(int _iSection)
 		{

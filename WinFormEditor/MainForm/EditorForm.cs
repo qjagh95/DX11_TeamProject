@@ -1301,7 +1301,7 @@ namespace WinFormEditor
             dZLength = Convert.ToDouble(TB_OBBZLength.Text);
 
             m_coreWrapper.AddColliderOBB(dRelativeCenterX, dRelativeCenterY, dRelativeCenterZ, dXLength, dYLength, dZLength, LB_ColliderID.SelectedIndex,
-                TB_ColliderTag.Text , TB_CollTypeTag.Text , TB_CollExceptTag.Text);
+                TB_ColliderTag.Text , TB_CollTypeTag.Text , TB_CollExceptTag.Text, CB_MeshScale.Checked);
 
             LB_ColliderList.Items.Add(TB_ColliderTag.Text);
             //////////////////////Clear///////////////////////////////////////////
@@ -1368,7 +1368,7 @@ namespace WinFormEditor
             }
 
             m_coreWrapper.AddColliderSphere(dSphereCenterX , dSphereCenterY , dSphereCenterZ , dRadius , LB_ColliderID.SelectedIndex,
-                TB_ColliderTag.Text, TB_CollTypeTag.Text, TB_CollExceptTag.Text);
+                TB_ColliderTag.Text, TB_CollTypeTag.Text, TB_CollExceptTag.Text, CB_MeshScale.Checked);
             LB_ColliderList.Items.Add(TB_ColliderTag.Text);
 
             //////////////////////Clear///////////////////////////////////////////
@@ -1444,7 +1444,7 @@ namespace WinFormEditor
             dYLength = Convert.ToDouble(TB_OBBYLength.Text);
             dZLength = Convert.ToDouble(TB_OBBZLength.Text);
 
-            m_coreWrapper.SetOBBColliderInfo(dRelativeCenterX, dRelativeCenterY, dRelativeCenterZ, dXLength, dYLength, dZLength);
+            m_coreWrapper.SetOBBColliderInfo(dRelativeCenterX, dRelativeCenterY, dRelativeCenterZ, dXLength, dYLength, dZLength , CB_MeshScale.Checked);
         }
 
         private void BT_CollSphere_Click(object sender, EventArgs e)
@@ -1508,7 +1508,7 @@ namespace WinFormEditor
                 dSphereCenterZ = Convert.ToDouble(TB_SphereCenterZ.Text);
             }
 
-            m_coreWrapper.SetSphereColliderInfo(dSphereCenterX, dSphereCenterY, dSphereCenterZ, dRadius);
+            m_coreWrapper.SetSphereColliderInfo(dSphereCenterX, dSphereCenterY, dSphereCenterZ, dRadius, CB_MeshScale.Checked);
         }
 
         private void LB_ColliderList_SelectedIndexChanged(object sender, EventArgs e)

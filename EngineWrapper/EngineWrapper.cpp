@@ -459,12 +459,12 @@ bool EngineWrapper::CoreWrapper::FindActiveCollider(String ^ _strTag)
 	return CEditManager::GetInst()->FindActiveCollider(strColliderTag);
 }
 
-void EngineWrapper::CoreWrapper::SetSphereColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dRadius)
+void EngineWrapper::CoreWrapper::SetSphereColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dRadius , bool _bMeshScaleEnable)
 {
-	PUN::CEditManager::GetInst()->SetSphereColliderInfo((float)dCenterX, (float)dCenterY, (float)dCenterZ, (float)dRadius);
+	PUN::CEditManager::GetInst()->SetSphereColliderInfo((float)dCenterX, (float)dCenterY, (float)dCenterZ, (float)dRadius , _bMeshScaleEnable);
 }
 
-void EngineWrapper::CoreWrapper::SetOBBColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dLengthX, double dLengthY, double dLengthZ)
+void EngineWrapper::CoreWrapper::SetOBBColliderInfo(double dCenterX, double dCenterY, double dCenterZ, double dLengthX, double dLengthY, double dLengthZ , bool _bMeshScaleEnable)
 {
-	PUN::CEditManager::GetInst()->SetOBB3DColliderInfo((float)dCenterX, (float)dCenterY, (float)dCenterZ, (float)dLengthX, (float)dLengthY, (float)dLengthZ);
+	PUN::CEditManager::GetInst()->SetOBB3DColliderInfo((float)dCenterX, (float)dCenterY, (float)dCenterZ, (float)dLengthX, (float)dLengthY, (float)dLengthZ , _bMeshScaleEnable);
 }

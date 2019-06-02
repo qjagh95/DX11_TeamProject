@@ -422,27 +422,6 @@ void CEditManager::AddComponent(std::string& _strCompTag)
 	}
 }
 
-void CEditManager::AddColliderOBB(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, 
-	float dLengthZ, int iColliderID, const std::string & _strTag , const std::string& _strCollTypeTag , const std::string& _strExceptTypeTag)
-{
-	CColliderOBB3D* pOBB3D = m_pObject->AddComponent<CColliderOBB3D>(_strTag);
-	pOBB3D->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), Vector3::Axis, Vector3(dLengthX, dLengthY, dLengthZ));
-	pOBB3D->SetColliderID(iColliderID);
-	pOBB3D->SetMyTypeName(_strCollTypeTag);
-	pOBB3D->SetContinueTypeName(_strExceptTypeTag);
-	SAFE_RELEASE(pOBB3D);
-}
-
-void CEditManager::AddColliderSphere(float dCenterX, float dCenterY, float dCenterZ, float fRadius,
-	int iColliderID, const std::string & _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag)
-{
-	CColliderSphere* pSphere = m_pObject->AddComponent<CColliderSphere>(_strTag);
-	pSphere->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), fRadius);
-	pSphere->SetColliderID(iColliderID);
-	pSphere->SetMyTypeName(_strCollTypeTag);
-	pSphere->SetContinueTypeName(_strExceptTypeTag);
-	SAFE_RELEASE(pSphere);
-}
 
 void CEditManager::SetLocalScale(double _dX, double _dY, double _dZ)
 {
@@ -1328,25 +1307,158 @@ int CEditManager::GetCollType() const
 	return (int)m_pSelectCollider->GetColliderType();
 }
 
-void CEditManager::SetSphereColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float fRadius)
+void CEditManager::SetSphereColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float fRadius, bool _bMeshScale)
 {
 	if (m_pSelectCollider == nullptr)
 	{
 		return;
 	}
 
-	((CColliderSphere*)m_pSelectCollider)->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), fRadius);
+	float fColliderRadius = fRadius;
+	if (_bMeshScale)
+	{
+		CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+		if (pRenderer == nullptr)
+		{
+			MessageBox(WINDOWHANDLE, L"Renderer Component가 Active Object에 없습니다", L"Message", MB_OK);
+			return;
+		}
+		CMesh* pMesh = pRenderer->GetMesh();
+		SAFE_RELEASE(pRenderer);
+		if (pMesh == nullptr)
+		{
+			MessageBox(WINDOWHANDLE, L"Mesh가 Active Object에 없습니다", L"Message", MB_OK);
+			return;
+		}
+
+		Vector3 vMeshLength = pMesh->GetLength();
+
+		fColliderRadius *= vMeshLength.x;
+		SAFE_RELEASE(pMesh);
+	}
+
+	((CColliderSphere*)m_pSelectCollider)->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), fColliderRadius);
 }
 
-void CEditManager::SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ)
+void CEditManager::SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ, bool _bMeshScale)
 {
 	if (m_pSelectCollider == nullptr)
 	{
 		return;
 	}
 
-	((CColliderOBB3D*)m_pSelectCollider)->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), Vector3::Axis , Vector3(dLengthX , dLengthY , dLengthZ));
+	float fLengthX = dLengthX;
+	float fLengthY = dLengthY;
+	float fLengthZ = dLengthZ;
+
+
+	if (_bMeshScale)
+	{
+		CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+		if (pRenderer == nullptr)
+		{
+			MessageBox(WINDOWHANDLE, L"Renderer Component가 Active Object에 없습니다", L"Message", MB_OK);
+			return;
+		}
+		CMesh* pMesh = pRenderer->GetMesh();
+		SAFE_RELEASE(pRenderer);
+		if (pMesh == nullptr)
+		{
+			MessageBox(WINDOWHANDLE, L"Mesh가 Active Object에 없습니다", L"Message", MB_OK);
+			return;
+		}
+		
+		Vector3 vMeshLength = pMesh->GetLength();
+
+		fLengthX *= vMeshLength.x;
+		fLengthY *= vMeshLength.y;
+		fLengthZ *= vMeshLength.z;
+
+		SAFE_RELEASE(pMesh);
+	}
+
+	((CColliderOBB3D*)m_pSelectCollider)->SetInfo(Vector3(fLengthX, fLengthY, fLengthZ), Vector3::Axis , Vector3(dLengthX , dLengthY , dLengthZ));
 }
+
+void CEditManager::AddColliderOBB(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY,
+	float dLengthZ, int iColliderID, const std::string & _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag, bool _bMeshScale)
+{
+	float fLengthX = dLengthX;
+	float fLengthY = dLengthY;
+	float fLengthZ = dLengthZ;
+
+
+	if (_bMeshScale)
+	{
+		CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+		if (pRenderer == nullptr)
+		{
+			MessageBox(WINDOWHANDLE, L"Renderer Component가 Active Object에 없습니다", L"Message", MB_OK);
+			return;
+		}
+		CMesh* pMesh = pRenderer->GetMesh();
+		SAFE_RELEASE(pRenderer);
+		if (pMesh == nullptr)
+		{
+			MessageBox(WINDOWHANDLE, L"Mesh가 Active Object에 없습니다", L"Message", MB_OK);
+			return;
+		}
+
+		Vector3 vMeshLength = pMesh->GetLength();
+
+		fLengthX *= vMeshLength.x;
+		fLengthY *= vMeshLength.y;
+		fLengthZ *= vMeshLength.z;
+
+		SAFE_RELEASE(pMesh);
+	}
+
+	CColliderOBB3D* pOBB3D = m_pObject->AddComponent<CColliderOBB3D>(_strTag);
+	pOBB3D->SetInfo(Vector3(fLengthX, fLengthY, fLengthZ), Vector3::Axis, Vector3(dLengthX, dLengthY, dLengthZ));
+	pOBB3D->SetColliderID(iColliderID);
+	pOBB3D->SetMyTypeName(_strCollTypeTag);
+	pOBB3D->SetContinueTypeName(_strExceptTypeTag);
+	SAFE_RELEASE(pOBB3D);
+}
+
+void CEditManager::AddColliderSphere(float dCenterX, float dCenterY, float dCenterZ, float fRadius,
+	int iColliderID, const std::string & _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag, bool _bMeshScale)
+{
+	float fColliderRadius = fRadius;
+	if (_bMeshScale)
+	{
+		CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+		if (pRenderer == nullptr)
+		{
+			MessageBox(WINDOWHANDLE, L"Renderer Component가 Active Object에 없습니다", L"Message", MB_OK);
+			return;
+		}
+		CMesh* pMesh = pRenderer->GetMesh();
+		SAFE_RELEASE(pRenderer);
+		if (pMesh == nullptr)
+		{
+			MessageBox(WINDOWHANDLE, L"Mesh가 Active Object에 없습니다", L"Message", MB_OK);
+			return;
+		}
+
+		Vector3 vMeshLength = pMesh->GetLength();
+
+		fColliderRadius *= vMeshLength.x;
+		SAFE_RELEASE(pMesh);
+	}
+
+	CColliderSphere* pSphere = m_pObject->AddComponent<CColliderSphere>(_strTag);
+	pSphere->SetInfo(Vector3(dCenterX, dCenterY, dCenterZ), fColliderRadius);
+	pSphere->SetColliderID(iColliderID);
+	pSphere->SetMyTypeName(_strCollTypeTag);
+	pSphere->SetContinueTypeName(_strExceptTypeTag);
+	SAFE_RELEASE(pSphere);
+}
+
 
 void CEditManager::SetStageSection(STAGE_SECTION_TYPE _eType)
 {

@@ -232,6 +232,7 @@
             this.label20 = new System.Windows.Forms.Label();
             this.LPositionX = new System.Windows.Forms.TextBox();
             this.label46 = new System.Windows.Forms.Label();
+            this.CB_MeshScale = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.PB_DeviceWindow)).BeginInit();
             this.GB_Scene.SuspendLayout();
             this.Inspector.SuspendLayout();
@@ -1098,6 +1099,7 @@
             // ColliderPage
             // 
             this.ColliderPage.BackColor = System.Drawing.SystemColors.Control;
+            this.ColliderPage.Controls.Add(this.CB_MeshScale);
             this.ColliderPage.Controls.Add(this.LB_ColliderList);
             this.ColliderPage.Controls.Add(this.label62);
             this.ColliderPage.Controls.Add(this.TB_OBBZLength);
@@ -1105,7 +1107,6 @@
             this.ColliderPage.Controls.Add(this.label47);
             this.ColliderPage.Controls.Add(this.TB_OBBXLength);
             this.ColliderPage.Controls.Add(this.label49);
-            this.ColliderPage.Controls.Add(this.label48);
             this.ColliderPage.Controls.Add(this.label61);
             this.ColliderPage.Controls.Add(this.TB_CollExceptTag);
             this.ColliderPage.Controls.Add(this.label60);
@@ -1148,7 +1149,7 @@
             this.TB_OBBZLength.BackColor = System.Drawing.SystemColors.Control;
             this.TB_OBBZLength.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_OBBZLength.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_OBBZLength.Location = new System.Drawing.Point(206, 450);
+            this.TB_OBBZLength.Location = new System.Drawing.Point(206, 485);
             this.TB_OBBZLength.Name = "TB_OBBZLength";
             this.TB_OBBZLength.Size = new System.Drawing.Size(64, 25);
             this.TB_OBBZLength.TabIndex = 33;
@@ -1160,7 +1161,7 @@
             this.TB_OBBYLength.BackColor = System.Drawing.SystemColors.Control;
             this.TB_OBBYLength.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_OBBYLength.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_OBBYLength.Location = new System.Drawing.Point(120, 450);
+            this.TB_OBBYLength.Location = new System.Drawing.Point(120, 485);
             this.TB_OBBYLength.Name = "TB_OBBYLength";
             this.TB_OBBYLength.Size = new System.Drawing.Size(64, 25);
             this.TB_OBBYLength.TabIndex = 31;
@@ -1172,7 +1173,7 @@
             this.label47.AutoSize = true;
             this.label47.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label47.ForeColor = System.Drawing.Color.Black;
-            this.label47.Location = new System.Drawing.Point(191, 456);
+            this.label47.Location = new System.Drawing.Point(191, 491);
             this.label47.Name = "label47";
             this.label47.Size = new System.Drawing.Size(14, 13);
             this.label47.TabIndex = 32;
@@ -1183,7 +1184,7 @@
             this.TB_OBBXLength.BackColor = System.Drawing.SystemColors.Control;
             this.TB_OBBXLength.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_OBBXLength.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_OBBXLength.Location = new System.Drawing.Point(32, 450);
+            this.TB_OBBXLength.Location = new System.Drawing.Point(32, 485);
             this.TB_OBBXLength.Name = "TB_OBBXLength";
             this.TB_OBBXLength.Size = new System.Drawing.Size(64, 25);
             this.TB_OBBXLength.TabIndex = 29;
@@ -1195,7 +1196,7 @@
             this.label49.AutoSize = true;
             this.label49.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label49.ForeColor = System.Drawing.Color.Black;
-            this.label49.Location = new System.Drawing.Point(103, 456);
+            this.label49.Location = new System.Drawing.Point(103, 491);
             this.label49.Name = "label49";
             this.label49.Size = new System.Drawing.Size(14, 13);
             this.label49.TabIndex = 30;
@@ -1206,7 +1207,7 @@
             this.label48.AutoSize = true;
             this.label48.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label48.ForeColor = System.Drawing.Color.Black;
-            this.label48.Location = new System.Drawing.Point(15, 456);
+            this.label48.Location = new System.Drawing.Point(5, 124);
             this.label48.Name = "label48";
             this.label48.Size = new System.Drawing.Size(14, 13);
             this.label48.TabIndex = 28;
@@ -1310,16 +1311,16 @@
             this.groupBox3.Controls.Add(this.label59);
             this.groupBox3.Controls.Add(this.label56);
             this.groupBox3.Controls.Add(this.TB_SphereCenterX);
-            this.groupBox3.Location = new System.Drawing.Point(8, 558);
+            this.groupBox3.Location = new System.Drawing.Point(8, 583);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(269, 205);
+            this.groupBox3.Size = new System.Drawing.Size(269, 189);
             this.groupBox3.TabIndex = 42;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "ColliderSphere";
             // 
             // BT_CollSphere
             // 
-            this.BT_CollSphere.Location = new System.Drawing.Point(8, 161);
+            this.BT_CollSphere.Location = new System.Drawing.Point(8, 137);
             this.BT_CollSphere.Name = "BT_CollSphere";
             this.BT_CollSphere.Size = new System.Drawing.Size(103, 33);
             this.BT_CollSphere.TabIndex = 43;
@@ -1362,7 +1363,7 @@
             // 
             // BT_ColliderSphere
             // 
-            this.BT_ColliderSphere.Location = new System.Drawing.Point(123, 161);
+            this.BT_ColliderSphere.Location = new System.Drawing.Point(123, 137);
             this.BT_ColliderSphere.Name = "BT_ColliderSphere";
             this.BT_ColliderSphere.Size = new System.Drawing.Size(138, 34);
             this.BT_ColliderSphere.TabIndex = 0;
@@ -1445,10 +1446,11 @@
             this.groupBox2.Controls.Add(this.BT_ColliderOBB);
             this.groupBox2.Controls.Add(this.TB_RelativeCenterY);
             this.groupBox2.Controls.Add(this.label50);
+            this.groupBox2.Controls.Add(this.label48);
             this.groupBox2.Controls.Add(this.label52);
             this.groupBox2.Controls.Add(this.TB_RelativeCenterX);
             this.groupBox2.Controls.Add(this.label51);
-            this.groupBox2.Location = new System.Drawing.Point(8, 340);
+            this.groupBox2.Location = new System.Drawing.Point(8, 366);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(269, 205);
             this.groupBox2.TabIndex = 34;
@@ -1457,7 +1459,7 @@
             // 
             // BT_CollOBBUpdate
             // 
-            this.BT_CollOBBUpdate.Location = new System.Drawing.Point(1, 152);
+            this.BT_CollOBBUpdate.Location = new System.Drawing.Point(1, 155);
             this.BT_CollOBBUpdate.Name = "BT_CollOBBUpdate";
             this.BT_CollOBBUpdate.Size = new System.Drawing.Size(103, 41);
             this.BT_CollOBBUpdate.TabIndex = 42;
@@ -1468,7 +1470,7 @@
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(5, 89);
+            this.label54.Location = new System.Drawing.Point(5, 92);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(51, 17);
             this.label54.TabIndex = 41;
@@ -1477,7 +1479,7 @@
             // label53
             // 
             this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(7, 23);
+            this.label53.Location = new System.Drawing.Point(7, 31);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(97, 17);
             this.label53.TabIndex = 30;
@@ -1488,7 +1490,7 @@
             this.TB_RelativeCenterZ.BackColor = System.Drawing.SystemColors.Control;
             this.TB_RelativeCenterZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_RelativeCenterZ.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_RelativeCenterZ.Location = new System.Drawing.Point(196, 51);
+            this.TB_RelativeCenterZ.Location = new System.Drawing.Point(196, 59);
             this.TB_RelativeCenterZ.Name = "TB_RelativeCenterZ";
             this.TB_RelativeCenterZ.Size = new System.Drawing.Size(64, 25);
             this.TB_RelativeCenterZ.TabIndex = 40;
@@ -1497,7 +1499,7 @@
             // 
             // BT_ColliderOBB
             // 
-            this.BT_ColliderOBB.Location = new System.Drawing.Point(111, 152);
+            this.BT_ColliderOBB.Location = new System.Drawing.Point(110, 155);
             this.BT_ColliderOBB.Name = "BT_ColliderOBB";
             this.BT_ColliderOBB.Size = new System.Drawing.Size(149, 42);
             this.BT_ColliderOBB.TabIndex = 0;
@@ -1510,7 +1512,7 @@
             this.TB_RelativeCenterY.BackColor = System.Drawing.SystemColors.Control;
             this.TB_RelativeCenterY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_RelativeCenterY.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_RelativeCenterY.Location = new System.Drawing.Point(110, 51);
+            this.TB_RelativeCenterY.Location = new System.Drawing.Point(110, 59);
             this.TB_RelativeCenterY.Name = "TB_RelativeCenterY";
             this.TB_RelativeCenterY.Size = new System.Drawing.Size(64, 25);
             this.TB_RelativeCenterY.TabIndex = 38;
@@ -1522,7 +1524,7 @@
             this.label50.AutoSize = true;
             this.label50.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label50.ForeColor = System.Drawing.Color.Black;
-            this.label50.Location = new System.Drawing.Point(181, 57);
+            this.label50.Location = new System.Drawing.Point(180, 64);
             this.label50.Name = "label50";
             this.label50.Size = new System.Drawing.Size(14, 13);
             this.label50.TabIndex = 39;
@@ -1533,7 +1535,7 @@
             this.label52.AutoSize = true;
             this.label52.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label52.ForeColor = System.Drawing.Color.Black;
-            this.label52.Location = new System.Drawing.Point(5, 57);
+            this.label52.Location = new System.Drawing.Point(5, 65);
             this.label52.Name = "label52";
             this.label52.Size = new System.Drawing.Size(14, 13);
             this.label52.TabIndex = 35;
@@ -1544,7 +1546,7 @@
             this.TB_RelativeCenterX.BackColor = System.Drawing.SystemColors.Control;
             this.TB_RelativeCenterX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.TB_RelativeCenterX.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
-            this.TB_RelativeCenterX.Location = new System.Drawing.Point(22, 51);
+            this.TB_RelativeCenterX.Location = new System.Drawing.Point(22, 59);
             this.TB_RelativeCenterX.Name = "TB_RelativeCenterX";
             this.TB_RelativeCenterX.Size = new System.Drawing.Size(64, 25);
             this.TB_RelativeCenterX.TabIndex = 36;
@@ -1556,7 +1558,7 @@
             this.label51.AutoSize = true;
             this.label51.Font = new System.Drawing.Font("맑은 고딕", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.label51.ForeColor = System.Drawing.Color.Black;
-            this.label51.Location = new System.Drawing.Point(93, 57);
+            this.label51.Location = new System.Drawing.Point(93, 65);
             this.label51.Name = "label51";
             this.label51.Size = new System.Drawing.Size(14, 13);
             this.label51.TabIndex = 37;
@@ -2670,13 +2672,23 @@
             this.label46.TabIndex = 29;
             this.label46.Text = "Log";
             // 
+            // CB_MeshScale
+            // 
+            this.CB_MeshScale.AutoSize = true;
+            this.CB_MeshScale.Location = new System.Drawing.Point(8, 341);
+            this.CB_MeshScale.Name = "CB_MeshScale";
+            this.CB_MeshScale.Size = new System.Drawing.Size(133, 21);
+            this.CB_MeshScale.TabIndex = 53;
+            this.CB_MeshScale.Text = "MeshScaleEnable";
+            this.CB_MeshScale.UseVisualStyleBackColor = true;
+            // 
             // EditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1947, 880);
+            this.ClientSize = new System.Drawing.Size(1924, 880);
             this.Controls.Add(this.label46);
             this.Controls.Add(this.GB_Transform);
             this.Controls.Add(this.groupBox1);
@@ -2930,6 +2942,7 @@
         private System.Windows.Forms.Button BT_CollSphere;
         private System.Windows.Forms.Button BT_CollOBBUpdate;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.CheckBox CB_MeshScale;
     }
 }
 
