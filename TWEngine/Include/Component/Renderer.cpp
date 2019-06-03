@@ -232,6 +232,16 @@ float CRenderer::GetDiffrentPosZ() const
 	return Result.z;
 }
 
+float CRenderer::GetBumpScale() const
+{
+	return m_tComponentCBuffer.fBumpScale;
+}
+
+bool CRenderer::GetAlphaEnable() const
+{
+	return m_bAlphaEnable;
+}
+
 Vector3 CRenderer::GetDiffrentPos() const
 {
 	return m_PosLastCheck - m_PosFirstCheck;
@@ -345,6 +355,11 @@ void CRenderer::SetAlphaEnable(bool bEnable)
 		m_tComponentCBuffer.iAlphaEnable = 0;
 }
 
+void CRenderer::SetBumpScale(float fScale)
+{
+	m_tComponentCBuffer.fBumpScale = fScale;
+}
+
 bool CRenderer::CreateRendererCBuffer(const string & strName, int iSize)
 {
 	PRendererCBuffer	pBuffer = FindRendererCBuffer(strName);
@@ -446,6 +461,8 @@ void CRenderer::Save(BinaryWrite* _pInstBW)
 	}
 	bool is2DRenderer = m_b2DRenderer;
 	bool isDecal = m_bDecalEnable;
+	bool isAlpha = m_bAlphaEnable;
+	float fBumpScale = m_tComponentCBuffer.fBumpScale;
 
 	// Save
 	_pInstBW->WriteData(strMeshTag);
@@ -454,6 +471,8 @@ void CRenderer::Save(BinaryWrite* _pInstBW)
 	_pInstBW->WriteData(strLayoutTag);
 	_pInstBW->WriteData(is2DRenderer);
 	_pInstBW->WriteData(isDecal);
+	_pInstBW->WriteData(isAlpha);
+	_pInstBW->WriteData(fBumpScale);
 }
 
 void CRenderer::Load(BinaryRead* _pInstBR)
@@ -466,8 +485,9 @@ void CRenderer::Load(BinaryRead* _pInstBR)
 	string strShaderTag = _pInstBR->ReadString();
 	string strLayoutKey = _pInstBR->ReadString();
 	bool   is2DRenderer = _pInstBR->ReadBool();
-	bool   isDecal = _pInstBR->ReadBool();
-
+	bool   isDecal		= _pInstBR->ReadBool();
+	bool   isAlpha		= _pInstBR->ReadBool();
+	float  fBumpScale	= _pInstBR->ReadFloat();
 	// Set
 	// Mesh
 	const TCHAR* filePath = CPathManager::GetInst()->FindPath(MESH_DATA_PATH);
@@ -516,7 +536,68 @@ void CRenderer::Load(BinaryRead* _pInstBR)
 	m_bDecalEnable = isDecal;
 	SetDecalEnable(m_bDecalEnable);
 
+	SetAlphaEnable(isAlpha);
+
 	tempIfs.close();
+
+		// Renderer 컴포넌트 추가시 Material 컴포넌트는 자동 등록된다.
+
+	// Load Data
+	//string strMeshTag = _pInstBR->ReadString();
+	//string strMaterialFileName = _pInstBR->ReadString();
+	//string strShaderTag = _pInstBR->ReadString();
+	//string strLayoutKey = _pInstBR->ReadString();
+	//bool   is2DRenderer = _pInstBR->ReadBool();
+	//bool   isDecal = _pInstBR->ReadBool();
+	//// Set
+	//// Mesh
+	//const TCHAR* filePath = CPathManager::GetInst()->FindPath(MESH_DATA_PATH);
+	//string strFullFilePath = CW2A(filePath);
+	//strFullFilePath += strMaterialFileName;
+
+	//ifstream tempIfs;
+	//tempIfs.open(strFullFilePath, ios::in);
+	//if (tempIfs.is_open() == true)
+	//{
+	//	// .msh File Set
+	//	std::basic_string<TCHAR> converted(strMaterialFileName.begin(), strMaterialFileName.end());
+	//	const TCHAR* strMshFileName = converted.c_str();
+	//	SetMesh(strMeshTag, strMshFileName);
+	//}
+	//else
+	//{
+	//	// Tag Set
+	//	SetMesh(strMeshTag);
+	//}
+	//if (m_pMesh == nullptr)
+	//{
+	//	return;
+	//}
+	//m_pMesh->SetTag(strMeshTag);
+
+	//// Shader
+	//if (!m_pShader)
+	//{
+	//	SetShader(strShaderTag);
+	//	m_pShader->SetTag(strShaderTag);
+	//}
+
+	//// Layout
+	//if (!m_pLayout)
+	//	SetInputLayout(strLayoutKey);
+
+	//// 2D Renderer
+	//m_b2DRenderer = is2DRenderer;
+	//if (m_b2DRenderer == true)
+	//{
+	//	Enable2DRenderer();
+	//}
+
+	//// Decal 
+	//m_bDecalEnable = isDecal;
+	//SetDecalEnable(m_bDecalEnable);
+
+	//tempIfs.close();
 }
 void CRenderer::AfterClone()
 {
@@ -546,14 +627,6 @@ bool CRenderer::Init()
 
 int CRenderer::Update(float fTime)
 {
-#ifdef DEBUG
-	short sDir = CInput::GetInst()->GetWheelDir();
-	SetBumpScale(20.0f * sDir, fTime);
-
-	if (KEYDOWN("KEY_K"))
-		SetBumpScaleNone();
-#endif
-
 	if (m_pAnimation == NULLPTR)
 		return 0;
 
@@ -862,7 +935,7 @@ void CRenderer::UpdateShadowTransform()
 
 void CRenderer::SetBumpScale(float fScale, float fTime)
 {
-	m_tComponentCBuffer.fBumpScale += fScale * fTime;
+	m_tComponentCBuffer.fBumpScale = fScale * fTime;
 }
 
 void CRenderer::SetBumpScaleNone()

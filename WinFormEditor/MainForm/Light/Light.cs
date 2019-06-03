@@ -26,15 +26,19 @@ namespace WinFormEditor
         public void SetLightToolsEnable(bool _isEnable)
         {
             List<object> listTools = m_editForm.GetLightTools();
-            ((Button)listTools[0]).Enabled      = _isEnable;
-            ((ComboBox)listTools[1]).Enabled    = _isEnable;
-            ((CheckBox)listTools[2]).Enabled    = _isEnable;
-            ((TextBox)listTools[3]).Enabled     = _isEnable;
-            ((TextBox)listTools[4]).Enabled     = _isEnable;
-            ((TextBox)listTools[5]).Enabled     = _isEnable;
-            ((TextBox)listTools[6]).Enabled     = _isEnable;
-            ((TrackBar)listTools[7]).Enabled    = _isEnable;
-            ((TextBox)listTools[8]).Enabled     = _isEnable;
+            ((Button)listTools[0]).Enabled      = _isEnable; // Btn_LightColor
+            ((ComboBox)listTools[1]).Enabled    = _isEnable; // CB_LightType
+            ((CheckBox)listTools[2]).Enabled    = _isEnable; // CB_WireFrame
+            ((TextBox)listTools[3]).Enabled     = _isEnable; // TB_SpcularR
+            ((TextBox)listTools[4]).Enabled     = _isEnable; // TB_SpcularG
+            ((TextBox)listTools[5]).Enabled     = _isEnable; // TB_SpcularB
+            ((TextBox)listTools[6]).Enabled     = _isEnable; // TB_SpcularPower
+            ((TrackBar)listTools[7]).Enabled    = _isEnable; // TB_Range
+            ((TextBox)listTools[8]).Enabled     = _isEnable; // TB_RangeValue
+            ((TrackBar)listTools[9]).Enabled    = _isEnable; // TrackBar_In
+            ((TextBox)listTools[10]).Enabled    = _isEnable; // TB_InAngle
+            ((TrackBar)listTools[11]).Enabled   = _isEnable; // TrackBar_Out
+            ((TextBox)listTools[12]).Enabled    = _isEnable; // TB_OutAngle
 
             // 속성 값 적용
             if (_isEnable == true)
@@ -68,6 +72,10 @@ namespace WinFormEditor
 
                 // Range
                 ((TextBox)listTools[8]).Text = ((TrackBar)listTools[7]).Value.ToString();
+
+                // SpotLight In, Out Angle
+                ((TextBox)listTools[10]).Text = ((TrackBar)listTools[9]).Value.ToString();
+                ((TextBox)listTools[12]).Text = ((TrackBar)listTools[11]).Value.ToString();
             }
         }
 

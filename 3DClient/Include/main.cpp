@@ -34,61 +34,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	//FPS 카메라와 카메라 흔들림 이펙트를 구현하는 매니저 구동
-	CCameraEff::GetInst()->Init();
 
-	char* pEntry[3] = {};
-	pEntry[ST_VERTEX] = (char*)"ParticleVS";
-	pEntry[ST_PIXEL] = (char*)"ParticlePS_GreenMat";
-	pEntry[ST_GEOMETRY] = (char*)"ParticleGS";
-	if (!GET_SINGLE(CShaderManager)->LoadShader("Particle_GreenMat", TEXT("Particle.fx"), pEntry))
-		return false;
+	GET_SINGLE(CGameManager)->PostInit();
 
-	Vector3	vParticle;
-	GET_SINGLE(CResourcesManager)->CreateMesh("Particle_GreenMat", "Particle_GreenMat", POS_LAYOUT,
-		&vParticle, 1, sizeof(Vector3), D3D11_USAGE_DEFAULT,
-		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-	pEntry[ST_PIXEL] = (char*)"ParticlePS_BlueMat";
-	if (!GET_SINGLE(CShaderManager)->LoadShader("Particle_BlueMat", TEXT("Particle.fx"), pEntry))
-		return false;
-	GET_SINGLE(CResourcesManager)->CreateMesh("Particle_BlueMat", "Particle_BlueMat", POS_LAYOUT,
-		&vParticle, 1, sizeof(Vector3), D3D11_USAGE_DEFAULT,
-		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-	pEntry[ST_PIXEL] = (char*)"ParticlePS_BlackMat";
-	if (!GET_SINGLE(CShaderManager)->LoadShader("Particle_BlackMat", TEXT("Particle.fx"), pEntry))
-		return false;
-	GET_SINGLE(CResourcesManager)->CreateMesh("Particle_BlackMat", "Particle_BlackMat", POS_LAYOUT,
-		&vParticle, 1, sizeof(Vector3), D3D11_USAGE_DEFAULT,
-		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
-
-	CCommonSoundLoader::GetInst()->LoadSoundCSVList(TEXT("CommonSound.csv"));
-	CCommonSoundLoader::GetInst()->LoadSoundRandomSeedCnt(TEXT("CommonSound_SoundCnt.csv"));
 	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "Test");
-	GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
-	
+	//GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
 
-#ifdef _DEBUG
-	//GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
-	//GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("First", "TutorialScene");
-	//GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("First", "LogoScene"); 
-	//GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("Second", "YH_TEST");
-	//GET_SINGLE(CSceneManager)->AddScene<CFirTestScene>("Third", "FirTestScene");
-
-#else
-	//GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "TutorialScene");
-	//GET_SINGLE(CSceneManager)->AddSceneComponent<CTutorialScene>("TutorialScene");
-	//GET_SINGLE(CSceneManager)->AddSceneComponent<CLogoScene>("LogoScene");
-#endif
+	GET_SINGLE(CGameManager)->Init();
 
 	GET_SINGLE(CSceneManager)->Access();
 
-	if (!GET_SINGLE(CGameManager)->Init())
-		return 0;
-
-	//GET_SINGLE(CSceneManager)->AddSceneComponent<CTestScene>("TestScene");
-	//GET_SINGLE(CSceneManager)->AddSceneComponent<CFirTestScene>("Fir");
-	
+	GET_SINGLE(CGameManager)->AfterInit();
 
     int iRet = CCore::GetInst()->Run();
 

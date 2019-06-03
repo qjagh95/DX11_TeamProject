@@ -188,7 +188,6 @@
     <ClInclude Include="CameraEff.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CommonSoundLoader.h" />
-    <ClInclude Include="CStage2Scene.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneComponent\FirTestScene.h" />
@@ -276,7 +275,6 @@
   <ItemGroup>
     <ClCompile Include="CameraEff.cpp" />
     <ClCompile Include="CommonSoundLoader.cpp" />
-    <ClCompile Include="CStage2Scene.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SceneComponent\FirTestScene.cpp" />

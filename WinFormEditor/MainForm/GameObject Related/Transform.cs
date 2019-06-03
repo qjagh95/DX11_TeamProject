@@ -261,7 +261,7 @@ namespace WinFormEditor
             }
         }
 
-        private bool StringFormCheck(TextBox _sender)
+        public bool StringFormCheck(TextBox _sender)
         {
             // 선택된 오브젝트가 있는지 검사한다.
             if (m_editForm.GetObjectListBox().SelectedItem == null)

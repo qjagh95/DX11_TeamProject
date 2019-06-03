@@ -139,6 +139,9 @@
     <Filter Include="01. SceneComponent\ST3\ST3_See">
       <UniqueIdentifier>{19f2e8e9-6f26-4d1c-969e-3f3d36ae02f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. SceneComponent\Stage4">
+      <UniqueIdentifier>{ed9e4149-ed00-4222-b6b4-fa8170346bf7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -394,7 +397,7 @@
       <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
     </ClInclude>
     <ClInclude Include="SceneComponent\Scene4_DG.h">
-      <Filter>01. SceneComponent</Filter>
+      <Filter>01. SceneComponent\Stage4</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\Parkour.h">
       <Filter>02. UserComponent\03. Field</Filter>
@@ -639,7 +642,7 @@
       <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\Scene4_DG.cpp">
-      <Filter>01. SceneComponent</Filter>
+      <Filter>01. SceneComponent\Stage4</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Parkour.cpp">
       <Filter>02. UserComponent\03. Field</Filter>

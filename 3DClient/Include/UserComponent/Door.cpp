@@ -63,8 +63,8 @@ CDoor::~CDoor()
 
 bool CDoor::Init()
 {
-	m_pTransform->SetWorldPivot(0.25f, -0.5f, 0.0f);
-	m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
+	//m_pTransform->SetWorldPivot(0.25f, -0.5f, 0.0f);
+	//m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
 
 	CRenderer* pRD = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
 	if (!pRD)
@@ -79,9 +79,9 @@ bool CDoor::Init()
 	if (!pOBB)
 	{
 		pOBB = m_pObject->AddComponent<CColliderOBB3D>("DoorBody");
-		m_pTransform->SetWorldPivot(0.25f, -0.5f, 0.0f);
+		/*m_pTransform->SetWorldPivot(0.25f, -0.5f, 0.0f);
 		m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
-		m_pTransform->SetLocalRotY(90.0f);
+		m_pTransform->SetLocalRotY(90.0f);*/
 
 		Vector3 vMeshLength = pRD->GetMeshLength();
 		Vector3 vScale = vMeshLength * GetWorldScale();
@@ -828,10 +828,8 @@ void CDoor::SetDoorTypeLocker()
 
 }
 
-void CDoor::SetTargetDoor(const string & strSceneKey, const string & strDoorKey, 
-	const Vector3& vPos)
-{
-	m_vTeleportPos = vPos;
+void CDoor::SetTargetDoor(const string & strSceneKey, const string & strDoorKey)
+{ 
 	m_strTargetSceneKey = strSceneKey;
 	m_strTargetDoorKey = strDoorKey;
 }
@@ -847,9 +845,9 @@ void CDoor::SetLeftRight(bool bLeft)
 		Vector3 vMeshLength = pRD->GetMeshLength();
 		Vector3 vScale = vMeshLength * GetWorldScale();
 		Vector3 vCenter;
-		vCenter.x = vMeshLength.z * 0.5f;
+		vCenter.x = vMeshLength.z * 0.0f;
 		vCenter.y = vMeshLength.y * 0.0f;
-		vCenter.z = vMeshLength.x * 0.0f;
+		vCenter.z = vMeshLength.x * 0.5f;
 
 		Vector3 vAxis[3];
 		Matrix matLocalRot = m_pTransform->GetLocalRotMatrix();
@@ -876,9 +874,9 @@ void CDoor::SetLeftRight(bool bLeft)
 		Vector3 vMeshLength = pRD->GetMeshLength();
 		Vector3 vScale = vMeshLength * GetWorldScale();
 		Vector3 vCenter;
-		vCenter.x = vMeshLength.z * -0.5f;
+		vCenter.x = vMeshLength.z * 0.0f;
 		vCenter.y = vMeshLength.y * 0.0f;
-		vCenter.z = vMeshLength.x * 0.0f;
+		vCenter.z = vMeshLength.x * -0.5f;
 
 		Vector3 vAxis[3];
 		Matrix matLocalRot = m_pTransform->GetLocalRotMatrix();

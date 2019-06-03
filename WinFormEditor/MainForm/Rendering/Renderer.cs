@@ -93,6 +93,9 @@ namespace WinFormEditor
                 // MeshName
                 meshNameTextBox.Text = meshName;
 
+                // BumpScale
+                m_editForm.GetBumpScaleTextBox().Text = Convert.ToString(wrapper.GetBumpScale());
+
                 // Selected Button
                 m_editForm.GetAddRenderComponentBtn().BackColor = Color.LawnGreen;
 

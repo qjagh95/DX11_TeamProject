@@ -166,7 +166,7 @@ public:
 	void SetDoorType(int iType);
 	void SetDoorTypeLocker();
 
-	void SetTargetDoor(const string& strSceneKey, const string& strDoorKey, const Vector3& vPos);
+	void SetTargetDoor(const string& strSceneKey, const string& strDoorKey);
 	void SetLeftRight(bool bLeft = false);
 
 	const bool IsOpened() const;

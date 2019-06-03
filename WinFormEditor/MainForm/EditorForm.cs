@@ -7,9 +7,9 @@ using EngineWrapper;
 
 namespace WinFormEditor
 {
-    public enum eLightType      { LT_DIR, LT_POINT, LT_SPOT, LT_MAX };
-    public enum eTransform      { T_LOCAL, T_WORLD, T_MAX };
-    public enum eTransformType  { TT_SCALE, TT_ROTATE, TT_POSITION, TT_MAX };
+    public enum eLightType { LT_DIR, LT_POINT, LT_SPOT, LT_MAX };
+    public enum eTransform { T_LOCAL, T_WORLD, T_MAX };
+    public enum eTransformType { TT_SCALE, TT_ROTATE, TT_POSITION, TT_MAX };
 
     public partial class EditorForm : Form
     {
@@ -17,20 +17,20 @@ namespace WinFormEditor
         public CoreWrapper m_coreWrapper = new CoreWrapper();
 
         // Member
-        private string m_strClipName    = "";
-        private string m_strStartFrame  = "";
-        private string m_strEndFrame    = "";
-        private string m_strAniTime     = "";
-        private string m_strDeleteClip  = "";
+        private string m_strClipName = "";
+        private string m_strStartFrame = "";
+        private string m_strEndFrame = "";
+        private string m_strAniTime = "";
+        private string m_strDeleteClip = "";
 
         // Instacne
-        private FileSaveLoad m_file                 = null;
-        private Layer m_layer                       = null;
-        private GameObject m_gameObj                = null;
-        private Transform m_transform               = null;
-        private Renderer m_renderer                 = null;
-        private Light m_light                       = null;
-        Dictionary<string, ObjectInfo> m_objInfo    = null;
+        private FileSaveLoad m_file = null;
+        private Layer m_layer = null;
+        private GameObject m_gameObj = null;
+        private Transform m_transform = null;
+        private Renderer m_renderer = null;
+        private Light m_light = null;
+        Dictionary<string, ObjectInfo> m_objInfo = null;
 
         private void Run(object sender, EventArgs e)
         {
@@ -56,7 +56,7 @@ namespace WinFormEditor
                     m_transform.m_isUpdateTr = true;
                 }
                 m_transform.UpdateTransform();
-                
+
                 // Navigation
                 TB_NaviIndex.Text = Convert.ToString(m_coreWrapper.GetSelectNaviIndex());
                 if (m_coreWrapper.GetSelectNaviMove() == true)
@@ -123,6 +123,10 @@ namespace WinFormEditor
             TB_DecalNormal.Text = "None";
             TB_DecalSpecular.Text = "None";
 
+            // CheckBox Disable
+            CB_GizmoEnable.Checked = false;
+            CB_PickColliderEnable.Checked= false;
+
             Application.Idle += Run;
         }
 
@@ -162,6 +166,11 @@ namespace WinFormEditor
             return Btn_AddLightComponent;
         }
 
+        public TextBox GetBumpScaleTextBox()
+        {
+            return TB_BumpScale;
+        }
+
         public List<object> GetLightTools()
         {
             List<object> listLightTools = new List<object>();
@@ -174,6 +183,10 @@ namespace WinFormEditor
             listLightTools.Add(TB_SpcularPower);
             listLightTools.Add(TB_Range);
             listLightTools.Add(TB_RangeValue);
+            listLightTools.Add(TrackBar_In);
+            listLightTools.Add(TB_InAngle);
+            listLightTools.Add(TrackBar_Out);
+            listLightTools.Add(TB_OutAngle);
             return listLightTools;
         }
 
@@ -182,8 +195,8 @@ namespace WinFormEditor
             Dictionary<eTransformType, List<TextBox>> dicListTr =
                 new Dictionary<eTransformType, List<TextBox>>();
 
-            List<TextBox> listScaleTr    = new List<TextBox>();
-            List<TextBox> listRotateTr   = new List<TextBox>();
+            List<TextBox> listScaleTr = new List<TextBox>();
+            List<TextBox> listRotateTr = new List<TextBox>();
             List<TextBox> listPositionTr = new List<TextBox>();
 
             if (_eTr == eTransform.T_LOCAL)
@@ -297,7 +310,7 @@ namespace WinFormEditor
             LoadObjList();
 
             // 처음에 툴을 실행시킬 때만 로드를 한다.
-            if(_isFileLoad == false)
+            if (_isFileLoad == false)
             {
                 LoadMeshList();
                 LoadAnmFile();
@@ -310,7 +323,7 @@ namespace WinFormEditor
             {
                 strTag = LB_ObjectList.Items[i].ToString();
                 strMeshName = m_coreWrapper.GetMeshName(strTag);
-                if(m_objInfo[strTag].meshInfo != null)
+                if (m_objInfo[strTag].meshInfo != null)
                 {
                     // MeshName
                     ObjectInfo.MeshInfo _meshInfo = new ObjectInfo.MeshInfo("");
@@ -328,7 +341,7 @@ namespace WinFormEditor
             // 아이템 목록 지우기
             LB_ObjectList.Items.Clear();
             LB_LogMessage.Items.Clear();
-            if(_isFileLoad == false)
+            if (_isFileLoad == false)
             {
                 ClipList.Items.Clear();
                 LB_BoneList.Items.Clear();
@@ -365,39 +378,39 @@ namespace WinFormEditor
                 for (int j = 0; j < arrObjTag.Length; ++j)
                 {
                     string strLayer = arrLayerTag[i];
-                    string strTag   = arrObjTag[j];
+                    string strTag = arrObjTag[j];
 
                     // Local Transform
                     float[] arrFLScale = m_transform.ObjGetLocalTransform(strTag, strLayer, eTransformType.TT_SCALE);
-                    float[] arrFLRot   = m_transform.ObjGetLocalTransform(strTag, strLayer, eTransformType.TT_ROTATE);
-                    float[] arrFLPos   = m_transform.ObjGetLocalTransform(strTag, strLayer, eTransformType.TT_POSITION);
+                    float[] arrFLRot = m_transform.ObjGetLocalTransform(strTag, strLayer, eTransformType.TT_ROTATE);
+                    float[] arrFLPos = m_transform.ObjGetLocalTransform(strTag, strLayer, eTransformType.TT_POSITION);
 
                     // World Transform
                     float[] arrFWScale = m_transform.ObjGetWorldTransform(strTag, strLayer, eTransformType.TT_SCALE);
-                    float[] arrFWRot   = m_transform.ObjGetWorldTransform(strTag, strLayer, eTransformType.TT_ROTATE);
-                    float[] arrFWPos   = m_transform.ObjGetWorldTransform(strTag, strLayer, eTransformType.TT_POSITION);
+                    float[] arrFWRot = m_transform.ObjGetWorldTransform(strTag, strLayer, eTransformType.TT_ROTATE);
+                    float[] arrFWPos = m_transform.ObjGetWorldTransform(strTag, strLayer, eTransformType.TT_POSITION);
 
                     // World Pivot
-                    float[] arrFPivot  = m_transform.ObjGetWorldPivot(strTag, strLayer);
+                    float[] arrFPivot = m_transform.ObjGetWorldPivot(strTag, strLayer);
 
                     // 데이터 생성 및 추가
                     ObjectInfo info = new ObjectInfo
                     {
                         // Member
-                        strLayerTag     = arrLayerTag[i],
+                        strLayerTag = arrLayerTag[i],
 
                         // MeshName
-                        meshInfo        = new ObjectInfo.MeshInfo(""),
+                        meshInfo = new ObjectInfo.MeshInfo(""),
 
                         // Vector
-                        vecLScale       = new ObjectInfo.Vector3(arrFLScale),
-                        vecLRotate      = new ObjectInfo.Vector3(arrFLRot),
-                        vecLPosition    = new ObjectInfo.Vector3(arrFLPos),
-                        vecWScale       = new ObjectInfo.Vector3(arrFWScale),
-                        vecWRotate      = new ObjectInfo.Vector3(arrFWRot),
-                        vecWPosition    = new ObjectInfo.Vector3(arrFWPos),
-                        vecWPivot       = new ObjectInfo.Vector3(arrFPivot),
-                        vecColor        = new ObjectInfo.Vector4(),
+                        vecLScale = new ObjectInfo.Vector3(arrFLScale),
+                        vecLRotate = new ObjectInfo.Vector3(arrFLRot),
+                        vecLPosition = new ObjectInfo.Vector3(arrFLPos),
+                        vecWScale = new ObjectInfo.Vector3(arrFWScale),
+                        vecWRotate = new ObjectInfo.Vector3(arrFWRot),
+                        vecWPosition = new ObjectInfo.Vector3(arrFWPos),
+                        vecWPivot = new ObjectInfo.Vector3(arrFPivot),
+                        vecColor = new ObjectInfo.Vector4(),
                     };
 
                     // 오브젝트 정보 추가
@@ -426,7 +439,7 @@ namespace WinFormEditor
             foreach (string f in Directory.GetFiles(path, "*.msh"))
             {
                 bool isLoad = m_coreWrapper.LoadMeshFromFullPath(Path.GetFileNameWithoutExtension(f), f);
-                if(isLoad == true)
+                if (isLoad == true)
                 {
                     LB_FileMesh.Items.Add(Path.GetFileNameWithoutExtension(f));
                 }
@@ -441,7 +454,7 @@ namespace WinFormEditor
             path += "\\3DClient\\Bin\\MeshData\\";
             foreach (string f in Directory.GetFiles(path, "*.anm"))
             {
-               LB_AniList.Items.Add(Path.GetFileNameWithoutExtension(f));
+                LB_AniList.Items.Add(Path.GetFileNameWithoutExtension(f));
             }
         }
 
@@ -762,11 +775,11 @@ namespace WinFormEditor
             // FileMesh
             string strMeshName = ((ListBox)sender).SelectedItem.ToString();
             ObjectInfo.MeshInfo meshInfo = m_objInfo[LB_ObjectList.SelectedItem.ToString()].meshInfo;
-			if (meshInfo == null)
-			{
-				meshInfo = new ObjectInfo.MeshInfo(strMeshName);
-				return;
-			}
+            if (meshInfo == null)
+            {
+                meshInfo = new ObjectInfo.MeshInfo(strMeshName);
+                return;
+            }
 
             meshInfo.m_strMeshName = strMeshName;
         }
@@ -778,7 +791,95 @@ namespace WinFormEditor
 
         private void TargetChange_OnOff(object sender, EventArgs e)
         {
-            m_coreWrapper.ChangeTarget(CB_TargetChange.Checked);
+            m_coreWrapper.ChangeTarget(CB_isDebugTarget.Checked);
+        }
+
+        private void BumpScaleCheckKeyPress(object sender, KeyPressEventArgs e)
+        {
+            // 숫자와 백스페이스, 마침표, 음수를 제외한 나머지를 바로 처리
+            if (!(char.IsDigit(e.KeyChar) || 
+                  e.KeyChar == Convert.ToChar(Keys.Back) ||
+                  e.KeyChar == Convert.ToChar('.') ||
+                  e.KeyChar == Convert.ToChar('-')))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void ChangeBumpScale(object sender, EventArgs e)
+        {
+            bool isCheck = true;
+            if (LB_ObjectList.SelectedItem == null)
+            {
+                isCheck = false;
+                MessageBox.Show("선택된 Object가 없습니다.");
+            }
+            else
+            {
+                bool isFind = m_coreWrapper.FindRendererComponent();
+                if (isFind == false)
+                {
+                    isCheck = false;
+                    MessageBox.Show("선택된 오브젝트에 Renderer 컴포넌트가 없습니다");
+                }
+            }
+            if(isCheck == false)
+            {
+                TB_BumpScale.TextChanged -= ChangeBumpScale;
+                TB_BumpScale.Clear();
+                TB_BumpScale.TextChanged += ChangeBumpScale;
+                return;
+            }
+
+            // 범프 값 변경
+            // Transform StringFormCheck(형식 검사) 함수 호출 용도로 사용한다.
+            if (TB_BumpScale.Text != "" && TB_BumpScale.Text != "-")
+            {
+                if (m_transform.StringFormCheck(TB_BumpScale) == true)
+                {
+                    float fBumpScale = (float)Convert.ToDouble(TB_BumpScale.Text);
+                    if(fBumpScale > 3.0f)
+                    {
+                        fBumpScale = 3.0f;
+                    }
+                    else if(fBumpScale < -3.0f)
+                    {
+                        fBumpScale = -3.0f;
+                    }
+                    TB_BumpScale.Text = fBumpScale.ToString();
+                    m_coreWrapper.SetBumpScale(100.0f);
+                }
+            }
+        }
+
+        private void SetAlphaEnable(object sender, EventArgs e)
+        {
+            bool isCheck = true;
+            if (LB_ObjectList.SelectedItem == null)
+            {
+                isCheck = false;
+                MessageBox.Show("선택된 Object가 없습니다.");
+            }
+            else
+            {
+                bool isFind = m_coreWrapper.FindRendererComponent();
+                if (isFind == false)
+                {
+                    isCheck = false;
+                    MessageBox.Show("선택된 오브젝트에 Renderer 컴포넌트가 없습니다");
+                }
+            }
+            if (isCheck == false)
+            {
+                ((CheckBox)sender).CheckedChanged -= SetAlphaEnable;
+                ((CheckBox)sender).Checked = false;
+                ((CheckBox)sender).CheckedChanged += SetAlphaEnable;
+                return;
+            }
+
+            // Set Alpha
+            bool isCheked = ((CheckBox)sender).Checked;
+            m_coreWrapper.SetAlphaEnable(isCheked);
         }
 
         /*******************************************************************************************************/
@@ -816,6 +917,24 @@ namespace WinFormEditor
                 // 위 키가 아닌 잘못된 형식의 값은 입력될 수 없다.
                 e.Handled = true;
             }
+        }
+
+        private void SetSpotLightAngle(object sender, EventArgs e)
+        {
+            int iInAngle = 0;
+            int iOutAngle = 0;
+            string name = ((TrackBar)sender).Name;
+            if(name == "TrackBar_In")
+            {
+                TB_InAngle.Text = ((TrackBar)sender).Value.ToString();
+            }
+            else
+            {
+                TB_OutAngle.Text = ((TrackBar)sender).Value.ToString();
+            }
+            iInAngle  = Convert.ToInt32(TB_InAngle.Text);
+            iOutAngle = Convert.ToInt32(TB_OutAngle.Text);
+            m_coreWrapper.SetAngle(iInAngle, iOutAngle);
         }
 
         private void ChangeSpecularValue(object sender, EventArgs e)
@@ -1172,7 +1291,7 @@ namespace WinFormEditor
         private void ChangeLayer_Click(object sender, EventArgs e)
         {
         }
-        
+
         private void Mouse_Wheel(object sender, MouseEventArgs e)
         {
             m_coreWrapper.SetMouseWheel(e.Delta);
@@ -1279,7 +1398,7 @@ namespace WinFormEditor
             double dYLength;
             double dZLength;
 
-            if(TB_RelativeCenterX.Text == "")
+            if (TB_RelativeCenterX.Text == "")
             {
                 dRelativeCenterX = 0;
             }
@@ -1312,7 +1431,7 @@ namespace WinFormEditor
             dZLength = Convert.ToDouble(TB_OBBZLength.Text);
 
             m_coreWrapper.AddColliderOBB(dRelativeCenterX, dRelativeCenterY, dRelativeCenterZ, dXLength, dYLength, dZLength, LB_ColliderID.SelectedIndex,
-                TB_ColliderTag.Text , TB_CollTypeTag.Text , TB_CollExceptTag.Text, CB_MeshScale.Checked);
+                TB_ColliderTag.Text, TB_CollTypeTag.Text, TB_CollExceptTag.Text, CB_MeshScale.Checked);
 
             LB_ColliderList.Items.Add(TB_ColliderTag.Text);
             //////////////////////Clear///////////////////////////////////////////
@@ -1330,7 +1449,7 @@ namespace WinFormEditor
 
         private void BT_ColliderSphere_Click(object sender, EventArgs e)
         {
-            if(LB_ObjectList.SelectedItem == null)
+            if (LB_ObjectList.SelectedItem == null)
             {
                 MessageBox.Show("선택된 Object가 없습니다.");
                 return;
@@ -1378,7 +1497,7 @@ namespace WinFormEditor
                 dSphereCenterZ = Convert.ToDouble(TB_SphereCenterZ.Text);
             }
 
-            m_coreWrapper.AddColliderSphere(dSphereCenterX , dSphereCenterY , dSphereCenterZ , dRadius , LB_ColliderID.SelectedIndex,
+            m_coreWrapper.AddColliderSphere(dSphereCenterX, dSphereCenterY, dSphereCenterZ, dRadius, LB_ColliderID.SelectedIndex,
                 TB_ColliderTag.Text, TB_CollTypeTag.Text, TB_CollExceptTag.Text, CB_MeshScale.Checked);
             LB_ColliderList.Items.Add(TB_ColliderTag.Text);
 
@@ -1400,7 +1519,7 @@ namespace WinFormEditor
                 MessageBox.Show("선택된 Object가 없습니다.");
                 return;
             }
-            if(m_coreWrapper.GetCollType() == 4)
+            if (m_coreWrapper.GetCollType() == 4)
             {
                 MessageBox.Show("선택된 Collider의 Type이 다릅니다.");
                 return;
@@ -1411,7 +1530,7 @@ namespace WinFormEditor
                 MessageBox.Show("선택된 Collider가 없습니다.");
                 return;
             }
-            if(TB_OBBXLength.Text == "" || TB_OBBYLength.Text == "" || TB_OBBZLength.Text == "")
+            if (TB_OBBXLength.Text == "" || TB_OBBYLength.Text == "" || TB_OBBZLength.Text == "")
             {
                 MessageBox.Show("Collider Info 값에 잘못된 값이 입력되었습니다..");
                 return;
@@ -1455,7 +1574,7 @@ namespace WinFormEditor
             dYLength = Convert.ToDouble(TB_OBBYLength.Text);
             dZLength = Convert.ToDouble(TB_OBBZLength.Text);
 
-            m_coreWrapper.SetOBBColliderInfo(dRelativeCenterX, dRelativeCenterY, dRelativeCenterZ, dXLength, dYLength, dZLength , CB_MeshScale.Checked);
+            m_coreWrapper.SetOBBColliderInfo(dRelativeCenterX, dRelativeCenterY, dRelativeCenterZ, dXLength, dYLength, dZLength, CB_MeshScale.Checked);
         }
 
         private void BT_CollSphere_Click(object sender, EventArgs e)
@@ -1540,7 +1659,7 @@ namespace WinFormEditor
 
             if (m_coreWrapper.FindActiveCollider(LB_ColliderList.SelectedItem.ToString()) == true)
             {
-                if(m_coreWrapper.GetCollType() == 4) // Sphere
+                if (m_coreWrapper.GetCollType() == 4) // Sphere
                 {
                     float[] fArrCenter = m_coreWrapper.GetSphereCenter();
                     float fRadius = m_coreWrapper.GetSphereRadius();
@@ -1550,7 +1669,7 @@ namespace WinFormEditor
                     TB_SphereCenterZ.Text = Convert.ToString(fArrCenter[2]);
                     TB_SphereRadius.Text = Convert.ToString(fRadius);
                 }
-                else if(m_coreWrapper.GetCollType() == 5) // OBB3D
+                else if (m_coreWrapper.GetCollType() == 5) // OBB3D
                 {
                     float[] fArrCenter = m_coreWrapper.GetOBBCenter();
                     float[] fArrLength = m_coreWrapper.GetOBBLength();
@@ -1635,12 +1754,7 @@ namespace WinFormEditor
             m_coreWrapper.AddDecalComponent();
         }
 
-        private void TB_DecalDiffuse_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void EditorForm_Load(object sender, EventArgs e)
+        private void GB_Renderer_Enter(object sender, EventArgs e)
         {
 
         }

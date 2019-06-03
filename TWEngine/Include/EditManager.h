@@ -138,6 +138,9 @@ public:
 	void GetMeshNameList(vector<string>* _pVec);
 	void SetMesh(const string& _strMeshTag);
 	void ChangeCameraTarget(bool _bTarget);
+	void SetAlphaEnable(bool _isFlag);
+	void SetBumpScale(float _fScale);
+	float GetBumpScale();
 	// 애니메이션
 public:
 	void LoadClipFromFullPath(const wstring& _strFullPath);
@@ -175,6 +178,7 @@ public:
 
 	int GetLightType();
 	float GetLightRange();
+	void SetAngle(float _inAngle, float _outAngle);
 	vector<Vector4> GetSpecular();
 	void CreateDefaultGlobalLight();
 	vector<string> GetGlobalLightList();

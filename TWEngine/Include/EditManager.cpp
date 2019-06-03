@@ -863,6 +863,28 @@ void CEditManager::ChangeCameraTarget(bool _bTarget)
 	}
 }
 
+void CEditManager::SetAlphaEnable(bool _isFlag)
+{
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+	pRenderer->SetAlphaEnable(_isFlag);
+	SAFE_RELEASE(pRenderer);
+}
+
+void CEditManager::SetBumpScale(float _fScale)
+{
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+	pRenderer->SetBumpScale(_fScale, 1.f);
+	SAFE_RELEASE(pRenderer);
+}
+
+float CEditManager::GetBumpScale()
+{
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+	float fBumpScale = pRenderer->GetBumpScale();
+	SAFE_RELEASE(pRenderer);
+	return fBumpScale;
+}
+
 void CEditManager::LoadClipFromFullPath(const wstring& _strFullPath)
 {
 	if (m_pObject == nullptr)
@@ -1239,6 +1261,20 @@ float CEditManager::GetLightRange()
 	}
 
 	return pLight->GetRange();
+}
+
+void CEditManager::SetAngle(float _inAngle, float _outAngle)
+{
+	if (m_pObject == nullptr)
+	{
+		return;
+	}
+	if (m_pObject->GetRenderGroup() != RG_LIGHT)
+	{
+		return;
+	}
+	CLight* pLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+	pLight->SetAngle(_inAngle, _outAngle);
 }
 
 vector<Vector4> CEditManager::GetSpecular()

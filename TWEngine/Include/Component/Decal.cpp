@@ -36,8 +36,8 @@ bool CDecal::Init()
 	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("DecalRenderer");
 	pRenderer->SetSave(false);
 	pRenderer->SetMesh("VolumeBox");
+	pRenderer->SetRenderState(ALPHA_BLEND);
 	pRenderer->SetRenderState(CULL_NONE);
-
 	SAFE_RELEASE(pRenderer);
 
 	return true;

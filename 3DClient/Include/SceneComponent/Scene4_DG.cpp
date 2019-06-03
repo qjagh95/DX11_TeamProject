@@ -1,5 +1,6 @@
 #include "../ClientHeader.h"
 #include "Scene4_DG.h"
+#include "../GameManager.h"
 #include "../UserComponent/Door.h"
 #include "../UserComponent/Human_Player.h"
 #include <StrUtility.h>
@@ -8,12 +9,16 @@
 #include <Component/ColliderOBB3D.h>
 
 // 테스트
-#define IS_TEST			true
+#define IS_TEST			false
 #define IS_CONVERTFBX	false
+#define IS_LIGHT_TEST	false
 
 CScene4::CScene4() :
 	m_pObjPlayer(nullptr),
+	m_pPlayerTr(nullptr),
 	m_pHumanPlayer(nullptr),
+	m_pObjChangeStageDoor(nullptr),
+
 	m_pObjHeavyDoor(nullptr),
 	m_pHeavyDoor(nullptr),
 	m_pObjBSDecal(nullptr),
@@ -31,6 +36,11 @@ CScene4::~CScene4()
 	SAFE_RELEASE(m_pHumanPlayer);
 
 #endif
+	SAFE_RELEASE(m_pObjPlayer);
+	SAFE_RELEASE(m_pPlayerTr);
+	SAFE_RELEASE(m_pObjChangeStageDoor);
+
+
 	SAFE_RELEASE(m_pObjHeavyDoor);
 	SAFE_RELEASE(m_pHeavyDoor);
 	SAFE_RELEASE(m_pObjBSDecal);
@@ -49,31 +59,43 @@ bool CScene4::Init()
 	// FBX 파일 로드
 	this->ConvertCorridorFBXFiles();
 #endif
-
 	// 스테이지4 맵 데이터 파일 로드
 	wstring wstrPath = CPathManager::GetInst()->FindPath(DATA_PATH);
 	wstrPath += L"Stage4_DG.dat";
 	string strDataPath = CW2A(wstrPath.c_str());
 	m_pScene->Load(strDataPath);
-	//
-	//// 전역광(Directional Light) 설정
-	//Vector4 vWhiteColor = Vector4(1.f, 1.f, 1.f, 1.0f);
-	//Vector4 vDarkColor  = Vector4(0.005f, 0.005f, 0.005f, 1.0f);
-	//CLayer* pLayer = m_pScene->FindLayer("Light");
-	//list<CGameObject*>* pLightList = pLayer->GetObjectList();
-	//list<CGameObject*>::iterator iter;
-	//list<CGameObject*>::iterator iterEnd = pLightList->end();
-	//for (iter = pLightList->begin(); iter != iterEnd; ++iter)
-	//{
-	//	CLight* pLight = (*iter)->FindComponentFromType<CLight>(CT_LIGHT);
-	//	pLight->SetLightColor(vWhiteColor, vWhiteColor, vWhiteColor);
-	//	SAFE_RELEASE(pLight);
-	//}
-	//SAFE_RELEASE(pLayer);
+	
+	// 전역광(Directional Light) 설정
+	Vector4 vWhiteColor = Vector4(1.f, 1.f, 1.f, 1.0f);
+	Vector4 vTestColor  = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+	Vector4 vDarkColor  = Vector4(0.005f, 0.005f, 0.005f, 1.0f);
+	CLayer* pLayer = m_pScene->FindLayer("Light");
+	list<CGameObject*>* pLightList = pLayer->GetObjectList();
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = pLightList->end();
+	for (iter = pLightList->begin(); iter != iterEnd; ++iter)
+	{
+		CLight* pLight = (*iter)->FindComponentFromType<CLight>(CT_LIGHT);
+		#if IS_LIGHT_TEST
+			pLight->SetLightColor(vTestColor, vTestColor, vTestColor);
+		#else
+			pLight->SetLightColor(vDarkColor, vDarkColor, vDarkColor);
+		#endif
+		SAFE_RELEASE(pLight);
+	}
+	SAFE_RELEASE(pLayer);
 
-	// 데칼(Blood Screen Space Decal)
+	
+
+
+
+
+
+	// 데칼(Screen Space Decal)
+	//CreateMilestoneDecal();
+
+
 	//CreateDecal();
-
 
 
 	// 초기화
@@ -138,30 +160,19 @@ void CScene4::AfterInit()
 	SAFE_RELEASE(pLayer);
 
 #else
-	CLayer* pLayer = m_pScene->FindLayer("Default");
-	m_pObjPlayer = CGameObject::CreateObject("Player", pLayer);
-	CTransform* pPlayerTr = m_pObjPlayer->GetTransform();
-	pPlayerTr->SetWorldPos(Vector3::Zero);
-	m_pHumanPlayer = m_pObjPlayer->AddComponent<CHuman_Player>("UC_HumanPlayer");
+	// 플레이어
+	m_pHumanPlayer = _PLAYER;
+	m_pObjPlayer = _PLAYER->GetGameObject();
+	m_pPlayerTr = m_pObjPlayer->GetTransform();
+	m_pPlayerTr->SetWorldPos(Vector3::Zero);
 	CRenderer* pRenderer = m_pObjPlayer->FindComponentFromType<CRenderer>(CT_RENDERER);
-	pRenderer->SetDecalEnable(true);
-
+	pRenderer->SetDecalEnable(false);
 	SAFE_RELEASE(pRenderer);
-	SAFE_RELEASE(pLayer);
+
+	// 스테이지 이동 문
+	SetChangeStageDoor();
 
 
-	//// 플레이어
-	//m_pObjPlayer = CObjectManager::GetInst()->FindObject("Player");
-	//if (m_pObjPlayer == nullptr)
-	//{
-	//	TrueAssert(true);
-	//}
-	//// 2019/05/02 Comment : "UC_HumanPlayer" 컴포넌트 태그는 차후에 바뀔 수 있다.
-	//m_pHumanPlayer = m_pObjPlayer->FindComponentFromTag<CHuman_Player>("UC_HumanPlayer");
-	//if (m_pHumanPlayer == nullptr)
-	//{
-	//	TrueAssert(true);
-	//}
 #endif
 }
 
@@ -177,6 +188,7 @@ int CScene4::Update(float _fTime)
 
 int CScene4::LateUpdate(float _fTime)
 {
+	CGameManager::GetInst()->Update(_fTime);
 	return 0;
 }
 
@@ -186,6 +198,39 @@ void CScene4::Collision(float _fTime)
 
 void CScene4::Render(float _fTime)
 {
+}
+
+void CScene4::SetChangeStageDoor()
+{
+	CDoor* pDoor = CGameManager::GetInst()->FindDoor(m_pScene, "ChangeStageDoor");
+	pDoor->SetDoorType(DOOR_STAGE);
+	pDoor->SetTargetDoor("Stage1", "Door_1");
+	pDoor->SetLeftRight();
+}
+
+void CScene4::CreateMilestoneDecal()
+{
+	/*CLayer* pLayer = m_pScene->FindLayer("Default");
+	CGameObject* pObjDecal = CGameObject::CreateObject("Decal", pLayer);
+	CTransform* pTr = pObjDecal->GetTransform();
+	pTr->SetWorldScale(5.f, 5.f, 5.f);
+	pTr->SetWorldRotX(-90.f);
+	pTr->SetWorldPos(10.f, 5.f, 8.f);
+	CDecal* pDecal = pObjDecal->AddComponent<CDecal>("Decal");
+	CRenderer* pRenderer = pObjDecal->FindComponentFromTag<CRenderer>("DecalRenderer");
+	pRenderer->SetRenderState(ALPHA_BLEND);
+	CMaterial* pMtrl = pObjDecal->FindComponentFromType<CMaterial>(CT_MATERIAL);
+	pMtrl->SetDiffuseTex(0, "StageMileStone_D", TEXT("MainHall.png"));
+	pMtrl->SetSampler(0, SAMPLER_LINEAR);
+	CColliderOBB3D*	pDecalSphere = pObjDecal->AddComponent<CColliderOBB3D>("DecalSphere");
+	pDecalSphere->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(2.5f, 1.5f, 2.5f));
+	SAFE_RELEASE(pDecalSphere);
+	SAFE_RELEASE(pRenderer);
+	SAFE_RELEASE(pMtrl);
+	SAFE_RELEASE(pDecal);
+	SAFE_RELEASE(pTr);
+	SAFE_RELEASE(pObjDecal);
+	SAFE_RELEASE(pLayer);*/
 }
 
 void CScene4::ConvertCorridorFBXFiles()

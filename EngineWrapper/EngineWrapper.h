@@ -87,17 +87,17 @@ namespace EngineWrapper
 
 		void SetLightAmbient(double _dR, double _dG, double _dB)
 		{
-			CEditManager::GetInst()->SetLightAmbient(Vector4((float)(255.0f / _dR), (float)(255.0f / _dG), (float)(255.0f / _dB), 1.0f));
+			CEditManager::GetInst()->SetLightAmbient(Vector4((float)(_dR / 255.0f), (float)(_dG / 255.0f), (float)(_dB / 255.0f), 1.0f));
 		}
 
 		void SetLightDiffuse(double _dR, double _dG, double _dB)
 		{
-			CEditManager::GetInst()->SetLightDiffuse(Vector4((float)(255.0f / _dR), (float)(255.0f / _dG), (float)(255.0f / _dB), 1.0f));
+			CEditManager::GetInst()->SetLightDiffuse(Vector4((float)(_dR / 255.0f), (float)(_dG / 255.0f), (float)(_dB / 255.0f), 1.0f));
 		}
 
 		void SetLightSpcular(double _dR, double _dG, double _dB, double _dA)
 		{
-			CEditManager::GetInst()->SetLightSpcular(Vector4((float)(255.0f / _dR), (float)(255.0f / _dG), (float)(255.0f / _dB), (float)(255.0f / _dA)));
+			CEditManager::GetInst()->SetLightSpcular(Vector4((float)(_dR / 255.0f), (float)(_dG / 255.0f), (float)(_dB / 255.0f), (float)_dA));
 		}
 
 		void AddLightComponent()
@@ -170,10 +170,14 @@ namespace EngineWrapper
 		bool LoadMeshFromFullPath(String^ _strMeshKey, String^ _strFullPath);
 		void SetMesh(String^ _strMeshTag);
 		void AddRenderComponent();
+		void SetAlphaEnable(bool _isFlag);
+		void SetBumpScale(float _fScale);
+		float GetBumpScale();
 
 	// 조명
 	public:
 		int GetLightType();
+		void SetAngle(float _inAngle, float _outAngle);
 		cli::array<float>^ GetSpecular();
 		float GetRange();
 		void CreateDefaultGlobalLight();

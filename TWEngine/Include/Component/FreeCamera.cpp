@@ -68,16 +68,16 @@ int CFreeCamera::Update(float fTime)
 	if (CInput::GetInst()->KeyPress("CAM_ROT_X_RETURN"))
 		m_pTransform->SetWorldRotX(0.0f);
 
-	if (CInput::GetInst()->KeyPress("ZeroRotation"))
-		RotationZero(fTime);
+	//if (CInput::GetInst()->KeyPress("ZeroRotation"))
+	//	RotationZero(fTime);
 
 	if (KEYHOLD("RButton"))
 		RotationByMouse(fTime);
 
-	short	sWheel = GET_SINGLE(CInput)->GetWheelDir();
+	//short	sWheel = GET_SINGLE(CInput)->GetWheelDir();
 
-	if (sWheel != 0)
-		m_pTransform->Move(Vector3::Axis[AXIS_Y], 8.0f * m_fSpeed * sWheel, fTime);
+	//if (sWheel != 0)
+	//	m_pTransform->Move(Vector3::Axis[AXIS_Y], 8.0f * m_fSpeed * sWheel, fTime);
 
 	return 0;
 }
@@ -127,17 +127,20 @@ void CFreeCamera::ZRotation(float fScale, float fTime)
 
 void CFreeCamera::XMove(float fScale, float fTime)
 {
-	m_pTransform->Move(AXIS_X, m_fSpeed * fScale, fTime);
+	//m_pTransform->Move(AXIS_X, m_fSpeed * fScale, fTime);
+	m_pTransform->Move(AXIS_X, 15.f * fScale, fTime);
 }
 
 void CFreeCamera::YMove(float fScale, float fTime)
 {
-	m_pTransform->Move(Vector3(0.f, 1.f, 0.f), 40.f * fScale, fTime);
+	//m_pTransform->Move(Vector3(0.f, 1.f, 0.f), 40.f * fScale, fTime);
+	m_pTransform->Move(Vector3(0.f, 1.f, 0.f), 15.f * fScale, fTime);
 }
 
 void CFreeCamera::ZMove(float fScale, float fTime)
 {
-	m_pTransform->Move(AXIS_Z, m_fSpeed * fScale, fTime);
+	//m_pTransform->Move(AXIS_Z, m_fSpeed * fScale, fTime);
+	m_pTransform->Move(AXIS_Z, 15.f * fScale, fTime);
 }
 
 void CFreeCamera::RotationZero(float fTime)

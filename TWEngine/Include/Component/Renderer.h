@@ -64,14 +64,16 @@ public:
 
 	void SetRotCheckStart(bool Value) { m_isRotFirstCheck = Value; }
 	void SetPosCheckStart(bool Value) { m_isPosFirstCheck = Value; }
-	Vector3 GetDiffrentRot() const;
-	float GetDiffrentPosX() const;
-	float GetDiffrentPosY() const;
-	float GetDiffrentPosZ() const;
-	Vector3 GetDiffrentPos() const;
+	Vector3 GetDiffrentRot()	const;
+	float GetDiffrentPosX()		const;
+	float GetDiffrentPosY()		const;
+	float GetDiffrentPosZ()		const;
+	float GetBumpScale()		const;
+	bool  GetAlphaEnable()		const;
+	Vector3 GetDiffrentPos()	const;
 
-	class CMesh* GetMesh() const;
-	Vector3 GetMeshLength() const;
+	class CMesh* GetMesh()		const;
+	Vector3 GetMeshLength()		const;
 	Vector3 GetModelMoveDist();
 
 	void SetMeshFromFullPath(const string& strKey, const TCHAR* pFullPath);
@@ -81,6 +83,8 @@ public:
 	void SetRenderState(const string& strName);
 	void SetDecalEnable(bool bEnable);
 	void SetAlphaEnable(bool bEnable);
+	void SetBumpScale(float fScale);
+	void SetBumpScale(float fScale, float fTime);
 	bool CreateRendererCBuffer(const string& strName, int iSize);
 	void UpdateRendererCBuffer(const string& strName, void* pData, int iSize);
 	void CheckComponent();
@@ -111,7 +115,7 @@ private:
 	void RenderNaviEditorMode(float fTime);
 	void UpdateTransform();
 	void UpdateShadowTransform();
-	void SetBumpScale(float fScale, float fTime);
+	
 	void SetBumpScaleNone();
 };
 

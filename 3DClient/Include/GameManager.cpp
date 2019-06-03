@@ -162,12 +162,9 @@ bool CGameManager::Init()
 	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
 	m_pPlayerTr = m_pPlayerObj->GetTransform();
-	//m_pPlayerTr->SetWorldRot(0.f, 180.f, 0.f);
 	m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
 	m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
-
-	//m_pPlayerTr->SetWorldPos(0.0f, 0.0f, 0.0f);
-	//m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
+	m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
 
 	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer);
 
@@ -179,8 +176,6 @@ bool CGameManager::Init()
 
 	AddToEachContainer();
 
-	//GET_SINGLE(CInput)->AddKey("F9", VK_F9);
-
 	SAFE_RELEASE(pLayer);
 	SAFE_RELEASE(pScene);
 
@@ -189,7 +184,7 @@ bool CGameManager::Init()
 
 bool CGameManager::AfterInit()
 {
-	return false;
+	return true;
 }
 
 void CGameManager::AddKey(const string & strKeyName, CGameObject* pObj)
@@ -226,23 +221,23 @@ void CGameManager::AddDoor(const string & strSceneKey, const string & strDoorObj
 	AddDoor(pScene, strDoorObjTag, pDoor);
 }
 
-void CGameManager::AddItemObject(CGameObject* pObj)
+void CGameManager::AddItemObject(CGameObject* pObj, char* strName)
 {
 	CScene* pScene = pObj->GetScene();
 
-	if (strstr(pObj->GetTag().c_str(), "Battery") != nullptr)
+	if (strstr(strName, "BATTERY") != nullptr)
 	{
 		CBattery* pBattery = pObj->AddComponent<CBattery>("Battery");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pBattery);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "Cigarette") != nullptr)
+	else if (strstr(strName, "CIGARETTE") != nullptr)
 	{
 		CCigarette* pCigarette = pObj->AddComponent<CCigarette>("Ciagrette");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pCigarette);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "HealingPack") != nullptr)
+	else if (strstr(strName, "HEALINGPACK") != nullptr)
 	{
 		CHealingPack* pHealingPack = pObj->AddComponent<CHealingPack>("HealingPack");
 		pHealingPack->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
@@ -250,7 +245,7 @@ void CGameManager::AddItemObject(CGameObject* pObj)
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pHealingPack);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "LunchBox") != nullptr)
+	else if (strstr(strName, "LUNCHBOX") != nullptr)
 	{
 		CHealingPack* pHealingPack = pObj->AddComponent<CHealingPack>("LunchBox");
 		pHealingPack->SetMesh("LunchBox", TEXT("LunchBox.msh"));
@@ -258,61 +253,61 @@ void CGameManager::AddItemObject(CGameObject* pObj)
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pHealingPack);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "Tablet") != nullptr)
+	else if (strstr(strName, "TABLET") != nullptr)
 	{
 		CTablet* pTablet = pObj->AddComponent<CTablet>("Tablet");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pTablet);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "Key") != nullptr)
+	else if (strstr(strName, "KEY") != nullptr)
 	{
 		CKeyCard* pKey = pObj->AddComponent<CKeyCard>("KeyCard");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pKey);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "Generator") != nullptr)
+	else if (strstr(strName, "GENERATOR") != nullptr)
 	{
 		CPaperGenerator* pPG = pObj->AddComponent<CPaperGenerator>("PaperGenerator");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pPG);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "Gongji") != nullptr)
+	else if (strstr(strName, "GONGJI") != nullptr)
 	{
 		CPaperGongji* pPG = pObj->AddComponent<CPaperGongji>("PaperGongji");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pPG);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "MsgTH") != nullptr)
+	else if (strstr(strName, "MSGTH") != nullptr)
 	{
 		CPaperMsgTH* pPM = pObj->AddComponent<CPaperMsgTH>("PaperMsgTH");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pPM);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "PlanA") != nullptr)
+	else if (strstr(strName, "PLANA") != nullptr)
 	{
 		CPaperPlanA* pPP = pObj->AddComponent<CPaperPlanA>("PaperPlanA");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pPP);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "PaperTest") != nullptr)
+	else if (strstr(strName, "PAPERTEST") != nullptr)
 	{
 		CPaperTest* pPT = pObj->AddComponent<CPaperTest>("PaperTest");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pPT);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "PaperBQ") != nullptr)
+	else if (strstr(strName, "PAPERBQ") != nullptr)
 	{
 		CPaperBQ* pBQ = pObj->AddComponent<CPaperBQ>("PaperBQ");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pBQ);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "PaperPL") != nullptr)
+	else if (strstr(strName, "PAPERPL") != nullptr)
 	{
 		CPaperPL* pPL = pObj->AddComponent<CPaperPL>("PaperPL");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pPL);
 	}
-	else if (strstr(pObj->GetTag().c_str(), "Silent") != nullptr)
+	else if (strstr(strName, "SILENT") != nullptr)
 	{
 		CPaperSilent* pPS = pObj->AddComponent<CPaperSilent>("PaperSilent");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
@@ -404,15 +399,26 @@ void CGameManager::AddToEachContainer()
 		//오브젝트 리스트를 순회하며 이름을 확인하여 컴포넌트를 붙혀주며 각 컨테이너에 넣어준다.
 		for (iterObj = pList->begin(); iterObj != iterObjEnd; ++iterObj)
 		{
-			if (strstr((*iterObj)->GetTag().c_str(), "Door") != nullptr)
-			{
-				pDoor = (*iterObj)->AddComponent<CDoor>("Door");
-				AddDoor(iter->second, (*iterObj)->GetTag(), pDoor);
+			string strTag = (*iterObj)->GetTag();
+			char strName[256] = {};
 
-				SAFE_RELEASE(pDoor);
+			strcpy(strName, strTag.c_str());
+
+			_strupr_s(strName);
+
+			if (strstr(strName, "DOOR") != nullptr)
+			{
+				if (strstr(strName, "FRAME") == nullptr)
+				{
+					pDoor = (*iterObj)->AddComponent<CDoor>("Door");
+					AddDoor(iter->second, (*iterObj)->GetTag(), pDoor);
+
+					SAFE_RELEASE(pDoor);
+				}
 			}
 
-			AddItemObject((*iterObj));
+			if (strstr(strName, "ITEM") != nullptr)
+				AddItemObject((*iterObj), strName);
 		}
 
 		pList = pLightLayer->GetObjectList();
@@ -776,7 +782,7 @@ void CGameManager::LoadCheckPoint()
 
 void CGameManager::Update(float fTime)
 {
-	CalculateShadowLight();
+	//CalculateShadowLight();
 }
 
 void CGameManager::CalculateShadowLight()

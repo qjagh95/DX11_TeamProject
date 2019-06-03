@@ -25,24 +25,35 @@ public:
 // 플레이어
 private:
 	CGameObject*	m_pObjPlayer;
+	CTransform*		m_pPlayerTr;
 	CHuman_Player*	m_pHumanPlayer;
 
 // 문
 private:
+	CGameObject*	m_pObjChangeStageDoor;
+
 	CGameObject*	m_pObjHeavyDoor;
 	CDoor*			m_pHeavyDoor;
 
+public:
+	void SetChangeStageDoor();
+
 // 데칼(SSD)
 private:
-	struct 
-
 	CGameObject*	m_pObjBSDecal;
 	CGameObject*	m_pObjBBDecal;
 	CDecal*			m_pBSDecal;
 	CDecal*			m_pBBDecal;
 
 public:
+	void CreateMilestoneDecal();
+
+public:
 	void ConvertCorridorFBXFiles();
+
+
+
+
 	void InitDecal();
 	//void CreateDecal();
 

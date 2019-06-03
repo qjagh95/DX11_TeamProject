@@ -51,6 +51,8 @@ public:
 	LightInfo	GetLightInfo()	const;
 	Vector4		GetLightColor() const;
 	Matrix		GetShadowVP()	const;
+	float		GetInAngle()	const;
+	float		GetOutAngle()	const;
 	bool		IsTurnOn()		const;
 public:
 	void Save(BinaryWrite* _pInstBW);

@@ -59,7 +59,7 @@ PS_OUTPUT_SINGLE StarLightScopePS(VS_OUTPUT_TEX input)
         blue  =  30.f / 255.f;
         float4 filterColor = float4(red, green, blue, 1.f);        
 
-        float fEnd = g_cameraNearFar.y - 800.f;
+        float fEnd = g_cameraNearFar.y - 950.f;
         float zInten = saturate(vDepthColor.w / fEnd); // z intencity
 
         // 거리 값에 비례하여 어둡게 처리한다.
@@ -69,7 +69,7 @@ PS_OUTPUT_SINGLE StarLightScopePS(VS_OUTPUT_TEX input)
         filterColor = float4(red, green, blue, 1.f);
 
         // 노이즈 효과
-        vNoiseColor *= 2.0f;
+        vNoiseColor *= 200.0f;
         
         // 최종 색상 값
         vColor *= filterColor * vNoiseColor;

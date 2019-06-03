@@ -258,9 +258,29 @@ void CoreWrapper::AddRenderComponent()
 	pManager->AddComponent(strComponentTag);
 }
 
+void CoreWrapper::SetAlphaEnable(bool _isFlag)
+{
+	PUN::CEditManager::GetInst()->SetAlphaEnable(_isFlag);
+}
+
+void CoreWrapper::SetBumpScale(float _fScale)
+{
+	PUN::CEditManager::GetInst()->SetBumpScale(_fScale);
+}
+
+float CoreWrapper::GetBumpScale()
+{
+	return PUN::CEditManager::GetInst()->GetBumpScale();
+}
+
 int CoreWrapper::GetLightType()
 {
 	return PUN::CEditManager::GetInst()->GetLightType();
+}
+
+void CoreWrapper::SetAngle(float _inAngle, float _outAngle)
+{
+	PUN::CEditManager::GetInst()->SetAngle(_inAngle, _outAngle);
 }
 
 cli::array<float>^ CoreWrapper::GetSpecular()
