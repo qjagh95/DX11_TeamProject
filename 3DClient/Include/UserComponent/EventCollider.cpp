@@ -9,8 +9,6 @@ CEventCollider::CEventCollider()	:
 	m_pPressCtrlObj(nullptr),
 	m_pPressGObj(nullptr),
 	m_pPressShiftObj(nullptr),
-	m_pPressShift2Obj(nullptr),
-	m_pPressShift3Obj(nullptr),
 	m_pPressMissionObj(nullptr),
 	m_pTriggerObj(nullptr),
 	m_pMessageObj(nullptr),
@@ -45,8 +43,6 @@ CEventCollider::~CEventCollider()
 	{
 		SAFE_RELEASE(m_pPressCtrlObj);
 		SAFE_RELEASE(m_pPressShiftObj);
-		SAFE_RELEASE(m_pPressShift2Obj);
-		SAFE_RELEASE(m_pPressShift3Obj);
 		SAFE_RELEASE(m_pPressMissionObj);
 		SAFE_RELEASE(m_pTriggerObj);
 		SAFE_RELEASE(m_pMessage);
@@ -105,7 +101,7 @@ int CEventCollider::Input(float fTime)
 
 			GET_SINGLE(CSceneManager)->ChangeScene("Stage1"); 
 
-			pTr->SetWorldPos(0.f);
+			pTr->SetWorldPos(Vector3(20.f , 0.f , 150.f));
 
 			m_bNext = false;
 		}
@@ -219,13 +215,13 @@ bool CEventCollider::SetTutorial()
 
 	pOBB = m_pPressShiftObj->AddComponent<CColliderOBB3D>("PressShiftBody");
 
-	pOBB->SetInfo(2.5f, Vector3::Axis, 10.f);
+	pOBB->SetInfo(2.5f, Vector3::Axis, Vector3(200.f, 10.f, 10.f));
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CEventCollider::Hit);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CEventCollider::Out);
 
 	SAFE_RELEASE(pOBB);
 
-	m_pPressShift2Obj = CGameObject::CreateObject("PressShift2", m_pLayer);
+	/*m_pPressShift2Obj = CGameObject::CreateObject("PressShift2", m_pLayer);
 
 	pPressShiftTr = m_pPressShift2Obj->GetTransform();
 
@@ -255,7 +251,7 @@ bool CEventCollider::SetTutorial()
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CEventCollider::Hit);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CEventCollider::Out);
 
-	SAFE_RELEASE(pOBB);
+	SAFE_RELEASE(pOBB);*/
 
 	// Mission ¾Ë¸²
 	m_pPressMissionObj = CGameObject::CreateObject("Mission", m_pLayer);
@@ -353,13 +349,10 @@ void CEventCollider::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 		}
 	}
 
-	if (((pSrc->GetTag() == "PressShiftBody") || (pSrc->GetTag() == "PressShift2Body") ||
-		(pSrc->GetTag() == "PressShift3Body")) && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
+	if (pSrc->GetTag() == "PressShiftBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
 		m_bShift = true;
 		m_pPressShiftObj->SetEnable(false);
-		m_pPressShift2Obj->SetEnable(false);
-		m_pPressShift3Obj->SetEnable(false);
 	}
 
 	if (pSrc->GetTag() == "MissionBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
@@ -394,8 +387,7 @@ void CEventCollider::Out(CCollider * pSrc, CCollider * pDest, float fTime)
 		}
 	}
 
-	if (((pSrc->GetTag() == "PressShiftBody") || (pSrc->GetTag() == "PressShift2Body") ||
-		(pSrc->GetTag() == "PressShift3Body")) && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
+	if (pSrc->GetTag() == "PressShiftBody" && pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
 		m_bShift = false;
 	}

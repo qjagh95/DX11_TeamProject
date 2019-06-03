@@ -18,8 +18,6 @@ private:
 	CGameObject*	m_pPressCtrlObj;
 	CGameObject*	m_pPressGObj;
 	CGameObject*	m_pPressShiftObj;
-	CGameObject*	m_pPressShift2Obj;
-	CGameObject*	m_pPressShift3Obj;
 	CGameObject*	m_pPressMissionObj;
 	CGameObject*	m_pTriggerObj;
 	CGameObject*	m_pMessageObj;

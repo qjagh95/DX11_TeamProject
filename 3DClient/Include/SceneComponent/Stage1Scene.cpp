@@ -33,9 +33,9 @@ bool CStage1Scene::Init()
 
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
-	CFreeCamera* pFreeCam = pCamera->AddComponent<CFreeCamera>("FreeCamera");
+	/*CFreeCamera* pFreeCam = pCamera->AddComponent<CFreeCamera>("FreeCamera");
 
-	SAFE_RELEASE(pFreeCam);
+	SAFE_RELEASE(pFreeCam);*/
 
 	CTransform* pCameraTr = pCamera->GetTransform();
 	pCameraTr->SetLocalPos(Vector3(0.f, 5.f, 5.f));

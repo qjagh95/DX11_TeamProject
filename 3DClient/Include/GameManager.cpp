@@ -179,9 +179,7 @@ void CGameManager::AddKey(const string & strKeyName, CGameObject* pObj)
 	unordered_map<string, CGameObject*>::iterator iter = m_mapKey.find(strKeyName);
 
 	if (iter == m_mapKey.end())
-		return;
-
-	m_mapKey.insert(make_pair(strKeyName, pObj));
+		m_mapKey.insert(make_pair(strKeyName, pObj));
 }
 
 void CGameManager::AddDoor(CScene * pScene, const string & strDoorObjTag, CDoor * pDoor)

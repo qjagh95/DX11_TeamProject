@@ -10,8 +10,15 @@ public:
 	CTutorialScene();
 	~CTutorialScene();
 
+private:
+	vector<string>	m_vecAlpha;
+
 public:
+	virtual void AfterInit();
 	virtual bool Init();
 	virtual int Update(float fTime);
+
+private:
+	void AdaptAlpha(const string& strName);
 };
 
