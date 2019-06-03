@@ -2,10 +2,24 @@
 #include "GameManager.h"
 #include "Input.h"
 #include "Scene/Layer.h"
-#include "UserComponent/Door.h"
-#include "UserComponent/Human_Player.h"
 #include "BinaryWriter.h"
+#include "CommonSoundLoader.h"
+#include "UserComponent/Door.h"
+#include "UserComponent/Tablet.h"
+#include "UserComponent/PaperBQ.h"
+#include "UserComponent/KeyCard.h"
+#include "UserComponent/PaperPL.h"
+#include "UserComponent/Battery.h"
+#include "UserComponent/Cigarette.h"
+#include "UserComponent/PaperTest.h"
+#include "UserComponent/PaperMsgTH.h"
+#include "UserComponent/PaperPlanA.h"
+#include "UserComponent/HealingPack.h"
+#include "UserComponent/PaperGongji.h"
+#include "UserComponent/PaperSilent.h"
+#include "UserComponent/Human_Player.h"
 #include "UserComponent/NoticeMessage.h"
+#include "UserComponent/PaperGenerator.h"
 
 DEFINITION_SINGLE(CGameManager)
 
@@ -97,6 +111,8 @@ CGameManager::~CGameManager()
 
 bool CGameManager::PostInit()
 {
+	CCameraEff::GetInst()->Init();
+
 	char* pEntry[3] = {};
 	pEntry[ST_VERTEX] = (char*)"ParticleVS";
 	pEntry[ST_PIXEL] = (char*)"ParticlePS_GreenMat";
@@ -123,6 +139,11 @@ bool CGameManager::PostInit()
 		&vParticle, 1, sizeof(Vector3), D3D11_USAGE_DEFAULT,
 		D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 
+	CCommonSoundLoader::GetInst()->LoadSoundCSVList(TEXT("CommonSound.csv"));
+	CCommonSoundLoader::GetInst()->LoadSoundRandomSeedCnt(TEXT("CommonSound_SoundCnt.csv"));
+
+
+
 	return true;
 }
 
@@ -132,10 +153,6 @@ bool CGameManager::Init()
 
 	CScene* pScene = GET_SINGLE(CSceneManager)->GetScene();
 	CLayer* pLayer = pScene->FindLayer("Default");
-
-	//pCamEffManager = CCameraEff::GetInst();
-	//pCamEffManager->Init();
-	//pCamEffManager->SetFirstPersonViewEnable();
 
 	if (!pLayer)
 		return false;
@@ -148,9 +165,10 @@ bool CGameManager::Init()
 	//m_pPlayerTr->SetWorldRot(0.f, 180.f, 0.f);
 	m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
 	m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
-	m_pPlayerTr->SetWorldPos(316.f, 20.f, 748.f);
-	//m_pPlayerTr->SetWorldPos(0.0f, 0.0f, 0.0f);	
-	m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
+
+	//m_pPlayerTr->SetWorldPos(0.0f, 0.0f, 0.0f);
+	//m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
+
 	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer);
 
 	m_pNotice = pNoticeObj->AddComponent<CNoticeMessage>("NoticeMessage");
@@ -206,6 +224,100 @@ void CGameManager::AddDoor(const string & strSceneKey, const string & strDoorObj
 	CScene* pScene = GET_SINGLE(CSceneManager)->FindScene(strSceneKey);
 
 	AddDoor(pScene, strDoorObjTag, pDoor);
+}
+
+void CGameManager::AddItemObject(CGameObject* pObj)
+{
+	CScene* pScene = pObj->GetScene();
+
+	if (strstr(pObj->GetTag().c_str(), "Battery") != nullptr)
+	{
+		CBattery* pBattery = pObj->AddComponent<CBattery>("Battery");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pBattery);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "Cigarette") != nullptr)
+	{
+		CCigarette* pCigarette = pObj->AddComponent<CCigarette>("Ciagrette");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pCigarette);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "HealingPack") != nullptr)
+	{
+		CHealingPack* pHealingPack = pObj->AddComponent<CHealingPack>("HealingPack");
+		pHealingPack->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
+		pHealingPack->SetHPAmount(m_pPlayer->GetMaxHP());
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pHealingPack);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "LunchBox") != nullptr)
+	{
+		CHealingPack* pHealingPack = pObj->AddComponent<CHealingPack>("LunchBox");
+		pHealingPack->SetMesh("LunchBox", TEXT("LunchBox.msh"));
+		pHealingPack->SetHPAmount(1);
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pHealingPack);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "Tablet") != nullptr)
+	{
+		CTablet* pTablet = pObj->AddComponent<CTablet>("Tablet");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pTablet);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "Key") != nullptr)
+	{
+		CKeyCard* pKey = pObj->AddComponent<CKeyCard>("KeyCard");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pKey);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "Generator") != nullptr)
+	{
+		CPaperGenerator* pPG = pObj->AddComponent<CPaperGenerator>("PaperGenerator");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pPG);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "Gongji") != nullptr)
+	{
+		CPaperGongji* pPG = pObj->AddComponent<CPaperGongji>("PaperGongji");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pPG);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "MsgTH") != nullptr)
+	{
+		CPaperMsgTH* pPM = pObj->AddComponent<CPaperMsgTH>("PaperMsgTH");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pPM);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "PlanA") != nullptr)
+	{
+		CPaperPlanA* pPP = pObj->AddComponent<CPaperPlanA>("PaperPlanA");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pPP);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "PaperTest") != nullptr)
+	{
+		CPaperTest* pPT = pObj->AddComponent<CPaperTest>("PaperTest");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pPT);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "PaperBQ") != nullptr)
+	{
+		CPaperBQ* pBQ = pObj->AddComponent<CPaperBQ>("PaperBQ");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pBQ);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "PaperPL") != nullptr)
+	{
+		CPaperPL* pPL = pObj->AddComponent<CPaperPL>("PaperPL");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pPL);
+	}
+	else if (strstr(pObj->GetTag().c_str(), "Silent") != nullptr)
+	{
+		CPaperSilent* pPS = pObj->AddComponent<CPaperSilent>("PaperSilent");
+		AddItemObject(pScene, pObj->GetTag(), pObj);
+		SAFE_RELEASE(pPS);
+	}
 }
 
 void CGameManager::AddItemObject(CScene * pScene, const string & strItemObjTag, CGameObject* pObj)
@@ -289,22 +401,18 @@ void CGameManager::AddToEachContainer()
 		pList = pDefaultLayer->GetObjectList();
 		iterObjEnd = pList->end();
 
-		//순회하며 각 컴포넌트가 있는 지 확인하여 각 컨테이너에 넣어준다.
+		//오브젝트 리스트를 순회하며 이름을 확인하여 컴포넌트를 붙혀주며 각 컨테이너에 넣어준다.
 		for (iterObj = pList->begin(); iterObj != iterObjEnd; ++iterObj)
 		{
-			pDoor = (*iterObj)->FindComponentFromType<CDoor>((COMPONENT_TYPE)UT_DOOR);
-
-			if (pDoor)
+			if (strstr((*iterObj)->GetTag().c_str(), "Door") != nullptr)
 			{
+				pDoor = (*iterObj)->AddComponent<CDoor>("Door");
 				AddDoor(iter->second, (*iterObj)->GetTag(), pDoor);
+
 				SAFE_RELEASE(pDoor);
 			}
 
-			if (strstr((*iterObj)->GetTag().c_str(), "Item") != nullptr)
-				AddItemObject(iter->second, (*iterObj)->GetTag(), (*iterObj));
-
-			if (strstr((*iterObj)->GetTag().c_str(), "Key") != nullptr)
-				AddKey((*iterObj)->GetTag(), (*iterObj));
+			AddItemObject((*iterObj));
 		}
 
 		pList = pLightLayer->GetObjectList();

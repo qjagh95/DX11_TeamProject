@@ -17,6 +17,8 @@ CVolumeFog::CVolumeFog() :
 	m_iPass(0)
 {
 	m_eComType = CT_VOLUMEFOG;
+	m_fDensityLevel = 1.0f;
+	m_tFogCBuffer.fDensity = 0.0f;
 }
 
 
@@ -44,6 +46,24 @@ void CVolumeFog::SetFogColor(const Vector4 & vColor)
 {
 	m_tFogCBuffer.vFogColor = vColor;
 }
+
+void CVolumeFog::SetDensity(float fDensity)
+{
+	m_fDensityLevel = 1.0f / fDensity;
+
+	Vector3 vScale = m_pTransform->GetWorldScale();
+
+	float fScale = vScale.x;
+
+	if (fDensity < vScale.y)
+		fDensity = vScale.y;
+
+	if (fDensity < vScale.z)
+		fDensity = vScale.z;
+
+	m_tFogCBuffer.fDensity = fScale * m_fDensityLevel;
+}
+
 
 bool CVolumeFog::Init()
 {
@@ -102,17 +122,22 @@ void CVolumeFog::UpdateData()
 
 	SAFE_RELEASE(pMainCamera);
 
-	Vector3 vScale = m_pTransform->GetWorldScale();
+	
 
-	float fDensity = vScale.x;
+	if (m_tFogCBuffer.fDensity < 0.001)
+	{
+		Vector3 vScale = m_pTransform->GetWorldScale();
 
-	if (fDensity < vScale.y)
-		fDensity = vScale.y;
+		float fDensity = vScale.x;
 
-	if (fDensity < vScale.z)
-		fDensity = vScale.z;
+		if (fDensity < vScale.y)
+			fDensity = vScale.y;
 
-	m_tFogCBuffer.fDensity = fDensity * 2.0f;
+		if (fDensity < vScale.z)
+			fDensity = vScale.z;
+
+		m_tFogCBuffer.fDensity = fDensity * m_fDensityLevel;
+	}
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("Fog", &m_tFogCBuffer);
 

@@ -32,6 +32,7 @@ private:
 	bool			m_bBlink;
 	bool			m_bTurnOn;
 	bool			m_bBlinkFinalTurnOn;
+	bool			m_bLightVolume;
 	float			m_fLimitTime;
 	float			m_fAccTime;
 	float			m_fCheckTime;
@@ -42,6 +43,8 @@ private:
 	Matrix			m_matShadowView;
 	Matrix			m_matShadowProj;
 	Matrix			m_matShadowVP;
+
+	class CVolumeFog* m_pFog;
 
 public:
 	LIGHT_TYPE  GetLightType()	const;

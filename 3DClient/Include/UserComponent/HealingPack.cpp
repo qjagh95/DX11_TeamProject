@@ -56,6 +56,8 @@ bool CHealingPack::Init()
 	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CHealingPack::MouseOut);
 	SAFE_RELEASE(pCollider);
 
+	
+
 	/**********************************************************************************************/
 
 	// 'Inventory' 객체 얻기
@@ -153,9 +155,9 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				// 아이템 아이콘 생성
 				// 'HealingPackIcon' 객체 생성
 				string strIconName = "";
-				if (m_pObject->GetTag() == "MedicalKit")
+				if (m_pObject->GetTag() == "HealingPack")
 				{
-					strIconName = "Icon_MedicalKit";
+					strIconName = "Icon_HealingPack";
 				}
 				else if (m_pObject->GetTag() == "LunchBox")
 				{

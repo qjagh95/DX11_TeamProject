@@ -45,6 +45,7 @@ public:
 	void AddKey(const string& strKeyName, CGameObject* pObj);
 	void AddDoor(CScene* pScene, const string& strDoorObjTag, CDoor* pDoor);
 	void AddDoor(const string& strSceneKey, const string& strDoorObjTag, CDoor* pDoor);
+	void AddItemObject(CGameObject* pObj);
 	void AddItemObject(CScene* pScene, const string& strItemObjTag, CGameObject* pObj);
 	void AddItemObject(const string& strSceneKey, const string& strItemObjTag, CGameObject* pObj);
 	void AddLight(CLight* pLight);

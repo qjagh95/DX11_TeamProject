@@ -1,7 +1,8 @@
 #include "../EngineHeader.h"
 #include "Light.h"
-#include "../Core.h"
 #include "Camera.h"
+#include "VolumeFog.h"
+#include "../Core.h"
 #include "../Device.h"
 
 PUN_USING
@@ -13,7 +14,9 @@ CLight::CLight() :
 	m_fDeltaTime(0.0f),
 	m_bBlink(false),
 	m_bBlinkFinalTurnOn(false),
-	m_bTurnOn(true)
+	m_bTurnOn(true),
+	m_bLightVolume(false),
+	m_pFog(nullptr)
 {
 	m_tInfo.vDif = Vector4::White;
 	m_tInfo.vAmb = Vector4(0.2f, 0.2f, 0.2f, 1.f);
@@ -90,16 +93,28 @@ void CLight::Load(BinaryRead * _pInstBR)
 	float fFallOff = _pInstBR->ReadFloat();
 	int iRimLight = _pInstBR->ReadInt();
 
+	if (fRange < 0)
+		fRange = 1.0f;
+	
+	if (fInAngle < 360.0f)
+		fInAngle = 0.0f;
+	
+	if (fOutAngle < 360.0f)
+		fOutAngle = 0.0f;
+
 	// 로드된 데이터를 이용하여 조명 정보를 세팅한다.
-	m_tInfo.vDif = vDif;
-	m_tInfo.vAmb = vAmb;
-	m_tInfo.vSpc = vSpc;
-	m_tInfo.iLightType = iLightType;
+
+	SetLightType((LIGHT_TYPE)iLightType);
 	m_tInfo.vPos = vPos;
 	m_tInfo.vDir = vDir;
-	m_tInfo.fRange = fRange;
-	m_tInfo.fInAngle = fInAngle;
-	m_tInfo.fOutAngle = fOutAngle;
+	SetLightColor(vDif, vAmb, vSpc);
+
+	if(m_eLightType != LT_DIR)
+		SetLightRange(fRange);
+
+	if(m_eLightType == LT_SPOT)
+		SetAngle(fInAngle, fOutAngle);
+
 	m_tInfo.fFallOff = fFallOff;
 	m_tInfo.iRimLight = iRimLight;
 
@@ -112,7 +127,33 @@ void CLight::SetLightType(LIGHT_TYPE eType)
 	m_tInfo.iLightType = eType;
 
 	if (eType == LT_SPOT)
+	{
 		m_pTransform->SetLocalRotX(90.0f);
+
+		if (!m_bLightVolume)
+		{
+			m_bLightVolume = true;
+
+			CGameObject* pObj = CGameObject::CreateObject("LightFog", nullptr);
+			CTransform* pTr = pObj->GetTransform();
+			m_pObject->AddChild(pObj);
+
+			float fRadius = 0.0f;
+
+			fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle));
+
+			m_pFog = pObj->AddComponent<CVolumeFog>("VolumeFog");
+
+			m_pFog->SetFogColor(m_vOriginColor);
+			m_pFog->SetMesh(CORN_VOLUME);
+
+			pTr->SetWorldScale(fRadius * 2.0f, m_fRange, fRadius * 2.0f);
+			pTr->SetWorldRotX(90.0f);
+
+			SAFE_RELEASE(pTr);
+			SAFE_RELEASE(pObj);
+		}
+	}
 }
 
 void CLight::SetLightRange(float fRange)
@@ -121,6 +162,18 @@ void CLight::SetLightRange(float fRange)
 	m_tInfo.fRange = fRange;
 
 	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fOutAngle), m_fWidth / m_fHeight, 0.03f, m_fRange);
+
+	if (m_bLightVolume)
+	{
+		CTransform* pTr = m_pFog->GetTransform();
+
+		float fRadius = 0.0f;
+		fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle));
+
+		pTr->SetWorldScale(fRadius, m_fRange, fRadius);
+
+		SAFE_RELEASE(pTr);
+	}
 }
 
 void CLight::SetAngle(float fInAngle, float fOutAngle)
@@ -132,6 +185,18 @@ void CLight::SetAngle(float fInAngle, float fOutAngle)
 	m_tInfo.fOutAngle = cosf(DegreeToRadian(fOutAngle * 0.5f));
 
 	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fOutAngle), m_fWidth / m_fHeight, 0.03f, m_fRange);
+
+	if (m_bLightVolume)
+	{
+		CTransform* pTr = m_pFog->GetTransform();
+
+		float fRadius = 0.0f;
+		fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle * 0.5f));
+
+		pTr->SetWorldScale(fRadius, m_pTransform->GetWorldPos().y, fRadius);
+
+		SAFE_RELEASE(pTr);
+	}
 }
 
 void CLight::SetLightColor(const Vector4 & vDif, const Vector4 & vAmb, const Vector4 & vSpc)
@@ -141,6 +206,9 @@ void CLight::SetLightColor(const Vector4 & vDif, const Vector4 & vAmb, const Vec
 	m_tInfo.vSpc = vSpc;
 
 	m_vOriginColor = vDif;
+
+	if (m_bLightVolume)
+		m_pFog->SetFogColor(vDif);
 }
 
 void CLight::SetLightAmbient(const Vector4 & vAmb)
@@ -152,6 +220,9 @@ void CLight::SetLightDiffuse(const Vector4 & vDif)
 {
 	m_tInfo.vDif = vDif;
 	m_vOriginColor = vDif;
+
+	if(m_bLightVolume)
+		m_pFog->SetFogColor(vDif);
 }
 
 void CLight::SetLightSpcular(const Vector4 & vSpc)
@@ -244,6 +315,7 @@ void CLight::Blink(float fTime)
 		else
 		{
 			m_bBlink = false;
+
 			if (m_bBlinkFinalTurnOn)
 			{
 				SetLightColor(m_vOriginColor, m_vOriginColor, m_vOriginColor);

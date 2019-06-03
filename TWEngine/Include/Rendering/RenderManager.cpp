@@ -29,7 +29,7 @@ DEFINITION_SINGLE(CRenderManager)
 CRenderManager::CRenderManager() :
 	m_pCreateState(nullptr),
 	m_bDeferred(true),
-	m_bFogEnable(false),
+	m_bFogEnable(true),
 	m_bSSAOEnable(false),
 	m_pSkyObj(nullptr),
 	m_pFogDepthSRV(nullptr),
@@ -1002,39 +1002,47 @@ void CRenderManager::RenderFog(float _fTime)
 	CONTEXT->CopyResource(m_pTarget[TARGET_BACK]->GetTexture(), m_pTarget[TARGET_SKY]->GetTexture());
 
 	m_pGBufferSampler->SetShader(9);
-	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
 	for (int i = 0; i < m_tRenderObj[RG_FOG].iSize; ++i)
 	{
-		m_pTarget[TARGET_FOG_DEPTH]->SetTarget();
+		{
+			m_pTarget[TARGET_FOG_DEPTH]->SetTarget();
 
-		m_pState[STATE_FRONT_CULL]->SetState();
+			m_pState[STATE_DEPTH_DISABLE]->SetState();
 
-		m_pShader[SHADER_FOG_FRONT]->SetShader();
+			{
+				m_pState[STATE_FRONT_CULL]->SetState();
 
-		m_tRenderObj[RG_FOG].pList[i]->Render(_fTime);
+				m_pShader[SHADER_FOG_FRONT]->SetShader();
 
-		m_pState[STATE_FRONT_CULL]->ResetState();
+				m_tRenderObj[RG_FOG].pList[i]->Render(_fTime);
 
-		CONTEXT->CopyResource(m_pFogDepthTex, m_pTarget[TARGET_FOG_DEPTH]->GetTexture());
+				m_pState[STATE_FRONT_CULL]->ResetState();
+			}
 
-		//두번째 패스 시작
-		m_pState[STATE_BACK_CULL]->SetState();
+			CONTEXT->CopyResource(m_pFogDepthTex, m_pTarget[TARGET_FOG_DEPTH]->GetTexture());
 
-		m_pShader[SHADER_FOG_BACK]->SetShader();
+			//두번째 패스 시작
+			{
+				m_pState[STATE_BACK_CULL]->SetState();
 
-		CONTEXT->PSSetShaderResources(9, 1, &m_pFogDepthSRV);
+				m_pShader[SHADER_FOG_BACK]->SetShader();
 
-		m_tRenderObj[RG_FOG].pList[i]->Render(_fTime);
+				CONTEXT->PSSetShaderResources(9, 1, &m_pFogDepthSRV);
 
-		ID3D11ShaderResourceView* pSRV = nullptr;
+				m_tRenderObj[RG_FOG].pList[i]->Render(_fTime);
 
-		CONTEXT->PSSetShaderResources(9, 1, &pSRV);
+				ID3D11ShaderResourceView* pSRV = nullptr;
 
-		m_pState[STATE_BACK_CULL]->ResetState();
+				CONTEXT->PSSetShaderResources(9, 1, &pSRV);
 
-		m_pTarget[TARGET_FOG_DEPTH]->ResetTarget();
+				m_pState[STATE_BACK_CULL]->ResetState();
+			}
 
+			m_pState[STATE_DEPTH_DISABLE]->ResetState();
+
+			m_pTarget[TARGET_FOG_DEPTH]->ResetTarget();
+		}
 		//세번째 패스 시작
 		m_pTarget[TARGET_BACK]->SetTarget();
 
@@ -1054,7 +1062,6 @@ void CRenderManager::RenderFog(float _fTime)
 
 		m_pTarget[TARGET_BACK]->ResetTarget();
 	}
-	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 }
 
 void CRenderManager::RenderFinalPass(float _fTime)

@@ -27,11 +27,13 @@ private:
 	ID3D11InputLayout*	m_pLayOut;
 
 	int					m_iPass;
+	float				m_fDensityLevel;
 	FogCBuffer			m_tFogCBuffer;
 
 public:
 	void SetMesh(const string& strMeshName);
 	void SetFogColor(const Vector4& vColor);
+	void SetDensity(float fDensity);
 
 public:
 	virtual bool Init();
