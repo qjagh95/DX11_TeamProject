@@ -690,17 +690,16 @@ void CDoor::OpenStage(const Vector3 & vDir)
 
 	if (bChangeStage)
 	{
-
-
 		//스테이지 전환
 		GET_SINGLE(CSceneManager)->ChangeScene(m_strTargetSceneKey);
-		
+
 		//대상 문 열기
 		CDoor*		pTargetDoor = GET_SINGLE(CGameManager)->FindDoor(m_strTargetSceneKey, m_strTargetDoorKey);
 
-		Vector3 vTargetPos		= pTargetDoor->GetWorldPos();
-		Vector3 vTargetRot		= pTargetDoor->GetWorldRot();
-		Vector3 vInvDir			= pTargetDoor->GetWorldAxis(AXIS_Z) * -1.0f;
+		Vector3 vTargetPos = pTargetDoor->GetWorldPos(); // 이동할 대상의 Position
+
+		Vector3 vTargetRot = pTargetDoor->GetWorldRot();
+		Vector3 vInvDir = pTargetDoor->GetWorldAxis(AXIS_Z) * -1.0f;
 
 		pTargetDoor->Open(vInvDir);
 
@@ -710,25 +709,48 @@ void CDoor::OpenStage(const Vector3 & vDir)
 			m_bFastOpen = false;
 		}
 
+		Vector3 vDiffRot;
+		vDiffRot.x = vTargetRot.x - GetWorldRot().x;
+		vDiffRot.y = vTargetRot.y - GetWorldRot().y;
+		vDiffRot.z = vTargetRot.z - GetWorldRot().z;
+
 		//플레이어가 문여는 애니메이션 하고 앞으로 나아가며 문이 자동으로 닫혀야함
 
 		CTransform* pTr = GET_SINGLE(CGameManager)->GetPlayerTr();
 
-		Vector3 vDir = pTr->GetWorldPos() - GetWorldPos();
+		Vector3 vPos = GetWorldPos();
+		float fDist = vPos.Distance(pTr->GetWorldPos());
+		vPos.y = 0.f;
+
+		Vector3 vDir = pTr->GetWorldPos() - vPos;
+		vDir.Normalize();
 		vDir.y = 0.0f;
-		vDir.z *= -1.0f;
-		vDir.x *= -1.0f;
-		//if (fLocalY > 0.0f)
+		
+		Matrix matWorld;
+		matWorld.RotationY(m_pTransform->GetWorldRot().y);
+		matWorld.RotationY(vDiffRot.y);
+		vDir = vDir.TransformNormal(matWorld);
+		//if (vTargetRot.y < 45.0f && vTargetRot.y > -45.0f)
 		//	vDir.x *= -1.0f;
 
+		//vDir.z *= -1.0f;
+		//vDir.x *= -1.0f;
+		//if (fLocalY > 0.0f)
+		//	vDir.x *= -1.0f;
+		vDir *= -fDist;
 		pTr->SetWorldPos(vTargetPos + vDir);
-		pTr->SetWorldRot(vTargetRot);
-
-		pTr->RotationY(180.0f);
+		//pTr->SetWorldRot(vTargetRot);
+		if(vDiffRot.y != 180.f && vDiffRot.y != -180.f && vDiffRot.y != 0.f)
+		pTr->RotationY(-vDiffRot.y);
+		else if (vDiffRot.y == 0.f)
+			pTr->RotationY(180.f);
 
 		pTr = GET_SINGLE(CSceneManager)->GetMainCameraTransform();
 
-		pTr->RotationY(180.0f);
+		if (vDiffRot.y != 180.f && vDiffRot.y != -180.f && vDiffRot.y != 0.f)
+			pTr->RotationY(-vDiffRot.y);
+		else if(vDiffRot.y == 0.f)
+		pTr->RotationY(180.f);
 
 		SAFE_RELEASE(pTr);
 	}
@@ -845,9 +867,9 @@ void CDoor::SetLeftRight(bool bLeft)
 		Vector3 vMeshLength = pRD->GetMeshLength();
 		Vector3 vScale = vMeshLength * GetWorldScale();
 		Vector3 vCenter;
-		vCenter.x = vMeshLength.z * 0.0f;
+		vCenter.x = vMeshLength.z * -0.5f;
 		vCenter.y = vMeshLength.y * 0.0f;
-		vCenter.z = vMeshLength.x * 0.5f;
+		vCenter.z = vMeshLength.x * 0.0f;
 
 		Vector3 vAxis[3];
 		Matrix matLocalRot = m_pTransform->GetLocalRotMatrix();
@@ -874,9 +896,9 @@ void CDoor::SetLeftRight(bool bLeft)
 		Vector3 vMeshLength = pRD->GetMeshLength();
 		Vector3 vScale = vMeshLength * GetWorldScale();
 		Vector3 vCenter;
-		vCenter.x = vMeshLength.z * 0.0f;
+		vCenter.x = vMeshLength.z * 0.5f;
 		vCenter.y = vMeshLength.y * 0.0f;
-		vCenter.z = vMeshLength.x * -0.5f;
+		vCenter.z = vMeshLength.x * 0.0f;
 
 		Vector3 vAxis[3];
 		Matrix matLocalRot = m_pTransform->GetLocalRotMatrix();

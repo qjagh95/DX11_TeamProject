@@ -411,15 +411,19 @@ void CSoundManager::PlayBgm(const std::string & strKey, bool bEnableTransition, 
 		StopBgm(bEnableTransition);
 	}
 
+
 	m_sPtrPrevBgmTrack = m_sPtrCurrentBgmTrack;
+
 	m_sPtrCurrentBgmTrack = _bgm->CreateInstance();
+	
 
 	if (bEnableTransition)
 	{
 		m_sPtrCurrentBgmTrack->SetVolume(0.f);
 		if (m_sPtrPrevBgmTrack != m_NULLPTR2)
 		{
-			m_strPrevBGMName = m_strCurrBGMName;
+			if(bDeleteFormerBgmFromMem)
+				m_strPrevBGMName = m_strCurrBGMName;
 
 		}
 		m_bOnTransition = bEnableTransition;

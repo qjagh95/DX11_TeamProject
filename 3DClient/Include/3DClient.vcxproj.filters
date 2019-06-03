@@ -402,6 +402,9 @@
     <ClInclude Include="UserComponent\Parkour.h">
       <Filter>02. UserComponent\03. Field</Filter>
     </ClInclude>
+    <ClInclude Include="SceneComponent\Stage2Scene.h">
+      <Filter>01. SceneComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -646,6 +649,9 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Parkour.cpp">
       <Filter>02. UserComponent\03. Field</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\Stage2Scene.cpp">
+      <Filter>01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

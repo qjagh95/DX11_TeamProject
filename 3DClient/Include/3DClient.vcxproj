@@ -197,6 +197,7 @@
     <ClInclude Include="SceneComponent\RandScapeTestScene.h" />
     <ClInclude Include="SceneComponent\Scene4_DG.h" />
     <ClInclude Include="SceneComponent\Stage1Scene.h" />
+    <ClInclude Include="SceneComponent\Stage2Scene.h" />
     <ClInclude Include="SceneComponent\TestScene-YH.h" />
     <ClInclude Include="SceneComponent\TestScene.h" />
     <ClInclude Include="ClientHeader.h" />
@@ -284,6 +285,7 @@
     <ClCompile Include="SceneComponent\RandScapeTestScene.cpp" />
     <ClCompile Include="SceneComponent\Scene4_DG.cpp" />
     <ClCompile Include="SceneComponent\Stage1Scene.cpp" />
+    <ClCompile Include="SceneComponent\Stage2Scene.cpp" />
     <ClCompile Include="SceneComponent\TestScene-YH.cpp" />
     <ClCompile Include="SceneComponent\TestScene.cpp" />
     <ClCompile Include="SceneComponent\TutorialScene.cpp" />

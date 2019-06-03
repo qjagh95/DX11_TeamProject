@@ -3,12 +3,12 @@
 
 PUN_USING
 
-class CStage1Scene
+class CStage2Scene
 	:public CSceneComponent
 {
 public:
-	CStage1Scene();
-	~CStage1Scene();
+	CStage2Scene();
+	~CStage2Scene();
 
 private:
 	float	m_fFade;
