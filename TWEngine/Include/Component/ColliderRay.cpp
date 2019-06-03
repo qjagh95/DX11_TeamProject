@@ -175,6 +175,7 @@ void CColliderRay::Collision(float fTime)
 
 void CColliderRay::Render(float fTime)
 {
+	m_vecStayingColliders.clear();
 	m_bCallBackFunc = false;
 
 #ifdef _DEBUG

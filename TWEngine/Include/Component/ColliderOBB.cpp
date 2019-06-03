@@ -93,7 +93,7 @@ void CColliderOBB::Collision(float fTime)
 
 void CColliderOBB::Render(float fTime)
 {
-	
+	m_vecStayingColliders.clear();
 	if (CCollisionManager::GetInst()->GetIsShow() == false)
 		return;
 

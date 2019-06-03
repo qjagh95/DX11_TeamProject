@@ -82,6 +82,7 @@ void CColliderRect::Collision(float fTime)
 
 void CColliderRect::Render(float fTime)
 {
+	m_vecStayingColliders.clear();
 	m_bCallBackFunc = false;
 
 	if (CCollisionManager::GetInst()->GetIsShow() == false)

@@ -127,6 +127,7 @@ void CColliderOBB3D::Collision(float fTime)
 
 void CColliderOBB3D::Render(float fTime)
 {
+	m_vecStayingColliders.clear();
 	m_bCallBackFunc = false;
 
 	if (CCollisionManager::GetInst()->GetIsShow() == false)
