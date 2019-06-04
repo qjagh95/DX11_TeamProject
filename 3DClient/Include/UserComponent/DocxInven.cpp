@@ -237,3 +237,11 @@ CDocxInven * CDocxInven::Clone()
 {
 	return new CDocxInven(*this);
 }
+
+void CDocxInven::Save(BinaryWrite * _pInstBW)
+{
+}
+
+void CDocxInven::Load(BinaryRead * _pInstBR)
+{
+}

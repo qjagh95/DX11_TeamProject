@@ -91,8 +91,8 @@ namespace PUN
 		AO_LOOP,
 		AO_ONCE_RETURN,
 		AO_ONCE_DESTROY,
+		AO_ONCE_LAST,
 		AO_ONCE_DISABLE,
-		AO_ONCE_LAST
 	};
 
 	enum COLLIDER_TYPE
@@ -124,6 +124,7 @@ namespace PUN
 		UT_SLOT
 	};
 
+	// Start Button
 	enum BUTTON_STATE
 	{
 		BS_DISABLE,
@@ -131,6 +132,26 @@ namespace PUN
 		BS_MOUSEON,
 		BS_CLICK,
 		BS_END
+	};
+
+	// End Button
+	enum EBUTTON_STATE
+	{
+		ES_DISABLE,
+		ES_NORMAL,
+		ES_MOUSEON,
+		ES_CLICK,
+		ES_END
+	};
+
+	// Continue Button
+	enum CBUTTON_STATE
+	{
+		CBS_DISABLE,
+		CS_NORMAL,
+		CS_MOUSEON,
+		CS_CLICK,
+		CS_END
 	};
 
 	enum BAR_DIR
@@ -459,6 +480,13 @@ namespace PUN
 		SST_S1_R7,
 		SST_S1_R8,
 		SST_S1_RG,
+		STT_S3_R1,
+		STT_S3_R2,
+		STT_S3_R3,
+		STT_S3_R4,
+		STT_S3_R5,
+		STT_S3_R6,
+		STT_S3_R7,
 		SST_END
 	};
 

@@ -159,6 +159,12 @@ void CAnimation2D::ChangeClip(const string & strName)
 	}
 }
 
+void CAnimation2D::ResetClip()
+{
+	m_pCurClip->fPlayTime = 0.f;
+	m_pCurClip->iFrame = 0.f;
+}
+
 PAnimationClip2D CAnimation2D::FindClip(const string & strName)
 {
 	unordered_map<string, PAnimationClip2D>::iterator	iter = m_mapClip.find(strName);

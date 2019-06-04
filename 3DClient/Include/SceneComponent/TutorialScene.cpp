@@ -44,6 +44,7 @@
 
 CTutorialScene::CTutorialScene()
 {
+	m_fFade = 0.f;
 }
 
 CTutorialScene::~CTutorialScene()
@@ -53,48 +54,51 @@ CTutorialScene::~CTutorialScene()
 void CTutorialScene::AfterInit()
 {
 	// CedarBush
-	AdaptAlpha("CedarBush1");
-	AdaptAlpha("CedarBush2");
-	AdaptAlpha("CedarBush4");
-	AdaptAlpha("CedarBush5");
-	AdaptAlpha("CedarBush6");
-	AdaptAlpha("CedarBush7");
-	AdaptAlpha("CedarBush8");
-	AdaptAlpha("CedarBush9");
-	AdaptAlpha("CedarBush10");
-	AdaptAlpha("CedarBush11");
+	//AdaptAlpha("CedarBush1");
+	//AdaptAlpha("CedarBush2");
+	//AdaptAlpha("CedarBush4");
+	//AdaptAlpha("CedarBush5");
+	//AdaptAlpha("CedarBush6");
+	//AdaptAlpha("CedarBush7");
+	//AdaptAlpha("CedarBush8");
+	//AdaptAlpha("CedarBush9");
+	//AdaptAlpha("CedarBush10");
+	//AdaptAlpha("CedarBush11");
 
-	// Grass
-	AdaptAlpha("Grass1");
-	AdaptAlpha("Grass4");
-	AdaptAlpha("Grass5");
-	AdaptAlpha("Grass6");
-	AdaptAlpha("Grass7");
-	AdaptAlpha("Grass8");
-	AdaptAlpha("Grass9");
+	//// Grass
+	//AdaptAlpha("Grass1");
+	//AdaptAlpha("Grass4");
+	//AdaptAlpha("Grass5");
+	//AdaptAlpha("Grass6");
+	//AdaptAlpha("Grass7");
+	//AdaptAlpha("Grass8");
+	//AdaptAlpha("Grass9");
 
-	// LeftTree
-	AdaptAlpha("LeftTree1");
-	AdaptAlpha("LeftTree2");
-	AdaptAlpha("LeftTree3");
-	AdaptAlpha("LeftTree4");
-	AdaptAlpha("LeftTree5");
+	//// LeftTree
+	//AdaptAlpha("LeftTree1");
+	//AdaptAlpha("LeftTree2");
+	//AdaptAlpha("LeftTree3");
+	//AdaptAlpha("LeftTree4");
+	//AdaptAlpha("LeftTree5");
 
-	// RightTree
-	AdaptAlpha("RightTree1");
-	AdaptAlpha("RightTree2");
-	AdaptAlpha("RightTree3");
-	AdaptAlpha("RightTree4");
-	AdaptAlpha("RightTree5");
-	AdaptAlpha("RightTree6");
-	AdaptAlpha("RightTree7");
-	AdaptAlpha("RightTree8");
-	AdaptAlpha("RightTree9");
-	AdaptAlpha("RightTree10");
-	
-	// Gate
-	AdaptAlpha("Gate1");
-	AdaptAlpha("Gate2");
+	//// RightTree
+	//AdaptAlpha("RightTree1");
+	//AdaptAlpha("RightTree2");
+	//AdaptAlpha("RightTree3");
+	//AdaptAlpha("RightTree4");
+	//AdaptAlpha("RightTree5");
+	//AdaptAlpha("RightTree6");
+	//AdaptAlpha("RightTree7");
+	//AdaptAlpha("RightTree8");
+	//AdaptAlpha("RightTree9");
+	//AdaptAlpha("RightTree10");
+	//
+	//// Gate
+	//AdaptAlpha("Gate1");
+	//AdaptAlpha("Gate2");
+
+	CDoor* pDoor = GET_SINGLE(CGameManager)->FindDoor(m_pScene, "Door_Tutorial");
+	pDoor->Lock(true, "KeyCard");
 }
 
 bool CTutorialScene::Init()
@@ -162,23 +166,6 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pKeyCardTr);
 	SAFE_RELEASE(pStageKey);
 	SAFE_RELEASE(pKeyCardObj);
-
-	CGameObject*	pDoorObj = CGameObject::CreateObject("TutorialDoor", pDefaultLayer);
-
-	CDoor*	pDoor = pDoorObj->AddComponent<CDoor>("TutorialDoor");
-
-	pDoor->Lock(true, "KeyCard");
-
-	GET_SINGLE(CGameManager)->AddDoor(m_pScene, pDoorObj->GetTag(), pDoor);
-
-	CTransform*	pDoorTr = pDoorObj->GetTransform();
-
-	pDoorTr->SetWorldPos(304.5f, 29.2f, 557.3f);
-	pDoorTr->SetWorldRot(0.f, 180.f, 0.f);
-
-	SAFE_RELEASE(pDoorTr);
-	SAFE_RELEASE(pDoor);
-	SAFE_RELEASE(pDoorObj);
 
 	CGameObject*	pEventObj = CGameObject::CreateObject("EventCollider", pDefaultLayer);
 
@@ -406,19 +393,32 @@ bool CTutorialScene::Init()
 
 int CTutorialScene::Update(float fTime)
 {
+	if (GET_SINGLE(CSceneManager)->GetChange())
+	{
+		m_fFade += 0.1f * fTime;
+		GET_SINGLE(CRenderManager)->SetFadeAmount(m_fFade, fTime);
+
+	}
+
+	if (m_fFade > 1.f)
+	{
+		m_fFade = 1.f;
+		GET_SINGLE(CSceneManager)->SetChange(false);
+	}
+
 	return 0;
 }
 
 int CTutorialScene::LateUpdate(float fTime)
 {
-	//GET_SINGLE(CGameManager)->Update(fTime);
+	GET_SINGLE(CGameManager)->Update(fTime);
 
 	return 0;
 }
 
 void CTutorialScene::AdaptAlpha(const string & strName)
 {
-	CGameObject*	pTreeObj = CGameObject::FindObject(strName);
+	/*CGameObject*	pTreeObj = CGameObject::FindObject(strName);
 
 	CRenderer*	pTreeRenderer = pTreeObj->FindComponentFromType<CRenderer>(CT_RENDERER);
 
@@ -427,5 +427,5 @@ void CTutorialScene::AdaptAlpha(const string & strName)
 	m_vecAlpha.push_back(strName);
 
 	SAFE_RELEASE(pTreeRenderer);
-	SAFE_RELEASE(pTreeObj);
+	SAFE_RELEASE(pTreeObj);*/
 }

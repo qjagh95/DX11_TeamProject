@@ -124,6 +124,7 @@ namespace PUN
 		UT_SLOT
 	};
 
+	// Start Button
 	enum BUTTON_STATE
 	{
 		BS_DISABLE,
@@ -131,6 +132,26 @@ namespace PUN
 		BS_MOUSEON,
 		BS_CLICK,
 		BS_END
+	};
+
+	// End Button
+	enum EBUTTON_STATE
+	{
+		ES_DISABLE,
+		ES_NORMAL,
+		ES_MOUSEON,
+		ES_CLICK,
+		ES_END
+	};
+
+	// Continue Button
+	enum CBUTTON_STATE
+	{
+		CBS_DISABLE,
+		CS_NORMAL,
+		CS_MOUSEON,
+		CS_CLICK,
+		CS_END
 	};
 
 	enum BAR_DIR

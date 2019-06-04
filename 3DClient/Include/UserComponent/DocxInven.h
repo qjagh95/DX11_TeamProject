@@ -56,5 +56,9 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CDocxInven* Clone();
+
+public:
+	void Save(BinaryWrite* _pInstBW);
+	void Load(BinaryRead*  _pInstBR);
 };
 

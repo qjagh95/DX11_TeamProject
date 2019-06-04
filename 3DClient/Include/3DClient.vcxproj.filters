@@ -414,6 +414,9 @@
     <ClInclude Include="SceneComponent\Stage2Scene.h">
       <Filter>01. SceneComponent\SC_Stage2Scene</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\KaTok.h">
+      <Filter>02. UserComponent\05. Item\03. Document</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -667,6 +670,9 @@
     </ClCompile>
     <ClCompile Include="SceneComponent\Stage2Scene.cpp">
       <Filter>01. SceneComponent\SC_Stage2Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\KaTok.cpp">
+      <Filter>02. UserComponent\05. Item\03. Document</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

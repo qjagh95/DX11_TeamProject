@@ -234,6 +234,7 @@
     <ClInclude Include="UserComponent\Interact_Func_Header.hpp" />
     <ClInclude Include="UserComponent\Inventory.h" />
     <ClInclude Include="UserComponent\Item_Func_Header.hpp" />
+    <ClInclude Include="UserComponent\KaTok.h" />
     <ClInclude Include="UserComponent\KeyBigICon.h" />
     <ClInclude Include="UserComponent\KeyCard.h" />
     <ClInclude Include="UserComponent\KeyInven.h" />
@@ -320,6 +321,7 @@
     <ClCompile Include="UserComponent\Idle.cpp" />
     <ClCompile Include="UserComponent\InteractiveObj.cpp" />
     <ClCompile Include="UserComponent\Inventory.cpp" />
+    <ClCompile Include="UserComponent\KaTok.cpp" />
     <ClCompile Include="UserComponent\KeyBigICon.cpp" />
     <ClCompile Include="UserComponent\KeyCard.cpp" />
     <ClCompile Include="UserComponent\KeyInven.cpp" />

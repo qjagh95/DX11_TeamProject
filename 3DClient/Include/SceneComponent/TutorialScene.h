@@ -11,7 +11,7 @@ public:
 	~CTutorialScene();
 
 private:
-	vector<string>	m_vecAlpha;
+	float			m_fFade;
 
 public:
 	virtual void AfterInit();

@@ -1,7 +1,7 @@
 
 #include "Share.fx"
 
-cbuffer Button	: register(b10)
+cbuffer Button	: register(b9)
 {
 	float4	g_vBSColor;
 }

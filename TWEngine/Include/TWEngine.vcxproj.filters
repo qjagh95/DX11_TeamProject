@@ -455,6 +455,12 @@
     <ClCompile Include="StrUtility.cpp">
       <Filter>01. Core\13.StringUtility</Filter>
     </ClCompile>
+    <ClCompile Include="Component\EndButton.cpp">
+      <Filter>06. Component\08. UI\03. Button</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ContinueButton.cpp">
+      <Filter>06. Component\08. UI\03. Button</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Macro.h">
@@ -744,6 +750,12 @@
     </ClInclude>
     <ClInclude Include="StrUtility.h">
       <Filter>01. Core\13.StringUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\EndButton.h">
+      <Filter>06. Component\08. UI\03. Button</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ContinueButton.h">
+      <Filter>06. Component\08. UI\03. Button</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

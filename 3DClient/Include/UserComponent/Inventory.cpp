@@ -51,6 +51,9 @@ CInventory::CInventory(const CInventory & inven)	:
 
 CInventory::~CInventory()
 {
+	SAFE_RELEASE(m_pZipper);
+	SAFE_RELEASE(m_pZipObj);
+
 	SAFE_RELEASE(m_pBigIcon);
 	SAFE_RELEASE(m_pBigIconObj);
 
@@ -122,6 +125,8 @@ void CInventory::SetVisible()
 		CSoundManager::GetInst()->SoundPlay("Inven_Open");
 		m_bVisible = true;
 		m_pObject->SetEnable(true);
+
+		m_pZipObj->SetEnable(true);
 		
 		for (size_t i = 0; i < m_vecItem.size(); ++i)
 		{
@@ -147,6 +152,8 @@ void CInventory::SetVisible()
 		m_pBigIcon->ChangeClip("BigIcon_Empty");
 		m_pBigIconObj->SetEnable(false);
 		m_iZipCount = 0;
+		m_pZipper->ResetClip();
+		m_pZipObj->SetEnable(false);
 
 		for (size_t i = 0; i < m_vecItem.size(); ++i)
 		{
@@ -634,6 +641,18 @@ bool CInventory::Init()
 
 	m_pBigIcon = m_pBigIconObj->AddComponent<CBigIcon>("BigIcon");
 
+	m_pZipObj = CGameObject::CreateObject("InvenZipper", m_pLayer, true);
+
+	m_pZipper = m_pZipObj->AddComponent<CZipper>("InvenZipper");
+
+	CTransform*	pZipTr = m_pZipObj->GetTransform();
+
+	pZipTr->SetWorldPos(255.f, 80.f, 0.f);
+
+	SAFE_RELEASE(pZipTr);
+
+	m_pZipObj->SetEnable(false);
+
 	return true;
 }
 
@@ -648,17 +667,17 @@ int CInventory::Update(float fTime)
 	{
 		if (m_iZipCount < 1.f)
 		{
-			CGameObject*	pZipObj = CGameObject::CreateObject("InvenZipper", m_pLayer, true);
+			//CGameObject*	pZipObj = CGameObject::CreateObject("InvenZipper", m_pLayer);
 
-			CZipper*	pZip = pZipObj->AddComponent<CZipper>("InvenZipper");
+			/*CZipper*	pZip = m_pZipObj->AddComponent<CZipper>("InvenZipper");
 
-			CTransform*	pZipTr = pZipObj->GetTransform();
+			CTransform*	pZipTr = m_pZipObj->GetTransform();
 
 			pZipTr->SetWorldPos(255.f, 80.f, 0.f);
 
 			SAFE_RELEASE(pZipTr);
-			SAFE_RELEASE(pZip);
-			SAFE_RELEASE(pZipObj);
+			SAFE_RELEASE(pZip);*/
+			//SAFE_RELEASE(pZipObj);
 			++m_iZipCount;
 		}
 	}

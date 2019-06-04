@@ -3,9 +3,9 @@
 #include "Renderer.h"
 #include "Material.h"
 #include "Transform.h"
-#include "Animation2D.h"
 #include "ColliderRect.h"
 #include "../GameObject.h"
+#include "SoundManager.h"
 
 PUN_USING
 
@@ -31,7 +31,6 @@ CUIButton::CUIButton(const CUIButton & button) :
 
 CUIButton::~CUIButton()
 {
-	//SAFE_RELEASE(m_pAnimation);
 }
 
 void CUIButton::Disable()
@@ -72,41 +71,43 @@ void CUIButton::AfterClone()
 
 bool CUIButton::Init()
 {
-	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("ButtonRenderer");
+	CSoundManager::GetInst()->CreateSoundEffect("MouseOn", TEXT("commonMusic/MouseClick.wav"));
+		
+	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("StartButtonRenderer");
 
 	pRenderer->SetMesh("TexRect");
 	pRenderer->SetRenderState(ALPHA_BLEND);
 	pRenderer->SetRenderState(DEPTH_DISABLE);
-	//pRenderer->SetShader(BUTTON_SHADER);
-
-	pRenderer->CreateRendererCBuffer("Button", sizeof(ButtonCBuffer));
+	pRenderer->SetShader(BUTTON_SHADER);
+	pRenderer->SetDecalEnable(false);
 	pRenderer->Enable2DRenderer();
+
+	pRenderer->CreateRendererCBuffer("Button", sizeof(m_tCBuffer));
 	SAFE_RELEASE(pRenderer);
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "Button", TEXT("Start.png"));
+	pMaterial->SetDiffuseTex(0, "StartButton", TEXT("Scene/Start.png"));
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
 
-	//m_pTransform->SetWorldPos(640.f, 360.f, 0.f);
-	m_pTransform->SetWorldScale(200.f, 50.f, 1.f);
+	m_pTransform->SetWorldScale(258.f, 55.f, 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
-	CColliderRect*	pRC = AddComponent<CColliderRect>("ButtonBody");
+	CColliderRect*	pRC = AddComponent<CColliderRect>("StartButtonBody");
 
 	pRC->SetCollisionGroup("UI");
-	pRC->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(200.f, 50.f, 0.f));
+	pRC->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(258.f, 55.f, 0.f));
 	pRC->SetCollisionCallback(CCT_ENTER, this, &CUIButton::Hit);
 	pRC->SetCollisionCallback(CCT_LEAVE, this, &CUIButton::MouseOut);
 
-	SAFE_RELEASE(pRC);
+	SAFE_RELEASE(pRC);	
 
 	m_eState = BS_NORMAL;
 	m_vBSColor[BS_DISABLE] = Vector4(0.5f, 0.5f, 0.5f, 1.f);
-	m_vBSColor[BS_NORMAL] = Vector4(0.9f, 0.9f, 0.9f, 1.f);
-	m_vBSColor[BS_MOUSEON] = Vector4(1.f, 1.f, 1.f, 1.f);
+	m_vBSColor[BS_NORMAL] = Vector4(0.7f, 0.7f, 0.7f, 1.f);
+	m_vBSColor[BS_MOUSEON] = Vector4(2.f, 2.f, 2.f, 1.f);
 	m_vBSColor[BS_CLICK] = Vector4(0.7f, 0.7f, 0.7f, 1.f);
 
 	m_pObject->SetRenderGroup(RG_UI);
@@ -163,9 +164,7 @@ void CUIButton::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 	if (pDest->GetTag() == "MouseWindow")
 	{
 		m_eState = BS_MOUSEON;
-
-		//if (!m_strSound[BS_MOUSEON - 1].empty())
-		//	GET_SINGLE(CSoundManager)->Play(m_strSound[BS_MOUSEON - 1]);
+		CSoundManager::GetInst()->SoundPlay("MouseOn");
 	}
 }
 
@@ -174,9 +173,6 @@ void CUIButton::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 	if (pDest->GetTag() == "MouseWindow")
 	{
 		m_eState = BS_NORMAL;
-
-		//if (!m_strSound[BS_NORMAL - 1].empty())
-		//	GET_SINGLE(CSoundManager)->Play(m_strSound[BS_NORMAL - 1]);
 	}
 }
 

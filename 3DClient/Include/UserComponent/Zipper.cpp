@@ -8,16 +8,24 @@
 
 CZipper::CZipper()
 {
+	m_pAnimation = nullptr;
 }
 
 CZipper::CZipper(const CZipper & zip)	:
 	CUserComponent(zip)
 {
+	m_pAnimation = nullptr;
 }
 
 CZipper::~CZipper()
 {
+	SAFE_RELEASE(m_pAnimation);
 	SAFE_RELEASE(m_pInvenObj);
+}
+
+void CZipper::ResetClip()
+{
+	m_pAnimation->ResetClip();
 }
 
 void CZipper::AfterClone()
@@ -48,7 +56,7 @@ bool CZipper::Init()
 	m_pTransform->SetWorldScale(120.f, 510.f, 1.f);
 	m_pTransform->SetWorldPos(255.f, 80.f, 1.f);
 
-	CAnimation2D*	pAnimation = m_pObject->AddComponent<CAnimation2D>("ZipperAnimation");
+	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("ZipperAnimation");
 
 	vector<Clip2DFrame>	vecClipFrame;
 	Clip2DFrame	tFrame = {};
@@ -60,12 +68,10 @@ bool CZipper::Init()
 		vecClipFrame.push_back(tFrame);
 	}
 
-	pAnimation->AddClip("Inven_Zipper", A2D_ATLAS, AO_ONCE_LAST, 0.4f, vecClipFrame,
+	m_pAnimation->AddClip("Inven_Zipper", A2D_ATLAS, AO_ONCE_LAST, 0.4f, vecClipFrame,
 		"Zipper_Inven", TEXT("UI/Inven/ZipperAnimate.png"));
 
 	vecClipFrame.clear();
-
-	SAFE_RELEASE(pAnimation);
 
 	m_pInvenObj = CGameObject::FindObject("Inven");
 
@@ -81,7 +87,8 @@ int CZipper::Update(float fTime)
 {
 	if (m_pInvenObj->GetEnable() == false)
 	{
-		m_pObject->Die();
+		//m_pAnimation->ResetClip();
+		//m_pObject->Die();
 	}
 
 	return 0;

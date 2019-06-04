@@ -219,39 +219,7 @@ bool CEventCollider::SetTutorial()
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CEventCollider::Hit);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CEventCollider::Out);
 
-	SAFE_RELEASE(pOBB);
-
-	/*m_pPressShift2Obj = CGameObject::CreateObject("PressShift2", m_pLayer);
-
-	pPressShiftTr = m_pPressShift2Obj->GetTransform();
-
-	pPressShiftTr->SetWorldPos(319.f, 8.f, 718.f);
-
-	SAFE_RELEASE(pPressShiftTr);
-
-	pOBB = m_pPressShift2Obj->AddComponent<CColliderOBB3D>("PressShift2Body");
-
-	pOBB->SetInfo(2.5f, Vector3::Axis, 10.f);
-	pOBB->SetCollisionCallback(CCT_ENTER, this, &CEventCollider::Hit);
-	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CEventCollider::Out);
-
-	SAFE_RELEASE(pOBB);
-
-	m_pPressShift3Obj = CGameObject::CreateObject("PressShift3", m_pLayer);
-
-	pPressShiftTr = m_pPressShift3Obj->GetTransform();
-
-	pPressShiftTr->SetWorldPos(391.f, 10.f, 718.f);
-
-	SAFE_RELEASE(pPressShiftTr);
-
-	pOBB = m_pPressShift3Obj->AddComponent<CColliderOBB3D>("PressShift3Body");
-
-	pOBB->SetInfo(2.5f, Vector3::Axis, 10.f);
-	pOBB->SetCollisionCallback(CCT_ENTER, this, &CEventCollider::Hit);
-	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CEventCollider::Out);
-
-	SAFE_RELEASE(pOBB);*/
+	SAFE_RELEASE(pOBB);	
 
 	// Mission ¾Ë¸²
 	m_pPressMissionObj = CGameObject::CreateObject("Mission", m_pLayer);

@@ -58,6 +58,7 @@ CDoor::CDoor(const CDoor & door) :
 
 CDoor::~CDoor()
 {
+	SAFE_RELEASE(m_Renderer);
 	if (m_pSndComp != 0)
 	{
 		PUN::CSoundSource* pSnd = (PUN::CSoundSource*)m_pSndComp;

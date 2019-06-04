@@ -51,7 +51,7 @@ static const char* strVoiceDie = "Player_Die";
 
 static const char* strVoices[14] =
 {
-	nullptr,
+	"",
 	strVoiceStealth,
 	strVoiceCrawl,
 	strVoiceBreathLow,
@@ -102,7 +102,7 @@ CHuman_Player::CHuman_Player() :
 	m_fMaxHideBedAngleX(20.f),
 	m_fMaxHideLockerAngleY(80.f),
 	m_fMaxHideLockerAngleX(15.f),
-	m_eVoiceType(PVT_NONE),
+	m_eVoiceType(PVT_LOW),
 	m_ePlayingVoiceType(PVT_NONE),
 	m_iPlayingVoiceNumber(0),
 	m_vPrevWorldPos(Vector3::Zero),

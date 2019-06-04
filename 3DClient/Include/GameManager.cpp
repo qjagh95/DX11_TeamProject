@@ -166,7 +166,7 @@ bool CGameManager::Init()
 	m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	//m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
 
-	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer);
+	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer, true);
 
 	m_pNotice = pNoticeObj->AddComponent<CNoticeMessage>("NoticeMessage");
 

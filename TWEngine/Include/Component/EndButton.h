@@ -3,30 +3,30 @@
 
 PUN_BEGIN
 
-class PUN_DLL CUIButton :
+class PUN_DLL CEndButton :
 	public CUI
 {
 	friend class CGameObject;
 
 protected:
-	CUIButton();
-	CUIButton(const CUIButton& button);
-	virtual ~CUIButton();
+	CEndButton();
+	CEndButton(const CEndButton& button);
+	virtual ~CEndButton();
 
 protected:
-	BUTTON_STATE			m_eState;
+	EBUTTON_STATE			m_eState;
 	function<void(float)>	m_ClickCallback;
-	Vector4					m_vBSColor[BS_END];
+	Vector4					m_vBSColor[ES_END];
 	ButtonCBuffer			m_tCBuffer;
-	string					m_strSound[BS_END];
+	string					m_strSound[ES_END];
 
 public:
 	void Disable();
 	void Enable();
-	void SetStateColor(BUTTON_STATE eState, const Vector4& vColor);
-	void SetStateColor(BUTTON_STATE eState, unsigned char r, unsigned char g,
+	void SetStateColor(EBUTTON_STATE eState, const Vector4& vColor);
+	void SetStateColor(EBUTTON_STATE eState, unsigned char r, unsigned char g,
 		unsigned char b, unsigned char a);
-	void SetSound(const string& strFileName, BUTTON_STATE eState);
+	void SetSound(const string& strFileName, EBUTTON_STATE eState);
 
 public:
 	virtual void AfterClone();
@@ -36,7 +36,7 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CUIButton* Clone();
+	virtual CEndButton* Clone();
 
 public:
 	void Hit(class CCollider* pSrc, class CCollider* pDest, float fTime);

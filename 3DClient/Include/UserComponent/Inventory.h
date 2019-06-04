@@ -21,6 +21,8 @@ private:
 	vector<class CGameObject*>	m_vecItem;
 	vector<class CGameObject*>	m_vecNumber;
 	vector<class CGameObject*>	m_vecList;
+	CGameObject*			m_pZipObj;
+	class CZipper*				m_pZipper;
 	INVENTORY_STATE			m_eState;
 	ICON_TYPE				m_eType;
 	int						m_iInvenMax;
