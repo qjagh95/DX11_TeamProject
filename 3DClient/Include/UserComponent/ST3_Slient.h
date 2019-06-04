@@ -8,6 +8,7 @@ enum SILENT_TRACE_STATE
 	STS_IDLE,
 	STS_WALK,
 	STS_WALK_IDLE,
+	STS_DOOR_FIND_WORK,
 	STS_SUPRISE_TRACE,
 	STS_USER_TRACE,
 	STS_CAN_TRACE,
@@ -42,6 +43,7 @@ public:
 private:
 	void FS_IDLE(float DeltaTime);
 	void FS_WALK(float DeltaTime);
+	void FS_DOOR_FIND_WORK(float DeltaTime);
 	void FS_WALK_IDLE(float DeltaTime);
 	void FS_USER_TRACE(float DeltaTime);
 	void FS_CAN_TRACE(float DeltaTime);
@@ -54,7 +56,7 @@ private:
 	void FS_HOOK(float DeltaTime);
 	void FS_JAP(float DeltaTime);
 	void FS_HEAD_ATTACK(float DeltaTime);
-	void FS_BASH_DOOR_OPEN(float DeltaTime) {}
+	void FS_BASH_DOOR_OPEN(float DeltaTime);
 	void FS_NORMAL_DOOR_OPEN_LEFT(float DeltaTime) {}
 	void FS_NORMAL_DOOR_OPEN_RIGHT(float DeltaTime) {}
 	
@@ -62,6 +64,10 @@ private:
 	void Walk2Sound(float DeltaTime);
 	void BashSound(float DeltaTime);
 	void BashMobSound(float DeltaTime);
+	void HookSound(float DeltaTime);
+	void JabSound(float DeltaTime);
+	void HeadAttackSound(float DeltaTime);
+	void AttackScream(float DeltaTime);
 
 	void PlayerStateCheck(float DeltaTime);
 	void DoorCheck();

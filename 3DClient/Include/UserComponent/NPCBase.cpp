@@ -219,3 +219,12 @@ void NPCBase::SetOBBCollider(const Vector3 & Length, const Vector3 & Center)
 {
 	m_BodyOBB->SetInfo(Center, Vector3::Axis, Length);
 }
+
+float NPCBase::GetYAngle(const Vector3 & V1, const Vector3 & V2) const
+{
+	float Atan = atan2(V1.x - V2.x, V1.z - V2.z);
+	float Angle = RadianToDegree(Atan);
+	Angle += 180.0f;
+	
+	return Angle;
+}

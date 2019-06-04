@@ -157,14 +157,14 @@ bool CGameManager::Init()
 	if (!pLayer)
 		return false;
 
-	m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
+	//m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
 
-	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
+	//m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
-	m_pPlayerTr = m_pPlayerObj->GetTransform();
-	m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
-	m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
-	m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
+	//m_pPlayerTr = m_pPlayerObj->GetTransform();
+	//m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
+	//m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
+	//m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
 
 	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer);
 
@@ -599,6 +599,37 @@ CLight * CGameManager::FindLight(const string & strSceneKey, const string & strL
 	return FindLight(pScene, strLightObj);
 }
 
+CDoor * CGameManager::GetNearDoor(CScene * scene, Vector3 & Pos) const
+{
+	auto FindIter = m_mapDoor.find(scene);
+
+	if(FindIter == m_mapDoor.end())
+		return NULLPTR;
+
+	auto getMap = FindIter->second;
+
+	auto StartIter = getMap->begin();
+	auto EndIter = getMap->end();
+
+	float Dist = StartIter->second->GetTransformNonCount()->GetWorldPos().GetDistance(Pos);
+	StartIter++;
+
+	CDoor* FindDoor = NULLPTR;
+	for (; StartIter != EndIter; StartIter++)
+	{
+		Vector3 DoorPos = StartIter->second->GetTransformNonCount()->GetWorldPos();
+		float DoorDist = Pos.Distance(DoorPos);
+
+		if (DoorDist <= Dist)
+		{
+			Dist = DoorDist;
+			FindDoor = StartIter->second;
+		}
+	}
+
+	return FindDoor;
+}
+
 CTransform* CGameManager::GetPlayerTr() const
 {
 	return m_pPlayerTr;
@@ -872,6 +903,25 @@ void CGameManager::BlinkLight(CScene * pScene, string strLightKey, float fLimitT
 		AddChangedListLight(pLight);
 
 	pLight->StartBlink(fLimitTime, fDeltaTime, vColor, bFinalTurnOn);
+}
+
+CDoor * CGameManager::GetPlayerCollDoor(CScene* scene) const
+{
+	auto FindIter = m_mapDoor.find(scene);
+
+	if (FindIter == m_mapDoor.end())
+		return NULLPTR;
+
+	auto StartIter = FindIter->second->begin();
+	auto EndIter = FindIter->second->end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		if (StartIter->second->GetIsPlayerColl() == true)
+			return StartIter->second;
+	}
+
+	return NULLPTR;
 }
 
 

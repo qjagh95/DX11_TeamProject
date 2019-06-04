@@ -437,7 +437,7 @@ void CFbxLoader::LoadUV(FbxMesh * pMesh, PFBXMESHCONTAINER pContainer,
 
 		vUV = pUV->GetDirectArray().GetAt(iUVIndex);
 
-		int iY = vUV.mData[1];
+		int iY = (int)vUV.mData[1];
 		float fY = 1.0f - (float)(vUV.mData[1] - iY);
 
 		pContainer->vecUV[iControlIndex].x = (float)(vUV.mData[0]);

@@ -90,14 +90,19 @@ private:
 	float		m_fFastOpenSpeed;
 	float		m_fDestroyBurstTime;
 	float		m_fAccTime;
+	float		m_fAutoCloseTime; // ¸îÃÊ ÈÄ ÀÚµ¿À¸·Î ´ÝÈú °ÇÁã?
+	float		m_fAutoCloseTimeVar;
 	float		m_fAccRot;
 	float		m_fRot;
 	bool		m_bLock;
+	bool		m_bAutoClose;
 	bool		m_bNeedKey;
 	bool		m_bFastOpen;
 	bool		m_bOpen;
+	bool		m_bisPlayerColl;
 	float		m_fOpenRot;
 	float		m_fCloseRot;
+
 	Vector3		m_vTeleportPos;
 	DOOR_TYPE	m_eDoorType;
 	string		m_strKeyName;
@@ -171,9 +176,16 @@ public:
 
 	const bool IsOpened() const;
 	const bool IsOnAction() const;
+	CSoundSource* Get3DSound() const { return (CSoundSource*)m_pSndComp; }
+
+	bool GetIsPlayerColl() const { return m_bisPlayerColl; }
+	bool GetIsAutoClose() const { return m_bAutoClose; };
+	void SetAutoCloseTime(float Value) { m_bAutoClose = true, m_fAutoCloseTime = Value; }
+	void AutoTimeClose(float fTime);
 
 public:
 	void Interact(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
+	void InteractRelease(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 
 	CDoor* Clone();
 };

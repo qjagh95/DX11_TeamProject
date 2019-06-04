@@ -180,7 +180,7 @@ void ST3_Suprise::FS_FIND(float DeltaTime)
 	}
 	else
 	{
-		if (CGameManager::GetInst()->FindDoor("Second", m_DoorName)->IsOpenFinished() == true)
+		if (CGameManager::GetInst()->FindDoor(m_pScene, m_DoorName)->IsOpenFinished() == true)
 			ChangeState(SS_DOWN, m_AniName);
 	}
 }

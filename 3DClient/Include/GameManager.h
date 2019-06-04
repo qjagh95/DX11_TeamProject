@@ -66,8 +66,8 @@ public:
 	CGameObject*	FindItemObject(const string& strSceneKey, const string& strItemObjKey);
 	CLight*			FindLight(CScene* pScene, const string& strLightObj);
 	CLight*			FindLight(const string& strSceneKey, const string& strLightObj);
+	CDoor*			GetNearDoor(CScene* scene, Vector3& Pos) const;
 
-	
 	CTransform*		GetPlayerTr()	const;
 	CHuman_Player*	GetPlayer()		const;
 	void PlayerSpon(const Vector3& vPos, const Vector3& vRot);
@@ -89,8 +89,8 @@ public:
 		const Vector4& vColor, bool bFinalTurnOn);
 	void BlinkLight(CScene* pScene, string strLightKey, float fLimitTime, float fDeltaTime,
 		const Vector4& vColor, bool bFinalTurnOn);
-	
-	
+
+	CDoor* GetPlayerCollDoor(CScene* scene) const;
 
 	DECLARE_SINGLE(CGameManager)
 };

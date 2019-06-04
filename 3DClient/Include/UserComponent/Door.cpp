@@ -43,6 +43,10 @@ CDoor::CDoor() :
 	m_eDoorType = DOOR_NORMAL;
 	m_iSection = SST_END;
 	m_eComType = (COMPONENT_TYPE)UT_DOOR;
+	m_bisPlayerColl = false;
+	m_bAutoClose = false;
+	m_fAutoCloseTime = 0.0f; // ¸îÃÊ ÈÄ ÀÚµ¿À¸·Î ´ÝÈú °ÇÁã?
+	m_fAutoCloseTimeVar = 0.0f; 
 }
 
 CDoor::CDoor(const CDoor & door) :
@@ -82,13 +86,24 @@ bool CDoor::Init()
 		/*m_pTransform->SetWorldPivot(0.25f, -0.5f, 0.0f);
 		m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
 		m_pTransform->SetLocalRotY(90.0f);*/
+		float fLocalY = m_pTransform->GetLocalRot().y;
 
 		Vector3 vMeshLength = pRD->GetMeshLength();
 		Vector3 vScale = vMeshLength * GetWorldScale();
 		Vector3 vCenter;
-		vCenter.x = vMeshLength.z * -0.5f;
-		vCenter.y = vMeshLength.y * 0.0f;
-		vCenter.z = vMeshLength.x * 0.0f;
+
+		vScale.x = vScale.x * 0.5f;
+
+		if (fLocalY > 1.0f)
+		{
+			vCenter.x = vMeshLength.z * -0.5f;
+			vCenter.z = vMeshLength.x * 0.0f;
+		}
+		else
+		{
+			vCenter.x = vMeshLength.z * 0.5f;
+			vCenter.z = vMeshLength.x * 0.0f;
+		}
 
 
 		//vCenter.x = 30.0f;
@@ -111,6 +126,7 @@ bool CDoor::Init()
 	}
 
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CDoor::Interact);
+	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CDoor::InteractRelease);
 
 	SAFE_RELEASE(pRD);
 	SAFE_RELEASE(pOBB);
@@ -148,6 +164,8 @@ int CDoor::Update(float fTime)
 {
 	if (m_eDoorType != DOOR_HEAVY)
 		OnAct(fTime);
+
+	AutoTimeClose(fTime);
 
 	return 0;
 }
@@ -929,6 +947,23 @@ const bool CDoor::IsOnAction() const
 	return m_iState & DOOR_ONACT;
 }
 
+void CDoor::AutoTimeClose(float fTime)
+{
+	if (m_bAutoClose)
+	{
+		if (m_iState == DOOR_OPEN)
+		{
+			m_fAutoCloseTimeVar += fTime;
+
+			if (m_fAutoCloseTime <= m_fAutoCloseTimeVar)
+			{
+				m_fAutoCloseTimeVar = 0.0f;
+				Close();
+			}
+		}
+	}
+
+}
 
 void CDoor::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 {
@@ -992,6 +1027,14 @@ void CDoor::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 				OnActHeavy(fTime);
 			}
 		}
+	}
+}
+
+void CDoor::InteractRelease(PUN::CCollider * pSrc, PUN::CCollider * pDest, float fTime)
+{
+	if (pDest->GetColliderID() == UCI_PLAYER_INTERACT)
+	{
+		m_bisPlayerColl = true;
 	}
 }
 

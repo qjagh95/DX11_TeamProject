@@ -49,6 +49,8 @@ public:
 	int GetState() const { return m_State; }
 	void SetState(int State) { m_State = State; }
 
+	float GetYAngle(const Vector3& V1, const Vector3& V2) const;
+
 protected:
 	string m_CurName;
 	CColliderSphere* m_HeadCollider;
