@@ -157,13 +157,13 @@ bool CGameManager::Init()
 	if (!pLayer)
 		return false;
 
-	//m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
+	m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
 
-	//m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
+	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
-	//m_pPlayerTr = m_pPlayerObj->GetTransform();
-	//m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
-	//m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
+	m_pPlayerTr = m_pPlayerObj->GetTransform();
+	m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
+	m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	//m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
 
 	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer);
@@ -412,6 +412,9 @@ void CGameManager::AddToEachContainer()
 				{
 					pDoor = (*iterObj)->AddComponent<CDoor>("Door");
 					AddDoor(iter->second, (*iterObj)->GetTag(), pDoor);
+
+					if (strstr(strName, "FAKE") == nullptr)
+						pDoor->Lock();
 
 					SAFE_RELEASE(pDoor);
 				}
@@ -835,6 +838,9 @@ void CGameManager::CalculateShadowLight()
 
 	for (int i = 1; i < m_vecLight[iSection].size(); ++i)
 	{
+		if (!m_vecLight[iSection][i]->IsTurnOn())
+			continue;
+
 		vLightPos = m_vecLight[iSection][i]->GetWorldPos();
 		vDist = vLightPos - vPlayerPos;
 		fDist = vDist.Length();

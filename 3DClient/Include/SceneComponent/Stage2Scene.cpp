@@ -18,7 +18,6 @@
 
 CStage2Scene::CStage2Scene()
 {
-	m_fFade = 0.001f;
 }
 
 CStage2Scene::~CStage2Scene()
@@ -32,15 +31,45 @@ bool CStage2Scene::Init()
 	string filePath = CW2A(wstr.c_str());
 	m_pScene->Load(filePath);
 
-	CLayer* pBackLayer = m_pScene->FindLayer("BackGround");
-	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
-	CLayer* pUILayer = m_pScene->FindLayer("UI");
-	CLayer* pTileLayer = m_pScene->FindLayer("Tile");
+	CGameObject* pObj = nullptr;
+	CTransform* pTr = nullptr;
+	CLight* pLight = nullptr;
 
-	SAFE_RELEASE(pDefaultLayer);
-	SAFE_RELEASE(pUILayer);
-	SAFE_RELEASE(pTileLayer);
-	SAFE_RELEASE(pBackLayer);
+	CLayer* pLayer = m_pScene->FindLayer("Light");
+
+	pObj = CGameObject::CreateObject("PointLight", pLayer);
+	pLight = pObj->AddComponent<CLight>("Light");
+	pTr = pObj->GetTransform();
+
+	pLight->SetLightType(LT_SPOT);
+	pLight->SetLightRange(30.0f);
+	pLight->SetAngle(15.0f, 30.0f);
+	pLight->EnableLightVolume();
+
+	pTr->SetWorldPos(Vector3(0.0f, 20.0f, 0.0f));
+	pTr->RotationX(90.0f);
+
+	SAFE_RELEASE(pObj);
+	SAFE_RELEASE(pTr);
+	SAFE_RELEASE(pLight);
+
+	pObj = CGameObject::CreateObject("PointLight", pLayer);
+	pLight = pObj->AddComponent<CLight>("Light");
+	pTr = pObj->GetTransform();
+
+	pLight->SetLightType(LT_SPOT);
+	pLight->SetLightRange(30.0f);
+	pLight->SetAngle(15.0f, 30.0f);
+	pLight->EnableLightVolume();
+
+	pTr->SetWorldPos(0.0f, 20.0f, 30.0f);
+	pTr->RotationX(90.0f);
+
+	SAFE_RELEASE(pObj);
+	SAFE_RELEASE(pTr);
+	SAFE_RELEASE(pLight);
+
+	SAFE_RELEASE(pLayer);
 
 	return true;
 }
@@ -48,27 +77,15 @@ bool CStage2Scene::Init()
 void CStage2Scene::AfterInit()
 {
 	//GET_SINGLE(CGameManager)->PlayerSpon(Vector3(120.0f, 0.0f, 177.5f), Vector3::Zero);
-	CDoor* pDoor = GET_SINGLE(CGameManager)->FindDoor(m_pScene, "Door_S2_S1_1");
+	//CDoor* pDoor = GET_SINGLE(CGameManager)->FindDoor(m_pScene, "Door_S2_S1_1");
 
-	pDoor->SetDoorType(DOOR_STAGE);
-	pDoor->SetTargetDoor("Stage1", "Door_S1_S2_1");
-	pDoor->SetLeftRight(true);
+	//pDoor->SetDoorType(DOOR_STAGE);
+	//pDoor->SetTargetDoor("Stage1", "Door_S1_S2_1");
+	//pDoor->SetLeftRight(true);
 }
 
 int CStage2Scene::Update(float fTime)
 {
-	if (GET_SINGLE(CSceneManager)->GetChange())
-	{
-		m_fFade += 0.1f * fTime;
-		GET_SINGLE(CRenderManager)->SetFadeAmount(m_fFade, fTime);
-
-	}
-
-	if (m_fFade > 1.f)
-	{
-		m_fFade = 1.f;
-		GET_SINGLE(CSceneManager)->SetChange(false);
-	}
 
 	return 0;
 }

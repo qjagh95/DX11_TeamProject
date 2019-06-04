@@ -455,25 +455,19 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 
         if (g_iRimLight == 1)
         {
-            float fLength = distance(vViewPos, float3(0.f, 0.f, 0.f));
-
-            if(fLength < 18)
-            {           
-
 			// 카메라방향과 노말벡터를 내적하여 어둡게 해줄 외각을 찾는다
-                float fRim = saturate(dot(vViewNormal, ToCamera));
+            float fRim = saturate(dot(vViewNormal, vLightDir));
 
 			// 0.3보다 크게 되면 Rim을 없애준다
-                if (fRim > 0.2 || fRim < 0.0f)
-                    fRim = 1;
+            if (fRim > 0.3)
+                fRim = 1;
 
 			// 0.3보다 작은 값만 Rim을 처리해준다
 			// 더 뚜렷한 외각선을 얻기 위함이다
-                else
-                    fRim = -1;
+            else
+                fRim = -1;
 
-                tInfo.vEmv = vMtrlSpc * vMtrlEmv + float4(pow(1 - fRim, g_fRimPower) * g_vRimColor, 1.f);
-            }
+            tInfo.vEmv = vMtrlSpc * vMtrlEmv + float4(pow(1 - fRim, g_fRimPower) * g_vRimColor, 1.f);
         }
     }
 
@@ -482,8 +476,8 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 		// 조명과 정점사이의 거리를 구한다.
 		float fDist = distance(vLightPos, vViewPos);
 
-		fIntensity = 1.f - fDist / g_fLightRange;
-		fIntensity = max(0, fIntensity) * 0.7f + 0.3f;
+        fIntensity = 1.f - (fDist / (g_fLightRange * 0.5f));
+		fIntensity = max(0.0f, fIntensity);
 	}
 
 	if (g_iLightType == LIGHT_SPOT)
@@ -503,7 +497,7 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
         {
             float fAngleDist = g_fLightInAngle - g_fLightOutAngle;
             float fAngle = g_fLightInAngle - fDot;
-            fIntensity = (1.f - fAngle / fAngleDist) * 0.7f + 0.3f;
+            fIntensity = (1.f - fAngle / fAngleDist);
         }
     }
 
@@ -516,8 +510,8 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 	//float3	vR = reflect(vViewNormal, vLightDir);
     vR = normalize(vR);
 
-	tInfo.vDif = vMtrlDif * g_vLightDif * max(0, fRamb) * fIntensity;
-    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(vR, ToCamera)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
+	tInfo.vDif = vMtrlDif * g_vLightDif * fRamb * fIntensity;
+    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(vR, ToCamera)), fSpcPower) * fIntensity /** SpotStrong*/;
     tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
 
 	return tInfo;

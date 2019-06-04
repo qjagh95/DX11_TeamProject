@@ -32,11 +32,17 @@ private:
 	bool			m_bBlink;
 	bool			m_bTurnOn;
 	bool			m_bBlinkFinalTurnOn;
+	bool			m_bBlinkAuto;
 	bool			m_bLightVolume;
 	float			m_fLimitTime;
 	float			m_fAccTime;
 	float			m_fCheckTime;
 	float			m_fDeltaTime;
+	float			m_fAutoBlinkAccTime;
+	float			m_fAutoBlinkDeltaTime;
+	float			m_fAutoLimitTime;
+	float			m_fAutoDeltaTime;
+	Vector4			m_vAutoChangeColor;
 	Vector4			m_vChangeColor;
 	Vector4			m_vOriginColor;
 
@@ -59,6 +65,7 @@ public:
 	void Load(BinaryRead*  _pInstBR);
 
 public:
+	void EnableLightVolume();
 	void SetLightType(LIGHT_TYPE eType);
 	void SetLightRange(float fRange);
 	void SetLightDirection(const Vector3& Dir);
@@ -77,7 +84,7 @@ public:
 	void UpdateLightCBuffer();
 
 	void StartBlink(float fLimitTime, float fDeltaTime, const Vector4& vColor, bool bFinalTurnOn = true);
-	void Blink(float fTime);
+	void SetAutoBlink(float fLimitTime, float fDeltaTime, const Vector4& vColor, float fAutoDeltaTime = 0.0f);
 
 	float GetRange();
 	Vector4 GetLightSpecular();
@@ -94,6 +101,9 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CLight* Clone();
+
+private:
+	void Blink(float fTime);
 };
 
 PUN_END

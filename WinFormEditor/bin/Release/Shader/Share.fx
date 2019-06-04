@@ -476,8 +476,8 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 		// 조명과 정점사이의 거리를 구한다.
 		float fDist = distance(vLightPos, vViewPos);
 
-		fIntensity = 1.f - fDist / g_fLightRange;
-		fIntensity = max(0, fIntensity) * 0.7f + 0.3f;
+        fIntensity = 1.f - (fDist / (g_fLightRange * 0.5f));
+		fIntensity = max(0.0f, fIntensity);
 	}
 
 	if (g_iLightType == LIGHT_SPOT)
@@ -497,7 +497,7 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
         {
             float fAngleDist = g_fLightInAngle - g_fLightOutAngle;
             float fAngle = g_fLightInAngle - fDot;
-            fIntensity = (1.f - fAngle / fAngleDist) * 0.7f + 0.3f;
+            fIntensity = (1.f - fAngle / fAngleDist);
         }
     }
 
@@ -510,8 +510,8 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 	//float3	vR = reflect(vViewNormal, vLightDir);
     vR = normalize(vR);
 
-	tInfo.vDif = vMtrlDif * g_vLightDif * max(0, fRamb) * fIntensity;
-    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(vR, vViewNormal)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
+	tInfo.vDif = vMtrlDif * g_vLightDif * fRamb * fIntensity;
+    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(vR, ToCamera)), fSpcPower) * fIntensity /** SpotStrong*/;
     tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
 
 	return tInfo;

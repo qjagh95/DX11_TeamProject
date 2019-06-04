@@ -3,12 +3,12 @@
 #include "Door.h"
 #include "SoundManager.h"
 #include "Human_Player.h"
-#include "../GameManager.h"
 #include "Scene/SceneManager.h"
 #include "Component/Camera.h"
 #include "Component/Transform.h"
 #include "Component/SoundSource.h"
 #include "Component/ColliderOBB3D.h"
+#include "../GameManager.h"
 
 //스테이지 문의 방향은 현재 씬에서 나가는 방향으로 월드 로테이션을 배치
 
@@ -70,11 +70,11 @@ bool CDoor::Init()
 	//m_pTransform->SetWorldPivot(0.25f, -0.5f, 0.0f);
 	//m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
 
-	CRenderer* pRD = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
-	if (!pRD)
+	m_Renderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+	if (!m_Renderer)
 	{
-		pRD = m_pObject->AddComponent<CRenderer>("DoorRenderer");
-		pRD->SetMesh("Door_Wood_Right-01", TEXT("Door_Wood_Right-01.msh"));
+		m_Renderer = m_pObject->AddComponent<CRenderer>("DoorRenderer");
+		m_Renderer->SetMesh("Door_Wood_Right-01", TEXT("Door_Wood_Right-01.msh"));
 	}
 
 
@@ -88,7 +88,7 @@ bool CDoor::Init()
 		m_pTransform->SetLocalRotY(90.0f);*/
 		float fLocalY = m_pTransform->GetLocalRot().y;
 
-		Vector3 vMeshLength = pRD->GetMeshLength();
+		Vector3 vMeshLength = m_Renderer->GetMeshLength();
 		Vector3 vScale = vMeshLength * GetWorldScale();
 		Vector3 vCenter;
 
@@ -128,7 +128,6 @@ bool CDoor::Init()
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CDoor::Interact);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CDoor::InteractRelease);
 
-	SAFE_RELEASE(pRD);
 	SAFE_RELEASE(pOBB);
 
 	AfterClone();
@@ -162,6 +161,8 @@ bool CDoor::Init()
 
 int CDoor::Update(float fTime)
 {
+	Bumho();
+
 	if (m_eDoorType != DOOR_HEAVY)
 		OnAct(fTime);
 
@@ -209,9 +210,6 @@ void CDoor::UnLock(const Vector3 & vAxis)
 		인벤토리에 unordered_map으로 m_strKeyName을 넣어서 bool값을 찾고
 		리턴된 bool값이 트루라면 키 아이템을 획득한 것으로 간주하고
 		잠금해제.
-
-		태환씨에게 필요한 것 : unordered_map<string, bool>로 변수를 선언하고
-		모든 씬의 열쇠만큼 할당해준다.
 		*/
 		//일단 임시로 GameManager에 함수 만들어 놓음. 태환씨 추가되면 그걸로 바꿀 예정
 		if (GET_SINGLE(CGameManager)->FindKey(m_strKeyName))
@@ -813,8 +811,6 @@ void CDoor::SetMesh(const string & strMeshKey, const TCHAR * pFileName)
 	SAFE_RELEASE(pRD);
 }
 
-
-
 DOOR_TYPE CDoor::GetDoorType() const
 {
 	return m_eDoorType;
@@ -962,7 +958,6 @@ void CDoor::AutoTimeClose(float fTime)
 			}
 		}
 	}
-
 }
 
 void CDoor::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
@@ -1041,4 +1036,47 @@ void CDoor::InteractRelease(PUN::CCollider * pSrc, PUN::CCollider * pDest, float
 CDoor * CDoor::Clone()
 {
 	return new CDoor(*this);
+}
+
+void CDoor::Bumho()
+{
+	m_MeshLength = m_Renderer->GetMeshLength() * m_pTransform->GetWorldScale();
+
+	Matrix Temp = m_pTransform->GetPosDelta();
+	m_WorldPos.x = Temp._41;
+	m_WorldPos.y = Temp._42;
+	m_WorldPos.z = Temp._43;
+
+	Vector3 LengthHelf = m_MeshLength * 0.5f;
+
+	m_FrontCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y + LengthHelf.y, m_WorldPos.z - LengthHelf.z);
+	m_FrontCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y + LengthHelf.y, m_WorldPos.z - LengthHelf.z);
+	m_FrontCenterRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y + LengthHelf.y, m_WorldPos.z - LengthHelf.z);
+	m_FrontUpCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y + m_MeshLength.y, m_WorldPos.z - LengthHelf.z);
+	m_FrontUpLeft = Vector3(m_WorldPos.x, m_WorldPos.y + m_MeshLength.y, m_WorldPos.z - LengthHelf.z);
+	m_FrontUpRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y + m_MeshLength.y, m_WorldPos.z - LengthHelf.z);
+	m_FrontDownCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y, m_WorldPos.z - LengthHelf.z);
+	m_FrontDownLeft = m_WorldPos;
+	m_FrontDownRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y, m_WorldPos.z - LengthHelf.z);
+
+	m_CenterCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y + LengthHelf.y, m_WorldPos.z + LengthHelf.z);
+	m_CenterCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y + LengthHelf.y, m_WorldPos.z + LengthHelf.z);
+	m_CenterCenterRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y + LengthHelf.y, m_WorldPos.z + LengthHelf.z);
+	m_CenterUpCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y + m_MeshLength.y, m_WorldPos.z + LengthHelf.z);
+	m_CenterUpLeft = Vector3(m_WorldPos.x, m_WorldPos.y + m_MeshLength.y, m_WorldPos.z + LengthHelf.z);
+	m_CenterUpRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y + m_MeshLength.y, m_WorldPos.z + LengthHelf.z);
+	m_CenterDownCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y, m_WorldPos.z + LengthHelf.z);
+	m_CenterDownLeft = Vector3(m_WorldPos.x, m_WorldPos.y, m_WorldPos.z + LengthHelf.z);
+	m_CenterDownRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y, m_WorldPos.z + LengthHelf.z);
+
+	m_BackCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y + LengthHelf.y, m_WorldPos.z + LengthHelf.z);
+	m_BackCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y + LengthHelf.y, m_WorldPos.z + LengthHelf.z);
+	m_BackCenterRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y + LengthHelf.y, m_WorldPos.z + LengthHelf.z);
+	m_BackUpCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y + m_MeshLength.y, m_WorldPos.z + m_MeshLength.z);
+	m_BackUpCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y + m_MeshLength.y, m_WorldPos.z + m_MeshLength.z);
+	m_BackUpCenterRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y + m_MeshLength.y, m_WorldPos.z + m_MeshLength.z);
+	m_BackDownCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
+	m_BackDownCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
+	m_BackDownCenterRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
+
 }

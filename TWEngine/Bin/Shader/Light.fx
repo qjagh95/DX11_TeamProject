@@ -48,7 +48,7 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_TEX input)
     //SV_POSITION = 현재 정점에 WVP변환 후 ViewPortSize가 곱해져서 들어옴.
     float2 UV = input.vPos.xy / g_ViewPortSize.xy;
 
-    float4 vDepth = g_GBufferDepthTex.Sample(g_GBufferSmp, input.vUV);
+    float4 vDepth = g_GBufferDepthTex.Sample(g_GBufferSmp, UV);
 
 	// 정점 위치를 구한다. 인자로 들어온 UV값은 화면공간에서의 비율이다.
 	// 0 ~ 1 사이로 들어오게 되는 것이다.
@@ -69,22 +69,27 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_TEX input)
 	// -2를 곱해서 아래가 -값이 될 수 있도록 해준다.
     vProjPos.y = input.vUV.y * -2.f + 1.f;
     vProjPos.z = vDepth.r;
-    vProjPos.w = 1.f;       
+    vProjPos.w = 1.f;
 
     vProjPos *= vDepth.a;
 
     if (g_iLightType != LIGHT_POINT)
     {
         if (vDepth.w == 0.0f)
+            clip(-1);        
+    }
+    else
+    {
+        if(input.vPos.w < vDepth.a)
             clip(-1);
     }
 
 	// 뷰공간으로 변환한다.
     float3 vViewPos = mul(vProjPos, g_matInvProj).xyz;
-    float4 vNormalCol = g_GBufferNormalTex.Sample(g_GBufferSmp, input.vUV);
+    float4 vNormalCol = g_GBufferNormalTex.Sample(g_GBufferSmp, UV);
     float3 vNormal = vNormalCol.xyz;
 	// 재질정보를 압축을 해제해서 구해준 재질 정보를 이용해서 계산한다.
-    float4 vMaterial = g_GBufferMaterialTex.Sample(g_GBufferSmp, input.vUV);
+    float4 vMaterial = g_GBufferMaterialTex.Sample(g_GBufferSmp, UV);
     float3 ToCamera = normalize(-vViewPos);
 
     _tagLightInfo tLight = ComputeLight(vViewPos, vNormal, vMaterial, vNormalCol.w, ToCamera);

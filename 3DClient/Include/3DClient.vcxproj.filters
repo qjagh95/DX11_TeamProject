@@ -142,6 +142,9 @@
     <Filter Include="01. SceneComponent\Stage4">
       <UniqueIdentifier>{ed9e4149-ed00-4222-b6b4-fa8170346bf7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. SceneComponent\SC_Stage2Scene">
+      <UniqueIdentifier>{469562f4-5ff4-47d2-98c3-a33bb137bdbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -402,14 +405,14 @@
     <ClInclude Include="UserComponent\Parkour.h">
       <Filter>02. UserComponent\03. Field</Filter>
     </ClInclude>
-    <ClInclude Include="SceneComponent\Stage2Scene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\StageKey.h">
       <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\CenterKey.h">
       <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\Stage2Scene.h">
+      <Filter>01. SceneComponent\SC_Stage2Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -656,14 +659,14 @@
     <ClCompile Include="UserComponent\Parkour.cpp">
       <Filter>02. UserComponent\03. Field</Filter>
     </ClCompile>
-    <ClCompile Include="SceneComponent\Stage2Scene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\StageKey.cpp">
       <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\CenterKey.cpp">
       <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\Stage2Scene.cpp">
+      <Filter>01. SceneComponent\SC_Stage2Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -51,7 +51,7 @@ CRenderManager::CRenderManager() :
 	memset(m_pShader, 0, sizeof(CShader*) * SHADER_END);
 	memset(m_pFilter, 0, sizeof(CCSFilter*) * CFT_END);
 	
-	m_bLightWireFrame = true;
+	m_bLightWireFrame = false;
 
 	m_tCBuffer = {};
 
@@ -696,7 +696,6 @@ void CRenderManager::RenderLightDir(float fTime, CLight * pLight)
 	cBuffer.matInvProj = cBuffer.matProj;
 	cBuffer.matInvProj.Inverse();
 	cBuffer.matInvProj.Transpose();
-
 	cBuffer.matView.Transpose();
 	cBuffer.matProj.Transpose();
 
@@ -704,6 +703,8 @@ void CRenderManager::RenderLightDir(float fTime, CLight * pLight)
 
 	// 조명 정보를 상수버퍼에 넘겨준다.
 	pLight->UpdateLightCBuffer();
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
+	m_pState[STATE_ACC_BLEND]->SetState();
 
 	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
 	CONTEXT->IASetInputLayout(nullptr);
@@ -713,6 +714,9 @@ void CRenderManager::RenderLightDir(float fTime, CLight * pLight)
 	CONTEXT->IASetVertexBuffers(0, 0, nullptr, 0, &iOffset);
 	CONTEXT->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
 	CONTEXT->Draw(4, 0);
+
+	m_pState[STATE_ACC_BLEND]->ResetState();
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 }
 
 void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
@@ -734,13 +738,13 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 	cBuffer.matWorld = matScale * matPos;
 	cBuffer.matView = getCamera->GetViewMatrix();
 	cBuffer.matProj = getCamera->GetProjMatrix();
-
 	cBuffer.matWV = cBuffer.matWorld * cBuffer.matView;
 	cBuffer.matWVP = cBuffer.matWV * cBuffer.matProj;
 	cBuffer.matInvProj = cBuffer.matProj;
-	cBuffer.matInvProj.Inverse();
-	cBuffer.matInvProj.Transpose();
 
+	cBuffer.matInvProj.Inverse();
+
+	cBuffer.matInvProj.Transpose();
 	cBuffer.matWorld.Transpose();
 	cBuffer.matView.Transpose();
 	cBuffer.matProj.Transpose();
@@ -751,9 +755,17 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 
 	CShaderManager::GetInst()->UpdateCBuffer("Transform", &cBuffer);
 
+	//m_pState[STATE_CULL_NONE]->SetState();
+	////m_pState[STATE_DEPTH_DISABLE]->SetState();
+
+	//m_pSphereVolum->Render();
+
+	////m_pState[STATE_DEPTH_DISABLE]->ResetState();
+	//m_pState[STATE_CULL_NONE]->ResetState();
+
 	m_pState[STATE_FRONT_CULL]->SetState();	
 	{
-		m_pState[STATE_DEPTH_GRATOR]->SetState();		
+		//m_pState[STATE_DEPTH_DISABLE]->SetState();
 		{
 			m_pState[STATE_ALL_BLEND]->SetState();			
 			{
@@ -761,7 +773,7 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 			}
 			m_pState[STATE_ALL_BLEND]->ResetState();
 		}
-		m_pState[STATE_DEPTH_GRATOR]->ResetState();
+		//m_pState[STATE_DEPTH_DISABLE]->ResetState();
 	}
 	m_pState[STATE_FRONT_CULL]->ResetState();
 
@@ -770,11 +782,11 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 	{
 		m_pState[STATE_ZERO_BLEND]->SetState();
 		{
-			m_pState[STATE_DEPTH_LESS]->SetState();
+			//m_pState[STATE_DEPTH_DISABLE]->SetState();
 			{
 				m_pSphereVolum->Render();
 			}
-			m_pState[STATE_DEPTH_LESS]->ResetState();
+			//m_pState[STATE_DEPTH_DISABLE]->ResetState();
 		}
 		m_pState[STATE_ZERO_BLEND]->ResetState();
 	}
@@ -831,8 +843,6 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 
 	CShaderManager::GetInst()->UpdateCBuffer("Transform", &cBuffer);
 
-	m_pState[STATE_ACC_BLEND]->SetState();
-	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
 	CDevice::GetInst()->GetContext()->IASetInputLayout(nullptr);
 
@@ -842,8 +852,6 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 	CDevice::GetInst()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
-	m_pState[STATE_DEPTH_DISABLE]->ResetState();
-	m_pState[STATE_ACC_BLEND]->ResetState();
 
 	if (m_bLightWireFrame == false)
 		return;
@@ -852,7 +860,6 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 
 	CONTEXT->IASetInputLayout(m_pPointLightLayout);
 
-	m_pState[STATE_DEPTH_DISABLE]->SetState();
 	m_pState[STATE_CULL_NONE]->SetState();
 	m_pState[STATE_WIRE_FRAME]->SetState();
 	{
@@ -860,7 +867,6 @@ void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
 	}
 	m_pState[STATE_WIRE_FRAME]->ResetState();
 	m_pState[STATE_CULL_NONE]->ResetState();
-	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 }
 
 void CRenderManager::RenderLightBlend(float _fTime)
@@ -996,9 +1002,7 @@ void CRenderManager::RenderSkyObj(FAVORITE_TARGET eTarget, float fTime)
 
 void CRenderManager::RenderFog(float _fTime)
 {
-	//첫번째 패스 시작
-	m_pTarget[TARGET_FOG_DEPTH]->ClearTarget();
-
+	
 	m_pTarget[TARGET_BACK]->ClearTarget();
 
 	CONTEXT->CopyResource(m_pTarget[TARGET_BACK]->GetTexture(), m_pTarget[TARGET_SKY]->GetTexture());
@@ -1007,7 +1011,9 @@ void CRenderManager::RenderFog(float _fTime)
 
 	for (int i = 0; i < m_tRenderObj[RG_FOG].iSize; ++i)
 	{
+		//첫번째 패스 시작
 		{
+			m_pTarget[TARGET_FOG_DEPTH]->ClearTarget();
 			m_pTarget[TARGET_FOG_DEPTH]->SetTarget();
 
 			m_pState[STATE_DEPTH_DISABLE]->SetState();
@@ -1026,17 +1032,13 @@ void CRenderManager::RenderFog(float _fTime)
 
 			//두번째 패스 시작
 			{
+				m_pTarget[TARGET_FOG_DEPTH]->ClearTarget();
+
 				m_pState[STATE_BACK_CULL]->SetState();
 
 				m_pShader[SHADER_FOG_BACK]->SetShader();
 
-				CONTEXT->PSSetShaderResources(9, 1, &m_pFogDepthSRV);
-
 				m_tRenderObj[RG_FOG].pList[i]->Render(_fTime);
-
-				ID3D11ShaderResourceView* pSRV = nullptr;
-
-				CONTEXT->PSSetShaderResources(9, 1, &pSRV);
 
 				m_pState[STATE_BACK_CULL]->ResetState();
 			}
@@ -1048,6 +1050,7 @@ void CRenderManager::RenderFog(float _fTime)
 		//세번째 패스 시작
 		m_pTarget[TARGET_BACK]->SetTarget();
 
+		CONTEXT->PSSetShaderResources(9, 1, &m_pFogDepthSRV);
 		m_pTarget[TARGET_FOG_DEPTH]->SetShader(10);
 		m_pTarget[TARGET_SKY]->SetShader(11);
 
@@ -1059,6 +1062,8 @@ void CRenderManager::RenderFog(float _fTime)
 
 		m_pState[STATE_CULL_NONE]->ResetState();
 
+		ID3D11ShaderResourceView* pSRV = nullptr;
+		CONTEXT->PSSetShaderResources(9, 1, &pSRV);
 		m_pTarget[TARGET_FOG_DEPTH]->ResetShader(10);
 		m_pTarget[TARGET_SKY]->ResetShader(11);
 

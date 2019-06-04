@@ -12,14 +12,19 @@ CLight::CLight() :
 	m_fLimitTime(0.0f),
 	m_fCheckTime(0.0f),
 	m_fDeltaTime(0.0f),
-	m_fInAngle(0.0f),
-	m_fOutAngle(0.0f),
-	m_fRange(0.0f),
+	m_fInAngle(1.0f),
+	m_fOutAngle(1.0f),
+	m_fRange(5.0f),
+	m_fAutoBlinkAccTime(0.0f),
+	m_fAutoBlinkDeltaTime(0.0f),
+	m_fAutoLimitTime(0.0f),
+	m_fAutoDeltaTime(0.0f),
 	m_bBlink(false),
 	m_bBlinkFinalTurnOn(false),
 	m_bTurnOn(true),
 	m_bLightVolume(false),
-	m_pFog(nullptr)
+	m_pFog(nullptr),
+	m_bBlinkAuto(false)
 {
 	m_tInfo.vDif = Vector4::White;
 	m_tInfo.vAmb = Vector4(0.2f, 0.2f, 0.2f, 1.f);
@@ -31,7 +36,7 @@ CLight::CLight() :
 	m_tInfo.iLightType = LT_DIR;
 	m_vOriginColor = Vector4::White;
 	m_vChangeColor = Vector4::Black;
-
+	m_vAutoChangeColor = Vector4::Black;
 	m_iRim = -1;
 	m_eComType = CT_LIGHT;
 }
@@ -139,103 +144,122 @@ void CLight::Load(BinaryRead * _pInstBR)
 	m_vOriginColor = vDif;
 }
 
+void CLight::EnableLightVolume()
+{
+	m_bLightVolume = true;
+
+	if (m_eLightType == LT_SPOT)
+	{
+		m_pTransform->SetLocalRotX(90.0f);
+
+		
+
+		if (!m_pFog)
+		{
+			CGameObject* pObj = CGameObject::CreateObject("LightFog", nullptr);
+			pObj->SetSave(false);
+			CTransform* pTr = pObj->GetTransform();
+			m_pObject->AddChild(pObj);
+
+			float fRadius = 0.0f;
+			float fRadian = DegreeToRadian(m_fOutAngle * 0.5f);
+			float fTangent = tanf(fRadian);
+			fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle * 0.5f));
+
+			m_pFog = pObj->AddComponent<CVolumeFog>("VolumeFog");
+
+			m_pFog->SetFogColor(m_vOriginColor);
+			m_pFog->SetMesh(CORN_VOLUME);
+
+			m_pFog->SetDensity(0.1f);
+
+			pTr->SetWorldScale(fRadius, m_fRange * 0.125f, fRadius);
+			pTr->SetWorldRotX(90.0f);
+
+			SAFE_RELEASE(pTr);
+			SAFE_RELEASE(pObj);
+		}
+		else
+		{
+			m_pFog->SetEnable(true);
+			CTransform* pTr = m_pFog->GetTransform();
+
+			m_pFog->SetFogColor(m_vOriginColor);
+			m_pFog->SetMesh(CORN_VOLUME);
+
+			float fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle * 0.5f));
+
+			pTr->SetWorldScale(fRadius, m_fRange * 0.33f, fRadius);
+
+			SAFE_RELEASE(pTr);
+		}
+	}
+	else if (m_eLightType == LT_POINT)
+	{
+		if (!m_pFog)
+		{
+			CGameObject* pObj = CGameObject::CreateObject("LightFog", nullptr);
+			pObj->SetSave(false);
+			CTransform* pTr = pObj->GetTransform();
+			m_pObject->AddChild(pObj);
+
+			m_pFog = pObj->AddComponent<CVolumeFog>("VolumeFog");
+
+			m_pFog->SetFogColor(m_vOriginColor);
+			m_pFog->SetMesh("Sky");
+			m_pFog->SetDensity(0.1f);
+
+			pTr->SetWorldScale(m_fRange * 0.33f, m_fRange * 0.33f, m_fRange * 0.33f);
+
+			SAFE_RELEASE(pTr);
+			SAFE_RELEASE(pObj);
+		}
+		else
+		{
+			m_pFog->SetEnable(true);
+			CTransform* pTr = m_pFog->GetTransform();
+
+			m_pFog->SetFogColor(m_vOriginColor);
+			m_pFog->SetMesh("Sky");
+
+			pTr->SetWorldScale(m_fRange * 0.33f, m_fRange * 0.33f, m_fRange * 0.33f);
+
+			SAFE_RELEASE(pTr);
+		}
+	}
+}
+
 void CLight::SetLightType(LIGHT_TYPE eType)
 {
 	m_eLightType = eType;
 	m_tInfo.iLightType = eType;
 
-	//if (eType == LT_DIR)
-	//{
-	//	if (m_bLightVolume)
-	//	{
-	//		m_bLightVolume = false;
-	//		if(m_pFog)
-	//			m_pFog->SetEnable(false);
-	//	}
-	//}
-	//else if (eType == LT_SPOT)
-	//{
-	//	m_pTransform->SetLocalRotX(90.0f);
+	if (m_bLightVolume)
+	{
+		if (m_eLightType == LT_DIR)
+		{
+			if (m_pFog)
+				m_pFog->SetEnable(false);
+		}
+		else if (m_eLightType == LT_SPOT)
+		{
+			m_pTransform->SetLocalRotX(90.0f);
 
-	//	if (!m_bLightVolume)
-	//	{
-	//		m_bLightVolume = true;
-
-	//		if (!m_pFog)
-	//		{
-	//			CGameObject* pObj = CGameObject::CreateObject("LightFog", nullptr);
-	//			pObj->SetSave(false);
-	//			CTransform* pTr = pObj->GetTransform();
-	//			m_pObject->AddChild(pObj);
-
-	//			float fRadius = 0.0f;
-
-	//			fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle));
-
-	//			m_pFog = pObj->AddComponent<CVolumeFog>("VolumeFog");
-
-	//			m_pFog->SetFogColor(m_vOriginColor);
-	//			m_pFog->SetMesh(CORN_VOLUME);
-
-	//			pTr->SetWorldScale(fRadius, m_fRange * 0.33f, fRadius);
-	//			pTr->SetWorldRotX(90.0f);
-
-	//			SAFE_RELEASE(pTr);
-	//			SAFE_RELEASE(pObj);
-	//		}
-	//		else
-	//		{
-	//			m_pFog->SetEnable(true);
-	//			CTransform* pTr = m_pFog->GetTransform();
-
-	//			m_pFog->SetFogColor(m_vOriginColor);
-	//			m_pFog->SetMesh(CORN_VOLUME);
-
-	//			float fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle));
-
-	//			pTr->SetWorldScale(fRadius, m_fRange * 0.33f, fRadius);
-	//			pTr->SetWorldRotX(90.0f);
-
-	//			SAFE_RELEASE(pTr);
-	//		}
-	//	}
-	//	else if (eType == LT_POINT)
-	//	{
-	//		m_bLightVolume = true;
-
-	//		if (!m_pFog)
-	//		{
-	//			CGameObject* pObj = CGameObject::CreateObject("LightFog", nullptr);
-	//			pObj->SetSave(false);
-	//			CTransform* pTr = pObj->GetTransform();
-	//			m_pObject->AddChild(pObj);
-
-	//			m_pFog = pObj->AddComponent<CVolumeFog>("VolumeFog");
-
-	//			m_pFog->SetFogColor(m_vOriginColor);
-	//			m_pFog->SetMesh("Sky");
-
-	//			pTr->SetWorldScale(m_fRange * 0.33f, m_fRange * 0.33f, m_fRange * 0.33f);
-	//			pTr->SetWorldRotX(90.0f);
-
-	//			SAFE_RELEASE(pTr);
-	//			SAFE_RELEASE(pObj);
-	//		}
-	//		else
-	//		{
-	//			m_pFog->SetEnable(true);
-	//			CTransform* pTr = m_pFog->GetTransform();
-
-	//			m_pFog->SetFogColor(m_vOriginColor);
-	//			m_pFog->SetMesh("Sky");
-
-	//			pTr->SetWorldScale(m_fRange * 0.33f, m_fRange * 0.33f, m_fRange * 0.33f);
-	//			pTr->SetWorldRotX(90.0f);
-
-	//			SAFE_RELEASE(pTr);
-	//		}
-	//	}
-	//}
+			if (m_pFog)
+			{
+				m_pFog->SetEnable(true);
+				m_pFog->SetMesh(CORN_VOLUME);
+			}
+		}
+		else if (m_eLightType == LT_POINT)
+		{			
+			if(m_pFog)
+			{
+				m_pFog->SetEnable(true);
+				m_pFog->SetMesh("Sky");
+			}
+		}
+	}
 }
 
 void CLight::SetLightRange(float fRange)
@@ -249,10 +273,18 @@ void CLight::SetLightRange(float fRange)
 	{
 		CTransform* pTr = m_pFog->GetTransform();
 
-		float fRadius = 0.0f;
-		fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle));
+		if (m_eLightType == LT_SPOT)
+		{
+			float fRadius = 0.0f;
+			fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle * 0.5f));
 
-		pTr->SetWorldScale(fRadius, m_fRange, fRadius);
+			pTr->SetWorldScale(fRadius, m_fRange * 0.125f, fRadius);
+		}
+		else if (m_eLightType == LT_POINT)
+		{
+			float fRange = m_fRange * 0.125f;
+			pTr->SetWorldScale(fRange, fRange, fRange);
+		}
 
 		SAFE_RELEASE(pTr);
 	}
@@ -266,7 +298,7 @@ void CLight::SetAngle(float fInAngle, float fOutAngle)
 	m_tInfo.fInAngle = cosf(DegreeToRadian(fInAngle * 0.5f));
 	m_tInfo.fOutAngle = cosf(DegreeToRadian(fOutAngle * 0.5f));
 
-	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fOutAngle), m_fWidth / m_fHeight, 0.03f, 500.0f);
+	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fOutAngle * 0.5f), m_fWidth / m_fHeight, 0.03f, 500.0f);
 
 	if (m_bLightVolume)
 	{
@@ -275,7 +307,7 @@ void CLight::SetAngle(float fInAngle, float fOutAngle)
 		float fRadius = 0.0f;
 		fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle * 0.5f));
 
-		pTr->SetWorldScale(fRadius, m_pTransform->GetWorldPos().y, fRadius);
+		pTr->SetWorldScale(fRadius,	m_fRange * 0.125, fRadius);
 
 		SAFE_RELEASE(pTr);
 	}
@@ -372,6 +404,15 @@ void CLight::StartBlink(float fLimitTime, float fDeltaTime, const Vector4 & vCol
 	m_bBlinkFinalTurnOn = bFinalTurnOn;
 }
 
+void CLight::SetAutoBlink(float fLimitTime, float fDeltaTime, const Vector4& vColor, float fAutoDeltaTime)
+{
+	m_bBlinkAuto = true;
+	m_fAutoLimitTime = fLimitTime;
+	m_fAutoDeltaTime = fDeltaTime;
+	m_vAutoChangeColor = vColor;
+	m_fDeltaTime = fAutoDeltaTime;
+}
+
 void CLight::Blink(float fTime)
 {
 	if (m_bBlink)
@@ -392,6 +433,7 @@ void CLight::Blink(float fTime)
 					SetLightColor(m_vChangeColor, Vector4(0.2f, 0.2f, 0.2f, 1.f), m_vChangeColor);
 					m_bTurnOn = false;
 				}
+				m_fCheckTime = m_fAccTime;
 			}
 		}
 		else
@@ -407,6 +449,20 @@ void CLight::Blink(float fTime)
 			{
 				SetLightColor(m_vChangeColor, Vector4(0.2f, 0.2f, 0.2f, 1.f), m_vChangeColor);
 				m_bTurnOn = false;
+			}
+			m_fAccTime = 0.0f;
+			m_fCheckTime = 0.0f;;
+		}
+	}
+	else
+	{
+		if (m_bBlinkAuto)
+		{
+			m_fAutoBlinkAccTime += fTime;
+			if (m_fAutoBlinkAccTime >= m_fAutoBlinkDeltaTime)
+			{
+				StartBlink(m_fAutoLimitTime, m_fAutoDeltaTime, m_vAutoChangeColor, true);
+				m_fAutoBlinkAccTime = 0.0f;
 			}
 		}
 	}
@@ -467,7 +523,7 @@ bool CLight::Init()
 	m_fHeight = (float)_RESOLUTION.iHeight;
 
 	m_fNear = pCamera->GetCameraNear();
-	m_fRange = pCamera->GetCameraFar();
+	m_fRange = 100.0f;
 	m_fOutAngle = pCamera->GetCameraViewAngle();
 
 	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_fOutAngle), m_fWidth / m_fHeight, m_fNear, 500.0f);

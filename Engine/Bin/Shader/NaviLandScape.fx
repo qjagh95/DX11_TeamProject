@@ -11,7 +11,7 @@ cbuffer NaviLandCBuffer : register(b6)
     int g_BrushZRange;
 };
 
-cbuffer GridCBuffer : register(b4)
+cbuffer GridCBuffer : register(b8)
 {
     int g_GridLineSize;
     int g_isVisibleGrid;
@@ -43,13 +43,13 @@ float4 GetBrushColor(float3 vPos, float4 BasicColor)
         {
             if (Range.z > 0.0f)
             {
-                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) && 
+                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) &&
                     (vPos.z <= g_BrushPos.z && vPos.z >= g_StartPos.z))
                     return float4(1.0f, 1.0f, 0.0f, 1.0f);
             }
             else if (Range.z < 0.0f)
             {
-                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) && 
+                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) &&
                     (vPos.z >= g_BrushPos.z && vPos.z <= g_StartPos.z))
                     return float4(1.0f, 1.0f, 0.0f, 1.0f);
             }
@@ -59,7 +59,7 @@ float4 GetBrushColor(float3 vPos, float4 BasicColor)
         {
             if (Range.z > 0.0f)
             {
-                if ((vPos.x >= g_BrushPos.x && vPos.x <= g_StartPos.x) && 
+                if ((vPos.x >= g_BrushPos.x && vPos.x <= g_StartPos.x) &&
                     (vPos.z <= g_BrushPos.z && vPos.z >= g_StartPos.z))
                     return float4(1.0f, 1.0f, 0.0f, 1.0f);
             }
