@@ -870,6 +870,14 @@ void CEditManager::SetAlphaEnable(bool _isFlag)
 	SAFE_RELEASE(pRenderer);
 }
 
+bool CEditManager::GetAlphaEnabled()
+{
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+	bool isEnabled = pRenderer->GetAlphaEnable();
+	SAFE_RELEASE(pRenderer);
+	return isEnabled;
+}
+
 void CEditManager::SetBumpScale(float _fScale)
 {
 	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
@@ -1275,6 +1283,18 @@ void CEditManager::SetAngle(float _inAngle, float _outAngle)
 	}
 	CLight* pLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
 	pLight->SetAngle(_inAngle, _outAngle);
+}
+
+float CEditManager::GetInAngle()
+{
+	CLight* pLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+	return pLight->GetInAngle();
+}
+
+float CEditManager::GetOutAngle()
+{
+	CLight* pLight = m_pObject->FindComponentFromTypeNonCount<CLight>(CT_LIGHT);
+	return pLight->GetOutAngle();
 }
 
 vector<Vector4> CEditManager::GetSpecular()

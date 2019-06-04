@@ -74,7 +74,9 @@ namespace WinFormEditor
                 ((TextBox)listTools[8]).Text = ((TrackBar)listTools[7]).Value.ToString();
 
                 // SpotLight In, Out Angle
+                ((TrackBar)listTools[9]).Value = (int)wrapper.GetInAngle();
                 ((TextBox)listTools[10]).Text = ((TrackBar)listTools[9]).Value.ToString();
+                ((TrackBar)listTools[11]).Value = (int)wrapper.GetOutAngle();
                 ((TextBox)listTools[12]).Text = ((TrackBar)listTools[11]).Value.ToString();
             }
         }

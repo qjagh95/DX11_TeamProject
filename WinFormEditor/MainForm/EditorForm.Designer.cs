@@ -216,9 +216,9 @@
             this.Label_BasicMesh = new System.Windows.Forms.Label();
             this.Btn_AddMesh = new System.Windows.Forms.Button();
             this.GB_Renderer = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.label69 = new System.Windows.Forms.Label();
             this.TB_BumpScale = new System.Windows.Forms.TextBox();
+            this.TrackBar_BumpScale = new System.Windows.Forms.TrackBar();
+            this.CB_AlphaEnabled = new System.Windows.Forms.CheckBox();
             this.label68 = new System.Windows.Forms.Label();
             this.CB_ColliderEnable = new System.Windows.Forms.CheckBox();
             this.TB_SelecteMesh = new System.Windows.Forms.TextBox();
@@ -270,6 +270,7 @@
             this.GB_Transform.SuspendLayout();
             this.GB_Hierachy.SuspendLayout();
             this.GB_Renderer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrackBar_BumpScale)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -2462,9 +2463,9 @@
             // 
             // GB_Renderer
             // 
-            this.GB_Renderer.Controls.Add(this.checkBox1);
-            this.GB_Renderer.Controls.Add(this.label69);
             this.GB_Renderer.Controls.Add(this.TB_BumpScale);
+            this.GB_Renderer.Controls.Add(this.TrackBar_BumpScale);
+            this.GB_Renderer.Controls.Add(this.CB_AlphaEnabled);
             this.GB_Renderer.Controls.Add(this.label68);
             this.GB_Renderer.Controls.Add(this.CB_ColliderEnable);
             this.GB_Renderer.Controls.Add(this.TB_SelecteMesh);
@@ -2488,44 +2489,44 @@
             this.GB_Renderer.Text = "Renderer";
             this.GB_Renderer.Enter += new System.EventHandler(this.GB_Renderer_Enter);
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.checkBox1.Location = new System.Drawing.Point(131, 328);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(63, 21);
-            this.checkBox1.TabIndex = 50;
-            this.checkBox1.Text = "Alpha";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.SetAlphaEnable);
-            // 
-            // label69
-            // 
-            this.label69.AutoSize = true;
-            this.label69.ForeColor = System.Drawing.Color.Black;
-            this.label69.Location = new System.Drawing.Point(8, 308);
-            this.label69.Name = "label69";
-            this.label69.Size = new System.Drawing.Size(283, 17);
-            this.label69.TabIndex = 49;
-            this.label69.Text = "-------------------------------------------------------";
-            // 
             // TB_BumpScale
             // 
             this.TB_BumpScale.BackColor = System.Drawing.SystemColors.Control;
-            this.TB_BumpScale.Location = new System.Drawing.Point(189, 280);
+            this.TB_BumpScale.Location = new System.Drawing.Point(214, 288);
             this.TB_BumpScale.Name = "TB_BumpScale";
-            this.TB_BumpScale.Size = new System.Drawing.Size(98, 25);
-            this.TB_BumpScale.TabIndex = 22;
+            this.TB_BumpScale.ReadOnly = true;
+            this.TB_BumpScale.Size = new System.Drawing.Size(75, 25);
+            this.TB_BumpScale.TabIndex = 52;
             this.TB_BumpScale.Text = "0";
-            this.TB_BumpScale.TextChanged += new System.EventHandler(this.ChangeBumpScale);
-            this.TB_BumpScale.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.BumpScaleCheckKeyPress);
+            // 
+            // TrackBar_BumpScale
+            // 
+            this.TrackBar_BumpScale.LargeChange = 1;
+            this.TrackBar_BumpScale.Location = new System.Drawing.Point(2, 291);
+            this.TrackBar_BumpScale.Maximum = 30;
+            this.TrackBar_BumpScale.Minimum = -30;
+            this.TrackBar_BumpScale.Name = "TrackBar_BumpScale";
+            this.TrackBar_BumpScale.Size = new System.Drawing.Size(211, 45);
+            this.TrackBar_BumpScale.TabIndex = 51;
+            this.TrackBar_BumpScale.Scroll += new System.EventHandler(this.ChangeBumpScale);
+            // 
+            // CB_AlphaEnabled
+            // 
+            this.CB_AlphaEnabled.AutoSize = true;
+            this.CB_AlphaEnabled.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.CB_AlphaEnabled.Location = new System.Drawing.Point(131, 337);
+            this.CB_AlphaEnabled.Name = "CB_AlphaEnabled";
+            this.CB_AlphaEnabled.Size = new System.Drawing.Size(63, 21);
+            this.CB_AlphaEnabled.TabIndex = 50;
+            this.CB_AlphaEnabled.Text = "Alpha";
+            this.CB_AlphaEnabled.UseVisualStyleBackColor = true;
+            this.CB_AlphaEnabled.CheckedChanged += new System.EventHandler(this.SetAlphaEnable);
             // 
             // label68
             // 
             this.label68.AutoSize = true;
             this.label68.ForeColor = System.Drawing.Color.Black;
-            this.label68.Location = new System.Drawing.Point(7, 284);
+            this.label68.Location = new System.Drawing.Point(7, 271);
             this.label68.Name = "label68";
             this.label68.Size = new System.Drawing.Size(178, 17);
             this.label68.TabIndex = 21;
@@ -2535,7 +2536,7 @@
             // 
             this.CB_ColliderEnable.AutoSize = true;
             this.CB_ColliderEnable.ForeColor = System.Drawing.Color.Black;
-            this.CB_ColliderEnable.Location = new System.Drawing.Point(8, 357);
+            this.CB_ColliderEnable.Location = new System.Drawing.Point(8, 363);
             this.CB_ColliderEnable.Name = "CB_ColliderEnable";
             this.CB_ColliderEnable.Size = new System.Drawing.Size(75, 21);
             this.CB_ColliderEnable.TabIndex = 20;
@@ -2554,7 +2555,7 @@
             // 
             this.CB_GizmoEnable.AutoSize = true;
             this.CB_GizmoEnable.ForeColor = System.Drawing.Color.Black;
-            this.CB_GizmoEnable.Location = new System.Drawing.Point(200, 328);
+            this.CB_GizmoEnable.Location = new System.Drawing.Point(200, 337);
             this.CB_GizmoEnable.Name = "CB_GizmoEnable";
             this.CB_GizmoEnable.Size = new System.Drawing.Size(66, 21);
             this.CB_GizmoEnable.TabIndex = 18;
@@ -2566,7 +2567,7 @@
             // 
             this.CB_PickColliderEnable.AutoSize = true;
             this.CB_PickColliderEnable.ForeColor = System.Drawing.Color.Black;
-            this.CB_PickColliderEnable.Location = new System.Drawing.Point(89, 357);
+            this.CB_PickColliderEnable.Location = new System.Drawing.Point(89, 363);
             this.CB_PickColliderEnable.Name = "CB_PickColliderEnable";
             this.CB_PickColliderEnable.Size = new System.Drawing.Size(105, 21);
             this.CB_PickColliderEnable.TabIndex = 17;
@@ -2578,7 +2579,7 @@
             // 
             this.FileMesh.AutoSize = true;
             this.FileMesh.ForeColor = System.Drawing.Color.Black;
-            this.FileMesh.Location = new System.Drawing.Point(7, 183);
+            this.FileMesh.Location = new System.Drawing.Point(7, 178);
             this.FileMesh.Name = "FileMesh";
             this.FileMesh.Size = new System.Drawing.Size(91, 17);
             this.FileMesh.TabIndex = 7;
@@ -2590,7 +2591,7 @@
             this.LB_FileMesh.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.LB_FileMesh.FormattingEnabled = true;
             this.LB_FileMesh.ItemHeight = 17;
-            this.LB_FileMesh.Location = new System.Drawing.Point(9, 200);
+            this.LB_FileMesh.Location = new System.Drawing.Point(9, 196);
             this.LB_FileMesh.Name = "LB_FileMesh";
             this.LB_FileMesh.Size = new System.Drawing.Size(278, 72);
             this.LB_FileMesh.TabIndex = 6;
@@ -2600,7 +2601,7 @@
             // 
             this.CB_isDebugTarget.AutoSize = true;
             this.CB_isDebugTarget.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.CB_isDebugTarget.Location = new System.Drawing.Point(9, 328);
+            this.CB_isDebugTarget.Location = new System.Drawing.Point(9, 337);
             this.CB_isDebugTarget.Name = "CB_isDebugTarget";
             this.CB_isDebugTarget.Size = new System.Drawing.Size(116, 21);
             this.CB_isDebugTarget.TabIndex = 8;
@@ -2939,7 +2940,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1924, 918);
+            this.ClientSize = new System.Drawing.Size(1924, 883);
             this.Controls.Add(this.label46);
             this.Controls.Add(this.GB_Transform);
             this.Controls.Add(this.groupBox1);
@@ -2985,6 +2986,7 @@
             this.GB_Hierachy.PerformLayout();
             this.GB_Renderer.ResumeLayout(false);
             this.GB_Renderer.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.TrackBar_BumpScale)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -3208,16 +3210,16 @@
         private System.Windows.Forms.TextBox TB_DecalNormal;
         private System.Windows.Forms.Label label65;
         private System.Windows.Forms.TextBox TB_DecalDiffuse;
-        private System.Windows.Forms.Label label69;
-        private System.Windows.Forms.TextBox TB_BumpScale;
         private System.Windows.Forms.Label label68;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox CB_AlphaEnabled;
         private System.Windows.Forms.Label label70;
         private System.Windows.Forms.TextBox TB_OutAngle;
         private System.Windows.Forms.TextBox TB_InAngle;
         private System.Windows.Forms.TrackBar TrackBar_Out;
         private System.Windows.Forms.Label label71;
         private System.Windows.Forms.TrackBar TrackBar_In;
+        private System.Windows.Forms.TextBox TB_BumpScale;
+        private System.Windows.Forms.TrackBar TrackBar_BumpScale;
     }
 }
 

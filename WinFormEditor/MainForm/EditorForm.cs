@@ -166,11 +166,6 @@ namespace WinFormEditor
             return Btn_AddLightComponent;
         }
 
-        public TextBox GetBumpScaleTextBox()
-        {
-            return TB_BumpScale;
-        }
-
         public List<object> GetLightTools()
         {
             List<object> listLightTools = new List<object>();
@@ -188,6 +183,21 @@ namespace WinFormEditor
             listLightTools.Add(TrackBar_Out);
             listLightTools.Add(TB_OutAngle);
             return listLightTools;
+        }
+
+        public CheckBox GetAlphaEnableCheckBox()
+        {
+            return CB_AlphaEnabled;
+        }
+
+        public TextBox GetBumpScaleTextBox()
+        {
+            return TB_BumpScale;
+        }
+
+        public TrackBar GetBumpScaleTrackBar()
+        {
+            return TrackBar_BumpScale;
         }
 
         public Dictionary<eTransformType, List<TextBox>> GetTransformTextBox(eTransform _eTr)
@@ -794,63 +804,72 @@ namespace WinFormEditor
             m_coreWrapper.ChangeTarget(CB_isDebugTarget.Checked);
         }
 
-        private void BumpScaleCheckKeyPress(object sender, KeyPressEventArgs e)
-        {
-            // 숫자와 백스페이스, 마침표, 음수를 제외한 나머지를 바로 처리
-            if (!(char.IsDigit(e.KeyChar) || 
-                  e.KeyChar == Convert.ToChar(Keys.Back) ||
-                  e.KeyChar == Convert.ToChar('.') ||
-                  e.KeyChar == Convert.ToChar('-')))
-            {
-                e.Handled = true;
-            }
-        }
-
         private void ChangeBumpScale(object sender, EventArgs e)
         {
-            bool isCheck = true;
-            if (LB_ObjectList.SelectedItem == null)
-            {
-                isCheck = false;
-                MessageBox.Show("선택된 Object가 없습니다.");
-            }
-            else
-            {
-                bool isFind = m_coreWrapper.FindRendererComponent();
-                if (isFind == false)
-                {
-                    isCheck = false;
-                    MessageBox.Show("선택된 오브젝트에 Renderer 컴포넌트가 없습니다");
-                }
-            }
-            if(isCheck == false)
-            {
-                TB_BumpScale.TextChanged -= ChangeBumpScale;
-                TB_BumpScale.Clear();
-                TB_BumpScale.TextChanged += ChangeBumpScale;
-                return;
-            }
-
-            // 범프 값 변경
-            // Transform StringFormCheck(형식 검사) 함수 호출 용도로 사용한다.
-            if (TB_BumpScale.Text != "" && TB_BumpScale.Text != "-")
-            {
-                if (m_transform.StringFormCheck(TB_BumpScale) == true)
-                {
-                    float fBumpScale = (float)Convert.ToDouble(TB_BumpScale.Text);
-                    if(fBumpScale > 3.0f)
-                    {
-                        fBumpScale = 3.0f;
-                    }
-                    else if(fBumpScale < -3.0f)
-                    {
-                        fBumpScale = -3.0f;
-                    }
-                    TB_BumpScale.Text = fBumpScale.ToString();
-                    m_coreWrapper.SetBumpScale(100.0f);
-                }
-            }
+            float fValue = (((TrackBar)sender).Value / 10.0f);
+            TB_BumpScale.Text = fValue.ToString();
+            m_coreWrapper.SetBumpScale(fValue);
         }
+
+        //private void BumpScaleCheckKeyPress(object sender, KeyPressEventArgs e)
+        //{
+        //    // 숫자와 백스페이스, 마침표, 음수를 제외한 나머지를 바로 처리
+        //    if (!(char.IsDigit(e.KeyChar) || 
+        //          e.KeyChar == Convert.ToChar(Keys.Back) ||
+        //          e.KeyChar == Convert.ToChar('.') ||
+        //          e.KeyChar == Convert.ToChar('-')))
+        //    {
+        //        e.Handled = true;
+        //    }
+        //}
+
+        //private void ChangeBumpScale(object sender, EventArgs e)
+        //{
+        //    bool isCheck = true;
+        //    if (LB_ObjectList.SelectedItem == null)
+        //    {
+        //        isCheck = false;
+        //        MessageBox.Show("선택된 Object가 없습니다.");
+        //    }
+        //    else
+        //    {
+        //        bool isFind = m_coreWrapper.FindRendererComponent();
+        //        if (isFind == false)
+        //        {
+        //            isCheck = false;
+        //            MessageBox.Show("선택된 오브젝트에 Renderer 컴포넌트가 없습니다");
+        //        }
+        //    }
+        //    if(isCheck == false)
+        //    {
+        //        TB_BumpScale.TextChanged -= ChangeBumpScale;
+        //        TB_BumpScale.Clear();
+        //        TB_BumpScale.TextChanged += ChangeBumpScale;
+        //        return;
+        //    }
+
+        //    // 범프 값 변경
+        //    // Transform StringFormCheck(형식 검사) 함수 호출 용도로 사용한다.
+        //    if (TB_BumpScale.Text != "" && TB_BumpScale.Text != "-")
+        //    {
+        //        if (m_transform.StringFormCheck(TB_BumpScale) == true)
+        //        {
+        //            float fBumpScale = (float)Convert.ToDouble(TB_BumpScale.Text);
+        //            if (fBumpScale > 3.0f)
+        //            {
+        //                fBumpScale = 3.0f;
+        //            }
+        //            else if (fBumpScale < -3.0f)
+        //            {
+        //                fBumpScale = -3.0f;
+        //            }
+        //            TB_BumpScale.TextChanged -= ChangeBumpScale;
+        //            TB_BumpScale.Text = fBumpScale.ToString();
+        //            m_coreWrapper.SetBumpScale(fBumpScale);
+        //            TB_BumpScale.TextChanged += ChangeBumpScale;
+        //        }
+        //    }
+        //}
 
         private void SetAlphaEnable(object sender, EventArgs e)
         {
@@ -1758,5 +1777,7 @@ namespace WinFormEditor
         {
 
         }
+
+       
     }
 }

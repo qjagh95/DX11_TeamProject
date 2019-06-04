@@ -536,7 +536,11 @@ void CRenderer::Load(BinaryRead* _pInstBR)
 	m_bDecalEnable = isDecal;
 	SetDecalEnable(m_bDecalEnable);
 
+	// Alpha
 	SetAlphaEnable(isAlpha);
+
+	// Bump
+	SetBumpScale(fBumpScale);
 
 	tempIfs.close();
 

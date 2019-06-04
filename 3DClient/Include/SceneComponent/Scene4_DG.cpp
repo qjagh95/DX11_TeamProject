@@ -202,7 +202,7 @@ void CScene4::Render(float _fTime)
 
 void CScene4::SetChangeStageDoor()
 {
-	CDoor* pDoor = CGameManager::GetInst()->FindDoor(m_pScene, "ChangeStageDoor");
+	CDoor* pDoor = CGameManager::GetInst()->FindDoor(m_pScene, "Door_S4_S1");
 	pDoor->SetDoorType(DOOR_STAGE);
 	pDoor->SetTargetDoor("Stage1", "Door_1");
 	pDoor->SetLeftRight();

@@ -139,6 +139,7 @@ public:
 	void SetMesh(const string& _strMeshTag);
 	void ChangeCameraTarget(bool _bTarget);
 	void SetAlphaEnable(bool _isFlag);
+	bool GetAlphaEnabled();
 	void SetBumpScale(float _fScale);
 	float GetBumpScale();
 	// 애니메이션
@@ -179,6 +180,8 @@ public:
 	int GetLightType();
 	float GetLightRange();
 	void SetAngle(float _inAngle, float _outAngle);
+	float GetInAngle();
+	float GetOutAngle();
 	vector<Vector4> GetSpecular();
 	void CreateDefaultGlobalLight();
 	vector<string> GetGlobalLightList();

@@ -95,6 +95,10 @@ namespace WinFormEditor
 
                 // BumpScale
                 m_editForm.GetBumpScaleTextBox().Text = Convert.ToString(wrapper.GetBumpScale());
+                m_editForm.GetBumpScaleTrackBar().Value = (int)(wrapper.GetBumpScale() * 10.0f);
+
+                // Alpha
+                m_editForm.GetAlphaEnableCheckBox().Checked = wrapper.GetAlphaEnabled();
 
                 // Selected Button
                 m_editForm.GetAddRenderComponentBtn().BackColor = Color.LawnGreen;

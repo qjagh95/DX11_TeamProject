@@ -268,6 +268,11 @@ void CoreWrapper::SetBumpScale(float _fScale)
 	PUN::CEditManager::GetInst()->SetBumpScale(_fScale);
 }
 
+bool CoreWrapper::GetAlphaEnabled()
+{
+	return PUN::CEditManager::GetInst()->GetAlphaEnabled();
+}
+
 float CoreWrapper::GetBumpScale()
 {
 	return PUN::CEditManager::GetInst()->GetBumpScale();
@@ -281,6 +286,16 @@ int CoreWrapper::GetLightType()
 void CoreWrapper::SetAngle(float _inAngle, float _outAngle)
 {
 	PUN::CEditManager::GetInst()->SetAngle(_inAngle, _outAngle);
+}
+
+float CoreWrapper::GetInAngle()
+{
+	return PUN::CEditManager::GetInst()->GetInAngle();
+}
+
+float CoreWrapper::GetOutAngle()
+{
+	return PUN::CEditManager::GetInst()->GetOutAngle();
 }
 
 cli::array<float>^ CoreWrapper::GetSpecular()

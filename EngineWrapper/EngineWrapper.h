@@ -171,6 +171,7 @@ namespace EngineWrapper
 		void SetMesh(String^ _strMeshTag);
 		void AddRenderComponent();
 		void SetAlphaEnable(bool _isFlag);
+		bool GetAlphaEnabled();
 		void SetBumpScale(float _fScale);
 		float GetBumpScale();
 
@@ -178,6 +179,8 @@ namespace EngineWrapper
 	public:
 		int GetLightType();
 		void SetAngle(float _inAngle, float _outAngle);
+		float GetInAngle();
+		float GetOutAngle();
 		cli::array<float>^ GetSpecular();
 		float GetRange();
 		void CreateDefaultGlobalLight();
