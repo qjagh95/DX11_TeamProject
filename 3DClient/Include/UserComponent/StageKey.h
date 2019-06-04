@@ -4,21 +4,23 @@
 
 PUN_USING
 
-class CPaperBQ :
+class CStageKey :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CPaperBQ();
-	CPaperBQ(const CPaperBQ& paper);
-	virtual ~CPaperBQ();
+	CStageKey();
+	CStageKey(const CStageKey& key);
+	virtual ~CStageKey();
 
 private:
-	CGameObject*	m_pDocxInvenObj;
-	class CDocxInven*		m_pDocxInven;
+	CGameObject*		m_pKeyInvenObj;
+	class CKeyInven*	m_pKeyInven;
 	CGameObject*	m_pOutLineObj;
+	CGameObject*	m_pBigObj;
 	CTransform*		m_pOutLineTr;
+	CTransform*		m_pBigTr;
 	bool			m_bMouseOn;
 	bool			m_bUseInven;
 	bool			m_bOnInven;
@@ -33,7 +35,7 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CPaperBQ* Clone();
+	virtual CStageKey* Clone();
 
 public:
 	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);

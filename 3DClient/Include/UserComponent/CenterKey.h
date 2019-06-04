@@ -4,26 +4,18 @@
 
 PUN_USING
 
-class CPaperBQ :
+class CCenterKey :
 	public CUserComponent
 {
 	friend class CGameObject;
 
 private:
-	CPaperBQ();
-	CPaperBQ(const CPaperBQ& paper);
-	virtual ~CPaperBQ();
+	CCenterKey();
+	CCenterKey(const CCenterKey& key);
+	virtual ~CCenterKey();
 
 private:
-	CGameObject*	m_pDocxInvenObj;
-	class CDocxInven*		m_pDocxInven;
-	CGameObject*	m_pOutLineObj;
-	CTransform*		m_pOutLineTr;
 	bool			m_bMouseOn;
-	bool			m_bUseInven;
-	bool			m_bOnInven;
-	int				m_iCount;
-	bool			m_bMotion;
 
 public:
 	virtual void AfterClone();
@@ -33,17 +25,10 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
-	virtual CPaperBQ* Clone();
+	virtual CCenterKey* Clone();
 
 public:
 	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);
 	void MouseOut(class CCollider* pSrc, class CCollider* pDest, float fTime);
-
-private:
-	void SetOutLineVisible(bool bEnable);
-
-public:
-	void SetOutLinePos(const Vector3& vPos);
-	void SetOutLinePos(float x, float y, float z);
 };
 

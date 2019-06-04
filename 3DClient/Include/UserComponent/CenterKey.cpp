@@ -1,5 +1,5 @@
 #include "../ClientHeader.h"
-#include "MasterKey.h"
+#include "CenterKey.h"
 #include "Component/Renderer.h"
 #include "Component/Material.h"
 #include "Component/Transform.h"
@@ -8,28 +8,29 @@
 #include "KeyBigIcon.h"
 #include "KeyInven.h"
 
-CMasterKey::CMasterKey()
+CCenterKey::CCenterKey()
 {
-	m_eComType = (COMPONENT_TYPE)KT_MASTER;
+	m_eComType = (COMPONENT_TYPE)KT_CENTER;
 	m_bMouseOn = false;
 }
 
-CMasterKey::CMasterKey(const CMasterKey & key)	:
+CCenterKey::CCenterKey(const CCenterKey & key)	:
 	CUserComponent(key)
 {
 }
 
-CMasterKey::~CMasterKey()
+
+CCenterKey::~CCenterKey()
 {
 }
 
-void CMasterKey::AfterClone()
+void CCenterKey::AfterClone()
 {
 }
 
-bool CMasterKey::Init()
+bool CCenterKey::Init()
 {
-	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("MKRenderer");
+	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("CKRenderer");
 
 	pRenderer->SetMesh("TexRect");
 	pRenderer->SetRenderState(ALPHA_BLEND);
@@ -43,7 +44,7 @@ bool CMasterKey::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "MasterKey", TEXT("UI/Key/KeyIcon_master.png"));
+	pMaterial->SetDiffuseTex(0, "CenterKey", TEXT("UI/Key/KeyIcon_center.png"));
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
@@ -56,8 +57,8 @@ bool CMasterKey::Init()
 
 	CColliderRect* pBody = AddComponent<CColliderRect>("CenterKeyBody");
 
-	pBody->SetCollisionCallback(CCT_ENTER, this, &CMasterKey::Hit);
-	pBody->SetCollisionCallback(CCT_LEAVE, this, &CMasterKey::MouseOut);
+	pBody->SetCollisionCallback(CCT_ENTER, this, &CCenterKey::Hit);
+	pBody->SetCollisionCallback(CCT_LEAVE, this, &CCenterKey::MouseOut);
 
 	pBody->SetCollisionGroup("UI");
 	pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
@@ -67,12 +68,12 @@ bool CMasterKey::Init()
 	return true;
 }
 
-int CMasterKey::Input(float fTime)
+int CCenterKey::Input(float fTime)
 {
 	return 0;
 }
 
-int CMasterKey::Update(float fTime)
+int CCenterKey::Update(float fTime)
 {
 	if (m_bMouseOn)
 	{
@@ -83,7 +84,7 @@ int CMasterKey::Update(float fTime)
 
 			CKeyBigICon* pKeyBig = pKeyBigObj->FindComponentFromType<CKeyBigICon>((COMPONENT_TYPE)IT_KEYICON);
 
-			pKeyBig->ChangeClip("KeyBig_KeyMaster");
+			pKeyBig->ChangeClip("KeyBig_KeyCenter");
 
 			SAFE_RELEASE(pKeyBig);
 			SAFE_RELEASE(pKeyBigObj);
@@ -93,25 +94,25 @@ int CMasterKey::Update(float fTime)
 	return 0;
 }
 
-int CMasterKey::LateUpdate(float fTime)
+int CCenterKey::LateUpdate(float fTime)
 {
 	return 0;
 }
 
-void CMasterKey::Collision(float fTime)
+void CCenterKey::Collision(float fTime)
 {
 }
 
-void CMasterKey::Render(float fTime)
+void CCenterKey::Render(float fTime)
 {
 }
 
-CMasterKey * CMasterKey::Clone()
+CCenterKey * CCenterKey::Clone()
 {
-	return new CMasterKey(*this);
+	return new CCenterKey(*this);
 }
 
-void CMasterKey::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
+void CCenterKey::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pDest->GetTag() == "MouseWindow")
 	{
@@ -119,7 +120,7 @@ void CMasterKey::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 	}
 }
 
-void CMasterKey::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
+void CCenterKey::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pDest->GetTag() == "MouseWindow")
 	{

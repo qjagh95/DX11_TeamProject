@@ -23,17 +23,64 @@ CTablet::CTablet(const CTablet& _tablet)
 
 CTablet::~CTablet()
 {
+	SAFE_RELEASE(m_pOutLineTr);
+	SAFE_RELEASE(m_pOutLineObj);
+	SAFE_RELEASE(m_pBigTr);
+	SAFE_RELEASE(m_pBigObj);
 	SAFE_RELEASE(m_pRenderer);
 	SAFE_RELEASE(m_pObjItemIcon);
 	SAFE_RELEASE(m_pInventory);
 	SAFE_RELEASE(m_pObjInventory);
 }
 
+void CTablet::AfterInit()
+{
+}
+
 bool CTablet::Init()
 {
+	m_pOutLineObj = CGameObject::CreateObject("TabletOutLine", m_pLayer);
+
+	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("TabletOutLineRenderer");
+
+	pOutRenderer->SetMesh("TabletOutLine", TEXT("Tablet.msh"));
+
+	SAFE_RELEASE(pOutRenderer);
+
+	CMaterial*	pOutMat = m_pOutLineObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pOutMat->SetMaterial(1.f, 1.f, 1.f, 3.2f, 5.f);
+	pOutMat->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pOutMat);
+
+	m_pOutLineTr = m_pOutLineObj->GetTransform();
+
+	m_pOutLineTr->SetWorldScale(68.f, 67.f, 68.f);
+
+	m_pBigObj = CGameObject::CreateObject("TabletBig", m_pLayer);
+
+	CRenderer*	pBigRenderer = m_pBigObj->AddComponent<CRenderer>("TabletBigRenderer");
+
+	pBigRenderer->SetMesh("TabletBig", TEXT("Tablet.msh"));
+
+	SAFE_RELEASE(pBigRenderer);
+
+	CMaterial*	pBigMat = m_pBigObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pBigMat->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pBigMat);
+
+	m_pBigTr = m_pBigObj->GetTransform();
+
+	m_pBigTr->SetWorldScale(66.f);
+
+	SetOutLineVisible(false);
+
 	// Trasnform 
 	//m_pTransform->SetWorldScale(20.f, 20.f, 20.f);
-	m_pTransform->SetWorldScale(66.f);
+	m_pTransform->SetWorldScale(22.f);
 
 	// Renderer
 	m_pRenderer = m_pObject->AddComponent<CRenderer>("Renderer");
@@ -49,10 +96,6 @@ bool CTablet::Init()
 	SAFE_RELEASE(pCollider);
 
 	/**********************************************************************************************/
-
-	// 'Inventory' 객체 얻기
-	m_pObjInventory = m_pScene->FindObject("Inven");
-	m_pInventory = m_pObjInventory->FindComponentFromTag<CInventory>("Inven");
 
 	return true;
 }
@@ -71,6 +114,7 @@ int CTablet::Update(float _fTime)
 		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 		pPlayer->ChangeRayAnim("AimOff");
 		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+		SetOutLineVisible(false);
 
 		m_bMotion = false;
 
@@ -99,6 +143,7 @@ void CTablet::Hit(CCollider * _pSrc, CCollider * _pDest, float _fTime)
 			pPlayer->ChangeRayAnim("AimOn");
 			GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_F_Pickup");
 			m_bGetItem = true;
+			SetOutLineVisible(true);
 		}
 	}
 
@@ -117,6 +162,10 @@ void CTablet::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 			{
 				m_isInvenInItem = true;
 
+				// 'Inventory' 객체 얻기
+				m_pObjInventory = m_pScene->FindObject("Inven");
+				m_pInventory = m_pObjInventory->FindComponentFromTag<CInventory>("Inven");
+
 				// 아이템 아이콘 생성
 				// 'HealingPackIcon' 객체 생성
 				string strIconName = "";
@@ -130,6 +179,7 @@ void CTablet::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 				pPlayer->ChangeRayAnim("AimOff");
 				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+				SetOutLineVisible(false);
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
@@ -150,4 +200,22 @@ void CTablet::MouseOut(CCollider * _pSrc, CCollider * _pDest, float _fTime)
 		m_bMotion = true;
 		m_bGetItem = false;
 	}
+}
+
+void CTablet::SetOutLineVisible(bool bEnable)
+{
+	m_pOutLineObj->SetEnable(bEnable);
+	m_pBigObj->SetEnable(bEnable);
+}
+
+void CTablet::SetOutLinePos(const Vector3 & vPos)
+{
+	m_pOutLineTr->SetWorldPos(vPos);
+	m_pBigTr->SetWorldPos(vPos);
+}
+
+void CTablet::SetOutLinePos(float x, float y, float z)
+{
+	m_pOutLineTr->SetWorldPos(Vector3(x, y, z));
+	m_pBigTr->SetWorldPos(Vector3(x, y, z));
 }

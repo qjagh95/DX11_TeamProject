@@ -15,14 +15,14 @@ bool CHuman_Player::Init_Items()
 	PUN::CInput::GetInst()->AddKey("U", 'U');
 	PUN::CInput::GetInst()->AddKey("K", 'K');
 
-	PUN::CGameObject *pDocxInvObj = PUN::CGameObject::CreateObject("DocxInven", this->m_pLayer);
+	PUN::CGameObject *pDocxInvObj = PUN::CGameObject::CreateObject("DocxInven", this->m_pLayer, true);
 
 	m_pDocxInven = pDocxInvObj->AddComponent<CDocxInven>("DocxInven");
 	m_pDocxInven->SetDocxMax(19);
 
 	SAFE_RELEASE(pDocxInvObj);
 
-	PUN::CGameObject *pKeyInvObj = PUN::CGameObject::CreateObject("KeyInven", this->m_pLayer);
+	PUN::CGameObject *pKeyInvObj = PUN::CGameObject::CreateObject("KeyInven", this->m_pLayer, true);
 
 	m_pKeyInven = pKeyInvObj->AddComponent<CKeyInven>("KeyInven");
 	m_pKeyInven->SetKeyMax(19);
@@ -30,7 +30,7 @@ bool CHuman_Player::Init_Items()
 	SAFE_RELEASE(pKeyInvObj);
 
 	// 아이템 피킹용 충돌체 생성
-	PUN::CGameObject*	pRayObj = PUN::CGameObject::CreateObject("Ray", this->m_pLayer);
+	PUN::CGameObject*	pRayObj = PUN::CGameObject::CreateObject("Ray", this->m_pLayer, true);
 
 	CRenderer*	pRenderer = pRayObj->AddComponent<CRenderer>("RayRenderer");
 

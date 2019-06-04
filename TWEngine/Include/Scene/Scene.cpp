@@ -152,16 +152,18 @@ bool CScene::Init()
 	m_pSkyObj = CGameObject::CreateObject("Sky");
 	m_pSkyObj->SetScene(this);
 	CTransform*	pSkyTr = m_pSkyObj->GetTransform();
-	pSkyTr->SetWorldScale(100000.f, 100000.f, 100000.f);
+	pSkyTr->SetWorldScale(10000000.f, 10000000.f, 10000000.f);
 	pSkyTr->Update(0.f);
 	SAFE_RELEASE(pSkyTr);
 	CRenderer* pRenderer = m_pSkyObj->AddComponent<CRenderer>("SkyRenderer");
-	pRenderer->SetMesh("Sky");
+	//pRenderer->SetMesh("Sky");
+	pRenderer->SetMesh("SkyBox");
 	pRenderer->SetRenderState(DEPTH_LESSEQUAL);
 	pRenderer->SetRenderState(CULL_NONE);
+	pRenderer->SetShader("Sky");
 	SAFE_RELEASE(pRenderer);
 	m_pSkyMtrl = m_pSkyObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
-	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("Sky.dds"));
+	m_pSkyMtrl->SetDiffuseTex(10, "SkyDefault", TEXT("exnight2.dds"));
 	m_pSkyMtrl->SetSampler(10, SAMPLER_LINEAR);
 
 	// Global Light

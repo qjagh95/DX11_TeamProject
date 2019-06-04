@@ -13,7 +13,8 @@ CHealingPack::CHealingPack() :
 	m_pRenderer(nullptr),
 	m_pObjInventory(nullptr),
 	m_pInventory(nullptr),
-	m_pObjItemIcon(nullptr)
+	m_pObjItemIcon(nullptr),
+	m_bMotion(false)
 {
 }
 
@@ -23,6 +24,13 @@ CHealingPack::CHealingPack(const CHealingPack& _healingPack)
 
 CHealingPack::~CHealingPack()
 {
+	SAFE_RELEASE(m_pOutLineMaterial);
+	SAFE_RELEASE(m_pOutLineRenderer);
+	SAFE_RELEASE(m_pBigRenderer);
+	SAFE_RELEASE(m_pOutLineTr);
+	SAFE_RELEASE(m_pOutLineObj);
+	SAFE_RELEASE(m_pBigTr);
+	SAFE_RELEASE(m_pBigObj);
 	SAFE_RELEASE(m_pRenderer);
 	SAFE_RELEASE(m_pObjItemIcon);
 	SAFE_RELEASE(m_pInventory);
@@ -39,10 +47,38 @@ TCHAR* stringToTCHAR(string& _string)
 	return param;
 }
 
+void CHealingPack::AfterInit()
+{
+}
+
 bool CHealingPack::Init()
 {
+	m_pOutLineObj = CGameObject::CreateObject("HPOutLine", m_pLayer);
+
+	m_pOutLineRenderer = m_pOutLineObj->AddComponent<CRenderer>("HPOutLineRenderer");
+
+	m_pOutLineMaterial = m_pOutLineObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	m_pOutLineMaterial->SetSampler(0, SAMPLER_LINEAR);
+
+	m_pOutLineTr = m_pOutLineObj->GetTransform();
+	
+	m_pBigObj = CGameObject::CreateObject("HPBig", m_pLayer);
+
+	m_pBigRenderer = m_pBigObj->AddComponent<CRenderer>("HPBigRenderer");
+
+	CMaterial*	pBigMat = m_pBigObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pBigMat->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pBigMat);
+
+	m_pBigTr = m_pBigObj->GetTransform();
+
+	SetOutLineVisible(false);
+
 	// Transform 
-	m_pTransform->SetWorldScale(20.f, 20.f, 20.f);
+	//m_pTransform->SetWorldScale(20.f, 20.f, 20.f);
 	//m_pTransform->SetWorldScale(10.f);
 
 	// Renderer
@@ -60,10 +96,6 @@ bool CHealingPack::Init()
 
 	/**********************************************************************************************/
 
-	// 'Inventory' 객체 얻기
-	m_pObjInventory = m_pScene->FindObject("Inven");
-	m_pInventory = m_pObjInventory->FindComponentFromTag<CInventory>("Inven");
-
 	return true;
 }
 
@@ -74,6 +106,8 @@ int CHealingPack::Input(float _fTime)
 
 int CHealingPack::Update(float _fTime)
 {
+	m_pOutLineMaterial->SetMaterial(1.f, 1.f, 1.f, 3.2f, 50.f);
+
 	if (m_bMotion)
 	{
 		CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
@@ -81,6 +115,7 @@ int CHealingPack::Update(float _fTime)
 		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 		pPlayer->ChangeRayAnim("AimOff");
 		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+		SetOutLineVisible(false);
 
 		m_bMotion = false;
 
@@ -95,6 +130,8 @@ void CHealingPack::SetMesh(const string& _meshKey, const TCHAR* _meshName)
 {
 	// .msh 파일안에 MAX 프로그램으로 재질(Material, Texture)를 적용시킨 모델이다.
 	m_pRenderer->SetMesh(_meshKey, _meshName);
+	m_pOutLineRenderer->SetMesh(_meshKey, _meshName);
+	m_pBigRenderer->SetMesh(_meshKey, _meshName);
 	m_strMeshKey = _meshKey;
 }
 
@@ -131,6 +168,7 @@ void CHealingPack::HitEnter(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 			pPlayer->ChangeRayAnim("AimOn");
 			GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_F_Pickup");
 			m_bGetItem = true;
+			SetOutLineVisible(true);
 		}
 	}
 
@@ -151,6 +189,10 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 			if (m_isInvenInItem == false)
 			{
 				m_isInvenInItem = true;
+
+				// 'Inventory' 객체 얻기
+				m_pObjInventory = m_pScene->FindObject("Inven");
+				m_pInventory = m_pObjInventory->FindComponentFromTag<CInventory>("Inven");
 
 				// 아이템 아이콘 생성
 				// 'HealingPackIcon' 객체 생성
@@ -175,6 +217,7 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 				pPlayer->ChangeRayAnim("AimOff");
 				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+				SetOutLineVisible(false);
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
@@ -195,4 +238,34 @@ void CHealingPack::MouseOut(CCollider * _pSrc, CCollider * _pDest, float _fTime)
 		m_bMotion = true;
 		m_bGetItem = false;
 	}
+}
+
+void CHealingPack::SetOutLineVisible(bool bEnable)
+{
+	m_pOutLineObj->SetEnable(bEnable);
+	m_pBigObj->SetEnable(bEnable);
+}
+
+void CHealingPack::SetOutLinePos(const Vector3 & vPos)
+{
+	m_pOutLineTr->SetWorldPos(vPos);
+	m_pBigTr->SetWorldPos(vPos);
+}
+
+void CHealingPack::SetOutLinePos(float x, float y, float z)
+{
+	m_pOutLineTr->SetWorldPos(Vector3(x, y, z));
+	m_pBigTr->SetWorldPos(Vector3(x, y, z));
+}
+
+void CHealingPack::SetOutLineScale(const Vector3 & vScale)
+{
+	m_pOutLineTr->SetWorldScale(vScale);
+	m_pBigTr->SetWorldScale (vScale);
+}
+
+void CHealingPack::SetOutLineScale(float x, float y, float z)
+{
+	m_pOutLineTr->SetWorldScale(Vector3(x + 8.f, y - 7.f, z + 8.f));
+	m_pBigTr->SetWorldScale(Vector3(x + 6.f, y - 6.f, z + 6.f));
 }

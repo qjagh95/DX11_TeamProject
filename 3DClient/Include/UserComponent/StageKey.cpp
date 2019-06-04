@@ -1,16 +1,17 @@
 #include "../ClientHeader.h"
-#include "PaperPL.h"
+#include "StageKey.h"
 #include "Component/Renderer.h"
 #include "Component/Material.h"
 #include "Component/Transform.h"
 #include "GameObject.h"
-#include "DocxInven.h"
+#include "KeyInven.h"
 #include "Component/ColliderSphere.h"
-#include "MeesagePL.h"
 #include "Human_Player.h"
+#include "CenterKey.h"
 #include "../GameManager.h"
+#include "Door.h"
 
-CPaperPL::CPaperPL()
+CStageKey::CStageKey()
 {
 	m_bUseInven = false;
 	m_bMouseOn = false;
@@ -18,34 +19,36 @@ CPaperPL::CPaperPL()
 	m_bMotion = false;
 }
 
-CPaperPL::CPaperPL(const CPaperPL & paper)	:
-	CUserComponent(paper)
+CStageKey::CStageKey(const CStageKey & key)	:
+	CUserComponent(key)
 {
 }
 
-CPaperPL::~CPaperPL()
+CStageKey::~CStageKey()
 {
 	SAFE_RELEASE(m_pOutLineObj);
+	SAFE_RELEASE(m_pBigObj);
 	SAFE_RELEASE(m_pOutLineTr);
+	SAFE_RELEASE(m_pBigTr);
 
 	if (m_bUseInven)
 	{
-		SAFE_RELEASE(m_pDocxInven);
-		SAFE_RELEASE(m_pDocxInvenObj);
+		SAFE_RELEASE(m_pKeyInven);
+		SAFE_RELEASE(m_pKeyInvenObj);
 	}
 }
 
-void CPaperPL::AfterClone()
+void CStageKey::AfterClone()
 {
 }
 
-bool CPaperPL::Init()
+bool CStageKey::Init()
 {
-	m_pOutLineObj = CGameObject::CreateObject("PaperLOutLine", m_pLayer);
+	m_pOutLineObj = CGameObject::CreateObject("StageKeyOutLine", m_pLayer);
 
-	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("PaperLRenderer");
+	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("StageKeyOutLineRenderer");
 
-	pOutRenderer->SetMesh("PaperLOutLine", TEXT("Paper.msh"));
+	pOutRenderer->SetMesh("StageKeyOutLine", TEXT("KeyCard.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -58,13 +61,30 @@ bool CPaperPL::Init()
 
 	m_pOutLineTr = m_pOutLineObj->GetTransform();
 
-	m_pOutLineTr->SetWorldScale(20.f, 20.f, 20.f);
-	m_pOutLineTr->SetWorldRot(90.f, 0.f, 0.f);
+	m_pOutLineTr->SetWorldScale(0.31f, 0.29f, 0.31f);
+
+	m_pBigObj = CGameObject::CreateObject("StageKeyBig", m_pLayer);
+
+	CRenderer*	pBigRenderer = m_pBigObj->AddComponent<CRenderer>("StageKeyBigRenderer");
+
+	pBigRenderer->SetMesh("StageKeyBig", TEXT("KeyCard.msh"));
+
+	SAFE_RELEASE(pBigRenderer);
+
+	CMaterial*	pBigMat = m_pBigObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pBigMat->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pBigMat);
+
+	m_pBigTr = m_pBigObj->GetTransform();
+
+	m_pBigTr->SetWorldScale(0.3f);
 
 	SetOutLineVisible(false);
 
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("PaperRender");
-	pRenderer->SetMesh("Paper_PL", TEXT("Paper.msh"));
+	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("StageKeyRender");
+	pRenderer->SetMesh("StageKey", TEXT("KeyCard.msh"));
 
 	SAFE_RELEASE(pRenderer);
 
@@ -74,28 +94,27 @@ bool CPaperPL::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(10.f, 10.f, 10.f);
-	m_pTransform->SetWorldRot(90.f, 0.f, 0.f);
+	m_pTransform->SetWorldScale(0.1f);
 
-	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("PaperPLBody");
+	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("StageKeyBody");
 
-	pBody->SetCollisionCallback(CCT_ENTER, this, &CPaperPL::Hit);
-	pBody->SetCollisionCallback(CCT_LEAVE, this, &CPaperPL::MouseOut);
-	pBody->SetColliderID((COLLIDER_ID)UCI_DOC_MESSAGEPL);
+	pBody->SetCollisionCallback(CCT_ENTER, this, &CStageKey::Hit);
+	pBody->SetCollisionCallback(CCT_LEAVE, this, &CStageKey::MouseOut);
+	pBody->SetColliderID((COLLIDER_ID)UCI_ITEM_KEY);
 
-	pBody->SetInfo(Vector3::Zero, 2.f);
+	pBody->SetInfo(Vector3::Zero, 1.f);
 
 	SAFE_RELEASE(pBody);
 
 	return true;
 }
 
-int CPaperPL::Input(float fTime)
+int CStageKey::Input(float fTime)
 {
 	return 0;
 }
 
-int CPaperPL::Update(float fTime)
+int CStageKey::Update(float fTime)
 {
 	if (m_bMouseOn)
 	{
@@ -105,17 +124,17 @@ int CPaperPL::Update(float fTime)
 			{
 				m_bOnInven = true;
 
-				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
+				m_pKeyInvenObj = CGameObject::FindObject("KeyInven");
 
-				CGameObject*	pSMObj = CGameObject::CreateObject("PaperPL", m_pLayer);
+				CGameObject*	pMKObj = CGameObject::CreateObject("CenterKey", m_pLayer);
 
-				CMeesagePL*	pSM = pSMObj->AddComponent<CMeesagePL>("PaperPL");
+				CCenterKey*	pMK = pMKObj->AddComponent<CCenterKey>("CenterKey");
 
-				m_pDocxInven = m_pDocxInvenObj->FindComponentFromTag<CDocxInven>("DocxInven");
-				m_pDocxInven->AddItem(pSMObj);
+				m_pKeyInven = m_pKeyInvenObj->FindComponentFromTag<CKeyInven>("KeyInven");
+				m_pKeyInven->AddItem(pMKObj);
 
-				SAFE_RELEASE(pSM);
-				SAFE_RELEASE(pSMObj);
+				SAFE_RELEASE(pMK);
+				SAFE_RELEASE(pMKObj);
 
 				CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
 
@@ -127,6 +146,7 @@ int CPaperPL::Update(float fTime)
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
 
+				GET_SINGLE(CGameManager)->AddKey(m_pObject->GetTag(), m_pObject);
 				GET_SINGLE(CGameManager)->AddChangedListItemObj(m_pObject);
 
 				m_pObject->SetEnable(false);
@@ -153,25 +173,25 @@ int CPaperPL::Update(float fTime)
 	return 0;
 }
 
-int CPaperPL::LateUpdate(float fTime)
+int CStageKey::LateUpdate(float fTime)
 {
 	return 0;
 }
 
-void CPaperPL::Collision(float fTime)
+void CStageKey::Collision(float fTime)
 {
 }
 
-void CPaperPL::Render(float fTime)
+void CStageKey::Render(float fTime)
 {
 }
 
-CPaperPL * CPaperPL::Clone()
+CStageKey * CStageKey::Clone()
 {
-	return new CPaperPL(*this);
+	return new CStageKey(*this);
 }
 
-void CPaperPL::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
+void CStageKey::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
 
@@ -198,7 +218,7 @@ void CPaperPL::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 	SAFE_RELEASE(pPlayerObj);
 }
 
-void CPaperPL::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
+void CStageKey::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pDest->GetColliderID() == UCI_PLAYER_RAY)
 	{
@@ -207,17 +227,20 @@ void CPaperPL::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 	}
 }
 
-void CPaperPL::SetOutLineVisible(bool bEnable)
+void CStageKey::SetOutLineVisible(bool bEnable)
 {
 	m_pOutLineObj->SetEnable(bEnable);
+	m_pBigObj->SetEnable(bEnable);
 }
 
-void CPaperPL::SetOutLinePos(const Vector3 & vPos)
+void CStageKey::SetOutLinePos(const Vector3 & vPos)
 {
 	m_pOutLineTr->SetWorldPos(vPos);
+	m_pBigTr->SetWorldPos(vPos);
 }
 
-void CPaperPL::SetOutLinePos(float x, float y, float z)
+void CStageKey::SetOutLinePos(float x, float y, float z)
 {
-	m_pOutLineTr->SetWorldPos(Vector3(x, y + 0.08f, z));
+	m_pOutLineTr->SetWorldPos(Vector3(x, y, z));
+	m_pBigTr->SetWorldPos(Vector3(x, y, z));
 }

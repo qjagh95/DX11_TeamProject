@@ -476,12 +476,14 @@ void CRenderManager::RenderDeferred(float fTime)
 	// HDR 등 다양한 화면 효과를 계산한다.
 	RenderComputeProcess(fTime);
 	// 최종 합성된 타겟을 화면에 출력한다.
-	
-#ifdef _DEBUG
+
 	RenderFinalPassDebug(fTime);
-#else
-	RenderFinalPass(fTime);
-#endif
+
+//#ifdef _DEBUG
+//	RenderFinalPassDebug(fTime);
+//#else
+//	RenderFinalPass(fTime);
+//#endif
 	//LandScape 클라이언트
 
 	//GBuffer 그릴 때 알비도 타겟에만 알파 음수로 놓고 그리면 댐

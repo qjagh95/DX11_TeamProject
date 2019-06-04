@@ -455,19 +455,25 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
 
         if (g_iRimLight == 1)
         {
+            float fLength = distance(vViewPos, float3(0.f, 0.f, 0.f));
+
+            if(fLength < 18)
+            {           
+
 			// 카메라방향과 노말벡터를 내적하여 어둡게 해줄 외각을 찾는다
-            float fRim = saturate(dot(vViewNormal, vLightDir));
+                float fRim = saturate(dot(vViewNormal, ToCamera));
 
 			// 0.3보다 크게 되면 Rim을 없애준다
-            if (fRim > 0.3)
-                fRim = 1;
+                if (fRim > 0.2 || fRim < 0.0f)
+                    fRim = 1;
 
 			// 0.3보다 작은 값만 Rim을 처리해준다
 			// 더 뚜렷한 외각선을 얻기 위함이다
-            else
-                fRim = -1;
+                else
+                    fRim = -1;
 
-            tInfo.vEmv = vMtrlSpc * vMtrlEmv + float4(pow(1 - fRim, g_fRimPower) * g_vRimColor, 1.f);
+                tInfo.vEmv = vMtrlSpc * vMtrlEmv + float4(pow(1 - fRim, g_fRimPower) * g_vRimColor, 1.f);
+            }
         }
     }
 
@@ -511,7 +517,7 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal, float4 vMaterial
     vR = normalize(vR);
 
 	tInfo.vDif = vMtrlDif * g_vLightDif * max(0, fRamb) * fIntensity;
-    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(vR, vViewNormal)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
+    tInfo.vSpc = float4(vMtrlSpc.xyz, 1.0f) * g_vLightSpc * pow(max(0.0f, dot(vR, ToCamera)), vMtrlSpc.w) * fIntensity /** SpotStrong*/;
     tInfo.vAmb = vMtrlAmb * g_vLightAmb * min(0.2f, fIntensity);
 
 	return tInfo;

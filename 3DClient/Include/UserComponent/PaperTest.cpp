@@ -25,6 +25,9 @@ CPaperTest::CPaperTest(const CPaperTest & paper)	:
 
 CPaperTest::~CPaperTest()
 {
+	SAFE_RELEASE(m_pOutLineObj);
+	SAFE_RELEASE(m_pOutLineTr);
+
 	if (m_bUseInven)
 	{
 		SAFE_RELEASE(m_pDocxInven);
@@ -38,6 +41,28 @@ void CPaperTest::AfterClone()
 
 bool CPaperTest::Init()
 {
+	m_pOutLineObj = CGameObject::CreateObject("FileTOutLine", m_pLayer);
+
+	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("FileTRenderer");
+
+	pOutRenderer->SetMesh("FileTOutLine", TEXT("FileEx.msh"));
+
+	SAFE_RELEASE(pOutRenderer);
+
+	CMaterial*	pOutMat = m_pOutLineObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pOutMat->SetMaterial(1.f, 1.f, 1.f, 3.2f, 5.f);
+	pOutMat->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pOutMat);
+
+	m_pOutLineTr = m_pOutLineObj->GetTransform();
+
+	m_pOutLineTr->SetWorldScale(0.203f, 0.202f, 0.202f);
+	m_pOutLineTr->SetWorldRot(0.f, 0.f, 90.f);
+
+	SetOutLineVisible(false);
+
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("FileTestRender");
 	pRenderer->SetMesh("File_Test", TEXT("FileEx.msh"));
 
@@ -50,6 +75,7 @@ bool CPaperTest::Init()
 	SAFE_RELEASE(pMaterial);
 
 	m_pTransform->SetWorldScale(0.1f, 0.1f, 0.1f);
+	m_pTransform->SetWorldRot(0.f, 0.f, 90.f);
 
 	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("File_TestBody");
 
@@ -96,6 +122,7 @@ int CPaperTest::Update(float fTime)
 				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 				pPlayer->ChangeRayAnim("AimOff");
 				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+				SetOutLineVisible(false);
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
@@ -115,6 +142,7 @@ int CPaperTest::Update(float fTime)
 		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 		pPlayer->ChangeRayAnim("AimOff");
 		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+		SetOutLineVisible(false);
 
 		m_bMotion = false;
 
@@ -161,6 +189,7 @@ void CPaperTest::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 			m_bMouseOn = true;
 			pPlayer->ChangeRayAnim("AimOn");
 			GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_F_Pickup");
+			SetOutLineVisible(true);
 		}
 	}
 
@@ -176,4 +205,19 @@ void CPaperTest::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 		m_bMouseOn = false;
 		m_bMotion = true;
 	}
+}
+
+void CPaperTest::SetOutLineVisible(bool bEnable)
+{
+	m_pOutLineObj->SetEnable(bEnable);
+}
+
+void CPaperTest::SetOutLinePos(const Vector3 & vPos)
+{
+	m_pOutLineTr->SetWorldPos(vPos);
+}
+
+void CPaperTest::SetOutLinePos(float x, float y, float z)
+{
+	m_pOutLineTr->SetWorldPos(Vector3(x + 0.15f, y, z));
 }

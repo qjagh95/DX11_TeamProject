@@ -81,38 +81,11 @@ bool CKeyBigICon::Init()
 	vecClipFrame.clear();
 
 	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(221.f, 328.f);
-	vecClipFrame.push_back(tFrame);
-
-	m_pAnimation->AddClip("KeyBig_KeyPiano", A2D_ATLAS, AO_LOOP, 0.5f, vecClipFrame,
-		"KeyPiano_KeyBig", TEXT("UI/Key/Key_Piano.png"));
-
-	vecClipFrame.clear();
-
-	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(221.f, 328.f);
-	vecClipFrame.push_back(tFrame);
-
-	m_pAnimation->AddClip("KeyBig_KeySmall", A2D_ATLAS, AO_LOOP, 0.5f, vecClipFrame,
-		"KeySmall_KeyBig", TEXT("UI/Key/Key_Small.png"));
-
-	vecClipFrame.clear();
-
-	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(221.f, 328.f);
-	vecClipFrame.push_back(tFrame);
-
-	m_pAnimation->AddClip("KeyBig_KeyTotal", A2D_ATLAS, AO_LOOP, 0.5f, vecClipFrame,
-		"KeyTotal_KeyBig", TEXT("UI/Key/Key_Total.png"));
-
-	vecClipFrame.clear();
-
-	tFrame.vLT = Vector2(0.f, 0.f);
-	tFrame.vRB = Vector2(221.f, 328.f);
+	tFrame.vRB = Vector2(500.f, 528.f);
 	vecClipFrame.push_back(tFrame);
 
 	m_pAnimation->AddClip("KeyBig_KeyCenter", A2D_ATLAS, AO_LOOP, 0.5f, vecClipFrame,
-		"KeyCenter_KeyBig", TEXT("UI/Key/Key_Center.png"));
+		"KeyCenter_KeyBig", TEXT("UI/Key/CenterKey_Detail.png"));
 
 	vecClipFrame.clear();
 

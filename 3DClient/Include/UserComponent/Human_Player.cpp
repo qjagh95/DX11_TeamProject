@@ -361,6 +361,8 @@ bool CHuman_Player::Init()
 	_Input->AddKey("G", 'G');
 	_Input->AddKey("Ctrl", VK_CONTROL);
 	_Input->AddKey("Tab", VK_TAB);
+	_Input->AddKey("NumPad1", VK_NUMPAD1);
+	_Input->AddKey("NumPad2", VK_NUMPAD2);
 	_Input->ShowMouse(false);
 
 	AfterClone();
@@ -2199,3 +2201,27 @@ void CHuman_Player::SetBreathIntensity(float fBreath)
 	m_fBreathIntensity = fBreath;
 }
 
+bool CHuman_Player::IsCrouching() const 
+{
+	if((m_iState & PSTATUS_CROUCHING) && (m_iState & PSTATUS_CROUCHED))
+		std::cout << "player is crouching" << std::endl;
+	return !((m_iState ^ (PSTATUS_CROUCHING | PSTATUS_CROUCHED) & (PSTATUS_CROUCHING | PSTATUS_CROUCHED)));
+}
+bool CHuman_Player::OnCrouchMoving() const 
+{
+	if((m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_STOPMOVE))
+		std::cout << "player is crouched and moving" << std::endl;
+	return (m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_STOPMOVE);
+}
+bool CHuman_Player::IsIdle() const 
+{
+	if(m_iState & PSTATUS_STOPMOVE)
+		std::cout << "player is idle" << std::endl;
+	return m_iState & PSTATUS_STOPMOVE;
+}
+bool CHuman_Player::IsCrouched() const 
+{
+	if((m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_CROUCHING))
+		std::cout << "player is crouched" << std::endl;
+	return (m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_CROUCHING);
+}

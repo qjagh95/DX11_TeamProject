@@ -405,6 +405,12 @@
     <ClInclude Include="SceneComponent\Stage2Scene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\StageKey.h">
+      <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\CenterKey.h">
+      <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -652,6 +658,12 @@
     </ClCompile>
     <ClCompile Include="SceneComponent\Stage2Scene.cpp">
       <Filter>01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\StageKey.cpp">
+      <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\CenterKey.cpp">
+      <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

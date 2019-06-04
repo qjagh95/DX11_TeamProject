@@ -39,6 +39,8 @@
 #include "../UserComponent/KeyCard.h"
 #include "../UserComponent/EventCollider.h"
 #include <NavigationMesh.h>
+#include "../GameManager.h"
+#include "../UserComponent/StageKey.h"
 
 CTutorialScene::CTutorialScene()
 {
@@ -139,8 +141,26 @@ bool CTutorialScene::Init()
 
 	pKeyCardTr->SetWorldPos(112.f, 17.f, 621.f);
 
+	Vector3 vKeyPos = pKeyCardTr->GetWorldPos();
+	pKeyCard->SetOutLinePos(vKeyPos);
+
 	SAFE_RELEASE(pKeyCardTr);
 	SAFE_RELEASE(pKeyCard);
+	SAFE_RELEASE(pKeyCardObj);
+
+	pKeyCardObj = CGameObject::CreateObject("StageKey", pDefaultLayer);
+
+	CStageKey*	pStageKey = pKeyCardObj->AddComponent<CStageKey>("StageKey");
+
+	pKeyCardTr = pKeyCardObj->GetTransform();
+
+	pKeyCardTr->SetWorldPos(316.f, 10.f, 748.f);
+
+	Vector3 vStageKeyPos = pKeyCardTr->GetWorldPos();
+	pStageKey->SetOutLinePos(vStageKeyPos);
+
+	SAFE_RELEASE(pKeyCardTr);
+	SAFE_RELEASE(pStageKey);
 	SAFE_RELEASE(pKeyCardObj);
 
 	CGameObject*	pDoorObj = CGameObject::CreateObject("TutorialDoor", pDefaultLayer);
@@ -149,10 +169,11 @@ bool CTutorialScene::Init()
 
 	pDoor->Lock(true, "KeyCard");
 
+	GET_SINGLE(CGameManager)->AddDoor(m_pScene, pDoorObj->GetTag(), pDoor);
+
 	CTransform*	pDoorTr = pDoorObj->GetTransform();
 
 	pDoorTr->SetWorldPos(304.5f, 29.2f, 557.3f);
-	//pDoorTr->SetLocalRot(0.f, 90.f, 0.f);
 	pDoorTr->SetWorldRot(0.f, 180.f, 0.f);
 
 	SAFE_RELEASE(pDoorTr);
@@ -170,46 +191,72 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pEventObj);
 
 	// MedicalKit
-	//CGameObject* pObjMedicalKit = CGameObject::CreateObject("MedicalKit", pDefaultLayer);
-	//CTransform* pMedicalKitTr = pObjMedicalKit->GetTransform();
-	//pMedicalKitTr->SetWorldPos(356.f, 20.f, 650.f);
-	//CHealingPack* pUCHealingPack = pObjMedicalKit->AddComponent<CHealingPack>("UC_HealingPack");
-	////pUCHealingPack->SetHPAmount(pPlayer->GetMaxHP());
-	//pUCHealingPack->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
-	//pMedicalKitTr->SetWorldScale(10.f);
-	//SAFE_RELEASE(pUCHealingPack);
-	//SAFE_RELEASE(pMedicalKitTr);
-	//SAFE_RELEASE(pObjMedicalKit);
+	CGameObject* pObjMedicalKit = CGameObject::CreateObject("MedicalKit", pDefaultLayer);
 
-	//// Lunch Box
-	//CGameObject* pObjLunchBox = CGameObject::CreateObject("LunchBox", pDefaultLayer);
-	//CTransform* pLuncBoxTr = pObjLunchBox->GetTransform();
-	//pLuncBoxTr->SetWorldPos(400.f, 20.f, 630.f);
-	//pLuncBoxTr->SetWorldScale(100.f);
-	//pUCHealingPack = pObjLunchBox->AddComponent<CHealingPack>("UC_HealingPack");
-	//pUCHealingPack->SetHPAmount(1);
-	//pUCHealingPack->SetMesh("LunchBox", TEXT("LunchBox.msh"));
-	//SAFE_RELEASE(pUCHealingPack);
-	//SAFE_RELEASE(pLuncBoxTr);
-	//SAFE_RELEASE(pObjLunchBox);
+	CTransform* pMedicalKitTr = pObjMedicalKit->GetTransform();
+	pMedicalKitTr->SetWorldPos(356.f, 20.f, 650.f);
 
-	//// Cigarette
-	//CGameObject* pObjCigarette = CGameObject::CreateObject("Cigarette", pDefaultLayer);
-	//CTransform* pCigaretteTr = pObjCigarette->GetTransform();
-	//pCigaretteTr->SetWorldPos(300.f, 20.f, 620.f);
-	//CCigarette* pUCCigarette = pObjCigarette->AddComponent<CCigarette>("UC_Cigarette");
-	//SAFE_RELEASE(pUCCigarette);
-	//SAFE_RELEASE(pCigaretteTr);
-	//SAFE_RELEASE(pObjCigarette);
+	CHealingPack* pUCHealingPack = pObjMedicalKit->AddComponent<CHealingPack>("UC_HealingPack");
+	//pUCHealingPack->SetHPAmount(pPlayer->GetMaxHP());
+	pUCHealingPack->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
+	pMedicalKitTr->SetWorldScale(10.f);
 
-	//// Tablet
-	//CGameObject* pObjTablet = CGameObject::CreateObject("Tablet", pDefaultLayer);
-	//CTransform* pTabletTr = pObjTablet->GetTransform();
-	//pTabletTr->SetWorldPos(300.f, 20.f, 600.f);
-	//CTablet* pUCTablet = pObjTablet->AddComponent<CTablet>("UC_Tablet");
-	//SAFE_RELEASE(pUCTablet);
-	//SAFE_RELEASE(pTabletTr);
-	//SAFE_RELEASE(pObjTablet);		
+	pUCHealingPack->SetOutLineScale(25.f, 25.f, 25.f);
+	Vector3 vMKPos = pMedicalKitTr->GetWorldPos();
+	pUCHealingPack->SetOutLinePos(vMKPos);
+
+	SAFE_RELEASE(pUCHealingPack);
+	SAFE_RELEASE(pMedicalKitTr);
+	SAFE_RELEASE(pObjMedicalKit);
+
+	// Lunch Box
+	CGameObject* pObjLunchBox = CGameObject::CreateObject("LunchBox", pDefaultLayer);
+
+	CTransform* pLuncBoxTr = pObjLunchBox->GetTransform();
+	pLuncBoxTr->SetWorldPos(400.f, 20.f, 630.f);
+	pLuncBoxTr->SetWorldScale(20.f);
+
+	pUCHealingPack = pObjLunchBox->AddComponent<CHealingPack>("UC_HealingPack");
+	pUCHealingPack->SetHPAmount(1);
+	pUCHealingPack->SetMesh("LunchBox", TEXT("LunchBox.msh"));
+
+	pUCHealingPack->SetOutLineScale(40.f, 40.f, 40.f);
+	Vector3 vLunchPos = pLuncBoxTr->GetWorldPos();
+	pUCHealingPack->SetOutLinePos(vLunchPos);
+
+	SAFE_RELEASE(pUCHealingPack);
+	SAFE_RELEASE(pLuncBoxTr);
+	SAFE_RELEASE(pObjLunchBox);
+
+	// Cigarette
+	CGameObject* pObjCigarette = CGameObject::CreateObject("Cigarette", pDefaultLayer);
+
+	CTransform* pCigaretteTr = pObjCigarette->GetTransform();
+	pCigaretteTr->SetWorldPos(300.f, 20.f, 620.f);
+
+	CCigarette* pUCCigarette = pObjCigarette->AddComponent<CCigarette>("UC_Cigarette");
+
+	Vector3 pCigaPos = pCigaretteTr->GetWorldPos();
+	pUCCigarette->SetOutLinePos(pCigaPos);
+
+	SAFE_RELEASE(pUCCigarette);
+	SAFE_RELEASE(pCigaretteTr);
+	SAFE_RELEASE(pObjCigarette);
+
+	// Tablet
+	CGameObject* pObjTablet = CGameObject::CreateObject("Tablet", pDefaultLayer);
+
+	CTransform* pTabletTr = pObjTablet->GetTransform();
+	pTabletTr->SetWorldPos(300.f, 20.f, 600.f);
+
+	CTablet* pUCTablet = pObjTablet->AddComponent<CTablet>("UC_Tablet");
+
+	Vector3 pTabletPos = pTabletTr->GetWorldPos();
+	pUCTablet->SetOutLinePos(pTabletPos);
+
+	SAFE_RELEASE(pUCTablet);
+	SAFE_RELEASE(pTabletTr);
+	SAFE_RELEASE(pObjTablet);		
 	
 	CGameObject*	pBatteryObj = CGameObject::CreateObject("Battery", pDefaultLayer);
 
@@ -219,9 +266,117 @@ bool CTutorialScene::Init()
 
 	pBatteryTr->SetWorldPos(108.f, 17.f, 619.f);
 
+	Vector3 pBatPos = pBatteryTr->GetWorldPos();
+	pBattery->SetOutLinePos(pBatPos);
+
 	SAFE_RELEASE(pBatteryTr);
 	SAFE_RELEASE(pBattery);
 	SAFE_RELEASE(pBatteryObj);	
+
+	CGameObject*	pPaperObj = CGameObject::CreateObject("Paper", pDefaultLayer);
+
+	CPaperGenerator*	pPaper = pPaperObj->AddComponent<CPaperGenerator>("Paper");
+
+	CTransform*	pPaperTr = pPaperObj->GetTransform();
+
+	pPaperTr->SetWorldPos(300.f, 20.f, 640.f);
+
+	Vector3 pPaperPos = pPaperTr->GetWorldPos();
+	pPaper->SetOutLinePos(pPaperPos);
+
+	SAFE_RELEASE(pPaperTr);
+	SAFE_RELEASE(pPaper);
+	SAFE_RELEASE(pPaperObj);
+
+	pPaperObj = CGameObject::CreateObject("Paper2", pDefaultLayer);
+
+	CPaperGongji*	pgPaper = pPaperObj->AddComponent<CPaperGongji>("Paper2");
+
+	pPaperTr = pPaperObj->GetTransform();
+
+	pPaperTr->SetWorldPos(300.f, 20.f, 670.f);
+
+	pPaperPos = pPaperTr->GetWorldPos();
+	pgPaper->SetOutLinePos(pPaperPos.x, pPaperPos.y, pPaperPos.z);
+
+	SAFE_RELEASE(pPaperTr);
+	SAFE_RELEASE(pgPaper);
+	SAFE_RELEASE(pPaperObj);
+
+	pPaperObj = CGameObject::CreateObject("Paper3", pDefaultLayer);
+
+	CPaperMsgTH*	pmPaper = pPaperObj->AddComponent<CPaperMsgTH>("Paper3");
+
+	pPaperTr = pPaperObj->GetTransform();
+
+	pPaperTr->SetWorldPos(320.f, 15.f, 680.f);
+
+	pPaperPos = pPaperTr->GetWorldPos();
+	pmPaper->SetOutLinePos(pPaperPos.x, pPaperPos.y, pPaperPos.z);
+
+	SAFE_RELEASE(pPaperTr);
+	SAFE_RELEASE(pmPaper);
+	SAFE_RELEASE(pPaperObj);
+
+	pPaperObj = CGameObject::CreateObject("Paper4", pDefaultLayer);
+
+	CPaperPlanA*	paPaper = pPaperObj->AddComponent<CPaperPlanA>("Paper4");
+
+	pPaperTr = pPaperObj->GetTransform();
+
+	pPaperTr->SetWorldPos(320.f, 15.f, 690.f);
+
+	pPaperPos = pPaperTr->GetWorldPos();
+	paPaper->SetOutLinePos(pPaperPos.x, pPaperPos.y, pPaperPos.z);
+
+	SAFE_RELEASE(pPaperTr);
+	SAFE_RELEASE(paPaper);
+	SAFE_RELEASE(pPaperObj);
+
+	pPaperObj = CGameObject::CreateObject("Paper5", pDefaultLayer);
+
+	CPaperTest*	tmPaper = pPaperObj->AddComponent<CPaperTest>("Paper5");
+
+	pPaperTr = pPaperObj->GetTransform();
+
+	pPaperTr->SetWorldPos(330.f, 15.f, 680.f);
+
+	pPaperPos = pPaperTr->GetWorldPos();
+	tmPaper->SetOutLinePos(pPaperPos.x, pPaperPos.y, pPaperPos.z);
+
+	SAFE_RELEASE(pPaperTr);
+	SAFE_RELEASE(tmPaper);
+	SAFE_RELEASE(pPaperObj);
+
+	pPaperObj = CGameObject::CreateObject("Paper51", pDefaultLayer);
+
+	CPaperBQ*	tmaPaper = pPaperObj->AddComponent<CPaperBQ>("Paper51");
+
+	pPaperTr = pPaperObj->GetTransform();
+
+	pPaperTr->SetWorldPos(340.f, 15.f, 680.f);
+
+	pPaperPos = pPaperTr->GetWorldPos();
+	tmaPaper->SetOutLinePos(pPaperPos.x, pPaperPos.y, pPaperPos.z);
+
+	SAFE_RELEASE(pPaperTr);
+	SAFE_RELEASE(tmaPaper);
+	SAFE_RELEASE(pPaperObj);
+
+	pPaperObj = CGameObject::CreateObject("Paper52", pDefaultLayer);
+
+	CPaperPL*	tmiPaper = pPaperObj->AddComponent<CPaperPL>("Paper52");
+
+	pPaperTr = pPaperObj->GetTransform();
+
+	pPaperTr->SetWorldPos(350.f, 15.f, 680.f);
+
+	pPaperPos = pPaperTr->GetWorldPos();
+	tmiPaper->SetOutLinePos(pPaperPos.x, pPaperPos.y, pPaperPos.z);
+
+	SAFE_RELEASE(pPaperTr);
+	SAFE_RELEASE(tmiPaper);
+	SAFE_RELEASE(pPaperObj);
 
 	/*CGameObject*	pBushObject = CGameObject::CreateObject("inside", pDefaultLayer);
 
@@ -251,6 +406,13 @@ bool CTutorialScene::Init()
 
 int CTutorialScene::Update(float fTime)
 {
+	return 0;
+}
+
+int CTutorialScene::LateUpdate(float fTime)
+{
+	//GET_SINGLE(CGameManager)->Update(fTime);
+
 	return 0;
 }
 

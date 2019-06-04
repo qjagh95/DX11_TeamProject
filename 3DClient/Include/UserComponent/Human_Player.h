@@ -320,7 +320,10 @@ public:
 	bool IsHiddenInBed();
 	bool IsHidingInLocker();
 	bool IsHiddenInLocker();
-
+	bool IsCrouching() const;
+	bool IsCrouched() const;
+	bool OnCrouchMoving() const;
+	bool IsIdle() const;
 	
 
 	class CInventory *GetInv();

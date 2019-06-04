@@ -25,6 +25,11 @@ CPaperGongji::CPaperGongji(const CPaperGongji & paper)	:
 
 CPaperGongji::~CPaperGongji()
 {
+	SAFE_RELEASE(m_pOutLineObj);
+	SAFE_RELEASE(m_pBigObj);
+	SAFE_RELEASE(m_pOutLineTr);
+	SAFE_RELEASE(m_pBigTr);
+
 	if (m_bUseInven)
 	{
 		SAFE_RELEASE(m_pDocxInven);
@@ -38,6 +43,47 @@ void CPaperGongji::AfterClone()
 
 bool CPaperGongji::Init()
 {
+	m_pOutLineObj = CGameObject::CreateObject("GongjiOutLine", m_pLayer);
+
+	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("GongjiRenderer");
+
+	pOutRenderer->SetMesh("GongjiOutLine", TEXT("FileEx.msh"));
+
+	SAFE_RELEASE(pOutRenderer);
+
+	CMaterial*	pOutMat = m_pOutLineObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pOutMat->SetMaterial(1.f, 1.f, 1.f, 3.2f, 5.f);
+	pOutMat->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pOutMat);
+
+	m_pOutLineTr = m_pOutLineObj->GetTransform();
+
+	m_pOutLineTr->SetWorldScale(0.203f, 0.202f, 0.202f);
+	m_pOutLineTr->SetWorldRot(0.f, 0.f, 90.f);
+
+	m_pBigObj = CGameObject::CreateObject("GongjiBig", m_pLayer);
+
+	CRenderer*	pBigRenderer = m_pBigObj->AddComponent<CRenderer>("GongjiBigRenderer");
+
+	pBigRenderer->SetMesh("GongjiBig", TEXT("FileEx.msh"));
+
+	SAFE_RELEASE(pBigRenderer);
+
+	CMaterial*	pBigMat = m_pBigObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+
+	pBigMat->SetSampler(0, SAMPLER_LINEAR);
+
+	SAFE_RELEASE(pBigMat);
+
+	m_pBigTr = m_pBigObj->GetTransform();
+
+	m_pBigTr->SetWorldScale(0.2f);
+	m_pBigTr->SetWorldRot(0.f, 0.f, 90.f);
+
+	SetOutLineVisible(false);
+
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("FileRender");
 	pRenderer->SetMesh("File_Gongji", TEXT("FileEx.msh"));
 
@@ -50,7 +96,7 @@ bool CPaperGongji::Init()
 	SAFE_RELEASE(pMaterial);
 
 	m_pTransform->SetWorldScale(0.1f, 0.1f, 0.1f);
-	m_pTransform->SetWorldRot(90.f, 0.f, 0.f);
+	m_pTransform->SetWorldRot(0.f, 0.f, 90.f);
 
 	CColliderSphere* pBody = m_pObject->AddComponent<CColliderSphere>("File_GongjiBody");
 
@@ -97,6 +143,7 @@ int CPaperGongji::Update(float fTime)
 				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 				pPlayer->ChangeRayAnim("AimOff");
 				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+				SetOutLineVisible(false);
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
@@ -116,6 +163,7 @@ int CPaperGongji::Update(float fTime)
 		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 		pPlayer->ChangeRayAnim("AimOff");
 		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+		SetOutLineVisible(false);
 
 		m_bMotion = false;
 
@@ -162,6 +210,7 @@ void CPaperGongji::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 			m_bMouseOn = true;
 			pPlayer->ChangeRayAnim("AimOn");
 			GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_F_Pickup");
+			SetOutLineVisible(true);
 		}
 	}
 
@@ -177,4 +226,22 @@ void CPaperGongji::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
 		m_bMouseOn = false;
 		m_bMotion = true;
 	}
+}
+
+void CPaperGongji::SetOutLineVisible(bool bEnable)
+{
+	m_pOutLineObj->SetEnable(bEnable);
+	m_pBigObj->SetEnable(bEnable);
+}
+
+void CPaperGongji::SetOutLinePos(const Vector3 & vPos)
+{
+	m_pOutLineTr->SetWorldPos(vPos);
+	m_pBigTr->SetWorldPos(vPos);
+}
+
+void CPaperGongji::SetOutLinePos(float x, float y, float z)
+{
+	m_pOutLineTr->SetWorldPos(Vector3(x + 0.15f, y, z));
+	m_pBigTr->SetWorldPos(Vector3(x, y, z));
 }

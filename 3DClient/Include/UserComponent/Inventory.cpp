@@ -648,7 +648,7 @@ int CInventory::Update(float fTime)
 	{
 		if (m_iZipCount < 1.f)
 		{
-			CGameObject*	pZipObj = CGameObject::CreateObject("InvenZipper", m_pLayer);
+			CGameObject*	pZipObj = CGameObject::CreateObject("InvenZipper", m_pLayer, true);
 
 			CZipper*	pZip = pZipObj->AddComponent<CZipper>("InvenZipper");
 

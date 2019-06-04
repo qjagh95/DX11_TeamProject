@@ -208,6 +208,7 @@
     <ClInclude Include="UserComponent\BigIcon.h" />
     <ClInclude Include="UserComponent\BulletCase.h" />
     <ClInclude Include="UserComponent\Cam_Func_Header.hpp" />
+    <ClInclude Include="UserComponent\CenterKey.h" />
     <ClInclude Include="UserComponent\Cigarette.h" />
     <ClInclude Include="UserComponent\CigaretteIcon.h" />
     <ClInclude Include="UserComponent\Document.h" />
@@ -267,6 +268,7 @@
     <ClInclude Include="UserComponent\ST3_See.h" />
     <ClInclude Include="UserComponent\ST3_Slient.h" />
     <ClInclude Include="UserComponent\ST3_Suprise.h" />
+    <ClInclude Include="UserComponent\StageKey.h" />
     <ClInclude Include="UserComponent\Tablet.h" />
     <ClInclude Include="UserComponent\TabletIcon.h" />
     <ClInclude Include="UserComponent\Trace.h" />
@@ -294,6 +296,7 @@
     <ClCompile Include="UserComponent\Bed.cpp" />
     <ClCompile Include="UserComponent\BigIcon.cpp" />
     <ClCompile Include="UserComponent\BulletCase.cpp" />
+    <ClCompile Include="UserComponent\CenterKey.cpp" />
     <ClCompile Include="UserComponent\Cigarette.cpp" />
     <ClCompile Include="UserComponent\CigaretteIcon.cpp" />
     <ClCompile Include="UserComponent\Document.cpp" />
@@ -351,6 +354,7 @@
     <ClCompile Include="UserComponent\ST3_See.cpp" />
     <ClCompile Include="UserComponent\ST3_Slient.cpp" />
     <ClCompile Include="UserComponent\ST3_Suprise.cpp" />
+    <ClCompile Include="UserComponent\StageKey.cpp" />
     <ClCompile Include="UserComponent\Tablet.cpp" />
     <ClCompile Include="UserComponent\TabletIcon.cpp" />
     <ClCompile Include="UserComponent\Trace.cpp" />

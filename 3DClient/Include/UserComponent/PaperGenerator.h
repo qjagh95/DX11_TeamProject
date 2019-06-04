@@ -17,6 +17,8 @@ private:
 private:
 	CGameObject*	m_pDocxInvenObj;
 	class CDocxInven*		m_pDocxInven;
+	CGameObject*	m_pOutLineObj;
+	CTransform*		m_pOutLineTr;
 	bool			m_bMouseOn;
 	bool			m_bUseInven;
 	bool			m_bOnInven;
@@ -36,5 +38,12 @@ public:
 public:
 	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);
 	void MouseOut(class CCollider* pSrc, class CCollider* pDest, float fTime);
+
+private:
+	void SetOutLineVisible(bool bEnable);
+
+public:
+	void SetOutLinePos(const Vector3& vPos);
+	void SetOutLinePos(float x, float y, float z);
 };
 
