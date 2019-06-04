@@ -58,6 +58,7 @@ enum DOCUMENT_TYPE
 enum KEY_TYPE
 {
 	KT_MASTER = DT_END,
+	KT_CENTER,
 	KT_END
 };
 

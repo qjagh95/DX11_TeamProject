@@ -201,6 +201,7 @@
             this.Label_PosX = new System.Windows.Forms.Label();
             this.Label_PosY = new System.Windows.Forms.Label();
             this.GB_Hierachy = new System.Windows.Forms.GroupBox();
+            this.CB_ObjectSort = new System.Windows.Forms.CheckBox();
             this.CB_ChangeStageSection = new System.Windows.Forms.Button();
             this.label42 = new System.Windows.Forms.Label();
             this.CB_StageSection = new System.Windows.Forms.ComboBox();
@@ -2275,6 +2276,7 @@
             // 
             // GB_Hierachy
             // 
+            this.GB_Hierachy.Controls.Add(this.CB_ObjectSort);
             this.GB_Hierachy.Controls.Add(this.CB_ChangeStageSection);
             this.GB_Hierachy.Controls.Add(this.label42);
             this.GB_Hierachy.Controls.Add(this.CB_StageSection);
@@ -2296,6 +2298,20 @@
             this.GB_Hierachy.TabIndex = 9;
             this.GB_Hierachy.TabStop = false;
             this.GB_Hierachy.Text = "Hierachy";
+            // 
+            // CB_ObjectSort
+            // 
+            this.CB_ObjectSort.AutoSize = true;
+            this.CB_ObjectSort.Checked = true;
+            this.CB_ObjectSort.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CB_ObjectSort.ForeColor = System.Drawing.Color.Black;
+            this.CB_ObjectSort.Location = new System.Drawing.Point(148, 510);
+            this.CB_ObjectSort.Name = "CB_ObjectSort";
+            this.CB_ObjectSort.Size = new System.Drawing.Size(52, 21);
+            this.CB_ObjectSort.TabIndex = 32;
+            this.CB_ObjectSort.Text = "Sort";
+            this.CB_ObjectSort.UseVisualStyleBackColor = true;
+            this.CB_ObjectSort.CheckedChanged += new System.EventHandler(this.ObjectSort);
             // 
             // CB_ChangeStageSection
             // 
@@ -2391,6 +2407,7 @@
             this.LB_ObjectList.Location = new System.Drawing.Point(5, 27);
             this.LB_ObjectList.Name = "LB_ObjectList";
             this.LB_ObjectList.Size = new System.Drawing.Size(195, 480);
+            this.LB_ObjectList.Sorted = true;
             this.LB_ObjectList.TabIndex = 0;
             this.LB_ObjectList.SelectedIndexChanged += new System.EventHandler(this.ChangeSelectedObject);
             this.LB_ObjectList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyDown_DeleteObject);
@@ -3220,6 +3237,7 @@
         private System.Windows.Forms.TrackBar TrackBar_In;
         private System.Windows.Forms.TextBox TB_BumpScale;
         private System.Windows.Forms.TrackBar TrackBar_BumpScale;
+        private System.Windows.Forms.CheckBox CB_ObjectSort;
     }
 }
 

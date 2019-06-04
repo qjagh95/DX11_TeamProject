@@ -184,9 +184,12 @@ namespace WinFormEditor
             m_editForm.GetObjInfo().Add(strObjectTag, info);
             _listBox.Items.Add(strObjectTag);
 
+            // 정렬
+            m_editForm.ObjectSort();
+
             // 포커스 활성화
-            int itemIndex = _listBox.Items.Count - 1;
-            _listBox.SelectedItem = _listBox.Items[itemIndex];
+            int iFindIndex = _listBox.FindString(strObjectTag);
+            _listBox.SelectedItem = _listBox.Items[iFindIndex];
             m_editForm.AddLogString(strObjectTag + " 오브젝트가 생성되었습니다.");
         }
 
@@ -237,6 +240,9 @@ namespace WinFormEditor
             }
             _listBox.SelectedIndex = SelectIndex - 1;
             m_editForm.AddLogString("오브젝트가 삭제되었습니다.");
+
+            // 정렬
+            m_editForm.ObjectSort();
         }
 
         public void DeleteAllObject(Form _form)
@@ -365,6 +371,13 @@ namespace WinFormEditor
                 _listBox.Items[_listBox.SelectedIndex] = _textBox.Text;
             }
             _listBox.SelectedIndexChanged += _event;
+
+            // 정렬
+            m_editForm.ObjectSort();
+
+            // 포커스
+            int iFindIndex = _listBox.FindString(strTag);
+            _listBox.SelectedItem = _listBox.Items[iFindIndex];
         }
 
         public void AddChild(ListBox _listBox, TextBox _textBox)

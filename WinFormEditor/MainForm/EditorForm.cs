@@ -585,6 +585,33 @@ namespace WinFormEditor
             m_gameObj.AddChild(LB_ObjectList, TB_ParentName);
         }
 
+        private void ObjectSort(object sender, EventArgs e)
+        {
+            if (CB_ObjectSort.Checked == true)
+            {
+                ObjectSort();
+            }
+        }
+
+        public void ObjectSort()
+        {
+            if (CB_ObjectSort.Checked == true)
+            {
+                // 오브젝트 리스트 정렬
+                List<string> objList = new List<string>();
+                for (int i = 0; i < LB_ObjectList.Items.Count; ++i)
+                {
+                    objList.Add(LB_ObjectList.Items[i].ToString());
+                }
+                objList.Sort();
+                LB_ObjectList.Items.Clear();
+                for (int i = 0; i < objList.Count; ++i)
+                {
+                    LB_ObjectList.Items.Add(objList[i]);
+                }
+            }
+        }
+
         /*******************************************************************************************************/
         // Transform
 
@@ -1777,7 +1804,5 @@ namespace WinFormEditor
         {
 
         }
-
-       
     }
 }
