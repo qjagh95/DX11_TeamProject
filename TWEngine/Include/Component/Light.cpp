@@ -534,7 +534,7 @@ bool CLight::Init()
 int CLight::Input(float fTime)
 {
 	if (m_eLightType != LT_DIR)
-		m_tInfo.vPos = m_pTransform->GetWorldPos();
+		m_tInfo.vPos = Vector3(m_pTransform->GetPosDelta()._41, m_pTransform->GetPosDelta()._42, m_pTransform->GetPosDelta()._43);
 
 	m_tInfo.vDir = m_pTransform->GetWorldAxis(AXIS_Z);
 

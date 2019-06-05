@@ -39,6 +39,11 @@ Vector3 CNavigationMesh::GetOffset() const
 	return m_vOffset;
 }
 
+Vector3 CNavigationMesh::GetSectionSize() const
+{
+	return m_vSectionSize;
+}
+
 list<Vector3> CNavigationMesh::GetPathList() const
 {
 	return m_PathList;

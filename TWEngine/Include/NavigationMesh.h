@@ -190,6 +190,7 @@ public:
 	Vector3	GetMin()	const;
 	Vector3 GetMax()	const;
 	Vector3 GetOffset()	const;
+	Vector3 GetSectionSize() const;
 	list<Vector3> GetPathList()	const;
 
 public:

@@ -406,6 +406,7 @@ void CCollisionManager::Collision(float fTime)
 								pCollSrc->SetCallBackFunc(true);
 								pCollDest->SetCallBackFunc(true);
 								pCollSrc->AddStayingColliders(pCollDest);
+								pCollDest->AddStayingColliders(pCollSrc);
 							}
 						}
 					}
@@ -553,7 +554,7 @@ void CCollisionManager::CollisionMouse2D(CGameObject* pMouseObj,
 					// 이전에 충돌되고 있었을 경우
 					else
 					{
-						const std::vector<CCollider*> *pVecSrcStayingColliders;
+						const std::vector<CCollider*> *pVecSrcStayingColliders = pCollSrc->GetStayingColliders();
 
 						std::vector<CCollider*>::const_iterator itr;
 						std::vector<CCollider*>::const_iterator itrEnd
@@ -575,6 +576,7 @@ void CCollisionManager::CollisionMouse2D(CGameObject* pMouseObj,
 							pCollSrc->OnCollision(pCollDest, fTime);
 							pCollDest->OnCollision(pCollSrc, fTime);
 							pCollSrc->AddStayingColliders(pCollDest);
+							pCollDest->AddStayingColliders(pCollSrc);
 						}
 
 						bMouseCollision = true;
