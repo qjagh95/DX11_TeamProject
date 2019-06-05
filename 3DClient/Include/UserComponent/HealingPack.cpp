@@ -205,7 +205,7 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				{
 					strIconName = "Icon_LunchBox";
 				}
-				m_pObjItemIcon = CGameObject::CreateObject(strIconName, m_pLayer);
+				m_pObjItemIcon = CGameObject::CreateObject(strIconName, m_pLayer, true);
 				CHealingPackIcon* pHealingPackIcon = m_pObjItemIcon->AddComponent<CHealingPackIcon>(strIconName);
 				pHealingPackIcon->SetHealingPackInst(this);
 				pHealingPackIcon->SetMaterial();

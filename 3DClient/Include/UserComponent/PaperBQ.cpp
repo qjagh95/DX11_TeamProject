@@ -107,7 +107,7 @@ int CPaperBQ::Update(float fTime)
 
 				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
 
-				CGameObject*	pSMObj = CGameObject::CreateObject("MessageBQ", m_pLayer);
+				CGameObject*	pSMObj = CGameObject::CreateObject("MessageBQ", m_pLayer, true);
 
 				CMessageBQ*	pSM = pSMObj->AddComponent<CMessageBQ>("MessageBQ");
 

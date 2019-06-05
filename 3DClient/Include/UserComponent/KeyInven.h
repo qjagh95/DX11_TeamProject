@@ -53,5 +53,8 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CKeyInven* Clone();
+
+public:
+	void AddUILayer();
 };
 

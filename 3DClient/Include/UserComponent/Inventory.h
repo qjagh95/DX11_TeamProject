@@ -37,7 +37,6 @@ private:
 	float					m_fItemY;
 
 private:
-	int				m_iZipCount;
 	int				m_iCount;
 
 private:
@@ -102,5 +101,8 @@ public:
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
 	virtual CInventory* Clone();
+
+public:
+	void AddUILayer();
 };
 

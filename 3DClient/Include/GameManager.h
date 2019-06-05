@@ -92,6 +92,8 @@ public:
 
 	CDoor* GetPlayerCollDoor(CScene* scene) const;
 
+	void AddUILayer();
+
 	DECLARE_SINGLE(CGameManager)
 };
 

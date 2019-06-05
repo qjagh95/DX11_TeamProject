@@ -76,6 +76,14 @@ int CStage1Scene::Update(float fTime)
 {
 	if (GET_SINGLE(CSceneManager)->GetChange())
 	{
+		static bool bAdd = true;
+
+		if (bAdd)
+		{
+			bAdd = false;
+			GET_SINGLE(CGameManager)->AddUILayer();
+		}
+
 		m_fFade += 0.1f * fTime;
 		GET_SINGLE(CRenderManager)->SetFadeAmount(m_fFade, fTime);
 

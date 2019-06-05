@@ -22,7 +22,11 @@ DEFINITION_SINGLE(CViewManager)
 CViewManager::CViewManager()	:
 	m_pCreateState(nullptr)
 {
+#ifdef _DEBUG
 	m_bTargetOnOff = true;
+#else
+	m_bTargetOnOff = false;
+#endif
 }
 
 CViewManager::~CViewManager()

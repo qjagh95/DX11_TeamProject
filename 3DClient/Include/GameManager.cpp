@@ -20,6 +20,9 @@
 #include "UserComponent/Human_Player.h"
 #include "UserComponent/NoticeMessage.h"
 #include "UserComponent/PaperGenerator.h"
+#include "UserComponent/Inventory.h"
+#include "UserComponent/DocxInven.h"
+#include "UserComponent/KeyInven.h"
 
 DEFINITION_SINGLE(CGameManager)
 
@@ -930,4 +933,32 @@ CDoor * CGameManager::GetPlayerCollDoor(CScene* scene) const
 	return NULLPTR;
 }
 
+void CGameManager::AddUILayer()
+{
+	CGameObject*	pInvenObj = CGameObject::FindObject("Inven");
 
+	CInventory*	pInven = pInvenObj->FindComponentFromType<CInventory>((COMPONENT_TYPE)UT_INVENTORY);
+
+	pInven->AddUILayer();
+
+	SAFE_RELEASE(pInven);
+	SAFE_RELEASE(pInvenObj);
+
+	CGameObject*	pDocxObj = CGameObject::FindObject("DocxInven");
+
+	CDocxInven*	pDocx = pDocxObj->FindComponentFromType<CDocxInven>((COMPONENT_TYPE)UT_DOCXINVEN);
+
+	pDocx->AddUILayer();
+
+	SAFE_RELEASE(pDocx);
+	SAFE_RELEASE(pDocxObj);
+
+	CGameObject*	pKeyInvenObj = CGameObject::FindObject("KeyInven");
+
+	CKeyInven*	pKeyInven = pKeyInvenObj->FindComponentFromType<CKeyInven>((COMPONENT_TYPE)UT_KEYINVEN);
+
+	pKeyInven->AddUILayer();
+
+	SAFE_RELEASE(pKeyInven);
+	SAFE_RELEASE(pKeyInvenObj);
+}

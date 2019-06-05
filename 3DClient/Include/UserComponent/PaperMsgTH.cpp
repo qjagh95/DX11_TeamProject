@@ -108,7 +108,7 @@ int CPaperMsgTH::Update(float fTime)
 
 				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
 
-				CGameObject*	pSMObj = CGameObject::CreateObject("MessageTH", m_pLayer);
+				CGameObject*	pSMObj = CGameObject::CreateObject("MessageTH", m_pLayer, true);
 
 				CMessageTH*	pSM = pSMObj->AddComponent<CMessageTH>("MessageTH");
 

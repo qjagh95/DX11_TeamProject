@@ -126,7 +126,8 @@ int CBattery::Update(float fTime)
 
 				m_pInvenObj = CGameObject::FindObject("Inven");
 
-				CGameObject*	pIconObj = CGameObject::CreateObject("Icon_Battery", m_pLayer);
+				CLayer*	pUILayer = m_pScene->FindLayer("UI");
+				CGameObject*	pIconObj = CGameObject::CreateObject("Icon_Battery", pUILayer, true);
 
 				CBatteryIcon*	pIcon = pIconObj->AddComponent<CBatteryIcon>("Icon_Battery");
 
@@ -150,7 +151,7 @@ int CBattery::Update(float fTime)
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
-
+				SAFE_RELEASE(pUILayer);
 
 			}
 		}

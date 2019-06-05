@@ -126,7 +126,7 @@ int CStageKey::Update(float fTime)
 
 				m_pKeyInvenObj = CGameObject::FindObject("KeyInven");
 
-				CGameObject*	pMKObj = CGameObject::CreateObject("CenterKey", m_pLayer);
+				CGameObject*	pMKObj = CGameObject::CreateObject("CenterKey", m_pLayer, true);
 
 				CCenterKey*	pMK = pMKObj->AddComponent<CCenterKey>("CenterKey");
 

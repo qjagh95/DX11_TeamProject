@@ -170,7 +170,7 @@ void CCigarette::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				// 酒捞袍 酒捞能 积己
 				// 'HealingPackIcon' 按眉 积己
 				string strIconName = "";
-				m_pObjItemIcon = CGameObject::CreateObject("Icon_Cigarette", m_pLayer);
+				m_pObjItemIcon = CGameObject::CreateObject("Icon_Cigarette", m_pLayer, true);
 				CCigaretteIcon* pCigaretteIcon = m_pObjItemIcon->AddComponent<CCigaretteIcon>("Icon_Cigarette");
 				m_pInventory->AddItem(m_pObjItemIcon);
 				SAFE_RELEASE(pCigaretteIcon);

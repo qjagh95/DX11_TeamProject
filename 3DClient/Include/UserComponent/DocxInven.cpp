@@ -192,13 +192,13 @@ bool CDocxInven::Init()
 	m_iDocxMax = 20;
 	m_iIndex = 0;
 
-	m_pDocObj = CGameObject::CreateObject("Document", m_pLayer);
+	m_pDocObj = CGameObject::CreateObject("Document", m_pLayer, true);
 	m_pDoc = m_pDocObj->AddComponent<CDocument>("Document");
 
 	m_pDocObj->SetEnable(false);
 	m_pDoc->ChangeClip("Message_Empty");
 
-	CGameObject*	pPMObj = CGameObject::CreateObject("PhoneMessage", m_pLayer);
+	CGameObject*	pPMObj = CGameObject::CreateObject("PhoneMessage", m_pLayer, true);
 
 	CPhoneMessage*	pPM = pPMObj->AddComponent<CPhoneMessage>("PhoneMessage");
 
@@ -240,8 +240,74 @@ CDocxInven * CDocxInven::Clone()
 
 void CDocxInven::Save(BinaryWrite * _pInstBW)
 {
+	int iSize = m_vecItem.size();
+	_pInstBW->WriteData(iSize);
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		_pInstBW->WriteData(m_vecItem[i]->GetTag());
+		_pInstBW->WriteData(m_vecItem[i]->GetLayer()->GetTag());
+		m_vecItem[i]->Save(_pInstBW);
+	}
+
+	_pInstBW->WriteData(m_iIndex);
+	_pInstBW->WriteData(m_iDocxMax);
+
+	_pInstBW->WriteData(m_pDocObj->GetTag());
+	_pInstBW->WriteData(m_pDocObj->GetLayer()->GetTag());
+	_pInstBW->WriteData(m_pDocObj);
+
+	_pInstBW->WriteData(m_pDoc->GetTag());
+	_pInstBW->WriteData(m_pDoc);
 }
 
 void CDocxInven::Load(BinaryRead * _pInstBR)
 {
+	int iSize = _pInstBR->ReadInt();
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		string ObjectTag = _pInstBR->ReadString();
+		string LayerTag = _pInstBR->ReadString();
+		CLayer* getLayer = CSceneManager::GetInst()->FindLayer(LayerTag);
+
+		CGameObject* pItem = CGameObject::CreateObject(ObjectTag, getLayer, true);
+		pItem->Load(_pInstBR);
+
+		SAFE_RELEASE(getLayer);
+		SAFE_RELEASE(pItem);
+	}
+
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+
+	string DocObjTag = _pInstBR->ReadString();
+	string strLayerTag = _pInstBR->ReadString();
+	CLayer*	pLayer = GET_SINGLE(CSceneManager)->FindLayer(strLayerTag);
+
+	CGameObject*	pDocument = CGameObject::CreateObject(DocObjTag, pLayer, true);
+	pDocument->Load(_pInstBR);
+
+	string DocTag = _pInstBR->ReadString();
+
+	CDocument*	pDoc = pDocument->AddComponent<CDocument>(DocTag);
+
+	SAFE_RELEASE(pDoc);
+	SAFE_RELEASE(pDocument);
+	SAFE_RELEASE(pLayer);
+}
+
+void CDocxInven::AddUILayer()
+{
+	CLayer*	pUILayer = m_pScene->FindLayer("UI");
+
+	for (size_t i = 0; i < m_vecItem.size(); ++i)
+	{
+		if (m_vecItem[i] == nullptr)
+			break;
+
+		pUILayer->AddObject(m_vecItem[i]);
+	}
+
+	SAFE_RELEASE(pUILayer);
 }

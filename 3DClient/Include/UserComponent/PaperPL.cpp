@@ -107,7 +107,7 @@ int CPaperPL::Update(float fTime)
 
 				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
 
-				CGameObject*	pSMObj = CGameObject::CreateObject("PaperPL", m_pLayer);
+				CGameObject*	pSMObj = CGameObject::CreateObject("PaperPL", m_pLayer, true);
 
 				CMeesagePL*	pSM = pSMObj->AddComponent<CMeesagePL>("PaperPL");
 

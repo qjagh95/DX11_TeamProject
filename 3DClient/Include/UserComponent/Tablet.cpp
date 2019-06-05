@@ -169,7 +169,7 @@ void CTablet::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				// 酒捞袍 酒捞能 积己
 				// 'HealingPackIcon' 按眉 积己
 				string strIconName = "";
-				m_pObjItemIcon = CGameObject::CreateObject("Icon_Tablet", m_pLayer);
+				m_pObjItemIcon = CGameObject::CreateObject("Icon_Tablet", m_pLayer, true);
 				CTabletIcon* pTabletIcon = m_pObjItemIcon->AddComponent<CTabletIcon>("Icon_Tablet");
 				m_pInventory->AddItem(m_pObjItemIcon);
 				SAFE_RELEASE(pTabletIcon);

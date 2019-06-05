@@ -30,11 +30,13 @@ public:
 		const vector<const TCHAR*>& vecFileName, const string& strPathKey = TEXTURE_PATH);
 	void SetDefaultClip(const string& strClip);
 	void ChangeClip(const string& strName);
-
+	void ResetClip();
+	
 private:
 	PAnimationClip2D FindClip(const string& strName);
 
 public:
+	void CurrentClipJumpToFrame(int iFrame);
 	virtual void Start();
 	virtual void AfterClone();
 	virtual bool Init();

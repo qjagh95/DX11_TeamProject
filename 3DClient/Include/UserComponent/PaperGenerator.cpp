@@ -41,7 +41,7 @@ void CPaperGenerator::AfterClone()
 
 bool CPaperGenerator::Init()
 {
-	m_pOutLineObj = CGameObject::CreateObject("FileOutLine", m_pLayer);
+	m_pOutLineObj = CGameObject::CreateObject("FileOutLine", m_pLayer, true);
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("FileRenderer");
 
@@ -107,7 +107,7 @@ int CPaperGenerator::Update(float fTime)
 
 				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
 
-				CGameObject*	pSMObj = CGameObject::CreateObject("DocxGenerator", m_pLayer);
+				CGameObject*	pSMObj = CGameObject::CreateObject("DocxGenerator", m_pLayer, true);
 
 				CDocxGenerator*	pSM = pSMObj->AddComponent<CDocxGenerator>("DocxGenerator");
 

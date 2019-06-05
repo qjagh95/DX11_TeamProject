@@ -43,7 +43,7 @@ void CPaperGongji::AfterClone()
 
 bool CPaperGongji::Init()
 {
-	m_pOutLineObj = CGameObject::CreateObject("GongjiOutLine", m_pLayer);
+	m_pOutLineObj = CGameObject::CreateObject("GongjiOutLine", m_pLayer, true);
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("GongjiRenderer");
 
@@ -128,7 +128,7 @@ int CPaperGongji::Update(float fTime)
 
 				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
 
-				CGameObject*	pSMObj = CGameObject::CreateObject("DocxGongji", m_pLayer);
+				CGameObject*	pSMObj = CGameObject::CreateObject("DocxGongji", m_pLayer, true);
 
 				CDocxGongji*	pSM = pSMObj->AddComponent<CDocxGongji>("DocxGongji");
 

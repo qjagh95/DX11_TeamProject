@@ -27,9 +27,7 @@ CInventory::CInventory() :
 	m_bVisible = false;
 	m_eState = INS_NORMAL;
 	m_fItemY = 0.f;
-	m_iZipCount = 0;
 	m_iCount = 0;
-
 
 	m_iBatteryCnt = 0;
 	m_iMedicalKitCnt = 0;
@@ -46,7 +44,6 @@ CInventory::CInventory() :
 CInventory::CInventory(const CInventory & inven)	:
 	CUserComponent(inven)
 {
-	//*this = inven;
 }
 
 CInventory::~CInventory()
@@ -151,7 +148,6 @@ void CInventory::SetVisible()
 		PUN::CInput::GetInst()->ShowMouse(false);
 		m_pBigIcon->ChangeClip("BigIcon_Empty");
 		m_pBigIconObj->SetEnable(false);
-		m_iZipCount = 0;
 		m_pZipper->ResetClip();
 		m_pZipObj->SetEnable(false);
 
@@ -255,6 +251,8 @@ void CInventory::AddItem(CGameObject * pItem)
 
 	m_vecItem[m_iIndex] = pItem;
 
+	CLayer*	pUILayer = m_pScene->FindLayer("UI");
+
 	Vector3	vInvenPos = m_pTransform->GetWorldPos();
 	string strTag = m_vecItem[m_iIndex]->GetTag();
 	CTransform*	pItemTr = m_vecItem[m_iIndex]->GetTransform();
@@ -265,7 +263,8 @@ void CInventory::AddItem(CGameObject * pItem)
 		if (m_iBatteryCnt == 0)
 		{
 			CGameObject* pBatteryObj = CGameObject::FindObject("Icon_Battery");
-			m_pBatteryNumberObj = CGameObject::CreateObject("BatteryNumber", m_pLayer);
+			m_pBatteryNumberObj = CGameObject::CreateObject("BatteryNumber", m_pLayer, true);
+			pUILayer->AddObject(m_pBatteryNumberObj);
 			m_vecNumber.push_back(m_pBatteryNumberObj);
 			m_vecList.push_back(pBatteryObj);
 			++m_iNumberIndex;
@@ -302,7 +301,7 @@ void CInventory::AddItem(CGameObject * pItem)
 		if (m_iMedicalKitCnt == 0)
 		{
 			CGameObject*	pMedicalKitObj = CGameObject::FindObject("Icon_MedicalKit");
-			m_pMedicalKitNumberObj = CGameObject::CreateObject("MedicalKitNumber", m_pLayer);
+			m_pMedicalKitNumberObj = CGameObject::CreateObject("MedicalKitNumber", m_pLayer, true);
 			m_vecNumber.push_back(m_pMedicalKitNumberObj);
 			m_vecList.push_back(pMedicalKitObj);
 			++m_iNumberIndex;
@@ -337,7 +336,7 @@ void CInventory::AddItem(CGameObject * pItem)
 		if (m_iLunchBoxCnt == 0)
 		{
 			CGameObject*	pLunchBoxObj = CGameObject::FindObject("Icon_LunchBox");
-			m_pLunchBoxNumberObj = CGameObject::CreateObject("LunchBoxNumber", m_pLayer);
+			m_pLunchBoxNumberObj = CGameObject::CreateObject("LunchBoxNumber", m_pLayer, true);
 			m_vecNumber.push_back(m_pLunchBoxNumberObj);
 			m_vecList.push_back(pLunchBoxObj);
 			++m_iNumberIndex;
@@ -373,7 +372,7 @@ void CInventory::AddItem(CGameObject * pItem)
 		if (m_iDaemaCnt == 0)
 		{
 			CGameObject*	pCigaretteObj = CGameObject::FindObject("Icon_Cigarette");
-			m_pDaemaNumberObj = CGameObject::CreateObject("DaemaNumber", m_pLayer);
+			m_pDaemaNumberObj = CGameObject::CreateObject("DaemaNumber", m_pLayer, true);
 			m_vecNumber.push_back(m_pDaemaNumberObj);
 			m_vecList.push_back(pCigaretteObj);
 			++m_iNumberIndex;
@@ -409,7 +408,7 @@ void CInventory::AddItem(CGameObject * pItem)
 		if (m_iTabletCnt == 0)
 		{
 			CGameObject*	pTabletObj = CGameObject::FindObject("Icon_Tablet");
-			m_pTabletNumberObj = CGameObject::CreateObject("TabletNumber", m_pLayer);
+			m_pTabletNumberObj = CGameObject::CreateObject("TabletNumber", m_pLayer, true);
 			m_vecNumber.push_back(m_pTabletNumberObj);
 			m_vecList.push_back(pTabletObj);
 			++m_iNumberIndex;
@@ -454,6 +453,7 @@ void CInventory::AddItem(CGameObject * pItem)
 
 	++m_iIndex;
 	SAFE_RELEASE(pItemTr);
+	SAFE_RELEASE(pUILayer);
 }
 
 void CInventory::UseItem(CGameObject * pItem)
@@ -637,7 +637,7 @@ bool CInventory::Init()
 
 	m_vecItem.resize(20);
 
-	m_pBigIconObj = CGameObject::CreateObject("BigIcon", m_pLayer);
+	m_pBigIconObj = CGameObject::CreateObject("BigIcon", m_pLayer, true);
 
 	m_pBigIcon = m_pBigIconObj->AddComponent<CBigIcon>("BigIcon");
 
@@ -663,25 +663,6 @@ int CInventory::Input(float fTime)
 
 int CInventory::Update(float fTime)
 {	
-	if (m_bVisible)
-	{
-		if (m_iZipCount < 1.f)
-		{
-			//CGameObject*	pZipObj = CGameObject::CreateObject("InvenZipper", m_pLayer);
-
-			/*CZipper*	pZip = m_pZipObj->AddComponent<CZipper>("InvenZipper");
-
-			CTransform*	pZipTr = m_pZipObj->GetTransform();
-
-			pZipTr->SetWorldPos(255.f, 80.f, 0.f);
-
-			SAFE_RELEASE(pZipTr);
-			SAFE_RELEASE(pZip);*/
-			//SAFE_RELEASE(pZipObj);
-			++m_iZipCount;
-		}
-	}
-
 	return 0;
 }
 
@@ -701,5 +682,36 @@ void CInventory::Render(float fTime)
 CInventory * CInventory::Clone()
 {
 	return new CInventory(*this);
+}
+
+void CInventory::AddUILayer()
+{
+	CLayer*	pUILayer = m_pScene->FindLayer("UI");
+
+	for (size_t i = 0; i < m_vecItem.size(); ++i)
+	{
+		if (m_vecItem[i] == nullptr)
+			break;
+
+		pUILayer->AddObject(m_vecItem[i]);
+	}
+
+	for (size_t i = 0; i < m_vecNumber.size(); ++i)
+	{
+		if (m_vecNumber[i] == nullptr)
+			break;
+
+		pUILayer->AddObject(m_vecNumber[i]);
+	}
+
+	for (size_t i = 0; i < m_vecNumber.size(); ++i)
+	{
+		if (m_vecList[i] == nullptr)
+			break;
+
+		pUILayer->AddObject(m_vecList[i]);
+	}
+
+	SAFE_RELEASE(pUILayer);
 }
 

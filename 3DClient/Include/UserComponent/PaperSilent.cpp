@@ -81,7 +81,7 @@ int CPaperSilent::Update(float fTime)
 
 				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
 
-				CGameObject*	pSMObj = CGameObject::CreateObject("SilentMessage", m_pLayer);
+				CGameObject*	pSMObj = CGameObject::CreateObject("SilentMessage", m_pLayer, true);
 
 				CSilentMessage*	pSM = pSMObj->AddComponent<CSilentMessage>("SilentMessage");
 

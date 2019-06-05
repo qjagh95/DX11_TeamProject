@@ -107,7 +107,7 @@ int CPaperPlanA::Update(float fTime)
 
 				m_pDocxInvenObj = CGameObject::FindObject("DocxInven");
 
-				CGameObject*	pSMObj = CGameObject::CreateObject("MessagePlanA", m_pLayer);
+				CGameObject*	pSMObj = CGameObject::CreateObject("MessagePlanA", m_pLayer, true);
 
 				CMessagePlanA*	pSM = pSMObj->AddComponent<CMessagePlanA>("MessagePlanA");
 

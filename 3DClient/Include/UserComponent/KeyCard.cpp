@@ -126,7 +126,7 @@ int CKeyCard::Update(float fTime)
 
 				m_pKeyInvenObj = CGameObject::FindObject("KeyInven");
 
-				CGameObject*	pMKObj = CGameObject::CreateObject("MasterKey", m_pLayer);				
+				CGameObject*	pMKObj = CGameObject::CreateObject("MasterKey", m_pLayer, true);				
 
 				CMasterKey*	pMK = pMKObj->AddComponent<CMasterKey>("MasterKey");
 

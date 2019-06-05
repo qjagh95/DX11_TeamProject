@@ -4,6 +4,7 @@
 #include "EventMessage.h"
 #include "Human_Player.h"
 #include "Rendering/RenderManager.h"
+#include "../GameManager.h"
 
 CEventCollider::CEventCollider()	:
 	m_pPressCtrlObj(nullptr),
@@ -100,7 +101,6 @@ int CEventCollider::Input(float fTime)
 			GET_SINGLE(CRenderManager)->SetFadeAmount(0.001f, fTime);
 
 			GET_SINGLE(CSceneManager)->ChangeScene("Stage1"); 
-
 			pTr->SetWorldPos(Vector3(20.f , 0.f , 150.f));
 
 			m_bNext = false;

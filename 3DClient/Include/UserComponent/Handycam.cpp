@@ -184,8 +184,7 @@ bool CHandycam::Init()
 
 	CLayer*	pUILayer = m_pScene->FindLayer("UI");
 
-	m_pBarObj = CGameObject::CreateObject("HandycamBar", pUILayer);
-	   
+	m_pBarObj = CGameObject::CreateObject("HandycamBar", pUILayer, true);	   
 
 	m_pBar = m_pBarObj->AddComponent<CUIBar>("HandycamBar");
 
@@ -219,7 +218,7 @@ int CHandycam::Update(float fTime)
 {
 	if (m_pObject->GetEnable() == true)
 	{
-		m_pBar->AddValue(-10 * fTime);
+		m_pBar->AddValue(-0.01f * fTime);
 	}
 
 	float fValue = m_pBar->GetValue();

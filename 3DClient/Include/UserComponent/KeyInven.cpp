@@ -129,7 +129,7 @@ void CKeyInven::AddItem(CGameObject * pItem)
 	pItemTr->SetWorldPos(vKeyPos.x + 395.f, vKeyPos.y + 562.f - m_fItemY, 0.f);
 	pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
-	m_fItemY += 60.f;
+	m_fItemY += 105.f;
 
 	if (m_pObject->GetEnable() == false)
 	{
@@ -187,11 +187,15 @@ bool CKeyInven::Init()
 	m_iKeyMax = 20;
 	m_iIndex = 0;
 
-	m_pKeyBigObj = CGameObject::CreateObject("KeyBigIcon", m_pLayer);
+	CLayer*	pUILayer = m_pScene->FindLayer("UI");
+
+	m_pKeyBigObj = CGameObject::CreateObject("KeyBigIcon", pUILayer, true);
 	m_pKeyBig = m_pKeyBigObj->AddComponent<CKeyBigICon>("KeyBigIcon");
 
 	m_pKeyBigObj->SetEnable(false);
 	m_pKeyBig->ChangeClip("KeyBig_Empty");
+
+	SAFE_RELEASE(pUILayer);
 
 	return true;
 }
@@ -222,4 +226,19 @@ void CKeyInven::Render(float fTime)
 CKeyInven * CKeyInven::Clone()
 {
 	return new CKeyInven(*this);
+}
+
+void CKeyInven::AddUILayer()
+{
+	CLayer*	pUILayer = m_pScene->FindLayer("UI");
+
+	for (size_t i = 0; i < m_vecKey.size(); ++i)
+	{
+		if (m_vecKey[i] == nullptr)
+			break;
+
+		pUILayer->AddObject(m_vecKey[i]);
+	}
+
+	SAFE_RELEASE(pUILayer);
 }
