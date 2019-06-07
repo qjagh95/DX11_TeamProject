@@ -433,6 +433,8 @@ void CGameManager::AddToEachContainer()
 						else if (strstr(strName, "BACK") != nullptr)
 							pDoor->LockIn(-1);
 					}
+					else if (strstr(strName, "BROKEN") != nullptr || strstr(strName, "FAKE") != nullptr)
+						pDoor->Break();
 
 					SAFE_RELEASE(pDoor);
 				}

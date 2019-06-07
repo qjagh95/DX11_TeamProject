@@ -31,6 +31,7 @@ CDoor::CDoor() :
 	m_bFastOpen(false),
 	m_bOpen(false),
 	m_bNeedKey(false),
+	m_bBroken(false),
 	m_iDir(0),
 	m_fOpenRot(90.0f),
 	m_fRot(0.0f),
@@ -197,6 +198,11 @@ bool CDoor::IsLock() const
 	return m_bLock;
 }
 
+bool CDoor::IsBroken() const
+{
+	return m_bBroken;
+}
+
 void CDoor::UnLock()
 {
 	m_bLock = false;
@@ -284,6 +290,11 @@ void CDoor::LockIn(int iDir)
 	m_bLock = true;
 	m_bNeedKey = false;
 	m_iLockDir = iDir;
+}
+
+void CDoor::Break()
+{
+	m_bBroken = true;
 }
 
 void CDoor::ChangeObjectSection(CGameObject* Object)
@@ -1010,20 +1021,31 @@ void CDoor::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 		{
 			if (CInput::GetInst()->KeyPress("E"))
 			{
-				//잠겨잇는 상태라면
-				if (m_bLock)
-					UnLock(vDir);
-				//잠겨있지 않다면
+				//문이 부서져있다면
+				if (m_bBroken)
+				{
+					//잠김 사운드 재생
+					PUN::CSoundSource *pSnd = (PUN::CSoundSource*)m_pSndComp;
+					pSnd->StopClip(LOCK_SOUND);
+					pSnd->Play(LOCK_SOUND);
+				}
 				else
 				{
-					bool bAct = m_iState & DOOR_ONACT;
-					//열리거나 닫히는 중이 아니라면
-					if (!bAct)
+					//잠겨잇는 상태라면
+					if (m_bLock)
+						UnLock(vDir);
+					//잠겨있지 않다면
+					else
 					{
-						if (m_iState & DOOR_CLOSE)
-							Open(vDir);
-						else if (m_iState & DOOR_OPEN)
-							Close();
+						bool bAct = m_iState & DOOR_ONACT;
+						//열리거나 닫히는 중이 아니라면
+						if (!bAct)
+						{
+							if (m_iState & DOOR_CLOSE)
+								Open(vDir);
+							else if (m_iState & DOOR_OPEN)
+								Close();
+						}
 					}
 				}
 			}

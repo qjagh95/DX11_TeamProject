@@ -35,18 +35,23 @@ void CBed::AfterClone()
 
 bool CBed::Init()
 {
-	CRenderer* pRD = m_pObject->AddComponent<CRenderer>("BedRenderer");
-	pRD->SetMesh("bed", TEXT("Bed_No_Sheet.msh"));
 
-	
+	CRenderer* pRD = FindComponentFromType<CRenderer>(CT_RENDERER);
+	if (!pRD)
+	{
+		pRD = m_pObject->AddComponent<CRenderer>("BedRenderer");
+		pRD->SetMesh("bed", TEXT("Bed_No_Sheet.msh"));
 
-	m_pTransform->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
-	m_pTransform->SetLocalRot(0.f, -90.f, 0.f);
-	//m_pTransform->SetWorldPivot(0.5f, 0.f, 0.5f);
-	m_pTransform->SetLocalPos(0.f, 0.f, 32.f);
+		m_pTransform->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
+		m_pTransform->SetLocalRot(0.f, -90.f, 0.f);
+		//m_pTransform->SetWorldPivot(0.5f, 0.f, 0.5f);
+		m_pTransform->SetLocalPos(0.f, 0.f, 32.f);
+	}
+
 	CColliderOBB3D *pCol = AddComponent<CColliderOBB3D>("Collider");
 
 	pCol->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(1.5f, 3.f, 3.f));
+	pCol->SetColliderID(UCI_BED);
 
 	SAFE_RELEASE(pCol);
 

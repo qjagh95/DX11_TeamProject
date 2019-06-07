@@ -101,6 +101,7 @@ private:
 	bool		m_bFastOpen;
 	bool		m_bOpen;
 	bool		m_bisPlayerColl;
+	bool		m_bBroken;
 	float		m_fOpenRot;
 	float		m_fCloseRot;
 
@@ -154,11 +155,13 @@ public:
 	void AfterClone();
 
 public:
-	bool IsLock() const;
+	bool IsLock()	const;
+	bool IsBroken() const;
 	void UnLock();
 	void UnLock(const Vector3& vAxis);
 	void Lock(bool bNeedKey = false, const string& strKeyName = "");
 	void LockIn(int iDir);
+	void Break();
 
 	void SetStageSection(STAGE_SECTION_TYPE Section) { m_iSection = Section; }
 	STAGE_SECTION_TYPE GetStageSection() const { return m_iSection; }

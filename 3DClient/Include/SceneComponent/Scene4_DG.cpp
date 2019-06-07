@@ -11,7 +11,7 @@
 
 // Å×½ºÆ®
 #define IS_TEST			false
-#define IS_CONVERTFBX	true
+#define IS_CONVERTFBX	false
 #define IS_LIGHT_TEST	false
 
 CScene4::CScene4() :

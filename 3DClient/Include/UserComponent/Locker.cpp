@@ -35,15 +35,20 @@ bool CLocker::Init()
 
 	m_vRelativePos = Vector3(-31.f, 10.f, 24.5f);
 
-	CRenderer* pRD = m_pObject->AddComponent<CRenderer>("LockerRenderer");
+	CRenderer* pRD = FindComponentFromType<CRenderer>(CT_RENDERER);
+	if (!pRD)
+	{
+		pRD = m_pObject->AddComponent<CRenderer>("LockerRenderer");
+		pRD->SetMesh("Large_Locker", TEXT("Large_Locker.msh"));
+
+		m_pTransform->SetLocalRotY(90.0f);
+		//m_pTransform->SetWorldPivot(0.0f, 0.0f, 0.0f);
+		m_pTransform->SetWorldScale(0.055f, 0.034f, 0.05f);
+	}
+
 	CColliderOBB3D* pOBB = m_pObject->AddComponent<CColliderOBB3D>("LockerBody");
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CLocker::Interact);
-
-	pRD->SetMesh("Large_Locker", TEXT("Large_Locker.msh"));
-
-	m_pTransform->SetLocalRotY(90.0f);
-	//m_pTransform->SetWorldPivot(0.0f, 0.0f, 0.0f);
-	m_pTransform->SetWorldScale(0.055f, 0.034f, 0.05f);
+	pOBB->SetColliderID(UCI_LOCKER);
 
 	Vector3 vMeshLength = pRD->GetMeshLength();
 	Vector3 vScale = vMeshLength * GetWorldScale();
@@ -65,7 +70,7 @@ bool CLocker::Init()
 
 	pOBB->SetInfo(vCenter, vAxis, vScale);
 
-	CGameObject* pObj = CGameObject::CreateObject("LockerDoorObj");
+	CGameObject* pObj = CGameObject::CreateObject("LkDoorObj");
 	CTransform* pTr = pObj->GetTransform();
 	m_pDoor = pObj->AddComponent<CDoor>("LockerDoor");
 

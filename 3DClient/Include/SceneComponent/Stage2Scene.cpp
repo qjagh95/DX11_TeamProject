@@ -82,6 +82,23 @@ void CStage2Scene::AfterInit()
 	//pDoor->SetDoorType(DOOR_STAGE);
 	//pDoor->SetTargetDoor("Stage1", "Door_S1_S2_1");
 	//pDoor->SetLeftRight(true);
+
+	CScene* pScene = GET_SINGLE(CSceneManager)->GetScene();
+	CLayer* pLayer = pScene->FindLayer("Default");
+
+	list<CGameObject*>* pList = pLayer->GetObjectList();
+
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = pList->end();
+
+	for (iter = pList->begin(); iter != iterEnd; ++iter)
+	{
+		//여기서 미리 생성한 두가지 버젼의 방 내용물을 수정한다.
+		//자식들도 같이 SetEnable하는 함수 만들어놓자.
+
+	}
+	//이벤트 콜라이더 배치
+
 }
 
 int CStage2Scene::Update(float fTime)

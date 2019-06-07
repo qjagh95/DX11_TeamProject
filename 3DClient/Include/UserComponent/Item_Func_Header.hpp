@@ -20,3 +20,5 @@ void  RecoveryHP(int _hp);
 int   GetHP();
 
 void ChangeRayAnim(const string& strName);
+class CKeyInven* GetKeyInven();
+class CDocxInven* GetDocxInven();
