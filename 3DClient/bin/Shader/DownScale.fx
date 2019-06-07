@@ -60,7 +60,7 @@ void DownScale(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : 
                 vColor += SharedColor16[iIdx.x + i][iIdx.y + j];
             }
         }
-        vColor /= 4.0f;
+        vColor *= 0.25f;
 
         iIdx = vGroupIdx.xy * 0.25f;
         vUV = vDispatchThreadID * 0.25f;
@@ -82,9 +82,9 @@ void DownScale(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : 
                 vColor += SharedColor4[vGroupThreadID.x + i][vGroupThreadID.y + j];
             }
         }
-        vColor /= 4.0f;
+        vColor *= 0.25f;
 
-        vUV = vDispatchThreadID *0.125f;
+        vUV = vDispatchThreadID * 0.125f;
 
         g_RWOutputTex64[vUV.xy] = vColor;
     }

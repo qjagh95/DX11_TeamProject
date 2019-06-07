@@ -40,6 +40,7 @@ CDoor::CDoor() :
 	m_strTargetDoorKey(""),
 	m_strTargetSceneKey("")
 {
+	m_iState = DOOR_CLOSE;
 	m_eDoorType = DOOR_NORMAL;
 	m_iSection = SST_END;
 	m_eComType = (COMPONENT_TYPE)UT_DOOR;
@@ -162,6 +163,9 @@ bool CDoor::Init()
 
 int CDoor::Update(float fTime)
 {
+	if (m_iState == DOOR_OPEN)
+		int a = 2;
+
 	Bumho();
 
 	if (m_eDoorType != DOOR_HEAVY)
@@ -230,6 +234,9 @@ void CDoor::UnLock(const Vector3 & vAxis)
 	else
 	{
 		Vector3 vDoorAxis = GetWorldAxis(AXIS_Z);
+
+		vDoorAxis *= m_iLockDir;
+
 		float fAngle = vDoorAxis.Angle(vAxis);
 
 		if (isnan(fAngle))
@@ -270,6 +277,13 @@ void CDoor::Lock(bool bNeedKey, const string & strKeyName)
 	m_bLock = true;
 	m_bNeedKey = bNeedKey;
 	m_strKeyName = strKeyName;
+}
+
+void CDoor::LockIn(int iDir)
+{
+	m_bLock = true;
+	m_bNeedKey = false;
+	m_iLockDir = iDir;
 }
 
 void CDoor::ChangeObjectSection(CGameObject* Object)
@@ -355,6 +369,11 @@ bool CDoor::SetSounds(const std::string strNames[], const TCHAR ** strFilePaths)
 	}
 
 	pSource->LoadSounds(vecKey, vecPath);
+
+	for (char i = 0; i < 5; ++i)
+	{
+		pSource->SetVolume(vecKey[i], 3.0f);
+	}
 
 	return true;
 }
@@ -965,6 +984,8 @@ void CDoor::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 {
 	if (pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
+		m_bisPlayerColl = true;
+
 		Vector3 vDir = pDest->GetWorldAxis(AXIS_Z);
 
 		bool bOnAct = m_iState & DOOR_ONACT;
@@ -1030,7 +1051,7 @@ void CDoor::InteractRelease(PUN::CCollider * pSrc, PUN::CCollider * pDest, float
 {
 	if (pDest->GetColliderID() == UCI_PLAYER_INTERACT)
 	{
-		m_bisPlayerColl = true;
+		m_bisPlayerColl = false;
 	}
 }
 
@@ -1079,5 +1100,4 @@ void CDoor::Bumho()
 	m_BackDownCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
 	m_BackDownCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
 	m_BackDownCenterRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
-
 }

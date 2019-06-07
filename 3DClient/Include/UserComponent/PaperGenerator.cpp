@@ -45,7 +45,7 @@ bool CPaperGenerator::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("FileRenderer");
 
-	pOutRenderer->SetMesh("FileOutLine", TEXT("FileEx.msh"));
+	pOutRenderer->SetMesh("File", TEXT("FileEx.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -62,9 +62,13 @@ bool CPaperGenerator::Init()
 	m_pOutLineTr->SetWorldRot(0.f, 0.f, 90.f);
 
 	SetOutLineVisible(false);
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
 
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("FileRender");
-	pRenderer->SetMesh("File_Generator", TEXT("FileEx.msh"));
+	if (!pRenderer)
+	{
+		pRenderer = m_pObject->AddComponent<CRenderer>("File_GeneratorRenderer");
+		pRenderer->SetMesh("File", TEXT("FileEx.msh"));
+	}
 
 	SAFE_RELEASE(pRenderer);
 

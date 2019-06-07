@@ -11,7 +11,7 @@ cbuffer Animation2D : register(b8)
     float3  g_vAnimEmpty;
 }
 
-cbuffer Particle : register(b10)
+cbuffer Particle : register(b4)
 {
     float3  g_vParticleCenter;
     float   g_fParticleSizeX;

@@ -23,6 +23,10 @@
 #include "UserComponent/Inventory.h"
 #include "UserComponent/DocxInven.h"
 #include "UserComponent/KeyInven.h"
+#include "UserComponent/Bed.h"
+#include "UserComponent/Locker.h"
+#include "UserComponent/Parkour.h"
+
 
 DEFINITION_SINGLE(CGameManager)
 
@@ -32,7 +36,8 @@ const string CGameManager::TCHARToString(const TCHAR* _ptsz)
 	// TCHAR -> string º¯È¯
 	int len = (int)wcslen((wchar_t*)_ptsz);
 	char* psz = new char[2 * len + 1];
-	wcstombs(psz, (wchar_t*)_ptsz, 2 * len + 1);
+	size_t Temp = 0;
+	wcstombs_s(&Temp, psz, wcslen(_ptsz), (wchar_t*)_ptsz, 2 * len + 1);
 	string cvtStr = psz;
 	delete[] psz;
 	return cvtStr;
@@ -44,7 +49,9 @@ const TCHAR* CGameManager::StringToTCHAR(const string& _str)
 	int len = (int)(1 + strlen(all));
 	wchar_t* t = new wchar_t[len];
 	if (NULL == t) throw std::bad_alloc();
-	mbstowcs(t, all, len);
+
+	size_t Temp = 0;
+	mbstowcs_s(&Temp, t, (size_t)len, all, len);
 	return (TCHAR*)t;
 }
 
@@ -160,13 +167,13 @@ bool CGameManager::Init()
 	if (!pLayer)
 		return false;
 
-	m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
+	//m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
 
-	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
+	//m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
-	m_pPlayerTr = m_pPlayerObj->GetTransform();
-	m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
-	m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
+	//m_pPlayerTr = m_pPlayerObj->GetTransform();
+	//m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
+	//m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	////m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
 
 	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer, true);
@@ -385,9 +392,12 @@ void CGameManager::AddToEachContainer()
 	list<CGameObject*>::const_iterator iterObj;
 	list<CGameObject*>::const_iterator iterObjEnd;
 
-	CDoor* pDoor = nullptr;
-	CLight* pLight = nullptr;
-	CGameObject* pObj = nullptr;
+	CDoor*			pDoor		= nullptr;
+	CLight*			pLight		= nullptr;
+	CGameObject*	pObj		= nullptr;
+	CBed*			pBed		= nullptr;
+	CLocker*		pLocker		= nullptr;
+	CParkour*		pParkour	= nullptr;
 
 	for (iter = mapScene->begin(); iter != iterEnd; ++iter)
 	{
@@ -405,7 +415,7 @@ void CGameManager::AddToEachContainer()
 			string strTag = (*iterObj)->GetTag();
 			char strName[256] = {};
 
-			strcpy(strName, strTag.c_str());
+			strcpy_s(strName, 256, strTag.c_str());
 
 			_strupr_s(strName);
 
@@ -416,15 +426,46 @@ void CGameManager::AddToEachContainer()
 					pDoor = (*iterObj)->AddComponent<CDoor>("Door");
 					AddDoor(iter->second, (*iterObj)->GetTag(), pDoor);
 
-					if (strstr(strName, "FAKE") == nullptr)
-						pDoor->Lock();
+					if (strstr(strName, "LOCK") != nullptr)
+					{
+						if (strstr(strName, "FRONT") != nullptr)
+							pDoor->LockIn(1);
+						else if (strstr(strName, "BACK") != nullptr)
+							pDoor->LockIn(-1);
+					}
 
 					SAFE_RELEASE(pDoor);
 				}
 			}
 
-			if (strstr(strName, "ITEM") != nullptr)
+			else if (strstr(strName, "ITEM") != nullptr)
 				AddItemObject((*iterObj), strName);
+
+			else if (strstr(strName, "BED") != nullptr)
+			{
+				pBed = (*iterObj)->AddComponent<CBed>("Bed");
+				SAFE_RELEASE(pBed);
+			}
+			else if (strstr(strName, "LOCKER") != nullptr)
+			{
+				pLocker = (*iterObj)->AddComponent<CLocker>("Locker");
+				SAFE_RELEASE(pLocker);
+			}
+			else if (strstr(strName, "PARKOUR") != nullptr)
+			{
+				pParkour = (*iterObj)->AddComponent<CParkour>("Parkour");
+				SAFE_RELEASE(pParkour);
+			}
+
+			pLight = (*iterObj)->FindComponentFromType<CLight>(CT_LIGHT);
+
+			if (pLight)
+			{
+				if (pLight->GetLightType() == LT_SPOT)
+					AddLight(pLight);
+
+				SAFE_RELEASE(pLight);
+			}
 		}
 
 		pList = pLightLayer->GetObjectList();

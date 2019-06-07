@@ -685,7 +685,7 @@ CInventory * CInventory::Clone()
 
 void CInventory::Save(BinaryWrite * _pInstBW)
 {
-	int iSize = m_vecItem.size();
+	int iSize = (int)m_vecItem.size();
 	_pInstBW->WriteData(iSize);
 
 	for (size_t i = 0; i < iSize; ++i)
@@ -707,7 +707,7 @@ void CInventory::Save(BinaryWrite * _pInstBW)
 	_pInstBW->WriteData(m_iTabletCnt);
 	_pInstBW->WriteData(m_iDaemaCnt);
 
-	iSize = m_vecNumber.size();
+	iSize = (int)m_vecNumber.size();
 	_pInstBW->WriteData(iSize);
 
 	for (size_t i = 0; i < iSize; ++i)
@@ -717,7 +717,7 @@ void CInventory::Save(BinaryWrite * _pInstBW)
 		m_vecNumber[i]->Save(_pInstBW);
 	}
 
-	iSize = m_vecList.size();
+	iSize = (int)m_vecList.size();
 	_pInstBW->WriteData(iSize);
 
 	for (size_t i = 0; i < iSize; ++i)

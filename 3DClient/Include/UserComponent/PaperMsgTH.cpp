@@ -46,7 +46,7 @@ bool CPaperMsgTH::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("PaperRenderer");
 
-	pOutRenderer->SetMesh("PaperOutLine", TEXT("Paper.msh"));
+	pOutRenderer->SetMesh("Paper", TEXT("Paper.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -63,9 +63,13 @@ bool CPaperMsgTH::Init()
 	m_pOutLineTr->SetWorldRot(90.f, 0.f, 0.f);
 
 	SetOutLineVisible(false);
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
 
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("PaperRender");
-	pRenderer->SetMesh("Papeer_msgth", TEXT("Paper.msh"));
+	if (!pRenderer)
+	{
+		pRenderer = m_pObject->AddComponent<CRenderer>("PaperRender");
+		pRenderer->SetMesh("Paper", TEXT("Paper.msh"));
+	}
 
 	SAFE_RELEASE(pRenderer);
 

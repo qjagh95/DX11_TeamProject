@@ -45,7 +45,7 @@ bool CPaperPL::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("PaperLRenderer");
 
-	pOutRenderer->SetMesh("PaperLOutLine", TEXT("Paper.msh"));
+	pOutRenderer->SetMesh("Paper", TEXT("Paper.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -63,8 +63,13 @@ bool CPaperPL::Init()
 
 	SetOutLineVisible(false);
 
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("PaperRender");
-	pRenderer->SetMesh("Paper_PL", TEXT("Paper.msh"));
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!pRenderer)
+	{
+		pRenderer = m_pObject->AddComponent<CRenderer>("PaperRender");
+		pRenderer->SetMesh("Paper", TEXT("Paper.msh"));
+	}
 
 	SAFE_RELEASE(pRenderer);
 

@@ -145,6 +145,9 @@
     <Filter Include="01. SceneComponent\SC_Stage2Scene">
       <UniqueIdentifier>{469562f4-5ff4-47d2-98c3-a33bb137bdbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\07. Interact\03 Parkour">
+      <UniqueIdentifier>{5f541b54-418f-4dae-ab22-0545cab9232d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -399,9 +402,6 @@
     <ClInclude Include="SceneComponent\Scene4_DG.h">
       <Filter>01. SceneComponent\Stage4</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Parkour.h">
-      <Filter>02. UserComponent\03. Field</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\StageKey.h">
       <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
     </ClInclude>
@@ -413,6 +413,9 @@
     </ClInclude>
     <ClInclude Include="UserComponent\KaTok.h">
       <Filter>02. UserComponent\05. Item\03. Document</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Parkour.h">
+      <Filter>02. UserComponent\07. Interact\03 Parkour</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -653,9 +656,6 @@
     <ClCompile Include="SceneComponent\Scene4_DG.cpp">
       <Filter>01. SceneComponent\Stage4</Filter>
     </ClCompile>
-    <ClCompile Include="UserComponent\Parkour.cpp">
-      <Filter>02. UserComponent\03. Field</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\StageKey.cpp">
       <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
     </ClCompile>
@@ -667,6 +667,9 @@
     </ClCompile>
     <ClCompile Include="UserComponent\KaTok.cpp">
       <Filter>02. UserComponent\05. Item\03. Document</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Parkour.cpp">
+      <Filter>02. UserComponent\07. Interact\03 Parkour</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

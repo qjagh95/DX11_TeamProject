@@ -48,7 +48,7 @@ bool CKeyCard::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("KeyCardOutLineRenderer");
 
-	pOutRenderer->SetMesh("KeyCardOutLine", TEXT("KeyCard.msh"));
+	pOutRenderer->SetMesh("KeyCard", TEXT("KeyCard.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -67,7 +67,7 @@ bool CKeyCard::Init()
 
 	CRenderer*	pBigRenderer = m_pBigObj->AddComponent<CRenderer>("KeyCardBigRenderer");
 
-	pBigRenderer->SetMesh("KeyCardBig", TEXT("KeyCard.msh"));
+	pBigRenderer->SetMesh("KeyCard", TEXT("KeyCard.msh"));
 
 	SAFE_RELEASE(pBigRenderer);
 
@@ -83,8 +83,13 @@ bool CKeyCard::Init()
 
 	SetOutLineVisible(false);
 
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("KeyCardRender");
-	pRenderer->SetMesh("KeyCard", TEXT("KeyCard.msh"));
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!pRenderer)
+	{
+		pRenderer = m_pObject->AddComponent<CRenderer>("KeyCardRender");
+		pRenderer->SetMesh("KeyCard", TEXT("KeyCard.msh"));
+	}
 
 	SAFE_RELEASE(pRenderer);
 

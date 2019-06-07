@@ -7,7 +7,6 @@ Texture2D<float4> BloomTex          : register(t3);
 
 StructuredBuffer<float> AvgLum    : register(t10);
 
-
 static const float2 varrNullPos[4] =
 {
     float2(-1.f, 1.f),
@@ -60,8 +59,6 @@ float3 ToneMapping(float3 vHDRColor)
     // 휘도 스케일을 픽셀 색상에 적용
     return vHDRColor * fLScale;
 }
-
-//static const float3 LUM_FACTOR = float3(0.299, 0.587, 0.114);
 
 VS_OUTPUT_TEX FullScreenQuadVS(uint iVertexID : SV_VertexID)
 {

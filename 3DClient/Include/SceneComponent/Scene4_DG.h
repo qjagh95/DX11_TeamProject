@@ -30,13 +30,10 @@ private:
 
 // ¹®
 private:
-	CGameObject*	m_pObjChangeStageDoor;
-
-	CGameObject*	m_pObjHeavyDoor;
 	CDoor*			m_pHeavyDoor;
 
 public:
-	void SetChangeStageDoor();
+	void DoorInit();
 
 // µ¥Ä®(SSD)
 private:
@@ -58,6 +55,5 @@ public:
 	//void CreateDecal();
 
 
-	void SetDoorInit();
 	void SetAmbientSoundPlay(const string& _soundName);
 };

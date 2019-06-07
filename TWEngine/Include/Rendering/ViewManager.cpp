@@ -308,19 +308,19 @@ bool CViewManager::CreateUAV()
 {
 	Resolution tRS = _RESOLUTION;
 
-	if (!CreateUAV("DownScale2x2", DOWNSCALE_SHADER, tRS.iWidth / 8, tRS.iHeight / 8, 1, 640, 360))
+	if (!CreateUAV("DownScale2x2", DOWNSCALE_SHADER, tRS.iWidth / 8, tRS.iHeight / 8, 1, 960, 540))
 	{
 		TrueAssert(true);
 		return false;
 	}
 
-	if (!CreateUAV("DownScale4x4", DOWNSCALE_SHADER, tRS.iWidth / 8, tRS.iHeight / 8, 1, 320, 180))
+	if (!CreateUAV("DownScale4x4", DOWNSCALE_SHADER, tRS.iWidth / 8, tRS.iHeight / 8, 1, 480, 270))
 	{
 		TrueAssert(true);
 		return false;
 	}
 
-	if (!CreateUAV("DownScale8x8", DOWNSCALE_SHADER, tRS.iWidth / 8, tRS.iHeight / 8, 1, 160, 90))
+	if (!CreateUAV("DownScale8x8", DOWNSCALE_SHADER, tRS.iWidth / 8, tRS.iHeight / 8, 1, 240, 135))
 	{
 		TrueAssert(true);
 		return false;
@@ -344,7 +344,7 @@ bool CViewManager::CreateUAV()
 		return false;
 	}
 
-	if (!CreateUAV("HDRFirstPass", HDR_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
+	if (!CreateUAV("HDRFirstPass", HDR_COMPUTE_SHADER, 127, 1, 1, 127, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
 	{
 		TrueAssert(true);
 		return false;
@@ -356,7 +356,7 @@ bool CViewManager::CreateUAV()
 		return false;
 	}
 
-	if (!CreateUAV("AdaptationFirst", ADAPT_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
+	if (!CreateUAV("AdaptationFirst", ADAPT_COMPUTE_SHADER, 127, 1, 1, 127, 1, DXGI_FORMAT_R32G32_FLOAT, GRT_BUFFER))
 	{
 		TrueAssert(true);
 		return false;
@@ -374,7 +374,7 @@ bool CViewManager::CreateUAV()
 		return false;
 	}
 
-	if (!CreateUAV("BloomFirst", ADAPT_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R32G32B32A32_FLOAT, GRT_BUFFER))
+	if (!CreateUAV("BloomFirst", ADAPT_COMPUTE_SHADER, 127, 1, 1, 127, 1, DXGI_FORMAT_R32G32B32A32_FLOAT, GRT_BUFFER))
 	{
 		TrueAssert(true);
 		return false;
@@ -392,19 +392,19 @@ bool CViewManager::CreateUAV()
 		return false;
 	}
 
-	if (!CreateUAV("Temp0", BLOOM_COMPUTE_SHADER, 57, 1, 1, 57, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	if (!CreateUAV("Temp0", BLOOM_COMPUTE_SHADER, 127, 1, 1, 127, 1, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
 	{
 		TrueAssert(true);
 		return false;
 	}
 
-	if (!CreateUAV("Temp1", BLOOM_VERTICAL_BLUR_SHADER, 320, 4, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	if (!CreateUAV("Temp1", BLOOM_VERTICAL_BLUR_SHADER, 480, 4, 1, 1920, 1080, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
 	{
 		TrueAssert(true);
 		return false;
 	}
 
-	if (!CreateUAV("BloomFinal", BLOOM_HORIZONTAL_BLUR_SHADER, 3, 180, 1, 1280, 720, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	if (!CreateUAV("BloomFinal", BLOOM_HORIZONTAL_BLUR_SHADER, 3, 270, 1, 1920, 1080, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
 	{
 		TrueAssert(true);
 		return false;

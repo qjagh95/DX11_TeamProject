@@ -3,6 +3,7 @@
 #include "../GameManager.h"
 #include "../UserComponent/Door.h"
 #include "../UserComponent/Human_Player.h"
+#include "../UserComponent/ST3_Suprise.h"
 #include <StrUtility.h>
 #include <Component/Light.h>
 #include <Component/FreeCamera.h>
@@ -10,17 +11,17 @@
 
 // 테스트
 #define IS_TEST			false
-#define IS_CONVERTFBX	false
+#define IS_CONVERTFBX	true
 #define IS_LIGHT_TEST	false
 
 CScene4::CScene4() :
 	m_pObjPlayer(nullptr),
 	m_pPlayerTr(nullptr),
 	m_pHumanPlayer(nullptr),
-	m_pObjChangeStageDoor(nullptr),
-
-	m_pObjHeavyDoor(nullptr),
 	m_pHeavyDoor(nullptr),
+
+
+
 	m_pObjBSDecal(nullptr),
 	m_pObjBBDecal(nullptr),
 	m_pBSDecal(nullptr),
@@ -38,11 +39,9 @@ CScene4::~CScene4()
 #endif
 	SAFE_RELEASE(m_pObjPlayer);
 	SAFE_RELEASE(m_pPlayerTr);
-	SAFE_RELEASE(m_pObjChangeStageDoor);
-
-
-	SAFE_RELEASE(m_pObjHeavyDoor);
 	SAFE_RELEASE(m_pHeavyDoor);
+
+
 	SAFE_RELEASE(m_pObjBSDecal);
 	SAFE_RELEASE(m_pObjBBDecal);
 	SAFE_RELEASE(m_pBSDecal);
@@ -170,9 +169,18 @@ void CScene4::AfterInit()
 	SAFE_RELEASE(pRenderer);
 
 	// 스테이지 이동 문
-	SetChangeStageDoor();
+	DoorInit();
+
+	// 시체
+	CLayer* pLayer = m_pScene->FindLayer("Default");
+	CGameObject* pObjCorpse1 = CGameObject::CreateObject("Suprise", pLayer);
+	CTransform* pCropse1Tr = pObjCorpse1->GetTransform();
+	//ST3_Suprise* Suprise = SupriseObject->AddComponent<ST3_Suprise>("Suprise");
 
 
+	SAFE_RELEASE(pCropse1Tr);
+	SAFE_RELEASE(pObjCorpse1);
+	SAFE_RELEASE(pLayer);
 #endif
 }
 
@@ -200,12 +208,18 @@ void CScene4::Render(float _fTime)
 {
 }
 
-void CScene4::SetChangeStageDoor()
+void CScene4::DoorInit()
 {
+	// 스테이지 이동문
 	CDoor* pDoor = CGameManager::GetInst()->FindDoor(m_pScene, "Door_S4_S1");
 	pDoor->SetDoorType(DOOR_STAGE);
 	pDoor->SetTargetDoor("Stage1", "Door_1");
-	pDoor->SetLeftRight();
+
+	// 총이 있는 방문
+	m_pHeavyDoor = CGameManager::GetInst()->FindDoor(m_pScene, "Gun_HeavyDoor");
+	m_pHeavyDoor->SetOpenRot(75.f);
+	m_pHeavyDoor->SetOpenTime(10.f);
+	m_pHeavyDoor->SetDoorType(DOOR_HEAVY);
 }
 
 void CScene4::CreateMilestoneDecal()
@@ -280,7 +294,8 @@ void CScene4::ConvertCorridorFBXFiles()
 		pRenderer->SetMesh(strFileName, fileName, MESH_PATH);
 
 		// 변환된 .MSH 파일을 경로(MESH_DATA_PATH)에 이동시키는데, 이때 이미 있는 파일이면 삭제한다.
-		string strTok = strtok(const_cast<char*>(strFileName.c_str()), ".");
+		char* context = NULLPTR;
+		string strTok = strtok_s(const_cast<char*>(strFileName.c_str()), ".", &context);
 		strTok += ".msh";
 		wstring wstrExistingFileName = CA2W((pUtil->TCHARToString(path) + strTok).c_str());
 		wstring wstrNewFileName = CA2W((pUtil->TCHARToString(meshDataPath) + strTok).c_str());
@@ -305,32 +320,18 @@ void CScene4::InitDecal()
 
 }
 
-void CScene4::SetDoorInit()
-{
-	CLayer* pLayer = m_pScene->FindLayer("Default");
-	CTransform* pTr = nullptr;
 
-	// Stage4 Entry Point(스테이지4 시작점) 오브젝트
 
-	// Stage4 Gun-Room Entry Point 오브젝트
 
-	// Gun-Room에 존재하는 타입(Heavy) 오브젝트
-	m_pObjHeavyDoor = pLayer->FindObject("UC_GunRoom_Door");
-	if (m_pObjHeavyDoor == nullptr)
-	{
-		return;
-	}
-	m_pHeavyDoor = m_pObjHeavyDoor->AddComponent<CDoor>("HeavyDoor");
-	if (m_pHeavyDoor == nullptr)
-	{
-		return;
-	}
-	m_pHeavyDoor->SetDoorType(DOOR_TYPE::DOOR_HEAVY);
-	m_pHeavyDoor->SetOpenRot(60.f);
-	m_pHeavyDoor->SetOpenTime(10.f);
-	SAFE_RELEASE(pTr);
-	SAFE_RELEASE(pLayer);
-}
+
+
+
+
+
+
+
+
+
 
 //void CScene4::CreateDecal(const string& _strTag,   const string& _decalTag,
 //						  const string& _difName,  const string& _difTexName, 

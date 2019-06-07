@@ -15,19 +15,20 @@ int CPistol::iBulletCaseCnt = 10;
 
 CPistol::CPistol() :
 	m_pRay(nullptr),
-	m_fFireReloadSpd(0.5f),
-	m_fFireTimer(0.5f),
+	m_fFireReloadSpd(0.35f),
+	m_fFireTimer(0.35f),
 	m_pSnd(nullptr),
 	m_pAnim(nullptr),
 	m_pGunSmoke(nullptr),
 	m_pMuzzle(nullptr),
-	m_vGunPointOffset(-0.1f, -.25f, -0.4f),
+	m_vGunPointOffset(-0.5f, -0.5f, -.7f),
 	//m_vSmokeSocketOffset(-0.3f, -.25f, -0.5f),
-	m_vSmokeSocketOffset(-0.3f, -.2f, -.85f),
+	m_vSmokeSocketOffset(-0.3f, -0.15f, -1.f),
 	m_pGunPointFake(nullptr),
 	m_fSmokeTimerBuf(0.f),
 	m_fSmokeTimer(0.85f),
-	m_iCurrBulletCaseIdx(0)
+	m_iCurrBulletCaseIdx(0),
+	m_vBulletCaseOffset(-0.0625f, 0.25f, 0.28f)
 {
 	tRecoilEff = {};
 	for (int i = 0; i < iBulletCaseCnt; ++i)
@@ -91,8 +92,11 @@ int CPistol::Update(float fTime)
 		if (m_fSmokeTimerBuf > m_fSmokeTimer)
 		{
 			PUN::CAnimation2D* pPartAnim = m_pGunSmoke->FindComponentFromType<PUN::CAnimation2D>(PUN::CT_ANIMATION2D);
-			pPartAnim->CurrentClipJumpToFrame(0);
-			SAFE_RELEASE(pPartAnim);
+			if (!m_pGunSmoke->GetEnable())
+			{
+				pPartAnim->CurrentClipJumpToFrame(0);
+			}
+			
 			m_pGunSmoke->SetEnable(true);
 		}
 	}
@@ -148,14 +152,10 @@ int CPistol::LateUpdate(float fTime)
 
 		SAFE_RELEASE(pObjTrans);
 
-		if (m_fFireTimer >= m_fFireReloadSpd * 0.125f)
+		if (!m_pMuzzle->GetEnable())
 		{
-			if (m_pMuzzle->GetEnable())
-			{
-				m_pGunMuzzleFlash->SetEnable(false);
-			}
+			m_pGunMuzzleFlash->SetEnable(false);
 		}
-		
 
 		SAFE_RELEASE(pMuzzleTrans);
 	}
@@ -275,9 +275,10 @@ void CPistol::AfterClone()
 	//Gun Muzzle
 	m_pMuzzle = PUN::CGameObject::CreateObject("gunMuzzle", m_pLayer, true);
 	m_pMuzzle->SetFrustrumCullUse(false);
-	PUN::CColliderOBB3D *pCol = nullptr;
+	//PUN::CColliderOBB3D *pCol = nullptr;
 	//pCol = m_pMuzzle->AddComponent<PUN::CColliderOBB3D>("col");
-	//pCol->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(.03125f, .0625f, .125f));
+	//pCol->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(.5f, .5f, .5f));
+	//pCol->SetColliderID(100);
 	//SAFE_RELEASE(pCol);
 
 	pParticle = m_pMuzzle->AddComponent<PUN::CParticle>("particle");
@@ -306,7 +307,7 @@ void CPistol::AfterClone()
 	pParticleAnimation = m_pMuzzle->AddComponent<PUN::CAnimation2D>("ParticleAnimation");
 
 	pParticleAnimation->AddClip("MuzzleFlash", PUN::A2D_FRAME, PUN::AO_ONCE_DISABLE,
-		.089999999999999999f, vecFrame, "GunMuzzle", vecExplosionName);
+		.175f, vecFrame, "GunMuzzle", vecExplosionName);
 
 	SAFE_RELEASE(pParticleAnimation);
 
@@ -342,9 +343,11 @@ void CPistol::AfterClone()
 	m_pGunPointFake = PUN::CGameObject::CreateObject("GunPoint", m_pLayer, true);
 
 	m_pAnim->AddSocket("Barrel", "GunPoint");
+	//m_pAnim->SetSocketOffset("Barrel", "GunPoint", Vector3(0.f, 5.f, 0.f));
 	m_pAnim->SetSocketObject("Barrel", "GunPoint", m_pGunPointFake);
 	//pCol = m_pGunPointFake->AddComponent<PUN::CColliderOBB3D>("col");
 	//pCol->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(.03125f, .0625f, .125f));
+	//pCol->SetColliderID(100);
 	//SAFE_RELEASE(pCol);
 
 	//m_pGunSmoke->SetEnable(false);
@@ -359,7 +362,7 @@ void CPistol::AfterClone()
 	{
 		strBulletCaseIdx = strBulletCase + std::to_string(i + 1);
 
-		pBulletCaseObj = PUN::CGameObject::CreateObject("BCase_Prot", m_pLayer, true);
+		pBulletCaseObj = PUN::CGameObject::CreateObject(strBulletCaseIdx, m_pLayer, true);
 		
 		m_arrBulletCases[i] = pBulletCaseObj->AddComponent<CBulletCase>("bulletCase");
 		pBulletCaseObj->SetEnable(false);
@@ -412,7 +415,12 @@ bool CPistol::Fire()
 			
 			pTrans = m_pScene->GetMainCameraTransform();
 			Vector3 vRot = pTrans->GetWorldRot();
+			Vector3 vCamAxis[3]= { pTrans->GetWorldAxis(PUN::AXIS_X), pTrans->GetWorldAxis(PUN::AXIS_Y), pTrans->GetWorldAxis(PUN::AXIS_Z) };
 			SAFE_RELEASE(pTrans);
+
+			vPos += vCamAxis[0] * m_vBulletCaseOffset.x;
+			vPos += vCamAxis[1] * m_vBulletCaseOffset.y;
+			vPos += vCamAxis[2] * m_vBulletCaseOffset.z;
 
 			m_arrBulletCases[m_iCurrBulletCaseIdx]->SetInstance(vPos, vRot);
 		}

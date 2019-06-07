@@ -4,7 +4,7 @@
 #include <Component/Animation.h>
 #include "../CommonSoundLoader.h"
 #include "Component/ColliderOBB3D.h"
-
+#define EPSILON 0.0000019073486328125f
 /*
 방향 알아내기 : const Vector3& GetMoveDirection()
 정속 속도 : Vector3에 1.f 출력
@@ -26,10 +26,10 @@ bool CHuman_Player::Init_Move()
 
 void CHuman_Player::OnDestroyMove()
 {
-	
+
 }
 
-void CHuman_Player::OnCrouching(float fTime) 
+void CHuman_Player::OnCrouching(float fTime)
 {
 
 }
@@ -45,7 +45,7 @@ void CHuman_Player::OnSprint(float fTime)
 {
 	float fAnimTime = m_pAnimation->GetCurrentClipTime();
 	float fPrevTime = fAnimTime - fTime;
-	
+
 	if (fAnimTime > RUN_STEP1 && fPrevTime < RUN_STEP1 || fAnimTime > RUN_STEP2 && fPrevTime < RUN_STEP2)
 	{
 		std::string strKey = m_strFTSKey + "Run";
@@ -56,7 +56,7 @@ void CHuman_Player::OnSprint(float fTime)
 			iRandNum = (rand() % iRandNum) + 1;
 			strKey += std::to_string(iRandNum);
 		}
-		
+
 		//m_pSound->StopClip(m_strFTSKey);
 		m_pSound->Play(strKey);
 	}
@@ -145,15 +145,16 @@ void CHuman_Player::CrouchForwardMendPos(float fTime)
 	//m_vTracerBuf = m_pRootBonePos->GetWorldPos();
 }
 
-int CHuman_Player::Input_Move(float fTime) 
+int CHuman_Player::Input_Move(float fTime)
 {
 	return 0;
 }
-int CHuman_Player::MoveUpdate(float fTime) 
+int CHuman_Player::MoveUpdate(float fTime)
 {
+
 	return 0;
 }
-int CHuman_Player::MoveLateUpdate(float fTime) 
+int CHuman_Player::MoveLateUpdate(float fTime)
 {
 	return 0;
 }
@@ -161,12 +162,19 @@ int CHuman_Player::MoveLateUpdate(float fTime)
 
 void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime)
 {
+	if (m_cInitLoopFinished > 0)
+		return;
 
 	if (m_iState & PSTATUS_BED)
 		return;
 	if (m_iState & PSTATUS_LOCKER)
 		return;
 
+	if (m_iState & PSTATUS_VAULT)
+	{
+		if (m_pAnimation->GetCurrentClip()->strName != "player_stand_idle")
+			return;
+	}
 
 	PUN::CColliderOBB3D * pSrcCol = nullptr;
 	PUN::CColliderOBB3D * pDestCol = nullptr;
@@ -192,6 +200,11 @@ void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime
 		return;
 	}
 
+	if (pDestCol->GetColliderID() < (PUN::COLLIDER_TYPE)UCI_NONE)
+	{
+		return;
+	}
+
 	CHuman_Player *pHuman = pDestCol->FindComponentFromType<CHuman_Player>((PUN::COMPONENT_TYPE)UT_PLAYER);
 	if (pHuman)
 	{
@@ -199,21 +212,55 @@ void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime
 		return;
 	}
 
-	PUN::CTransform *pSrcTr = pSrcCol->GetTransform();
-	PUN::CTransform *pDestTr = pDestCol->GetTransform();
-
 	PUN::OBB3DInfo _tDestInfo = pDestCol->GetInfo();
 	PUN::OBB3DInfo _tSrcInfo = pSrcCol->GetInfo();
 
-	//콜라이더 가운데 위치 알아내기
-	Vector3 vDestCenter = pDestTr->GetWorldPos() + _tDestInfo.vCenter;
-	Vector3 vSrcCenter = pSrcTr->GetWorldPos() + _tSrcInfo.vCenter;
+	Vector3 vRes;
+	Vector3 vMaxPoint;
+	Vector3 vMaxPointTangent;
+	Vector3 vMinPoint;
+	Vector3 vMinPointTanget;
 
-	SAFE_RELEASE(pSrcTr);
-	SAFE_RELEASE(pDestTr);
+
+	std::vector<PUN::CColliderOBB3D*>::iterator Itr = m_vecCollidingGeom.begin();
+	std::vector<PUN::CColliderOBB3D*>::iterator ItrEnd = m_vecCollidingGeom.end();
+
+	bool bHasIt = false;
+	for (; Itr != ItrEnd; ++Itr)
+	{
+		if (*Itr == pDestCol)
+		{
+			bHasIt = true;
+			break;
+		}
+	}
+	if (!bHasIt)
+		m_vecCollidingGeom.push_back(pDestCol);
+
+	if (!m_bGeomTest)
+	{
+		PUN::CTransform *pSrcTr = pSrcCol->GetTransform();
+		PUN::CTransform *pDestTr = pDestCol->GetTransform();
+
+		pSrcTr->Update(fTime);
+		pDestTr->Update(fTime);
+
+		pSrcTr->LateUpdate(fTime);
+		pDestTr->LateUpdate(fTime);
+
+		SAFE_RELEASE(pSrcTr);
+		SAFE_RELEASE(pDestTr);
+	}
+	
+	//콜라이더 가운데 위치 알아내기
+	Vector3 vDestCenter = _tDestInfo.vCenter;
+	Vector3 vSrcCenter = _tSrcInfo.vCenter;
+
 	//두 콜라이더 사이의 방향벡터 구하기
-	Vector3 vVectorDiffUnNorm = vDestCenter - vSrcCenter;//vSrcCenter에서 vDestCenter
+	Vector3 vVectorDiffUnNorm = vSrcCenter - vDestCenter;
 	Vector3 vVectorDiff = vVectorDiffUnNorm;
+	Vector3 vVectorBuf;
+	Vector3 vVectorDirBuf;
 	vVectorDiff.Normalize();
 
 	//Vector3 vVelocityNorm = m_vVelocity;
@@ -228,7 +275,8 @@ void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime
 		fMagnitude = vVectorDiffUnNorm.z / vVectorDiff.z;
 	//pDest-> 방향벡터 쪽으로 최소값 가지는 정점 구하기
 
-	float fVectorDotMax = FLT_MAX;
+	float fVectorDotMax = -FLT_MAX;
+	float fVectorDotMin = FLT_MAX;
 	float fVectorDotBuf = 0.f;
 
 	for (char i = 0; i < 8; ++i)
@@ -236,44 +284,106 @@ void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime
 		switch (i)
 		{
 		case 0:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tDestInfo.vLength.x, _tDestInfo.vLength.y, _tDestInfo.vLength.z);
+			vVectorDirBuf = Vector3::Zero;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_X] * vVectorBuf.x;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Y] * vVectorBuf.y;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Z] * vVectorBuf.z;
+			fVectorDotBuf = vVectorDiff.Dot(vVectorDirBuf);
+			if (fVectorDotBuf < fVectorDotMin)
+			{
+				fVectorDotMin = fVectorDotBuf;
+				
+			}
+				
 			break;
 		case 1:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tDestInfo.vLength.x, _tDestInfo.vLength.y, _tDestInfo.vLength.z * -1.f);
+			vVectorDirBuf = Vector3::Zero;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_X] * vVectorBuf.x;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Y] * vVectorBuf.y;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Z] * vVectorBuf.z;
+			fVectorDotBuf = vVectorDiff.Dot(vVectorDirBuf);
+			if (fVectorDotBuf < fVectorDotMin)
+			{
+				fVectorDotMin = fVectorDotBuf;
+				
+			}
+				
 			break;
 		case 2:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf =Vector3(_tDestInfo.vLength.x, _tDestInfo.vLength.y * -1.f, _tDestInfo.vLength.z);
+			vVectorDirBuf = Vector3::Zero;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_X] * vVectorBuf.x;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Y] * vVectorBuf.y;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Z] * vVectorBuf.z;
+
+			fVectorDotBuf = vVectorDiff.Dot(vVectorDirBuf);
+			if (fVectorDotBuf < fVectorDotMin)
+			{
+				fVectorDotMin = fVectorDotBuf;
+				
+			}
 			break;
 		case 3:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * 0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tDestInfo.vLength.x, _tDestInfo.vLength.y * -1.f, _tDestInfo.vLength.z * -1.f);
+			vVectorDirBuf = Vector3::Zero;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_X] * vVectorBuf.x;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Y] * vVectorBuf.y;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Z] * vVectorBuf.z;
+
+			fVectorDotBuf = vVectorDiff.Dot(vVectorDirBuf);
+			if (fVectorDotBuf < fVectorDotMin)
+			{
+				fVectorDotMin = fVectorDotBuf;
+				
+			}
 			break;
 		case 4:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tDestInfo.vLength.x * -1.f, _tDestInfo.vLength.y, _tDestInfo.vLength.z);
+			vVectorDirBuf = Vector3::Zero;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_X] * vVectorBuf.x;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Y] * vVectorBuf.y;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Z] * vVectorBuf.z;
+
+			fVectorDotBuf = vVectorDiff.Dot(vVectorDirBuf);
+			if (fVectorDotBuf < fVectorDotMin)
+			{
+				fVectorDotMin = fVectorDotBuf;
+			}
 			break;
 		case 5:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * 0.5f, _tDestInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tDestInfo.vLength.x * -1.f, _tDestInfo.vLength.y, _tDestInfo.vLength.z * -1.f);
+			vVectorDirBuf = Vector3::Zero;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_X] * vVectorBuf.x;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Y] * vVectorBuf.y;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Z] * vVectorBuf.z;
+
+			fVectorDotBuf = vVectorDiff.Dot(vVectorDirBuf);
+			if (fVectorDotBuf < fVectorDotMin)
+				fVectorDotMin = fVectorDotBuf;
 			break;
 		case 6:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tDestInfo.vLength.x * -1.f, _tDestInfo.vLength.y * -1.f, _tDestInfo.vLength.z);
+			vVectorDirBuf = Vector3::Zero;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_X] * vVectorBuf.x;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Y] * vVectorBuf.y;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Z] * vVectorBuf.z;
+
+			fVectorDotBuf = vVectorDiff.Dot(vVectorDirBuf);
+			if (fVectorDotBuf < fVectorDotMin)
+				fVectorDotMin = fVectorDotBuf;
 			break;
 		case 7:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tDestInfo.vLength.x * -0.5f, _tDestInfo.vLength.y * -0.5f, _tDestInfo.vLength.z *-0.5f));
-			if (fVectorDotBuf < fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tDestInfo.vLength.x * -1.f, _tDestInfo.vLength.y * -1.f, _tDestInfo.vLength.z *-1.f);
+			vVectorDirBuf = Vector3::Zero;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_X] * vVectorBuf.x;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Y] * vVectorBuf.y;
+			vVectorDirBuf += _tDestInfo.vAxis[AXIS_Z] * vVectorBuf.z;
+
+			fVectorDotBuf = vVectorDiff.Dot(vVectorDirBuf); 
+			if (fVectorDotBuf < fVectorDotMin)
+				fVectorDotMin = fVectorDotBuf;
 			break;
 		}
 	}
@@ -282,63 +392,82 @@ void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime
 	//pSrc-> 방향벡터 쪽으로 최대값 가지는 정점 구하기
 	fVectorDotMax = -FLT_MAX;
 	fVectorDotBuf = 0.f;
+	
 	for (char i = 0; i < 8; ++i)
 	{
+		float fSign = 1.f;
 		switch (i)
 		{
 		case 0:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tSrcInfo.vLength.x , _tSrcInfo.vLength.y , _tSrcInfo.vLength.z );
+							
 			break;
 		case 1:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tSrcInfo.vLength.x , _tSrcInfo.vLength.y , _tSrcInfo.vLength.z * -1.f);
+			
 			break;
 		case 2:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tSrcInfo.vLength.x , _tSrcInfo.vLength.y * -1.f, _tSrcInfo.vLength.z );
+			fSign = -1.f;
 			break;
 		case 3:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * 0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tSrcInfo.vLength.x , _tSrcInfo.vLength.y * -1.f, _tSrcInfo.vLength.z * -1.f);
+			fSign = -1.f;
 			break;
 		case 4:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tSrcInfo.vLength.x * -1.f, _tSrcInfo.vLength.y , _tSrcInfo.vLength.z );
+			
 			break;
 		case 5:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * 0.5f, _tSrcInfo.vLength.z * -0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tSrcInfo.vLength.x * -1.f, _tSrcInfo.vLength.y , _tSrcInfo.vLength.z * -1.f);
+			
 			break;
 		case 6:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z * 0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
+			vVectorBuf = Vector3(_tSrcInfo.vLength.x * -1.f, _tSrcInfo.vLength.y * -1.f, _tSrcInfo.vLength.z );
+			fSign = -1.f;
 			break;
 		case 7:
-			fVectorDotBuf = vVectorDiff.Dot(Vector3(_tSrcInfo.vLength.x * -0.5f, _tSrcInfo.vLength.y * -0.5f, _tSrcInfo.vLength.z *-0.5f));
-			if (fVectorDotBuf > fVectorDotMax)
-				fVectorDotMax = fVectorDotBuf;
-			break;
+			vVectorBuf = Vector3(_tSrcInfo.vLength.x * -1.f, _tSrcInfo.vLength.y * -1.f, _tSrcInfo.vLength.z *-1.f);
+			fSign = -1.f;
+		}
+
+		vVectorDirBuf = Vector3::Zero;
+		vVectorDirBuf += _tDestInfo.vAxis[AXIS_X] * vVectorBuf.x;
+		vVectorDirBuf += _tDestInfo.vAxis[AXIS_Y] * vVectorBuf.y;
+		vVectorDirBuf += _tDestInfo.vAxis[AXIS_Z] * vVectorBuf.z;
+
+		fVectorDotBuf = vVectorDiff.Dot(vVectorDirBuf);
+
+		if (fVectorDotBuf > fVectorDotMax)
+		{
+			fVectorDotMax = fVectorDotBuf;
+			vMaxPoint = vVectorDirBuf;
+			vMaxPointTangent = vMaxPoint;
+			vMaxPointTangent = _tDestInfo.vAxis[AXIS_Y] * (2.f * fSign);
 		}
 	}
 
 	Vector3 vSrcPoint = vVectorDiff * (fVectorDotMax / fMagnitude);
 
 	//두 정점 사이를 0으로 만드는 벡터값 구하기
-	Vector3 vRes = vDestPoint - vSrcPoint;
+	float fSigned = fVectorDotMax + fVectorDotMin;
+	Vector3 vVelocity = m_pMovePointer->GetWorldPos() - m_vPrevWorldPos;
+	float fVelocityScale = vVelocity.Length();
+	//vRes = vVectorDiff * (-abs(fSigned));
+	vRes = vVectorDiff;
 	vRes.y = 0.f;
-	//vRes *= f;
-	//vRes -= m_vVelocity;
+	float fBias = 0.225f;
+	if (m_iState &PSTATUS_VAULT)
+		fBias = 2.75f;
+	vRes *= (fVelocityScale + abs(fSigned)) * fBias;
+	vRes -= vVelocity * 0.375f;
+	
 	//그만큼 밀기
+	if (m_bNaviOn)
+		PlayerMove_CheckNav(vRes);
+	else
+		PlayerMove(vRes);
 
-	PlayerMove(vRes);
 }
 
 void CHuman_Player::Geometry_Out(CCollider *pSrc, CCollider *pDest, float fTime)
@@ -363,6 +492,31 @@ void CHuman_Player::Geometry_Out(CCollider *pSrc, CCollider *pDest, float fTime)
 	if (!pSrcCol)
 		return;
 
+	std::vector<PUN::CColliderOBB3D*>::iterator Itr = m_vecCollidingGeom.begin();
+	std::vector<PUN::CColliderOBB3D*>::iterator ItrEnd = m_vecCollidingGeom.end();
+	
+	for (; Itr != ItrEnd; ++Itr)
+	{
+		if (*Itr == pDestCol)
+		{
+			m_vecCollidingGeom.erase(Itr);
+			break;
+		}
+	}
+
 	//std::cout << "OBB Exit call" << std::endl;
 
+}
+
+void CHuman_Player::PlayerMove_CheckNav(Vector3 vMove) 
+{
+	Vector3 vPos = m_pMovePointer->GetWorldPos();
+	Move(vMove);
+	Vector3 vAfterPos = m_pMovePointer->GetWorldPos();
+	Vector3 vRealMove = vAfterPos - vPos;
+	
+	if (vRealMove == Vector3::Zero)
+		return;
+
+	PlayerMove(vRealMove);
 }

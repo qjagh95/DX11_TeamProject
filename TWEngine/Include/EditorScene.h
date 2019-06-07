@@ -15,6 +15,8 @@ private:
 
 private:
 	void CreatePrototype();
+	void ScopeLightActive(float _fTime);
+	void ScopeLightDisable(float _fTime);
 
 public:
 	void Move(float fScale, float fTime);

@@ -42,6 +42,7 @@ CRenderer::CRenderer() :
 	m_pMaterial(nullptr),
 	m_pBoneTex(nullptr),
 	m_b2DRenderer(false),
+	m_bAlphaEnable(false),
 	m_bDecalEnable(false),
 	m_bDontRenderMat(false)
 {

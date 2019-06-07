@@ -19,7 +19,8 @@ const string CStrUtility::TCHARToString(const TCHAR* _ptsz)
 	// TCHAR -> string º¯È¯
 	int len = (int)wcslen((wchar_t*)_ptsz);
 	char* psz = new char[2 * len + 1];
-	wcstombs(psz, (wchar_t*)_ptsz, 2 * len + 1);
+	size_t Temp = 0;
+	wcstombs_s(&Temp, psz, static_cast<size_t>(len), (wchar_t*)_ptsz, 2 * len + 1);
 	string cvtStr = psz;
 	delete[] psz;
 	return cvtStr;
@@ -31,7 +32,9 @@ const TCHAR* CStrUtility::StringToTCHAR(const string& _str)
 	int len = (int)(1 + strlen(all));
 	wchar_t* t = new wchar_t[len];
 	if (NULL == t) throw std::bad_alloc();
-	mbstowcs(t, all, len);
+
+	size_t Temp = 0;
+	mbstowcs_s(&Temp,t, static_cast<size_t>(len), all, len);
 	return (TCHAR*)t;
 }
 

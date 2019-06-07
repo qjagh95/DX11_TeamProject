@@ -21,7 +21,7 @@ cbuffer BloomThresholdCB : register(b4)
 }
 
 // 각 스레드에 대해 4x4 다운 스케일을 수행한다
-float4 DownScale4x4(uint2 CurPixel, uint groupThreadId)
+float DownScale4x4(uint2 CurPixel, uint groupThreadId)
 {
     float avgLum = 0.f;
 

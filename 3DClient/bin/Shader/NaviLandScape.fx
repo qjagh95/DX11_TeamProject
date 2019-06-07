@@ -94,7 +94,7 @@ VS_OUTPUT_3D_COLOR LandScapeColorVS(VS_INPUT_3D_COLOR input)
 
     float3 vPos = input.vPos - g_vPivot * g_vLength;
 
-    float3 sPos = mul(float4(vPos, 1.0f), g_matWorld);
+    float3 sPos = mul(float4(vPos, 1.0f), g_matWorld).xyz;
     output.vPos = mul(float4(vPos, 1.0f), g_matWVP);
     output.vUV = input.vUV;
     output.vColor = input.vColor;

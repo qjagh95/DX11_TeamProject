@@ -12,10 +12,10 @@ cbuffer Blur : register(b1)
 
 groupshared float4 g_vSharedColor[2][2];
 groupshared float g_vDepth[2][2];
-groupshared float4 g_vBlurColorH[640];
-groupshared float4 g_vBlurColorV[360];
+groupshared float4 g_vBlurColorH[960];
+groupshared float4 g_vBlurColorV[540];
 
-[numthreads(640, 1, 1)]
+[numthreads(960, 1, 1)]
 void HorizontalBlur(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : SV_DispatchThreadID)
 {
     float4 vColor = (float4) 0;
@@ -56,7 +56,7 @@ void HorizontalBlur(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThread
     {
         k = vGroupThreadID.x + i;
 
-        if (k >= 0 && k < 640)
+        if (k >= 0 && k < 960)
         {
             if (i == 0)
                 continue;
@@ -68,7 +68,7 @@ void HorizontalBlur(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThread
     g_RWOutputTex[vDispatchThreadID.xy] = vColor;
 }
 
-[numthreads(1, 360, 1)]
+[numthreads(1, 540, 1)]
 void VerticalBlur(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : SV_DispatchThreadID)
 {
     float4 vColor = (float4) 0;
@@ -107,7 +107,7 @@ void VerticalBlur(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID
     {
         k = vGroupThreadID.y + i;
 
-        if (k >= 0 && k < 360)
+        if (k >= 0 && k < 540)
         {
             if (i == 0)
                 continue;

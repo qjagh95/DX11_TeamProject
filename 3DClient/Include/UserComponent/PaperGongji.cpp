@@ -47,7 +47,7 @@ bool CPaperGongji::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("GongjiRenderer");
 
-	pOutRenderer->SetMesh("GongjiOutLine", TEXT("FileEx.msh"));
+	pOutRenderer->SetMesh("File", TEXT("FileEx.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -67,7 +67,7 @@ bool CPaperGongji::Init()
 
 	CRenderer*	pBigRenderer = m_pBigObj->AddComponent<CRenderer>("GongjiBigRenderer");
 
-	pBigRenderer->SetMesh("GongjiBig", TEXT("FileEx.msh"));
+	pBigRenderer->SetMesh("File", TEXT("FileEx.msh"));
 
 	SAFE_RELEASE(pBigRenderer);
 
@@ -84,8 +84,13 @@ bool CPaperGongji::Init()
 
 	SetOutLineVisible(false);
 
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("FileRender");
-	pRenderer->SetMesh("File_Gongji", TEXT("FileEx.msh"));
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!pRenderer)
+	{
+		pRenderer = m_pObject->AddComponent<CRenderer>("File_GongjiRenderer");
+		pRenderer->SetMesh("File", TEXT("FileEx.msh"));
+	}
 
 	SAFE_RELEASE(pRenderer);
 

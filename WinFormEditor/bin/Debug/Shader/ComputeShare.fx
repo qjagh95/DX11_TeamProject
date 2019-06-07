@@ -1,3 +1,5 @@
+#include "Share.fx"
+
 cbuffer Basic : register(b0)
 {
     float2 g_fPixelSize;
@@ -7,8 +9,6 @@ cbuffer Basic : register(b0)
 Texture2D g_BaseTex : register(t0);
 
 RWTexture2D<float4> g_RWOutputTex : register(u0);
-
-static const float4 LUM_FACTOR = float4(0.299, 0.587, 0.114, 0);
 
 cbuffer DownScaleConstants : register(b2)
 {

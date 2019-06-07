@@ -48,7 +48,7 @@ bool CStageKey::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("StageKeyOutLineRenderer");
 
-	pOutRenderer->SetMesh("StageKeyOutLine", TEXT("KeyCard.msh"));
+	pOutRenderer->SetMesh("KeyCard", TEXT("KeyCard.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -67,7 +67,7 @@ bool CStageKey::Init()
 
 	CRenderer*	pBigRenderer = m_pBigObj->AddComponent<CRenderer>("StageKeyBigRenderer");
 
-	pBigRenderer->SetMesh("StageKeyBig", TEXT("KeyCard.msh"));
+	pBigRenderer->SetMesh("KeyCard", TEXT("KeyCard.msh"));
 
 	SAFE_RELEASE(pBigRenderer);
 
@@ -83,8 +83,13 @@ bool CStageKey::Init()
 
 	SetOutLineVisible(false);
 
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("StageKeyRender");
-	pRenderer->SetMesh("StageKey", TEXT("KeyCard.msh"));
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!pRenderer)
+	{
+		pRenderer = m_pObject->AddComponent<CRenderer>("StageKeyRender");
+		pRenderer->SetMesh("KeyCard", TEXT("KeyCard.msh"));
+	}
 
 	SAFE_RELEASE(pRenderer);
 

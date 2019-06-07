@@ -243,7 +243,7 @@ CDocxInven * CDocxInven::Clone()
 
 void CDocxInven::Save(BinaryWrite * _pInstBW)
 {
-	int iSize = m_vecItem.size();
+	int iSize = (int)m_vecItem.size();
 	_pInstBW->WriteData(iSize);
 
 	for (size_t i = 0; i < iSize; ++i)

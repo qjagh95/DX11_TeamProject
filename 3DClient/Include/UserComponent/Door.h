@@ -84,6 +84,7 @@ protected:
 private:
 	int			m_iState;
 	int			m_iDir;
+	int			m_iLockDir;
 	float		m_fOpenTime;
 	float		m_fOpenSpeed;
 	float		m_fFastOpenTime;
@@ -157,6 +158,7 @@ public:
 	void UnLock();
 	void UnLock(const Vector3& vAxis);
 	void Lock(bool bNeedKey = false, const string& strKeyName = "");
+	void LockIn(int iDir);
 
 	void SetStageSection(STAGE_SECTION_TYPE Section) { m_iSection = Section; }
 	STAGE_SECTION_TYPE GetStageSection() const { return m_iSection; }

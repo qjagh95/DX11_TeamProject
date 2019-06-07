@@ -72,7 +72,7 @@ bool CLogoScene::Init()
 
 	CTransform* pBackTr = pBackObj->GetTransform();
 
-	pBackTr->SetWorldScale(_RESOLUTION.iWidth, _RESOLUTION.iHeight, 1.f);
+	pBackTr->SetWorldScale((float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 1.f);
 
 	SAFE_RELEASE(pBackTr);
 	SAFE_RELEASE(pMaterial);
@@ -88,7 +88,7 @@ bool CLogoScene::Init()
 
 	CTransform*	pSBTr = m_pSButtonObj->GetTransform();
 
-	pSBTr->SetWorldPos(_RESOLUTION.iWidth / 2, _RESOLUTION.iHeight /2 - 150.f, 0.f);
+	pSBTr->SetWorldPos((float)(_RESOLUTION.iWidth / 2.0f), (float)(_RESOLUTION.iHeight / 2.0f - 150.f), 0.f);
 	pSBTr->SetWorldScale(258.f, 55.f, 1.f);
 
 	SAFE_RELEASE(pSBTr);
@@ -103,7 +103,7 @@ bool CLogoScene::Init()
 
 	CTransform*	pCBTr = m_pCButtonObj->GetTransform();
 
-	pCBTr->SetWorldPos(_RESOLUTION.iWidth / 2, _RESOLUTION.iHeight / 2 - 220.f, 0.f);
+	pCBTr->SetWorldPos((float)(_RESOLUTION.iWidth / 2), (float)(_RESOLUTION.iHeight / 2.0f - 220.f), 0.f);
 	pCBTr->SetWorldScale(258.f, 55.f, 1.f);
 
 	SAFE_RELEASE(pCBTr);
@@ -118,7 +118,7 @@ bool CLogoScene::Init()
 
 	CTransform*	pEBTr = m_pEButtonObj->GetTransform();
 
-	pEBTr->SetWorldPos(_RESOLUTION.iWidth / 2, _RESOLUTION.iHeight / 2 - 290.f, 0.f);
+	pEBTr->SetWorldPos((float)(_RESOLUTION.iWidth / 2.0f), (float)(_RESOLUTION.iHeight / 2.0f - 290.f), 0.f);
 	pEBTr->SetWorldScale(258.f, 55.f, 1.f);
 
 	SAFE_RELEASE(pEBTr);

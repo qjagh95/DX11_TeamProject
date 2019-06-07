@@ -17,7 +17,7 @@ static float fz;
 bool CHuman_Player::Init_Interact()
 {
 	CRenderer* pRD = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
-
+	
 	CColliderOBB3D* pOBB = nullptr;
 	pOBB = m_pObject->AddComponent<CColliderOBB3D>("Player_Interact");
 	pOBB->SetMyTypeName("Player_Interact");
@@ -36,13 +36,13 @@ bool CHuman_Player::Init_Interact()
 	
 	vLength.x = 1.0f;
 	vLength.y = fabs(vMax.y - vMin.y);
-	vLength.z = fabs(vMax.z - vMin.z);
+	vLength.z = 37.5f;
 	
-	pOBB->SetInfo(Vector3(0.0f, 0.0f, 25.0f), Vector3::Axis, vLength * 0.05f);
+	pOBB->SetInfo(Vector3(0.0f, 0.0f, 40.f), Vector3::Axis, vLength * 0.05f);
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CHuman_Player::InteractCallBackEnter);
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CHuman_Player::InteractCallBackStay);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CHuman_Player::InteractCallBackLeave);
-
+	
 	SAFE_RELEASE(pMesh);
 	SAFE_RELEASE(pOBB);
 	SAFE_RELEASE(pRD);
@@ -627,13 +627,19 @@ void  CHuman_Player::Interact_With_Locker(CLocker *pLocker, float fTime)
 			{
 				if (m_pAnimation->GetCurrentClip()->strName == "player_locker_hide")
 				{
-					if (m_pAnimation->GetCurrentClip()->fPlayTime + 0.25f < m_pAnimation->GetCurrentClip()->fEndTime)
+					if (m_pAnimation->GetCurrentClipTime() + 0.26f < m_pAnimation->GetCurrentClip()->fEndTime)
 					{
 						Vector3 vLockerAxisZ = pLockerTr->GetWorldAxis(PUN::AXIS_Z);
 						Vector3 vOpenPos = pLockerTr->GetWorldPos() + (vLockerAxisZ * 2.75f);
-						m_pTransform->SetWorldPos(vOpenPos);
+						//m_pTransform->SetWorldPos(vOpenPos);
+						Vector3 vBodyPos = m_pTransform->GetWorldPos();
+
+						Vector3 vMove = vOpenPos - vBodyPos;
+						PlayerMove(vMove);
 					}
+					
 				}
+				
 				
 			}
 			//pLocker->OpenDoor();
@@ -648,10 +654,11 @@ void  CHuman_Player::Interact_With_Locker(CLocker *pLocker, float fTime)
 
 				Vector3 vLockerZ = pLockerTr->GetWorldAxis(PUN::AXIS_Z);
 				vLockerPos += (vLockerZ * (-1.05f));
+				Vector3 vBodyPos = m_pTransform->GetWorldPos();
 
-				m_pTransform->SetWorldPos(vLockerPos);
+				Vector3 vMove = vLockerPos - vBodyPos;
 
-				
+				PlayerMove(vMove);
 			}
 			
 		}
@@ -721,6 +728,22 @@ void  CHuman_Player::Interact_With_Locker(CLocker *pLocker, float fTime)
 
 void CHuman_Player::Interact_Exit_Locker(CLocker *pLocker, float fTime)
 {
+	if (m_iState & PSTATUS_LOCKER)
+	{
+		PUN::CTransform *pLockerTR = pLocker->GetTransform();
+		Vector3 vLockerPos = pLockerTR->GetWorldPos();
+
+		Vector3 vLockerZ = pLockerTR->GetWorldAxis(PUN::AXIS_Z);
+		vLockerPos += (vLockerZ * (-1.05f));
+
+		Vector3 vBodyPos = m_pTransform->GetWorldPos();
+
+		Vector3 vMove = vLockerPos - vBodyPos;
+
+		PlayerMove(vMove);
+
+		SAFE_RELEASE(pLockerTR);
+	}
 	CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
 }
 void CHuman_Player::Interact_With_Door(CDoor *pDoor, float fTime)
@@ -774,11 +797,21 @@ void CHuman_Player::Interact_With_VaultObj(class CParkour* pVObj, float fTime)
 		{
 			m_iState |= PSTATUS_VAULT;
 			m_pAnimation->ChangeClip("player_jump_over_from_walk");
+			CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
 		}
 	}
 	else
 	{
 		CGameManager::GetInst()->ChangeNoticeClip("Button_Empty");
+	}
+
+
+	if (m_iState & PSTATUS_VAULT)
+	{
+		if (m_pAnimation->GetCurrentClip()->strName == "player_jump_over_from_walk")
+		{
+			PlayerMove(m_pTransform->GetWorldAxis(PUN::AXIS_Z) * (m_fFWalkSpeed * fTime * 0.25f));
+		}
 	}
 
 }

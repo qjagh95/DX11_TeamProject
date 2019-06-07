@@ -315,7 +315,7 @@ bool CShaderManager::Init()
 	CreateCBuffer("Component",		 2,	 sizeof(ComponentCBuffer),		CST_VERTEX | CST_GEOMETRY | CST_PIXEL);
 	CreateCBuffer("Light",			 3,	 sizeof(LightInfo),				CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("RimLight",		 4,	 sizeof(RimLightInfo),			CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("PublicCBuffer",	 5,	 sizeof(PublicCBuffer),			CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("PublicCBuffer",	 5,	 sizeof(PublicCBuffer),			CST_VERTEX | CST_PIXEL | CST_COMPUTE);
 	CreateCBuffer("NaviLandCBuffer", 6,  sizeof(NaviLandCBuffer),		CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Collider",		 7,	 sizeof(Vector4),				CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("GridCBuffer",	 8,  sizeof(GridCBuffer),			CST_VERTEX | CST_PIXEL);

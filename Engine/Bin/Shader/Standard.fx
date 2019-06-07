@@ -458,7 +458,7 @@ PS_OUTPUT_SINGLE SSAmbientOcclusionPS(VS_OUTPUT_TEX input)
     float2 vUV = input.vUV * 2.0f;
 
     float4 vDepth = g_DepthTexture.Sample(g_DiffuseSmp, vUV);
-    float3 vNormal = g_NormalTexture.Sample(g_DiffuseSmp, vUV);
+    float3 vNormal = g_NormalTexture.Sample(g_DiffuseSmp, vUV).xyz;
 
     if (vDepth.a == 0.0f)
         clip(-1);

@@ -233,7 +233,7 @@ SamplerState	g_MultiSmp4		    : register(s8);
 SamplerState PointSampler : register(s9);
 //SamplerState LinearSampler : register(s1);
 
-static const float3 LUM_FACTOR = float3(0.299, 0.587, 0.114);
+static const float3 LUM_FACTOR = float3(0.299f, 0.587f, 0.114f);
 
 cbuffer FinalPassConstants : register(b10)
 {
@@ -339,7 +339,7 @@ _tagLightInfo ComputeLight(float3 vViewPos, float3 vViewNormal , float2 vUV)
 	float vSpc = g_vMtrlSpc.w;
 	if (g_vMtrlAmb.w == 1.f)
 	{
-		vSpc = g_SpecularTex.Sample(g_DiffuseSmp, vUV);
+		vSpc = g_SpecularTex.Sample(g_DiffuseSmp, vUV).r;
 	}
 	tInfo.vSpc = vSpc * g_vLightSpc * pow(max(0, dot(vView, vR)), g_vMtrlSpc.w) * fIntensity;
 

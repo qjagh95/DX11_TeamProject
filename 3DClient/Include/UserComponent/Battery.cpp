@@ -47,7 +47,7 @@ bool CBattery::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("OutLineRenderer");
 
-	pOutRenderer->SetMesh("BatteryOutLine", TEXT("Battery.msh"));
+	pOutRenderer->SetMesh("Battery", TEXT("Battery.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -66,7 +66,7 @@ bool CBattery::Init()
 
 	CRenderer*	pBigRenderer = m_pBigObj->AddComponent<CRenderer>("BigRenderer");
 
-	pBigRenderer->SetMesh("BatteryBig", TEXT("Battery.msh"));
+	pBigRenderer->SetMesh("Battery", TEXT("Battery.msh"));
 
 	SAFE_RELEASE(pBigRenderer);
 
@@ -82,8 +82,13 @@ bool CBattery::Init()
 
 	SetOutLineVisible(false);
 
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("Render");
-	pRenderer->SetMesh("Battery", TEXT("Battery.msh"));
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!pRenderer)
+	{
+		pRenderer = m_pObject->AddComponent<CRenderer>("BatteryRenderer");
+		pRenderer->SetMesh("Battery", TEXT("Battery.msh"));
+	}
 
 	SAFE_RELEASE(pRenderer);
 

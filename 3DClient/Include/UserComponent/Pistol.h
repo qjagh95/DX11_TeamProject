@@ -3,6 +3,7 @@
 #include <Component/ColliderRay.h>
 #include <Component/SoundSource.h>
 #include <Component/Animation.h>
+#include <Component/Light.h>
 
 #include "../Client.h"
 #include "../CameraEff.h"
@@ -46,6 +47,7 @@ private:
 	float m_fSmokeTimerBuf;
 	Vector3 m_vGunPointOffset;
 	Vector3 m_vSmokeSocketOffset;
+	Vector3 m_vBulletCaseOffset;
 
 public:
 	bool Fire();

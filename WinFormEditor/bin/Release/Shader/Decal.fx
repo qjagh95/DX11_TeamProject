@@ -61,8 +61,13 @@ PS_OUTPUT_DECAL SSDPS(VS_OUTPUT_DECAL input)
 
     float4 vColor = g_DiffuseTex.Sample(g_DiffuseSmp, vScreenUV);
 
+    vColor.a *= 5.5f;
+    
+
     if (vColor.a == 0.f)
         clip(-1);
+    else if(vColor.a > 1.0f)
+        vColor.a = 1.0f;
 
     output.vAlbedo = vColor;
 
@@ -75,7 +80,7 @@ PS_OUTPUT_DECAL SSDPS(VS_OUTPUT_DECAL input)
         float3 vNormal = g_NormalTex.Sample(g_DiffuseSmp, vScreenUV).xyz;
 
         vNormal = vNormal * 2.f - 1.f;
-        vNormal = normalize(vNormal);
+        vNormal = normalize(lerp(float3(0.0f, 0.0f, 1.0f), vNormal, g_fBumpScale));
 
         float3x3 mat =
         {

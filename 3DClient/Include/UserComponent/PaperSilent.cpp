@@ -38,8 +38,13 @@ void CPaperSilent::AfterClone()
 
 bool CPaperSilent::Init()
 {
-	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("SPaperRender");
-	pRenderer->SetMesh("SPaper", TEXT("Paper.msh"));
+	CRenderer* pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!pRenderer)
+	{
+		pRenderer = m_pObject->AddComponent<CRenderer>("SPaperRender");
+		pRenderer->SetMesh("Paper", TEXT("Paper.msh"));
+	}
 
 	SAFE_RELEASE(pRenderer);
 

@@ -83,6 +83,7 @@ int CBulletCase::Update(float fTime)
 	}
 	else
 	{
+		m_vCurrVelocity = vCaseInitVel;
 		m_pObject->SetEnable(false);
 	}
 
@@ -125,9 +126,10 @@ void CBulletCase::Kill()
 
 void CBulletCase::SetInstance(const Vector3 & vecPos, const Vector3& vecRot)
 {
+	m_pObject->SetEnable(true);
 	m_pTransform->SetWorldPos(vecPos);
 	m_pTransform->SetWorldRot(vecRot);
 	m_fCurrLife = 0.f;
 	m_vCurrVelocity = vCaseInitVel;
-	m_pObject->SetEnable(true);
+	
 }

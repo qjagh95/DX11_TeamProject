@@ -230,7 +230,7 @@ CKeyInven * CKeyInven::Clone()
 
 void CKeyInven::Save(BinaryWrite * _pInstBW)
 {
-	int iSize = m_vecKey.size();
+	int iSize = (int)m_vecKey.size();
 	_pInstBW->WriteData(iSize);
 
 	for (size_t i = 0; i < iSize; ++i)

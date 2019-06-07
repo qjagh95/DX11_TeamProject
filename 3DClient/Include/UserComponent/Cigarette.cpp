@@ -43,7 +43,7 @@ bool CCigarette::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("CigaOutLineRenderer");
 
-	pOutRenderer->SetMesh("CigaOutLine", TEXT("Daema.msh"));
+	pOutRenderer->SetMesh("Cigarette", TEXT("Daema.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -62,7 +62,7 @@ bool CCigarette::Init()
 
 	CRenderer*	pBigRenderer = m_pBigObj->AddComponent<CRenderer>("CigaBigRenderer");
 
-	pBigRenderer->SetMesh("CigaBig", TEXT("Daema.msh"));
+	pBigRenderer->SetMesh("Cigarette", TEXT("Daema.msh"));
 
 	SAFE_RELEASE(pBigRenderer);
 
@@ -84,8 +84,13 @@ bool CCigarette::Init()
 	m_pTransform->SetWorldRotX(180.f);
 
 	// Renderer
-	m_pRenderer = m_pObject->AddComponent<CRenderer>("Renderer");
-	m_pRenderer->SetMesh("Cigarette", TEXT("Daema.msh"));
+	m_pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!m_pRenderer)
+	{
+		m_pRenderer = m_pObject->AddComponent<CRenderer>("CigaretteRenderer");
+		m_pRenderer->SetMesh("Cigarette", TEXT("Daema.msh"));
+	}
 	
 	// Sphere Collider
 	CColliderSphere* pCollider = m_pObject->AddComponent<CColliderSphere>("Cigarette_Collider");

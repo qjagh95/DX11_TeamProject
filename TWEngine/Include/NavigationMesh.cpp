@@ -941,6 +941,27 @@ int CNavigationMesh::GetCellIndex(const Vector3 & vPos)
 	return (idxZ * m_iLineRectCount + idxX) * 2;
 }
 
+const PNavigationCell CNavigationMesh::GetNavigationCell(const Vector3 & vPos)
+{
+	int iCellIndex = GetCellIndex(vPos);
+	if (iCellIndex < 0)
+		return nullptr;
+	return (const PNavigationCell)m_vecCell[iCellIndex];
+}
+
+Vector3 CNavigationMesh::GetCellSize() const
+{
+	if (m_bGrid)
+	{
+
+		Vector3	vCellSize = (m_vMax - m_vMin) / m_iLineRectCount;
+		return vCellSize;
+	}
+	else
+	
+		return Vector3();
+}
+
 bool CNavigationMesh::RayIntersectTriangle(Vector3 rayOrigin,
 	Vector3 rayDir, Vector3 v0, Vector3 v1, Vector3 v2,
 	float & t, Vector3 & vIntersect)

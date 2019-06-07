@@ -43,13 +43,13 @@ float4 GetBrushColor(float3 vPos, float4 BasicColor)
         {
             if (Range.z > 0.0f)
             {
-                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) && 
+                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) &&
                     (vPos.z <= g_BrushPos.z && vPos.z >= g_StartPos.z))
                     return float4(1.0f, 1.0f, 0.0f, 1.0f);
             }
             else if (Range.z < 0.0f)
             {
-                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) && 
+                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) &&
                     (vPos.z >= g_BrushPos.z && vPos.z <= g_StartPos.z))
                     return float4(1.0f, 1.0f, 0.0f, 1.0f);
             }
@@ -59,7 +59,7 @@ float4 GetBrushColor(float3 vPos, float4 BasicColor)
         {
             if (Range.z > 0.0f)
             {
-                if ((vPos.x >= g_BrushPos.x && vPos.x <= g_StartPos.x) && 
+                if ((vPos.x >= g_BrushPos.x && vPos.x <= g_StartPos.x) &&
                     (vPos.z <= g_BrushPos.z && vPos.z >= g_StartPos.z))
                     return float4(1.0f, 1.0f, 0.0f, 1.0f);
             }
@@ -94,7 +94,7 @@ VS_OUTPUT_3D_COLOR LandScapeColorVS(VS_INPUT_3D_COLOR input)
 
     float3 vPos = input.vPos - g_vPivot * g_vLength;
 
-    float3 sPos = mul(float4(vPos, 1.0f), g_matWorld);
+    float3 sPos = mul(float4(vPos, 1.0f), g_matWorld).xyz;
     output.vPos = mul(float4(vPos, 1.0f), g_matWVP);
     output.vUV = input.vUV;
     output.vColor = input.vColor;

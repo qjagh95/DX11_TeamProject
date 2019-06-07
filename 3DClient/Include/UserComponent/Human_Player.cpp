@@ -50,7 +50,7 @@ static const char* strVoiceDie = "Player_Die";
 
 static const char* strVoices[14] =
 {
-	"",
+	nullptr,
 	strVoiceStealth,
 	strVoiceCrawl,
 	strVoiceBreathLow,
@@ -101,14 +101,17 @@ CHuman_Player::CHuman_Player() :
 	m_fMaxHideBedAngleX(20.f),
 	m_fMaxHideLockerAngleY(80.f),
 	m_fMaxHideLockerAngleX(15.f),
-	m_eVoiceType(PVT_LOW),
-	m_ePlayingVoiceType(PVT_NONE),
+	m_eVoiceType(PVT_NONE),
+	m_ePlayingVoiceType(PVT_LOW),
 	m_iPlayingVoiceNumber(0),
 	m_vPrevWorldPos(Vector3::Zero),
-	m_vVelocity(Vector3::Zero)
+	m_vVelocity(Vector3::Zero),
+	m_pGeometryBody(nullptr),
+	m_bGeomTest(false)
 {
 	m_pInst = this;
 	m_eComType = (COMPONENT_TYPE)UT_PLAYER;
+	m_vecCollidingGeom.clear();
 #include "Player_Item_Values.txt"
 #include "Player_Interact_Values.txt"
 #include "Player_Cam_Values.txt"
@@ -273,7 +276,7 @@ CHuman_Player::CHuman_Player(const CHuman_Player & player) :
 
 	m_bLoadedOnce = player.m_bLoadedOnce;
 	m_iState = 1;
-
+	m_vecCollidingGeom.clear();
 	m_fHideTime = player.m_fHideTime;
 	m_fDoorEffectDelay = player.m_fDoorEffectDelay;
 	m_fFWalkSpeed = player.m_fFWalkSpeed;
@@ -313,7 +316,7 @@ CHuman_Player::~CHuman_Player()
 	SAFE_RELEASE(m_pInven);
 	SAFE_RELEASE(m_pHandycam);
 	SAFE_RELEASE(m_pCamModelObj);
-
+	SAFE_RELEASE(m_pGeometryBody);
 	SAFE_RELEASE(m_pRootBonePos);
 
 	SAFE_RELEASE(m_pHandGun);
@@ -460,7 +463,8 @@ void CHuman_Player::AfterClone()
 
 int CHuman_Player::Input(float fTime)
 {
-
+	m_bGeomTest = false;
+	m_pMovePointer->SetWorldPos(m_pTransform->GetWorldPos());
 	if (m_fBreathIntensity > 0.f)
 	{
 		if (m_fBreathIntensity < 0.25f)
@@ -486,7 +490,7 @@ int CHuman_Player::Input(float fTime)
 	PUN::CTransform *pHeadTrans = m_pHeadObj->GetTransform();
 
 	Vector3 vTotMoveDiff = Vector3::Zero;
-	m_pMovePointer->SetWorldPos(m_pTransform->GetWorldPos());
+	
 	m_iDirFlag = 0;
 	m_iState |= PSTATUS_STOPMOVE;
 
@@ -828,10 +832,19 @@ int CHuman_Player::Input(float fTime)
 	//Movement
 	InputMove(fTime, bBlend);
 
-	/*
+	std::vector<PUN::CColliderOBB3D*>::iterator Itr = m_vecCollidingGeom.begin();
+	std::vector<PUN::CColliderOBB3D*>::iterator ItrEnd = m_vecCollidingGeom.end();
+
+	for (; Itr != ItrEnd; ++Itr)
+	{
+		Geometry_Push(m_pGeometryBody, (*Itr), fTime);
+	}
+	//if (m_bGeomTest)
+	//{
+	//	m_pMovePointer->SetWorldPos(m_vPrevWorldPos);
+	//}
 	
-	*/
-	
+	m_vecCollidingGeom.clear();
 
 	if (m_cInitLoopFinished < 1)
 	{
@@ -896,6 +909,7 @@ int CHuman_Player::Input(float fTime)
 
 int CHuman_Player::Update(float fTime)
 {
+	m_bGeomTest = true;
 	if ((m_iState & PSTATUS_LOCKER) || (m_iState & PSTATUS_BED))
 	{
 		m_eVoiceType = PVT_STEALTH;
@@ -1023,25 +1037,35 @@ void CHuman_Player::SetVoiceType(PLAYER_VOICE_TYPE eVoiceType)
 
 void CHuman_Player::VoiceSound(float fTime)
 {
+	if (m_eVoiceType < 1)
+		return;
 	std::string strStopVoiceKey;
 
 	if (m_ePlayingVoiceType != PVT_NONE)
 	{
-		strStopVoiceKey = strVoices[m_ePlayingVoiceType];
-		strStopVoiceKey += std::to_string(m_iPlayingVoiceNumber);
-		if (m_ePlayingVoiceType == m_eVoiceType)
-		{
-			if (m_pSound->GetClipState(strStopVoiceKey) == PLAYING)
-			{
-				return;
-			}
-		}
-		else
+		if (m_iPlayingVoiceNumber > 0)
 		{
 			
+			if (strVoices[m_ePlayingVoiceType])
+			{
+				strStopVoiceKey = strVoices[m_ePlayingVoiceType];
+				strStopVoiceKey += std::to_string(m_iPlayingVoiceNumber);
+				if (m_ePlayingVoiceType == m_eVoiceType)
+				{
+					if (m_pSound->GetClipState(strStopVoiceKey) == PLAYING)
+					{
+						return;
+					}
+				}
+				else
+				{
 
-			m_pSound->StopClip(strStopVoiceKey, false);
+					m_pSound->StopClip(strStopVoiceKey, false);
+				}
+			}
+			
 		}
+		
 		
 	}
 
@@ -1450,11 +1474,11 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 
 	PUN::CGameObject *pRoot = PUN::CGameObject::CreateObject("PlayerRoot", m_pLayer, true);
 
-	PUN::CColliderOBB3D *pCol = pRoot->AddComponent<PUN::CColliderOBB3D>("PlayerGeom");
-	pCol->SetInfo(Vector3(0.f, -.25f, 0.1f), Vector3::Axis, Vector3(1.25f, 2.55f, 1.6f));
-	pCol->SetCollisionCallback(PUN::CCT_STAY, this, &CHuman_Player::Geometry_Push);
-	pCol->SetCollisionCallback(PUN::CCT_LEAVE, this, &CHuman_Player::Geometry_Out);
-	SAFE_RELEASE(pCol);
+	m_pGeometryBody = pRoot->AddComponent<PUN::CColliderOBB3D>("PlayerGeom");
+	m_pGeometryBody->SetInfo(Vector3(0.f, -.25f, -1.f), Vector3::Axis, Vector3(1.25f, 2.55f, 1.25f));
+	m_pGeometryBody->SetCollisionCallback(PUN::CCT_STAY, this, &CHuman_Player::Geometry_Push);
+	m_pGeometryBody->SetCollisionCallback(PUN::CCT_LEAVE, this, &CHuman_Player::Geometry_Out);
+	
 	m_pAnimation->SetSocketObject("Hero-Spine2", "root", pRoot);
 
 	m_pRootBonePos = pRoot->GetTransform();
@@ -1472,38 +1496,147 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 
 void CHuman_Player::Move(PUN::AXIS axis, float fSpeed, float fTime)
 {
-	Vector3 vAxis = m_pTransform->GetWorldAxis(axis);
-	Vector3	vPos = m_pTransform->GetWorldPos() + Vector3(vAxis * fSpeed * fTime);
-
-	CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene,
-		vPos);
-
-	bool	bMove = true;
-
-	if (pMesh)
-	{
-		if (!pMesh->CheckCell(vPos))
-			bMove = false;
-	}
-
-	if (!bMove)
-		return;
+	float fAddSpeed = fSpeed;
 
 	if (m_isAccel)
 	{
-		float fMultiSpeed = m_accelSpeed * fSpeed;
-		m_pMovePointer->Move(vAxis, fMultiSpeed, fTime);
+		fAddSpeed = m_accelSpeed * fSpeed;
+		
 	}
-	else
-	{
-		m_pMovePointer->Move(vAxis, fSpeed, fTime);
-	}
+	
 
+	Vector3 vAxis = m_pTransform->GetWorldAxis(axis);
+	Vector3	vPos = vAxis * (fAddSpeed * fTime);
+
+	Move(vPos);
+}
+
+void CHuman_Player::Move(Vector3 vMove) 
+{
+	if (vMove == Vector3::Zero)
+		return;
+	
+	Vector3 vCurrPos = m_pTransform->GetWorldPos();
+	Vector3 vRestorePos = vCurrPos;
+	Vector3 vPos =  vCurrPos + vMove;
+
+	CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene, vPos);
+	if (m_bNaviOn && pMesh)
+	{
+		float fVelocity = vMove.Length();
+		if (fVelocity < 1.e-17f)
+			return;
+
+
+		bool	bMove = false;
+
+		PUN::PNavigationCell pNavi = nullptr;
+		//vCurrPos에서 가장 가까운 선 찾기
+		//Dot = 사영 = Cos값
+		float fMinDist = FLT_MAX;
+		float fDot = 0.f;
+		float fDist = FLT_MAX;
+		float fBaseDist = 0.f;
+		float fRadian = 0.f;
+		
+		Vector3 vGrid;
+		Vector3 vRes = vMove;
+
+
+		for (char i = 0; i < 4; ++i)
+		{
+			pNavi = pMesh->GetNavigationCell(vPos);
+			if (pMesh->CheckCell(vPos))
+			{
+				if (vRes != Vector3::Zero)
+				{
+					float fResVel = vRes.Length();
+					if (fResVel <= fVelocity)
+					{
+						bMove = true;
+						m_pMovePointer->Move(vRes);
+						
+
+					}
+					else
+					{
+						vRes.Normalize();
+						vRes *= fVelocity;
+						m_pMovePointer->Move(vRes);
+					
+					}
+					return;
+				}
+				
+			}
+
+			if (i == 3)
+				break;
+
+
+			vGrid = (vCurrPos - pNavi->vEdgeCenter[i]) * 2.f; //해당 선분의 중점이므로 이 거리에 2를 곱해야 함
+			vGrid.y = pNavi->vEdgeCenter[i].y;
+			fDot = pNavi->vEdge[i].Dot(vGrid);
+
+			fBaseDist = vGrid.Length();
+			float fCos = fDot / fBaseDist;
+			fRadian = acosf(fCos);
+			fDist = abs(sinf(fRadian) * fDot); //거리값
+			Vector3 vEdge = pNavi->vEdge[i];
+			vEdge.Normalize();
+			Vector3 vAltRes = vEdge * fCos;
+			Vector3 vAltResMinus = vAltRes * -1.f;
+
+			float fTestSignAltRes[2] = { (vMove + vAltRes).Length(), (vMove + vAltResMinus).Length()};
+			
+			if (fTestSignAltRes[0] < fTestSignAltRes[1])
+			{
+				vRes = vAltResMinus;
+				vPos = vCurrPos + vRes;
+
+				pNavi = pMesh->GetNavigationCell(vPos);
+				if (pMesh->CheckCell(vPos))
+				{
+					float fResVel = vRes.Length();
+					if (fResVel <= fVelocity)
+					{
+						bMove = true;
+						m_pMovePointer->Move(vRes);
+
+
+					}
+					else
+					{
+						vRes.Normalize();
+						vRes *= fVelocity;
+						m_pMovePointer->Move(vRes);
+
+					}
+					return;
+
+				}
+			}
+
+
+			vPos = vCurrPos + vAltRes;
+			vRes = vAltRes;
+		}
+		
+		if (!bMove)
+		{
+			return;
+		}
+
+	}
+	
+
+	m_pMovePointer->Move(vMove);
 }
 
 void CHuman_Player::PlayerMove(const Vector3& vMove)
 {
 	m_pTransform->Move(vMove);
+	
 	m_pMovePointer->Move(vMove);
 	PUN::CTransform *pHead = m_pHeadObj->GetTransform();
 	pHead->Move(vMove);
@@ -1648,6 +1781,7 @@ bool CHuman_Player::IsPlayerOnSceneChange()
 
 void CHuman_Player::InputMove(float fTime, bool& bBlend)
 {
+
 	PUN::CInput *_Input = PUN::CInput::GetInst();
 
 	if (_Input->KeyPress("Shift"))
@@ -2202,25 +2336,25 @@ void CHuman_Player::SetBreathIntensity(float fBreath)
 
 bool CHuman_Player::IsCrouching() const 
 {
-	if((m_iState & PSTATUS_CROUCHING) && (m_iState & PSTATUS_CROUCHED))
-		std::cout << "player is crouching" << std::endl;
+	//if((m_iState & PSTATUS_CROUCHING) && (m_iState & PSTATUS_CROUCHED))
+	//	std::cout << "player is crouching" << std::endl;
 	return !((m_iState ^ (PSTATUS_CROUCHING | PSTATUS_CROUCHED) & (PSTATUS_CROUCHING | PSTATUS_CROUCHED)));
 }
 bool CHuman_Player::OnCrouchMoving() const 
 {
-	if((m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_STOPMOVE))
-		std::cout << "player is crouched and moving" << std::endl;
+	//if((m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_STOPMOVE))
+	//	std::cout << "player is crouched and moving" << std::endl;
 	return (m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_STOPMOVE);
 }
 bool CHuman_Player::IsIdle() const 
 {
-	if(m_iState & PSTATUS_STOPMOVE)
-		std::cout << "player is idle" << std::endl;
+	//if(m_iState & PSTATUS_STOPMOVE)
+	//	std::cout << "player is idle" << std::endl;
 	return m_iState & PSTATUS_STOPMOVE;
 }
 bool CHuman_Player::IsCrouched() const 
 {
-	if((m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_CROUCHING))
-		std::cout << "player is crouched" << std::endl;
+	//if((m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_CROUCHING))
+	//	std::cout << "player is crouched" << std::endl;
 	return (m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_CROUCHING);
 }

@@ -130,6 +130,11 @@ bool CRenderManager::Init()
 	if (!GET_SINGLE(CViewManager)->Init())
 		return false;
 
+	if (CCore::GetInst()->m_bEditorMode == true)
+	{
+		m_bLightWireFrame = true;
+	}
+
 	m_tCBuffer.ViewPortSize.x = (float)CDevice::GetInst()->GetResolution().iWidth;
 	m_tCBuffer.ViewPortSize.y = (float)CDevice::GetInst()->GetResolution().iHeight;
 	m_tCBuffer.isDeferred = m_bDeferred;
@@ -795,7 +800,7 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 	if (m_bLightWireFrame == false)
 		return;
 
-	//m_pState[STATE_DEPTH_DISABLE]->SetState();
+	m_pState[STATE_DEPTH_DISABLE]->SetState();
 	m_pState[STATE_CULL_NONE]->SetState();
 	m_pState[STATE_WIRE_FRAME]->SetState();
 	{
@@ -803,7 +808,7 @@ void CRenderManager::RenderLightPoint(float fTime, CLight * pLight)
 	}
 	m_pState[STATE_WIRE_FRAME]->ResetState();
 	m_pState[STATE_CULL_NONE]->ResetState();
-	//m_pState[STATE_DEPTH_DISABLE]->ResetState();
+	m_pState[STATE_DEPTH_DISABLE]->ResetState();
 }
 
 void CRenderManager::RenderLightSpot(float fTime, CLight * pLight)
@@ -960,9 +965,10 @@ void CRenderManager::RenderSkyObj(FAVORITE_TARGET eTarget, float fTime)
 {
 	m_pTarget[eTarget]->ClearTarget();
 	m_pTarget[eTarget]->SetTarget();
-
+	
+	//if(m_pSkyObj->GetEnable() == true)
+		
 	m_pSkyObj->Render(fTime);
-
 	m_pTarget[TARGET_BLEND]->SetShader(0);
 	m_pState[STATE_DEPTH_DISABLE]->SetState();
 
@@ -1162,6 +1168,8 @@ void CRenderManager::RenderFinalPassDebug(float _fTime)
 	// 상수 버퍼 업데이트
 	SetOnOff(m_fOnOff);
 	SetStarLightScope(m_iScopeFlag);
+	//SetOnOff(true);
+	//SetStarLightScope(1);
 	m_accShakeTime += _fTime;
 	float quakeTime = 0.3f;
 	float quakeDelay = 0.01f;

@@ -43,7 +43,7 @@ bool CTablet::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("TabletOutLineRenderer");
 
-	pOutRenderer->SetMesh("TabletOutLine", TEXT("Tablet.msh"));
+	pOutRenderer->SetMesh("Tablet", TEXT("Tablet.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -62,7 +62,7 @@ bool CTablet::Init()
 
 	CRenderer*	pBigRenderer = m_pBigObj->AddComponent<CRenderer>("TabletBigRenderer");
 
-	pBigRenderer->SetMesh("TabletBig", TEXT("Tablet.msh"));
+	pBigRenderer->SetMesh("Tablet", TEXT("Tablet.msh"));
 
 	SAFE_RELEASE(pBigRenderer);
 
@@ -83,9 +83,13 @@ bool CTablet::Init()
 	m_pTransform->SetWorldScale(22.f);
 
 	// Renderer
-	m_pRenderer = m_pObject->AddComponent<CRenderer>("Renderer");
-	m_pRenderer->SetMesh("Tablet", TEXT("Tablet.msh"));
+	m_pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
 
+	if (!m_pRenderer)
+	{
+		m_pRenderer = m_pObject->AddComponent<CRenderer>("TabletRenderer");
+		m_pRenderer->SetMesh("Tablet", TEXT("Tablet.msh"));
+	}
 	// Sphere Collider
 	CColliderSphere* pCollider = m_pObject->AddComponent<CColliderSphere>("Tablet_Collider");
 	pCollider->SetInfo(Vector3::Zero, 1.f);

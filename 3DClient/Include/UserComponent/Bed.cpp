@@ -53,7 +53,7 @@ bool CBed::Init()
 	SAFE_RELEASE(pRD);
 
 	std::string matressStr = "matress_";
-	matressStr += GetTag();
+	matressStr += to_string((unsigned int)this);
 	PUN::CGameObject *pMatress = PUN::CGameObject::CreateObject(matressStr, m_pLayer);
 
 	pRD = pMatress->AddComponent<PUN::CRenderer>("renderer");

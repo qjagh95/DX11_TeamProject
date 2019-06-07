@@ -45,7 +45,7 @@ bool CPaperTest::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("FileTRenderer");
 
-	pOutRenderer->SetMesh("FileTOutLine", TEXT("FileEx.msh"));
+	pOutRenderer->SetMesh("File", TEXT("FileEx.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -64,7 +64,7 @@ bool CPaperTest::Init()
 	SetOutLineVisible(false);
 
 	CRenderer* pRenderer = m_pObject->AddComponent<CRenderer>("FileTestRender");
-	pRenderer->SetMesh("File_Test", TEXT("FileEx.msh"));
+	pRenderer->SetMesh("File", TEXT("FileEx.msh"));
 
 	SAFE_RELEASE(pRenderer);
 

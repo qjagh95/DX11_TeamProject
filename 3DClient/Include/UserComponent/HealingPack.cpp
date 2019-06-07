@@ -53,9 +53,24 @@ void CHealingPack::AfterInit()
 
 bool CHealingPack::Init()
 {
+	m_pRenderer = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
+
+	if (!m_pRenderer)
+	{
+		if(GetWorldScale() != Vector3::Zero)
+			m_pTransform->SetWorldScale(7.0f);
+
+		m_pRenderer = m_pObject->AddComponent<CRenderer>("HealingPackRenderer");
+		m_pRenderer->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
+	}
+
+	CMesh* pMesh = m_pRenderer->GetMesh();
+	string strMeshTag = pMesh->GetTag();
+
 	m_pOutLineObj = CGameObject::CreateObject("HPOutLine", m_pLayer);
 
 	m_pOutLineRenderer = m_pOutLineObj->AddComponent<CRenderer>("HPOutLineRenderer");
+	m_pOutLineRenderer->SetMesh(strMeshTag);
 
 	m_pOutLineMaterial = m_pOutLineObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
@@ -66,6 +81,7 @@ bool CHealingPack::Init()
 	m_pBigObj = CGameObject::CreateObject("HPBig", m_pLayer);
 
 	m_pBigRenderer = m_pBigObj->AddComponent<CRenderer>("HPBigRenderer");
+	m_pBigRenderer->SetMesh(strMeshTag);
 
 	CMaterial*	pBigMat = m_pBigObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
@@ -82,7 +98,6 @@ bool CHealingPack::Init()
 	//m_pTransform->SetWorldScale(10.f);
 
 	// Renderer
-	m_pRenderer = m_pObject->AddComponent<CRenderer>("Renderer");
 
 	// Sphere Collider
 	CColliderSphere* pCollider = m_pObject->AddComponent<CColliderSphere>("HealingPack_Collider");
