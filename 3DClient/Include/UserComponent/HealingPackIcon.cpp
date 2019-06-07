@@ -94,13 +94,13 @@ void CHealingPackIcon::SetMaterial()
 	{
 		m_eComType = (COMPONENT_TYPE)IT_MEDICALKIT;
 		m_pCollider->SetColliderID((COLLIDER_ID)UCI_ITEM_FAK);
-		pMaterial->SetDiffuseTex(0, "MedicalKitIcon", TEXT("UI/Icon/FoodCan.png"));
+		pMaterial->SetDiffuseTex(0, "MedicalKitIcon", TEXT("UI/Icon/FirstAidKit.png"));
 	}
 	else if (m_strMeshName == "LunchBox")
 	{
 		m_eComType = (COMPONENT_TYPE)IT_LUNCHBOX;
 		m_pCollider->SetColliderID((COLLIDER_ID)UCI_ITEM_LUNCHBOX);
-		pMaterial->SetDiffuseTex(0, "LaunchBoxIcon", TEXT("UI/Icon/ColaCan.png"));
+		pMaterial->SetDiffuseTex(0, "LaunchBoxIcon", TEXT("UI/Icon/Lunchbox.png"));
 	}
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 	SAFE_RELEASE(pMaterial);

@@ -29,6 +29,8 @@ CDocxInven::~CDocxInven()
 {
 	SAFE_RELEASE(m_pDoc);
 	SAFE_RELEASE(m_pDocObj);
+	SAFE_RELEASE(m_pPM);
+	SAFE_RELEASE(m_pPMObj);
 
 	for (size_t i = 0; i < m_vecItem.size(); ++i)
 	{
@@ -165,6 +167,8 @@ bool CDocxInven::Init()
 	CSoundManager::GetInst()->CreateSoundEffect("Docx_Open", TEXT("Document_Open.WAV"));
 	CResourcesManager::GetInst()->CreateTexture("DocxInven", TEXT("UI/Document/DocxInven.png"));
 
+	CLayer*	pUILayer = m_pScene->FindLayer("UI");
+
 	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("InventoryRenderer");
 
 	pRenderer->SetMesh("TexRect");
@@ -192,20 +196,19 @@ bool CDocxInven::Init()
 	m_iDocxMax = 20;
 	m_iIndex = 0;
 
-	m_pDocObj = CGameObject::CreateObject("Document", m_pLayer, true);
+	m_pDocObj = CGameObject::CreateObject("Document", pUILayer, true);
 	m_pDoc = m_pDocObj->AddComponent<CDocument>("Document");
 
 	m_pDocObj->SetEnable(false);
 	m_pDoc->ChangeClip("Message_Empty");
 
-	CGameObject*	pPMObj = CGameObject::CreateObject("PhoneMessage", m_pLayer, true);
+	m_pPMObj = CGameObject::CreateObject("PhoneMessage", pUILayer, true);
 
-	CPhoneMessage*	pPM = pPMObj->AddComponent<CPhoneMessage>("PhoneMessage");
+	m_pPM = m_pPMObj->AddComponent<CPhoneMessage>("PhoneMessage");
 
-	AddItem(pPMObj);
+	AddItem(m_pPMObj);
 
-	SAFE_RELEASE(pPM);
-	SAFE_RELEASE(pPMObj);
+	SAFE_RELEASE(pUILayer);
 
 	return true;
 }
@@ -258,7 +261,12 @@ void CDocxInven::Save(BinaryWrite * _pInstBW)
 	_pInstBW->WriteData(m_pDocObj);
 
 	_pInstBW->WriteData(m_pDoc->GetTag());
-	_pInstBW->WriteData(m_pDoc);
+
+	_pInstBW->WriteData(m_pPMObj->GetTag());
+	_pInstBW->WriteData(m_pPMObj->GetLayer()->GetTag());
+	_pInstBW->WriteData(m_pPMObj);
+
+	_pInstBW->WriteData(m_pPM->GetTag());
 }
 
 void CDocxInven::Load(BinaryRead * _pInstBR)
@@ -294,6 +302,19 @@ void CDocxInven::Load(BinaryRead * _pInstBR)
 
 	SAFE_RELEASE(pDoc);
 	SAFE_RELEASE(pDocument);
+
+	string PMObjTag = _pInstBR->ReadString();
+	string strPMLayerTag = _pInstBR->ReadString();
+
+	CGameObject*	pPMObj = CGameObject::CreateObject(PMObjTag, pLayer, true);
+	pPMObj->Load(_pInstBR);
+
+	string PMTag = _pInstBR->ReadString();
+
+	CDocument*	pPM = pPMObj->AddComponent<CDocument>(PMTag);
+
+	SAFE_RELEASE(pPM);
+	SAFE_RELEASE(pPMObj);
 	SAFE_RELEASE(pLayer);
 }
 

@@ -252,9 +252,6 @@
     <ClInclude Include="UserComponent\Hidable.h">
       <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\HitEffectAlpha.h">
-      <Filter>02. UserComponent\01. Player\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\HitEffectAnim.h">
       <Filter>02. UserComponent\01. Player\Effect</Filter>
     </ClInclude>
@@ -508,9 +505,6 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Hidable.cpp">
       <Filter>02. UserComponent\07. Interact\02. Hidable</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\HitEffectAlpha.cpp">
-      <Filter>02. UserComponent\01. Player\Effect</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\HitEffectAnim.cpp">
       <Filter>02. UserComponent\01. Player\Effect</Filter>

@@ -178,12 +178,12 @@ bool CTutorialScene::Init()
 	SAFE_RELEASE(pEventObj);
 
 	// MedicalKit
-	CGameObject* pObjMedicalKit = CGameObject::CreateObject("MedicalKit", pDefaultLayer);
+	CGameObject* pObjMedicalKit = CGameObject::CreateObject("HealingPack", pDefaultLayer);
 
 	CTransform* pMedicalKitTr = pObjMedicalKit->GetTransform();
 	pMedicalKitTr->SetWorldPos(356.f, 20.f, 650.f);
 
-	CHealingPack* pUCHealingPack = pObjMedicalKit->AddComponent<CHealingPack>("UC_HealingPack");
+	CHealingPack* pUCHealingPack = pObjMedicalKit->AddComponent<CHealingPack>("HealingPack");
 	//pUCHealingPack->SetHPAmount(pPlayer->GetMaxHP());
 	pUCHealingPack->SetMesh("MedicalKit", TEXT("MedicalKit.msh"));
 	pMedicalKitTr->SetWorldScale(10.f);

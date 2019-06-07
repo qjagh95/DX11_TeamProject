@@ -124,9 +124,11 @@ int CStageKey::Update(float fTime)
 			{
 				m_bOnInven = true;
 
+				CLayer*	pUILayer = m_pScene->FindLayer("UI");
+
 				m_pKeyInvenObj = CGameObject::FindObject("KeyInven");
 
-				CGameObject*	pMKObj = CGameObject::CreateObject("CenterKey", m_pLayer, true);
+				CGameObject*	pMKObj = CGameObject::CreateObject("CenterKey", pUILayer, true);
 
 				CCenterKey*	pMK = pMKObj->AddComponent<CCenterKey>("CenterKey");
 
@@ -145,6 +147,7 @@ int CStageKey::Update(float fTime)
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
+				SAFE_RELEASE(pUILayer);
 
 				GET_SINGLE(CGameManager)->AddKey(m_pObject->GetTag(), m_pObject);
 				GET_SINGLE(CGameManager)->AddChangedListItemObj(m_pObject);

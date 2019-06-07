@@ -55,6 +55,8 @@ public:
 	virtual CKeyInven* Clone();
 
 public:
+	void Save(BinaryWrite* _pInstBW);
+	void Load(BinaryRead*  _pInstBR);
 	void AddUILayer();
 };
 

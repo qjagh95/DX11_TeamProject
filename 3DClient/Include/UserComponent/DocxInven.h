@@ -18,6 +18,8 @@ private:
 	vector<class CGameObject*>	m_vecItem;
 	class CGameObject*		m_pDocObj;
 	class CDocument*		m_pDoc;
+	CGameObject*			m_pPMObj;
+	class CPhoneMessage*	m_pPM;
 	DOCXINVEN_STATE			m_eState;
 	int						m_iDocxMax;
 	int						m_iFlag;

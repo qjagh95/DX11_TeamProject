@@ -37,9 +37,6 @@ private:
 	float					m_fItemY;
 
 private:
-	int				m_iCount;
-
-private:
 	int		m_iBatteryCnt;
 	int		m_iMedicalKitCnt;
 	int		m_iLunchBoxCnt;
@@ -103,6 +100,8 @@ public:
 	virtual CInventory* Clone();
 
 public:
+	void Save(BinaryWrite* _pInstBW);
+	void Load(BinaryRead*  _pInstBR);
 	void AddUILayer();
 };
 

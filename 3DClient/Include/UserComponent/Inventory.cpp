@@ -27,7 +27,6 @@ CInventory::CInventory() :
 	m_bVisible = false;
 	m_eState = INS_NORMAL;
 	m_fItemY = 0.f;
-	m_iCount = 0;
 
 	m_iBatteryCnt = 0;
 	m_iMedicalKitCnt = 0;
@@ -682,6 +681,133 @@ void CInventory::Render(float fTime)
 CInventory * CInventory::Clone()
 {
 	return new CInventory(*this);
+}
+
+void CInventory::Save(BinaryWrite * _pInstBW)
+{
+	int iSize = m_vecItem.size();
+	_pInstBW->WriteData(iSize);
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		_pInstBW->WriteData(m_vecItem[i]->GetTag());
+		_pInstBW->WriteData(m_vecItem[i]->GetLayer()->GetTag());
+		m_vecItem[i]->Save(_pInstBW);
+	}
+
+	_pInstBW->WriteData(m_iIndex);
+	_pInstBW->WriteData(m_iInvenMax);
+	_pInstBW->WriteData(m_iMoveIndex);
+	_pInstBW->WriteData(m_iNumberIndex);
+	_pInstBW->WriteData(m_fItemY);
+
+	_pInstBW->WriteData(m_iBatteryCnt);
+	_pInstBW->WriteData(m_iMedicalKitCnt);
+	_pInstBW->WriteData(m_iLunchBoxCnt);
+	_pInstBW->WriteData(m_iTabletCnt);
+	_pInstBW->WriteData(m_iDaemaCnt);
+
+	iSize = m_vecNumber.size();
+	_pInstBW->WriteData(iSize);
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		_pInstBW->WriteData(m_vecNumber[i]->GetTag());
+		_pInstBW->WriteData(m_vecNumber[i]->GetLayer()->GetTag());
+		m_vecNumber[i]->Save(_pInstBW);
+	}
+
+	iSize = m_vecList.size();
+	_pInstBW->WriteData(iSize);
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		_pInstBW->WriteData(m_vecList[i]->GetTag());
+		_pInstBW->WriteData(m_vecList[i]->GetLayer()->GetTag());
+		m_vecList[i]->Save(_pInstBW);
+	}
+	   
+
+	_pInstBW->WriteData(m_pZipObj->GetTag());
+	_pInstBW->WriteData(m_pZipObj->GetLayer()->GetTag());
+	m_pZipObj->Save(_pInstBW);
+
+	_pInstBW->WriteData(m_pZipper->GetTag());
+}
+
+void CInventory::Load(BinaryRead * _pInstBR)
+{
+	int iSize = _pInstBR->ReadInt();
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		string ObjectTag = _pInstBR->ReadString();
+		string LayerTag = _pInstBR->ReadString();
+		CLayer* getLayer = CSceneManager::GetInst()->FindLayer(LayerTag);
+
+		CGameObject* pItem = CGameObject::CreateObject(ObjectTag, getLayer, true);
+		pItem->Load(_pInstBR);
+
+		SAFE_RELEASE(getLayer);
+		SAFE_RELEASE(pItem);
+	}
+
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+
+	iSize = _pInstBR->ReadInt();
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		string ObjectTag = _pInstBR->ReadString();
+		string LayerTag = _pInstBR->ReadString();
+		CLayer* getLayer = CSceneManager::GetInst()->FindLayer(LayerTag);
+
+		CGameObject* pItem = CGameObject::CreateObject(ObjectTag, getLayer, true);
+		pItem->Load(_pInstBR);
+
+		SAFE_RELEASE(getLayer);
+		SAFE_RELEASE(pItem);
+	}
+
+
+	iSize = _pInstBR->ReadInt();
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		string ObjectTag = _pInstBR->ReadString();
+		string LayerTag = _pInstBR->ReadString();
+		CLayer* getLayer = CSceneManager::GetInst()->FindLayer(LayerTag);
+
+		CGameObject* pItem = CGameObject::CreateObject(ObjectTag, getLayer, true);
+		pItem->Load(_pInstBR);
+
+		SAFE_RELEASE(getLayer);
+		SAFE_RELEASE(pItem);
+	}
+
+	string ZipObjTag = _pInstBR->ReadString();
+	string ZipLayerTag = _pInstBR->ReadString();
+	CLayer* getZipLayer = CSceneManager::GetInst()->FindLayer(ZipLayerTag);
+
+	CGameObject* pZipItem = CGameObject::CreateObject(ZipObjTag, getZipLayer, true);
+	pZipItem->Load(_pInstBR);
+
+	string ZipTag = _pInstBR->ReadString();
+	CZipper*	pZip = pZipItem->AddComponent<CZipper>(ZipTag);
+
+	SAFE_RELEASE(pZip);
+	SAFE_RELEASE(getZipLayer);
+	SAFE_RELEASE(pZipItem);
 }
 
 void CInventory::AddUILayer()

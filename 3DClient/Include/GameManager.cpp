@@ -160,13 +160,13 @@ bool CGameManager::Init()
 	if (!pLayer)
 		return false;
 
-	//m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
+	m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
 
-	//m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
+	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
-	//m_pPlayerTr = m_pPlayerObj->GetTransform();
-	//m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
-	//m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
+	m_pPlayerTr = m_pPlayerObj->GetTransform();
+	m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
+	m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	////m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
 
 	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer, true);

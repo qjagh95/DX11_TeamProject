@@ -228,6 +228,64 @@ CKeyInven * CKeyInven::Clone()
 	return new CKeyInven(*this);
 }
 
+void CKeyInven::Save(BinaryWrite * _pInstBW)
+{
+	int iSize = m_vecKey.size();
+	_pInstBW->WriteData(iSize);
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		_pInstBW->WriteData(m_vecKey[i]->GetTag());
+		_pInstBW->WriteData(m_vecKey[i]->GetLayer()->GetTag());
+		m_vecKey[i]->Save(_pInstBW);
+	}
+
+	_pInstBW->WriteData(m_iIndex);
+	_pInstBW->WriteData(m_iKeyMax);
+
+	_pInstBW->WriteData(m_pKeyBigObj->GetTag());
+	_pInstBW->WriteData(m_pKeyBigObj->GetLayer()->GetTag());
+	_pInstBW->WriteData(m_pKeyBigObj);
+
+	_pInstBW->WriteData(m_pKeyBig->GetTag());
+}
+
+void CKeyInven::Load(BinaryRead * _pInstBR)
+{
+	int iSize = _pInstBR->ReadInt();
+
+	for (size_t i = 0; i < iSize; ++i)
+	{
+		string ObjectTag = _pInstBR->ReadString();
+		string LayerTag = _pInstBR->ReadString();
+		CLayer* getLayer = CSceneManager::GetInst()->FindLayer(LayerTag);
+
+		CGameObject* pItem = CGameObject::CreateObject(ObjectTag, getLayer, true);
+		pItem->Load(_pInstBR);
+
+		SAFE_RELEASE(getLayer);
+		SAFE_RELEASE(pItem);
+	}
+
+	_pInstBR->ReadInt();
+	_pInstBR->ReadInt();
+
+	string KeyObjTag = _pInstBR->ReadString();
+	string strLayerTag = _pInstBR->ReadString();
+	CLayer*	pLayer = GET_SINGLE(CSceneManager)->FindLayer(strLayerTag);
+
+	CGameObject*	pKeyObj = CGameObject::CreateObject(KeyObjTag, pLayer, true);
+	pKeyObj->Load(_pInstBR);
+
+	string KeyTag = _pInstBR->ReadString();
+
+	CKeyBigICon*	pKey = pKeyObj->AddComponent<CKeyBigICon>(KeyTag);
+
+	SAFE_RELEASE(pKey);
+	SAFE_RELEASE(pKeyObj);
+	SAFE_RELEASE(pLayer);
+}
+
 void CKeyInven::AddUILayer()
 {
 	CLayer*	pUILayer = m_pScene->FindLayer("UI");

@@ -104,6 +104,18 @@ bool CHitEffectAnim::Init()
 
 	vecClipFrame.clear();
 
+	for (int i = 0; i < 2; ++i)
+	{
+		tFrame.vLT = Vector2(0.f + i * 800.f, 0.f);
+		tFrame.vRB = Vector2(800.f + i * 800.f, 475.f);
+		vecClipFrame.push_back(tFrame);
+	}
+
+	m_pAnimation->AddClip("Hit4", A2D_ATLAS, AO_LOOP, 0.4f, vecClipFrame,
+		"Anim4_Hit", TEXT("Effect/HitEffect4_new.png"));
+
+	vecClipFrame.clear();
+
 	m_pPlayerObj = CGameObject::FindObject("Player");
 
 	return true;

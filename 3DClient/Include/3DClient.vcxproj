@@ -226,7 +226,6 @@
     <ClInclude Include="UserComponent\HealingPack.h" />
     <ClInclude Include="UserComponent\HealingPackIcon.h" />
     <ClInclude Include="UserComponent\Hidable.h" />
-    <ClInclude Include="UserComponent\HitEffectAlpha.h" />
     <ClInclude Include="UserComponent\HitEffectAnim.h" />
     <ClInclude Include="UserComponent\Human_Player.h" />
     <ClInclude Include="UserComponent\Idle.h" />
@@ -315,7 +314,6 @@
     <ClCompile Include="UserComponent\HealingPack.cpp" />
     <ClCompile Include="UserComponent\HealingPackIcon.cpp" />
     <ClCompile Include="UserComponent\Hidable.cpp" />
-    <ClCompile Include="UserComponent\HitEffectAlpha.cpp" />
     <ClCompile Include="UserComponent\HitEffectAnim.cpp" />
     <ClCompile Include="UserComponent\Human_Player.cpp" />
     <ClCompile Include="UserComponent\Idle.cpp" />

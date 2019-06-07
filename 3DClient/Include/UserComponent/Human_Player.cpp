@@ -18,7 +18,6 @@
 #include "../CommonSoundLoader.h"
 #include "Handycam.h"
 #include "NavigationMesh.h"
-#include "HitEffectAlpha.h"
 #include "Locker.h"
 
 static const char* strFootStepSndHeader = "FTS_";

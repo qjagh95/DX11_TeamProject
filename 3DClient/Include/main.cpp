@@ -7,6 +7,7 @@
 #include "SceneComponent/JBH_Stage3.h"
 #include "SceneComponent/TestScene.h"
 #include "SceneComponent/TestScene-YH.h"
+#include "SceneComponent/Stage2Scene.h"
 #include "SceneComponent/LogoScene.h"
 #include "SceneComponent/RandScapeTestScene.h"
 #include "CameraEff.h"
@@ -31,14 +32,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		CCore::DestroyInst();
 		DESTROY_SINGLE(CGameManager);
 		return 0;
-	}
+	}	
 
 	//FPS 카메라와 카메라 흔들림 이펙트를 구현하는 매니저 구동
 
 	GET_SINGLE(CGameManager)->PostInit();
 
-	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("First", "Test");
-	//GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
+	GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("Start", "Start");
+	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("TutorialScene", "Tutorial");
+	GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
+	//GET_SINGLE(CSceneManager)->AddScene<CStage2Scene>("Stage2", "Stage2");
 
 	GET_SINGLE(CGameManager)->Init();
 

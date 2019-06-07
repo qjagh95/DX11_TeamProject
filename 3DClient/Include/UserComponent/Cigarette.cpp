@@ -167,10 +167,11 @@ void CCigarette::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				m_pObjInventory = m_pScene->FindObject("Inven");
 				m_pInventory = m_pObjInventory->FindComponentFromTag<CInventory>("Inven");
 
+				CLayer*	pUILayer = m_pScene->FindLayer("UI");
 				// 酒捞袍 酒捞能 积己
 				// 'HealingPackIcon' 按眉 积己
 				string strIconName = "";
-				m_pObjItemIcon = CGameObject::CreateObject("Icon_Cigarette", m_pLayer, true);
+				m_pObjItemIcon = CGameObject::CreateObject("Icon_Cigarette", pUILayer, true);
 				CCigaretteIcon* pCigaretteIcon = m_pObjItemIcon->AddComponent<CCigaretteIcon>("Icon_Cigarette");
 				m_pInventory->AddItem(m_pObjItemIcon);
 				SAFE_RELEASE(pCigaretteIcon);
@@ -183,6 +184,7 @@ void CCigarette::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
+				SAFE_RELEASE(pUILayer);
 
 				GET_SINGLE(CGameManager)->AddChangedListItemObj(m_pObject);
 

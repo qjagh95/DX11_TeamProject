@@ -194,18 +194,20 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				m_pObjInventory = m_pScene->FindObject("Inven");
 				m_pInventory = m_pObjInventory->FindComponentFromTag<CInventory>("Inven");
 
+				CLayer*	pUILayer = m_pScene->FindLayer("UI");
+
 				// 酒捞袍 酒捞能 积己
 				// 'HealingPackIcon' 按眉 积己
 				string strIconName = "";
 				if (m_pObject->GetTag() == "HealingPack")
 				{
-					strIconName = "Icon_HealingPack";
+					strIconName = "Icon_MedicalKit";
 				}
 				else if (m_pObject->GetTag() == "LunchBox")
 				{
 					strIconName = "Icon_LunchBox";
 				}
-				m_pObjItemIcon = CGameObject::CreateObject(strIconName, m_pLayer, true);
+				m_pObjItemIcon = CGameObject::CreateObject(strIconName, pUILayer, true);
 				CHealingPackIcon* pHealingPackIcon = m_pObjItemIcon->AddComponent<CHealingPackIcon>(strIconName);
 				pHealingPackIcon->SetHealingPackInst(this);
 				pHealingPackIcon->SetMaterial();
@@ -221,6 +223,7 @@ void CHealingPack::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
+				SAFE_RELEASE(pUILayer);
 
 				GET_SINGLE(CGameManager)->AddChangedListItemObj(m_pObject);
 
