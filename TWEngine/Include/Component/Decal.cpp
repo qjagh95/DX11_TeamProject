@@ -74,21 +74,21 @@ CDecal * CDecal::Clone()
 void CDecal::Save(BinaryWrite * _pInstBW)
 {
 	int iSize = 0;
-	iSize = m_strDiffuseTex.length();
+	iSize = (int)m_strDiffuseTex.length();
 	_pInstBW->WriteData(iSize);
 	if (iSize > 0)
 	{
 		_pInstBW->WriteData(m_strDiffuseTex, iSize);
 	}
 
-	iSize = m_strNormalTex.length();
+	iSize = (int)m_strNormalTex.length();
 	_pInstBW->WriteData(iSize);
 	if (iSize > 0)
 	{
 		_pInstBW->WriteData(m_strNormalTex, iSize);
 	}
 
-	iSize = m_strSpecTex.length();
+	iSize = (int)m_strSpecTex.length();
 	_pInstBW->WriteData(iSize);
 	if (iSize > 0)
 	{

@@ -22,6 +22,8 @@ ST3_Slient::ST3_Slient()
 	m_FindTimeVar = 0.0f;
 	m_BashCount = 0;
 	m_isDoorColl = false;
+	m_isParkourColl = false;
+	m_PlayerCollDoor = NULLPTR;
 
 	m_3DSoundObject = NULLPTR;
 	m_3DSound = NULLPTR;
@@ -59,7 +61,7 @@ bool ST3_Slient::Init()
 
 	m_AniName[STS_IDLE] = "idle_search_forward";
 	m_AniName[STS_WALK] = "move_forward_slow";
-	m_AniName[STS_DOOR_FIND_WORK] = "move_forward_slow";
+	m_AniName[STS_DOOR_TRACE] = "move_forward_fast";
 	m_AniName[STS_CAN_WATE] = "idle_search_forward";
 	m_AniName[STS_WALK_IDLE] = "idle_search_forward";
 	m_AniName[STS_SUPRISE_TRACE] = "move_forward_fast";
@@ -116,6 +118,8 @@ bool ST3_Slient::Init()
 	m_3DSound->LoadSound("Scream2", L"enemies\\Enemies_def_hit2.wav");
 	m_3DSound->LoadSound("Scream3", L"enemies\\Enemies_def_hit3.wav");
 
+	m_3DSound->LoadSound("BashOpen", L"dist_wood_03.wav");
+
 	m_Animation->SetCallback("move_forward_fast", this, 8, &ST3_Slient::Walk1Sound);
 	m_Animation->SetCallback("move_forward_fast", this, 19, &ST3_Slient::Walk2Sound);
 	m_Animation->SetCallback("bash_door_loop", this, 10, &ST3_Slient::BashSound);
@@ -129,7 +133,9 @@ bool ST3_Slient::Init()
 	m_Animation->SetCallback("attack_middle", this, 1, &ST3_Slient::AttackScream);
 
 	m_BodyOBB->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(0.8f, 7.0f, 0.8f));
-	 
+	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST3_Slient::DoorCollFirst);
+	m_BodyOBB->SetCollisionCallback(CCT_LEAVE, this, &ST3_Slient::DoorCollEnd);
+
 	return true;
 }
 
@@ -148,13 +154,15 @@ int ST3_Slient::Update(float DeltaTime)
 	m_3DSoundObject->GetTransformNonCount()->SetWorldPos(m_pTransform->GetWorldPos());
 	m_PlayerState = m_TargetPlayer->GetState();
 
+	cout << m_CurName << endl;
+
 	switch (m_State)
 	{
 	case STS_IDLE:
 		FS_IDLE(DeltaTime);
 		break;
-	case STS_DOOR_FIND_WORK:
-		FS_DOOR_FIND_WORK(DeltaTime);
+	case STS_DOOR_TRACE:
+		FS_DOOR_TRACE(DeltaTime);
 		break;
 	case STS_WALK:
 		FS_WALK(DeltaTime);
@@ -205,6 +213,7 @@ int ST3_Slient::Update(float DeltaTime)
 		FS_NORMAL_DOOR_OPEN_RIGHT(DeltaTime);
 		break;
 	}
+
 
 	return 0;
 }
@@ -316,14 +325,67 @@ void ST3_Slient::AttackScream(float DeltaTime)
 
 void ST3_Slient::PlayerStateCheck(float DeltaTime)
 {
-	if(!m_PlayerState & PSTATUS_CROUCHED || !m_PlayerState & PSTATUS_CROUCHING || !m_PlayerState & PSTATUS_IDLE)
-	{
+	if((m_PlayerState & PSTATUS_CROUCHED) || (m_PlayerState & PSTATUS_CROUCHING) || (m_PlayerState & PSTATUS_STOPMOVE))
+		return;
+	else
 		ChangeState(STS_USER_TRACE, m_AniName);
-	}
 }
 
 void ST3_Slient::DoorCheck()
 {
+	CDoor* getDoor = CGameManager::GetInst()->GetPlayerCollDoor(m_pScene);
+
+	if (getDoor == NULLPTR)
+	{
+		m_PlayerCollDoor = NULLPTR;
+		return;
+	}
+
+	if (getDoor->GetIsPlayerColl() == false)
+	{
+		m_PlayerCollDoor = NULLPTR;
+		return;
+	}
+
+	m_PlayerCollDoor = getDoor;
+
+	//3 = LockSound
+	if (getDoor->Get3DSound()->GetClipState(3) == PLAYING)
+	{
+		m_PathFind = false;
+		Matrix Temp = getDoor->GetTransformNonCount()->GetPosDelta();
+		m_MovingPos.x = Temp._41;
+		m_MovingPos.z = Temp._43;
+		m_MovingPos.y = 0.0f;
+
+		ChangeState(STS_DOOR_TRACE, m_AniName);
+	}
+}
+
+void ST3_Slient::DoorCollCheck()
+{
+	if (m_isDoorColl == true)
+	{
+		m_MovingPos = Vector3(36.5f, 0.0f, 11.0f);
+		m_PathFind = false;
+		ChangeState(STS_WALK, m_AniName);
+	}
+}
+
+void ST3_Slient::ParkourCheck()
+{
+}
+
+void ST3_Slient::DoorCollFirst(CCollider * Src, CCollider * Dest, float DeltaTime)
+{
+	if (Dest->GetTag() == "DoorBody")
+		m_isDoorColl = true;
+}
+
+void ST3_Slient::DoorCollEnd(CCollider * Src, CCollider * Dest, float DeltaTime)
+{
+	if (Dest->GetTag() == "DoorBody")
+		m_isDoorColl = false;
 }
 
 void ST3_Slient::FS_IDLE(float DeltaTime)
@@ -350,23 +412,17 @@ void ST3_Slient::FS_WALK(float DeltaTime)
 		m_PathList.clear();
 		m_PathList = m_NaviMesh->GetPathList();
 
-		m_MovePos = m_PathList.front();
+		if(m_PathList.empty() == false)
+			m_MovePos = m_PathList.front();
 	}
 
 	Vector3 Dir = m_MovePos - myPos;
 	Dir.Normalize();
 
-	myPos += Dir * m_MoveSpeed * DeltaTime;
-	bool bMove = true;
+	myPos += Dir * 10.0f * DeltaTime;
 
-	if (m_NaviMesh->CheckCell(myPos) == false)
-		bMove = false;
-
-	if (bMove == true)
-	{
-		m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
-		m_pTransform->Move(Dir, 10.0f, DeltaTime);
-	}
+	m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
+	m_pTransform->Move(Dir, 10.0f, DeltaTime);
 
 	if (m_PathList.empty())
 	{
@@ -375,7 +431,51 @@ void ST3_Slient::FS_WALK(float DeltaTime)
 	}
 	else
 	{
-		if (((myPos.x <= m_MovePos.x + 1.0f) && (myPos.x >= m_MovePos.x - 1.0f)) && (myPos.z <= m_MovePos.z + 1.0f && myPos.z >= m_MovePos.z - 1.0f))
+		if (((myPos.x <= m_MovePos.x + 15.0f) && (myPos.x >= m_MovePos.x - 15.0f)) && (myPos.z <= m_MovePos.z + 15.0f && myPos.z >= m_MovePos.z - 15.0f))
+		{
+			m_MovePos = m_PathList.front();
+			m_PathList.pop_front();
+		}
+	}
+
+	if (m_TargetDistance <= 50.0f)
+		PlayerStateCheck(DeltaTime);
+}
+
+void ST3_Slient::FS_DOOR_TRACE(float DeltaTime)
+{
+	Vector3 myPos = m_CenterDownCenter;
+
+	if (m_PathFind == false)
+	{
+		m_NaviMesh->FindPath(m_CenterDownCenter, m_MovingPos);
+
+		m_PathFind = true;
+
+		m_PathList.clear();
+		m_PathList = m_NaviMesh->GetPathList();
+
+		if (m_PathList.empty() == false)
+			m_MovePos = m_PathList.front();
+	}
+
+	Vector3 Dir = m_MovePos - myPos;
+	Dir.Normalize();
+
+	myPos += Dir * m_MoveSpeed * DeltaTime;
+
+	m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
+	m_pTransform->Move(Dir, m_MoveSpeed, DeltaTime);
+
+	if (m_PathList.empty())
+	{
+		m_pTransform->SetWorldRotY(GetYAngle(m_MovingPos, m_CenterDownCenter));
+		m_PathFind = false;
+		ChangeState(STS_BASH_DOOR, m_AniName);
+	}               
+	else
+	{
+		if (((m_CenterDownCenter.x <= m_MovePos.x + 1.0f) && (m_CenterDownCenter.x >= m_MovePos.x - 1.0f)) && (m_CenterDownCenter.z <= m_MovePos.z + 1.0f && m_CenterDownCenter.z >= m_MovePos.z - 1.0f))
 		{
 			m_MovePos = m_PathList.front();
 			m_PathList.pop_front();
@@ -383,15 +483,12 @@ void ST3_Slient::FS_WALK(float DeltaTime)
 	}
 }
 
-void ST3_Slient::FS_DOOR_FIND_WORK(float DeltaTime)
-{
-}
-
 void ST3_Slient::FS_WALK_IDLE(float DeltaTime)
 {
 	if (m_TargetDistance <= 50.0f)
 		PlayerStateCheck(DeltaTime);
 
+	DoorCheck();
 }
 
 void ST3_Slient::FS_USER_TRACE(float DeltaTime)
@@ -751,8 +848,48 @@ void ST3_Slient::FS_HEAD_ATTACK(float DeltaTime)
 
 void ST3_Slient::FS_BASH_DOOR_OPEN(float DeltaTime)
 {
+	if (m_Animation->GetCurFrame() == 0)
+	{
+		string Temp = "BashOpen";
+		m_3DSound->SetVolume("BashOpen", 3.0f);
+		m_3DSound->Play(Temp);
+
+		m_Renderer->SetPosCheckStart(true);
+	}
+
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
+		Vector3 ZAxis = m_pTransform->GetWorldAxis(AXIS_Z);
+		Vector3 X = Vector3::Axis[AXIS_X];
+
+		float Angle = X.GetAngle(ZAxis);
+ 		float Offset = m_Renderer->GetDiffrentPosZ();
+		Vector3 Convert = m_CenterDownCenter;
+
+		if (Angle >= 3.0f)
+		{
+			Offset *= -1.0f;
+			Convert.x += Offset;
+		}
+		else if (Angle <= 185.0f)
+			Convert.x += Offset;
+
+		Convert.y = 0.0f;
+
+		if (m_NaviMesh->CheckCell(Convert) == false)
+		{
+			while (true)
+			{
+				if (m_NaviMesh->CheckCell(Convert) == true)
+					break;
+
+				Vector3 Axis = m_pTransform->GetWorldAxis();
+				Convert += Axis * -1.0f;
+			}
+		}
+
+		m_pTransform->SetWorldPos(Convert);
+
 		m_PathFind = false;
 		m_MovingPos = Vector3(36.5f, 0.0f, 11.0f);
 		ChangeState(STS_WALK, m_AniName);
@@ -761,7 +898,7 @@ void ST3_Slient::FS_BASH_DOOR_OPEN(float DeltaTime)
 
 void ST3_Slient::FS_BASH_DOOR(float DeltaTime)
 {
-	if (m_Animation->IsCurAnimStart() == true)
+	if (m_Animation->GetCurFrame() == 0)
 		m_Renderer->SetPosCheckStart(true);
 
 	if (m_Animation->IsCurAnimEnd() == true)
@@ -785,26 +922,9 @@ void ST3_Slient::FS_BASH_DOOR(float DeltaTime)
 			}
 			else
 			{
-				float Offset = m_Renderer->GetDiffrentPosZ();
-				Vector3 Convert = m_CenterDownCenter;
-				Convert.z += Offset;
-
-				if (m_NaviMesh->CheckCell(Convert) == false)
-				{
-					while (true)
-					{
-						if (m_NaviMesh->CheckCell(Convert) == true)
-							break;
-						Vector3 Axis = m_pTransform->GetWorldAxis();
-						Convert.z += Axis.z * -1.0f;
-					}
-				}
-
-				m_pTransform->SetWorldPos(Convert);
+				getDoor->OpenFast(m_pTransform->GetWorldAxis(AXIS_X));
 				ChangeState(STS_BASH_DOOR_OPEN, m_AniName);
 			}
-
 		}
-
 	}
 }

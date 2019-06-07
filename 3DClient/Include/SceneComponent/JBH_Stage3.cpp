@@ -16,6 +16,7 @@
 
 bool JBH_Stage3::m_isCanDrop = false;
 bool JBH_Stage3::m_SlientMode = false;
+Vector3 JBH_Stage3::m_DoorPos[DN_MAX];
 
 JBH_Stage3::JBH_Stage3()
 {
@@ -47,7 +48,6 @@ bool JBH_Stage3::Init()
 	BasicInit();
 	//DoorInit();
 
-	m_DoorMap = CGameManager::GetInst()->GetDoorMap(m_pScene);
 	CSoundManager::GetInst()->CreateSoundEffect("CamSuprise", L"music/10-AI NPC CHASE INTRO 3.wav");
 	CSoundManager::GetInst()->CreateSoundEffect("TraceBGM", L"music\\10-AI NPC CHASE LOOP 2 (Strings).wav");
 
@@ -56,6 +56,17 @@ bool JBH_Stage3::Init()
 
 void JBH_Stage3::AfterInit()
 {
+	m_DoorMap = CGameManager::GetInst()->GetDoorMap(m_pScene);
+
+	m_DoorPos[DN_START_DOOR] = Vector3(228.0f, 0.0f, 66.0f);
+	m_DoorPos[DN_ROOM1_DOOR] = Vector3(170.0f, 0.0f, 33.0f);
+	m_DoorPos[DN_ROOM2_DOOR] = Vector3(39.0f, 0.0f, 54.0f);
+	m_DoorPos[DN_ROOM3_DOOR] = Vector3(39.0f, 0.0f, 96.0f);
+	m_DoorPos[DN_OUT_STAGE1_DOOR] = Vector3(77.0f, 0.0f, 159.0f);
+	m_DoorPos[DN_OUT_STAGE2_DOOR] = Vector3(157.0f, 0.0f, 159.0f);
+	m_DoorPos[DN_END_DOOR] = Vector3(216.0f, 0.0f, 155.0f);
+	m_DoorPos[DN_MID_DOOR] = Vector3(155.0f, 0.0f, 11.0f);
+
 	// Àü¿ª±¤(Directional Light) ¼³Á¤
 	Vector4 vWhiteColor = Vector4(1.f, 1.f, 1.f, 1.0f);
 	Vector4 vDarkColor = Vector4(0.005f, 0.005f, 0.005f, 1.0f);
@@ -73,6 +84,23 @@ void JBH_Stage3::AfterInit()
 	}
 	SAFE_RELEASE(pLayer);
 	NPCInit();
+
+	auto StartIter = m_DoorMap->begin();
+	auto EndIter = m_DoorMap->end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		CGameObject* pObj = StartIter->second->GetGameObjectNonCount();
+		string strTag = pObj->GetTag();
+		char strName[256] = {};
+
+		strcpy(strName, strTag.c_str());
+
+		_strupr_s(strName);
+
+		if (strstr(strName, "FAKE"))
+			StartIter->second->Lock(true, "");
+	}
 }
 
 int JBH_Stage3::Update(float DeltaTime)
@@ -86,7 +114,11 @@ int JBH_Stage3::Update(float DeltaTime)
 	SupriseSound(DeltaTime);
 
 
-	if (m_ChaceNPC->GetState() == STS_USER_TRACE || m_ChaceNPC->GetState() == STS_JAP || m_ChaceNPC->GetState() == STS_HOOK || m_ChaceNPC->GetState() == STS_HEAD_ATTACK)
+	if (m_ChaceNPC->GetState() == STS_USER_TRACE
+		|| m_ChaceNPC->GetState() == STS_JAP
+		|| m_ChaceNPC->GetState() == STS_HOOK 
+		|| m_ChaceNPC->GetState() == STS_HEAD_ATTACK
+		|| m_ChaceNPC->GetState() == STS_DOOR_TRACE)
 	{
 		if (m_isChangeBGM == false)
 		{
@@ -147,7 +179,7 @@ void JBH_Stage3::BasicInit()
 	CSoundManager::GetInst()->CreateSoundEffect("ST3BGM", L"SurgeonAttack.wav");
 	CSoundManager::GetInst()->CreateSoundEffect("GlassBracking", L"GlassBracking.wav");
 
-	CSoundManager::GetInst()->PlayBgm("ST3BGM");
+	//CSoundManager::GetInst()->PlayBgm("ST3BGM");
 	CSoundManager::GetInst()->SetBgmVolume(0.5f);
 	CSoundManager::GetInst()->SetTransitionTime(2.0f);
 

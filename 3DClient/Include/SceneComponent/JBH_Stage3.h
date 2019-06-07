@@ -3,6 +3,19 @@
 
 PUN_USING
 
+enum DOOR_NAME
+{
+	DN_ROOM2_DOOR,
+	DN_OUT_STAGE1_DOOR,
+	DN_OUT_STAGE2_DOOR,
+	DN_ROOM1_DOOR,
+	DN_ROOM3_DOOR,
+	DN_END_DOOR,
+	DN_START_DOOR,
+	DN_MID_DOOR,
+	DN_MAX,
+};
+
 class CHuman_Player;
 class CDoor;
 class ST3_Slient;
@@ -25,6 +38,8 @@ private:
 	void SupriseSound(float DeltaTime);
 
 private:
+	static Vector3 m_DoorPos[DN_MAX];
+
 	CHuman_Player* m_Player;
 	CGameObject* m_PlayerObject;
 	unordered_map<string, CDoor*>* m_DoorMap;

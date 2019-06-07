@@ -1640,6 +1640,11 @@ void CAnimation::SkipToNextClip()
 	}
 }
 
+int CAnimation::GetCurFrame() const
+{
+	return m_pCurClip->iFrame;
+}
+
 void CAnimation::LoadFbxAnimation(const char * pFullPath)
 {
 	CFbxLoader	loader;

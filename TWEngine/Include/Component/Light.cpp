@@ -307,7 +307,7 @@ void CLight::SetAngle(float fInAngle, float fOutAngle)
 		float fRadius = 0.0f;
 		fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle * 0.5f));
 
-		pTr->SetWorldScale(fRadius,	m_fRange * 0.125, fRadius);
+		pTr->SetWorldScale(fRadius,	m_fRange * 0.125f, fRadius);
 
 		SAFE_RELEASE(pTr);
 	}

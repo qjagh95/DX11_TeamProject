@@ -160,14 +160,14 @@ bool CGameManager::Init()
 	if (!pLayer)
 		return false;
 
-	m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
+	//m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
 
-	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
+	//m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
-	m_pPlayerTr = m_pPlayerObj->GetTransform();
-	m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
-	m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
-	//m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
+	//m_pPlayerTr = m_pPlayerObj->GetTransform();
+	//m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
+	//m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
+	////m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
 
 	CGameObject*	pNoticeObj = CGameObject::CreateObject("NoticeMessage", pLayer, true);
 
@@ -617,13 +617,27 @@ CDoor * CGameManager::GetNearDoor(CScene * scene, Vector3 & Pos) const
 	auto StartIter = getMap->begin();
 	auto EndIter = getMap->end();
 
-	float Dist = StartIter->second->GetTransformNonCount()->GetWorldPos().GetDistance(Pos);
+	CDoor* FindDoor = NULLPTR;
+	FindDoor = StartIter->second;
+
+	Matrix Temp = StartIter->second->GetTransformNonCount()->GetPosDelta();
+	Vector3 getPos;
+	getPos.x = Temp._41;
+	getPos.z = Temp._43;
+	
+	getPos.y = 0.0f;
+
+	float Dist = getPos.GetDistance(Pos);
 	StartIter++;
 
-	CDoor* FindDoor = NULLPTR;
 	for (; StartIter != EndIter; StartIter++)
 	{
-		Vector3 DoorPos = StartIter->second->GetTransformNonCount()->GetWorldPos();
+		Temp = StartIter->second->GetTransformNonCount()->GetPosDelta();
+
+		Vector3 DoorPos;
+		DoorPos.x = Temp._41;
+		DoorPos.z = Temp._43;
+
 		float DoorDist = Pos.Distance(DoorPos);
 
 		if (DoorDist <= Dist)

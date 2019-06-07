@@ -8,7 +8,7 @@ enum SILENT_TRACE_STATE
 	STS_IDLE,
 	STS_WALK,
 	STS_WALK_IDLE,
-	STS_DOOR_FIND_WORK,
+	STS_DOOR_TRACE,
 	STS_SUPRISE_TRACE,
 	STS_USER_TRACE,
 	STS_CAN_TRACE,
@@ -39,24 +39,26 @@ public:
 
 	void SetAttack(int Value) { m_Attack = Value; }
 	int GetAttack() const { return m_Attack; }
+	void DoorCollFirst(CCollider* Src, CCollider* Dest, float DeltaTime);
+	void DoorCollEnd(CCollider* Src, CCollider* Dest, float DeltaTime);
 
 private:
 	void FS_IDLE(float DeltaTime);
 	void FS_WALK(float DeltaTime);
-	void FS_DOOR_FIND_WORK(float DeltaTime);
+	void FS_DOOR_TRACE(float DeltaTime);
 	void FS_WALK_IDLE(float DeltaTime);
 	void FS_USER_TRACE(float DeltaTime);
 	void FS_CAN_TRACE(float DeltaTime);
 	void FS_SUPRISE_TRACE(float DeltaTime);
 	void FS_BASH_DOOR(float DeltaTime);
 	void FS_CAN_WATE(float DeltaTime);
-	void FS_BED_FIND(float DeltaTime) {}
-	void FS_DESK_FIND(float DeltaTime) {}
-	void FS_LOCKER_FIND(float DeltaTime) {}
 	void FS_HOOK(float DeltaTime);
 	void FS_JAP(float DeltaTime);
 	void FS_HEAD_ATTACK(float DeltaTime);
 	void FS_BASH_DOOR_OPEN(float DeltaTime);
+	void FS_DESK_FIND(float DeltaTime) {}
+	void FS_BED_FIND(float DeltaTime) {}
+	void FS_LOCKER_FIND(float DeltaTime) {}
 	void FS_NORMAL_DOOR_OPEN_LEFT(float DeltaTime) {}
 	void FS_NORMAL_DOOR_OPEN_RIGHT(float DeltaTime) {}
 	
@@ -71,6 +73,8 @@ private:
 
 	void PlayerStateCheck(float DeltaTime);
 	void DoorCheck();
+	void DoorCollCheck();
+	void ParkourCheck();
 
 private:
 	string m_AniName[STS_MAX];
@@ -90,8 +94,11 @@ private:
 
 	CGameObject* m_AttackBoxObject;
 	CColliderOBB3D* m_AttackBox;
+	
+	CDoor* m_PlayerCollDoor;
 
 	bool m_isDoorColl;
+	bool m_isParkourColl;
 
 public:
 	ST3_Slient();
