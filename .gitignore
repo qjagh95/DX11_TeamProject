@@ -589,13 +589,5 @@
 /WinFormEditor/obj/Debug/WinFormEditor.csproj.CopyComplete
 /WinFormEditor/obj/Debug/WinFormEditor.csproj.FileListAbsolute.txt
 /3DClient/bin/MeshData
-/3DClient/bin/Data
-/3DClient/bin/Sound
-/3DClient/bin/Stage1.nav
-/3DClient/bin/Stage1.Land
-/3DClient/bin/Stage1.dat
-/WinFormEditor/bin/Debug/Data
-/WinFormEditor/bin/Debug/Mesh
-/WinFormEditor/bin/Release/Data
-/WinFormEditor/bin/Release/Mesh
-/WinFormEditor/bin/Release/Mesh
+/3DClient/bin
+/WinFormEditor/bin

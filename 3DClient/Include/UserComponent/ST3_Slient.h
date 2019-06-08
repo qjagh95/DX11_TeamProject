@@ -12,17 +12,12 @@ enum SILENT_TRACE_STATE
 	STS_SUPRISE_TRACE,
 	STS_USER_TRACE,
 	STS_CAN_TRACE,
-	STS_BED_FIND,
-	STS_DESK_FIND,
-	STS_LOCKER_FIND,
 	STS_HOOK,
 	STS_CAN_WATE,
 	STS_JAP,
 	STS_HEAD_ATTACK,
 	STS_BASH_DOOR,
 	STS_BASH_DOOR_OPEN,
-	STS_NORMAL_DOOR_OPEN_LEFT,
-	STS_NORMAL_DOOR_OPEN_RIGHT,
 	STS_MAX,
 };
 
@@ -41,6 +36,7 @@ public:
 	int GetAttack() const { return m_Attack; }
 	void DoorCollFirst(CCollider* Src, CCollider* Dest, float DeltaTime);
 	void DoorCollEnd(CCollider* Src, CCollider* Dest, float DeltaTime);
+	void PlayerBulletHit(CCollider* Src, CCollider* Dest, float DeltaTime);
 
 private:
 	void FS_IDLE(float DeltaTime);
@@ -88,17 +84,28 @@ private:
 	int m_PlayerState;
 	float m_FindTime;
 	float m_FindTimeVar;
+	float m_HitMoveSpeed;
 
 	CGameObject* m_3DSoundObject;
 	CSoundSource* m_3DSound;
 
-	CGameObject* m_AttackBoxObject;
-	CColliderOBB3D* m_AttackBox;
+	CGameObject* m_AttackJap;
+	CColliderOBB3D* m_AttackJapBox;
+
+	CGameObject* m_AttackHook;
+	CColliderOBB3D* m_AttackHookBox;
+
+	CGameObject* m_AttackHead;
+	CColliderOBB3D* m_AttackHeadBox;
 	
 	CDoor* m_PlayerCollDoor;
 
 	bool m_isDoorColl;
 	bool m_isParkourColl;
+
+	bool m_isHit;
+	float m_SlowTime;
+	float m_SlowTimeVar;
 
 public:
 	ST3_Slient();

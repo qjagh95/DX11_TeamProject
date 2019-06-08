@@ -67,6 +67,7 @@ public:
 	CLight*			FindLight(CScene* pScene, const string& strLightObj);
 	CLight*			FindLight(const string& strSceneKey, const string& strLightObj);
 	CDoor*			GetNearDoor(CScene* scene, Vector3& Pos) const;
+	string GetNearDoorString(CScene* scene, Vector3& Pos) const;
 
 	CTransform*		GetPlayerTr()	const;
 	CHuman_Player*	GetPlayer()		const;
@@ -91,6 +92,7 @@ public:
 		const Vector4& vColor, bool bFinalTurnOn);
 
 	CDoor* GetPlayerCollDoor(CScene* scene) const;
+	string GetPlayerCollDoorMapKey(CScene* scene) const;
 
 	void AddUILayer();
 

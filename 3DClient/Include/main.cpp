@@ -1,15 +1,11 @@
 #include "ClientHeader.h"
 #include "Core.h"
-#include "SceneComponent/MainScene.h"
 #include "SceneComponent/TutorialScene.h"
-#include "SceneComponent/FirTestScene.h"
 #include "SceneComponent/Stage1Scene.h"
 #include "SceneComponent/JBH_Stage3.h"
-#include "SceneComponent/TestScene.h"
 #include "SceneComponent/TestScene-YH.h"
 #include "SceneComponent/Stage2Scene.h"
 #include "SceneComponent/LogoScene.h"
-#include "SceneComponent/RandScapeTestScene.h"
 #include "CameraEff.h"
 #include "CommonSoundLoader.h"
 #include <Rendering/ShaderManager.h>
@@ -25,6 +21,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	srand((unsigned int)time(0));
 	
+
+
 	if (!CCore::GetInst()->Init(hInstance, 1280, 720,
 		TEXT("OutLast - 1"), TEXT("OutLast - 1"), IDI_ICON1, IDI_ICON1,
 		true))
@@ -34,7 +32,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}	
 
-	//FPS 카메라와 카메라 흔들림 이펙트를 구현하는 매니저 구동
+
+	//자동전체화면
+	//keybd_event(VK_LMENU, 0, KEYEVENTF_EXTENDEDKEY, 0);
+	//keybd_event(VK_RETURN, 0, KEYEVENTF_EXTENDEDKEY, 0);
+	//keybd_event(VK_LMENU, 0, KEYEVENTF_KEYUP, 0);
+	//keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, 0);
 
 	GET_SINGLE(CGameManager)->PostInit();
 

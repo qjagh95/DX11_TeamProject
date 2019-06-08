@@ -202,6 +202,7 @@
     <ClInclude Include="UserComponent\BatteryIcon.h" />
     <ClInclude Include="UserComponent\Bed.h" />
     <ClInclude Include="UserComponent\BigIcon.h" />
+    <ClInclude Include="UserComponent\Bullet.h" />
     <ClInclude Include="UserComponent\BulletCase.h" />
     <ClInclude Include="UserComponent\Cam_Func_Header.hpp" />
     <ClInclude Include="UserComponent\CenterKey.h" />
@@ -288,6 +289,7 @@
     <ClCompile Include="UserComponent\BatteryIcon.cpp" />
     <ClCompile Include="UserComponent\Bed.cpp" />
     <ClCompile Include="UserComponent\BigIcon.cpp" />
+    <ClCompile Include="UserComponent\Bullet.cpp" />
     <ClCompile Include="UserComponent\BulletCase.cpp" />
     <ClCompile Include="UserComponent\CenterKey.cpp" />
     <ClCompile Include="UserComponent\Cigarette.cpp" />

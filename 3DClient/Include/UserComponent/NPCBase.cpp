@@ -12,9 +12,6 @@ NPCBase::NPCBase()
 	m_Animation = NULLPTR;
 	m_BT = NULLPTR;
 	m_NaviMesh = NULLPTR;
-	m_HeadCollider = NULLPTR;
-	m_BodyCollider = NULLPTR;
-	m_LegCollider = NULLPTR;
 	m_BodyOBB = NULLPTR;
 	m_Target = NULLPTR;
 
@@ -36,9 +33,6 @@ NPCBase::NPCBase(const NPCBase & CopyData)
 
 NPCBase::~NPCBase()
 {
-	SAFE_RELEASE(m_HeadCollider);
-	SAFE_RELEASE(m_BodyCollider);
-	SAFE_RELEASE(m_LegCollider);
 	SAFE_RELEASE(m_BodyOBB);
 	SAFE_RELEASE(m_Renderer);
 	SAFE_RELEASE(m_Animation);
@@ -53,26 +47,12 @@ bool NPCBase::Init()
 	m_Renderer = m_pObject->AddComponent<CRenderer>("MonsterRenderer");
 	m_Renderer->SetAnimation(m_Animation);
 
-	m_HeadCollider = m_pObject->AddComponent<CColliderSphere>("MonsterHead");
-	m_HeadCollider->SetInfo(Vector3(0.0f, 1.0f, 0.0f), 1.0f);
-	m_HeadCollider->SetMyTypeName("MonsterHead");
-	m_HeadCollider->SetContinueTypeName("MonsterBodyOBB");
-	m_HeadCollider->SetContinueTypeName("MouseCollider");
-
-	m_BodyCollider = m_pObject->AddComponent<CColliderSphere>("MonsterBody");
-	m_BodyCollider->SetMyTypeName("MonsterBody");
-	m_BodyCollider->SetContinueTypeName("MonsterBodyOBB");
-	m_BodyCollider->SetContinueTypeName("MouseCollider");
-
-	m_LegCollider = m_pObject->AddComponent<CColliderSphere>("MonsterLeg");
-	m_LegCollider->SetInfo(Vector3(0.0f, -1.0f, 0.0f), 5.0f);
-	m_LegCollider->SetMyTypeName("MonsterLeg");
-	m_LegCollider->SetContinueTypeName("MonsterBodyOBB");
-	m_LegCollider->SetContinueTypeName("MouseCollider");
-
 	m_BodyOBB = m_pObject->AddComponent<CColliderOBB3D>("MonsterBodyOBB");
 	m_BodyOBB->SetMyTypeName("MonsterBodyOBB");
 	m_BodyOBB->SetContinueTypeName("MouseCollider");
+	m_BodyOBB->SetContinueTypeName("JapBody");
+	m_BodyOBB->SetContinueTypeName("HookBody");
+	m_BodyOBB->SetContinueTypeName("HeadBody");
 
 	m_pTransform->SetWorldScale(Vector3(0.04f, 0.04f, 0.04f));
 	m_MyCount = m_Count;
@@ -198,21 +178,6 @@ void NPCBase::SetTarget(CGameObject * Target)
 	m_Target = Target;
 	m_TargetTransform = m_Target->GetTransformNonCount();
 	m_TargetPlayer = m_Target->FindComponentFromTagNonCount<CHuman_Player>("Player");
-}
-
-void NPCBase::SetLegCollider(float Radius, const Vector3 & Center)
-{
-	m_LegCollider->SetInfo(Center, Radius);
-}
-
-void NPCBase::SetBodyCollider(float Radius, const Vector3 & Center)
-{
-	m_BodyCollider->SetInfo(Center, Radius);
-}
-
-void NPCBase::SetHeadCollider(float Radius, const Vector3 & Center)
-{
-	m_HeadCollider->SetInfo(Center, Radius);
 }
 
 void NPCBase::SetOBBCollider(const Vector3 & Length, const Vector3 & Center)

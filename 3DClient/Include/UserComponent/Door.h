@@ -117,6 +117,8 @@ private:
 	CRenderer*	m_Renderer;
 	Vector3		m_WorldPos;
 	Vector3		m_MeshLength;
+	CColliderOBB3D* m_OBB;
+
 
 public:
 	Vector3		m_FrontCenter;
@@ -148,6 +150,8 @@ public:
 	Vector3		m_BackDownCenter;
 	Vector3		m_BackDownCenterLeft;
 	Vector3		m_BackDownCenterRight;
+
+	Vector3 GetColliderCenter() const;
 public:
 	bool Init();
 	int Update(float fTime);

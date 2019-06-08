@@ -40,10 +40,6 @@ public:
 	CTransform* GetTargetTransform() const { return m_TargetTransform; }
 	void SetMoveingPos(const Vector3& Pos) { m_MovingPos = Pos; }
 	Vector3 GetMovingPos() const { return m_MovingPos; }
-
-	void SetLegCollider(float Radius, const Vector3& Center = Vector3::Zero);
-	void SetBodyCollider(float Radius,const Vector3& Center = Vector3::Zero);
-	void SetHeadCollider(float Radius,const Vector3& Center = Vector3::Zero);
 	void SetOBBCollider(const Vector3& Length, const Vector3& Center = Vector3::Zero);
 
 	int GetState() const { return m_State; }
@@ -53,9 +49,6 @@ public:
 
 protected:
 	string m_CurName;
-	CColliderSphere* m_HeadCollider;
-	CColliderSphere* m_BodyCollider;
-	CColliderSphere* m_LegCollider;
 	CColliderOBB3D* m_BodyOBB;
 	CRenderer* m_Renderer;
 	CAnimation* m_Animation;

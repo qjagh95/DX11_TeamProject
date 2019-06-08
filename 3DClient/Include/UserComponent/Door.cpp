@@ -60,6 +60,7 @@ CDoor::CDoor(const CDoor & door) :
 
 CDoor::~CDoor()
 {
+	SAFE_RELEASE(m_OBB);
 	SAFE_RELEASE(m_Renderer);
 	if (m_pSndComp != 0)
 	{
@@ -81,11 +82,11 @@ bool CDoor::Init()
 	}
 
 
-	CColliderOBB3D* pOBB = m_pObject->FindComponentFromType<CColliderOBB3D>(CT_COLLIDER);
+	m_OBB = m_pObject->FindComponentFromType<CColliderOBB3D>(CT_COLLIDER);
 
-	if (!pOBB)
+	if (!m_OBB)
 	{
-		pOBB = m_pObject->AddComponent<CColliderOBB3D>("DoorBody");
+		m_OBB = m_pObject->AddComponent<CColliderOBB3D>("DoorBody");
 		/*m_pTransform->SetWorldPivot(0.25f, -0.5f, 0.0f);
 		m_pTransform->SetWorldScale(0.05f, 0.05f, 0.05f);
 		m_pTransform->SetLocalRotY(90.0f);*/
@@ -124,14 +125,13 @@ bool CDoor::Init()
 			vAxis[i] = vAxis[i].TransformNormal(matLocalRot);
 		}
 
-		pOBB->SetInfo(vCenter, vAxis, vScale);
-		pOBB->SetColliderID((COLLIDER_ID)UCI_DOOR);
+		m_OBB->SetInfo(vCenter, vAxis, vScale);
+		m_OBB->SetColliderID((COLLIDER_ID)UCI_DOOR);
 	}
 
-	pOBB->SetCollisionCallback(CCT_STAY, this, &CDoor::Interact);
-	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CDoor::InteractRelease);
+	m_OBB->SetCollisionCallback(CCT_STAY, this, &CDoor::Interact);
+	m_OBB->SetCollisionCallback(CCT_LEAVE, this, &CDoor::InteractRelease);
 
-	SAFE_RELEASE(pOBB);
 
 	AfterClone();
 
@@ -164,9 +164,6 @@ bool CDoor::Init()
 
 int CDoor::Update(float fTime)
 {
-	if (m_iState == DOOR_OPEN)
-		int a = 2;
-
 	Bumho();
 
 	if (m_eDoorType != DOOR_HEAVY)
@@ -1122,4 +1119,12 @@ void CDoor::Bumho()
 	m_BackDownCenter = Vector3(m_WorldPos.x + LengthHelf.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
 	m_BackDownCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
 	m_BackDownCenterRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
+}
+}
+
+Vector3 CDoor::GetColliderCenter() const
+{
+	OBB3DInfo a = m_OBB->GetInfo();
+	a.vCenter.y = 0.0f;
+	return a.vCenter;
 }

@@ -1019,3 +1019,45 @@ void CGameManager::AddUILayer()
 	SAFE_RELEASE(pKeyInven);
 	SAFE_RELEASE(pKeyInvenObj);
 }
+
+string CGameManager::GetPlayerCollDoorMapKey(CScene * scene) const
+{
+	string Return = "";
+
+	auto FindIter = m_mapDoor.find(scene);
+
+	if (FindIter == m_mapDoor.end())
+		return Return;
+
+	auto StartIter = FindIter->second->begin();
+	auto EndIter = FindIter->second->end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		if (StartIter->second->GetIsPlayerColl() == true)
+			return StartIter->first;
+	}
+
+	return Return;
+}
+
+string CGameManager::GetPlayerCollDoorMapKey(CScene * scene) const
+{
+	string Return = "";
+
+	auto FindIter = m_mapDoor.find(scene);
+
+	if (FindIter == m_mapDoor.end())
+		return Return;
+
+	auto StartIter = FindIter->second->begin();
+	auto EndIter = FindIter->second->end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		if (StartIter->second->GetIsPlayerColl() == true)
+			return StartIter->first;
+	}
+
+	return Return;
+}

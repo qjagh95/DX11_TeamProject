@@ -4,7 +4,6 @@
 #include "Door.h"
 
 #include "../GameManager.h"
-
 #include "../SceneComponent/JBH_Stage3.h"
 
 #include <Component/SoundSource.h>
@@ -21,15 +20,24 @@ ST3_Slient::ST3_Slient()
 	m_FindTime = 3.0f;
 	m_FindTimeVar = 0.0f;
 	m_BashCount = 0;
+	m_HitMoveSpeed = 20.0f;
 	m_isDoorColl = false;
 	m_isParkourColl = false;
-	m_PlayerCollDoor = NULLPTR;
 
+	m_isHit = false;
+	m_SlowTime = 0.0f;
+	m_SlowTimeVar = 0.0f;
+
+	m_PlayerCollDoor = NULLPTR;
 	m_3DSoundObject = NULLPTR;
 	m_3DSound = NULLPTR;
 
-	m_AttackBoxObject = NULLPTR;
-	m_AttackBox = NULLPTR;
+	m_AttackJap = NULLPTR;
+	m_AttackJapBox = NULLPTR;
+	m_AttackHook = NULLPTR;
+	m_AttackHookBox = NULLPTR;
+	m_AttackHead = NULLPTR;
+	m_AttackHeadBox = NULLPTR;
 }
 
 ST3_Slient::ST3_Slient(const ST3_Slient & CopyData)
@@ -42,8 +50,12 @@ ST3_Slient::~ST3_Slient()
 	SAFE_RELEASE(m_3DSoundObject);
 	SAFE_RELEASE(m_3DSound);
 
-	SAFE_RELEASE(m_AttackBoxObject);
-	SAFE_RELEASE(m_AttackBox);
+	SAFE_RELEASE(m_AttackJap);
+	SAFE_RELEASE(m_AttackJapBox);
+	SAFE_RELEASE(m_AttackHook);
+	SAFE_RELEASE(m_AttackHookBox);
+	SAFE_RELEASE(m_AttackHead);
+	SAFE_RELEASE(m_AttackHeadBox);
 }
 
 bool ST3_Slient::Init()
@@ -56,9 +68,6 @@ bool ST3_Slient::Init()
 	3. bne, anm : Cannibal
 	*/
 
-	//m_AttackBoxObject = CGameObject::CreateObject("AttackBox", m_pLayer);
-	//m_AttackBox = m_AttackBox->AddComponent< CColliderOBB3D>("AttackBox");
-
 	m_AniName[STS_IDLE] = "idle_search_forward";
 	m_AniName[STS_WALK] = "move_forward_slow";
 	m_AniName[STS_DOOR_TRACE] = "move_forward_fast";
@@ -69,11 +78,6 @@ bool ST3_Slient::Init()
 	m_AniName[STS_CAN_TRACE] = "move_forward_fast";
 	m_AniName[STS_BASH_DOOR] = "bash_door_loop";
 	m_AniName[STS_BASH_DOOR_OPEN] = "bash_door_end";
-	m_AniName[STS_NORMAL_DOOR_OPEN_LEFT] = "open_door_left_push_close";
-	m_AniName[STS_NORMAL_DOOR_OPEN_RIGHT] = "open_door_right_push_close";
-	m_AniName[STS_BED_FIND] = "grap_bed_left";
-	m_AniName[STS_DESK_FIND] = "grap_desk";
-	m_AniName[STS_LOCKER_FIND] = "grap_locker";
 	m_AniName[STS_HOOK] = "attack_right";
 	m_AniName[STS_JAP] = "attack_left";
 	m_AniName[STS_HEAD_ATTACK] = "attack_middle";
@@ -84,10 +88,47 @@ bool ST3_Slient::Init()
 	m_Animation->LoadBone("Cannibal.bne");
 	m_Animation->Load("enem_def_2.anm");
 
+	m_AttackJap = CGameObject::CreateObject("JapBody", m_pLayer);
+	m_AttackJapBox = m_AttackJap->AddComponent< CColliderOBB3D>("JapBody");
+	m_AttackJapBox->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(0.5f, 0.5f, 0.5f));
+	m_AttackJapBox->SetContinueTypeName("MonsterBodyOBB");
+	m_AttackJapBox->SetContinueTypeName("HookBody");
+	m_AttackJapBox->SetContinueTypeName("HeadBody");
+	m_AttackJapBox->SetEnable(false);
+
+	m_AttackHook = CGameObject::CreateObject("HookBody", m_pLayer);
+	m_AttackHookBox = m_AttackHook->AddComponent< CColliderOBB3D>("HookBody");
+	m_AttackHookBox->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(0.5f, 0.5f, 0.5f));
+	m_AttackHookBox->SetContinueTypeName("MonsterBodyOBB");
+	m_AttackHookBox->SetContinueTypeName("JapBody");
+	m_AttackHookBox->SetContinueTypeName("HeadBody");
+	m_AttackHookBox->SetEnable(false);
+
+	m_AttackHead = CGameObject::CreateObject("HeadBody", m_pLayer);
+	m_AttackHeadBox = m_AttackHead->AddComponent< CColliderOBB3D>("HeadBody");
+	m_AttackHeadBox->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(0.5f, 0.5f, 0.5f));
+	m_AttackHeadBox->SetContinueTypeName("MonsterBodyOBB");
+	m_AttackHeadBox->SetContinueTypeName("HookBody");
+	m_AttackHeadBox->SetContinueTypeName("JapBody");
+	m_AttackHeadBox->SetEnable(false);
+
+	m_Animation->AddSocket("NPCMedium-L-Finger0", "JapBody");
+	m_Animation->AddSocket("NPCMedium-R-Finger0", "HookBody");
+	m_Animation->AddSocket("NPCMedium-Head", "HeadBody");
+
+	m_Animation->SetSocketObject("NPCMedium-L-Finger0", "JapBody", m_AttackJap);
+	m_Animation->SetSocketObject("NPCMedium-R-Finger0", "HookBody", m_AttackHook);
+	m_Animation->SetSocketObject("NPCMedium-Head", "HeadBody", m_AttackHead);
+	
+	//수정
+	m_Animation->SetSocketOffset("NPCMedium-L-Finger0", "JapBody", Vector3(25.0f, 95.0f, -35.0f));
+	m_Animation->SetSocketOffset("NPCMedium-R-Finger0", "HookBody", Vector3(-25.0f, 95.0f, -35.0f));
+	m_Animation->SetSocketOffset("NPCMedium-Head", "HeadBody", Vector3(0.0f, 180.0f, 0.0f));
+
 	ChangeState(STS_IDLE, m_AniName);
 
 	m_3DSoundObject = CGameObject::CreateObject("3DCanSound", m_pLayer);
-	m_3DSound = m_3DSoundObject->AddComponent<PUN::CSoundSource>("3DCanSound");
+	m_3DSound = m_3DSoundObject->AddComponent<CSoundSource>("3DCanSound");
 	m_3DSound->GetTransformNonCount()->SetWorldPos(Vector3(67.0f, 0.0f, 155.0f));
 
 	m_3DSound->LoadSound("Engry1", L"enemies\\Enemies_def_angry1.wav");
@@ -135,6 +176,7 @@ bool ST3_Slient::Init()
 	m_BodyOBB->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(0.8f, 7.0f, 0.8f));
 	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST3_Slient::DoorCollFirst);
 	m_BodyOBB->SetCollisionCallback(CCT_LEAVE, this, &ST3_Slient::DoorCollEnd);
+	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST3_Slient::PlayerBulletHit);
 
 	return true;
 }
@@ -142,7 +184,6 @@ bool ST3_Slient::Init()
 int ST3_Slient::Input(float DeltaTime)
 {
 	NPCBase::Input(DeltaTime);
-	//m_AttackBox->SetEnable(false);
 
 	return 0;
 }
@@ -154,7 +195,24 @@ int ST3_Slient::Update(float DeltaTime)
 	m_3DSoundObject->GetTransformNonCount()->SetWorldPos(m_pTransform->GetWorldPos());
 	m_PlayerState = m_TargetPlayer->GetState();
 
-	cout << m_CurName << endl;
+	if (m_isHit == true)
+		m_MoveSpeed = 10.0f;
+	else
+		m_MoveSpeed = 22.5f;
+
+	if (m_isHit == true)
+	{
+		m_SlowTimeVar += DeltaTime;
+
+		if (m_SlowTime <= m_SlowTimeVar)
+		{
+			m_SlowTimeVar = 0.0f;
+			m_isHit = false;
+		}
+		m_MoveSpeed = m_HitMoveSpeed;
+	}
+	else
+		m_MoveSpeed = 22.5f;
 
 	switch (m_State)
 	{
@@ -182,15 +240,6 @@ int ST3_Slient::Update(float DeltaTime)
 	case STS_SUPRISE_TRACE:
 		FS_SUPRISE_TRACE(DeltaTime);
 		break;
-	case STS_BED_FIND:
-		FS_BED_FIND(DeltaTime);
-		break;
-	case STS_DESK_FIND:
-		FS_DESK_FIND(DeltaTime);
-		break;
-	case STS_LOCKER_FIND:
-		FS_LOCKER_FIND(DeltaTime);
-		break;
 	case STS_HOOK:
 		FS_HOOK(DeltaTime);
 		break;
@@ -206,14 +255,7 @@ int ST3_Slient::Update(float DeltaTime)
 	case STS_BASH_DOOR_OPEN:
 		FS_BASH_DOOR_OPEN(DeltaTime);
 		break;
-	case STS_NORMAL_DOOR_OPEN_LEFT:
-		FS_NORMAL_DOOR_OPEN_LEFT(DeltaTime);
-		break;
-	case STS_NORMAL_DOOR_OPEN_RIGHT:
-		FS_NORMAL_DOOR_OPEN_RIGHT(DeltaTime);
-		break;
 	}
-
 
 	return 0;
 }
@@ -257,10 +299,12 @@ void ST3_Slient::BashSound(float DeltaTime)
 	RandNum += 1;
 	
 	char B[2] = "";
-	char B2[7] = "Bash";
+	char B2[11] = "Bash";
 
-	itoa(RandNum, B, 10);
-	string SoundKey = strcat(B2, B);
+	_itoa_s(RandNum, B, 10);
+	strcat_s(B2, 11, B);
+
+	string SoundKey = B2;
 
 	m_3DSound->SetVolume(SoundKey, 3.0f);
 	m_3DSound->Play(SoundKey);
@@ -299,19 +343,21 @@ void ST3_Slient::AttackScream(float DeltaTime)
 	RandNum += 1;
 
 	char B[2] = "";
-	char B2[8] = "Scream";
+	char B2[18] = "Scream";
 
-	itoa(RandNum, B, 10);
-	string SoundKey = strcat(B2, B);
+	_itoa_s(RandNum, B, 10);
+	strcat_s(B2, 18, B);
+	string SoundKey = B2;
 
 	bool isPlay = false;
 	for (int i = 0; i < 3; i++)
 	{
 		char Buffer[2] = "";
-		char Buffer2[8] = "Scream";
-		itoa(i + 1, Buffer, 10);
+		char Buffer2[18] = "Scream";
+		_itoa_s(i + 1, Buffer, 10);
+		strcat_s(Buffer2, 18, Buffer);
 
-		string Copy = strcat(Buffer2, Buffer);
+		string Copy = Buffer2;
 		if (m_3DSound->GetClipState(Copy) == PLAYING)
 		{
 			isPlay = true;
@@ -347,18 +393,38 @@ void ST3_Slient::DoorCheck()
 		return;
 	}
 
+	if (getDoor->GetDoorType() == DOOR_STAGE)
+	{
+		m_PlayerCollDoor = NULLPTR;
+		return;
+	}
+
+	string DoorTag = CGameManager::GetInst()->GetPlayerCollDoorMapKey(m_pScene);
+
+	if (strstr(DoorTag.c_str(), "Fake") != NULLPTR)
+	{
+		m_PlayerCollDoor = NULLPTR;
+		return;
+	}
+
 	m_PlayerCollDoor = getDoor;
 
 	//3 = LockSound
 	if (getDoor->Get3DSound()->GetClipState(3) == PLAYING)
 	{
-		m_PathFind = false;
-		Matrix Temp = getDoor->GetTransformNonCount()->GetPosDelta();
-		m_MovingPos.x = Temp._41;
-		m_MovingPos.z = Temp._43;
-		m_MovingPos.y = 0.0f;
+		if (getDoor->IsOpened() == false)
+		{
+			m_PathFind = false;
+			//Matrix Temp = getDoor->GetTransformNonCount()->GetPosDelta();
+			//m_MovingPos.x = Temp._41;
+			//m_MovingPos.z = Temp._43;
+			//m_MovingPos.y = 0.0f;
 
-		ChangeState(STS_DOOR_TRACE, m_AniName);
+			m_MovingPos = getDoor->GetColliderCenter();
+			m_MovingPos.y = 0.0f;
+
+			ChangeState(STS_DOOR_TRACE, m_AniName);
+		}
 	}
 }
 
@@ -386,6 +452,15 @@ void ST3_Slient::DoorCollEnd(CCollider * Src, CCollider * Dest, float DeltaTime)
 {
 	if (Dest->GetTag() == "DoorBody")
 		m_isDoorColl = false;
+}
+
+void ST3_Slient::PlayerBulletHit(CCollider * Src, CCollider * Dest, float DeltaTime)
+{
+	if (Dest->GetTag() == "BulletBody")
+	{
+		m_isHit = true;
+		m_SlowTimeVar = 0.0f;
+	}
 }
 
 void ST3_Slient::FS_IDLE(float DeltaTime)
@@ -421,7 +496,6 @@ void ST3_Slient::FS_WALK(float DeltaTime)
 
 	myPos += Dir * 10.0f * DeltaTime;
 
-	m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
 	m_pTransform->Move(Dir, 10.0f, DeltaTime);
 
 	if (m_PathList.empty())
@@ -431,8 +505,9 @@ void ST3_Slient::FS_WALK(float DeltaTime)
 	}
 	else
 	{
-		if (((myPos.x <= m_MovePos.x + 15.0f) && (myPos.x >= m_MovePos.x - 15.0f)) && (myPos.z <= m_MovePos.z + 15.0f && myPos.z >= m_MovePos.z - 15.0f))
+		if (((myPos.x <= m_MovePos.x + 1.0f) && (myPos.x >= m_MovePos.x - 1.0f)) && (myPos.z <= m_MovePos.z + 1.0f && myPos.z >= m_MovePos.z - 1.0f))
 		{
+			m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
 			m_MovePos = m_PathList.front();
 			m_PathList.pop_front();
 		}
@@ -455,22 +530,40 @@ void ST3_Slient::FS_DOOR_TRACE(float DeltaTime)
 		m_PathList.clear();
 		m_PathList = m_NaviMesh->GetPathList();
 
-		if (m_PathList.empty() == false)
-			m_MovePos = m_PathList.front();
+		m_MovePos = m_PathList.front();
 	}
 
 	Vector3 Dir = m_MovePos - myPos;
 	Dir.Normalize();
 
 	myPos += Dir * m_MoveSpeed * DeltaTime;
-
-	m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
 	m_pTransform->Move(Dir, m_MoveSpeed, DeltaTime);
+	float Ang = m_pTransform->GetWorldAxis(AXIS_Z).GetAngle(Dir);
 
 	if (m_PathList.empty())
 	{
-		m_pTransform->SetWorldRotY(GetYAngle(m_MovingPos, m_CenterDownCenter));
+		CDoor* getDoor = CGameManager::GetInst()->GetNearDoor(m_pScene, m_CenterDownCenter);
+		Vector3 DoorAxis = getDoor->GetTransformNonCount()->GetWorldAxis(AXIS_Z);
+		Vector3 MyAxis = m_pTransform->GetWorldAxis(AXIS_Z);
+		float Ang2 = DoorAxis.GetAngle(MyAxis);
+
+		if (fabsf(DoorAxis.x) > 0.999f)
+		{
+			if (DoorAxis.x > 0.f)
+				m_pTransform->SetWorldRotY(90.f);
+			else
+				m_pTransform->SetWorldRotY(270.f);
+		}
+		else if (fabsf(DoorAxis.z) > 0.999f)
+		{
+			if (DoorAxis.z > 0.f)
+				m_pTransform->SetWorldRotY(0.f);
+			else
+				m_pTransform->SetWorldRotY(180.f);
+		}
+
 		m_PathFind = false;
+		//m_pTransform->SetWorldRotY(Ang + 180.0f);
 		ChangeState(STS_BASH_DOOR, m_AniName);
 	}               
 	else
@@ -479,6 +572,8 @@ void ST3_Slient::FS_DOOR_TRACE(float DeltaTime)
 		{
 			m_MovePos = m_PathList.front();
 			m_PathList.pop_front();
+
+			m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
 		}
 	}
 }
@@ -525,10 +620,7 @@ void ST3_Slient::FS_USER_TRACE(float DeltaTime)
 		bMove = false;
 
 	if (bMove == true)
-	{
-		m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter));
 		m_pTransform->Move(Dir, m_MoveSpeed, DeltaTime);
-	}
 
 	if (m_PathList.empty())
 		m_PathFind = false;
@@ -536,6 +628,7 @@ void ST3_Slient::FS_USER_TRACE(float DeltaTime)
 	{
 		if (((myPos.x <= m_MovePos.x + 1.0f) && (myPos.x >= m_MovePos.x - 1.0f)) && (myPos.z <= m_MovePos.z + 1.0f && myPos.z >= m_MovePos.z - 1.0f))
 		{
+			m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter));
 			m_MovePos = m_PathList.front();
 			m_PathList.pop_front();
 		}
@@ -594,18 +687,15 @@ void ST3_Slient::FS_CAN_TRACE(float DeltaTime)
 		bMove = false;
 
 	if (bMove == true)
-	{
-		m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
 		m_pTransform->Move(Dir, m_MoveSpeed, DeltaTime);
-	}
 
 	if (m_PathList.empty())
 		m_PathFind = false;
 	else
 	{
-		//여기조건찾아야함.
 		if (((myPos.x <= m_MovePos.x + 1.0f) && (myPos.x >= m_MovePos.x - 1.0f)) && (myPos.z <= m_MovePos.z + 1.0f && myPos.z >= m_MovePos.z - 1.0f))
 		{
+			m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
 			m_MovePos = m_PathList.front();
 			m_PathList.pop_front();
 		}
@@ -617,19 +707,22 @@ void ST3_Slient::FS_CAN_TRACE(float DeltaTime)
 		RandNum += 1;
 
 		char B[2] = "";
-		char B2[7] = "Engry";
-		itoa(RandNum, B, 10);
+		char B2[11] = "Engry";
+		_itoa_s(RandNum, B, 10);
 
-		string SoundKey = strcat(B2,B);
+		strcat_s(B2, 11, B);
+		string SoundKey = B2;
 
 		bool isPlay = false;
 		for (int i = 0; i < 5; i++)
 		{
 			char Buffer[2] = "";
-			char Buffer2[7] = "Engry";
-			itoa(i + 1, Buffer, 10);
+			char Buffer2[11] = "Engry";
+			_itoa_s(i + 1, Buffer, 10);
+			strcat_s(Buffer2, 11, Buffer);
 
-			string Copy = strcat(Buffer2, Buffer);
+			string Copy = Buffer2;
+
 			if (m_3DSound->GetClipState(Copy) == PLAYING)
 			{
 				isPlay = true;
@@ -695,19 +788,22 @@ void ST3_Slient::FS_SUPRISE_TRACE(float DeltaTime)
 		RandNum += 1;
 
 		char B[2] = "";
-		char B2[7] = "Engry";
-		itoa(RandNum, B, 10);
+		char B2[11] = "Engry";
+		_itoa_s(RandNum, B, 10);
+		strcat_s(B2, 11, B);
 
-		string SoundKey = strcat(B2, B);
+		string SoundKey = B2;
 
 		bool isPlay = false;
 		for (int i = 0; i < 5; i++)
 		{
 			char Buffer[2] = "";
-			char Buffer2[7] = "Engry";
-			itoa(i + 1, Buffer, 10);
+			char Buffer2[11] = "Engry";
+			_itoa_s(i + 1, Buffer, 10);
+			strcat_s(Buffer2, 11, Buffer);
 
-			string Copy = strcat(Buffer2, Buffer);
+			string Copy = Buffer2;
+
 			if (m_3DSound->GetClipState(Copy) == PLAYING)
 			{
 				isPlay = true;
@@ -752,9 +848,13 @@ void ST3_Slient::FS_HOOK(float DeltaTime)
 	Vector3 TargetPos = m_TargetTransform->GetWorldPos();
 	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter));
 
-	//m_AttackBox->SetEnable(true);
+	if (m_Animation->GetCurFrame() == 8)
+		m_AttackHookBox->SetEnable(true);
+
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
+		m_AttackHookBox->SetEnable(false);
+
 		if (m_TargetDistance <= 5.0f)
 		{
 			int RandNum = rand() % 3;
@@ -785,9 +885,13 @@ void ST3_Slient::FS_JAP(float DeltaTime)
 	Vector3 TargetPos = m_TargetTransform->GetWorldPos();
 	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter));
 
-	//m_AttackBox->SetEnable(true);
+	if (m_Animation->GetCurFrame() == 8)
+		m_AttackJapBox->SetEnable(true);
+
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
+		m_AttackJapBox->SetEnable(false);
+
 		if (m_TargetDistance <= 5.0f)
 		{
 			int RandNum = rand() % 3;
@@ -818,9 +922,13 @@ void ST3_Slient::FS_HEAD_ATTACK(float DeltaTime)
 	Vector3 TargetPos = m_TargetTransform->GetWorldPos();
 	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter));
 
-	//m_AttackBox->SetEnable(true);
+	if (m_Animation->GetCurFrame() == 12)
+		m_AttackHeadBox->SetEnable(true);
+
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
+		m_AttackHeadBox->SetEnable(false);
+
 		if (m_TargetDistance <= 5.0f)
 		{
 			int RandNum = rand() % 3;
@@ -848,31 +956,40 @@ void ST3_Slient::FS_HEAD_ATTACK(float DeltaTime)
 
 void ST3_Slient::FS_BASH_DOOR_OPEN(float DeltaTime)
 {
+	CDoor* getDoor = CGameManager::GetInst()->GetNearDoor(m_pScene, m_CenterDownCenter);
+
 	if (m_Animation->GetCurFrame() == 0)
 	{
 		string Temp = "BashOpen";
 		m_3DSound->SetVolume("BashOpen", 3.0f);
 		m_3DSound->Play(Temp);
-
 		m_Renderer->SetPosCheckStart(true);
 	}
 
+	if (m_Animation->GetCurFrame() == 6)
+		getDoor->OpenFast(m_pTransform->GetWorldAxis(AXIS_X));
+
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
-		Vector3 ZAxis = m_pTransform->GetWorldAxis(AXIS_Z);
-		Vector3 X = Vector3::Axis[AXIS_X];
-
-		float Angle = X.GetAngle(ZAxis);
- 		float Offset = m_Renderer->GetDiffrentPosZ();
+		Vector3 DoorAxis = getDoor->GetTransformNonCount()->GetWorldAxis(AXIS_Z);
+		float Offset = m_Renderer->GetDiffrentPosZ();
 		Vector3 Convert = m_CenterDownCenter;
+		getDoor->OpenFast(m_pTransform->GetWorldAxis(AXIS_X));
 
-		if (Angle >= 3.0f)
+		if (fabsf(DoorAxis.x) > 0.999f)
 		{
-			Offset *= -1.0f;
-			Convert.x += Offset;
+			if (DoorAxis.x > 0.0f)
+				Convert.x += Offset;
+			else
+				Convert.x -= Offset;
 		}
-		else if (Angle <= 185.0f)
-			Convert.x += Offset;
+		else if (fabsf(DoorAxis.z) > 0.999f)
+		{
+			if (DoorAxis.z > 0.0f)
+				Convert.x += Offset;
+			else
+				Convert.x -= Offset;
+		}
 
 		Convert.y = 0.0f;
 
@@ -921,10 +1038,7 @@ void ST3_Slient::FS_BASH_DOOR(float DeltaTime)
 				return;
 			}
 			else
-			{
-				getDoor->OpenFast(m_pTransform->GetWorldAxis(AXIS_X));
 				ChangeState(STS_BASH_DOOR_OPEN, m_AniName);
-			}
 		}
 	}
 }

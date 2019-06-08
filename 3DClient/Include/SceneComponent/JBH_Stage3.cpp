@@ -16,7 +16,6 @@
 
 bool JBH_Stage3::m_isCanDrop = false;
 bool JBH_Stage3::m_SlientMode = false;
-Vector3 JBH_Stage3::m_DoorPos[DN_MAX];
 
 JBH_Stage3::JBH_Stage3()
 {
@@ -36,9 +35,6 @@ JBH_Stage3::JBH_Stage3()
 
 JBH_Stage3::~JBH_Stage3()
 {
-	SAFE_RELEASE(m_Player);
-	SAFE_RELEASE(m_PlayerObject);
-
 	SAFE_RELEASE(m_ChaceObject);
 	SAFE_RELEASE(m_ChaceNPC);
 }
@@ -56,21 +52,14 @@ bool JBH_Stage3::Init()
 
 void JBH_Stage3::AfterInit()
 {
+	CCamera* pCamera = m_pScene->GetMainCameraNonCount();
 	m_DoorMap = CGameManager::GetInst()->GetDoorMap(m_pScene);
-
-	m_DoorPos[DN_START_DOOR] = Vector3(228.0f, 0.0f, 66.0f);
-	m_DoorPos[DN_ROOM1_DOOR] = Vector3(170.0f, 0.0f, 33.0f);
-	m_DoorPos[DN_ROOM2_DOOR] = Vector3(39.0f, 0.0f, 54.0f);
-	m_DoorPos[DN_ROOM3_DOOR] = Vector3(39.0f, 0.0f, 96.0f);
-	m_DoorPos[DN_OUT_STAGE1_DOOR] = Vector3(77.0f, 0.0f, 159.0f);
-	m_DoorPos[DN_OUT_STAGE2_DOOR] = Vector3(157.0f, 0.0f, 159.0f);
-	m_DoorPos[DN_END_DOOR] = Vector3(216.0f, 0.0f, 155.0f);
-	m_DoorPos[DN_MID_DOOR] = Vector3(155.0f, 0.0f, 11.0f);
 
 	// Àü¿ª±¤(Directional Light) ¼³Á¤
 	Vector4 vWhiteColor = Vector4(1.f, 1.f, 1.f, 1.0f);
 	Vector4 vDarkColor = Vector4(0.005f, 0.005f, 0.005f, 1.0f);
 	CLayer* pLayer = m_pScene->FindLayer("Light");
+	CLayer* pDefault = m_pScene->FindLayer("Default");
 
 	list<CGameObject*>* pLightList = pLayer->GetObjectList();
 	list<CGameObject*>::iterator iter;
@@ -83,6 +72,15 @@ void JBH_Stage3::AfterInit()
 		SAFE_RELEASE(pLight);
 	}
 	SAFE_RELEASE(pLayer);
+
+	m_PlayerObject = _PLAYER->GetGameObjectNonCount();
+	m_Player =_PLAYER;
+	m_Player->GetTransformNonCount()->SetWorldPos(Vector3(238.0f, 0.0f, 68.0f));
+	m_Player->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
+	pCamera->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
+
+	SAFE_RELEASE(pDefault);
+
 	NPCInit();
 
 	auto StartIter = m_DoorMap->begin();
@@ -94,13 +92,15 @@ void JBH_Stage3::AfterInit()
 		string strTag = pObj->GetTag();
 		char strName[256] = {};
 
-		strcpy(strName, strTag.c_str());
+		strcpy_s(strName, 256,strTag.c_str());
 
 		_strupr_s(strName);
 
 		if (strstr(strName, "FAKE"))
 			StartIter->second->Lock(true, "");
 	}
+
+
 }
 
 int JBH_Stage3::Update(float DeltaTime)
@@ -160,7 +160,7 @@ void JBH_Stage3::BasicInit()
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
 
 	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	Path += "JBH_Stage3_Test.dat";
+	Path += "TH2_Stage3.dat";
 	m_pScene->Load(Path);
 
 	CGameObject* NavLandObject = CGameObject::CreateObject("Land", pDefaultLayer);
@@ -169,12 +169,6 @@ void JBH_Stage3::BasicInit()
 	Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
 	Path += "Stage3Nav.nav";
 	Land->LoadLandScape(Path);
-
-	m_PlayerObject = CGameObject::CreateObject("Player", pDefaultLayer, true);
-	m_Player = m_PlayerObject->AddComponent<CHuman_Player>("Player");
-	m_Player->GetTransformNonCount()->SetWorldPos(Vector3(238.0f, 0.0f, 68.0f));
-	m_Player->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
-	pCamera->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
 
 	CSoundManager::GetInst()->CreateSoundEffect("ST3BGM", L"SurgeonAttack.wav");
 	CSoundManager::GetInst()->CreateSoundEffect("GlassBracking", L"GlassBracking.wav");
