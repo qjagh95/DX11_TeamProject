@@ -10,6 +10,7 @@
 #include <Scene/Scene.h>
 #include "BulletCase.h"
 #include "Human_Player.h"
+#include "Bullet.h"
 
 int CPistol::iBulletCaseCnt = 10;
 
@@ -418,11 +419,14 @@ bool CPistol::Fire()
 			Vector3 vCamAxis[3]= { pTrans->GetWorldAxis(PUN::AXIS_X), pTrans->GetWorldAxis(PUN::AXIS_Y), pTrans->GetWorldAxis(PUN::AXIS_Z) };
 			SAFE_RELEASE(pTrans);
 
+			CBullet::Create(vPos, vRot, m_pLayer);
+
 			vPos += vCamAxis[0] * m_vBulletCaseOffset.x;
 			vPos += vCamAxis[1] * m_vBulletCaseOffset.y;
 			vPos += vCamAxis[2] * m_vBulletCaseOffset.z;
 
 			m_arrBulletCases[m_iCurrBulletCaseIdx]->SetInstance(vPos, vRot);
+			
 		}
 		++m_iCurrBulletCaseIdx;
 		if (m_iCurrBulletCaseIdx >= iBulletCaseCnt)

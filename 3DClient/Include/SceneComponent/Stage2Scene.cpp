@@ -35,42 +35,6 @@ bool CStage2Scene::Init()
 	CTransform* pTr = nullptr;
 	CLight* pLight = nullptr;
 
-	CLayer* pLayer = m_pScene->FindLayer("Light");
-
-	pObj = CGameObject::CreateObject("PointLight", pLayer);
-	pLight = pObj->AddComponent<CLight>("Light");
-	pTr = pObj->GetTransform();
-
-	pLight->SetLightType(LT_SPOT);
-	pLight->SetLightRange(30.0f);
-	pLight->SetAngle(15.0f, 30.0f);
-	pLight->EnableLightVolume();
-
-	pTr->SetWorldPos(Vector3(0.0f, 20.0f, 0.0f));
-	pTr->RotationX(90.0f);
-
-	SAFE_RELEASE(pObj);
-	SAFE_RELEASE(pTr);
-	SAFE_RELEASE(pLight);
-
-	pObj = CGameObject::CreateObject("PointLight", pLayer);
-	pLight = pObj->AddComponent<CLight>("Light");
-	pTr = pObj->GetTransform();
-
-	pLight->SetLightType(LT_SPOT);
-	pLight->SetLightRange(30.0f);
-	pLight->SetAngle(15.0f, 30.0f);
-	pLight->EnableLightVolume();
-
-	pTr->SetWorldPos(0.0f, 20.0f, 30.0f);
-	pTr->RotationX(90.0f);
-
-	SAFE_RELEASE(pObj);
-	SAFE_RELEASE(pTr);
-	SAFE_RELEASE(pLight);
-
-	SAFE_RELEASE(pLayer);
-
 	return true;
 }
 

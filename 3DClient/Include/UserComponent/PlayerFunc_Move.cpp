@@ -461,6 +461,9 @@ void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime
 		fBias = 2.75f;
 	vRes *= (fVelocityScale + abs(fSigned)) * fBias;
 	vRes -= vVelocity * 0.375f;
+
+	if (vRes != Vector3::Zero)
+		m_cMoveCheckFlag |= 2;
 	
 	//그만큼 밀기
 	if (m_bNaviOn)
@@ -510,8 +513,20 @@ void CHuman_Player::Geometry_Out(CCollider *pSrc, CCollider *pDest, float fTime)
 
 void CHuman_Player::PlayerMove_CheckNav(Vector3 vMove) 
 {
+	
+
 	Vector3 vPos = m_pMovePointer->GetWorldPos();
-	Move(vMove);
+	int iRes = Move(vMove);
+
+	if (m_cMoveCheckFlag & 2)
+	{
+		
+		if (iRes > 1)
+		{
+			m_pMovePointer->SetWorldPos(m_vPrevWorldPos);
+			return;
+		}
+	}
 	Vector3 vAfterPos = m_pMovePointer->GetWorldPos();
 	Vector3 vRealMove = vAfterPos - vPos;
 	

@@ -843,6 +843,10 @@ int CHuman_Player::Input(float fTime)
 	//{
 	//	m_pMovePointer->SetWorldPos(m_vPrevWorldPos);
 	//}
+	if (m_cMoveCheckFlag == 3)
+	{
+		m_pMovePointer->SetWorldPos(m_vPrevWorldPos);
+	}
 	
 	m_vecCollidingGeom.clear();
 
@@ -1476,6 +1480,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 
 	m_pGeometryBody = pRoot->AddComponent<PUN::CColliderOBB3D>("PlayerGeom");
 	m_pGeometryBody->SetInfo(Vector3(0.f, -.25f, -1.f), Vector3::Axis, Vector3(1.25f, 2.55f, 1.25f));
+	m_pGeometryBody->SetColliderID(UCI_PLAYER_HIT);
 	m_pGeometryBody->SetCollisionCallback(PUN::CCT_STAY, this, &CHuman_Player::Geometry_Push);
 	m_pGeometryBody->SetCollisionCallback(PUN::CCT_LEAVE, this, &CHuman_Player::Geometry_Out);
 	
@@ -1511,25 +1516,20 @@ void CHuman_Player::Move(PUN::AXIS axis, float fSpeed, float fTime)
 	Move(vPos);
 }
 
-void CHuman_Player::Move(Vector3 vMove) 
+int CHuman_Player::Move(Vector3 vMove)
 {
 	if (vMove == Vector3::Zero)
-		return;
-	
+		return 0;
 	Vector3 vCurrPos = m_pTransform->GetWorldPos();
 	Vector3 vRestorePos = vCurrPos;
-	Vector3 vPos =  vCurrPos + vMove;
-
+	Vector3 vPos = vCurrPos + vMove;
 	CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene, vPos);
 	if (m_bNaviOn && pMesh)
 	{
 		float fVelocity = vMove.Length();
 		if (fVelocity < 1.e-17f)
-			return;
-
-
+			return 1;
 		bool	bMove = false;
-
 		PUN::PNavigationCell pNavi = nullptr;
 		//vCurrPos에서 가장 가까운 선 찾기
 		//Dot = 사영 = Cos값
@@ -1538,14 +1538,13 @@ void CHuman_Player::Move(Vector3 vMove)
 		float fDist = FLT_MAX;
 		float fBaseDist = 0.f;
 		float fRadian = 0.f;
-		
 		Vector3 vGrid;
 		Vector3 vRes = vMove;
-
-
 		for (char i = 0; i < 4; ++i)
 		{
 			pNavi = pMesh->GetNavigationCell(vPos);
+			if (i > 0)
+				m_cMoveCheckFlag |= 2;
 			if (pMesh->CheckCell(vPos))
 			{
 				if (vRes != Vector3::Zero)
@@ -1555,29 +1554,23 @@ void CHuman_Player::Move(Vector3 vMove)
 					{
 						bMove = true;
 						m_pMovePointer->Move(vRes);
-						
-
 					}
 					else
 					{
 						vRes.Normalize();
 						vRes *= fVelocity;
 						m_pMovePointer->Move(vRes);
-					
 					}
-					return;
+					if (i == 0)
+						return 0;
+					return 2;
 				}
-				
 			}
-
 			if (i == 3)
 				break;
-
-
 			vGrid = (vCurrPos - pNavi->vEdgeCenter[i]) * 2.f; //해당 선분의 중점이므로 이 거리에 2를 곱해야 함
 			vGrid.y = pNavi->vEdgeCenter[i].y;
 			fDot = pNavi->vEdge[i].Dot(vGrid);
-
 			fBaseDist = vGrid.Length();
 			float fCos = fDot / fBaseDist;
 			fRadian = acosf(fCos);
@@ -1586,14 +1579,11 @@ void CHuman_Player::Move(Vector3 vMove)
 			vEdge.Normalize();
 			Vector3 vAltRes = vEdge * fCos;
 			Vector3 vAltResMinus = vAltRes * -1.f;
-
-			float fTestSignAltRes[2] = { (vMove + vAltRes).Length(), (vMove + vAltResMinus).Length()};
-			
+			float fTestSignAltRes[2] = { (vMove + vAltRes).Length(), (vMove + vAltResMinus).Length() };
 			if (fTestSignAltRes[0] < fTestSignAltRes[1])
 			{
 				vRes = vAltResMinus;
 				vPos = vCurrPos + vRes;
-
 				pNavi = pMesh->GetNavigationCell(vPos);
 				if (pMesh->CheckCell(vPos))
 				{
@@ -1602,35 +1592,27 @@ void CHuman_Player::Move(Vector3 vMove)
 					{
 						bMove = true;
 						m_pMovePointer->Move(vRes);
-
-
 					}
 					else
 					{
 						vRes.Normalize();
 						vRes *= fVelocity;
 						m_pMovePointer->Move(vRes);
-
 					}
-					return;
-
+					return 3;
 				}
 			}
-
-
 			vPos = vCurrPos + vAltRes;
 			vRes = vAltRes;
 		}
-		
 		if (!bMove)
 		{
-			return;
+			return 4;
 		}
-
 	}
-	
-
 	m_pMovePointer->Move(vMove);
+
+	return 0;
 }
 
 void CHuman_Player::PlayerMove(const Vector3& vMove)

@@ -194,6 +194,7 @@ private:
 	float m_fMaxHideBedAngleX;
 	float m_fMaxHideBedAngleY;
 	bool  m_bNaviOn;
+	char  m_cMoveCheckFlag;
 	Vector3 m_vCamWorldOffset	;
 	Vector3 m_vCamLocalOffset;
 	Vector3 m_vCamCrouchLocalOffset;
@@ -257,7 +258,7 @@ public:
 	void HandyCam_Using(float fTime);
 	void HandyCam_Off(float fTime);
 	void Move(PUN::AXIS axis, float fSpeed, float fTime);
-	void Move(Vector3 vMove);
+	int Move(Vector3 vMove);
 	void PlayerMove(const Vector3& vMove);
 	void PlayerRot(const Vector3& vRot);
 	void SetAnimNotify();

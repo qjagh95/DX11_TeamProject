@@ -233,7 +233,7 @@ SamplerState	g_MultiSmp4		    : register(s8);
 SamplerState PointSampler : register(s9);
 //SamplerState LinearSampler : register(s1);
 
-static const float3 LUM_FACTOR = float3(0.299f, 0.587f, 0.114f);
+const static float3 LUM_FACTOR = float3(0.299f, 0.587f, 0.114f);
 
 cbuffer FinalPassConstants : register(b10)
 {

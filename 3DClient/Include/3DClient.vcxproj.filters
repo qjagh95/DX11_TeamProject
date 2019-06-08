@@ -34,12 +34,6 @@
     <Filter Include="02. UserComponent\05. Item">
       <UniqueIdentifier>{1b4edc38-cf5d-4fa4-80cb-e4110fb51c70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. UserComponent\06. TraceMob">
-      <UniqueIdentifier>{37327c8d-54ea-4fbc-a924-2f3624541c42}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. UserComponent\06. TraceMob\Behavior">
-      <UniqueIdentifier>{bb1c6e7c-8e11-4555-a6b8-026a244d8836}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\CameraEff">
       <UniqueIdentifier>{a1c2bfae-bc54-449c-8c34-32eb2e78a459}</UniqueIdentifier>
     </Filter>
@@ -72,9 +66,6 @@
     </Filter>
     <Filter Include="02. UserComponent\01. Player\Effect">
       <UniqueIdentifier>{22eb19de-1c76-4d4a-8031-b6e8bc7e71e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. SceneComponent\ST3">
-      <UniqueIdentifier>{79047502-1e1b-41dd-b61c-c68b97523e2c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. UserComponent\04. UI\01. Inventory">
       <UniqueIdentifier>{7b1b45d9-37a5-4d3e-b219-3409ca234092}</UniqueIdentifier>
@@ -109,9 +100,6 @@
     <Filter Include="03. Manager">
       <UniqueIdentifier>{c4779955-37d1-4f10-8b21-3cb4cf30a647}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. SceneComponent\ST3\ST3_Slient">
-      <UniqueIdentifier>{23aa5247-3415-4819-ad07-f283b2d2d72f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. UserComponent\04. UI\03. Event">
       <UniqueIdentifier>{bab893be-a3b9-430e-9c71-c6c4896b0b89}</UniqueIdentifier>
     </Filter>
@@ -133,37 +121,64 @@
     <Filter Include="02. UserComponent\05. Item\03. Document\02. DocIcon\03. Stage 3">
       <UniqueIdentifier>{d8be62f1-1314-4170-aa3f-684e3b65d07e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. SceneComponent\ST3\ST3_Suprise">
-      <UniqueIdentifier>{0fb77a95-aa21-493e-8b22-17fabb3ae361}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. SceneComponent\ST3\ST3_See">
-      <UniqueIdentifier>{19f2e8e9-6f26-4d1c-969e-3f3d36ae02f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. SceneComponent\Stage4">
-      <UniqueIdentifier>{ed9e4149-ed00-4222-b6b4-fa8170346bf7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. SceneComponent\SC_Stage2Scene">
-      <UniqueIdentifier>{469562f4-5ff4-47d2-98c3-a33bb137bdbb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. UserComponent\07. Interact\03 Parkour">
       <UniqueIdentifier>{5f541b54-418f-4dae-ab22-0545cab9232d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\Stage3_JBH">
+      <UniqueIdentifier>{79047502-1e1b-41dd-b61c-c68b97523e2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\Stage2_SCC">
+      <UniqueIdentifier>{469562f4-5ff4-47d2-98c3-a33bb137bdbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\Stage4_KDG">
+      <UniqueIdentifier>{ed9e4149-ed00-4222-b6b4-fa8170346bf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\Stage1_CJH">
+      <UniqueIdentifier>{30ab6af0-773e-4583-8654-84e7e1bb41f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\LogoScene">
+      <UniqueIdentifier>{76aeb078-d2b6-4f98-8e41-15a3db2862eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\TutorialScene_CTH">
+      <UniqueIdentifier>{d191314a-2b1a-4c71-a993-1de75b81b471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\06. Monster">
+      <UniqueIdentifier>{37327c8d-54ea-4fbc-a924-2f3624541c42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\06. Monster\BT">
+      <UniqueIdentifier>{b2179b0c-2f37-4e35-a27f-0d3ddebd188f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\06. Monster\BT\Behavior">
+      <UniqueIdentifier>{bb1c6e7c-8e11-4555-a6b8-026a244d8836}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\06. Monster\FSM">
+      <UniqueIdentifier>{d0351bfc-107e-448f-bdc7-eaf4f16ca0da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\06. Monster\FSM\Default">
+      <UniqueIdentifier>{0e977e5d-a3b5-48d0-bbec-a8e9c71d6f68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\06. Monster\FSM\NPCBase">
+      <UniqueIdentifier>{8e6dd420-46f9-4e00-a45a-c347c49535d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\06. Monster\FSM\ST3_Slient">
+      <UniqueIdentifier>{23aa5247-3415-4819-ad07-f283b2d2d72f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\06. Monster\FSM\ST3_See">
+      <UniqueIdentifier>{19f2e8e9-6f26-4d1c-969e-3f3d36ae02f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\06. Monster\FSM\ST3_Suprise">
+      <UniqueIdentifier>{0fb77a95-aa21-493e-8b22-17fabb3ae361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. SceneComponent\Stage5_CJH">
+      <UniqueIdentifier>{62a66441-f9bb-46e8-b9d6-8e5e03c1f762}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="SceneComponent\MainScene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent\FirTestScene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
     <ClInclude Include="ClientHeader.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent\LogoScene.h">
-      <Filter>01. SceneComponent</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\Player.h">
       <Filter>02. UserComponent\01. Player</Filter>
@@ -184,13 +199,10 @@
       <Filter>02. UserComponent\01. Player</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\Idle.h">
-      <Filter>02. UserComponent\06. TraceMob\Behavior</Filter>
+      <Filter>02. UserComponent\06. Monster\BT\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\Trace.h">
-      <Filter>02. UserComponent\06. TraceMob\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\TraceMob.h">
-      <Filter>02. UserComponent\06. TraceMob</Filter>
+      <Filter>02. UserComponent\06. Monster\BT\Behavior</Filter>
     </ClInclude>
     <ClInclude Include="CameraEff.h">
       <Filter>소스 파일\CameraEff</Filter>
@@ -199,15 +211,6 @@
       <Filter>02. UserComponent\03. Field\Items</Filter>
     </ClInclude>
     <ClInclude Include="SceneComponent\TestScene-YH.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent\TestScene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent\TutorialScene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent\RandScapeTestScene.h">
       <Filter>01. SceneComponent</Filter>
     </ClInclude>
     <ClInclude Include="CommonSoundLoader.h">
@@ -375,17 +378,11 @@
     <ClInclude Include="UserComponent\PaperPL.h">
       <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\03. Stage 3</Filter>
     </ClInclude>
-    <ClInclude Include="SceneComponent\JBH_Stage3.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\ST3_Suprise.h">
-      <Filter>01. SceneComponent\ST3\ST3_Suprise</Filter>
+      <Filter>02. UserComponent\06. Monster\FSM\ST3_Suprise</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\ST3_See.h">
-      <Filter>01. SceneComponent\ST3\ST3_See</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\NPCBase.h">
-      <Filter>01. SceneComponent\ST3</Filter>
+      <Filter>02. UserComponent\06. Monster\FSM\ST3_See</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\EventCollider.h">
       <Filter>02. UserComponent\04. UI\03. Event</Filter>
@@ -393,14 +390,11 @@
     <ClInclude Include="UserComponent\NoticeMessage.h">
       <Filter>02. UserComponent\04. UI\03. Event</Filter>
     </ClInclude>
-    <ClInclude Include="SceneComponent\Stage1Scene.h">
-      <Filter>01. SceneComponent</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\ST3_Slient.h">
-      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
+      <Filter>02. UserComponent\06. Monster\FSM\ST3_Slient</Filter>
     </ClInclude>
     <ClInclude Include="SceneComponent\Scene4_DG.h">
-      <Filter>01. SceneComponent\Stage4</Filter>
+      <Filter>01. SceneComponent\Stage4_KDG</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\StageKey.h">
       <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
@@ -409,7 +403,7 @@
       <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
     </ClInclude>
     <ClInclude Include="SceneComponent\Stage2Scene.h">
-      <Filter>01. SceneComponent\SC_Stage2Scene</Filter>
+      <Filter>01. SceneComponent\Stage2_SCC</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\KaTok.h">
       <Filter>02. UserComponent\05. Item\03. Document</Filter>
@@ -417,19 +411,31 @@
     <ClInclude Include="UserComponent\Parkour.h">
       <Filter>02. UserComponent\07. Interact\03 Parkour</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\ST_Default.h">
+      <Filter>02. UserComponent\06. Monster\FSM\Default</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\Stage1Scene.h">
+      <Filter>01. SceneComponent\Stage1_CJH</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\LogoScene.h">
+      <Filter>01. SceneComponent\LogoScene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\JBH_Stage3.h">
+      <Filter>01. SceneComponent\Stage3_JBH</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\NPCBase.h">
+      <Filter>02. UserComponent\06. Monster\FSM\NPCBase</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\TutorialScene.h">
+      <Filter>01. SceneComponent\TutorialScene_CTH</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\TraceMob.h">
+      <Filter>02. UserComponent\06. Monster\BT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\MainScene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\FirTestScene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\LogoScene.cpp">
-      <Filter>01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Player.cpp">
       <Filter>02. UserComponent\01. Player</Filter>
@@ -447,13 +453,10 @@
       <Filter>02. UserComponent\01. Player</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Idle.cpp">
-      <Filter>02. UserComponent\06. TraceMob\Behavior</Filter>
+      <Filter>02. UserComponent\06. Monster\BT\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Trace.cpp">
-      <Filter>02. UserComponent\06. TraceMob\Behavior</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\TraceMob.cpp">
-      <Filter>02. UserComponent\06. TraceMob</Filter>
+      <Filter>02. UserComponent\06. Monster\BT\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="CameraEff.cpp">
       <Filter>소스 파일\CameraEff</Filter>
@@ -475,15 +478,6 @@
     </ClCompile>
     <ClCompile Include="UserComponent\PlayerFunc_cam.cpp">
       <Filter>02. UserComponent\01. Player\PlayerFunc</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\TestScene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\TutorialScene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\RandScapeTestScene.cpp">
-      <Filter>01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="CommonSoundLoader.cpp">
       <Filter>소스 파일\CommonSound</Filter>
@@ -629,17 +623,11 @@
     <ClCompile Include="UserComponent\PaperPL.cpp">
       <Filter>02. UserComponent\05. Item\03. Document\01. 3DObject\03. Stage 3</Filter>
     </ClCompile>
-    <ClCompile Include="SceneComponent\JBH_Stage3.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\ST3_Suprise.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Suprise</Filter>
+      <Filter>02. UserComponent\06. Monster\FSM\ST3_Suprise</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\ST3_See.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_See</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\NPCBase.cpp">
-      <Filter>01. SceneComponent\ST3</Filter>
+      <Filter>02. UserComponent\06. Monster\FSM\ST3_See</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\EventCollider.cpp">
       <Filter>02. UserComponent\04. UI\03. Event</Filter>
@@ -647,14 +635,11 @@
     <ClCompile Include="UserComponent\NoticeMessage.cpp">
       <Filter>02. UserComponent\04. UI\03. Event</Filter>
     </ClCompile>
-    <ClCompile Include="SceneComponent\Stage1Scene.cpp">
-      <Filter>01. SceneComponent</Filter>
-    </ClCompile>
     <ClCompile Include="UserComponent\ST3_Slient.cpp">
-      <Filter>01. SceneComponent\ST3\ST3_Slient</Filter>
+      <Filter>02. UserComponent\06. Monster\FSM\ST3_Slient</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\Scene4_DG.cpp">
-      <Filter>01. SceneComponent\Stage4</Filter>
+      <Filter>01. SceneComponent\Stage4_KDG</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\StageKey.cpp">
       <Filter>02. UserComponent\05. Item\04. Key\01. 3DObject</Filter>
@@ -663,13 +648,34 @@
       <Filter>02. UserComponent\05. Item\04. Key\02. KeyIcon</Filter>
     </ClCompile>
     <ClCompile Include="SceneComponent\Stage2Scene.cpp">
-      <Filter>01. SceneComponent\SC_Stage2Scene</Filter>
+      <Filter>01. SceneComponent\Stage2_SCC</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\KaTok.cpp">
       <Filter>02. UserComponent\05. Item\03. Document</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Parkour.cpp">
       <Filter>02. UserComponent\07. Interact\03 Parkour</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ST_Default.cpp">
+      <Filter>02. UserComponent\06. Monster\FSM\Default</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\Stage1Scene.cpp">
+      <Filter>01. SceneComponent\Stage1_CJH</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\LogoScene.cpp">
+      <Filter>01. SceneComponent\LogoScene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\JBH_Stage3.cpp">
+      <Filter>01. SceneComponent\Stage3_JBH</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\NPCBase.cpp">
+      <Filter>02. UserComponent\06. Monster\FSM\NPCBase</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\TutorialScene.cpp">
+      <Filter>01. SceneComponent\TutorialScene_CTH</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\TraceMob.cpp">
+      <Filter>02. UserComponent\06. Monster\BT</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
