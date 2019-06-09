@@ -1,5 +1,6 @@
 #include "../ClientHeader.h"
 #include "Document.h"
+#include "Device.h"
 
 CDocument::CDocument()	:
 	m_pAnimation(nullptr)
@@ -47,8 +48,9 @@ bool CDocument::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(600.f, 600.f, 1.f);
-	m_pTransform->SetWorldPos(830.f, 350.f, 1.f);
+	m_pTransform->SetWorldScale(900.f, 900.f, 1.f);
+	m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 830.f / 1280.f)), 
+		_RESOLUTION.iHeight * (1.f - (1 - 350.f / 720.f)), 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("DocAnimation");
@@ -70,7 +72,7 @@ bool CDocument::Init()
 	vecClipFrame.push_back(tFrame);
 
 	m_pAnimation->AddClip("MobileMessage", A2D_ATLAS, AO_LOOP, 1.f, vecClipFrame,
-		"MessageMobile", TEXT("UI/Document/MobileMessage.png"));
+		"MessageMobile", TEXT("UI/Document/PH.png"));
 
 	vecClipFrame.clear();
 

@@ -23,7 +23,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	
 
 
-	if (!CCore::GetInst()->Init(hInstance, 1280, 720,
+	if (!CCore::GetInst()->Init(hInstance, 1920, 1020,
 		TEXT("OutLast - 1"), TEXT("OutLast - 1"), IDI_ICON1, IDI_ICON1,
 		true))
 	{

@@ -53,50 +53,6 @@ CTutorialScene::~CTutorialScene()
 
 void CTutorialScene::AfterInit()
 {
-	// CedarBush
-	//AdaptAlpha("CedarBush1");
-	//AdaptAlpha("CedarBush2");
-	//AdaptAlpha("CedarBush4");
-	//AdaptAlpha("CedarBush5");
-	//AdaptAlpha("CedarBush6");
-	//AdaptAlpha("CedarBush7");
-	//AdaptAlpha("CedarBush8");
-	//AdaptAlpha("CedarBush9");
-	//AdaptAlpha("CedarBush10");
-	//AdaptAlpha("CedarBush11");
-
-	//// Grass
-	//AdaptAlpha("Grass1");
-	//AdaptAlpha("Grass4");
-	//AdaptAlpha("Grass5");
-	//AdaptAlpha("Grass6");
-	//AdaptAlpha("Grass7");
-	//AdaptAlpha("Grass8");
-	//AdaptAlpha("Grass9");
-
-	//// LeftTree
-	//AdaptAlpha("LeftTree1");
-	//AdaptAlpha("LeftTree2");
-	//AdaptAlpha("LeftTree3");
-	//AdaptAlpha("LeftTree4");
-	//AdaptAlpha("LeftTree5");
-
-	//// RightTree
-	//AdaptAlpha("RightTree1");
-	//AdaptAlpha("RightTree2");
-	//AdaptAlpha("RightTree3");
-	//AdaptAlpha("RightTree4");
-	//AdaptAlpha("RightTree5");
-	//AdaptAlpha("RightTree6");
-	//AdaptAlpha("RightTree7");
-	//AdaptAlpha("RightTree8");
-	//AdaptAlpha("RightTree9");
-	//AdaptAlpha("RightTree10");
-	//
-	//// Gate
-	//AdaptAlpha("Gate1");
-	//AdaptAlpha("Gate2");
-
 	CDoor* pDoor = GET_SINGLE(CGameManager)->FindDoor(m_pScene, "Door_Tutorial");
 	pDoor->Lock(true, "KeyCard");
 }
@@ -104,11 +60,12 @@ void CTutorialScene::AfterInit()
 bool CTutorialScene::Init()
 {
 	wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
-	wstr += L"LightTest.dat";
+	wstr += L"ColTest.dat";
+	//wstr += L"TH2_Stage3.dat";
 	string filePath = CW2A(wstr.c_str());
 	m_pScene->Load(filePath);
 
-	GET_SINGLE(CRenderManager)->SetHDRValue(0.22f, 5.7f);
+	//GET_SINGLE(CRenderManager)->SetHDRValue(0.22f, 5.7f);
 
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
@@ -363,25 +320,7 @@ bool CTutorialScene::Init()
 
 	SAFE_RELEASE(pPaperTr);
 	SAFE_RELEASE(tmiPaper);
-	SAFE_RELEASE(pPaperObj);
-
-	/*CGameObject*	pBushObject = CGameObject::CreateObject("inside", pDefaultLayer);
-
-	CRenderer*	pBushRenderer = pBushObject->AddComponent<CRenderer>("insideRenderer");
-
-	pBushRenderer->SetMesh("inside", L"DoorInside.fbx", MESH_PATH);
-
-	SAFE_RELEASE(pBushRenderer);
-
-	CTransform*	pBushTransform = pBushObject->GetTransform();
-
-	pBushTransform->SetWorldPos(316.f,10.f, 700.f);
-	pBushTransform->SetWorldRot(0.f, 90.f, 0.f);
-	pBushTransform->SetWorldScale(0.08f);
-
-	SAFE_RELEASE(pBushTransform);
-
-	SAFE_RELEASE(pBushObject);		*/
+	SAFE_RELEASE(pPaperObj);	
 
 	SAFE_RELEASE(pCamera);
 
@@ -397,7 +336,6 @@ int CTutorialScene::Update(float fTime)
 	{
 		m_fFade += 0.1f * fTime;
 		GET_SINGLE(CRenderManager)->SetFadeAmount(m_fFade, fTime);
-
 	}
 
 	if (m_fFade > 1.f)
@@ -414,18 +352,4 @@ int CTutorialScene::LateUpdate(float fTime)
 	GET_SINGLE(CGameManager)->Update(fTime);
 
 	return 0;
-}
-
-void CTutorialScene::AdaptAlpha(const string & strName)
-{
-	/*CGameObject*	pTreeObj = CGameObject::FindObject(strName);
-
-	CRenderer*	pTreeRenderer = pTreeObj->FindComponentFromType<CRenderer>(CT_RENDERER);
-
-	pTreeRenderer->SetAlphaEnable(true);
-
-	m_vecAlpha.push_back(strName);
-
-	SAFE_RELEASE(pTreeRenderer);
-	SAFE_RELEASE(pTreeObj);*/
 }

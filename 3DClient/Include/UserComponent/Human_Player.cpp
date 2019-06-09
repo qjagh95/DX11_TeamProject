@@ -848,6 +848,28 @@ int CHuman_Player::Input(float fTime)
 		m_pMovePointer->SetWorldPos(m_vPrevWorldPos);
 	}
 	
+	else
+	{
+		Vector3 vMovePos = m_pMovePointer->GetWorldPos();
+		CNavigationMesh*	pMesh = GET_SINGLE(CNavigationManager3D)->FindNavMesh(m_pScene, vMovePos);
+		if (m_bNaviOn && pMesh)
+		{
+			if (!pMesh->GetNavigationCell(vMovePos))
+			{
+				m_pMovePointer->SetWorldPos(m_vPrevWorldPos);
+			}
+			else
+			{
+				float fY = pMesh->GetY(vMovePos);
+				if (fY != vMovePos.y)
+				{
+					vMovePos.y = fY;
+					m_pMovePointer->SetWorldPos(vMovePos);
+				}
+			}
+		}
+	}
+
 	m_vecCollidingGeom.clear();
 
 	if (m_cInitLoopFinished < 1)
@@ -1071,6 +1093,30 @@ void CHuman_Player::VoiceSound(float fTime)
 		}
 		
 		
+	}
+
+	if (m_ePlayingVoiceType == PVT_HURT)
+	{
+		if (m_iPlayingVoiceNumber > 0)
+		{
+
+			if (strVoices[m_ePlayingVoiceType])
+			{
+				strStopVoiceKey = strVoices[m_ePlayingVoiceType];
+				strStopVoiceKey += std::to_string(m_iPlayingVoiceNumber);
+				if (m_ePlayingVoiceType == m_eVoiceType)
+				{
+					if (m_pSound->GetClipState(strStopVoiceKey) == PLAYING)
+					{
+						return;
+					}
+					else
+					{
+						m_ePlayingVoiceType = PVT_MED;
+					}
+				}
+			}
+		}
 	}
 
 	std::string strVoiceKey;

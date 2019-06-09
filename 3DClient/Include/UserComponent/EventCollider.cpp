@@ -5,6 +5,7 @@
 #include "Human_Player.h"
 #include "Rendering/RenderManager.h"
 #include "../GameManager.h"
+#include "Device.h"
 
 CEventCollider::CEventCollider()	:
 	m_pPressCtrlObj(nullptr),
@@ -64,8 +65,9 @@ bool CEventCollider::Init()
 	
 	CTransform*	pMsgTr = m_pMessageObj->GetTransform();
 
-	pMsgTr->SetWorldScale(468.f, 88.f, 1.f);
-	pMsgTr->SetWorldPos(630.f, 600.f, 0.f);
+	pMsgTr->SetWorldScale(468.f * 1.5f, 88.f * 1.5f, 1.f);
+	pMsgTr->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 630.f / 1280.f)),
+		_RESOLUTION.iHeight * (1.f - (1 - 600.f / 720.f)), 1.f);
 
 	SAFE_RELEASE(pMsgTr);
 

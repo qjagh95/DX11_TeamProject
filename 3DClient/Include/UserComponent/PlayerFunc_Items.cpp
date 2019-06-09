@@ -7,7 +7,7 @@
 #include "Component/Renderer.h"
 #include "Component/Material.h"
 #include "Component/Transform.h"
-
+#include "Device.h"
 
 bool CHuman_Player::Init_Items()
 {
@@ -53,9 +53,10 @@ bool CHuman_Player::Init_Items()
 
 	m_pRayTr = pRayObj->GetTransform();
 
-	m_pRayTr->SetWorldScale(47.f, 47.f, 1.f);
+	m_pRayTr->SetWorldScale(74.f, 74.f, 1.f);
 	m_pRayTr->SetWorldPivot(0.5f, 0.5f, 0.f);
-	m_pRayTr->SetWorldPos(640.f, 353.f, 0.f);	
+	m_pRayTr->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 640.f / 1280.f)),
+		_RESOLUTION.iHeight * (1.f - (1 - 353.f / 720.f)), 0.f);
 
 	CColliderRay*	pRay = pRayObj->AddComponent<CColliderRay>("RayBody");
 

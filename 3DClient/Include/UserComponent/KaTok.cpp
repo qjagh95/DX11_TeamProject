@@ -34,7 +34,7 @@ bool CKaTok::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "MobileMEssage", TEXT("UI/Document/MobileMessage.png"));
+	pMaterial->SetDiffuseTex(0, "MobileMEssage", TEXT("UI/Document/PH.png"));
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);

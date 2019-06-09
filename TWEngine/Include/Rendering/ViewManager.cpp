@@ -404,7 +404,7 @@ bool CViewManager::CreateUAV()
 		return false;
 	}
 
-	if (!CreateUAV("BloomFinal", BLOOM_HORIZONTAL_BLUR_SHADER, 3, 270, 1, 1920, 1080, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
+	if (!CreateUAV("BloomFinal", BLOOM_HORIZONTAL_BLUR_SHADER, 4, 480, 1, 1920, 1080, DXGI_FORMAT_R16G16B16A16_FLOAT, GRT_FOR_BLOOM))
 	{
 		TrueAssert(true);
 		return false;

@@ -88,7 +88,7 @@ bool CLogoScene::Init()
 
 	CTransform*	pSBTr = m_pSButtonObj->GetTransform();
 
-	pSBTr->SetWorldPos((float)(_RESOLUTION.iWidth / 2.0f), (float)(_RESOLUTION.iHeight / 2.0f - 150.f), 0.f);
+	pSBTr->SetWorldPos((float)(_RESOLUTION.iWidth / 2.0f), (float)(_RESOLUTION.iHeight / 2.0f - 250.f), 0.f);
 	pSBTr->SetWorldScale(258.f, 55.f, 1.f);
 
 	SAFE_RELEASE(pSBTr);
@@ -103,7 +103,7 @@ bool CLogoScene::Init()
 
 	CTransform*	pCBTr = m_pCButtonObj->GetTransform();
 
-	pCBTr->SetWorldPos((float)(_RESOLUTION.iWidth / 2), (float)(_RESOLUTION.iHeight / 2.0f - 220.f), 0.f);
+	pCBTr->SetWorldPos((float)(_RESOLUTION.iWidth / 2), (float)(_RESOLUTION.iHeight / 2.0f - 350.f), 0.f);
 	pCBTr->SetWorldScale(258.f, 55.f, 1.f);
 
 	SAFE_RELEASE(pCBTr);
@@ -118,7 +118,7 @@ bool CLogoScene::Init()
 
 	CTransform*	pEBTr = m_pEButtonObj->GetTransform();
 
-	pEBTr->SetWorldPos((float)(_RESOLUTION.iWidth / 2.0f), (float)(_RESOLUTION.iHeight / 2.0f - 290.f), 0.f);
+	pEBTr->SetWorldPos((float)(_RESOLUTION.iWidth / 2.0f), (float)(_RESOLUTION.iHeight / 2.0f - 450.f), 0.f);
 	pEBTr->SetWorldScale(258.f, 55.f, 1.f);
 
 	SAFE_RELEASE(pEBTr);
@@ -153,8 +153,8 @@ int CLogoScene::Update(float fTime)
 
 			m_pPMsgTr = m_pMsgObj->GetTransform();
 
-			m_pPMsgTr->SetWorldScale(720.f, 720.f, 1.f);
-			m_pPMsgTr->SetWorldPos(950.f, 350.f, 0.f);
+			m_pPMsgTr->SetWorldScale(1080.f, 1080.f, 1.f);
+			m_pPMsgTr->SetWorldPos(_RESOLUTION.iWidth - 550.f, _RESOLUTION.iHeight/2.f, 0.f);
 
 			SAFE_RELEASE(pMsg);
 		}
@@ -164,12 +164,12 @@ int CLogoScene::Update(float fTime)
 			m_pPMsgTr->Move(Vector3(-1.f, 0.f, 0.f), 3000.f, fTime);
 		}
 
-		if (m_fChangeTime >= 0.1f && m_fChangeTime < 3.f)
+		if (m_fChangeTime >= 0.1f && m_fChangeTime < 6.f)
 		{
 			bMove = false;
 		}
 
-		else if (m_fChangeTime >= 3.f)
+		else if (m_fChangeTime >= 6.f)
 		{
 			GET_SINGLE(CRenderManager)->SetFadeAmount(0.001f, fTime);
 

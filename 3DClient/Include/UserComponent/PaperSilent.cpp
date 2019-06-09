@@ -43,7 +43,7 @@ bool CPaperSilent::Init()
 	if (!pRenderer)
 	{
 		pRenderer = m_pObject->AddComponent<CRenderer>("SPaperRender");
-		pRenderer->SetMesh("Paper", TEXT("Paper.msh"));
+		pRenderer->SetMesh("DocxPaper", TEXT("DocxPaper.msh"));
 	}
 
 	SAFE_RELEASE(pRenderer);

@@ -167,11 +167,11 @@ bool CGameManager::Init()
 	if (!pLayer)
 		return false;
 
-	//m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
+	m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
 
-	//m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
+	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
-	//m_pPlayerTr = m_pPlayerObj->GetTransform();
+	m_pPlayerTr = m_pPlayerObj->GetTransform();
 	//m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
 	//m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	////m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
@@ -703,6 +703,11 @@ CHuman_Player * CGameManager::GetPlayer() const
 	return m_pPlayer;
 }
 
+void CGameManager::SetPlayerNaviY(bool bEnable)
+{
+	m_pPlayer->SetNaviY(bEnable);
+}
+
 void CGameManager::PlayerSpon(const Vector3 & vPos, const Vector3 & vRot)
 {
 	m_pPlayerTr->SetWorldPos(vPos);
@@ -1018,27 +1023,6 @@ void CGameManager::AddUILayer()
 
 	SAFE_RELEASE(pKeyInven);
 	SAFE_RELEASE(pKeyInvenObj);
-}
-
-string CGameManager::GetPlayerCollDoorMapKey(CScene * scene) const
-{
-	string Return = "";
-
-	auto FindIter = m_mapDoor.find(scene);
-
-	if (FindIter == m_mapDoor.end())
-		return Return;
-
-	auto StartIter = FindIter->second->begin();
-	auto EndIter = FindIter->second->end();
-
-	for (; StartIter != EndIter; StartIter++)
-	{
-		if (StartIter->second->GetIsPlayerColl() == true)
-			return StartIter->first;
-	}
-
-	return Return;
 }
 
 string CGameManager::GetPlayerCollDoorMapKey(CScene * scene) const

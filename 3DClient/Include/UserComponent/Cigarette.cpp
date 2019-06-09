@@ -142,7 +142,7 @@ void CCigarette::Hit(CCollider * _pSrc, CCollider * _pDest, float _fTime)
 
 	float fDist = m_pTransform->GetWorldPos().Distance(vPlayerPos);
 
-	if (fDist < 50.f)
+	if (fDist < 25.f)
 	{
 		if (_pDest->GetColliderID() == UCI_PLAYER_RAY)
 		{

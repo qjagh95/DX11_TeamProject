@@ -1,6 +1,6 @@
 #include "../ClientHeader.h"
 #include "NoticeMessage.h"
-
+#include "Device.h"
 
 
 CNoticeMessage::CNoticeMessage()
@@ -49,8 +49,9 @@ bool CNoticeMessage::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(200.f, 100.f, 1.f);
-	m_pTransform->SetWorldPos(723.f, 351.f, 1.f);
+	m_pTransform->SetWorldScale(350.f, 150.f, 1.f);
+	m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 723.f / 1280.f)),
+		_RESOLUTION.iHeight * (1.f - (1 - 351.f / 720.f)), 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("NMAnimation");

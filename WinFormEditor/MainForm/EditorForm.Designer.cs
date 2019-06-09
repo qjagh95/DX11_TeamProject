@@ -1354,8 +1354,8 @@
             "ColliderID_Bed",
             "ColliderID_Locker",
             "ColliderID_Player_Hit",
+            "ColliderID_Player_interact",
             "ColliderID_Player_Ray",
-            "ColliderID_Player_Interact",
             "ColliderID_Enemy_Attack",
             "ColliderID_Enemy_Interact",
             "ColliderID_Enemy_Hit",
@@ -1367,8 +1367,12 @@
             "ColliderID_Item_Key",
             "ColliderID_Item_Document",
             "ColliderID_Item_Duct",
-            "ColliderID_Item_Section",
-            "ColliderID_Item_Gernerator"});
+            "ColliderID_Section",
+            "ColliderID_Gernerator",
+            "ColliderID_Bullet",
+            "ColliderID_Wall,",
+            "ColliderID_Glass,",
+            "ColliderID_Elevator"});
             this.LB_ColliderID.Location = new System.Drawing.Point(9, 143);
             this.LB_ColliderID.Name = "LB_ColliderID";
             this.LB_ColliderID.Size = new System.Drawing.Size(260, 72);
@@ -2347,7 +2351,31 @@
             "Stage1_Room6",
             "Stage1_Room7",
             "Stage1_Room8",
-            "Stage1_RoomG"});
+            "Stage1_RoomG",
+            "Stage2_Room0",
+            "Stage2_Room1",
+            "Stage2_Room2",
+            "Stage2_Room3",
+            "Stage2_Room4",
+            "Stage2_Room5",
+            "Stage2_Room6",
+            "Stage2_Room7",
+            "Stage2_Room8",
+            "Stage2_Room9",
+            "Stage2_Room10",
+            "Stage3_Room1",
+            "Stage3_Room2",
+            "Stage3_Room3",
+            "Stage3_Room4",
+            "Stage3_Room5",
+            "Stage3_Room6",
+            "Stage3_Room7",
+            "Stage4_Room0",
+            "Stage4_Room1",
+            "Stage4_Room2",
+            "Stage4_Room3",
+            "Stage5_Room0",
+            "Stage5_Elevator"});
             this.CB_StageSection.Location = new System.Drawing.Point(9, 545);
             this.CB_StageSection.Name = "CB_StageSection";
             this.CB_StageSection.Size = new System.Drawing.Size(191, 25);

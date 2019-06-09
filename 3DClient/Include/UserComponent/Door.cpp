@@ -1120,7 +1120,7 @@ void CDoor::Bumho()
 	m_BackDownCenterLeft = Vector3(m_WorldPos.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
 	m_BackDownCenterRight = Vector3(m_WorldPos.x + m_MeshLength.x, m_WorldPos.y, m_WorldPos.z + m_MeshLength.z);
 }
-}
+
 
 Vector3 CDoor::GetColliderCenter() const
 {

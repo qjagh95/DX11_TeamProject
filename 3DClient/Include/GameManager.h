@@ -71,6 +71,7 @@ public:
 
 	CTransform*		GetPlayerTr()	const;
 	CHuman_Player*	GetPlayer()		const;
+	void SetPlayerNaviY(bool bEnable);
 	void PlayerSpon(const Vector3& vPos, const Vector3& vRot);
 	void ChangeNoticeClip(const string& strName);
 

@@ -88,6 +88,7 @@ bool CHealingPack::Init()
 	pBigMat->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pBigMat);
+	SAFE_RELEASE(pMesh);
 
 	m_pBigTr = m_pBigObj->GetTransform();
 
@@ -176,7 +177,7 @@ void CHealingPack::HitEnter(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 
 	float fDist = m_pTransform->GetWorldPos().Distance(vPlayerPos);
 
-	if (fDist < 50.f)
+	if (fDist < 25.f)
 	{
 		if (_pDest->GetColliderID() == UCI_PLAYER_RAY)
 		{

@@ -128,19 +128,19 @@ void CFreeCamera::ZRotation(float fScale, float fTime)
 void CFreeCamera::XMove(float fScale, float fTime)
 {
 	//m_pTransform->Move(AXIS_X, m_fSpeed * fScale, fTime);
-	m_pTransform->Move(AXIS_X, 15.f * fScale, fTime);
+	m_pTransform->Move(AXIS_X, 77.f * fScale, fTime);
 }
 
 void CFreeCamera::YMove(float fScale, float fTime)
 {
 	//m_pTransform->Move(Vector3(0.f, 1.f, 0.f), 40.f * fScale, fTime);
-	m_pTransform->Move(Vector3(0.f, 1.f, 0.f), 15.f * fScale, fTime);
+	m_pTransform->Move(Vector3(0.f, 1.f, 0.f), 77.f * fScale, fTime);
 }
 
 void CFreeCamera::ZMove(float fScale, float fTime)
 {
 	//m_pTransform->Move(AXIS_Z, m_fSpeed * fScale, fTime);
-	m_pTransform->Move(AXIS_Z, 15.f * fScale, fTime);
+	m_pTransform->Move(AXIS_Z, 77.f * fScale, fTime);
 }
 
 void CFreeCamera::RotationZero(float fTime)

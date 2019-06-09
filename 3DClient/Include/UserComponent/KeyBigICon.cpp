@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "Component/ColliderRect.h"
 #include "Input.h"
+#include "Device.h"
 
 CKeyBigICon::CKeyBigICon()
 {
@@ -54,8 +55,9 @@ bool CKeyBigICon::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(500.f, 528.f, 1.f);
-	m_pTransform->SetWorldPos(560.f, 80.f, 0.f);
+	m_pTransform->SetWorldScale(750.f, 792.f, 1.f);
+	m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 560.f / 1280.f)),
+		_RESOLUTION.iHeight * (1.f - (1 - 80.f / 720.f)), 1.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("KeyBigIconAnimation");
 

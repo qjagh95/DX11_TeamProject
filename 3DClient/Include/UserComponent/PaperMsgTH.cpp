@@ -46,7 +46,7 @@ bool CPaperMsgTH::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("PaperRenderer");
 
-	pOutRenderer->SetMesh("Paper", TEXT("Paper.msh"));
+	pOutRenderer->SetMesh("DocxPaper", TEXT("DocxPaper.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -67,8 +67,8 @@ bool CPaperMsgTH::Init()
 
 	if (!pRenderer)
 	{
-		pRenderer = m_pObject->AddComponent<CRenderer>("PaperRender");
-		pRenderer->SetMesh("Paper", TEXT("Paper.msh"));
+		pRenderer = m_pObject->AddComponent<CRenderer>("DocxPaperRender");
+		pRenderer->SetMesh("DocxPaper", TEXT("DocxPaper.msh"));
 	}
 
 	SAFE_RELEASE(pRenderer);
@@ -187,7 +187,7 @@ void CPaperMsgTH::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 
 	float fDist = m_pTransform->GetWorldPos().Distance(vPlayerPos);
 
-	if (fDist < 50.f)
+	if (fDist < 25.f)
 	{
 		if (pDest->GetColliderID() == UCI_PLAYER_RAY)
 		{

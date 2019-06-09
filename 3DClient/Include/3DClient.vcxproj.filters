@@ -172,6 +172,9 @@
     <Filter Include="01. SceneComponent\Stage5_CJH">
       <UniqueIdentifier>{62a66441-f9bb-46e8-b9d6-8e5e03c1f762}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\08. Etc">
+      <UniqueIdentifier>{ddb06c9f-401f-47e5-80a7-048bba281b59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -435,6 +438,12 @@
     <ClInclude Include="UserComponent\Bullet.h">
       <Filter>02. UserComponent\03. Field</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Section.h">
+      <Filter>02. UserComponent\08. Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\Elevator.h">
+      <Filter>02. UserComponent\08. Etc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -682,6 +691,12 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Bullet.cpp">
       <Filter>02. UserComponent\03. Field</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Section.cpp">
+      <Filter>02. UserComponent\08. Etc</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\Elevator.cpp">
+      <Filter>02. UserComponent\08. Etc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

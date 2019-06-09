@@ -208,7 +208,7 @@ void CPaperGongji::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
 
 	float fDist = m_pTransform->GetWorldPos().Distance(vPlayerPos);
 
-	if (fDist < 50.f)
+	if (fDist < 25.f)
 	{
 		if (pDest->GetColliderID() == UCI_PLAYER_RAY)
 		{

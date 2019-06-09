@@ -45,7 +45,7 @@ bool CPaperBQ::Init()
 
 	CRenderer*	pOutRenderer = m_pOutLineObj->AddComponent<CRenderer>("PaperBRenderer");
 
-	pOutRenderer->SetMesh("Paper", TEXT("Paper.msh"));
+	pOutRenderer->SetMesh("DocxPaper", TEXT("DocxPaper.msh"));
 
 	SAFE_RELEASE(pOutRenderer);
 
@@ -67,8 +67,8 @@ bool CPaperBQ::Init()
 
 	if (!pRenderer)
 	{
-		pRenderer = m_pObject->AddComponent<CRenderer>("PaperRender");
-		pRenderer->SetMesh("Paper", TEXT("Paper.msh"));
+		pRenderer = m_pObject->AddComponent<CRenderer>("DocxPaperPaperRender");
+		pRenderer->SetMesh("DocxPaper", TEXT("DocxPaper.msh"));
 	}
 
 	SAFE_RELEASE(pRenderer);

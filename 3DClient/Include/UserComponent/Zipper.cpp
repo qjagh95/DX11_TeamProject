@@ -5,6 +5,7 @@
 #include "Component/Transform.h"
 #include "GameObject.h"
 #include "Component/Animation2D.h"
+#include "Device.h"
 
 CZipper::CZipper()
 {
@@ -52,9 +53,9 @@ bool CZipper::Init()
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);
-
-	m_pTransform->SetWorldScale(120.f, 510.f, 1.f);
-	m_pTransform->SetWorldPos(255.f, 80.f, 1.f);
+	m_pTransform->SetWorldScale(180.f, 800.f, 1.f);
+	m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 255.f / 1280.f)),
+		_RESOLUTION.iWidth * (1.f - (1 - 80.f / 720.f)), 1.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("ZipperAnimation");
 

@@ -10,12 +10,28 @@ public:
 	CStage1Scene();
 	~CStage1Scene();
 
+	static bool m_isEventColl;
+	bool m_isTemp;
+
 private:
 	float	m_fFade;
 
+	CGameObject* m_CollObject;
+	CColliderOBB3D* m_EventColl;
+
+	CGameObject* m_DefaultObject;
+	ST_Default* m_Default;
+
+	bool m_isChangeBGM;
+
+private:
+	void EventCallback(CCollider* Src, CCollider* Dest, float DeltaTime);
+
 public:
-	virtual bool Init();
-	virtual void AfterInit();
-	virtual int Update(float fTime);
+	bool Init() override;
+	void AfterInit() override;
+	int Input(float fTime) override;
+	int Update(float fTime) override;
+	void Render(float fTime) override;
 };
 
