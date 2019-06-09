@@ -1766,9 +1766,3 @@ void CRenderManager::FindMagicNumber(float fTime)
 		ImGui::End();
 	}
 }
-
-void CRenderManager::SetMotionBlur(int iMotionBlur)
-{
-	m_tFinalCBuffer.iMotionBlur = iMotionBlur;
-	GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass", &m_tFinalCBuffer);
-}

@@ -17,11 +17,6 @@ void CHuman_Player::InteractCallBackEnter(CCollider* pSrc,
 void CHuman_Player::InteractCallBackStay(CCollider * pSrc,
 	CCollider * pDest, float fTime)
 {
-	if (pDest->GetColliderID() == (COLLIDER_ID)UCI_GRASS)
-	{ 
-		m_bOnGrass = true;
-	}
-
 	PUN::CGameObject *pDestObj = pDest->GetGameObject();
 
 	if (pDestObj)
@@ -75,14 +70,6 @@ void CHuman_Player::InteractCallBackLeave(CCollider * pSrc,
 	//즉시종료시 호출하지 않음
 	if (fTime == 0.f)
 		return;
-
-	if (pDest->GetColliderID() == (COLLIDER_ID)UCI_GRASS)
-	{
-		m_bOnGrass = false;
-		SetFootStepEnvironment(FTSE_GRASS);
-	}
-	else
-		SetFootStepEnvironment(FTSE_CONCRETE);
 	
 	PUN::CGameObject *pDestObj = pDest->GetGameObject();
 

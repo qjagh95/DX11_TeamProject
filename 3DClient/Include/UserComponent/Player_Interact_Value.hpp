@@ -14,7 +14,6 @@ float m_fRotX;
 float m_fRotY;
 float m_fAccRotX;
 float m_fAccRotY;
-bool	m_bOnGrass;
 INTERACT_STATE m_eInteractState;
 Vector3 m_vTargetDir;
 CGameObject* m_pCameraObj;

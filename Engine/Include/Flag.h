@@ -217,7 +217,87 @@ namespace PUN
 		OCT_SKILL,
 		OCT_NONE
 	};
-	
+
+	// Character Tab State
+	enum CHARACTER_TAB_STATE
+	{
+		CTS_NORMAL,
+		CTS_CLICK,
+		CTS_MOUSEON,
+		CTS_DISABLE,
+		CTS_END
+	};
+
+	// Equip Tab State
+	enum EQUIP_TAB_STATE
+	{
+		ETS_NORMAL,
+		ETS_CLICK,
+		ETS_MOUSEON,
+		ETS_DISABLE,
+		ETS_END
+	};
+
+	// Inven Tab State
+	enum INVEN_TAB_STATE
+	{
+		ITS_NORMAL,
+		ITS_CLICK,
+		ITS_MOUSEON,
+		ITS_DISABLE,
+		ITS_END
+	};
+
+	// Club Tab State
+	enum CLUB_TAB_STATE
+	{
+		CLTS_NORMAL,
+		CLTS_CLICK,
+		CLTS_MOUSEON,
+		CLTS_DISABLE,
+		CLTS_END
+	};
+
+	// Option Tab State
+	enum OPTION_TAB_STATE
+	{
+		OTS_NORMAL,
+		OTS_CLICK,
+		OTS_MOUSEON,
+		OTS_DISABLE,
+		OTS_END
+	};
+
+	// Team Tab State
+	enum TEAM_TAB_STATE
+	{
+		TTS_NORMAL,
+		TTS_CLICK,
+		TTS_MOUSEON,
+		TTS_DISABLE,
+		TTS_END
+	};
+
+	// Combo Tab State
+	enum COMBO_TAB_STATE
+	{
+		COTS_NORMAL,
+		COTS_CLICK,
+		COTS_MOUSEON,
+		COTS_DISABLE,
+		COTS_END
+	};
+
+	// Quick Slot Buttn State
+	enum QUICK_SLOT_BUTTON_STATE
+	{
+		QS_NORMAL,
+		QS_CLICK,
+		QS_MOUSEON,
+		QS_DISABLE,
+		QS_END
+	};
+
 	// End Button
 	enum END_BUTTON_STATE
 	{
@@ -400,30 +480,13 @@ namespace PUN
 		SST_S1_R7,
 		SST_S1_R8,
 		SST_S1_RG,
-		SST_S2_R0,
-		SST_S2_R1,
-		SST_S2_R2,
-		SST_S2_R3,
-		SST_S2_R4,
-		SST_S2_R5,
-		SST_S2_R6,
-		SST_S2_R7,
-		SST_S2_R8,
-		SST_S2_R9,
-		SST_S2_R10,
-		SST_S3_R1,
-		SST_S3_R2,
-		SST_S3_R3,
-		SST_S3_R4,
-		SST_S3_R5,
-		SST_S3_R6,
-		SST_S3_R7,
-		SST_S4_R0,
-		SST_S4_R1,
-		SST_S4_R2,
-		SST_S4_R3,
-		SST_S5_R0,
-		SST_S5_Elevator,
+		STT_S3_R1,
+		STT_S3_R2,
+		STT_S3_R3,
+		STT_S3_R4,
+		STT_S3_R5,
+		STT_S3_R6,
+		STT_S3_R7,
 		SST_END
 	};
 

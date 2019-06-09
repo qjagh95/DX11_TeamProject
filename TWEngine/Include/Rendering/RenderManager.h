@@ -159,7 +159,6 @@ private:
 public:
 	void FindMagicNumber(float fTime);
 
-	void SetMotionBlur(int iMotionBlur);
 
 	DECLARE_SINGLE(CRenderManager)
 };

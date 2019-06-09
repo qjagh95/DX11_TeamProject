@@ -1369,10 +1369,7 @@
             "ColliderID_Item_Duct",
             "ColliderID_Section",
             "ColliderID_Gernerator",
-            "ColliderID_Bullet",
-            "ColliderID_Wall,",
-            "ColliderID_Glass,",
-            "ColliderID_Elevator"});
+            "ColliderID_Bullet"});
             this.LB_ColliderID.Location = new System.Drawing.Point(9, 143);
             this.LB_ColliderID.Name = "LB_ColliderID";
             this.LB_ColliderID.Size = new System.Drawing.Size(260, 72);

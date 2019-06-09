@@ -233,9 +233,6 @@ void CBed::OnCollisionExitWithPlayer(PUN::CCollider * pSrc, PUN::CCollider * pDe
 	if (!pDestObj)
 		return;
 	
-	if (pDest->GetColliderID() < 0)
-		return;
-
 	CHuman_Player *pPlayer = pDest->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 
 	if (pPlayer)

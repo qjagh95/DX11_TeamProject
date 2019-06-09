@@ -177,7 +177,6 @@ bool ST3_Slient::Init()
 	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST3_Slient::DoorCollFirst);
 	m_BodyOBB->SetCollisionCallback(CCT_LEAVE, this, &ST3_Slient::DoorCollEnd);
 	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST3_Slient::PlayerBulletHit);
-	m_BodyOBB->SetCollisionCallback(CCT_STAY, this, &ST3_Slient::MonsterColl);
 
 	return true;
 }
@@ -464,39 +463,6 @@ void ST3_Slient::PlayerBulletHit(CCollider * Src, CCollider * Dest, float DeltaT
 	}
 }
 
-void ST3_Slient::MonsterColl(CCollider * Src, CCollider * Dest, float DeltaTime)
-{
-	if (Dest->GetTag() == "MonsterBodyOBB")
-	{
-		Vector3 myAxis = Dest->GetTransformNonCount()->GetWorldAxis(AXIS_Z);
-
-		Vector3 Pos = dynamic_cast<CColliderOBB3D*>(Src)->GetInfo().vCenter;
-		Vector3 DestPos = dynamic_cast<CColliderOBB3D*>(Dest)->GetInfo().vCenter;
-
-		Pos.y = 0.0f;
-		DestPos.y = 0.0f;
-
-		Vector3 Normal = Pos.Cross(DestPos);
-		Normal.Normalize();
-
-		XMVECTOR i = XMLoadFloat3((XMFLOAT3*)&myAxis);
-		XMVECTOR n = XMLoadFloat3((XMFLOAT3*)&Normal);
-		XMVECTOR Result = XMVector3Reflect(i, n);
-		Vector3 Convert = Vector3(Result);
-		Convert.Normalize();
-		Convert.y = 0.0f;
-
-		Vector3 Convert2 = Pos;
-
-		Convert2.x += Convert.x * 10.0f * DeltaTime;
-		Convert2.z += Convert.z * 10.0f * DeltaTime;
-		
-		if (CNavigationManager3D::GetInst()->FindNavMesh(m_pScene, Pos)->CheckCell(Convert2) == true)
-			m_pTransform->Move(Convert, 10.0f, DeltaTime);
-	}
-
-}
-
 void ST3_Slient::FS_IDLE(float DeltaTime)
 {
 	//어차피 한번하고 안들어옴
@@ -647,7 +613,14 @@ void ST3_Slient::FS_USER_TRACE(float DeltaTime)
 	Vector3 Dir = m_MovePos - myPos;
 	Dir.Normalize();
 
-	m_pTransform->Move(Dir, m_MoveSpeed, DeltaTime);
+	myPos += Dir * m_MoveSpeed * DeltaTime;
+	bool bMove = true;
+
+	if (m_NaviMesh->CheckCell(myPos) == false)
+		bMove = false;
+
+	if (bMove == true)
+		m_pTransform->Move(Dir, m_MoveSpeed, DeltaTime);
 
 	if (m_PathList.empty())
 		m_PathFind = false;

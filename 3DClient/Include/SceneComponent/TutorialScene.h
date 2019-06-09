@@ -18,5 +18,8 @@ public:
 	virtual bool Init();
 	virtual int Update(float fTime);
 	virtual int LateUpdate(float fTime);
+
+private:
+	void AdaptAlpha(const string& strName);
 };
 

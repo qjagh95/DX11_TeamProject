@@ -217,7 +217,87 @@ namespace PUN
 		OCT_SKILL,
 		OCT_NONE
 	};
-	
+
+	// Character Tab State
+	enum CHARACTER_TAB_STATE
+	{
+		CTS_NORMAL,
+		CTS_CLICK,
+		CTS_MOUSEON,
+		CTS_DISABLE,
+		CTS_END
+	};
+
+	// Equip Tab State
+	enum EQUIP_TAB_STATE
+	{
+		ETS_NORMAL,
+		ETS_CLICK,
+		ETS_MOUSEON,
+		ETS_DISABLE,
+		ETS_END
+	};
+
+	// Inven Tab State
+	enum INVEN_TAB_STATE
+	{
+		ITS_NORMAL,
+		ITS_CLICK,
+		ITS_MOUSEON,
+		ITS_DISABLE,
+		ITS_END
+	};
+
+	// Club Tab State
+	enum CLUB_TAB_STATE
+	{
+		CLTS_NORMAL,
+		CLTS_CLICK,
+		CLTS_MOUSEON,
+		CLTS_DISABLE,
+		CLTS_END
+	};
+
+	// Option Tab State
+	enum OPTION_TAB_STATE
+	{
+		OTS_NORMAL,
+		OTS_CLICK,
+		OTS_MOUSEON,
+		OTS_DISABLE,
+		OTS_END
+	};
+
+	// Team Tab State
+	enum TEAM_TAB_STATE
+	{
+		TTS_NORMAL,
+		TTS_CLICK,
+		TTS_MOUSEON,
+		TTS_DISABLE,
+		TTS_END
+	};
+
+	// Combo Tab State
+	enum COMBO_TAB_STATE
+	{
+		COTS_NORMAL,
+		COTS_CLICK,
+		COTS_MOUSEON,
+		COTS_DISABLE,
+		COTS_END
+	};
+
+	// Quick Slot Buttn State
+	enum QUICK_SLOT_BUTTON_STATE
+	{
+		QS_NORMAL,
+		QS_CLICK,
+		QS_MOUSEON,
+		QS_DISABLE,
+		QS_END
+	};
+
 	// End Button
 	enum END_BUTTON_STATE
 	{

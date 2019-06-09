@@ -1,2 +1,1 @@
 m_pHidingLocker = nullptr;
-m_bOnGrass = false;

@@ -6,10 +6,12 @@ PUN_USING
 enum DEFULT_STATE
 {
 	DS_IDLE,
+	DS_WALK,
 	DS_PATROL,
 	DS_USER_TRACE,
 	DS_HOOK,
 	DS_JAP,
+	DS_HIT,
 	DS_HEAD_ATTACK,
 	DS_BASH_DOOR,
 	DS_BASH_DOOR_OPEN,
@@ -32,7 +34,6 @@ public:
 	void DoorCollFirst(CCollider* Src, CCollider* Dest, float DeltaTime);
 	void DoorCollEnd(CCollider* Src, CCollider* Dest, float DeltaTime);
 	void PlayerBulletHit(CCollider* Src, CCollider* Dest, float DeltaTime);
-	void MonsterColl(CCollider* Src, CCollider* Dest, float DeltaTime);
 
 	void AddPatrolPos(const Vector3& Pos) { m_vecPatrolPos.push_back(Pos); }
 	void SetPatrolSpeed(float Value) { m_PatrolSpeed = Value; }
@@ -52,10 +53,12 @@ public:
 
 private:
 	void FS_IDLE(float DeltaTime);
+	void FS_WALK(float DeltaTime);
 	void FS_USER_TRACE(float DeltaTime);
 	void FS_HOOK(float DeltaTime);
 	void FS_JAP(float DeltaTime);
 	void FS_HEAD_ATTACK(float DeltaTime);
+	void FS_HIT(float DeltaTime);
 	void FS_BASH_DOOR(float DeltaTime);
 	void FS_BASH_DOOR_OPEN(float DeltaTime);
 	void FS_PATROL(float DeltaTime);
@@ -78,21 +81,11 @@ private:
 	CGameObject* m_3DSoundObject;
 	CSoundSource* m_3DSound;
 
-	CGameObject* m_AttackJap;
-	CColliderOBB3D* m_AttackJapBox;
-
-	CGameObject* m_AttackHook;
-	CColliderOBB3D* m_AttackHookBox;
-
-	CGameObject* m_AttackHead;
-	CColliderOBB3D* m_AttackHeadBox;
+	CGameObject* m_AttackBoxObject;
+	CColliderOBB3D* m_AttackBox;
 
 	bool m_isDoorColl;
 	bool m_isCJHStage;
-
-	bool m_isHit;
-	float m_SlowTime;
-	float m_SlowTimeVar;
 
 public:
 	ST_Default();

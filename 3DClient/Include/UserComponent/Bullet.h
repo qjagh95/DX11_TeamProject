@@ -3,7 +3,7 @@
 #include "Component/UserComponent.h"
 #include <Scene/Layer.h>
 #include "Component/Collider.h"
-
+#include "Component/Decal.h"
 
 class CBullet :
 	public PUN::CUserComponent
@@ -15,12 +15,11 @@ protected:
 	~CBullet();
 	
 private:
-	PUN::CGameObject *m_pBulletDecal;
+	PUN::CDecal *m_pBulletDecal;
 	float m_fCurrTimer;
 	int m_iDamage;
 	bool m_bLeaveDecal;
-	Vector3 m_vPrevPos;
-	static bool m_bLoaded;
+
 public:
 	static Vector4 vTracerDiffColor;
 	static Vector4 vTracerSpcColor;
