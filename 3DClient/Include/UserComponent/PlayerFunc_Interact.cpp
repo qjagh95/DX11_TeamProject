@@ -371,7 +371,13 @@ int CHuman_Player::Input_Interact(float fTime)
 
 int CHuman_Player::InteractUpdate(float fTime)
 {
-	
+	if (m_bOnGrass)
+	{
+		SetFootStepEnvironment(FTSE_GRASS);
+	}
+	else
+		SetFootStepEnvironment(FTSE_CONCRETE);
+
 	//Vector3 vTestPos = m_pTransform->GetWorldPos();
 	//std::cout << "test position : (" << vTestPos.x << ", " << vTestPos.y << ", " << vTestPos.z << ")" << std::endl;
 	if (m_iState & PSTATUS_LOCKER)

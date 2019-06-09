@@ -6,7 +6,8 @@
 
 PUN_USING
 
-CDecal::CDecal()
+CDecal::CDecal():
+	m_pRenderer(nullptr)
 {
 	SetTag("Decal");
 	m_eComType = CT_DECAL;
@@ -15,10 +16,13 @@ CDecal::CDecal()
 CDecal::CDecal(const CDecal & decal) :
 	CComponent(decal)
 {
+	m_pRenderer = nullptr;
 }
 
 CDecal::~CDecal()
 {
+	SAFE_RELEASE(m_pRenderer);
+
 }
 
 void CDecal::Start()
@@ -33,13 +37,12 @@ bool CDecal::Init()
 {
 	m_pObject->SetRenderGroup(RG_DECAL);
 
-	CRenderer*	pRenderer = m_pObject->AddComponent<CRenderer>("DecalRenderer");
-	pRenderer->SetSave(false);
-	pRenderer->SetMesh("VolumeBox");
-	pRenderer->SetRenderState(ALPHA_BLEND);
-	pRenderer->SetRenderState(CULL_NONE);
-	SAFE_RELEASE(pRenderer);
-
+	m_pRenderer = m_pObject->AddComponent<CRenderer>("DecalRenderer");
+	m_pRenderer->SetSave(false);
+	m_pRenderer->SetMesh("VolumeBox");
+	m_pRenderer->SetRenderState(ALPHA_BLEND);
+	m_pRenderer->SetRenderState(CULL_NONE);
+	
 	return true;
 }
 

@@ -13,6 +13,7 @@ protected:
 	CDecal(const CDecal& decal);
 	~CDecal();
 protected:
+	class PUN::CRenderer *m_pRenderer;
 	std::string m_strDiffuseTex;
 	std::string m_strNormalTex;
 	std::string m_strSpecTex;
