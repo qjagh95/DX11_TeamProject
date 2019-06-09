@@ -44,9 +44,6 @@ bool JBH_Stage3::Init()
 	BasicInit();
 	//DoorInit();
 
-	CSoundManager::GetInst()->CreateSoundEffect("CamSuprise", L"music/10-AI NPC CHASE INTRO 3.wav");
-	CSoundManager::GetInst()->CreateSoundEffect("TraceBGM", L"music\\10-AI NPC CHASE LOOP 2 (Strings).wav");
-
 	return true;
 }
 
@@ -106,13 +103,11 @@ void JBH_Stage3::AfterInit()
 int JBH_Stage3::Update(float DeltaTime)
 {
 	m_PlayerState = m_Player->GetState();
-	m_PlayerSection = m_PlayerObject->GetStageSection();
 
 	if (CGameManager::GetInst()->FindDoor(m_pScene, "MidDoor")->IsOpenFinished() == true)
 		m_SlientMode = true;
 
 	SupriseSound(DeltaTime);
-
 
 	if (m_ChaceNPC->GetState() == STS_USER_TRACE
 		|| m_ChaceNPC->GetState() == STS_JAP
@@ -170,8 +165,10 @@ void JBH_Stage3::BasicInit()
 	Path += "Stage3Nav.nav";
 	Land->LoadLandScape(Path);
 
-	CSoundManager::GetInst()->CreateSoundEffect("ST3BGM", L"SurgeonAttack.wav");
 	CSoundManager::GetInst()->CreateSoundEffect("GlassBracking", L"GlassBracking.wav");
+	CSoundManager::GetInst()->CreateSoundEffect("CamSuprise", L"music/10-AI NPC CHASE INTRO 3.wav");
+	CSoundManager::GetInst()->CreateSoundEffect("ST3BGM", L"SurgeonAttack.wav");
+	CSoundManager::GetInst()->CreateSoundEffect("TraceBGM", L"music\\10-AI NPC CHASE LOOP 2 (Strings).wav");
 
 	//CSoundManager::GetInst()->PlayBgm("ST3BGM");
 	CSoundManager::GetInst()->SetBgmVolume(0.5f);

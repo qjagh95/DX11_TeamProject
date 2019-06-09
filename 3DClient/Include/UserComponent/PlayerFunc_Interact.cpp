@@ -17,7 +17,7 @@ static float fz;
 bool CHuman_Player::Init_Interact()
 {
 	CRenderer* pRD = m_pObject->FindComponentFromType<CRenderer>(CT_RENDERER);
-	
+	m_iRotDir = 0;
 	CColliderOBB3D* pOBB = nullptr;
 	pOBB = m_pObject->AddComponent<CColliderOBB3D>("Player_Interact");
 	pOBB->SetMyTypeName("Player_Interact");
@@ -36,9 +36,9 @@ bool CHuman_Player::Init_Interact()
 	
 	vLength.x = 1.0f;
 	vLength.y = fabs(vMax.y - vMin.y);
-	vLength.z = 37.5f;
+	vLength.z = 40.f;
 	
-	pOBB->SetInfo(Vector3(0.0f, 0.0f, 40.f), Vector3::Axis, vLength * 0.05f);
+	pOBB->SetInfo(Vector3(0.0f, 0.0f, 45.f), Vector3::Axis, vLength * 0.05f);
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CHuman_Player::InteractCallBackEnter);
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CHuman_Player::InteractCallBackStay);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CHuman_Player::InteractCallBackLeave);
@@ -150,40 +150,43 @@ void CHuman_Player::Hide_Bed(float fTime)
 {
 	//m_eTempPlayerState = (PLAYER_STATUS)m_iState;
 	//m_iState = PSTATUS_NONE;
-
+	
 	float fAngle = m_pTransform->GetWorldRot().y - m_vTargetDir.y;
+	if (m_iRotDir == 0)
+	{
+		if (fAngle > 0.f && fAngle <= 180.0f)
+		{
+			if (m_iState & PSTATUS_CROUCHED)
+			{
+				m_pAnimation->ChangeClip("player_enter_bed_left");
+			}
+			else
+			{
+				m_pAnimation->ChangeClip("player_enter_bed_left_stand");
+			}
 
-	if (fAngle > 0.f && fAngle <= 180.0f)
-	{
-		if (m_iState & PSTATUS_CROUCHED)
+			m_iRotDir = -1;
+		}
+		else if (fAngle <= 0.f && fAngle > -180.f)
 		{
-			m_pAnimation->ChangeClip("player_enter_bed_left");
+			if (m_iState & PSTATUS_CROUCHED)
+			{
+				m_pAnimation->ChangeClip("player_enter_bed_right");
+			}
+			else
+			{
+				m_pAnimation->ChangeClip("player_enter_bed_right_stand");
+			}
+
+			m_iRotDir = 1;
 		}
 		else
 		{
-			m_pAnimation->ChangeClip("player_enter_bed_left_stand");
+			//m_iState = m_eTempPlayerState; //이거 누구냐....
+			return;
 		}
-		
-		m_iRotDir = -1;
 	}
-	else if (fAngle <= .0f && fAngle > -180.0f)
-	{
-		if (m_iState & PSTATUS_CROUCHED)
-		{
-			m_pAnimation->ChangeClip("player_enter_bed_right");
-		}
-		else
-		{
-			m_pAnimation->ChangeClip("player_enter_bed_right_stand");
-		}
-		
-		m_iRotDir = 1;
-	}
-	else
-	{
-		//m_iState = m_eTempPlayerState; //이거 누구냐....
-		return;
-	}
+	
 	
 	//m_fDestRotY = fAngle;
 	//m_fDestRotX = m_pCameraTr->GetWorldRot().x;
@@ -217,6 +220,7 @@ void CHuman_Player::Hiding_Bed(float fTime)
 void CHuman_Player::Exit_Bed(float fTime) 
 {
 	PUN::CInput *_Input = PUN::CInput::GetInst();
+
 	if (m_iRotDir == 1) //left
 	{
 		if (_Input->KeyPush("Ctrl"))
@@ -252,6 +256,7 @@ void CHuman_Player::Exit_Bed(float fTime)
 		if (m_pAnimation->GetCurrentClipTime() > 0.8f)
 		{
 			HidingMotionEnd(fTime);
+			m_iRotDir = 0;
 		}
 	}
 	//m_fViewMaxAngleY = 90;
@@ -340,7 +345,7 @@ void CHuman_Player::StateGetOutBed(float fTime)
 	}
 	else
 	{
-		
+		m_iRotDir = 0;
 	}
 }
 
