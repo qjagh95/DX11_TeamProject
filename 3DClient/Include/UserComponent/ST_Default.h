@@ -32,6 +32,7 @@ public:
 	void DoorCollFirst(CCollider* Src, CCollider* Dest, float DeltaTime);
 	void DoorCollEnd(CCollider* Src, CCollider* Dest, float DeltaTime);
 	void PlayerBulletHit(CCollider* Src, CCollider* Dest, float DeltaTime);
+	void MonsterColl(CCollider* Src, CCollider* Dest, float DeltaTime);
 
 	void AddPatrolPos(const Vector3& Pos) { m_vecPatrolPos.push_back(Pos); }
 	void SetPatrolSpeed(float Value) { m_PatrolSpeed = Value; }

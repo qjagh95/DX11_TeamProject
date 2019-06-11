@@ -16,6 +16,7 @@ CStage1Scene::CStage1Scene()
 {
 	m_fFade = 0.001f;
 	m_isTemp = false;
+	m_isChangeBGM = true;
 	m_CollObject = NULLPTR;
 	m_EventColl = NULLPTR;
 	
@@ -63,6 +64,8 @@ bool CStage1Scene::Init()
 	m_Default->AddPatrolPos(Vector3(45.0f, 0.0f, 177.0f));
 	m_Default->AddPatrolPos(Vector3(70.0f, 0.0f, 177.0f));
 	m_Default->AddPatrolPos(Vector3(90.0f, 0.0f, 177.0f));
+
+	CSoundManager::GetInst()->CreateSoundEffect("ST1_TraceBGM", L"music\\10-AI NPC CHASE LOOP 4 (Percs_02).wav");
 
 	SAFE_RELEASE(newLand);
 	SAFE_RELEASE(Land);
@@ -127,6 +130,26 @@ int CStage1Scene::Update(float fTime)
 	{
 		m_fFade = 1.f; 
 		GET_SINGLE(CSceneManager)->SetChange(false);
+	}
+
+	if (m_Default->GetState() == DS_USER_TRACE
+		|| m_Default->GetState() == DS_JAP
+		|| m_Default->GetState() == DS_HOOK
+		|| m_Default->GetState() == DS_HEAD_ATTACK)
+	{
+		if (m_isChangeBGM == false)
+		{
+			CSoundManager::GetInst()->PlayBgm("ST1_TraceBGM");
+			m_isChangeBGM = true;
+		}
+	}
+	else
+	{
+		if (m_isChangeBGM = true)
+		{
+			CSoundManager::GetInst()->PlayBgm("AMB_Heater_loop");
+			m_isChangeBGM = false;
+		}
 	}
 
 	return 0;

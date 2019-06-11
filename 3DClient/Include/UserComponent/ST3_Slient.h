@@ -37,6 +37,7 @@ public:
 	void DoorCollFirst(CCollider* Src, CCollider* Dest, float DeltaTime);
 	void DoorCollEnd(CCollider* Src, CCollider* Dest, float DeltaTime);
 	void PlayerBulletHit(CCollider* Src, CCollider* Dest, float DeltaTime);
+	void MonsterColl(CCollider* Src, CCollider* Dest, float DeltaTime);
 
 private:
 	void FS_IDLE(float DeltaTime);
@@ -52,11 +53,6 @@ private:
 	void FS_JAP(float DeltaTime);
 	void FS_HEAD_ATTACK(float DeltaTime);
 	void FS_BASH_DOOR_OPEN(float DeltaTime);
-	void FS_DESK_FIND(float DeltaTime) {}
-	void FS_BED_FIND(float DeltaTime) {}
-	void FS_LOCKER_FIND(float DeltaTime) {}
-	void FS_NORMAL_DOOR_OPEN_LEFT(float DeltaTime) {}
-	void FS_NORMAL_DOOR_OPEN_RIGHT(float DeltaTime) {}
 	
 	void Walk1Sound(float DeltaTime);
 	void Walk2Sound(float DeltaTime);
