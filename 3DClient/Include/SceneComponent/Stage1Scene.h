@@ -22,8 +22,6 @@ private:
 	CGameObject* m_DefaultObject;
 	ST_Default* m_Default;
 
-	bool m_isChangeBGM;
-
 private:
 	void EventCallback(CCollider* Src, CCollider* Dest, float DeltaTime);
 

@@ -262,38 +262,6 @@ void ST_Default::PlayerBulletHit(CCollider * Src, CCollider * Dest, float DeltaT
 	}
 }
 
-void ST_Default::MonsterColl(CCollider * Src, CCollider * Dest, float DeltaTime)
-{
-	if (Dest->GetTag() == "MonsterBodyOBB")
-	{
-		Vector3 myAxis = Dest->GetTransformNonCount()->GetWorldAxis(AXIS_Z);
-
-		Vector3 Pos = dynamic_cast<CColliderOBB3D*>(Src)->GetInfo().vCenter;
-		Vector3 DestPos = dynamic_cast<CColliderOBB3D*>(Dest)->GetInfo().vCenter;
-
-		Pos.y = 0.0f;
-		DestPos.y = 0.0f;
-
-		Vector3 Normal = Pos.Cross(DestPos);
-		Normal.Normalize();
-
-		XMVECTOR i = XMLoadFloat3((XMFLOAT3*)&myAxis);
-		XMVECTOR n = XMLoadFloat3((XMFLOAT3*)&Normal);
-		XMVECTOR Result = XMVector3Reflect(i, n);
-		Vector3 Convert = Vector3(Result);
-		Convert.Normalize();
-		Convert.y = 0.0f;
-
-		Vector3 Convert2 = Pos;
-
-		Convert2.x += Convert.x * 10.0f * DeltaTime;
-		Convert2.z += Convert.z * 10.0f * DeltaTime;
-
-		if (CNavigationManager3D::GetInst()->FindNavMesh(m_pScene, Pos)->CheckCell(Convert2) == true)
-			m_pTransform->Move(Convert, 10.0f, DeltaTime);
-	}
-}
-
 void ST_Default::FS_IDLE(float DeltaTime)
 {
 	//스테이지 변경 bool값
