@@ -99,7 +99,7 @@ bool CHitEffectAnim::Init()
 		vecClipFrame.push_back(tFrame);
 	}
 
-	m_pAnimation->AddClip("Hit_Anim", A2D_ATLAS, AO_LOOP, 0.4f, vecClipFrame,
+	m_pAnimation->AddClip("Hit_Anim", A2D_ATLAS, AO_LOOP, 0.8f, vecClipFrame,
 		"Anim_Hit", TEXT("Effect/HitEffect3.png"));
 
 	vecClipFrame.clear();
@@ -112,7 +112,7 @@ bool CHitEffectAnim::Init()
 	}
 
 	m_pAnimation->AddClip("Hit4", A2D_ATLAS, AO_LOOP, 0.4f, vecClipFrame,
-		"Anim4_Hit", TEXT("Effect/HitEffect4_new.png"));
+		"Anim4_Hit", TEXT("Effect/bloodyrect4_new.png"));
 
 	vecClipFrame.clear();
 
@@ -127,9 +127,7 @@ int CHitEffectAnim::Input(float fTime)
 }
 
 int CHitEffectAnim::Update(float fTime)
-{
-	
-
+{	
 	return 0;
 }
 
@@ -148,5 +146,5 @@ void CHitEffectAnim::Render(float fTime)
 
 CHitEffectAnim * CHitEffectAnim::Clone()
 {
-	return nullptr;
+	return new CHitEffectAnim(*this);
 }

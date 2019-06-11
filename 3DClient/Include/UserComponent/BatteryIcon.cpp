@@ -107,6 +107,15 @@ int CBatteryIcon::Update(float fTime)
 
 			SAFE_RELEASE(pHandycam);
 			SAFE_RELEASE(pHandycamObj);
+
+			CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
+
+			CBigIcon* pBigIcon = pBigIconObj->FindComponentFromType<CBigIcon>((COMPONENT_TYPE)IT_BIGICON);
+
+			pBigIcon->ChangeClip("BigIcon_Empty");
+
+			SAFE_RELEASE(pBigIcon);
+			SAFE_RELEASE(pBigIconObj);
 		}
 	}
 	

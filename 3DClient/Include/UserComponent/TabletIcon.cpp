@@ -110,6 +110,15 @@ void CTabletIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 		pHumanPlayer->SetEnvincibilityTime(5.f);
 		SAFE_RELEASE(pObjPlayer);
 		SAFE_RELEASE(pHumanPlayer);
+
+		CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
+
+		CBigIcon* pBigIcon = pBigIconObj->FindComponentFromType<CBigIcon>((COMPONENT_TYPE)IT_BIGICON);
+
+		pBigIcon->ChangeClip("BigIcon_Empty");
+
+		SAFE_RELEASE(pBigIcon);
+		SAFE_RELEASE(pBigIconObj);
 	}
 }
 

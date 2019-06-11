@@ -98,7 +98,6 @@ void CCigaretteIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 			return;
 		}
 		m_isUseItem = true;
-		cout << "µé¾î¿È" << endl;
 		CGameObject* pObjInventory = CGameObject::FindObject("Inven");
 		CInventory*	pInventory = pObjInventory->FindComponentFromTag<CInventory>("Inven");
 		pInventory->UseItem(m_pObject);
@@ -113,10 +112,19 @@ void CCigaretteIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 			pHumanPlayer->RecoveryHP(-1);
 		}
 		pHumanPlayer->SetAccelState(true);
-		pHumanPlayer->SetAccelSpeed(2.f);
-		pHumanPlayer->SetAccelDuration(10.f);
+		pHumanPlayer->SetAccelSpeed(1.5f);
+		pHumanPlayer->SetAccelDuration(60.f);
 		SAFE_RELEASE(pObjPlayer);
 		SAFE_RELEASE(pHumanPlayer);
+
+		CGameObject*	pBigIconObj = CGameObject::FindObject("BigIcon");
+
+		CBigIcon* pBigIcon = pBigIconObj->FindComponentFromType<CBigIcon>((COMPONENT_TYPE)IT_BIGICON);
+
+		pBigIcon->ChangeClip("BigIcon_Empty");
+
+		SAFE_RELEASE(pBigIcon);
+		SAFE_RELEASE(pBigIconObj);
 	}
 }
 

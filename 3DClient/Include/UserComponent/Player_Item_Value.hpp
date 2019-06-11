@@ -1,6 +1,9 @@
+
+
 class CKeyInven*	m_pKeyInven;
 class CDocxInven*	m_pDocxInven;
 CAnimation2D*	m_pRayAnimation;
+class CHitEffectAnim*	m_pHitAnim;
 CTransform*	m_pRayTr;
 float   m_fAccelTime;
 // 무적 효과
@@ -11,6 +14,7 @@ float	m_invincibilityTime;
 bool	m_isAccel;
 float	m_accelSpeed;
 float   m_accelDuration;
+float	m_fAccelTime;
 
 // 회복 효과
 int		m_playerMaxHP;

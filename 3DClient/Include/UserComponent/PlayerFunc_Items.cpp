@@ -8,6 +8,7 @@
 #include "Component/Material.h"
 #include "Component/Transform.h"
 #include "Device.h"
+#include "HitEffectAnim.h"
 
 bool CHuman_Player::Init_Items()
 {
@@ -113,6 +114,19 @@ bool CHuman_Player::Init_Items()
 
 	SAFE_RELEASE(pRayObj);
 
+	PUN::CGameObject*	pHitAnimObj = PUN::CGameObject::CreateObject("HitEffect", this->m_pLayer, true);
+
+	m_pHitAnim = pHitAnimObj->AddComponent<CHitEffectAnim>("HitEffect");
+
+	m_pHitAnim->ChangeClip("Hit_Empty");
+
+	PUN::CTransform*	pHitAnimTr = pHitAnimObj->GetTransform();
+
+	pHitAnimTr->SetWorldScale((float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 0.f);
+
+	SAFE_RELEASE(pHitAnimTr);
+	SAFE_RELEASE(pHitAnimObj);
+
 	return true;
 }
 
@@ -126,6 +140,7 @@ void CHuman_Player::OnDestroyInven()
 	SAFE_RELEASE(m_pKeyInven);
 	SAFE_RELEASE(m_pDocxInven);
 	SAFE_RELEASE(m_pRayAnimation);
+	SAFE_RELEASE(m_pHitAnim);
 	SAFE_RELEASE(m_pRayTr);
 }
 
@@ -198,18 +213,19 @@ int CHuman_Player::ItemUpdate(float fTime)
 	switch (m_playerHP)
 	{
 	case 5:
-		//m_pAnimation2D->ChangeClip("Hit_Empty");
+		m_pHitAnim->ChangeClip("Hit_Empty");
 		break;
 	case 4:
-		//m_pAnimation2D->ChangeClip("Hit1");
+		m_pHitAnim->ChangeClip("Hit1");
 		break;
 	case 3:
-		//m_pAnimation2D->ChangeClip("Hit2");
+		m_pHitAnim->ChangeClip("Hit2");
 		break;
 	case 2:
-		//m_pAnimation2D->ChangeClip("Hit_Anim");
+		m_pHitAnim->ChangeClip("Hit_Anim");
 		break;
 	case 1:
+		m_pHitAnim->ChangeClip("Hit4");
 		break;
 	}
 
