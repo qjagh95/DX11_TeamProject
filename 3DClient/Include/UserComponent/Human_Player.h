@@ -82,7 +82,9 @@ enum PLAYER_STATUS
 	PSTATUS_TURNING		=		0x2000000,
 	PSTATUS_INACTIVE =			0x4000000,
 	PSTATUS_FALLING		=		0x8000000,
-	PSTATUS_VAULT		=		0x10000000
+	PSTATUS_VAULT		=		0x10000000,
+	PSTATUS_HIT			=		0x20000000,
+	PSTATUS_DIE			=		0x40000000
 };
 
 
@@ -320,6 +322,7 @@ public:
 	void SetInInteractiveSceneChange(bool bIn);
 	bool IsPlayerOnSceneChange();
 	
+	void HitBoxEnter(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime);
 	
 	void InputRot_Interact(float fTime);
 

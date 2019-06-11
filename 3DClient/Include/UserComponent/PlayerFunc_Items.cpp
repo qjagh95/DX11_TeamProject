@@ -11,6 +11,13 @@
 
 bool CHuman_Player::Init_Items()
 {
+	tHitEffL = {};
+	tHitEffL.fEffectTime = 0.45f;
+	tHitEffL.funcEffect = std::bind(&CHuman_Player::HitCamEffL, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+	tHitEffR = {};
+	tHitEffR.fEffectTime = 0.45f;
+	tHitEffR.funcEffect = std::bind(&CHuman_Player::HitCamEffR, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
+
 	PUN::CInput::GetInst()->AddKey("F", 'F');
 	PUN::CInput::GetInst()->AddKey("U", 'U');
 	PUN::CInput::GetInst()->AddKey("K", 'K');
@@ -326,4 +333,20 @@ CKeyInven* CHuman_Player::GetKeyInven()
 CDocxInven* CHuman_Player::GetDocxInven()
 {
 	return m_pDocxInven;
+}
+
+void CHuman_Player::HitCamEffL(float fTime, float fCurrTime, float fEndTime, PUN::CTransform* pCam)
+{
+	float fRate = fCurrTime / fEndTime;
+	Vector3 vRot = Vector3::Zero;
+	vRot.y = (70.f + cosf(fRate * PUN_PI) * 100.f) * fTime;
+	PlayerRot(vRot);
+}
+
+void CHuman_Player::HitCamEffR(float fTime, float fCurrTime, float fEndTime, PUN::CTransform* pCam)
+{
+	float fRate = fCurrTime / fEndTime;
+	Vector3 vRot = Vector3::Zero;
+	vRot.y = (70.f + cosf(fRate * PUN_PI) * 100.f) * fTime;
+	PlayerRot(vRot);
 }

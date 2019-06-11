@@ -12,6 +12,7 @@
 #include <Scene/Layer.h>
 #include <Scene/SceneManager.h>
 
+
 Vector4 CBullet::vTracerDiffColor = Vector4(1.f, 0.25f, 0.f, 1.f);
 Vector4 CBullet::vTracerSpcColor = Vector4(1.f, 0.75f, 0.25f, 1.f);
 Vector3 CBullet::vBulletSize = Vector3(0.5f, 0.5f, 0.75f);
@@ -263,7 +264,7 @@ void CBullet::AfterClone()
 	//
 	//SAFE_RELEASE(pMat);
 
-	PUN::CColliderOBB3D *pCol = AddComponent<PUN::CColliderOBB3D>("BulletCol");
+	PUN::CColliderOBB3D *pCol = AddComponent<PUN::CColliderOBB3D>("BulletBody");
 	pCol->SetColliderID(UCI_BULLET);
 	pCol->SetInfo(Vector3::Zero, Vector3::Axis, vBulletSize);
 	pCol->SetCollisionCallback(PUN::CCT_ENTER, this, &CBullet::OnBulletHit);
@@ -328,6 +329,7 @@ CBullet * CBullet::Clone()
 
 void CBullet::OnBulletHit(PUN::CCollider * pSrc, PUN::CCollider * pDest, float fTime)
 {
+	
 	if (m_bLeaveDecal)
 		return;
 	PUN::CColliderOBB3D *pOBBBullet = nullptr;
@@ -490,6 +492,27 @@ void CBullet::OnBulletHit(PUN::CCollider * pSrc, PUN::CCollider * pDest, float f
 	*/
 	
 	Vector3 vCenter = (m_vPrevPos + m_pTransform->GetWorldPos()) * 0.5f - (m_pTransform->GetWorldAxis(PUN::AXIS_Z) * tBulletInfo->vLength.z);
+
+	if (pDest->GetTag() == "MonsterBodyOBB")
+	{
+		std::string strKey = "blood";
+		strKey += to_string((unsigned long long)this + rand());
+		PUN::CLayer *ppLayer = PUN::CSceneManager::GetInst()->FindLayer("Default");
+		PUN::CGameObject *pDust = PUN::CGameObject::CreateClone(strKey, "BloodParticle", ppLayer);
+		SAFE_RELEASE(ppLayer);
+
+
+		PUN::CTransform *pProtTr = pDust->GetTransform();
+		pProtTr->SetWorldPos(vCenter);
+		pProtTr->SetWorldScale(Vector3(2.5f, 5.f, 1.f));
+		SAFE_RELEASE(pProtTr);
+
+		SAFE_RELEASE(pDust);
+
+		m_pObject->Die();
+		return;
+	}
+
 	vRot.x += 90.f;
 	pDecalTrans->SetWorldRot(vRot);
 

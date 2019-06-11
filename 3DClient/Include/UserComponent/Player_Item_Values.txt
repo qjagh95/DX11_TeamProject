@@ -8,6 +8,7 @@ m_invincibilityTime	= 0.f;
 m_isAccel		= false;
 m_accelSpeed	= 1.0f;
 m_accelDuration	= 0.0f;
+m_fAccelTime = 0.f;
 
 // Ã¼·Â
 m_playerMaxHP	= 5;

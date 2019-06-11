@@ -2,6 +2,7 @@
 #include "Player_Interact_Value.hpp"
 #include "Player_Item_Value.hpp"
 #include <Component/Collider.h>
+#include <Component/Animation.h>
 #include "Door.h"
 #include "Locker.h"
 #include "Bed.h"
@@ -11,12 +12,40 @@
 void CHuman_Player::InteractCallBackEnter(CCollider* pSrc,
 	CCollider* pDest, float fTime)
 {
-
+	
+	
 }
 
 void CHuman_Player::InteractCallBackStay(CCollider * pSrc,
 	CCollider * pDest, float fTime)
 {
+	/*
+	UCI_ITEM_BATTERY,
+	UCI_ITEM_DAMBAE,
+	UCI_ITEM_LUNCHBOX,
+	UCI_ITEM_TABLET,
+	UCI_ITEM_FAK,
+	UCI_ITEM_KEY,
+	UCI_DOCUMENT,
+	*/
+
+	if (pDest->GetColliderID() >= UCI_ITEM_BATTERY && pDest->GetColliderID() <= UCI_DOCUMENT)
+	{
+		if (PUN::CInput::GetInst()->KeyRelease("F"))
+		{
+			if (m_iState & PSTATUS_CROUCHED)
+			{
+				m_pAnimation->ChangeClip("player_crouch_doc_pickup_h30v-10");
+			}
+			else
+			{
+				m_pAnimation->ChangeClip("player_crouch_object_pickup_h60v60");
+			}
+
+			m_iState |= PSTATUS_ITEM;
+		}
+	}
+
 	if (pDest->GetColliderID() == (COLLIDER_ID)UCI_GRASS)
 	{ 
 		m_bOnGrass = true;

@@ -21,3 +21,5 @@ CGameObject* m_pCameraObj;
 CTransform* m_pCameraTr;
 PLAYER_STATUS m_eTempPlayerState;
 class CLocker *m_pHidingLocker;
+tCameraEffects tHitEffL;
+tCameraEffects tHitEffR;

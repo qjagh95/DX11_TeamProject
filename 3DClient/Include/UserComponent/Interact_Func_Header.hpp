@@ -19,3 +19,5 @@ void Interact_Exit_Bed(class CBed *pBed, float fTime);
 
 void Interact_With_VaultObj(class CParkour* pVObj, float fTime);
 void Interact_Exit_VaultObj(class CParkour* pVObj, float fTime);
+
+void Hit_By_Enemy(PUN::CCollider *pEnemCol, float fTime);

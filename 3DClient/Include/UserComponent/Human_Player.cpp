@@ -463,6 +463,38 @@ void CHuman_Player::AfterClone()
 
 int CHuman_Player::Input(float fTime)
 {
+	if (m_iState & (PSTATUS_DIE))
+	{
+		m_pTransform->SetLocalPos(0.f, -50.f, 0.f);
+
+		PUN::CTransform *pTR = m_pScene->GetMainCameraTransform();
+		PUN::CTransform *pHeadTrans = m_pHeadObj->GetTransform();
+
+		Vector3 vCamPos = pHeadTrans->GetWorldPos();
+		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_X) * m_vCamCrouchLocalOffset.x;
+		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Y) * m_vCamCrouchLocalOffset.y;
+		vCamPos += pHeadTrans->GetWorldAxis(PUN::AXIS_Z) * m_vCamCrouchLocalOffset.z;
+
+		Vector3 vRot = pHeadTrans->GetWorldRot();
+		pTR->SetWorldPos(vCamPos);
+		pTR->SetWorldRot(vRot);
+
+		SAFE_RELEASE(pTR);
+		return -16;
+	}
+
+	if (m_pAnimation->GetCurrentClip()->strName == "player_stand_idle")
+	{
+		if (m_iState & PSTATUS_HIT)
+		{
+			m_iState ^= PSTATUS_HIT;
+		}
+		if (m_iState & PSTATUS_ITEM)
+		{
+			m_iState ^= PSTATUS_ITEM;
+		}
+	}
+	
 	m_bGeomTest = false;
 	m_pMovePointer->SetWorldPos(m_pTransform->GetWorldPos());
 	if (m_fBreathIntensity > 0.f)
@@ -1030,6 +1062,24 @@ int CHuman_Player::Update(float fTime)
 
 int CHuman_Player::LateUpdate(float fTime)
 {
+	//"player_crouch_object_pickup_h45v35", PUN::AO_ONCE_RETURN);
+	//"player_object_pickup_h40v70", PUN::AO_ONCE_RETURN);
+
+	if (m_iState & PSTATUS_ITEM)
+	{
+		if ((m_iPrevState & PSTATUS_ITEM) == 0)
+		{
+			if (m_iState & PSTATUS_CROUCHED)
+			{
+				m_pAnimation->ChangeClip("player_crouch_object_pickup_h45v35");
+			}
+			else
+			{
+				m_pAnimation->ChangeClip("player_object_pickup_h40v70");
+			}
+		}
+	}
+
 	pCamEffManager->LateUpdate(fTime);
 
 	m_vPrevMoveDirection = m_vMoveDirection;
@@ -1117,6 +1167,10 @@ void CHuman_Player::VoiceSound(float fTime)
 				}
 			}
 		}
+	}
+	else if (m_ePlayingVoiceType == PVT_DIE)
+	{
+		return;
 	}
 
 	std::string strVoiceKey;
@@ -1527,6 +1581,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 	m_pGeometryBody = pRoot->AddComponent<PUN::CColliderOBB3D>("PlayerGeom");
 	m_pGeometryBody->SetInfo(Vector3(0.f, -.25f, -1.f), Vector3::Axis, Vector3(1.25f, 2.55f, 1.25f));
 	m_pGeometryBody->SetColliderID(UCI_PLAYER_HIT);
+	m_pGeometryBody->SetCollisionCallback(PUN::CCT_ENTER, this, &CHuman_Player::HitBoxEnter);
 	m_pGeometryBody->SetCollisionCallback(PUN::CCT_STAY, this, &CHuman_Player::Geometry_Push);
 	m_pGeometryBody->SetCollisionCallback(PUN::CCT_LEAVE, this, &CHuman_Player::Geometry_Out);
 	
@@ -1551,8 +1606,24 @@ void CHuman_Player::Move(PUN::AXIS axis, float fSpeed, float fTime)
 
 	if (m_isAccel)
 	{
+		float fAddSpeed = fSpeed;
+		float fFirstSpeed = fAddSpeed;
+
 		fAddSpeed = m_accelSpeed * fSpeed;
 		
+		GET_SINGLE(CRenderManager)->EnableFilter(CFT_MOTIONBLUR);
+		GET_SINGLE(CRenderManager)->SetMotionBlur(1);
+
+		m_fAccelTime += fTime;
+
+		if (m_fAccelTime > m_accelDuration)
+		{
+			m_isAccel = false;
+			fAddSpeed = fFirstSpeed;
+			GET_SINGLE(CRenderManager)->DisableFilter(CFT_MOTIONBLUR);
+			GET_SINGLE(CRenderManager)->SetMotionBlur(0);
+		}
+
 	}
 	
 
@@ -1751,6 +1822,10 @@ void CHuman_Player::AfterLoad()
 	m_pAnimation->SetClipOption("player_locker_exit", PUN::AO_ONCE_RETURN);
 	m_pAnimation->SetClipOption("player_locker_hide", PUN::AO_ONCE_RETURN);
 	m_pAnimation->SetClipOption("player_jump_over_from_walk", PUN::AO_ONCE_RETURN);
+	m_pAnimation->SetClipOption("player_crouch_object_pickup_h45v35", PUN::AO_ONCE_RETURN);
+	m_pAnimation->SetClipOption("player_object_pickup_h40v70", PUN::AO_ONCE_RETURN);
+	m_pAnimation->SetClipOption("player_hit_foward", PUN::AO_ONCE_RETURN);
+	m_pAnimation->SetClipOption("player_stand_death", PUN::AO_ONCE_LAST);
 
 	m_pAnimation->SetClipUseBoneTransform("player_crouch_forward", "Hero-Pelvis");
 	m_pAnimation->SetClipUseBoneTransform("player_crouch_backward", "Hero-Pelvis");
@@ -2085,16 +2160,24 @@ void CHuman_Player::InputMove(float fTime, bool& bBlend)
 
 	if (m_iState & PSTATUS_STOPMOVE)
 	{
-		if (m_iState & PSTATUS_CROUCHED)
+		if (m_iState & PSTATUS_ITEM)
 		{
-			if ((m_iState & PSTATUS_TURNING) == 0)
-				m_pAnimation->ChangeClip("player_crouch_idle");
+
 		}
 		else
 		{
-			if((m_iState & PSTATUS_TURNING) == 0)
-				m_pAnimation->ChangeClip("player_stand_idle");
+			if (m_iState & PSTATUS_CROUCHED)
+			{
+				if ((m_iState & PSTATUS_TURNING) == 0)
+					m_pAnimation->ChangeClip("player_crouch_idle");
+			}
+			else
+			{
+				if ((m_iState & PSTATUS_TURNING) == 0)
+					m_pAnimation->ChangeClip("player_stand_idle");
+			}
 		}
+		
 	}
 }
 
@@ -2385,4 +2468,97 @@ bool CHuman_Player::IsCrouched() const
 	//if((m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_CROUCHING))
 	//	std::cout << "player is crouched" << std::endl;
 	return (m_iState & PSTATUS_CROUCHED) && !(m_iState & PSTATUS_CROUCHING);
+}
+
+
+void CHuman_Player::Hit_By_Enemy(PUN::CCollider *pEnemCol, float fTime)
+{
+	std::string strVoiceKey;
+	m_fBreathIntensity += fTime * 1.75f;
+	CCommonSoundLoader* cLoader = CCommonSoundLoader::GetInst();
+	unsigned int iTypeCnt = 1;
+	if (m_playerHP < 1)
+	{
+		strVoiceKey = strVoices[PVT_DIE];
+		iTypeCnt = cLoader->GetSoundRandomCnt(strVoiceKey);
+
+		if (iTypeCnt > 1)
+		{
+			iTypeCnt = (rand() % iTypeCnt) + 1;
+			strVoiceKey += std::to_string(iTypeCnt);
+		}
+		m_pSound->Play(strVoiceKey);
+
+		m_iState |= PSTATUS_DIE;
+		m_pAnimation->ChangeClip("player_stand_death");
+
+		return;
+	}
+
+	strVoiceKey = strVoices[PVT_HURT];
+	iTypeCnt = cLoader->GetSoundRandomCnt(strVoiceKey);
+
+	if (iTypeCnt > 1)
+	{
+		iTypeCnt = (rand() % iTypeCnt) + 1;
+		strVoiceKey += std::to_string(iTypeCnt);
+	}
+	m_pSound->Play(strVoiceKey);
+
+	m_iPlayingVoiceNumber = iTypeCnt;
+
+	m_iState |= PSTATUS_HIT;
+	m_pAnimation->ChangeClip("player_hit_forward");
+
+	//push away from enemy
+
+	PUN::CTransform *pEnemTr = pEnemCol->GetTransform();
+	Vector3 vEnemPos = pEnemTr->GetWorldPos();
+
+	SAFE_RELEASE(pEnemTr);
+
+	Vector3 vCurrPos = m_pTransform->GetWorldPos();
+
+	Vector3 vXAxis = m_pTransform->GetWorldAxis(PUN::AXIS_X);
+
+	Vector3 vP2E = vEnemPos - vCurrPos;
+	
+	float fDistM = (vP2E - vXAxis).Length();
+	float fDistP = (vP2E + vXAxis).Length();
+
+	if (fDistM == fDistP)
+	{
+		if(rand()%2 > 0)
+			CCameraEff::GetInst()->AddUpdateEffect(tHitEffL);
+		else
+			CCameraEff::GetInst()->AddUpdateEffect(tHitEffR);
+	}
+
+	else if(fDistM > fDistP)
+		CCameraEff::GetInst()->AddUpdateEffect(tHitEffR);
+	else
+		CCameraEff::GetInst()->AddUpdateEffect(tHitEffL);
+
+
+	m_playerHP -= 1;
+
+
+}
+
+
+void CHuman_Player::HitBoxEnter(PUN::CCollider* pSrc, PUN::CCollider* pDest, float fTime)
+{
+	std::string strDestTag = pDest->GetTag();
+	if (strDestTag == "JapBody" || strDestTag == "HookBody" || strDestTag == "HeadBody")
+	{
+		Hit_By_Enemy(pDest, fTime);
+	}
+	else
+	{
+		strDestTag = pSrc->GetTag();
+		if (strDestTag == "JapBody" || strDestTag == "HookBody" || strDestTag == "HeadBody")
+		{
+			Hit_By_Enemy(pSrc, fTime);
+		}
+	}
 }

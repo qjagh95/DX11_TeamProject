@@ -22,3 +22,5 @@ int   GetHP();
 void ChangeRayAnim(const string& strName);
 class CKeyInven* GetKeyInven();
 class CDocxInven* GetDocxInven();
+void HitCamEffL(float fTime, float fCurrTime, float fEndTime, PUN::CTransform* pCam);
+void HitCamEffR(float fTime, float fCurrTime, float fEndTime, PUN::CTransform* pCam);
