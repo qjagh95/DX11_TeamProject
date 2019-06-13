@@ -155,7 +155,7 @@ void JBH_Stage3::BasicInit()
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
 
 	string Path = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	Path += "TH2_Stage3.dat";
+	Path += "Majasinina_Stage3.dat";
 	m_pScene->Load(Path);
 
 	CGameObject* NavLandObject = CGameObject::CreateObject("Land", pDefaultLayer);

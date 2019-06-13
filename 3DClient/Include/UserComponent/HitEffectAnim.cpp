@@ -50,7 +50,7 @@ bool CHitEffectAnim::Init()
 
 	CMaterial*	pMaterial = m_pObject->FindComponentFromType<CMaterial>(CT_MATERIAL);
 
-	pMaterial->SetDiffuseTex(0, "HitEffectAnim", TEXT("Effect/bloodyrect2.png"));
+	pMaterial->SetDiffuseTex(0, "HitEffectAnim", TEXT("Effect/HitEffect_Empty.png"));
 	pMaterial->SetSampler(0, SAMPLER_LINEAR);
 
 	SAFE_RELEASE(pMaterial);

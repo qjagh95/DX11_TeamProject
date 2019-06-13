@@ -5,7 +5,7 @@
 #include "../UserComponent/Door.h"
 #include "../UserComponent/Human_Player.h"
 #include "../UserComponent/ST_Default.h"
-
+#include "../UserComponent/EventCollider.h"
 #include "../GameManager.h"
 
 #include <Component/LandScape.h>
@@ -64,6 +64,15 @@ bool CStage1Scene::Init()
 	m_Default->AddPatrolPos(Vector3(45.0f, 0.0f, 177.0f));
 	m_Default->AddPatrolPos(Vector3(70.0f, 0.0f, 177.0f));
 	m_Default->AddPatrolPos(Vector3(90.0f, 0.0f, 177.0f));
+
+	CGameObject*	pEventObj = CGameObject::CreateObject("EventCollider", pDefaultLayer);
+
+	CEventCollider*	pEvent = pEventObj->AddComponent<CEventCollider>("EventCollider");
+
+	pEvent->NoticeCamera();
+
+	SAFE_RELEASE(pEvent);
+	SAFE_RELEASE(pEventObj);
 
 	CSoundManager::GetInst()->CreateSoundEffect("ST1_TraceBGM", L"music\\10-AI NPC CHASE LOOP 4 (Percs_02).wav");
 

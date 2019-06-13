@@ -81,9 +81,7 @@ bool CBullet::Init()
 		pRenderer->SetMesh("Particle_GreenMat");
 		SAFE_RELEASE(pRenderer);
 
-		PUN::CColliderOBB3D*	pParticleSphere = pParticleObj->AddComponent<PUN::CColliderOBB3D>("DecalSphere");
-		pParticleSphere->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(1.f, 1.f, 1.f));
-		SAFE_RELEASE(pParticleSphere);
+		//SAFE_RELEASE(pParticleSphere);
 		PUN::CMaterial*	pParticleMtrl = pParticleObj->FindComponentFromType<PUN::CMaterial>(PUN::CT_MATERIAL);
 		vector<const TCHAR*>	vecExplosionName;
 		for (int i = 1; i <= 24; ++i)
@@ -210,6 +208,7 @@ int CBullet::Update(float fTime)
 				SAFE_RELEASE(pDust);
 
 				PUN::CLight* pLight = FindComponentFromType<PUN::CLight>(PUN::CT_LIGHT);
+				pLight->SetEnable(false);
 				pLight->SetLightColor(Vector4::Zero, Vector4::Zero, Vector4::Zero);
 				SAFE_RELEASE(pLight);
 			}
@@ -361,15 +360,26 @@ void CBullet::OnBulletHit(PUN::CCollider * pSrc, PUN::CCollider * pDest, float f
 	const PUN::POBB3DInfo tBulletInfo = &(pOBBBullet->GetInfo());
 
 	
+	bool bSkip = false;
 
 	switch (collId)
 	{
+	case UCI_NONE:
+		bSkip = true;
+		break;
 	case UCI_DOOR:
 	case UCI_PARKOUR:
 	case UCI_BED:
 	case UCI_LOCKER:
-	case UCI_WALL:
+		m_bLeaveDecal = true;
+		m_pBulletDecal->SetEnable(true);
+		break;
+
 	case UCI_GENERATOR:
+		m_bLeaveDecal = true;
+		m_pBulletDecal->SetEnable(true);
+		break;
+	case UCI_WALL:
 		m_bLeaveDecal = true;
 		m_pBulletDecal->SetEnable(true);
 		break;
@@ -382,9 +392,12 @@ void CBullet::OnBulletHit(PUN::CCollider * pSrc, PUN::CCollider * pDest, float f
 	//case UCI_DUCT:
 	//	break;
 	default:
-		return;
+		bSkip = true;
 		break;
 	}
+
+	if (bSkip)
+		return;
 
 
 	Vector3 vRot = m_pTransform->GetWorldRot();
@@ -531,5 +544,11 @@ void CBullet::OnBulletHit(PUN::CCollider * pSrc, PUN::CCollider * pDest, float f
 	SAFE_RELEASE(pDust);
 
 	pDecalTrans->SetWorldPos(vCenter);
+
+	PUN::CLight* pLight = FindComponentFromType<PUN::CLight>(PUN::CT_LIGHT);
+	pLight->SetEnable(false);
+	pLight->SetLightColor(Vector4::Zero, Vector4::Zero, Vector4::Zero);
+	SAFE_RELEASE(pLight);
+	
 	//Decal Should be set this Axis as Up Vector
 }

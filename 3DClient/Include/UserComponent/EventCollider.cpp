@@ -287,7 +287,7 @@ bool CEventCollider::NoticeCamera()
 
 	CTransform*	pPressGTr = m_pPressGObj->GetTransform();
 
-	pPressGTr->SetWorldPos(320.f, 13.f, 700.f);
+	pPressGTr->SetWorldPos(20.f, 0.f, 150.f);
 
 	SAFE_RELEASE(pPressGTr);
 

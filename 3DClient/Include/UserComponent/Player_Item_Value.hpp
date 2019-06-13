@@ -14,7 +14,6 @@ float	m_invincibilityTime;
 bool	m_isAccel;
 float	m_accelSpeed;
 float   m_accelDuration;
-float	m_fAccelTime;
 
 // 회복 효과
 int		m_playerMaxHP;
