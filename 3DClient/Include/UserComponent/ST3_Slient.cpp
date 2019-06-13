@@ -173,7 +173,12 @@ bool ST3_Slient::Init()
 	m_Animation->SetCallback("attack_left", this, 1, &ST3_Slient::AttackScream);
 	m_Animation->SetCallback("attack_middle", this, 1, &ST3_Slient::AttackScream);
 
-	m_BodyOBB->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(0.8f, 7.0f, 0.8f));
+	Vector3 Axis[3];
+	Axis[0] = m_pTransform->GetWorldAxis(AXIS_X);
+	Axis[1] = m_pTransform->GetWorldAxis(AXIS_Y);
+	Axis[2] = m_pTransform->GetWorldAxis(AXIS_Z);
+
+	m_BodyOBB->SetInfo(Vector3(0.0f, 7.0f, 0.0f), Axis, Vector3(0.8f, 7.0f, 0.8f));
 	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST3_Slient::DoorCollFirst);
 	m_BodyOBB->SetCollisionCallback(CCT_LEAVE, this, &ST3_Slient::DoorCollEnd);
 	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST3_Slient::PlayerBulletHit);
@@ -460,7 +465,7 @@ void ST3_Slient::PlayerBulletHit(CCollider * Src, CCollider * Dest, float DeltaT
 	if (Dest->GetTag() == "BulletBody")
 	{
 		m_isHit = true;
-		m_SlowTimeVar = 0.0f;
+		m_SlowTimeVar   = 0.0f;
 	}
 }
 

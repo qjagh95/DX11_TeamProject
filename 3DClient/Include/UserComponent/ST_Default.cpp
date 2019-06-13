@@ -155,7 +155,12 @@ bool ST_Default::Init()
 	m_Animation->SetSocketOffset("NPCMedium-R-Finger0", "HookBody", Vector3(-25.0f, 95.0f, -35.0f));
 	m_Animation->SetSocketOffset("NPCMedium-Head", "HeadBody", Vector3(0.0f, 180.0f, 0.0f));
 
-	m_BodyOBB->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(0.8f, 7.0f, 0.8f));
+	Vector3 Axis[3];
+	Axis[0] = m_pTransform->GetWorldAxis(AXIS_X);
+	Axis[1] = m_pTransform->GetWorldAxis(AXIS_Y);
+	Axis[2] = m_pTransform->GetWorldAxis(AXIS_Z);
+
+	m_BodyOBB->SetInfo(Vector3(0.0f, 7.0f, 0.0f), Axis, Vector3(0.8f,7.0f, 0.8f));
 	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST_Default::DoorCollFirst);
 	m_BodyOBB->SetCollisionCallback(CCT_LEAVE, this, &ST_Default::DoorCollEnd);
 	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST_Default::PlayerBulletHit);
@@ -399,6 +404,25 @@ void ST_Default::FS_PATROL(float DeltaTime)
 	}
 }
 
+void ST_Default::DoorCollCheck(float DeltaTime)
+{
+	CDoor* getDoor = CGameManager::GetInst()->GetNearDoor(m_pScene, m_CenterDownCenter);
+
+	Matrix Temp = getDoor->GetTransformNonCount()->GetPosDelta();
+	Vector3 Pos;
+	Pos.x = Temp._41;
+	Pos.z = Temp._43;
+
+	float Dist = m_CenterDownCenter.GetDistance(Pos);
+
+	if (Dist <= 3.0f)
+	{
+		m_PathFind = false;
+		ChangeState(DS_PATROL, m_AniName);
+	}
+
+}
+
 void ST_Default::FS_USER_TRACE(float DeltaTime)
 {
 	Vector3 myPos = m_CenterDownCenter;
@@ -460,6 +484,8 @@ void ST_Default::FS_USER_TRACE(float DeltaTime)
 		m_RanSelect = rand() % (int)m_vecPatrolPos.size();
 		ChangeState(DS_PATROL, m_AniName);
 	}
+
+	DoorCollCheck(DeltaTime);
 }
 
 void ST_Default::FS_HOOK(float DeltaTime)
@@ -468,11 +494,16 @@ void ST_Default::FS_HOOK(float DeltaTime)
 	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter) );
 
 	if (m_Animation->GetCurFrame() == 8)
-		m_AttackHookBox->SetEnable(true);
+	{
+		if (m_TargetDistance <= 3.0f)
+			_PLAYER->Hit_By_Enemy(m_BodyOBB, DeltaTime);
+
+		//m_AttackHookBox->SetEnable(true);
+	}
 
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
-		m_AttackHookBox->SetEnable(false);
+		//m_AttackHookBox->SetEnable(false);
 
 		if (m_TargetDistance <= 5.0f)
 		{
@@ -505,11 +536,14 @@ void ST_Default::FS_JAP(float DeltaTime)
 	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter));
 
 	if (m_Animation->GetCurFrame() == 8)
-		m_AttackJapBox->SetEnable(true);
+	{
+		if (m_TargetDistance <= 3.0f)
+			_PLAYER->Hit_By_Enemy(m_BodyOBB, DeltaTime);
+	}
 
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
-		m_AttackJapBox->SetEnable(false);
+		//m_AttackJapBox->SetEnable(false);
 
 		if (m_TargetDistance <= 5.0f)
 		{
@@ -542,11 +576,14 @@ void ST_Default::FS_HEAD_ATTACK(float DeltaTime)
 	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter) + 180.0f);
 
 	if (m_Animation->GetCurFrame() == 12)
-		m_AttackHeadBox->SetEnable(true);
+	{
+		if (m_TargetDistance <= 3.0f)
+			_PLAYER->Hit_By_Enemy(m_BodyOBB, DeltaTime);
+	}
 
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
-		m_AttackHeadBox->SetEnable(false);
+		//m_AttackHeadBox->SetEnable(false);
 
 		if (m_TargetDistance <= 5.0f)
 		{
@@ -671,4 +708,8 @@ void ST_Default::AttackScream(float DeltaTime)
 
 	if (isPlay == false)
 		m_3DSound->Play(SoundKey);
+}
+
+void ST_Default::Hit(float DeltaTime)
+{
 }

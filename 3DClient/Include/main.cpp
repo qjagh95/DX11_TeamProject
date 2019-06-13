@@ -41,10 +41,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	GET_SINGLE(CGameManager)->PostInit();
 
-	GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("Start", "Start");
-	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("TutorialScene", "Tutorial");
-	GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
+	//GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("Start", "Start");
+	//GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("TutorialScene", "Tutorial");
+	//GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
 	//GET_SINGLE(CSceneManager)->AddScene<CStage2Scene>("Stage2", "Stage2");
+	GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("wwre", "Sterewage2");
 
 	GET_SINGLE(CGameManager)->Init();
 

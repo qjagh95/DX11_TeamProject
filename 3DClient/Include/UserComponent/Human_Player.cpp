@@ -68,7 +68,7 @@ static const char* strVoices[14] =
 
 using namespace PUN;
 
-bool CHuman_Player::m_bHasGun = false;
+bool CHuman_Player::m_bHasGun = true;
 
 CHuman_Player * CHuman_Player::m_pInst = nullptr;
 

@@ -45,7 +45,7 @@ bool CStage1Scene::Init()
 	CGameObject* newLand = CGameObject::CreateObject("Stage1Navi", pDefaultLayer);
 	CLandScape* Land = newLand->AddComponent< CLandScape>("Stage1Navi");
 	string Temp = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
-	Temp += "Stage1_Test.nav";
+	Temp += "Stage1.nav";
 	Land->LoadLandScape(Temp);
 
 	m_CollObject = CGameObject::CreateObject("EventColl", pDefaultLayer);

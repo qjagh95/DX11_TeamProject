@@ -70,7 +70,7 @@ bool CLocker::Init()
 
 	pOBB->SetInfo(vCenter, vAxis, vScale);
 
-	CGameObject* pObj = CGameObject::CreateObject("LkDoorObj");
+	CGameObject* pObj = CGameObject::CreateObject("LkDorObj");
 	CTransform* pTr = pObj->GetTransform();
 	m_pDoor = pObj->AddComponent<CDoor>("LockerDoor");
 
@@ -78,7 +78,9 @@ bool CLocker::Init()
 	m_pDoor->SetOpenTime(1.2f);
 	m_pObject->AddChild(pObj);
 
-	pTr->SetWorldPos(m_vRelativePos * pTr->GetWorldScale());
+	Vector3 vDoorOffset = m_vRelativePos * pTr->GetWorldScale();
+	vDoorOffset.y += pTr->GetWorldScale().y * 1.5f;
+	pTr->SetWorldPos(vDoorOffset);
 	pTr->SetWorldScale(0.055f, 0.0345f, 0.05f);
 	//pTr->SetWorldRot(0.f, 90.f, 0.f);
 

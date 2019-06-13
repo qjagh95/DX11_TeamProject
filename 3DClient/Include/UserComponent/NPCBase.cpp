@@ -48,7 +48,6 @@ bool NPCBase::Init()
 	m_Renderer->SetAnimation(m_Animation);
 
 	m_BodyOBB = m_pObject->AddComponent<CColliderOBB3D>("MonsterBodyOBB");
-	m_BodyOBB->SetMyTypeName("MonsterBodyOBB");
 	m_BodyOBB->SetContinueTypeName("MouseCollider");
 	m_BodyOBB->SetContinueTypeName("JapBody");
 	m_BodyOBB->SetContinueTypeName("HookBody");

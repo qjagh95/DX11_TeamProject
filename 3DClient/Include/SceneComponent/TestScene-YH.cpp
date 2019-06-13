@@ -689,8 +689,8 @@ bool CTestSceneYH::Init()
 	//Locker
 	pObj = CGameObject::CreateObject("locker_test", pDefaultLayer);
 	pTransform = pObj->GetTransform();
-	pTransform->SetWorldPos(Vector3(-20.f, 0.f, 5.f));
-	pTransform->SetWorldRot(0.f, 90.f, 0.f);
+	pTransform->SetWorldPos(Vector3(10.f, 0.f, 15.f));
+	//pTransform->SetWorldRot(0.f, 90.f, 0.f);
 	CLocker* pLocker = pObj->AddComponent<CLocker>("locker");
 
 	SAFE_RELEASE(pLocker);
@@ -701,7 +701,8 @@ bool CTestSceneYH::Init()
 	//넘을 책상
 	pObj = CGameObject::CreateObject("vault_desk", pDefaultLayer);
 	pTransform = pObj->GetTransform();
-	pTransform->SetWorldPos(Vector3(-15.f, 0.f, 5.f));
+	pTransform->SetWorldPos(Vector3(5.f, 0.f, -15.f));
+	pTransform->SetWorldRot(Vector3(0.f, 15.f, 0.f));
 	CParkour *pParkour = pObj->AddComponent<CParkour>("vault");
 	
 

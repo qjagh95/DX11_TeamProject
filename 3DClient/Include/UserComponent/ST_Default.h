@@ -60,6 +60,8 @@ private:
 	void FS_BASH_DOOR_OPEN(float DeltaTime);
 	void FS_PATROL(float DeltaTime);
 
+	void DoorCollCheck(float DeltaTime);
+
 private:
 	string m_AniName[DS_MAX];
 	float m_PlayerFindDist;
