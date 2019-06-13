@@ -1065,21 +1065,6 @@ int CHuman_Player::LateUpdate(float fTime)
 	//"player_crouch_object_pickup_h45v35", PUN::AO_ONCE_RETURN);
 	//"player_object_pickup_h40v70", PUN::AO_ONCE_RETURN);
 
-	if (m_iState & PSTATUS_ITEM)
-	{
-		if ((m_iPrevState & PSTATUS_ITEM) == 0)
-		{
-			if (m_iState & PSTATUS_CROUCHED)
-			{
-				m_pAnimation->ChangeClip("player_crouch_object_pickup_h45v35");
-			}
-			else
-			{
-				m_pAnimation->ChangeClip("player_object_pickup_h40v70");
-			}
-		}
-	}
-
 	pCamEffManager->LateUpdate(fTime);
 
 	m_vPrevMoveDirection = m_vMoveDirection;
@@ -2325,7 +2310,22 @@ void CHuman_Player::InputRot(float fTime, PUN::CTransform *pHeadTrans, Vector3& 
 			float fTurnMotion = 120.f * fTime;
 			m_iState |= PSTATUS_TURNING;
 
-			if (m_iState & PSTATUS_STOPMOVE)
+
+			if (m_iState & PSTATUS_ITEM)
+			{
+				if ((m_iPrevState & PSTATUS_ITEM) == 0)
+				{
+					if (m_iState & PSTATUS_CROUCHED)
+					{
+						m_pAnimation->ChangeClip("player_crouch_object_pickup_h45v35");
+					}
+					else
+					{
+						m_pAnimation->ChangeClip("player_object_pickup_h40v70");
+					}
+				}
+			}
+			else if (m_iState & PSTATUS_STOPMOVE)
 			{
 				if (m_iState & PSTATUS_BED)
 				{

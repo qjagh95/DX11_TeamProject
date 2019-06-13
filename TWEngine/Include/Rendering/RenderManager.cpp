@@ -57,12 +57,18 @@ CRenderManager::CRenderManager() :
 
 	// ============= Magic Number용 =================
 	m_bHDR = false;
+	m_bHDROn = false;
 	m_bAdaptation = false;
+	m_bAdaptationOn = false;
 	m_bBloom = false;
+	m_bBloomOn = false;
 	m_bBlur = false;
+	m_bBlurOn = false;
 	m_bMotionBlur = false;
+	m_bMotionBlurOn = false;
 	m_bSLC = false;
 	m_bDepthFog = false;
+	m_bDepthFogOn = false;
 
 	m_iScopeFlag = -1;
 	m_fOnOff = 1.f;
@@ -231,7 +237,8 @@ bool CRenderManager::Init()
 
 	m_pRandomNormalTex = GET_SINGLE(CResourcesManager)->FindTexture("RandomNormal");
 
-	m_tCBuffer.iSSAOEnable = 0;
+	m_tCBuffer.iSSAOEnable = 1;
+	m_bSSAOEnable = true;
 
 	// 야간 투시경에 필요한 정보
 	srand((unsigned int)time(NULL));
@@ -1556,7 +1563,10 @@ void CRenderManager::SetOnOff(float iOnOff)
 void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, bool bOnOff)
 {
 	if (bOnOff)
+	{
+		m_bHDR = true;
 		EnableFilter(CFT_HDR);
+	}
 
 	else
 		DisableFilter(CFT_HDR);
@@ -1571,7 +1581,11 @@ void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, bool bOnOff
 void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime, bool bOnOff)
 {
 	if (bOnOff)
+	{
+		m_bHDROn = bOnOff;
+		m_bHDR = true;
 		EnableFilter(CFT_HDR);
+	}
 
 	else
 		DisableFilter(CFT_HDR);
@@ -1586,7 +1600,11 @@ void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime
 void CRenderManager::SetAdaptValue(float fAdaptation, float fTime, bool bOnOff)
 {
 	if (bOnOff)
+	{
+		m_bAdaptationOn = bOnOff;
 		EnableFilter(CFT_ADAPTATION);
+		m_tFinalCBuffer.iAdaptation = 1;
+	}
 
 	else
 		DisableFilter(CFT_ADAPTATION);
@@ -1616,7 +1634,11 @@ void CRenderManager::SetAdaptValue(float fAdaptation, bool bOnOff)
 void CRenderManager::SetBloomValue(float fBloomScale, float fTime, bool bOnOff)
 {
 	if (bOnOff)
+	{
 		EnableFilter(CFT_BLOOM);
+		m_bBloom = true;
+		m_bBloomOn = bOnOff;
+	}
 
 	else
 		DisableFilter(CFT_BLOOM);
@@ -1632,6 +1654,48 @@ void CRenderManager::SetFadeAmount(float fFadeAmount, float fTime)
 	m_tFinalCBuffer.fFadeAmount = fFadeAmount;
 
 	GET_SINGLE(CShaderManager)->UpdateCBuffer("FinalPass", &m_tFinalCBuffer);
+}
+
+void CRenderManager::SetDepthFog(bool bOnOff, Vector4 vFogColor, float fStartDepth, float fEndDepth)
+{
+	if (bOnOff)
+	{
+		m_bDepthFogOn = bOnOff;
+		m_tFinalCBuffer.iDepthFog = 1;
+	}
+	else
+	{
+		m_bDepthFogOn = bOnOff;
+		m_tFinalCBuffer.iDepthFog = 0;
+	}
+
+	m_tDepthFogCBuffer.fStartDepth = fStartDepth;
+	m_tDepthFogCBuffer.fEndDepth = fEndDepth;
+	m_tDepthFogCBuffer.vFogColor = vFogColor;
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("DepthFog", &m_tDepthFogCBuffer);
+}
+
+void CRenderManager::SetDepthFog(bool bOnOff, float r, float g, float b, float fStartDepth, float fEndDepth)
+{
+	if (bOnOff)
+	{
+		m_bDepthFogOn = bOnOff;
+		m_tFinalCBuffer.iDepthFog = 1;
+	}
+	else
+	{
+		m_bDepthFogOn = bOnOff;
+		m_tFinalCBuffer.iDepthFog = 0;
+	}
+
+	m_tDepthFogCBuffer.fStartDepth = fStartDepth;
+	m_tDepthFogCBuffer.fEndDepth = fEndDepth;
+	m_tDepthFogCBuffer.vFogColor.r = r;
+	m_tDepthFogCBuffer.vFogColor.g = g;
+	m_tDepthFogCBuffer.vFogColor.b = b;
+
+	GET_SINGLE(CShaderManager)->UpdateCBuffer("DepthFog", &m_tDepthFogCBuffer);
 }
 
 void CRenderManager::SetBloomValue(float fBloomScale, bool bOnOff)
@@ -1683,7 +1747,7 @@ void CRenderManager::FindMagicNumber(float fTime)
 			m_pPostEffect->SetFinalPassCB(m_fMiddleGrey, m_fLumWhite, fTime);
 			m_pPostEffect->UpdateCBuffer(CFT_HDR);
 		}
-		else
+		else if(m_bHDR == false && m_bHDROn == false)
 			DisableFilter(CFT_HDR);
 
 		ImGui::Checkbox("Adaptation", &m_bAdaptation);
@@ -1698,7 +1762,7 @@ void CRenderManager::FindMagicNumber(float fTime)
 
 			pFilter->SetAdaptationTime(m_fAdaptation);
 		}
-        else
+        else if(m_bAdaptation == false && m_bAdaptationOn == false)
 			DisableFilter(CFT_ADAPTATION);
 		
 		ImGui::Checkbox("Bloom", &m_bBloom);
@@ -1715,27 +1779,27 @@ void CRenderManager::FindMagicNumber(float fTime)
 			pFilter->SetBloomThreshold(m_fBloomThreshold);
 			pFilter->SetBloomScale(m_fBloomScale);
 		}
-		else
+		else if(m_bBloom == false && m_bBloomOn == false)
 			DisableFilter(CFT_BLOOM);
 
 		ImGui::Checkbox("Blur", &m_bBlur);
 
 		if (m_bBlur)
 			EnableFilter(CFT_BLUR);
-		else
+		else if(m_bBlur == false && m_bBlurOn == false)
 			DisableFilter(CFT_BLUR);
 
 		ImGui::Checkbox("MotionBlur", &m_bMotionBlur);
 
 		if (m_bMotionBlur)
 			EnableFilter(CFT_MOTIONBLUR);
-		else
+		else if(m_bMotionBlur == false && m_bMotionBlurOn == false)
 			DisableFilter(CFT_MOTIONBLUR);
 
 		ImGui::Checkbox("SSAO", &m_bSSAOEnable);
 		if (m_bSSAOEnable)
 			m_tCBuffer.iSSAOEnable = 1;
-		else
+		else if(m_bSSAOEnable == false && m_bSSAOEnableOn == false)
 			m_tCBuffer.iSSAOEnable = 0;
 
 		ImGui::Checkbox("DepthFog", &m_bDepthFog);
@@ -1760,7 +1824,7 @@ void CRenderManager::FindMagicNumber(float fTime)
 
 			GET_SINGLE(CShaderManager)->UpdateCBuffer("DepthFog", &m_tDepthFogCBuffer);
 		}
-		else
+		else if(m_bDepthFog == false && m_bDepthFogOn == false)
 			m_tFinalCBuffer.iDepthFog = 0;
 
 		ImGui::End();

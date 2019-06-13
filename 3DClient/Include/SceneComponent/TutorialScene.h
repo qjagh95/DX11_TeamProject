@@ -12,6 +12,7 @@ public:
 
 private:
 	float			m_fFade;
+	float			m_fAdaptationTime;
 
 public:
 	virtual void AfterInit();

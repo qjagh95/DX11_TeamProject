@@ -2,6 +2,7 @@
 #include "Human_Player.h"
 #include "Inventory.h"
 #include "Component/ColliderOBB3D.h"
+#include "Component/ColliderRay.h"
 #include "Resource/Mesh.h"
 #include "Scene/SceneManager.h"
 #include "Door.h"
@@ -43,6 +44,8 @@ bool CHuman_Player::Init_Interact()
 	pOBB->SetCollisionCallback(CCT_STAY, this, &CHuman_Player::InteractCallBackStay);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CHuman_Player::InteractCallBackLeave);
 	
+
+
 	SAFE_RELEASE(pMesh);
 	SAFE_RELEASE(pOBB);
 	SAFE_RELEASE(pRD);

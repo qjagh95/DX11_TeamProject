@@ -4,6 +4,7 @@ class CKeyInven*	m_pKeyInven;
 class CDocxInven*	m_pDocxInven;
 CAnimation2D*	m_pRayAnimation;
 class CHitEffectAnim*	m_pHitAnim;
+class CGameObject*	m_pHitAnimObj;
 CTransform*	m_pRayTr;
 float   m_fAccelTime;
 // 무적 효과

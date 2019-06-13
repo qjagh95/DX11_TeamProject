@@ -74,13 +74,20 @@ private:
 	class CPostEffect*	m_pPostEffect;
 	bool				m_bMagic;
 	bool				m_bHDR;
+	bool				m_bHDROn;
 	bool				m_bAdaptation;
+	bool				m_bAdaptationOn;
 	bool				m_bBloom;
+	bool				m_bBloomOn;
 	bool				m_bBlur;
+	bool				m_bBlurOn;
 	bool				m_bMotionBlur;
+	bool				m_bMotionBlurOn;
 	bool				m_bSLC;
 	bool				m_bSSAOEnable;
+	bool				m_bSSAOEnableOn;
 	bool				m_bDepthFog;
+	bool				m_bDepthFogOn;
 	bool				m_AdaptOn;
 	float				m_fMiddleGrey;
 	float				m_fLumWhite;
@@ -123,6 +130,8 @@ public:
 	void SetBloomValue(float fBloomScale, bool bOnOff = false);
 	void SetBloomValue(float fBloomScale, float fTime, bool bOnOff = false);
 	void SetFadeAmount(float fFadeAmount, float fTime);
+	void SetDepthFog(bool bOnOff, Vector4 vFogColor = Vector4::Black, float fStartDepth = 0.f, float fEndDepth = 0.f);
+	void SetDepthFog(bool bOnOff, float r, float g, float b, float fStartDepth = 0.f, float fEndDepth = 0.f);
 
 public:
 	void AddRenderObj(class CGameObject* pObj);

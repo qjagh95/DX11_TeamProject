@@ -75,6 +75,7 @@ bool CHuman_Player::Init_Items()
 	pRay->SetInfo(vMousePos, Vector3::Axis[AXIS_Z]);
 	pRay->MouseEnable();
 	pRay->SetCollisionCallback(CCT_ENTER, this, &CHuman_Player::RayCallBackEnter);
+	pRay->SetCollisionCallback(CCT_STAY, this, &CHuman_Player::RayCallBackStay);
 	pRay->SetCollisionCallback(CCT_LEAVE, this, &CHuman_Player::RayCallBackLeave);
 	pRay->SetColliderID((COLLIDER_ID)UCI_PLAYER_RAY);
 
@@ -114,18 +115,17 @@ bool CHuman_Player::Init_Items()
 
 	SAFE_RELEASE(pRayObj);
 
-	PUN::CGameObject*	pHitAnimObj = PUN::CGameObject::CreateObject("HitEffect", this->m_pLayer, true);
+	m_pHitAnimObj = PUN::CGameObject::CreateObject("HitEffect", this->m_pLayer, true);
 
-	m_pHitAnim = pHitAnimObj->AddComponent<CHitEffectAnim>("HitEffect");
+	m_pHitAnim = m_pHitAnimObj->AddComponent<CHitEffectAnim>("HitEffect");
 
 	m_pHitAnim->ChangeClip("Hit_Empty");
 
-	PUN::CTransform*	pHitAnimTr = pHitAnimObj->GetTransform();
+	PUN::CTransform*	pHitAnimTr = m_pHitAnimObj->GetTransform();
 
 	pHitAnimTr->SetWorldScale((float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 0.f);
 
 	SAFE_RELEASE(pHitAnimTr);
-	SAFE_RELEASE(pHitAnimObj);
 
 	return true;
 }
@@ -140,8 +140,9 @@ void CHuman_Player::OnDestroyInven()
 	SAFE_RELEASE(m_pKeyInven);
 	SAFE_RELEASE(m_pDocxInven);
 	SAFE_RELEASE(m_pRayAnimation);
-	SAFE_RELEASE(m_pHitAnim);
 	SAFE_RELEASE(m_pRayTr);
+	SAFE_RELEASE(m_pHitAnim);
+	SAFE_RELEASE(m_pHitAnimObj);
 }
 
 int CHuman_Player::Input_Items(float fTime)

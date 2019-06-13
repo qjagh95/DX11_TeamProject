@@ -45,6 +45,7 @@
 CTutorialScene::CTutorialScene()
 {
 	m_fFade = 0.f;
+	m_fAdaptationTime = 0.f;
 }
 
 CTutorialScene::~CTutorialScene()
@@ -65,7 +66,8 @@ bool CTutorialScene::Init()
 	string filePath = CW2A(wstr.c_str());
 	m_pScene->Load(filePath);
 
-	//GET_SINGLE(CRenderManager)->SetHDRValue(0.22f, 5.7f);
+	GET_SINGLE(CRenderManager)->SetHDRValue(0.22f, 5.7f);
+	GET_SINGLE(CRenderManager)->SetDepthFog(true, 0.136f, 0.005f, 0.136f, 0.f, 168.f);
 
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
@@ -342,6 +344,21 @@ int CTutorialScene::Update(float fTime)
 		m_fFade = 1.f;
 		GET_SINGLE(CSceneManager)->SetChange(false);
 	}
+
+	m_fAdaptationTime += fTime;
+
+	if (m_fAdaptationTime <= 1.f)
+	{
+		GET_SINGLE(CRenderManager)->SetAdaptValue(0.5f, fTime, true);
+	}
+
+	if (m_fAdaptationTime > 1.f && m_fAdaptationTime <= 4.f)
+	{
+		GET_SINGLE(CRenderManager)->SetAdaptValue(3.f, fTime, true);
+	}
+
+	if (m_fAdaptationTime > 3.f)
+		m_fAdaptationTime = 0.f;
 
 	return 0;
 }
