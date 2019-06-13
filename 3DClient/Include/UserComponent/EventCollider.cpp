@@ -101,6 +101,9 @@ int CEventCollider::Input(float fTime)
 			iState ^= PSTATUS_FALLING;
 			pPlayer->SetState(iState);
 			GET_SINGLE(CRenderManager)->SetFadeAmount(0.001f, fTime);
+			GET_SINGLE(CRenderManager)->SetAdaptValue(0.f, fTime, false);
+			GET_SINGLE(CRenderManager)->SetHDRValue(0.22f, 5.7f, false);
+			GET_SINGLE(CRenderManager)->SetDepthFog(false, 0.f, 0.f, 0.f, 0.f, 0.f);
 
 			GET_SINGLE(CSceneManager)->ChangeScene("Stage1"); 
 			pTr->SetWorldPos(Vector3(20.f , 0.f , 150.f));
@@ -267,7 +270,7 @@ bool CEventCollider::SetTutorial()
 
 	pOBB = pNextObj->AddComponent<CColliderOBB3D>("NextSceneBody");
 
-	pOBB->SetInfo(2.5f, Vector3::Axis, Vector3(30.f, 5.f, 50.f));
+	pOBB->SetInfo(2.5f, Vector3::Axis, Vector3(30.f, 50.f, 50.f));
 	pOBB->SetCollisionCallback(CCT_ENTER, this, &CEventCollider::Hit);
 	pOBB->SetCollisionCallback(CCT_LEAVE, this, &CEventCollider::Out);
 

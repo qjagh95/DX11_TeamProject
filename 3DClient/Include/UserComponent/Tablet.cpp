@@ -185,7 +185,10 @@ void CTablet::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 				pPlayer->ChangeRayAnim("AimOff");
 				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
 				SetOutLineVisible(false);
+				unsigned int uState = pPlayer->GetState();
 
+				uState |= PSTATUS_ITEM;
+				pPlayer->SetState(uState);
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
 				SAFE_RELEASE(pUILayer);

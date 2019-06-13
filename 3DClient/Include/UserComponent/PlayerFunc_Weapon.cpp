@@ -90,24 +90,28 @@ int CHuman_Player::WeaponInput(float fTime)
 	
 	if (CInput::GetInst()->KeyPress("1"))
 	{
-		if (!m_pPistol->GetEnable())
+		if (m_bHasGun)
 		{
-			m_pPistol->DrawOut();
-			m_pPartCamAnim->bActivated = true;
-			m_pPartCamAnim->bUseCustomParent = true;
-			m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("gun_take")->second;
-			m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("gun_idle")->second;
-			m_iState |= PSTATUS_GUN;
-			
+			if (!m_pPistol->GetEnable())
+			{
+				m_pPistol->DrawOut();
+				m_pPartCamAnim->bActivated = true;
+				m_pPartCamAnim->bUseCustomParent = true;
+				m_pPartCamAnim->pNextClip = m_pPartCamAnim->mapPartClips.find("gun_take")->second;
+				m_pPartCamAnim->pDefaultClip = m_pPartCamAnim->mapPartClips.find("gun_idle")->second;
+				m_iState |= PSTATUS_GUN;
+
+			}
+			else
+			{
+				m_pPartCamAnim->bActivated = false;
+				m_pPartCamAnim->bUseCustomParent = false;
+				m_iState ^= PSTATUS_GUN;
+				m_pPistol->SetEnable(false);
+				m_pHandGun->SetEnable(false);
+			}
 		}
-		else
-		{
-			m_pPartCamAnim->bActivated = false;
-			m_pPartCamAnim->bUseCustomParent = false;
-			m_iState ^= PSTATUS_GUN;
-			m_pPistol->SetEnable(false);
-			m_pHandGun->SetEnable(false);
-		}
+		
 	}
 	
 	if (m_pPistol->GetEnable())

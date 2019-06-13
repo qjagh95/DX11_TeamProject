@@ -1588,7 +1588,11 @@ void CRenderManager::SetHDRValue(float fMiddleGrey, float fLumWhite, float fTime
 	}
 
 	else
+	{
 		DisableFilter(CFT_HDR);
+		m_bHDROn = bOnOff;
+		m_bHDR = false;
+	}
 
 	m_fMiddleGrey = fMiddleGrey;
 	m_fLumWhite = fLumWhite;
@@ -1607,7 +1611,11 @@ void CRenderManager::SetAdaptValue(float fAdaptation, float fTime, bool bOnOff)
 	}
 
 	else
+	{
 		DisableFilter(CFT_ADAPTATION);
+		m_bAdaptationOn = bOnOff;
+		m_bAdaptation = false;
+	}
 
 	m_fAdaptation = fAdaptation;
 
@@ -1622,7 +1630,11 @@ void CRenderManager::SetAdaptValue(float fAdaptation, bool bOnOff)
 		EnableFilter(CFT_ADAPTATION);
 
 	else
+	{
 		DisableFilter(CFT_ADAPTATION);
+		m_bAdaptationOn = bOnOff;
+		m_bAdaptation = false;
+	}
 
 	m_fAdaptation = fAdaptation;
 
@@ -1641,7 +1653,11 @@ void CRenderManager::SetBloomValue(float fBloomScale, float fTime, bool bOnOff)
 	}
 
 	else
+	{
 		DisableFilter(CFT_BLOOM);
+		m_bBloomOn = bOnOff;
+		m_bBloom = false;
+	}
 
 	m_fBloomScale = fBloomScale;
 
@@ -1665,6 +1681,7 @@ void CRenderManager::SetDepthFog(bool bOnOff, Vector4 vFogColor, float fStartDep
 	}
 	else
 	{
+		m_bDepthFog = false;
 		m_bDepthFogOn = bOnOff;
 		m_tFinalCBuffer.iDepthFog = 0;
 	}
@@ -1685,6 +1702,7 @@ void CRenderManager::SetDepthFog(bool bOnOff, float r, float g, float b, float f
 	}
 	else
 	{
+		m_bDepthFog = false;
 		m_bDepthFogOn = bOnOff;
 		m_tFinalCBuffer.iDepthFog = 0;
 	}
@@ -1704,7 +1722,11 @@ void CRenderManager::SetBloomValue(float fBloomScale, bool bOnOff)
 		EnableFilter(CFT_BLOOM);
 
 	else
+	{
 		DisableFilter(CFT_BLOOM);
+		m_bBloomOn = false;
+		m_bBloom = false;
+	}
 
 	m_fBloomScale = fBloomScale;
 

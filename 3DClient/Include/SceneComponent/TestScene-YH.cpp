@@ -55,6 +55,12 @@ bool CTestSceneYH::Init()
 {
 	//CCameraEff::GetInst()->SetFirstPersonViewEnable();
 	//PUN::CSoundManager::GetInst()->PlayBgm(TEXT("Zipper_Open.WAV"), true);
+
+	PUN::CSoundManager::GetInst()->CreateSoundEffect("bgm001", TEXT("APINK.wav"));
+	PUN::CSoundManager::GetInst()->CreateSoundEffect("bgm002", TEXT("orig_sudden.wav"));
+
+	PUN::CSoundManager::GetInst()->SetTransitionTime(1.5f);
+
 	CCamera* pCamera = m_pScene->GetMainCamera();
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	pCamera->SetNear(0.03f);
@@ -571,7 +577,8 @@ bool CTestSceneYH::Init()
 	
 	*/
 	
-	//파티클 만들기
+/*
+//파티클 만들기
 	CGameObject*	pParticleObj = CGameObject::CreateObject("BloodParticle", pDefaultLayer);
 	CParticle*	pParticle = pParticleObj->AddComponent<CParticle>("Particle");
 	SAFE_RELEASE(pParticle);
@@ -595,55 +602,102 @@ bool CTestSceneYH::Init()
 		vecFrame.push_back(tFrame);
 	}
 	pParticleMtrl->SetDiffuseTex(4, "Gun_Blood", vecExplosionName);
-	
 	pParticleMtrl->SetSampler(0, SAMPLER_LINEAR);
 	SAFE_RELEASE(pParticleMtrl);
 	CAnimation2D*	pParticleAnimation = pParticleObj->AddComponent<CAnimation2D>("ParticleAnimation");
-
 	pParticleAnimation->AddClip("Idle", A2D_FRAME, AO_LOOP,
 		0.333334f, vecFrame, "Gun_Blood", vecExplosionName);
 
 	SAFE_RELEASE(pParticleAnimation);
-
 	for (size_t i = 0; i < vecExplosionName.size(); ++i)
 	{
 		SAFE_DELETE_ARRAY(vecExplosionName[i]);
 	}
-
 	vecExplosionName.clear();
-	
-	pTransform = pParticleObj->GetTransform();
 
+	pTransform = pParticleObj->GetTransform();
 	pTransform->SetWorldPos(-50.f, 15.f, 5.f);
 	pTransform->SetWorldScale(6.f, 6.f, 1.f);
-
 	SAFE_RELEASE(pTransform);
-
 	SAFE_RELEASE(pParticleObj);
+
+
+	//먼지 파티클
+	pParticleObj = CGameObject::CreateObject("DustParticle", pDefaultLayer);
+	pParticle = pParticleObj->AddComponent<CParticle>("Particle");
+	SAFE_RELEASE(pParticle);
+
+	pRenderer = pParticleObj->FindComponentFromType<CRenderer>(PUN::CT_RENDERER);
+	pRenderer->SetMesh("Particle_GreenMat");
+	//pRenderer->SetMesh("Particle_BlackMat");
+	SAFE_RELEASE(pRenderer);
+	pParticleMtrl = pParticleObj->FindComponentFromType<CMaterial>(CT_MATERIAL);
+	vecExplosionName.clear();
+	vecFrame.clear();
+	for (int i = 1; i <= 179; ++i)
+	{
+		int idx = i < 90 ? i : 180 - i;
+		TCHAR*	pFileName = new TCHAR[MAX_PATH];
+		memset(pFileName, 0, sizeof(TCHAR) * MAX_PATH);
+		wsprintf(pFileName, TEXT("Particles\\Dust_Interior_Loop\\dust%d.png"), idx);
+		vecExplosionName.push_back(pFileName);
+
+		Clip2DFrame	tFrame = {};
+		tFrame.vLT = Vector2(0.f, 0.f);
+		tFrame.vRB = Vector2(1.f, 1.f);
+		vecFrame.push_back(tFrame);
+	}
+	pParticleMtrl->SetDiffuseTex(4, "Dust_Loop", vecExplosionName);
+	pParticleMtrl->SetSampler(0, SAMPLER_LINEAR);
+	SAFE_RELEASE(pParticleMtrl);
+	pParticleAnimation = pParticleObj->AddComponent<CAnimation2D>("ParticleAnimation");
+	pParticleAnimation->AddClip("Idle", A2D_FRAME, AO_LOOP,
+		6.f, vecFrame, "Interior_Dust", vecExplosionName);
+
+	SAFE_RELEASE(pParticleAnimation);
+	for (size_t i = 0; i < vecExplosionName.size(); ++i)
+	{
+		SAFE_DELETE_ARRAY(vecExplosionName[i]);
+	}
+	vecExplosionName.clear();
+
+	pTransform = pParticleObj->GetTransform();
+	pTransform->SetWorldPos(0.f, 4.f, 0.f);
+	pTransform->SetWorldScale(32.f, 18.f, 1.f);
+	SAFE_RELEASE(pTransform);
+	SAFE_RELEASE(pParticleObj);
+*/
+	
+	
 	
 	//숨을 침대
 	pObj = CGameObject::CreateObject("bed_test", pDefaultLayer);
 	
 	pTransform = pObj->GetTransform();
 	pTransform->SetWorldPos(15.f, 0.f, 10.f);
+	pTransform->SetWorldRot(0.f, 45.f, 0.f);
 	SAFE_RELEASE(pTransform);
 	CBed *pBed = pObj->AddComponent<CBed>("bed");
 
 	SAFE_RELEASE(pBed);
 
 	SAFE_RELEASE(pObj);
+	
+	
 
+	
 	//Locker
 	pObj = CGameObject::CreateObject("locker_test", pDefaultLayer);
 	pTransform = pObj->GetTransform();
 	pTransform->SetWorldPos(Vector3(-20.f, 0.f, 5.f));
-
+	pTransform->SetWorldRot(0.f, 90.f, 0.f);
 	CLocker* pLocker = pObj->AddComponent<CLocker>("locker");
 
 	SAFE_RELEASE(pLocker);
 	SAFE_RELEASE(pTransform);
 	SAFE_RELEASE(pObj);
-
+	
+	
 	//넘을 책상
 	pObj = CGameObject::CreateObject("vault_desk", pDefaultLayer);
 	pTransform = pObj->GetTransform();
@@ -666,6 +720,15 @@ bool CTestSceneYH::Init()
 
 int CTestSceneYH::Update(float fTime)
 {
+	if (PUN::CInput::GetInst()->KeyPress("NumPad1"))
+	{
+		PUN::CSoundManager::GetInst()->PlayBgm("bgm001");
+	}
+	if (PUN::CInput::GetInst()->KeyPress("NumPad2"))
+	{
+		PUN::CSoundManager::GetInst()->PlayBgm("bgm002");
+	}
+
 	if (!m_bInitUpdate)
 	{
 		if (_PLAYER)

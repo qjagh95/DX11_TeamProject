@@ -60,6 +60,9 @@ void CTutorialScene::AfterInit()
 
 bool CTutorialScene::Init()
 {
+	GET_SINGLE(CSoundManager)->CreateSoundEffect("TutorialBGM", L"ambient/Thunder_Roll_08.wav");
+	GET_SINGLE(CSoundManager)->PlayBgm("TutorialBGM");
+
 	wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
 	wstr += L"TutorialScene.dat";
 	//wstr += L"TH2_Stage3.dat";
@@ -174,19 +177,19 @@ bool CTutorialScene::Init()
 	//SAFE_RELEASE(pObjLunchBox);
 
 	//// Cigarette
-	//CGameObject* pObjCigarette = CGameObject::CreateObject("Cigarette", pDefaultLayer);
+	CGameObject* pObjCigarette = CGameObject::CreateObject("Cigarette", pDefaultLayer);
 
-	//CTransform* pCigaretteTr = pObjCigarette->GetTransform();
-	//pCigaretteTr->SetWorldPos(300.f, 20.f, 620.f);
+	CTransform* pCigaretteTr = pObjCigarette->GetTransform();
+	pCigaretteTr->SetWorldPos(300.f, 20.f, 620.f);
 
-	//CCigarette* pUCCigarette = pObjCigarette->AddComponent<CCigarette>("UC_Cigarette");
+	CCigarette* pUCCigarette = pObjCigarette->AddComponent<CCigarette>("UC_Cigarette");
 
-	//Vector3 pCigaPos = pCigaretteTr->GetWorldPos();
-	//pUCCigarette->SetOutLinePos(pCigaPos);
+	Vector3 pCigaPos = pCigaretteTr->GetWorldPos();
+	pUCCigarette->SetOutLinePos(pCigaPos);
 
-	//SAFE_RELEASE(pUCCigarette);
-	//SAFE_RELEASE(pCigaretteTr);
-	//SAFE_RELEASE(pObjCigarette);
+	SAFE_RELEASE(pUCCigarette);
+	SAFE_RELEASE(pCigaretteTr);
+	SAFE_RELEASE(pObjCigarette);
 
 	//// Tablet
 	//CGameObject* pObjTablet = CGameObject::CreateObject("Tablet", pDefaultLayer);

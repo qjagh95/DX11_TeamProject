@@ -121,7 +121,7 @@ int CCigarette::Update(float _fTime)
 		pPlayer->ChangeRayAnim("AimOff");
 		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
 		SetOutLineVisible(false);
-
+		pPlayer->TakeItem();
 		m_bMotion = false;
 
 		SAFE_RELEASE(pPlayer);

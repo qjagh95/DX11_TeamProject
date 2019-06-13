@@ -5,6 +5,7 @@
 #include "Component/Arm.h"
 #include "Component/FreeCamera.h"
 #include "EditManager.h"
+#include "Rendering/RenderManager.h"
 PUN_USING
 
 EditorScene::EditorScene()
@@ -28,6 +29,7 @@ bool EditorScene::Init()
 	pCamera->SetCameraType(CT_PERSPECTIVE);
 	pCameraTr->SetWorldPos(Vector3(0.f, 0.0f, -50.f));
 
+	GET_SINGLE(CRenderManager)->SetHDRValue(0.22f, 5.5f, false);
 	//////////////Camera Target Object///////////////////////
 	//CGameObject* pObject = CGameObject::CreateObject("FreeCamObj", pDefaultLayer);
 	//pObject->SetSave(false);

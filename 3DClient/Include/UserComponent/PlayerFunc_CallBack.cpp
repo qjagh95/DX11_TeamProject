@@ -179,19 +179,7 @@ void CHuman_Player::RayCallBackStay(CCollider * pSrc,
 
 	if (pDest->GetColliderID() >= UCI_ITEM_BATTERY && pDest->GetColliderID() <= UCI_DOCUMENT)
 	{
-		if (PUN::CInput::GetInst()->KeyRelease("F"))
-		{
-			if (m_iState & PSTATUS_CROUCHED)
-			{
-				m_pAnimation->ChangeClip("player_crouch_doc_pickup_h30v-10");
-			}
-			else
-			{
-				m_pAnimation->ChangeClip("player_crouch_object_pickup_h60v60");
-			}
-
-			m_iState |= PSTATUS_ITEM;
-		}
+		
 	}
 
 }

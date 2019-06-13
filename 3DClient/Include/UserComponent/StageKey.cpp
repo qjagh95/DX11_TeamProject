@@ -149,7 +149,7 @@ int CStageKey::Update(float fTime)
 				pPlayer->ChangeRayAnim("AimOff");
 				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
 				SetOutLineVisible(false);
-
+				pPlayer->TakeItem();
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
 				SAFE_RELEASE(pUILayer);

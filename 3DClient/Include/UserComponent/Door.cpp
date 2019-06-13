@@ -125,6 +125,7 @@ bool CDoor::Init()
 			vAxis[i] = vAxis[i].TransformNormal(matLocalRot);
 		}
 
+
 		m_OBB->SetInfo(vCenter, vAxis, vScale);
 		m_OBB->SetColliderID((COLLIDER_ID)UCI_DOOR);
 	}

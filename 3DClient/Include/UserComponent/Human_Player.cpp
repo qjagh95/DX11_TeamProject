@@ -68,6 +68,7 @@ static const char* strVoices[14] =
 
 using namespace PUN;
 
+bool CHuman_Player::m_bHasGun = false;
 
 CHuman_Player * CHuman_Player::m_pInst = nullptr;
 
@@ -95,7 +96,7 @@ CHuman_Player::CHuman_Player() :
 	m_pPartCamAnim(nullptr),
 	m_fBreathIntensity(0.f),
 	m_iPrevState(0),
-	m_bNaviOn (true),
+	m_bNaviOn(true),
 	m_cInitLoopFinished(2),
 	m_fMaxHideBedAngleY(15.f),
 	m_fMaxHideBedAngleX(20.f),
@@ -489,9 +490,9 @@ int CHuman_Player::Input(float fTime)
 		{
 			m_iState ^= PSTATUS_HIT;
 		}
-		if (m_iState & PSTATUS_ITEM)
+		if (m_iState & PSTATUS_PICKUP)
 		{
-			m_iState ^= PSTATUS_ITEM;
+			m_iState ^= PSTATUS_PICKUP;
 		}
 	}
 	
@@ -2561,4 +2562,23 @@ void CHuman_Player::HitBoxEnter(PUN::CCollider* pSrc, PUN::CCollider* pDest, flo
 			Hit_By_Enemy(pSrc, fTime);
 		}
 	}
+}
+
+void CHuman_Player::TakeItem()
+{
+	if (m_iState & PSTATUS_CROUCHED)
+	{
+		m_pAnimation->ChangeClip("player_crouch_doc_pickup_h30v-10");
+	}
+	else
+	{
+		m_pAnimation->ChangeClip("player_crouch_object_pickup_h60v60");
+	}
+
+	m_iState |= PSTATUS_PICKUP;
+}
+
+void CHuman_Player::GunCheat()
+{
+	m_bHasGun = true;
 }

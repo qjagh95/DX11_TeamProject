@@ -55,7 +55,7 @@ enum PLAYER_STATUS
 {
 	PSTATUS_NONE,
 	PSTATUS_IDLE,
-	PSTATUS_WOUNDED = 2,
+	PSTATUS_PICKUP = 2,
 	PSTATUS_WALK = 4,
 	PSTATUS_SPRINT = 8,
 	PSTATUS_STOPMOVE =			0x10,
@@ -197,6 +197,7 @@ private:
 	float m_fMaxHideBedAngleX;
 	float m_fMaxHideBedAngleY;
 	bool  m_bNaviOn;
+	static bool m_bHasGun;
 	char  m_cMoveCheckFlag;
 	Vector3 m_vCamWorldOffset	;
 	Vector3 m_vCamLocalOffset;
@@ -335,8 +336,8 @@ public:
 	bool IsCrouched() const;
 	bool OnCrouchMoving() const;
 	bool IsIdle() const;
-	
-
+	void TakeItem();
+	void GunCheat();
 	class CInventory *GetInv();
 	//custom public Functions
 #include "Cam_Func_Header.hpp"

@@ -177,24 +177,8 @@ void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime
 			return;
 	}
 
-
-
 	PUN::CColliderOBB3D * pSrcCol = nullptr;
 	PUN::CColliderOBB3D * pDestCol = nullptr;
-
-	if (pDestCol->GetColliderID() == UCI_DUCT)
-	{
-		m_iState |= PSTATUS_DUCT;
-
-		if (m_iState & PSTATUS_CROUCHED)
-			return;
-		else if (m_iState & PSTATUS_CROUCHING)
-		{
-			m_iState & PSTATUS_CROUCHED;
-			m_iState ^= PSTATUS_CROUCHING;
-			return;
-		}
-	}
 
 	if (pSrc->GetTag() == "PlayerGeom")
 	{
@@ -211,6 +195,22 @@ void CHuman_Player::Geometry_Push(CCollider *pSrc, CCollider *pDest, float fTime
 		return;
 	if (!pSrcCol)
 		return;
+
+
+	if (pDestCol->GetColliderID() == UCI_DUCT)
+	{
+		m_iState |= PSTATUS_DUCT;
+
+		if (m_iState & PSTATUS_CROUCHED)
+			return;
+		else if (m_iState & PSTATUS_CROUCHING)
+		{
+			m_iState & PSTATUS_CROUCHED;
+			m_iState ^= PSTATUS_CROUCHING;
+			return;
+		}
+	}
+
 
 	if (pDestCol->GetColliderID() > (PUN::COLLIDER_TYPE)UCI_LOCKER)
 	{

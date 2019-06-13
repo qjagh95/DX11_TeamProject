@@ -115,9 +115,9 @@ bool CHuman_Player::Init_Items()
 
 	SAFE_RELEASE(pRayObj);
 
-	m_pHitAnimObj = PUN::CGameObject::CreateObject("HitEffect", this->m_pLayer, true);
+	m_pHitAnimObj = PUN::CGameObject::CreateObject("HE", this->m_pLayer, true);
 
-	m_pHitAnim = m_pHitAnimObj->AddComponent<CHitEffectAnim>("HitEffect");
+	m_pHitAnim = m_pHitAnimObj->AddComponent<CHitEffectAnim>("HE");
 
 	m_pHitAnim->ChangeClip("Hit_Empty");
 

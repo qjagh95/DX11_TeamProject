@@ -153,7 +153,7 @@ int CBattery::Update(float fTime)
 				CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
 				pPlayer->ChangeRayAnim("AimOff");
 				GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
-
+				pPlayer->TakeItem();
 				SAFE_RELEASE(pPlayer);
 				SAFE_RELEASE(pPlayerObj);
 				SAFE_RELEASE(pUILayer);

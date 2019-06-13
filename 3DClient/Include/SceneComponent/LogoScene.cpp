@@ -164,12 +164,12 @@ int CLogoScene::Update(float fTime)
 			m_pPMsgTr->Move(Vector3(-1.f, 0.f, 0.f), 3000.f, fTime);
 		}
 
-		if (m_fChangeTime >= 0.1f && m_fChangeTime < 6.f)
+		if (m_fChangeTime >= 0.1f && m_fChangeTime < 10.f)
 		{
 			bMove = false;
 		}
 
-		else if (m_fChangeTime >= 6.f)
+		else if (m_fChangeTime >= 10.f)
 		{
 			GET_SINGLE(CRenderManager)->SetFadeAmount(0.001f, fTime);
 
