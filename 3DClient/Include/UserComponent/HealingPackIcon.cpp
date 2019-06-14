@@ -26,8 +26,8 @@ CHealingPackIcon::~CHealingPackIcon()
 bool CHealingPackIcon::Init()
 {
 	// Transform
-	//m_pTransform->SetWorldScale(135.f, 136.f, 1.f);
-	m_pTransform->SetWorldScale(90.f, 91.f, 1.f);
+	m_pTransform->SetWorldScale(135.f, 136.f, 1.f);
+	//m_pTransform->SetWorldScale(90.f, 91.f, 1.f);
 	//m_pTransform->SetWorldPos(600.f, 429.f, 0.f);
 
 	// Renderer
@@ -42,8 +42,8 @@ bool CHealingPackIcon::Init()
 	// Collider
 	m_pCollider = AddComponent<CColliderRect>("IconCollider");
 	m_pCollider->SetCollisionGroup("UI");
-	//m_pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(150.f, 150.f, 0.f));
-	m_pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
+	m_pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(150.f, 150.f, 0.f));
+	//m_pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
 	m_pCollider->SetCollisionCallback(CCT_ENTER, this, &CHealingPackIcon::Hit);
 	m_pCollider->SetCollisionCallback(CCT_STAY, this, &CHealingPackIcon::HitStay);
 	m_pCollider->SetCollisionCallback(CCT_LEAVE, this, &CHealingPackIcon::MouseOut);

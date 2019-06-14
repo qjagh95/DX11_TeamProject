@@ -28,7 +28,7 @@ CCore::CCore()
 	m_pTimer = NULLPTR;
 	m_LogText = NULLPTR;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(46831);
+	//_CrtSetBreakAlloc(7773077);
 	
 	memset(m_fClearColor, 0, sizeof(float) * 4);
 
@@ -270,7 +270,7 @@ int CCore::Run()
 		else
 		{
 			if (m_bGuiMode == true)
-				GUIManager::Get()->ImGuiBegin("Rendering Options");
+				GUIManager::Get()->ImGuiBegin("Profiles");
 
 			Logic();
 		}

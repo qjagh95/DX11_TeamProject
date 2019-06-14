@@ -13,6 +13,8 @@ public:
 
 private:
 	float	m_fFade;
+	bool	m_bBGMChange;
+	int		m_iIllusion;
 
 	vector<CGameObject*> m_vecRealObj;
 	vector<CGameObject*> m_vecIllusionObj;
@@ -23,6 +25,7 @@ public:
 	virtual bool Init();
 	virtual void AfterInit();
 	virtual int Update(float fTime);
+	virtual void ChangeScene();
 
 	void InteractIllusion(CCollider* pSrc, CCollider* pDest, float fTime);
 	void InteractReal(CCollider* pSrc, CCollider* pDest, float fTime);

@@ -46,12 +46,6 @@ PS_OUTPUT_SINGLE StarLightScopePS(VS_OUTPUT_TEX input)
 
     if (isFlag == 1)
     {
-        float2 cvtUV = input.vUV * 2 - 1;
-        float powX = pow((cvtUV.x / ratio), 2);
-        float powY = pow(cvtUV.y, 2);
-        float distance = abs(sqrt(powX + powY));
-        distance *= 0.8f;
-
         // 야간투시경 색상
         float red, green, blue = 0.f;
         red   =   1.f / 255.f;
@@ -59,7 +53,16 @@ PS_OUTPUT_SINGLE StarLightScopePS(VS_OUTPUT_TEX input)
         blue  =  30.f / 255.f;
         float4 filterColor = float4(red, green, blue, 1.f);        
 
+        //화면 중앙을 0,0으로 맞춰주기 위한 보정
+        float2 cvtUV = input.vUV * 2.0f - 1.0f;
+        //종횡비가 자동으로 보정이 안돼서 타원형으로 나오기때문에 직접 곱한다.
+        float powX = pow((cvtUV.x / ratio), 2);
+        float powY = pow(cvtUV.y, 2);
+        float distance = abs(sqrt(powX + powY));
+        distance *= 0.8f;
+
         float fEnd = g_cameraNearFar.y - 950.f;
+        //깊이에따라서 DepthFog비슷한 효과를 내도록 한다.
         float zInten = saturate(vDepthColor.w / fEnd); // z intencity
 
         // 거리 값에 비례하여 어둡게 처리한다.

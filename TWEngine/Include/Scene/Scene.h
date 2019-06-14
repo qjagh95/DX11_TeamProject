@@ -32,6 +32,7 @@ public:
 	void EnableLayer(const string& strTag, bool bEnable);
 	void ChangeLayerZOrder(const string& strTag, int iZOrder);
 	void GetLayerTagList(vector<string>* _pVec);
+	void ChangeScene();
 	CLayer* FindLayer(const string& strTag);
 	CGameObject* m_LandObject;
 	void AfterInit();

@@ -142,6 +142,9 @@ void CLight::Load(BinaryRead * _pInstBR)
 	m_tInfo.iRimLight = iRimLight;
 
 	m_vOriginColor = vDif;
+
+	if (strstr(m_pObject->GetTag().c_str(), "Lamp") != nullptr)
+		EnableLightVolume();
 }
 
 void CLight::EnableLightVolume()
@@ -150,52 +153,6 @@ void CLight::EnableLightVolume()
 
 	if (m_eLightType == LT_SPOT)
 	{
-		m_pTransform->SetLocalRotX(90.0f);
-
-		
-
-		if (!m_pFog)
-		{
-			CGameObject* pObj = CGameObject::CreateObject("LightFog", nullptr);
-			pObj->SetSave(false);
-			CTransform* pTr = pObj->GetTransform();
-			m_pObject->AddChild(pObj);
-
-			float fRadius = 0.0f;
-			float fRadian = DegreeToRadian(m_fOutAngle * 0.5f);
-			float fTangent = tanf(fRadian);
-			fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle * 0.5f));
-
-			m_pFog = pObj->AddComponent<CVolumeFog>("VolumeFog");
-
-			m_pFog->SetFogColor(m_vOriginColor);
-			m_pFog->SetMesh(CORN_VOLUME);
-
-			m_pFog->SetDensity(0.1f);
-
-			pTr->SetWorldScale(fRadius, m_fRange * 0.125f, fRadius);
-			pTr->SetWorldRotX(90.0f);
-
-			SAFE_RELEASE(pTr);
-			SAFE_RELEASE(pObj);
-		}
-		else
-		{
-			m_pFog->SetEnable(true);
-			CTransform* pTr = m_pFog->GetTransform();
-
-			m_pFog->SetFogColor(m_vOriginColor);
-			m_pFog->SetMesh(CORN_VOLUME);
-
-			float fRadius = m_fRange * tanf(DegreeToRadian(m_fOutAngle * 0.5f));
-
-			pTr->SetWorldScale(fRadius, m_fRange * 0.33f, fRadius);
-
-			SAFE_RELEASE(pTr);
-		}
-	}
-	else if (m_eLightType == LT_POINT)
-	{
 		if (!m_pFog)
 		{
 			CGameObject* pObj = CGameObject::CreateObject("LightFog", nullptr);
@@ -208,8 +165,8 @@ void CLight::EnableLightVolume()
 			m_pFog->SetFogColor(m_vOriginColor);
 			m_pFog->SetMesh("Sky");
 			m_pFog->SetDensity(0.1f);
-
-			pTr->SetWorldScale(m_fRange * 0.33f, m_fRange * 0.33f, m_fRange * 0.33f);
+			pTr->SetWorldPos(0.0f, 1.5f, 3.0f);
+			pTr->SetWorldScale(3.0f);
 
 			SAFE_RELEASE(pTr);
 			SAFE_RELEASE(pObj);
@@ -222,7 +179,7 @@ void CLight::EnableLightVolume()
 			m_pFog->SetFogColor(m_vOriginColor);
 			m_pFog->SetMesh("Sky");
 
-			pTr->SetWorldScale(m_fRange * 0.33f, m_fRange * 0.33f, m_fRange * 0.33f);
+			pTr->SetWorldScale(3.0f);
 
 			SAFE_RELEASE(pTr);
 		}
@@ -395,12 +352,12 @@ void CLight::UpdateLightCBuffer()
 
 void CLight::StartBlink(float fLimitTime, float fDeltaTime, const Vector4 & vColor, bool bFinalTurnOn)
 {
+	m_bBlink = true;
 	m_fLimitTime = fLimitTime;
 	m_fDeltaTime = fDeltaTime;
 	m_fCheckTime = 0.0f;
 	m_fAccTime = 0.0f;
 	m_vChangeColor = vColor;
-	m_bBlink = true;
 	m_bBlinkFinalTurnOn = bFinalTurnOn;
 }
 
@@ -425,13 +382,13 @@ void CLight::Blink(float fTime)
 			{	
 				if (m_bTurnOn)
 				{
-					SetLightColor(m_vOriginColor, Vector4(0.2f, 0.2f, 0.2f, 1.f), m_vOriginColor);
-					m_bTurnOn = true;
+					m_tInfo.vDif = m_vChangeColor;
+					m_bTurnOn = false;
 				}
 				else
 				{
-					SetLightColor(m_vChangeColor, Vector4(0.2f, 0.2f, 0.2f, 1.f), m_vChangeColor);
-					m_bTurnOn = false;
+					m_tInfo.vDif = m_vOriginColor;
+					m_bTurnOn = true;
 				}
 				m_fCheckTime = m_fAccTime;
 			}
@@ -442,12 +399,12 @@ void CLight::Blink(float fTime)
 
 			if (m_bBlinkFinalTurnOn)
 			{
-				SetLightColor(m_vOriginColor, Vector4(0.2f, 0.2f, 0.2f, 1.f), m_vOriginColor);
+				m_tInfo.vDif = m_vOriginColor;
 				m_bTurnOn = true;
 			}
 			else
 			{
-				SetLightColor(m_vChangeColor, Vector4(0.2f, 0.2f, 0.2f, 1.f), m_vChangeColor);
+				m_tInfo.vDif = m_vChangeColor;
 				m_bTurnOn = false;
 			}
 			m_fAccTime = 0.0f;

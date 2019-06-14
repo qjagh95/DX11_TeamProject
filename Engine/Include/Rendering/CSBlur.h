@@ -31,7 +31,9 @@ public:
 	bool GetDOFEnable();
 	void EnableDOF();
 	void DisableDOF();
-	
+	void SetDensity(float fDensity);
+	void SetFar(float fFar);
+	void SetNumPixel(int iNum);
 
 public:
 	virtual bool Init();

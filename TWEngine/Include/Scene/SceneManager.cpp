@@ -180,6 +180,8 @@ void CSceneManager::ChangeScene(const string & KeyName)
 	for (; StartIter != EndIter; StartIter++)
 		StartIter->second->SetScene(m_pCurScene);
 
+	m_pCurScene->ChangeScene();
+
 	GET_SINGLE(CRenderManager)->SetSkyObject(getScene->GetSkyObjectNonCount());
 
 	m_bChange = true;
@@ -219,7 +221,7 @@ CGameObject * CSceneManager::GetMainCameraObjNonCount() const
 
 bool CSceneManager::Init()
 {
-	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 90.f, 0.03f, 1000.f);;
+	m_pMainCameraObj = CreateCamera("MainCamera", Vector3(0.f, 0.f, -5.f), CT_PERSPECTIVE, (float)_RESOLUTION.iWidth, (float)_RESOLUTION.iHeight, 70.f, 0.03f, 1000.f);;
 	m_pMainCameraTr = m_pMainCameraObj->GetTransform();
 	m_pMainCamera = m_pMainCameraObj->FindComponentFromType<CCamera>(CT_CAMERA);
 

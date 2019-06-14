@@ -383,25 +383,20 @@ void ST_Default::FS_PATROL(float DeltaTime)
 	Vector3 Dir = m_MovePos - m_CenterDownCenter;
 	Dir.Normalize();
 
-	m_pTransform->LookAtY(m_MovePos);
-	m_pTransform->Move(Dir, 10.0f, DeltaTime);
+	m_pTransform->Move(Dir, 8.0f, DeltaTime);
 
-	float fDist = m_MovePos.Distance(m_pTransform->GetWorldPos());
-
-	if (fDist < 0.5f)
+	if (m_PathList.empty())
+		m_PathFind = false;
+	else
 	{
-		if (m_PathList.empty())
-			m_PathFind = false;
-		else
+		if (((m_CenterDownCenter.x <= m_MovePos.x + 1.0f) && (m_CenterDownCenter.x >= m_MovePos.x - 1.0f)) && (m_CenterDownCenter.z <= m_MovePos.z + 1.0f && m_CenterDownCenter.z >= m_MovePos.z - 1.0f))
 		{
-			if (((m_CenterDownCenter.x <= m_MovePos.x + 1.0f) && (m_CenterDownCenter.x >= m_MovePos.x - 1.0f)) && (m_CenterDownCenter.z <= m_MovePos.z + 1.0f && m_CenterDownCenter.z >= m_MovePos.z - 1.0f))
-			{
-				m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
-				m_MovePos = m_PathList.front();
-				m_PathList.pop_front();
-			}
+			m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
+			m_MovePos = m_PathList.front();
+			m_PathList.pop_front();
 		}
 	}
+
 
 	if (m_CenterDownCenter.Distance(PatrolPos) < 5.0f)
 	{
@@ -458,7 +453,8 @@ void ST_Default::FS_USER_TRACE(float DeltaTime)
 	Vector3 Dir = m_MovePos - myPos;
 	Dir.Normalize();
 
-	m_pTransform->Move(Dir, m_MoveSpeed, DeltaTime);
+	//m_pTransform->Move(Dir, m_MoveSpeed, DeltaTime);
+	m_pTransform->Move(Dir, 8.f, DeltaTime);
 
 	if (m_PathList.empty())
 		m_PathFind = false;
@@ -506,16 +502,11 @@ void ST_Default::FS_HOOK(float DeltaTime)
 	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter));
 
 	if (m_Animation->GetCurFrame() == 8)
-	{
-		if (m_TargetDistance <= 3.0f)
-			_PLAYER->Hit_By_Enemy(m_BodyOBB, DeltaTime);
-
-		//m_AttackHookBox->SetEnable(true);
-	}
+		m_AttackHookBox->SetEnable(true);
 
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
-		//m_AttackHookBox->SetEnable(false);
+		m_AttackHookBox->SetEnable(false);
 
 		if (m_TargetDistance <= 5.0f)
 		{
@@ -548,14 +539,11 @@ void ST_Default::FS_JAP(float DeltaTime)
 	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter));
 
 	if (m_Animation->GetCurFrame() == 8)
-	{
-		if (m_TargetDistance <= 3.0f)
-			_PLAYER->Hit_By_Enemy(m_BodyOBB, DeltaTime);
-	}
+		m_AttackJapBox->SetEnable(true);
 
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
-		//m_AttackJapBox->SetEnable(false);
+		m_AttackJapBox->SetEnable(false);
 
 		if (m_TargetDistance <= 5.0f)
 		{
@@ -588,14 +576,11 @@ void ST_Default::FS_HEAD_ATTACK(float DeltaTime)
 	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter) + 180.0f);
 
 	if (m_Animation->GetCurFrame() == 12)
-	{
-		if (m_TargetDistance <= 3.0f)
-			_PLAYER->Hit_By_Enemy(m_BodyOBB, DeltaTime);
-	}
+		m_AttackHeadBox->SetEnable(false);
 
 	if (m_Animation->IsCurAnimEnd() == true)
 	{
-		//m_AttackHeadBox->SetEnable(false);
+		m_AttackHeadBox->SetEnable(false);
 
 		if (m_TargetDistance <= 5.0f)
 		{

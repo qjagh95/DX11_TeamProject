@@ -739,134 +739,6 @@ void SoundEffectInstanceBase::Apply3D(const AudioListener& listener, const Audio
     float matrix[XAUDIO2_MAX_AUDIO_CHANNELS * 8] = {};
     assert(mDSPSettings.SrcChannelCount <= XAUDIO2_MAX_AUDIO_CHANNELS);
     assert(mDSPSettings.DstChannelCount <= 8);
-    //Edit by YeongHyeok Kwon
-    //Stereo Sound : Must Set Matrix properly
-    /*
-    UINT32 dwChannelMask = engine->GetChannelMask();
-
-    switch (dwChannelMask)
-    {
-    case SPEAKER_MONO:
-       matrix[0] = 1.0f;
-       break;
-    case SPEAKER_STEREO:
-        matrix[0] = 1.0f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = 1.f;
-        break;
-    case SPEAKER_2POINT1:
-        matrix[0] = 1.0f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = 1.f;
-        matrix[4] = 0.f;
-        matrix[5] = 0.f;
-        break;
-    case SPEAKER_4POINT1:
-        matrix[0] = 1.0f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = 1.f;
-        matrix[4] = 0.f;
-        matrix[5] = 0.f;
-        matrix[6] = 0.8f;
-        matrix[7] = 0.f;
-        matrix[8] = 0.f;
-        matrix[9] = 0.8f;
-        break;
-    case SPEAKER_5POINT1:
-        matrix[0] = 1.0f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = 1.f;
-        matrix[4] = 0.f;
-        matrix[5] = 0.f;
-        matrix[6] = 0.f;
-        matrix[7] = 0.f;
-        matrix[8] = 0.8f;
-        matrix[9] = 0.f;
-        matrix[10] = 0.f;
-        matrix[11] = 0.8f;
-        break;
-    case SPEAKER_7POINT1:
-        matrix[0] = .9f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = .9f;
-        matrix[4] = 0.f;
-        matrix[5] = 0.f;
-        matrix[6] = 0.f;
-        matrix[7] = 0.f;
-        matrix[8] = 0.8f;
-        matrix[9] = 0.f;
-        matrix[10] = 0.f;
-        matrix[11] = 0.8f;
-        matrix[12] = 1.f;
-        matrix[13] = 0.f;
-        matrix[14] = 0.f;
-        matrix[15] = 1.f;
-        break;
-    case SPEAKER_5POINT1_SURROUND:
-        matrix[0] = .9f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = .9f;
-        matrix[4] = 0.f;
-        matrix[5] = 0.f;
-        matrix[6] = 0.f;
-        matrix[7] = 0.f;
-        matrix[8] = 1.f;
-        matrix[9] = 0.f;
-        matrix[10] = 0.f;
-        matrix[11] = 1.f;
-        break;
-    case SPEAKER_7POINT1_SURROUND:
-        matrix[0] = .9f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = .9f;
-        matrix[4] = 0.f;
-        matrix[5] = 0.f;
-        matrix[6] = 0.f;
-        matrix[7] = 0.f;
-        matrix[8] = 0.8f;
-        matrix[9] = 0.f;
-        matrix[10] = 0.f;
-        matrix[11] = 0.8f;
-        matrix[12] = 1.f;
-        matrix[13] = 0.f;
-        matrix[14] = 0.f;
-        matrix[15] = 1.f;
-        break;
-
-    case SPEAKER_SURROUND:
-        matrix[0] = .9f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = .9f;
-        matrix[4] = 0.5f;
-        matrix[5] = 0.5f;
-        matrix[6] = 0.5f;
-        matrix[7] = 0.5f;
-        break;
-    case SPEAKER_QUAD:
-        matrix[0] = 1.0f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = 1.f;
-        matrix[4] = 0.8f;
-        matrix[5] = 0.f;
-        matrix[6] = 0.f;
-        matrix[7] = 0.8f;
-        break;
-
-
-    default:
-        break;
-    }
-
-    */
 
     mDSPSettings.pMatrixCoefficients = matrix;
 
@@ -903,87 +775,19 @@ void SoundEffectInstanceBase::Apply3D(const AudioListener& listener, const Audio
 
     UINT32 dwChannelMask = engine->GetChannelMask();
     float fMinorTrack = 0.f;
+
     switch (dwChannelMask)
     {
     case SPEAKER_STEREO:
-        /*
-        //Version 1 : Mix L track and R track
-        matrix[1] = matrix[3];
-        matrix[2] = matrix[0];
-        */
-
-        //Version 2 : Play Dominant Track
         fMinorTrack = matrix[1] * matrix[2];
         matrix[2] = fMinorTrack;
         matrix[1] = fMinorTrack;
-       
         break;
-    case SPEAKER_2POINT1:
-        fMinorTrack = matrix[0] * matrix[2];
-        matrix[2] = fMinorTrack;
-        matrix[1] = fMinorTrack;
-        break;
-    case SPEAKER_4POINT1:
-        fMinorTrack = matrix[0] * matrix[2];
-        matrix[2] = fMinorTrack;
-        matrix[1] = fMinorTrack;
-        break;
-    case SPEAKER_5POINT1:
-        fMinorTrack = matrix[0] * matrix[2];
-        matrix[2] = fMinorTrack;
-        matrix[1] = fMinorTrack;
-        break;
-    case SPEAKER_7POINT1:
-        fMinorTrack = matrix[0] * matrix[2];
-        matrix[2] = fMinorTrack;
-        matrix[1] = fMinorTrack;
-        break;
-    case SPEAKER_5POINT1_SURROUND:
-        fMinorTrack = matrix[9] * matrix[10];
-        matrix[9] = fMinorTrack;
-        matrix[10] = fMinorTrack;
-        fMinorTrack = matrix[1] * matrix[2];
-        matrix[1] = fMinorTrack;
-        matrix[2] = fMinorTrack;
-        /*
-        matrix[0] = .9f;
-        matrix[1] = 0.f;
-        matrix[2] = 0.f;
-        matrix[3] = .9f;
-        matrix[4] = 0.f;
-        matrix[5] = 0.f;
-        matrix[6] = 0.f;
-        matrix[7] = 0.f;
-        matrix[8] = 1.f;
-        matrix[9] = 0.f;
-        matrix[10] = 0.f;
-        matrix[11] = 1.f;
-        */
-        break;
-    case SPEAKER_7POINT1_SURROUND:
-        fMinorTrack = matrix[0] * matrix[2];
-        matrix[2] = fMinorTrack;
-        matrix[1] = fMinorTrack;
-        break;
-
-    case SPEAKER_SURROUND:
-        fMinorTrack = matrix[0] * matrix[2];
-        matrix[2] = fMinorTrack;
-        matrix[1] = fMinorTrack;
-        break;
-    case SPEAKER_QUAD:
-        fMinorTrack = matrix[0] * matrix[2];
-        matrix[2] = fMinorTrack;
-        matrix[1] = fMinorTrack;
-        break;
-
-
     default:
         break;
     }
 
     (void)voice->SetOutputMatrix(direct, mDSPSettings.SrcChannelCount, mDSPSettings.DstChannelCount, matrix);
-
 
     if (reverb)
     {

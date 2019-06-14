@@ -62,31 +62,18 @@ int PUN::CSoundSource::Update(float fTime)
 	Vector3 vRotSide = m_pTransform->GetWorldAxis(PUN::AXIS_X);
 
 	Vector3 vOriUp = vOriFront.Cross(vRotSide);
-	/*
-	XMFLOAT3 xmRotFront(vRotFront.x, vRotFront.y, vRotFront.z);
-	XMFLOAT3 xmRotUp(vRotUp.x, vRotUp.y, vRotUp.z);
-	*/
 	
 	m_tAudioEmitter.SetPosition(xmPos);
-	
-	//m_tAudioEmitter.InnerRadius = 50.f;
 
 	XMFLOAT3 xmOriF(vOriFront.x, vOriFront.y, vOriFront.z);
 	XMFLOAT3 xmOriU(vOriUp.x, vOriUp.y, vOriUp.z);
 
 	m_tAudioEmitter.SetOrientation(xmOriF, xmOriU);
 
-	
-
 	for (int i = 0; i < m_vecsPtrSound.size(); ++i)
 	{
-		
 		if (m_vecsPtrSound[i]->GetState() == PLAYING)
-		{
 			m_vecsPtrSound[i]->Apply3D(pMgr->GetMainListener(), m_tAudioEmitter, false);
-		}
-		
-		
 	}
 	
 	return 0;

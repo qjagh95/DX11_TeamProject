@@ -477,6 +477,11 @@ void CScene::GetLayerTagList(vector<string>* _pVec)
 	}
 }
 
+void CScene::ChangeScene()
+{
+	m_pSceneComponent->ChangeScene();
+}
+
 CLayer * CScene::FindLayer(const string & strTag)
 {
 	list<CLayer*>::iterator	iter;

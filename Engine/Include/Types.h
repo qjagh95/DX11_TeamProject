@@ -346,12 +346,13 @@ namespace PUN
 		int			iSize;
 		int			iDepthOfField;
 		float		fCameraFar;
-		float		fEmpty;
+		float		fDensity;
 
 		_tagBlurCBuffer() :
 			iSize(0),
 			iDepthOfField(0),
-			fCameraFar(1000.0f)
+			fCameraFar(1000.0f),
+			fDensity(0.0f)
 		{
 		}
 
@@ -368,8 +369,11 @@ namespace PUN
 		int			iDepthFog;
 		int			iBloom;
 		int			iAdaptation;
+		int			iDistortion;
 		float		fFadeAmount;
-		float		vEmpty;
+		float		fWaveScale;
+		float		fWaveSpeed;
+		Vector2		vWaveCenter;
 
 		_tagFinalPassCBuffer() :
 			iHDR(0),
@@ -378,8 +382,12 @@ namespace PUN
 			iDepthFog(0),
 			iBloom(0),
 			iAdaptation(0),
-			fFadeAmount(1)
+			fFadeAmount(1),
+			fWaveScale(2.0f),
+			iDistortion(0),
+			fWaveSpeed(0.0f)
 		{
+			vWaveCenter = Vector2::Zero;
 		}
 
 	}FinalPassCB, *PFinalPassCB;

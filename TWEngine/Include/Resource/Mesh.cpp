@@ -214,21 +214,18 @@ void CMesh::UpdateVertexBuffer(void * pData, int iContainer)
 		assert(false);
 
 	PMeshContainer	pContainer = m_vecMeshContainer[iContainer];
-
-	memcpy(pContainer->tVB.pData, pData,
-		pContainer->tVB.iSize * pContainer->tVB.iCount);
+	memcpy(pContainer->tVB.pData, pData, pContainer->tVB.iSize * pContainer->tVB.iCount);
 
 	switch (pContainer->tVB.eUsage)
 	{
 		case D3D11_USAGE_DEFAULT:
-			CONTEXT->UpdateSubresource(pContainer->tVB.pBuffer,
-				0, nullptr, pData, 0, 0);
+			CONTEXT->UpdateSubresource(pContainer->tVB.pBuffer, 0, nullptr, pData, 0, 0);
 			break;
+
 		case D3D11_USAGE_DYNAMIC:
 		{
 			D3D11_MAPPED_SUBRESOURCE	tMap;
-			CONTEXT->Map(pContainer->tVB.pBuffer, 0, D3D11_MAP_WRITE_DISCARD,
-				0, &tMap);
+			CONTEXT->Map(pContainer->tVB.pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &tMap);
 
 			memcpy(tMap.pData, pData, pContainer->tVB.iSize * pContainer->tVB.iCount);
 

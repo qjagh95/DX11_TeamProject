@@ -23,8 +23,8 @@ CTabletIcon::~CTabletIcon()
 bool CTabletIcon::Init()
 {
 	// Transform
-	//m_pTransform->SetWorldScale(135.f, 135.f, 1.f);
-	m_pTransform->SetWorldScale(90.f, 90.f, 1.f);
+	m_pTransform->SetWorldScale(135.f, 135.f, 1.f);
+	//m_pTransform->SetWorldScale(90.f, 90.f, 1.f);
 	//m_pTransform->SetWorldPos(600.f, 429.f, 0.f);
 
 	// Renderer, Material
@@ -43,8 +43,8 @@ bool CTabletIcon::Init()
 	// Collider
 	CColliderRect* pCollider = AddComponent<CColliderRect>("IconCollider");
 	pCollider->SetCollisionGroup("UI");
-	//pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(150.f, 150.f, 0.f));
-	pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
+	pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(150.f, 150.f, 0.f));
+	//pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
 	pCollider->SetCollisionCallback(CCT_ENTER, this, &CTabletIcon::Hit);
 	pCollider->SetCollisionCallback(CCT_STAY, this, &CTabletIcon::HitStay);
 	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CTabletIcon::MouseOut);

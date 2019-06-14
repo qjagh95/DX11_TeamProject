@@ -1,43 +1,5 @@
 #pragma once
 
-/*
-enum AUDIO_ENGINE_REVERB
-	{
-		Reverb_Off,
-		Reverb_Default,
-		Reverb_Generic,
-		Reverb_Forest,
-		Reverb_PaddedCell,
-		Reverb_Room,
-		Reverb_Bathroom,
-		Reverb_LivingRoom,
-		Reverb_StoneRoom,
-		Reverb_Auditorium,
-		Reverb_ConcertHall,
-		Reverb_Cave,
-		Reverb_Arena,
-		Reverb_Hangar,
-		Reverb_CarpetedHallway,
-		Reverb_Hallway,
-		Reverb_StoneCorridor,
-		Reverb_Alley,
-		Reverb_City,
-		Reverb_Mountains,
-		Reverb_Quarry,
-		Reverb_Plain,
-		Reverb_ParkingLot,
-		Reverb_SewerPipe,
-		Reverb_Underwater,
-		Reverb_SmallRoom,
-		Reverb_MediumRoom,
-		Reverb_LargeRoom,
-		Reverb_MediumHall,
-		Reverb_LargeHall,
-		Reverb_Plate,
-		Reverb_MAX
-	};
-*/
-
 PUN_BEGIN
 
 enum FLUSH_BGM_BUFFER
@@ -66,15 +28,15 @@ public:
 	shared_ptr<SoundEffect> const& FindSoundEffect(const string& KeyName);
 
 private:
+	class CTransform *m_pListenerTransform;
 	float m_fAudioCoordSizeDiv;
 	X3DAUDIO_CONE m_tSoundCone;
 
-	std::unordered_map<std::string, std::shared_ptr<DirectX::SoundEffect>>::iterator m_itrCurrBgm;
-	std::string m_strCurrBGMName;
-	std::string m_strPrevBGMName;
-	std::shared_ptr<DirectX::SoundEffect> m_NoKeyBgmBuf;
-	std::shared_ptr<DirectX::SoundEffect> m_NoKeyBgmBuf2;
-	class CTransform *m_pListenerTransform;
+	unordered_map<string, shared_ptr<SoundEffect>>::iterator m_itrCurrBgm;
+	string m_strCurrBGMName;
+	string m_strPrevBGMName;
+	shared_ptr<SoundEffect> m_NoKeyBgmBuf;
+	shared_ptr<SoundEffect> m_NoKeyBgmBuf2;
 
 	unique_ptr<AudioEngine> m_AudioEngine;
 	unordered_map<string, shared_ptr<SoundEffect>> m_SoundEffectMap;

@@ -25,8 +25,8 @@ CCigaretteIcon::~CCigaretteIcon()
 bool CCigaretteIcon::Init()
 {
 	// Transform
-	//m_pTransform->SetWorldScale(135.f, 130.f, 1.f);
-	m_pTransform->SetWorldScale(86.f, 94.f, 1.f);
+	m_pTransform->SetWorldScale(135.f, 130.f, 1.f);
+	//m_pTransform->SetWorldScale(86.f, 94.f, 1.f);
 	//m_pTransform->SetWorldPos(600.f, 429.f, 0.f);
 
 	// Renderer, Material
@@ -45,8 +45,8 @@ bool CCigaretteIcon::Init()
 	// Collider
 	CColliderRect* pCollider = AddComponent<CColliderRect>("IconCollider");
 	pCollider->SetCollisionGroup("UI");
-	//pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(150.f, 150.f, 0.f));
-	pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
+	pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(150.f, 150.f, 0.f));
+	//pCollider->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
 	pCollider->SetCollisionCallback(CCT_ENTER, this, &CCigaretteIcon::Hit);
 	pCollider->SetCollisionCallback(CCT_STAY, this, &CCigaretteIcon::HitStay);
 	pCollider->SetCollisionCallback(CCT_LEAVE, this, &CCigaretteIcon::MouseOut);
@@ -114,8 +114,8 @@ void CCigaretteIcon::HitStay(CCollider* _pSrc, CCollider* _pDest, float _fTime)
 			pHumanPlayer->RecoveryHP(-1);
 		}
 		pHumanPlayer->SetAccelState(true);
-		pHumanPlayer->SetAccelSpeed(1.5f);
-		pHumanPlayer->SetAccelDuration(60.f);
+		pHumanPlayer->SetAccelSpeed(2.f);
+		pHumanPlayer->SetAccelDuration(20.f);
 		SAFE_RELEASE(pObjPlayer);
 		SAFE_RELEASE(pHumanPlayer);
 

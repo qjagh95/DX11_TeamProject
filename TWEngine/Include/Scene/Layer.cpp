@@ -149,7 +149,11 @@ void CLayer::Load(BinaryRead* _pInstBR)
 		CGameObject* ChildObject = FindObjectLoadVersion(ChildTag);
 
 		//EraseObjectNoRelease(ChildObject);
-		ParentObject->AddChild(ChildObject, true);
+		if (ParentObject)
+		{
+			if(ChildObject)
+				ParentObject->AddChild(ChildObject, true);
+		}
 	}
 	m_AllChildList.clear();
 }

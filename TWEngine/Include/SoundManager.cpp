@@ -13,46 +13,6 @@ SINGLETON_VAR_INIT(CSoundManager)
 shared_ptr<SoundEffect> CSoundManager::m_NULLPTR1;
 shared_ptr<SoundEffectInstance> CSoundManager::m_NULLPTR2;
 
-
-/*
-enum AUDIO_ENGINE_REVERB
-	{
-		Reverb_Off,
-		Reverb_Default,
-		Reverb_Generic,
-		Reverb_Forest,
-		Reverb_PaddedCell,
-		Reverb_Room,
-		Reverb_Bathroom,
-		Reverb_LivingRoom,
-		Reverb_StoneRoom,
-		Reverb_Auditorium,
-		Reverb_ConcertHall,
-		Reverb_Cave,
-		Reverb_Arena,
-		Reverb_Hangar,
-		Reverb_CarpetedHallway,
-		Reverb_Hallway,
-		Reverb_StoneCorridor,
-		Reverb_Alley,
-		Reverb_City,
-		Reverb_Mountains,
-		Reverb_Quarry,
-		Reverb_Plain,
-		Reverb_ParkingLot,
-		Reverb_SewerPipe,
-		Reverb_Underwater,
-		Reverb_SmallRoom,
-		Reverb_MediumRoom,
-		Reverb_LargeRoom,
-		Reverb_MediumHall,
-		Reverb_LargeHall,
-		Reverb_Plate,
-		Reverb_MAX
-	};
-*/
-
-
 CSoundManager::CSoundManager() :
 	m_fBgmPan(0.f),
 	m_fBgmPitch(0.f),
@@ -88,18 +48,6 @@ bool CSoundManager::Init()
 	m_AudioEngine = make_unique<AudioEngine>(Flag);
 	m_AudioEngine->SetReverb(Reverb_Default);
 	m_AudioEngine->GetChannelMask();
-	/*
-	m_tSoundCone.InnerAngle = X3DAUDIO_PI;
-	m_tSoundCone.InnerReverb = 1.f;
-	m_tSoundCone.InnerLPF = 0.75f;
-	m_tSoundCone.InnerVolume = 2.f;
-	m_tSoundCone.OuterAngle = X3DAUDIO_2PI;
-	m_tSoundCone.OuterLPF = 0.25f;
-	m_tSoundCone.OuterReverb = 0.5f;
-	m_tSoundCone.OuterVolume = 1.f;
-	m_Listener.pCone = &m_tSoundCone;
-	*/
-	
 
 	//CreateSoundEffect("BGM", TEXT("bgm_Dnf.wav"));
 	//CreateSoundEffect("Effect", TEXT("BugChange.wav"));
@@ -204,14 +152,13 @@ void CSoundManager::Update(float fTime)
 
 		vPos /= m_fAudioCoordSizeDiv;
 
-		Vector3 vUp = m_pListenerTransform->GetWorldAxis(PUN::AXIS_Y);
-		Vector3 vFront = m_pListenerTransform->GetWorldAxis(PUN::AXIS_Z);
+		Vector3 vUp = m_pListenerTransform->GetWorldAxis(AXIS_Y);
+		Vector3 vFront = m_pListenerTransform->GetWorldAxis(AXIS_Z);
 
-		DirectX::XMFLOAT3 mPos(vPos.x, vPos.y, vPos.z);
+		XMFLOAT3 mPos(vPos.x, vPos.y, vPos.z);
 		m_Listener.SetPosition(mPos);
 
-		m_Listener.SetOrientation(DirectX::XMFLOAT3(vFront.x, vFront.y, vFront.z),
-			DirectX::XMFLOAT3(vUp.x, vUp.y, vUp.z));
+		m_Listener.SetOrientation(XMFLOAT3(vFront.x, vFront.y, vFront.z), XMFLOAT3(vUp.x, vUp.y, vUp.z));
 	}
 
 	m_AudioEngine->Update();

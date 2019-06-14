@@ -1352,6 +1352,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 							else if (!strcmp(strDataBuf_1, "WalkFSpeed"))
 							{
 								m_fFWalkSpeed = std::stof(strDataBuf);
+								//m_fFWalkSpeed = 8.f;
 							}
 
 							else if (!strcmp(strDataBuf_1, "WalkBSpeed"))
@@ -1372,6 +1373,7 @@ bool CHuman_Player::LoadData(const TCHAR * dataPath)
 							else if (!strcmp(strDataBuf_1, "SprintSpeed"))
 							{
 								m_fSprintSpeed = std::stof(strDataBuf);
+								//m_fSprintSpeed = 13.f;
 							}
 
 							else if (!strcmp(strDataBuf_1, "m_fCrouchToStandSpeed"))
@@ -1598,7 +1600,7 @@ void CHuman_Player::Move(PUN::AXIS axis, float fSpeed, float fTime)
 		fAddSpeed = m_accelSpeed * fSpeed;
 		
 		GET_SINGLE(CRenderManager)->EnableFilter(CFT_MOTIONBLUR);
-		GET_SINGLE(CRenderManager)->SetMotionBlur(1);
+		GET_SINGLE(CRenderManager)->SetMotionBlur(true, 1);
 
 		m_fAccelTime += fTime;
 
@@ -1607,7 +1609,7 @@ void CHuman_Player::Move(PUN::AXIS axis, float fSpeed, float fTime)
 			m_isAccel = false;
 			fAddSpeed = fFirstSpeed;
 			GET_SINGLE(CRenderManager)->DisableFilter(CFT_MOTIONBLUR);
-			GET_SINGLE(CRenderManager)->SetMotionBlur(0);
+			GET_SINGLE(CRenderManager)->SetMotionBlur(false, 0);
 		}
 
 	}

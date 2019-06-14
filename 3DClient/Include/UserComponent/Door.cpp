@@ -138,7 +138,8 @@ bool CDoor::Init()
 
 	m_iState = 1;
 	m_fOpenRot = 90.0f;
-	m_fOpenTime = 1.0f;
+	//m_fOpenTime = 1.0f;
+	m_fOpenTime = 2.0f;
 	m_fFastOpenTime = 0.1f;
 
 	m_fFastOpenSpeed = 1.0f / m_fFastOpenTime;
@@ -148,15 +149,15 @@ bool CDoor::Init()
 	names[0] = "wood_Door_Open1";
 	names[1] = "wood_Door_Close1";
 	names[2] = "wood_Door_Bash1";
-	names[3] = "";
-	names[4] = "";
+	names[3] = "wood_Door_Lock";
+	names[4] = "wood_Door_UnLock";
 
 	TCHAR* strPaths[5];
-	strPaths[0] = (TCHAR*)TEXT("WoodenDoor_OPENING_01.wav");
+	strPaths[0] = (TCHAR*)TEXT("door\\WoodenDoor_OPENING_02.wav");
 	strPaths[1] = (TCHAR*)TEXT("WoodenDoor_CLOSING_03.wav");
 	strPaths[2] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
-	strPaths[3] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
-	strPaths[4] = (TCHAR*)TEXT("SFX_WoodenDoor_Bash_01.wav");
+	strPaths[3] = (TCHAR*)TEXT("door\\WoodDoor_CLosed-02.wav");
+	strPaths[4] = (TCHAR*)TEXT("door\\SecurityDoor_OPENING_02.wav");
 
 	SetSounds(names, (const TCHAR**)strPaths);
 
@@ -730,7 +731,12 @@ void CDoor::OpenStage(const Vector3 & vDir)
 	float fAngle = vDirZ.Angle(vDir);
 	bool bChangeStage = false;
 
-	if (fAngle < 90.0f)
+	Vector3 vWorldAxisZ = Vector3::Axis[AXIS_Z];
+	Vector3 vAxis = vWorldAxisZ.Cross(vDir);
+	if (vAxis.y < 0.0f)
+		fAngle *= -1.0f;
+
+	if (fabs(fAngle) < 90.0f)
 		bChangeStage = true;
 
 	if (bChangeStage)
@@ -741,8 +747,8 @@ void CDoor::OpenStage(const Vector3 & vDir)
 		//대상 문 열기
 		CDoor*		pTargetDoor = GET_SINGLE(CGameManager)->FindDoor(m_strTargetSceneKey, m_strTargetDoorKey);
 
+		Vector3 vPos = m_pTransform->GetWorldPos();
 		Vector3 vTargetPos = pTargetDoor->GetWorldPos(); // 이동할 대상의 Position
-
 		Vector3 vTargetRot = pTargetDoor->GetWorldRot();
 		Vector3 vInvDir = pTargetDoor->GetWorldAxis(AXIS_Z) * -1.0f;
 
@@ -754,50 +760,34 @@ void CDoor::OpenStage(const Vector3 & vDir)
 			m_bFastOpen = false;
 		}
 
-		Vector3 vDiffRot;
-		vDiffRot.x = vTargetRot.x - GetWorldRot().x;
-		vDiffRot.y = vTargetRot.y - GetWorldRot().y;
-		vDiffRot.z = vTargetRot.z - GetWorldRot().z;
+		CTransform* pPlayerTr = GET_SINGLE(CGameManager)->GetPlayerTr();
+		CTransform* pTargetTr = pTargetDoor->GetTransformNonCount();
+		CTransform* pCameraTr = GET_SINGLE(CSceneManager)->GetMainCameraTransformNonCount();
 
-		//플레이어가 문여는 애니메이션 하고 앞으로 나아가며 문이 자동으로 닫혀야함
+		Vector3 vPlayerPos = pPlayerTr->GetWorldPos();
 
-		CTransform* pTr = GET_SINGLE(CGameManager)->GetPlayerTr();
+		//문에서 플레이어를 바라보는 방향벡터를 구한다.
+		Vector3 vDir = vPlayerPos - vPos;
 
-		Vector3 vPos = GetWorldPos();
-		float fDist = vPos.Distance(pTr->GetWorldPos());
-		vPos.y = 0.f;
-
-		Vector3 vDir = pTr->GetWorldPos() - vPos;
+		//벡터의 길이를 저장해두고 정규화 시켜 상대 각도도 구해놓는다.
+		float fDist = vDir.Length();
 		vDir.Normalize();
-		vDir.y = 0.0f;
-		
-		Matrix matWorld;
-		matWorld.RotationY(m_pTransform->GetWorldRot().y);
-		matWorld.RotationY(vDiffRot.y);
-		vDir = vDir.TransformNormal(matWorld);
-		//if (vTargetRot.y < 45.0f && vTargetRot.y > -45.0f)
-		//	vDir.x *= -1.0f;
+		Vector3 vInvAxisZ = m_pTransform->GetWorldAxis(AXIS_Z);
+		float fRelativeAngle = vDir.Angle(vInvAxisZ);
 
-		//vDir.z *= -1.0f;
-		//vDir.x *= -1.0f;
-		//if (fLocalY > 0.0f)
-		//	vDir.x *= -1.0f;
-		vDir *= -fDist;
-		pTr->SetWorldPos(vTargetPos + vDir);
-		//pTr->SetWorldRot(vTargetRot);
-		if(vDiffRot.y != 180.f && vDiffRot.y != -180.f && vDiffRot.y != 0.f)
-		pTr->RotationY(-vDiffRot.y);
-		else if (vDiffRot.y == 0.f)
-			pTr->RotationY(180.f);
+		//타겟 문의 로테이션 매트리스를 받아놓고 미리 구해놓은 각도만큼 회전시킨다.
+		Matrix matRot = pTargetTr->GetRotDelta();
+		matRot.RotationY(DegreeToRadian(fRelativeAngle));
 
-		pTr = GET_SINGLE(CSceneManager)->GetMainCameraTransform();
+		//실제 방향벡터를 구한다.
+		vDir = Vector3(0.0f, 0.0f, -1.0f);
+		Vector3 vRealDir = vDir.TransformNormal(matRot) * fDist;
 
-		if (vDiffRot.y != 180.f && vDiffRot.y != -180.f && vDiffRot.y != 0.f)
-			pTr->RotationY(-vDiffRot.y);
-		else if(vDiffRot.y == 0.f)
-		pTr->RotationY(180.f);
-
-		SAFE_RELEASE(pTr);
+		//타겟 문의 위치에서 해당 방향으로 이동시킨다.
+		pPlayerTr->SetWorldPos(vTargetPos + vRealDir);
+		pPlayerTr->SetWorldRot(vTargetRot);
+		pPlayerTr->RotationY(180.0f + fAngle);
+		pCameraTr->SetWorldRot(pPlayerTr->GetWorldRot());
 	}
 	else
 	{
@@ -813,6 +803,96 @@ void CDoor::OpenStage(const Vector3 & vDir)
 
 		m_fCloseRot = GetWorldRot().y;
 	}
+
+	//Vector3 vDirZ = GetWorldAxis(AXIS_Z);
+	//float fLocalY = m_pTransform->GetLocalRot().y;
+
+	//float fAngle = vDirZ.Angle(vDir);
+	//bool bChangeStage = false;
+
+	//if (fAngle < 90.0f)
+	//	bChangeStage = true;
+
+	//if (bChangeStage)
+	//{
+	//	//스테이지 전환
+	//	GET_SINGLE(CSceneManager)->ChangeScene(m_strTargetSceneKey);
+
+	//	//대상 문 열기
+	//	CDoor*		pTargetDoor = GET_SINGLE(CGameManager)->FindDoor(m_strTargetSceneKey, m_strTargetDoorKey);
+
+	//	Vector3 vTargetPos = pTargetDoor->GetWorldPos(); // 이동할 대상의 Position
+
+	//	Vector3 vTargetRot = pTargetDoor->GetWorldRot();
+	//	Vector3 vInvDir = pTargetDoor->GetWorldAxis(AXIS_Z) * -1.0f;
+
+	//	pTargetDoor->Open(vInvDir);
+
+	//	if (m_bFastOpen)
+	//	{
+	//		pTargetDoor->SetFastOpen(m_bFastOpen);
+	//		m_bFastOpen = false;
+	//	}
+
+	//	Vector3 vDiffRot;
+	//	vDiffRot.x = vTargetRot.x - GetWorldRot().x;
+	//	vDiffRot.y = vTargetRot.y - GetWorldRot().y;
+	//	vDiffRot.z = vTargetRot.z - GetWorldRot().z;
+
+	//	//플레이어가 문여는 애니메이션 하고 앞으로 나아가며 문이 자동으로 닫혀야함
+
+	//	CTransform* pTr = GET_SINGLE(CGameManager)->GetPlayerTr();
+
+	//	Vector3 vPos = GetWorldPos();
+	//	float fDist = vPos.Distance(pTr->GetWorldPos());
+	//	vPos.y = 0.f;
+
+	//	Vector3 vDir = pTr->GetWorldPos() - vPos;
+	//	vDir.Normalize();
+	//	vDir.y = 0.0f;
+	//	
+	//	Matrix matWorld;
+	//	matWorld.RotationY(m_pTransform->GetWorldRot().y);
+	//	matWorld.RotationY(vDiffRot.y);
+	//	vDir = vDir.TransformNormal(matWorld);
+	//	//if (vTargetRot.y < 45.0f && vTargetRot.y > -45.0f)
+	//	//	vDir.x *= -1.0f;
+
+	//	//vDir.z *= -1.0f;
+	//	//vDir.x *= -1.0f;
+	//	//if (fLocalY > 0.0f)
+	//	//	vDir.x *= -1.0f;
+	//	vDir *= -fDist;
+	//	pTr->SetWorldPos(vTargetPos + vDir);
+	//	//pTr->SetWorldRot(vTargetRot);
+	//	if(vDiffRot.y != 180.f && vDiffRot.y != -180.f && vDiffRot.y != 0.f)
+	//	pTr->RotationY(-vDiffRot.y);
+	//	else if (vDiffRot.y == 0.f)
+	//		pTr->RotationY(180.f);
+
+	//	pTr = GET_SINGLE(CSceneManager)->GetMainCameraTransform();
+
+	//	if (vDiffRot.y != 180.f && vDiffRot.y != -180.f && vDiffRot.y != 0.f)
+	//		pTr->RotationY(-vDiffRot.y);
+	//	else if(vDiffRot.y == 0.f)
+	//	pTr->RotationY(180.f);
+
+	//	SAFE_RELEASE(pTr);
+	//}
+	//else
+	//{
+	//	if (fLocalY < 0.0f)
+	//		m_iDir = 1;
+	//	else
+	//		m_iDir = -1;
+
+	//	m_fAccTime = 0.0f;
+	//	m_fAccRot = 0.0f;
+	//	m_fRot = 0.0f;
+	//	m_iState = DOOR_ONACT | DOOR_OPEN;
+
+	//	m_fCloseRot = GetWorldRot().y;
+	//}
 }
 
 void CDoor::OpenLocker(const Vector3 & vDir)
@@ -1052,6 +1132,24 @@ void CDoor::Interact(CCollider * pSrc, CCollider * pDest, float fTime)
 		else
 		{			
 			if(KEYHOLD("E"))
+			{
+				//문이 닫혀있는 상태라면
+				if (m_iState & DOOR_CLOSE)
+				{
+					//열리고 있는 중이라고 바꿔준 후 
+					m_iState = DOOR_OPEN | DOOR_ONACT;
+					m_fCloseRot = GetWorldRot().y;
+				}
+				//조금씩 문을 연다
+				OnActHeavy(fTime);
+			}
+		}
+	}
+	else if(pDest->GetColliderID() == UCI_PLAYER_RAY)
+	{
+		if (m_eDoorType == DOOR_HEAVY)
+		{
+			if (KEYHOLD("E"))
 			{
 				//문이 닫혀있는 상태라면
 				if (m_iState & DOOR_CLOSE)

@@ -272,13 +272,13 @@ void CInventory::AddItem(CGameObject * pItem)
 			SAFE_RELEASE(pBatteryObj);
 
 			m_pBatteryNumber = m_pBatteryNumberObj->AddComponent<CNumber>("BatteryNumber");
-			/*pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-				vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);*/
-			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
+			pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+				vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+			//pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 			m_vBatteryIconPos = pItemTr->GetWorldPos();
-			//m_fItemY += 151.f;
-			m_fItemY += 105.f;
+			m_fItemY += 151.f;
+			//m_fItemY += 105.f;
 		}
 
 		++m_iBatteryCnt;
@@ -290,14 +290,14 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pBatteryNumber->SetNumber(m_iBatteryCnt);
 		m_pBatteryNumber->SetNumberPivot(0.5f, 0.5f, 0.f); 
 
-		//pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-		//	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
-		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
+		pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+			vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+		//pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pBatteryNumberObj->GetTransform();
-		//pNumTr->SetWorldPos(m_vBatteryIconPos.x + 51.f, m_vBatteryIconPos.y - 51.f - 151.f, 0.f);
-		pNumTr->SetWorldPos(m_vBatteryIconPos.x + 35.f, m_vBatteryIconPos.y - 35.f, 0.f);
+		pNumTr->SetWorldPos(m_vBatteryIconPos.x + 51.f, m_vBatteryIconPos.y - 51.f - 151.f, 0.f);
+		//pNumTr->SetWorldPos(m_vBatteryIconPos.x + 35.f, m_vBatteryIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -315,13 +315,13 @@ void CInventory::AddItem(CGameObject * pItem)
 			SAFE_RELEASE(pMedicalKitObj);
 
 			m_pMedicalKitNumber = m_pMedicalKitNumberObj->AddComponent<CNumber>("MedicalKitNumber");
-			//pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-			//	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+			pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+				vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 			m_vMedicalKitIconPos = pItemTr->GetWorldPos();
-			//m_fItemY += 151.f;
-			m_fItemY += 105.f;
+			m_fItemY += 151.f;
+			//m_fItemY += 105.f;
 		}
 		++m_iMedicalKitCnt;
 		if (m_iMedicalKitCnt >= 2)
@@ -331,14 +331,14 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pMedicalKitNumber->SetNumber(m_iMedicalKitCnt);
 		m_pMedicalKitNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
 
-		//pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-		//	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
-		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
+		pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+			vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+		//pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pMedicalKitNumberObj->GetTransform();
-		//pNumTr->SetWorldPos(m_vMedicalKitIconPos.x + 51.f, m_vMedicalKitIconPos.y - 51.f - 151.f, 0.f);
-		pNumTr->SetWorldPos(m_vMedicalKitIconPos.x + 35.f, m_vMedicalKitIconPos.y - 35.f, 0.f);
+		pNumTr->SetWorldPos(m_vMedicalKitIconPos.x + 51.f, m_vMedicalKitIconPos.y - 51.f - 151.f, 0.f);
+		//pNumTr->SetWorldPos(m_vMedicalKitIconPos.x + 35.f, m_vMedicalKitIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -356,13 +356,13 @@ void CInventory::AddItem(CGameObject * pItem)
 			SAFE_RELEASE(pLunchBoxObj);
 
 			m_pLunchBoxNumber = m_pLunchBoxNumberObj->AddComponent<CNumber>("LunchBoxNumber");
-			//pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-			//	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+			pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+				vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
 			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 			m_vLunchBoxIconPos = pItemTr->GetWorldPos();
-			//m_fItemY += 151.f;
-			m_fItemY += 105.f;
+			m_fItemY += 151.f;
+			//m_fItemY += 105.f;
 		}
 
 		++m_iLunchBoxCnt;
@@ -373,14 +373,14 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pLunchBoxNumber->SetNumber(m_iLunchBoxCnt);
 		m_pLunchBoxNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
 
-		//pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-		//	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
-		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
+		pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+			vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+		//pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pLunchBoxNumberObj->GetTransform();
-		//pNumTr->SetWorldPos(m_vLunchBoxIconPos.x + 51.f, m_vLunchBoxIconPos.y - 51.f - 151.f, 0.f);
-		pNumTr->SetWorldPos(m_vLunchBoxIconPos.x + 35.f, m_vLunchBoxIconPos.y - 35.f, 0.f);
+		pNumTr->SetWorldPos(m_vLunchBoxIconPos.x + 51.f, m_vLunchBoxIconPos.y - 51.f - 151.f, 0.f);
+		//pNumTr->SetWorldPos(m_vLunchBoxIconPos.x + 35.f, m_vLunchBoxIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -398,13 +398,13 @@ void CInventory::AddItem(CGameObject * pItem)
 			SAFE_RELEASE(pCigaretteObj);
 
 			m_pDaemaNumber = m_pDaemaNumberObj->AddComponent<CNumber>("DaemaNumber");
-			//pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-			//	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
-			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
+			pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+				vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+			//pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 			m_vDaemaIconPos = pItemTr->GetWorldPos();
-			//m_fItemY += 151.f;
-			m_fItemY += 105.f;
+			m_fItemY += 151.f;
+			//m_fItemY += 105.f;
 		}
 
 		++m_iDaemaCnt;
@@ -415,14 +415,14 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pDaemaNumber->SetNumber(m_iDaemaCnt);
 		m_pDaemaNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
 
-		//pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-		// 	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
-		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
+		pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+		 	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+		//pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pDaemaNumberObj->GetTransform();
-		//pNumTr->SetWorldPos(m_vDaemaIconPos.x + 51.f, m_vDaemaIconPos.y - 51.f - 151.f, 0.f);
-		pNumTr->SetWorldPos(m_vDaemaIconPos.x + 35.f, m_vDaemaIconPos.y - 35.f, 0.f);
+		pNumTr->SetWorldPos(m_vDaemaIconPos.x + 51.f, m_vDaemaIconPos.y - 51.f - 151.f, 0.f);
+		//pNumTr->SetWorldPos(m_vDaemaIconPos.x + 35.f, m_vDaemaIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -440,13 +440,13 @@ void CInventory::AddItem(CGameObject * pItem)
 			SAFE_RELEASE(pTabletObj);
 
 			m_pTabletNumber = m_pTabletNumberObj->AddComponent<CNumber>("TabletNumber");
-			//pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-			//	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
-			pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
+			pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+				vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+			//pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY, 0.f);
 			pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 			m_vTabletIconPos = pItemTr->GetWorldPos();
-			//m_fItemY += 151.f;
-			m_fItemY += 105.f;
+			m_fItemY += 151.f;
+			//m_fItemY += 105.f;
 		}
 
 		++m_iTabletCnt;
@@ -457,14 +457,14 @@ void CInventory::AddItem(CGameObject * pItem)
 		m_pTabletNumber->SetNumber(m_iTabletCnt);
 		m_pTabletNumber->SetNumberPivot(0.5f, 0.5f, 0.f);
 
-		//pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
-		//	vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
-		pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
+		pItemTr->SetWorldPos(vInvenPos.x + _RESOLUTION.iWidth * (1.f - (1 - 315.f / 1280.f)),
+			vInvenPos.y + _RESOLUTION.iHeight * (1.f - (1 - 646.f / 720.f)) - m_fItemY, 0.f);
+		//pItemTr->SetWorldPos(vInvenPos.x + 315.f, vInvenPos.y + 562.f - m_fItemY + 105.f, 0.f);
 		pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 		CTransform*	pNumTr = m_pTabletNumberObj->GetTransform();
-		//pNumTr->SetWorldPos(m_vTabletIconPos.x + 51.f, m_vTabletIconPos.y - 51.f - 151.f, 0.f);
-		pNumTr->SetWorldPos(m_vTabletIconPos.x + 35.f, m_vTabletIconPos.y - 35.f, 0.f);
+		pNumTr->SetWorldPos(m_vTabletIconPos.x + 51.f, m_vTabletIconPos.y - 51.f - 151.f, 0.f);
+		//pNumTr->SetWorldPos(m_vTabletIconPos.x + 35.f, m_vTabletIconPos.y - 35.f, 0.f);
 		SAFE_RELEASE(pNumTr);
 	}
 
@@ -609,15 +609,15 @@ void CInventory::MoveItem(size_t iIndex)
 {
 	CTransform*	pListTr = m_vecList[iIndex]->GetTransform();
 
-	//pListTr->SetWorldPos(pListTr->GetWorldPos().x, pListTr->GetWorldPos().y + 145.f, 0.f);
-	pListTr->SetWorldPos(pListTr->GetWorldPos().x, pListTr->GetWorldPos().y + 105.f, 0.f);
+	pListTr->SetWorldPos(pListTr->GetWorldPos().x, pListTr->GetWorldPos().y + 151.f, 0.f);
+	//pListTr->SetWorldPos(pListTr->GetWorldPos().x, pListTr->GetWorldPos().y + 105.f, 0.f);
 
 	SAFE_RELEASE(pListTr);
 
 	CTransform*	pNumberTr = m_vecNumber[iIndex]->GetTransform();
 
-	//pNumberTr->SetWorldPos(pNumberTr->GetWorldPos().x, pNumberTr->GetWorldPos().y + 145.f, 0.f);
-	pNumberTr->SetWorldPos(pNumberTr->GetWorldPos().x, pNumberTr->GetWorldPos().y + 105.f, 0.f);
+	pNumberTr->SetWorldPos(pNumberTr->GetWorldPos().x, pNumberTr->GetWorldPos().y + 151.f, 0.f);
+	//pNumberTr->SetWorldPos(pNumberTr->GetWorldPos().x, pNumberTr->GetWorldPos().y + 105.f, 0.f);
 
 	SAFE_RELEASE(pNumberTr);
 }
@@ -679,9 +679,9 @@ bool CInventory::Init()
 
 	CTransform*	pZipTr = m_pZipObj->GetTransform();
 
-	//pZipTr->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 255.f / 1280.f)),
-	//	_RESOLUTION.iWidth * (1.f - (1 - 45.f / 720.f)), 1.f);
-	pZipTr->SetWorldPos(255.f, 80.f, 0.f);
+	pZipTr->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 255.f / 1280.f)),
+		_RESOLUTION.iWidth * (1.f - (1 - 45.f / 720.f)), 1.f);
+	//pZipTr->SetWorldPos(255.f, 80.f, 0.f);
 
 	SAFE_RELEASE(pZipTr);
 

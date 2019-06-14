@@ -64,8 +64,9 @@ bool CEventMessage::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 520.f / 1280.f)),
-		_RESOLUTION.iHeight * (1.f - (1 - 500.f / 720.f)), 1.f);
+	/*m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 520.f / 1280.f)),
+		_RESOLUTION.iHeight * (1.f - (1 - 500.f / 720.f)), 1.f);*/
+	m_pTransform->SetWorldPos(520.f, 500.f, 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("EMAnimation");

@@ -126,13 +126,13 @@ void CKeyInven::AddItem(CGameObject * pItem)
 
 	Vector3	vKeyPos = m_pTransform->GetWorldPos();
 
-	//pItemTr->SetWorldPos(vKeyPos.x + _RESOLUTION.iWidth * (1.f - (1 - 375.f / 1280.f)),
-	//	vKeyPos.y + _RESOLUTION.iHeight * (1.f - (1 - 572.f / 720.f)) - m_fItemY, 0.f);
-	pItemTr->SetWorldPos(vKeyPos.x + 395.f, vKeyPos.y + 562.f - m_fItemY, 0.f);
+	pItemTr->SetWorldPos(vKeyPos.x + _RESOLUTION.iWidth * (1.f - (1 - 375.f / 1280.f)),
+		vKeyPos.y + _RESOLUTION.iHeight * (1.f - (1 - 572.f / 720.f)) - m_fItemY, 0.f);
+	//pItemTr->SetWorldPos(vKeyPos.x + 395.f, vKeyPos.y + 562.f - m_fItemY, 0.f);
 	pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
-	//m_fItemY += 159.f;
-	m_fItemY += 105.f;
+	m_fItemY += 159.f;
+	//m_fItemY += 105.f;
 
 	if (m_pObject->GetEnable() == false)
 	{

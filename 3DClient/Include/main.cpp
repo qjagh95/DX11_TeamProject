@@ -24,7 +24,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	srand((unsigned int)time(0));	
 
-	if (!CCore::GetInst()->Init(hInstance, 1280, 720,
+	if (!CCore::GetInst()->Init(hInstance, 1920, 1080,
 		TEXT("OutLast - 1"), TEXT("OutLast - 1"), IDI_ICON1, IDI_ICON1,
 		true))
 	{
@@ -41,13 +41,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	GET_SINGLE(CGameManager)->PostInit();
 
-	GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("Start", "Start");
-	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("TutorialScene", "Tutorial");
-	GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
-	GET_SINGLE(CSceneManager)->AddScene<CStage2Scene>("Stage2", "Stage2");
+	//GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("Start", "Start");
+	//GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("TutorialScene", "Tutorial");
+	//GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
+	//GET_SINGLE(CSceneManager)->AddScene<CStage2Scene>("Stage2", "Stage2");
 	GET_SINGLE(CSceneManager)->AddScene<JBH_Stage3>("Stage3", "Stage3");
-	GET_SINGLE(CSceneManager)->AddScene<CScene4>("Stage4", "Stage4");
 	//GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("wwre", "Sterewage2");
+	//GET_SINGLE(CSceneManager)->AddScene<CScene4>("Stage4", "Stage4");
 
 	GET_SINGLE(CGameManager)->Init();
 

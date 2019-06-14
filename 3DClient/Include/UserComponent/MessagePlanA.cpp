@@ -51,8 +51,8 @@ bool CMessagePlanA::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	//m_pTransform->SetWorldScale(330.f, 80.f, 1.f);
-	m_pTransform->SetWorldScale(220.f, 53.f, 1.f);
+	m_pTransform->SetWorldScale(330.f, 80.f, 1.f);
+	//m_pTransform->SetWorldScale(220.f, 53.f, 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("PAAnimation");
@@ -84,8 +84,8 @@ bool CMessagePlanA::Init()
 	pBody->SetCollisionCallback(CCT_LEAVE, this, &CMessagePlanA::MouseOut);
 
 	pBody->SetCollisionGroup("UI");
-	//pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(330.f, 80.f, 0.f));
-	pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(220.f, 53.f, 0.f));
+	pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(330.f, 80.f, 0.f));
+	//pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(220.f, 53.f, 0.f));
 
 	SAFE_RELEASE(pBody);
 

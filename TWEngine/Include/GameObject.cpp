@@ -27,6 +27,7 @@ CGameObject::CGameObject() :
 	m_pPickingCollSphere(nullptr),
 	m_bUseFrustumCull(true),
 	m_isDontDestroy(false),
+	m_bShadow(false),
 	m_eSectionType((STAGE_SECTION_TYPE)0)
 {
 	SetTag("GameObject");

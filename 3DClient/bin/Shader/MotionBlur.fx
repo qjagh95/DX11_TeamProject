@@ -37,7 +37,7 @@ void MotionBlur(int3 vDispatchThreadID : SV_DispatchThreadID)
     ReturnColor += lerp(vColorArr5, vColorArr6, g_DeltaTime);
     ReturnColor += lerp(vColorArr6, vColorArr7, g_DeltaTime);
 
-    vColor /= 4.1f;
+	ReturnColor /= 4.1f;
 
     g_RWOutputTex[vDispatchThreadID.xy] = ReturnColor;
 }

@@ -117,6 +117,10 @@ public:
 	Vector3 GetWorldScale()	const;
 	Vector3 GetWorldRot()	const;
 	Vector3 GetWorldPos()	const;
+	Vector3 GetWorldRelativePos() const
+	{
+		return m_vWorldPos;
+	}
 	Vector3 GetPivot()	const;
 	Vector3 GetWorldAxis(AXIS eAxis)	const;
 	const Vector3* GetWorldAxis()	const;

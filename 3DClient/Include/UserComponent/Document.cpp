@@ -48,11 +48,11 @@ bool CDocument::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	//m_pTransform->SetWorldScale(900.f, 900.f, 1.f);
-	//m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 830.f / 1280.f)), 
-	//	_RESOLUTION.iHeight * (1.f - (1 - 350.f / 720.f)), 1.f);
-	m_pTransform->SetWorldScale(600.f, 600.f, 1.f);
-	m_pTransform->SetWorldPos(830.f, 350.f, 1.f);
+	m_pTransform->SetWorldScale(900.f, 900.f, 1.f);
+	m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 830.f / 1280.f)), 
+		_RESOLUTION.iHeight * (1.f - (1 - 350.f / 720.f)), 1.f);
+	//m_pTransform->SetWorldScale(600.f, 600.f, 1.f);
+	//m_pTransform->SetWorldPos(830.f, 350.f, 1.f);
 	m_pTransform->SetWorldPivot(0.5f, 0.5f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("DocAnimation");

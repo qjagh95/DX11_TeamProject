@@ -695,7 +695,7 @@ vector<Vector3> CEditManager::GetWorldTransform(const string _strObjectTag, cons
 	}
 	case eTransformType::TT_POSITION:
 	{
-		pVecTranform.push_back(pTr->GetWorldPos());
+		pVecTranform.push_back(pTr->GetWorldRelativePos());
 		break;
 	}
 	}

@@ -41,7 +41,7 @@ void CMinion3D::Start()
 {
 	m_pTransform->SetLocalRot(0.f, -90.f, 0.f);
 	m_pTransform->SetWorldScale(0.1f, 0.1f, 0.1f);
-	m_pTransform->SetWorldPos(38.f, 0.f, 81.f);
+	//m_pTransform->SetWorldPos(38.f, 0.f, 81.f);
 }
 
 void CMinion3D::AfterClone()

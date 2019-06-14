@@ -12,14 +12,13 @@ ST3_Slient::ST3_Slient()
 {
 	m_Attack = 1;
 	m_TraceDist = 5.0f;
-	m_BashCount = 3;
+	m_BashCount = 0;
 	m_MoveSpeed = 22.5f;
 	m_WateTime = 2.0f; 
 	m_WateTimeVar = 0.0f;
 	m_PlayerState = 0;
 	m_FindTime = 3.0f;
 	m_FindTimeVar = 0.0f;
-	m_BashCount = 0;
 	m_HitMoveSpeed = 20.0f;
 	m_isDoorColl = false;
 	m_isParkourColl = false;
@@ -61,12 +60,6 @@ ST3_Slient::~ST3_Slient()
 bool ST3_Slient::Init()
 {
 	NPCBase::Init();
-
-	/*
-	1. бя╬ф©ю╢б ╦В.
-	2. Mesh : Cannibal
-	3. bne, anm : Cannibal
-	*/
 
 	m_AniName[STS_IDLE] = "idle_search_forward";
 	m_AniName[STS_WALK] = "move_forward_slow";
@@ -159,7 +152,7 @@ bool ST3_Slient::Init()
 	m_3DSound->LoadSound("Scream2", L"enemies\\Enemies_def_hit2.wav");
 	m_3DSound->LoadSound("Scream3", L"enemies\\Enemies_def_hit3.wav");
 
-	//m_3DSound->LoadSound("BashOpen", L"dist_wood_03.wav");
+	m_3DSound->LoadSound("BashOpen", L"dist_wood_03.wav");
 
 	m_Animation->SetCallback("move_forward_fast", this, 8, &ST3_Slient::Walk1Sound);
 	m_Animation->SetCallback("move_forward_fast", this, 19, &ST3_Slient::Walk2Sound);
@@ -404,6 +397,9 @@ void ST3_Slient::DoorCheck()
 		m_PlayerCollDoor = NULLPTR;
 		return;
 	}
+
+	if (JBH_Stage3::m_isCanDrop == false)
+		return;
 
 	string DoorTag = CGameManager::GetInst()->GetPlayerCollDoorMapKey(m_pScene);
 

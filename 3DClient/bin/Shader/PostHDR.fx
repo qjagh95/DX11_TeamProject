@@ -37,8 +37,11 @@ cbuffer FinalPass : register(b9)
     int     g_iDepthFog;
     int     g_iBloom;
     int     g_iAdaptation;
+	int		g_iDistortion;
     float   g_fFadeAmount;
-    float   g_Empty1234141241;
+	float	g_fWaveScale;
+	float	g_fWaveSpeed;
+	float2	g_vWaveCenter;
 }
 
 cbuffer DepthFog : register(b13)
@@ -73,17 +76,42 @@ VS_OUTPUT_TEX FullScreenQuadVS(uint iVertexID : SV_VertexID)
 PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
-    
-    float4 vDepth = DepthTex.Sample(PointSampler, Input.vUV.xy);
-    float3 vColor = OriginTex.Sample(PointSampler, Input.vUV.xy).xyz;
+ 
+	float2 vUV = Input.vUV;
+
+	if (g_iDistortion)
+	{
+		if (g_fWaveScale > 0)
+		{
+			float2 p = float2(vUV.x, vUV.y - 1.f);
+			p.x -= g_vWaveCenter.x;
+			p.y += g_vWaveCenter.y;
+
+			float lenth = sqrt(pow(p.x, 2) + pow(p.y, 2));
+
+			float fScale = (1.f - lenth) * g_fWaveScale;
+
+			if (fScale < 0.000001f)
+			{
+				fScale = 0.000000f;
+			}
+
+			vUV = vUV + (((p / lenth) * cos(g_DeltaTime * g_fWaveSpeed) * fScale) + (fScale * 0.5f));
+		}
+	}
+
+    float4 vDepth = DepthTex.Sample(PointSampler, vUV);
+    float3 vColor = OriginTex.Sample(PointSampler, vUV).xyz;
 
     float Focus = vDepth.y;
     float fDepth = vDepth.w;
 
+
+
     if (g_iBlur == 1 || g_iMotionBlur == 1)
     {
         if (Focus < 0.5f)
-            vColor = BlurTex.Sample(PointSampler, Input.vUV.xy).xyz;
+            vColor = BlurTex.Sample(PointSampler, vUV).xyz;
     }
 
     if (g_iDepthFog == 1)
@@ -99,7 +127,7 @@ PS_OUTPUT_SINGLE FinalPassPS(VS_OUTPUT_TEX Input)
     if(g_iBloom == 1)
     {
     // Bloom Contribution 을 추가한다
-        vColor += fBloomScale * BloomTex.Sample(g_DiffuseSmp, Input.vUV.xy).xyz;
+        vColor += fBloomScale * BloomTex.Sample(g_DiffuseSmp, vUV).xyz;
     }
     
     // 톤 매핑(HDR 색을 LDR색으로 변환)

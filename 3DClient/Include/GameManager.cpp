@@ -27,6 +27,7 @@
 #include "UserComponent/Locker.h"
 #include "UserComponent/Parkour.h"
 #include "Component/ColliderSphere.h"
+#include "UserComponent/ControlBase.h"
 
 DEFINITION_SINGLE(CGameManager)
 
@@ -166,8 +167,10 @@ bool CGameManager::Init()
 
 	if (!pLayer)
 		return false;
-
+	
 	m_pPlayerObj = CGameObject::CreateObject("Player", pLayer, true);
+	m_pPlayerObj->SetShadow();
+	m_pPlayerObj->GetTransformNonCount()->SetWorldPos(Vector3(300.0f, 0.0f, 700.0f));
 
 	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 

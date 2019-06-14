@@ -4,10 +4,10 @@ Texture2D g_DepthTex : register(t1);
 
 cbuffer Blur : register(b1)
 {
-    int     g_iNumPixel;
-    int     g_iDepthOfField;
-    float   g_fCameraFar;
-    float   g_fBlurEmpty;
+	int     g_iNumPixel;
+	int     g_iDepthOfField;
+	float   g_fCameraFar;
+	float   g_fBlurDensity;
 }
 
 groupshared float4 g_vSharedColor[2][2];
@@ -18,103 +18,131 @@ groupshared float4 g_vBlurColorV[540];
 [numthreads(960, 1, 1)]
 void HorizontalBlur(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : SV_DispatchThreadID)
 {
-    float4 vColor = (float4) 0;
-    int iMaxCount = g_iNumPixel;
-    int iMaxOffset = iMaxCount * 0.5f;
-    int3 vUV;
+	float4 vColor = (float4) 0;
+	int iMaxCount = g_iNumPixel;
 
-    vUV.xy = vDispatchThreadID.xy;
-    vUV.z = 0;
+	if (iMaxCount % 2 == 0)
+		iMaxCount -= 1;
 
-    float4 vOriginColor = g_BaseTex.Load(vUV);    
+	int iMaxOffset = iMaxCount * 0.5f;
+	int3 vUV;
 
-    if (!isfinite(vOriginColor.x) || !isfinite(vOriginColor.y) || !isfinite(vOriginColor.z) || !isfinite(vOriginColor.a))
-        vOriginColor = float4(0.0f, 0.0f, 0.0f, 10.0f);
-    
+	vUV.xy = vDispatchThreadID.xy;
+	vUV.z = 0;
 
-    g_vBlurColorH[vGroupThreadID.x] = vOriginColor;
-    
-    GroupMemoryBarrierWithGroupSync();
+	float4 vOriginColor = g_BaseTex.Load(vUV);
 
-    int k = 0;
-    
-    float fBlur = 1.0f / (float)iMaxCount;
+	if (!isfinite(vOriginColor.x) || !isfinite(vOriginColor.y) || !isfinite(vOriginColor.z) || !isfinite(vOriginColor.a))
+		vOriginColor = float4(0.0f, 0.0f, 0.0f, 10.0f);
 
-    vColor = vOriginColor * fBlur;
 
-    if (g_iDepthOfField == 1)
-    {
-        float fDepth = vOriginColor.a / g_fCameraFar;
-       if (fDepth > 1.0f || fDepth < 0.000001f)
-            fDepth = 0.9f;
+	g_vBlurColorH[vGroupThreadID.x] = vOriginColor;
 
-        fBlur = fDepth / (float)(iMaxCount - 1);
-        vColor = vOriginColor * (1.0f - fDepth);
-    }    
+	GroupMemoryBarrierWithGroupSync();
 
-    for (int i = -iMaxOffset; i <= iMaxOffset; ++i)
-    {
-        k = vGroupThreadID.x + i;
+	int k = 0;
 
-        if (k >= 0 && k < 960)
-        {
-            if (i == 0)
-                continue;
+	float fMyBlur = 1.0f - g_fBlurDensity;
 
-            vColor += g_vBlurColorH[k] * fBlur;
-        }
-    }
+	if (fMyBlur > 1.0f)
+		fMyBlur = 1.0f;
+	else if (fMyBlur < 1.0f / (float)iMaxCount)
+		fMyBlur = 1.0f / (float)iMaxCount;
 
-    g_RWOutputTex[vDispatchThreadID.xy] = vColor;
+	float fBlur = (1.0f - fMyBlur) / (float)iMaxCount;
+
+	if (fBlur < 0.0f)
+		fBlur = 0.0f;
+
+	vColor = vOriginColor * fMyBlur;
+
+	if (g_iDepthOfField == 1)
+	{
+		float fDepth = vOriginColor.a / g_fCameraFar;
+		if (fDepth > 1.0f || fDepth < 0.000001f)
+			fDepth = 0.9f;
+
+		fBlur = fDepth / (float)(iMaxCount - 1);
+		vColor = vOriginColor * (1.0f - fDepth);
+	}
+
+	for (int i = -iMaxOffset; i <= iMaxOffset; ++i)
+	{
+		k = vGroupThreadID.x + i;
+
+		if (k >= 0 && k < 960)
+		{
+			if (i == 0)
+				continue;
+
+			vColor += g_vBlurColorH[k] * fBlur;
+		}
+	}
+
+	g_RWOutputTex[vDispatchThreadID.xy] = vColor;
 }
 
 [numthreads(1, 540, 1)]
 void VerticalBlur(int3 vGroupThreadID : SV_GroupThreadID, int3 vDispatchThreadID : SV_DispatchThreadID)
 {
-    float4 vColor = (float4) 0;
-    int iMaxCount = g_iNumPixel;
-    int iMaxOffset = iMaxCount / 2;
-    int3 vUV;
-    vUV.xy = vDispatchThreadID.xy;
-    vUV.z = 0;
+	float4 vColor = (float4) 0;
+	int iMaxCount = g_iNumPixel;
 
-    float4 vOriginColor = g_BaseTex.Load(vUV);
+	if (iMaxCount % 2 == 0)
+		iMaxCount -= 1;
 
-    if (!isfinite(vOriginColor.x) || !isfinite(vOriginColor.y) || !isfinite(vOriginColor.z))
-        vOriginColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	int iMaxOffset = iMaxCount / 2;
+	int3 vUV;
+	vUV.xy = vDispatchThreadID.xy;
+	vUV.z = 0;
 
-    g_vBlurColorV[vGroupThreadID.y] = vOriginColor;
+	float4 vOriginColor = g_BaseTex.Load(vUV);
 
-    
-    GroupMemoryBarrierWithGroupSync();     
+	if (!isfinite(vOriginColor.x) || !isfinite(vOriginColor.y) || !isfinite(vOriginColor.z))
+		vOriginColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 
-    float fBlur = 1.0f / (float)iMaxCount;
+	g_vBlurColorV[vGroupThreadID.y] = vOriginColor;
 
-    vColor = vOriginColor * fBlur;
 
-    if (g_iDepthOfField == 1)
-    {
-        float fDepth = vOriginColor.a / g_fCameraFar;
-        if (fDepth > 1.0f || fDepth < 0.000001f)
-            fDepth = 0.9f;
-        fBlur = fDepth / (float)(iMaxCount - 1);
-        vColor = vOriginColor * (1.0f - fDepth);
-    }
+	GroupMemoryBarrierWithGroupSync();
 
-    int k = 0;
-  
-    for (int i = -iMaxOffset; i <= iMaxOffset; ++i)
-    {
-        k = vGroupThreadID.y + i;
+	float fMyBlur = 1.0f - g_fBlurDensity;
 
-        if (k >= 0 && k < 540)
-        {
-            if (i == 0)
-                continue;
+	if (fMyBlur > 1.0f)
+		fMyBlur = 1.0f;
+	else if (fMyBlur < 1.0f / (float)iMaxCount)
+		fMyBlur = 1.0f / (float)iMaxCount;
 
-            vColor += g_vBlurColorV[k] * fBlur;
-        }
-    }
+	float fBlur = (1.0f - fMyBlur) / (float)iMaxCount;
 
-    g_RWOutputTex[vDispatchThreadID.xy] = vColor;
+	if (fBlur < 0.0f)
+		fBlur = 0.0f;
+
+	vColor = vOriginColor * fMyBlur;
+
+	if (g_iDepthOfField == 1)
+	{
+		float fDepth = vOriginColor.a / g_fCameraFar;
+		if (fDepth > 1.0f || fDepth < 0.000001f)
+			fDepth = 0.9f;
+		fBlur = fDepth / (float)(iMaxCount - 1);
+		vColor = vOriginColor * (1.0f - fDepth);
+	}
+
+	int k = 0;
+
+	for (int i = -iMaxOffset; i <= iMaxOffset; ++i)
+	{
+		k = vGroupThreadID.y + i;
+
+		if (k >= 0 && k < 540)
+		{
+			if (i == 0)
+				continue;
+
+			vColor += g_vBlurColorV[k] * fBlur;
+		}
+	}
+
+	g_RWOutputTex[vDispatchThreadID.xy] = vColor;
 }

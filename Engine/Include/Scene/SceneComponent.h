@@ -25,6 +25,7 @@ public:
 	virtual int LateUpdate(float fTime);
 	virtual void Collision(float fTime);
 	virtual void Render(float fTime);
+	virtual void ChangeScene();
 };
 
 PUN_END

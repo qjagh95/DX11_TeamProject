@@ -611,16 +611,8 @@ void CLandScape::OnOff()
 	{
 		m_isShow ^= true;
 
-		if (m_isShow == true)
-		{
-			CRenderer* getRenderer = m_pObject->FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
-			getRenderer->SetEnable(m_isShow);
-		}
-		else
-		{
-			CRenderer* getRenderer = m_pObject->FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
-			getRenderer->SetEnable(m_isShow);
-		}
+		CRenderer* getRenderer = m_pObject->FindComponentFromTypeNonCount<CRenderer>(CT_RENDERER);
+		getRenderer->SetEnable(m_isShow);
 	}
 }
 

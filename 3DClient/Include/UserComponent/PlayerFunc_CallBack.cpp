@@ -13,7 +13,6 @@ void CHuman_Player::InteractCallBackEnter(CCollider* pSrc,
 	CCollider* pDest, float fTime)
 {
 	
-	
 }
 
 void CHuman_Player::InteractCallBackStay(CCollider * pSrc,

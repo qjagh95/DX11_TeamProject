@@ -42,3 +42,7 @@ void CSceneComponent::Collision(float fTime)
 void CSceneComponent::Render(float fTime)
 {
 }
+
+void CSceneComponent::ChangeScene()
+{
+}

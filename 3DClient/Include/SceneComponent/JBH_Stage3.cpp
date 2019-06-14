@@ -14,6 +14,8 @@
 #include "../UserComponent/Door.h"
 #include "../CameraEff.h"
 #include "../UserComponent/ControlBase.h"
+#include "../UserComponent/BatteryIcon.h"
+#include "../UserComponent/Inventory.h"
 
 bool JBH_Stage3::m_isCanDrop = false;
 bool JBH_Stage3::m_SlientMode = false;
@@ -55,9 +57,10 @@ void JBH_Stage3::AfterInit()
 
 	// Àü¿ª±¤(Directional Light) ¼³Á¤
 	Vector4 vWhiteColor = Vector4(1.f, 1.f, 1.f, 1.0f);
-	Vector4 vDarkColor = Vector4(0.005f, 0.005f, 0.005f, 1.0f);
+	Vector4 vDarkColor = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
 	CLayer* pLayer = m_pScene->FindLayer("Light");
 	CLayer* pDefault = m_pScene->FindLayer("Default");
+	CLayer* UILayer = m_pScene->FindLayer("UI");
 
 	list<CGameObject*>* pLightList = pLayer->GetObjectList();
 	list<CGameObject*>::iterator iter;
@@ -76,8 +79,6 @@ void JBH_Stage3::AfterInit()
 	m_Player->GetTransformNonCount()->SetWorldPos(Vector3(238.0f, 0.0f, 68.0f));
 	m_Player->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, -90.0f, 0.0f));
 	pCamera->GetTransformNonCount()->SetWorldRot(Vector3(0.0f, 270.0f, 0.0f));
-
-	SAFE_RELEASE(pDefault);
 
 	NPCInit();
 
@@ -105,6 +106,25 @@ void JBH_Stage3::AfterInit()
 			SAFE_RELEASE(pCon);
 		}
 	}
+
+	CDoor* getDoor = CGameManager::GetInst()->FindDoor(m_pScene, "C_Corridor_18_Door");
+	getDoor->Lock(true, "Item_Key_Stage4");
+
+	getDoor = CGameManager::GetInst()->FindDoor(m_pScene, "C_Corridor_5_Door_Lock");
+	getDoor->Lock(true);
+
+	CGameObject* getInvenObj = pDefault->FindObjectNonCount("Inven");
+	CInventory* getInven = getInvenObj->FindComponentFromTypeNonCount<CInventory>(static_cast<COMPONENT_TYPE>(UT_INVENTORY));
+
+	CGameObject* newBattryObj = CGameObject::CreateObject("Icon_Battery", UILayer);
+	CBatteryIcon* newBattry = newBattryObj->AddComponent< CBatteryIcon>("Icon_Battery");
+
+	getInven->AddItem(newBattryObj);
+
+	SAFE_RELEASE(newBattry);
+	SAFE_RELEASE(newBattryObj);
+	SAFE_RELEASE(pDefault);
+	SAFE_RELEASE(UILayer);
 }
 
 int JBH_Stage3::Update(float DeltaTime)

@@ -4,8 +4,10 @@
 #include "../UserComponent/Door.h"
 #include "../UserComponent/Human_Player.h"
 #include "../UserComponent/ST3_Suprise.h"
+#include "../UserComponent/ST_Default.h"
 #include <StrUtility.h>
 #include <Component/Light.h>
+#include <Component/LandScape.h>
 #include <Component/FreeCamera.h>
 #include <Component/ColliderOBB3D.h>
 
@@ -15,17 +17,18 @@
 #define IS_LIGHT_TEST	false
 
 CScene4::CScene4() :
+	m_fFade(0.f),
+	m_bMouseOn(false),
+	m_bMotion(false),
+	m_isChangeBGM(false),
+	m_isShot(false),
 	m_pObjPlayer(nullptr),
 	m_pPlayerTr(nullptr),
 	m_pHumanPlayer(nullptr),
 	m_pHeavyDoor(nullptr),
-
-
-
-	m_pObjBSDecal(nullptr),
-	m_pObjBBDecal(nullptr),
-	m_pBSDecal(nullptr),
-	m_pBBDecal(nullptr)
+	m_pHandGun(nullptr),
+	m_newMonsterObject(nullptr),
+	m_newMonster(nullptr)
 {
 }
 
@@ -40,12 +43,10 @@ CScene4::~CScene4()
 	SAFE_RELEASE(m_pObjPlayer);
 	SAFE_RELEASE(m_pPlayerTr);
 	SAFE_RELEASE(m_pHeavyDoor);
-
-
-	SAFE_RELEASE(m_pObjBSDecal);
-	SAFE_RELEASE(m_pObjBBDecal);
-	SAFE_RELEASE(m_pBSDecal);
-	SAFE_RELEASE(m_pBBDecal);
+	SAFE_RELEASE(m_newMonsterObject);
+	SAFE_RELEASE(m_newMonster);
+	SAFE_RELEASE(m_pHandGun);
+	SAFE_RELEASE(m_pHandGunTr);
 }
 
 void CScene4::Start()
@@ -63,12 +64,26 @@ bool CScene4::Init()
 	wstrPath += L"Stage4_DG.dat";
 	string strDataPath = CW2A(wstrPath.c_str());
 	m_pScene->Load(strDataPath);
-	
+
+	// Navigation
+	CLayer* pLayer = m_pScene->FindLayer("Default");
+	CGameObject* NavLandObject = CGameObject::CreateObject("Land", pLayer);
+	CLandScape* Land = NavLandObject->AddComponent<CLandScape>("Land");
+	string strPath = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
+	strPath += "Stage4_Nav_DG.nav";
+	Land->LoadLandScape(strPath);
+	SAFE_RELEASE(pLayer);
+
+	// 사운드
+	CSoundManager::GetInst()->CreateSoundEffect("Stage4BGM", L"music\\11-Surgeon Stealth 2 (MIX1-Strings).wav");
+	CSoundManager::GetInst()->CreateSoundEffect("TraceBGM", L"music\\10-AI NPC CHASE LOOP 2 (Strings).wav");
+	CSoundManager::GetInst()->SetTransitionTime(2.0f);
+
 	// 전역광(Directional Light) 설정
 	Vector4 vWhiteColor = Vector4(1.f, 1.f, 1.f, 1.0f);
 	Vector4 vTestColor  = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
-	Vector4 vDarkColor  = Vector4(0.005f, 0.005f, 0.005f, 1.0f);
-	CLayer* pLayer = m_pScene->FindLayer("Light");
+	Vector4 vDarkColor  = Vector4(0.04f, 0.01f, 0.01f, 1.0f);
+	pLayer = m_pScene->FindLayer("Light");
 	list<CGameObject*>* pLightList = pLayer->GetObjectList();
 	list<CGameObject*>::iterator iter;
 	list<CGameObject*>::iterator iterEnd = pLightList->end();
@@ -84,62 +99,8 @@ bool CScene4::Init()
 	}
 	SAFE_RELEASE(pLayer);
 
-	
-
-
-
-
-
-	// 데칼(Screen Space Decal)
-	//CreateMilestoneDecal();
-
-
-	//CreateDecal();
-
-
-	// 초기화
-	{
-		//SetDoorInit();
-	}
-
-
-	/*
-	CreateBloodDecal();*/
-
-	// y축 기준으로 데칼이 보인다.
-
-
-	//CLayer* pLayer = m_pScene->FindLayer("Default");
-
-	// BloodDecal_Small
-	//CGameObject* pObjBSDecal = CGameObject::CreateObject("Decal", pLayer);
-	//CTransform* pBSTr = pObjBSDecal->GetTransform();
-	//pBSTr->SetWorldRotX(-90.f);
-	//pBSTr->SetWorldScale(5.f, 5.f, 5.f);
-	//pBSTr->SetWorldPos(10.f, 5.f, 8.f);
-	//CDecal* pBSDecal = pObjBSDecal->AddComponent<CDecal>("Decal");
-	//CRenderer* pRenderer = pObjBSDecal->FindComponentFromTag<CRenderer>("DecalRenderer");
-	//pRenderer->SetRenderState(ALPHA_BLEND);
-	//// SetDiffuseTex, NormalTex, SpecularTex() 호출 시 Texture를 만들어준다.
-	//CMaterial* pBSMtrl = pObjBSDecal->FindComponentFromType<CMaterial>(CT_MATERIAL);
-	//pBSMtrl->SetDiffuseTex(0, "BloodDecalD_Small", TEXT("Decal/ControlCenter.png"));
-	///*pBSMtrl->SetNormalTex(1, "BloodDecalN_Small", TEXT("Decal/ControlCenter.png"));
-	//pBSMtrl->SetSpecularTex(2, "BloodDecalS_Small", TEXT("Decal/ControlCenter.png"));*/
-	//pBSMtrl->SetSampler(0, SAMPLER_LINEAR);
-	////pBSMtrl->SetNormalSampler(0, SAMPLER_LINEAR);
-	////pBSMtrl->SetSpecularSampler(0, SAMPLER_LINEAR);
-
-
-	/*CColliderOBB3D*	pDecalSphere = pObjBSDecal->AddComponent<CColliderOBB3D>("DecalSphere");
-	pDecalSphere->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(2.5f, 1.5f, 2.5f));
-	SAFE_RELEASE(pDecalSphere);*/
-
-
-
-
-
-
-	//SAFE_RELEASE(pLayer);
+	// 키
+	GET_SINGLE(CInput)->AddKey("Shot", VK_RBUTTON);
 
 	return true;
 }
@@ -163,37 +124,52 @@ void CScene4::AfterInit()
 	m_pHumanPlayer = _PLAYER;
 	m_pObjPlayer = _PLAYER->GetGameObject();
 	m_pPlayerTr = m_pObjPlayer->GetTransform();
-	m_pPlayerTr->SetWorldPos(Vector3::Zero);
+	m_pHumanPlayer->PlayerRot(Vector3(0.f, 90.f, 0.f));
+	m_pPlayerTr->SetWorldPos(40.f, 0.f, 25.f);
 	CRenderer* pRenderer = m_pObjPlayer->FindComponentFromType<CRenderer>(CT_RENDERER);
 	pRenderer->SetDecalEnable(false);
 	SAFE_RELEASE(pRenderer);
 
-	// 스테이지 이동 문
-	DoorInit();
-
-	// 시체
+	// 몬스터
 	CLayer* pLayer = m_pScene->FindLayer("Default");
-	CGameObject* pObjCorpse1 = CGameObject::CreateObject("Suprise", pLayer);
-	CTransform* pCropse1Tr = pObjCorpse1->GetTransform();
-	ST3_Suprise* Suprise = pObjCorpse1->AddComponent<ST3_Suprise>("Suprise");
+	m_newMonsterObject = CGameObject::CreateObject("Suprise", pLayer);
+	m_newMonster = m_newMonsterObject->AddComponent<ST_Default>("Suprise");
+	m_newMonster->GetTransformNonCount()->SetWorldPos(Vector3(60.f, 0.f, 100.f));
+	m_newMonster->AddPatrolPos(Vector3(60.f, 0.f, 100.f));
+	m_newMonster->AddPatrolPos(Vector3(109.f, 0.f, 115.f));
+	m_newMonster->AddPatrolPos(Vector3(54.f, 0.f, 82.f));
+	m_newMonster->IamNotFirstStage();
+	m_newMonster->SetPlayerFindDistance(35.f);
+	m_newMonster->SetTarget(m_pObjPlayer);
 
-	CGameObject*	pPObj = CGameObject::FindObject("Player");
-
-	Suprise->SetTarget(pPObj);
-
-	SAFE_RELEASE(pPObj);
-
-	SAFE_RELEASE(pCropse1Tr);
-	SAFE_RELEASE(Suprise);
-	SAFE_RELEASE(pObjCorpse1);
+	// 총
+	m_pHandGun = PUN::CGameObject::CreateObject("Gun", pLayer);
+	m_pHandGun->SetFrustrumCullUse(false);
+	m_pHandGunTr = m_pHandGun->GetTransform();
+	m_pHandGunTr->SetWorldPos(85.f, 4.5f, 99.f);
+	m_pHandGunTr->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
+	m_pHandGunTr->SetWorldRotY(30.f);
+	CRenderer *renderer = m_pHandGun->AddComponent<CRenderer>("renderer");
+	renderer->SetMesh("gun", TEXT("glock_OnlyFire.msh"));
+	SAFE_RELEASE(renderer);
+	CAnimation* pAnim = m_pHandGun->AddComponent<CAnimation>("animation");
+	pAnim->LoadBone(TEXT("glock_OnlyFire.bne"));
+	pAnim->Load(TEXT("glock_idle.anm"));
+	pAnim->LoadFileAsClip("fire", TEXT("glock_fire.anm"));
+	pAnim->SetDefaultClip("Take 001");
+	pAnim->SetClipOption("fire", PUN::AO_ONCE_RETURN);
+	pAnim->SetBlendSkip(true);
+	SAFE_RELEASE(pAnim);
+	CColliderSphere* pBody = m_pHandGun->AddComponent<CColliderSphere>("GunBody");
+	pBody->SetCollisionCallback(CCT_ENTER, this, &CScene4::Hit);
+	pBody->SetCollisionCallback(CCT_LEAVE, this, &CScene4::MouseOut);
+	pBody->SetColliderID((COLLIDER_ID)UCI_ITEM_BATTERY);
+	pBody->SetInfo(Vector3::Zero, 1.f);
+	SAFE_RELEASE(pBody);
 	SAFE_RELEASE(pLayer);
 
-	CDoor* pDoor = GET_SINGLE(CGameManager)->FindDoor(m_pScene, "Door_S4_S1");
-
-	pDoor->SetDoorType(DOOR_STAGE);
-	pDoor->SetTargetDoor("Stage1", "Door_S1_S4");
-	pDoor->SetLeftRight(true);
-
+	// 스테이지 이동 문
+	DoorInit();
 #endif
 }
 
@@ -204,18 +180,85 @@ int CScene4::Input(float _fTime)
 
 int CScene4::Update(float _fTime)
 {
-	if (GET_SINGLE(CSceneManager)->GetChange())
+	/*if (GET_SINGLE(CSceneManager)->GetChange())
 	{
 		static bool bAdd = true;
-
 		if (bAdd)
 		{
 			bAdd = false;
 			GET_SINGLE(CGameManager)->AddUILayer();
 			GET_SINGLE(CGameManager)->SetPlayerNaviY(true);
 		}
+	}*/
+
+	// 행동에 따른 사운드 재생
+	if (m_newMonster->GetState() == DS_USER_TRACE
+		|| m_newMonster->GetState() == DS_HOOK
+		|| m_newMonster->GetState() == DS_JAP
+		|| m_newMonster->GetState() == DS_HEAD_ATTACK)
+	{
+		if (m_isChangeBGM == false)
+		{
+			CSoundManager::GetInst()->PlayBgm("TraceBGM");
+			m_isChangeBGM = true;
+		}
+	}
+	else
+	{
+		if (m_isChangeBGM = true)
+		{
+			CSoundManager::GetInst()->PlayBgm("Stage4BGM");
+			m_isChangeBGM = false;
+		}
 	}
 
+	if (m_isShot == false)
+	{
+		if (CInput::GetInst()->KeyPress("Shot") == true)
+		{
+			m_isShot = true;
+		}
+	}
+	else
+	{
+		m_fFade += 2.f * _fTime;
+		GET_SINGLE(CRenderManager)->SetFadeAmount(1.0f - m_fFade, _fTime);
+	}
+	if (m_fFade > 1.f)
+	{
+		m_fFade = 1.f;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	if (m_bMouseOn)
+	{
+		if (KEYUP("F"))
+		{
+			CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
+			CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
+			pPlayer->ChangeRayAnim("AimOff");
+			m_pHandGun->SetEnable(false);
+			GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+			pPlayer->TakeItem();
+			SAFE_RELEASE(pPlayer);
+			SAFE_RELEASE(pPlayerObj);
+		}
+	}
+	if (m_bMotion)
+	{
+		CGameObject*	pPlayerObj = CGameObject::FindObject("Player");
+		CHuman_Player*	pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
+		pPlayer->ChangeRayAnim("AimOff");
+		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_Empty");
+		m_bMotion = false;
+		SAFE_RELEASE(pPlayer);
+		SAFE_RELEASE(pPlayerObj);
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	
 	GET_SINGLE(CGameManager)->Update(_fTime);
 
 	return 0;
@@ -235,6 +278,36 @@ void CScene4::Render(float _fTime)
 {
 }
 
+void CScene4::Hit(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	CGameObject* pPlayerObj = CGameObject::FindObject("Player");
+	CHuman_Player* pPlayer = pPlayerObj->FindComponentFromType<CHuman_Player>((COMPONENT_TYPE)UT_PLAYER);
+	CTransform*	pPlayerTr = pPlayerObj->GetTransform();
+	Vector3 vPlayerPos = pPlayerTr->GetWorldPos();
+	float fDist = m_pHandGun->GetTransformNonCount()->GetWorldPos().Distance(vPlayerPos);
+	if (fDist < 10.f)
+	{
+		if (pDest->GetColliderID() == UCI_PLAYER_RAY)
+		{
+			m_bMouseOn = true;
+			pPlayer->ChangeRayAnim("AimOn");
+			GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_F_Pickup");
+		}
+	}
+	SAFE_RELEASE(pPlayerTr);
+	SAFE_RELEASE(pPlayer);
+	SAFE_RELEASE(pPlayerObj);
+}
+
+void CScene4::MouseOut(CCollider * pSrc, CCollider * pDest, float fTime)
+{
+	if (pDest->GetColliderID() == UCI_PLAYER_RAY)
+	{
+		m_bMouseOn = false;
+		m_bMotion = true;
+	}
+}
+
 void CScene4::DoorInit()
 {
 	// 스테이지 이동문
@@ -244,34 +317,9 @@ void CScene4::DoorInit()
 
 	// 총이 있는 방문
 	m_pHeavyDoor = CGameManager::GetInst()->FindDoor(m_pScene, "Gun_HeavyDoor");
-	m_pHeavyDoor->SetOpenRot(75.f);
-	m_pHeavyDoor->SetOpenTime(10.f);
+	m_pHeavyDoor->SetOpenRot(80.f);
+	m_pHeavyDoor->SetOpenTime(2.f);
 	m_pHeavyDoor->SetDoorType(DOOR_HEAVY);
-}
-
-void CScene4::CreateMilestoneDecal()
-{
-	/*CLayer* pLayer = m_pScene->FindLayer("Default");
-	CGameObject* pObjDecal = CGameObject::CreateObject("Decal", pLayer);
-	CTransform* pTr = pObjDecal->GetTransform();
-	pTr->SetWorldScale(5.f, 5.f, 5.f);
-	pTr->SetWorldRotX(-90.f);
-	pTr->SetWorldPos(10.f, 5.f, 8.f);
-	CDecal* pDecal = pObjDecal->AddComponent<CDecal>("Decal");
-	CRenderer* pRenderer = pObjDecal->FindComponentFromTag<CRenderer>("DecalRenderer");
-	pRenderer->SetRenderState(ALPHA_BLEND);
-	CMaterial* pMtrl = pObjDecal->FindComponentFromType<CMaterial>(CT_MATERIAL);
-	pMtrl->SetDiffuseTex(0, "StageMileStone_D", TEXT("MainHall.png"));
-	pMtrl->SetSampler(0, SAMPLER_LINEAR);
-	CColliderOBB3D*	pDecalSphere = pObjDecal->AddComponent<CColliderOBB3D>("DecalSphere");
-	pDecalSphere->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(2.5f, 1.5f, 2.5f));
-	SAFE_RELEASE(pDecalSphere);
-	SAFE_RELEASE(pRenderer);
-	SAFE_RELEASE(pMtrl);
-	SAFE_RELEASE(pDecal);
-	SAFE_RELEASE(pTr);
-	SAFE_RELEASE(pObjDecal);
-	SAFE_RELEASE(pLayer);*/
 }
 
 void CScene4::ConvertCorridorFBXFiles()
@@ -338,68 +386,4 @@ void CScene4::ConvertCorridorFBXFiles()
 	SAFE_RELEASE(pRenderer);
 	SAFE_RELEASE(pObject);
 	SAFE_RELEASE(pLayer);
-}
-
-void CScene4::InitDecal()
-{
-	// 핏 자국
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//void CScene4::CreateDecal(const string& _strTag,   const string& _decalTag,
-//						  const string& _difName,  const string& _difTexName, 
-//						  const string& _norName,  const string& _norTexName,
-//						  const string& _specName, const string& _specTexName,
-//						  Vector3 _scale, Vector3 _rotate, Vector3 _pos)
-//{
-	//CLayer* pLayer = m_pScene->FindLayer("Default");
-
-	//// BloodDecal_Small
-	//m_pObjBSDecal = CGameObject::CreateObject("Decal", pLayer);
-	//CTransform* pBSTr = m_pObjBSDecal->GetTransform();
-	//pBSTr->SetWorldRotZ(-90.f);
-	//pBSTr->SetWorldScale(5.f, 5.f, 5.f);
-	//pBSTr->SetWorldPos(8.f, 5.f, 1.f);
-	//m_pBSDecal = m_pObjBSDecal->AddComponent<CDecal>("Decal");
-	//CRenderer* pRenderer = m_pObjBSDecal->FindComponentFromTag<CRenderer>("DecalRenderer");
-	//pRenderer->SetRenderState(ALPHA_BLEND);
-	//// SetDiffuseTex, NormalTex, SpecularTex() 호출 시 Texture를 만들어준다.
-	//CMaterial* pBSMtrl = m_pObjBSDecal->FindComponentFromType<CMaterial>(CT_MATERIAL);
-	//pBSMtrl->SetDiffuseTex(0,  "BloodDecalD_Small", TEXT("Decal/Shout24674-perfil3_COLOR.png"));
-	//pBSMtrl->SetNormalTex(1,   "BloodDecalN_Small", TEXT("Decal/Shout24674-perfil3_NRM.png"));
-	//pBSMtrl->SetSpecularTex(2, "BloodDecalS_Small", TEXT("Decal/Shout24674-perfil3_SPEC.png"));
-	//pBSMtrl->SetSampler(0, SAMPLER_LINEAR);
-	//pBSMtrl->SetNormalSampler(0, SAMPLER_LINEAR);
-	//pBSMtrl->SetSpecularSampler(0, SAMPLER_LINEAR);
-//
-//	CColliderOBB3D*	pDecalSphere = m_pObjBSDecal->AddComponent<CColliderOBB3D>("DecalSphere");
-//	pDecalSphere->SetInfo(Vector3::Zero, Vector3::Axis, Vector3(2.5f, 1.5f, 2.5f));
-//	SAFE_RELEASE(pDecalSphere);
-//
-//	SAFE_RELEASE(pBSMtrl);
-//	SAFE_RELEASE(pRenderer);
-//	SAFE_RELEASE(pBSTr);
-//	SAFE_RELEASE(pLayer);
-//
-//	// BloodDecal_Big
-//	//CMaterial* pBBMtrl = m_pObjBBDecal->FindComponentFromType<
-//}
-
-void CScene4::SetAmbientSoundPlay(const string& _soundName)
-{
-	// 환경(주변) 사운드 재생
 }

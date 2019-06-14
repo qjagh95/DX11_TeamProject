@@ -6,6 +6,7 @@ PUN_USING
 
 class CDoor;
 class CHuman_Player;
+class ST_Default;
 class CScene4 : public CSceneComponent
 {
 public:
@@ -22,11 +23,28 @@ public:
 	void Collision(float _fTime)	override;
 	void Render(float _fTime)		override;
 
+private:
+	bool m_isChangeBGM;
+	bool m_isShot;
+	bool m_bMouseOn;
+	bool m_bMotion;
+	float m_fFade;
+
 // 플레이어
 private:
 	CGameObject*	m_pObjPlayer;
 	CTransform*		m_pPlayerTr;
 	CHuman_Player*	m_pHumanPlayer;
+
+// 몬스터
+private:
+	CGameObject*	m_newMonsterObject;
+	ST_Default*		m_newMonster;
+
+// 총
+private:
+	CGameObject*	m_pHandGun;
+	CTransform*		m_pHandGunTr;
 
 // 문
 private:
@@ -35,25 +53,10 @@ private:
 public:
 	void DoorInit();
 
-// 데칼(SSD)
-private:
-	CGameObject*	m_pObjBSDecal;
-	CGameObject*	m_pObjBBDecal;
-	CDecal*			m_pBSDecal;
-	CDecal*			m_pBBDecal;
-
-public:
-	void CreateMilestoneDecal();
-
 public:
 	void ConvertCorridorFBXFiles();
 
+	void Hit(CCollider * pSrc, CCollider * pDest, float fTime);
+	void MouseOut(CCollider * pSrc, CCollider * pDest, float fTime);
 
-
-
-	void InitDecal();
-	//void CreateDecal();
-
-
-	void SetAmbientSoundPlay(const string& _soundName);
 };

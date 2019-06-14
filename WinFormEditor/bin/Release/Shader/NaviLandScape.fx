@@ -11,7 +11,7 @@ cbuffer NaviLandCBuffer : register(b6)
     int g_BrushZRange;
 };
 
-cbuffer GridCBuffer : register(b4)
+cbuffer GridCBuffer : register(b8)
 {
     int g_GridLineSize;
     int g_isVisibleGrid;
@@ -31,6 +31,7 @@ float4 GetBrushColor(float3 vPos, float4 BasicColor)
         (vPos.x <= g_BrushPos.x + XRange) &&
         (vPos.z >= g_BrushPos.z - ZRange) &&
         (vPos.z <= g_BrushPos.z + ZRange))
+            //살구색 RGB값
             return float4(0.960784376f, 0.960784376f, 0.862745166f, 1.000000000f);
 
         return BasicColor;
@@ -43,13 +44,13 @@ float4 GetBrushColor(float3 vPos, float4 BasicColor)
         {
             if (Range.z > 0.0f)
             {
-                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) && 
+                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) &&
                     (vPos.z <= g_BrushPos.z && vPos.z >= g_StartPos.z))
                     return float4(1.0f, 1.0f, 0.0f, 1.0f);
             }
             else if (Range.z < 0.0f)
             {
-                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) && 
+                if ((vPos.x <= g_BrushPos.x && vPos.x >= g_StartPos.x) &&
                     (vPos.z >= g_BrushPos.z && vPos.z <= g_StartPos.z))
                     return float4(1.0f, 1.0f, 0.0f, 1.0f);
             }
@@ -59,7 +60,7 @@ float4 GetBrushColor(float3 vPos, float4 BasicColor)
         {
             if (Range.z > 0.0f)
             {
-                if ((vPos.x >= g_BrushPos.x && vPos.x <= g_StartPos.x) && 
+                if ((vPos.x >= g_BrushPos.x && vPos.x <= g_StartPos.x) &&
                     (vPos.z <= g_BrushPos.z && vPos.z >= g_StartPos.z))
                     return float4(1.0f, 1.0f, 0.0f, 1.0f);
             }
@@ -94,7 +95,7 @@ VS_OUTPUT_3D_COLOR LandScapeColorVS(VS_INPUT_3D_COLOR input)
 
     float3 vPos = input.vPos - g_vPivot * g_vLength;
 
-    float3 sPos = mul(float4(vPos, 1.0f), g_matWorld);
+    float3 sPos = mul(float4(vPos, 1.0f), g_matWorld).xyz;
     output.vPos = mul(float4(vPos, 1.0f), g_matWVP);
     output.vUV = input.vUV;
     output.vColor = input.vColor;

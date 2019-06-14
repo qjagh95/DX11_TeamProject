@@ -389,17 +389,25 @@ PS_OUTPUT_SINGLE ShadowPS(VS_OUTPUT_TEX input)
     if(vShadowDepth.w == 0.0f)
         clip(-1);
 
-    float4 vColor = float4(1.0f, 1.0f, 1.0f, 1.0f);;
+	float4 vColor = float4(1.0f, 1.0f, 1.0f, 1.0f);;
 
-    float fShadowBias = 1.0f;
+	if (vShadowUV.x < 1.0f && vShadowUV.x > 0.0f && vShadowUV.y < 1.0f && vShadowUV.y > 0.0f)
+	{
+		float4 vShadowDepth = g_ShadowTex.Sample(PointSampler, vShadowUV);
 
-    float fPixelToLight = vShadowProjPos.w;
-    float fAmbientPixel = vShadowDepth.w + fShadowBias;
+		if (vShadowDepth.w == 0.0f)
+			clip(-1);
 
-    if (fPixelToLight > fAmbientPixel)
-        vColor = float4(0.2f, 0.2f, 0.2f, 1.0f);
-    
-    output.vTarget0 = vColor;
+		float fShadowBias = 1.0f;
+
+		float fPixelToLight = vShadowProjPos.w;
+		float fAmbientPixel = vShadowDepth.w + fShadowBias;
+
+		if (fPixelToLight > fAmbientPixel)
+			vColor = float4(0.2f, 0.2f, 0.2f, 1.0f);
+	}
+
+	output.vTarget0 = vColor;
 
     return output;
 }

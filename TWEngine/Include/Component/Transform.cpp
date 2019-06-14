@@ -346,6 +346,9 @@ Vector3 CTransform::GetWorldRot() const
 
 Vector3 CTransform::GetWorldPos() const
 {
+	if (m_pParent)
+		return m_pParent->GetWorldPos() + m_vWorldPos;
+
 	return m_vWorldPos;
 }
 
@@ -787,7 +790,7 @@ void CTransform::Save(BinaryWrite* _pInstBW)
 	/* World */
 	Vector3 worldS = GetWorldScale();
 	Vector3 worldR = GetWorldRot();
-	Vector3 worldP = GetWorldPos();
+	Vector3 worldP = GetWorldRelativePos();
 	_pInstBW->WriteData(worldS);
 	_pInstBW->WriteData(worldR);
 	_pInstBW->WriteData(worldP);

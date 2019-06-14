@@ -47,6 +47,21 @@ void CCSBlur::DisableDOF()
 	m_tBlurCBuffer.iDepthOfField = 0;
 }
 
+void CCSBlur::SetDensity(float fDensity)
+{
+	m_tBlurCBuffer.fDensity = fDensity;
+}
+
+void CCSBlur::SetFar(float fFar)
+{
+	m_tBlurCBuffer.fCameraFar = fFar;
+}
+
+void CCSBlur::SetNumPixel(int iNum)
+{
+	m_tBlurCBuffer.iSize = iNum;
+}
+
 bool CCSBlur::Init()
 {
 	CUAV* pUAV = GET_SINGLE(CViewManager)->FindUAV("DownScale2x2");

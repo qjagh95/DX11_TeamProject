@@ -37,7 +37,7 @@ public:
 	{
 		if (pTr)
 		{
-			pTr->AddRef();
+			//pTr->AddRef();
 			m_vTargetPos = pTr->GetWorldPos();
 		}
 		m_pTargetTr = pTr;

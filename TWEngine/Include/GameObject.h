@@ -50,6 +50,7 @@ private:
 	int						m_iObjectListIdx;
 	bool					m_isFrustumCull;
 	bool					m_bSave;
+	bool					m_bShadow;
 	string					m_strLayerName;
 	RENDER_GROUP			m_eRenderGroup;
 	STAGE_SECTION_TYPE		m_eSectionType;
@@ -74,6 +75,11 @@ public:
 	{
 		return m_bSave;
 	}
+
+	void SetShadow() { m_bShadow = true; }
+
+	bool IsShaodw() const { return m_bShadow; }
+
 	class CColliderOBB3D* GetPickingOBB() const;
 	void SetObjectListIndex(int _idx)
 	{

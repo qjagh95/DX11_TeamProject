@@ -89,17 +89,25 @@ private:
 	bool				m_bDepthFog;
 	bool				m_bDepthFogOn;
 	bool				m_AdaptOn;
+	bool				m_bDOF;
+	bool				m_bDistortion;
 	float				m_fMiddleGrey;
 	float				m_fLumWhite;
 	float				m_fAdaptation;
 	float				m_fBloomThreshold;
 	float				m_fBloomScale;
+	float				m_fBlurDensity;
 	Vector3				m_vRimColor;
 	float				m_fRimColor;
 	Vector4				m_vDepthFogColor;
 	float				m_fDepthFogStart;
 	float				m_fDepthFogEnd;
 	float				m_fOnOff;
+	float				m_fDofEnd;
+	int					m_iNumPixel;
+
+	float				m_fWaveLimitTime;
+	float				m_fTime;
 
 public:
 	GAME_MODE GetGameMode()	const;
@@ -168,7 +176,11 @@ private:
 public:
 	void FindMagicNumber(float fTime);
 
-	void SetMotionBlur(int iMotionBlur);
+	void SetMotionBlur(bool bEnable, int iMotionBlur);
+	void SetSkyEnable(bool bEnable);
+
+	void EnableDistortion();
+	void Distortion(float fTime);
 
 	DECLARE_SINGLE(CRenderManager)
 };

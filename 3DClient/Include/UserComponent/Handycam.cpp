@@ -189,16 +189,16 @@ bool CHandycam::Init()
 
 	m_pBar = m_pBarObj->AddComponent<CUIBar>("HandycamBar");
 
-	//m_pBar->SetScale(145.f, 20.f, 1.f);
-	m_pBar->SetScale(93.f, 13.f, 1.f);
+	m_pBar->SetScale(145.f, 20.f, 1.f);
+	//m_pBar->SetScale(93.f, 13.f, 1.f);
 	m_pBar->SetBarDir(BD_RIGHT);
 	m_pBar->SetMinMaxValue(0.f, 120);
-	m_pBar->SetValue(120.f);
+	m_pBar->SetValue(150.f);
 
 	CTransform*	pBarTr = m_pBarObj->GetTransform();
 
-	//pBarTr->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 1152.f / 1280.f)) + 7.f, _RESOLUTION.iHeight * (1.f - (1 - 629.f / 720.f)), 0.f);
-	pBarTr->SetWorldPos(1154.f, 629.f, 0.f);
+	pBarTr->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 1152.f / 1280.f)) + 7.f, _RESOLUTION.iHeight * (1.f - (1 - 629.f / 720.f)), 0.f);
+	//pBarTr->SetWorldPos(1154.f, 629.f, 0.f);
 	pBarTr->SetWorldScale(93.f, 13.f, 1.f);
 
 	m_pBarObj->SetRenderGroup(RG_UI);
@@ -221,7 +221,7 @@ int CHandycam::Update(float fTime)
 {
 	if (m_pObject->GetEnable() == true)
 	{
-		m_pBar->AddValue(-0.01f * fTime);
+		m_pBar->AddValue(-1.f * fTime);
 	}
 
 	float fValue = m_pBar->GetValue();

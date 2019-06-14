@@ -44,6 +44,7 @@ bool ST3_Suprise::Init()
 	*/
 
 	NPCBase::Init();
+
 	m_Renderer->SetMesh("Patient20", TEXT("Patient20.msh"));
 	m_Animation->LoadBone("patient20.bne");
 	m_Animation->Load("NpcMediumDeathPoses-01_AS.anm");
