@@ -820,6 +820,7 @@ void CGameObject::AddChild(CGameObject * pChild, bool bEditorMode)
 	pChild->m_pTransform->SetParentFlag(TPF_ROT | TPF_POS);
 	pChild->AddRef();
 	pChild->m_pTransform->AddRef();
+	pChild->m_isChild = true;
 
 	m_ChildList.push_back(pChild);
 	m_pLayer->AddObject(pChild, bEditorMode);

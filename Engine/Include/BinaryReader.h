@@ -23,6 +23,7 @@ public:
 	void ReadData(Vector3& Data);
 	void ReadData(Vector4& Data);
 	void ReadData(string& Data);
+	void ReadData(std::string& _Data, int _iSize);
 	void ReadData(wstring& Data);
 
 	ifstream* BinaryRead::GetIfStream();

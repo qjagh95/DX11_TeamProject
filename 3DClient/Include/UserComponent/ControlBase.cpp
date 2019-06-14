@@ -26,7 +26,7 @@ CControlBase::CControlBase(const CControlBase & pCom)
 
 CControlBase::~CControlBase()
 {
-	SAFE_RELEASE(m_pLeverTr);
+	//SAFE_RELEASE(m_pLeverTr);
 }
 
 void CControlBase::AfterClone()
@@ -35,7 +35,7 @@ void CControlBase::AfterClone()
 
 bool CControlBase::Init()
 {
-	CGameObject* pObj = CGameObject::CreateObject("LeverObj", m_pLayer);
+	/*CGameObject* pObj = CGameObject::CreateObject("LeverObj", m_pLayer);
 
 	m_pObject->AddChild(pObj);
 
@@ -48,9 +48,9 @@ bool CControlBase::Init()
 	pRD->SetMesh("Lever", TEXT("Lever.msh"));
 
 	SAFE_RELEASE(pRD);
-	SAFE_RELEASE(pObj);
+	SAFE_RELEASE(pObj);*/
 
-	pRD = FindComponentFromType<CRenderer>(CT_RENDERER);
+	/*pRD = FindComponentFromType<CRenderer>(CT_RENDERER);
 	if (!pRD)
 	{
 		pRD = AddComponent<CRenderer>("ControlRenderer");
@@ -71,7 +71,7 @@ bool CControlBase::Init()
 	pOBB->SetColliderID((COLLIDER_ID)UCI_CONTROL);
 
 	SAFE_RELEASE(pRD);
-
+*/
 	return true;
 }
 

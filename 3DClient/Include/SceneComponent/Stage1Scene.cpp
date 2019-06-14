@@ -36,7 +36,7 @@ CStage1Scene::~CStage1Scene()
 bool CStage1Scene::Init()
 {
 	wstring wstr = CPathManager::GetInst()->FindPath(DATA_PATH);
-	wstr += L"Stage1EditingTest_2.dat";
+	wstr += L"Stage1.dat";
 	string filePath = CW2A(wstr.c_str());
 	m_pScene->Load(filePath);
 
@@ -47,6 +47,27 @@ bool CStage1Scene::Init()
 	string Temp = CPathManager::GetInst()->FindPathFromMultibyte(DATA_PATH);
 	Temp += "Stage1.nav";
 	Land->LoadLandScape(Temp);
+
+	// Àü¿ª±¤(Directional Light) ¼³Á¤
+	Vector4 vWhiteColor = Vector4(1.f, 1.f, 1.f, 1.0f);
+	Vector4 vTestColor = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+	Vector4 vDarkColor = Vector4(0.05f, 0.05f, 0.05f, 1.0f);
+	CLayer* pLayer = m_pScene->FindLayer("Light");
+	list<CGameObject*>* pLightList = pLayer->GetObjectList();
+	list<CGameObject*>::iterator iter;
+	list<CGameObject*>::iterator iterEnd = pLightList->end();
+	for (iter = pLightList->begin(); iter != iterEnd; ++iter)
+	{
+		CLight* pLight = (*iter)->FindComponentFromType<CLight>(CT_LIGHT);
+#if _NDEBUG
+		pLight->SetLightColor(vDarkColor, vDarkColor, vDarkColor);
+#else
+		pLight->SetLightColor(vDarkColor, vDarkColor, vDarkColor);
+		//pLight->SetLightColor(vTestColor, vTestColor, vTestColor);
+#endif
+		SAFE_RELEASE(pLight);
+	}
+	SAFE_RELEASE(pLayer);
 
 	m_CollObject = CGameObject::CreateObject("EventColl", pDefaultLayer);
 	m_EventColl = m_CollObject->AddComponent<CColliderOBB3D>("EventColl");
@@ -59,7 +80,7 @@ bool CStage1Scene::Init()
 	m_DefaultObject->GetTransformNonCount()->SetWorldPos(100.0f, 0.0f, 10.0f);
 	m_DefaultObject->GetTransformNonCount()->SetWorldRotY(180.0f);
 
-	m_Default->AddPatrolPos(Vector3(100.0f, 0.0f, 45.f));
+	m_Default->AddPatrolPos(Vector3(100.0f, 0.0f, 45.f)); 
 	m_Default->AddPatrolPos(Vector3(100.0f, 0.0f, 177.0f));
 	m_Default->AddPatrolPos(Vector3(45.0f, 0.0f, 177.0f));
 	m_Default->AddPatrolPos(Vector3(70.0f, 0.0f, 177.0f));
@@ -88,7 +109,7 @@ void CStage1Scene::AfterInit()
 	CDoor* pDoor = GET_SINGLE(CGameManager)->FindDoor(m_pScene, "Door_S1_S4");
 
 	pDoor->SetDoorType(DOOR_STAGE);
-	pDoor->SetTargetDoor("Stage4", "ChangeStageDoor");
+	pDoor->SetTargetDoor("Stage4", "Door_S4_S1");
 	pDoor->SetLeftRight(true);
 
 	pDoor = GET_SINGLE(CGameManager)->FindDoor(m_pScene, "Door_S1_S2_1");

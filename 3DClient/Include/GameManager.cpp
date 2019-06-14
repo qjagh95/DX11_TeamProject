@@ -26,22 +26,9 @@
 #include "UserComponent/Bed.h"
 #include "UserComponent/Locker.h"
 #include "UserComponent/Parkour.h"
-#include "UserComponent/Elevator.h"
-#include "UserComponent/ElevatorController.h"
-#include "UserComponent/ControlBase.h"
 #include "Component/ColliderSphere.h"
 
 DEFINITION_SINGLE(CGameManager)
-
-void CGameManager::SetElevatorDown(bool _bEnable)
-{
-	m_pElevator->SetDown(_bEnable);
-}
-
-void CGameManager::SetElevatorUp(bool _bEnable)
-{
-	m_pElevator->SetUp(_bEnable);
-}
 
 // String Convert...
 const string CGameManager::TCHARToString(const TCHAR* _ptsz)
@@ -75,7 +62,6 @@ CGameManager::CGameManager()
 	m_pPlayer = NULLPTR;
 	m_pPlayerTr = NULLPTR;
 	m_pPlayerObj = NULLPTR;
-	m_pElevator = nullptr;
 	m_mapKey.clear();
 }
 
@@ -86,7 +72,6 @@ CGameManager::~CGameManager()
 	SAFE_RELEASE(m_pPlayer);
 	SAFE_RELEASE(m_pPlayerTr);
 	SAFE_RELEASE(m_pPlayerObj);
-	SAFE_RELEASE(m_pElevator);
 
 	unordered_map<CScene*, unordered_map<string, CDoor*>*>::iterator iterDoor;
 	unordered_map<CScene*, unordered_map<string, CDoor*>*>::iterator iterDoorEnd = m_mapDoor.end();
@@ -414,7 +399,6 @@ void CGameManager::AddToEachContainer()
 	CBed*					pBed		= nullptr;
 	CLocker*				pLocker		= nullptr;
 	CParkour*				pParkour	= nullptr;
-	CElevatorController*	pController = nullptr;
 	CColliderSphere*		pSphere		= nullptr;
 	for (iter = mapScene->begin(); iter != iterEnd; ++iter)
 	{
@@ -474,25 +458,6 @@ void CGameManager::AddToEachContainer()
 			{
 				pParkour = (*iterObj)->AddComponent<CParkour>("Parkour");
 				SAFE_RELEASE(pParkour);
-			}
-			else if (strstr(strName, "ELEVATOR") != nullptr)
-			{
-				if (strstr(strName, "CONTROLLER") != nullptr)
-				{
-					pController = (*iterObj)->AddComponent<CElevatorController>("ElevatorControllder");
-					SAFE_RELEASE(pController);
-				}
-				else if (strstr(strName , "GATE") != nullptr)
-				{
-
-				}
-				else
-				{
-					if (m_pElevator)
-						SAFE_RELEASE(m_pElevator);
-
-					m_pElevator = (*iterObj)->AddComponent<CElevator>("Elevator");
-				}
 			}
 			else if (strstr(strName, "LEVER") != nullptr)
 			{

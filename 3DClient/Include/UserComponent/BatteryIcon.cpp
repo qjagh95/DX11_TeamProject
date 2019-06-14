@@ -51,7 +51,8 @@ bool CBatteryIcon::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(90.f * 1.5f, 29.f * 1.5f, 1.f);
+	//m_pTransform->SetWorldScale(90.f * 1.5f, 29.f * 1.5f, 1.f);
+	m_pTransform->SetWorldScale(90.f, 29.f, 1.f);
 
 	CColliderRect* pBody = AddComponent<CColliderRect>("BatteryIconBody");
 
@@ -59,7 +60,8 @@ bool CBatteryIcon::Init()
 	pBody->SetCollisionCallback(CCT_LEAVE, this, &CBatteryIcon::MouseOut);
 
 	pBody->SetCollisionGroup("UI");
-	pBody->SetInfo(Vector3(0.f, -50.f, 0.f), Vector3(150.f, 100.f, 0.f));
+	//pBody->SetInfo(Vector3(0.f, -50.f, 0.f), Vector3(150.f, 100.f, 0.f));
+	pBody->SetInfo(Vector3(0.f, -30.f, 0.f), Vector3(100.f, 70.f, 0.f));
 
 	SAFE_RELEASE(pBody);	
 

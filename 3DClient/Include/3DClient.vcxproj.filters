@@ -175,9 +175,6 @@
     <Filter Include="02. UserComponent\08. Etc">
       <UniqueIdentifier>{ddb06c9f-401f-47e5-80a7-048bba281b59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. UserComponent\08. Etc\Elevator">
-      <UniqueIdentifier>{c71f34f6-63c8-480b-8621-f516d1ee107c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. UserComponent\07. Interact\04. Control">
       <UniqueIdentifier>{f6d55539-96d9-4fab-9261-584468932487}</UniqueIdentifier>
     </Filter>
@@ -194,9 +191,6 @@
     </ClInclude>
     <ClInclude Include="UserComponent\Minion.h">
       <Filter>02. UserComponent\02. Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\Field.h">
-      <Filter>02. UserComponent\03. Field</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
       <Filter>헤더 파일</Filter>
@@ -447,18 +441,6 @@
     <ClInclude Include="UserComponent\Section.h">
       <Filter>02. UserComponent\08. Etc</Filter>
     </ClInclude>
-    <ClInclude Include="UserComponent\Elevator.h">
-      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
-    </ClInclude>
-    <ClInclude Include="UserComponent\ElevatorController.h">
-      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
-    </ClInclude>
-    <ClInclude Include="ElevatorGate.h">
-      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent\Stage5Scene.h">
-      <Filter>01. SceneComponent\Stage5_CJH</Filter>
-    </ClInclude>
     <ClInclude Include="UserComponent\ControlBase.h">
       <Filter>02. UserComponent\07. Interact\04. Control</Filter>
     </ClInclude>
@@ -472,9 +454,6 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Minion.cpp">
       <Filter>02. UserComponent\02. Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\Field.cpp">
-      <Filter>02. UserComponent\03. Field</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Ghost.cpp">
       <Filter>02. UserComponent\02. Monster</Filter>
@@ -712,18 +691,6 @@
     </ClCompile>
     <ClCompile Include="UserComponent\Section.cpp">
       <Filter>02. UserComponent\08. Etc</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\Elevator.cpp">
-      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
-    </ClCompile>
-    <ClCompile Include="UserComponent\ElevatorController.cpp">
-      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
-    </ClCompile>
-    <ClCompile Include="ElevatorGate.cpp">
-      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent\Stage5Scene.cpp">
-      <Filter>01. SceneComponent\Stage5_CJH</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\ControlBase.cpp">
       <Filter>02. UserComponent\07. Interact\04. Control</Filter>

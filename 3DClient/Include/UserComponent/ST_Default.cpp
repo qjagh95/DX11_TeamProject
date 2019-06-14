@@ -20,7 +20,7 @@ ST_Default::ST_Default()
 	m_MoveSpeed = 22.5f;
 	m_Hp = 5;
 
-	m_isHit = false; 
+	m_isHit = false;
 	m_SlowTime = 0.5f;
 	m_SlowTimeVar = 0.0f;
 
@@ -160,7 +160,7 @@ bool ST_Default::Init()
 	Axis[1] = m_pTransform->GetWorldAxis(AXIS_Y);
 	Axis[2] = m_pTransform->GetWorldAxis(AXIS_Z);
 
-	m_BodyOBB->SetInfo(Vector3(0.0f, 7.0f, 0.0f), Axis, Vector3(0.8f,7.0f, 0.8f));
+	m_BodyOBB->SetInfo(Vector3(0.0f, 7.0f, 0.0f), Axis, Vector3(0.8f, 7.0f, 0.8f));
 	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST_Default::DoorCollFirst);
 	m_BodyOBB->SetCollisionCallback(CCT_LEAVE, this, &ST_Default::DoorCollEnd);
 	m_BodyOBB->SetCollisionCallback(CCT_ENTER, this, &ST_Default::PlayerBulletHit);
@@ -364,6 +364,9 @@ void ST_Default::FS_PATROL(float DeltaTime)
 
 	if (m_PathFind == false)
 	{
+		if (!m_NaviMesh)
+			return;
+
 		m_NaviMesh->FindPath(m_CenterDownCenter, PatrolPos);
 		m_PathFind = true;
 
@@ -371,26 +374,35 @@ void ST_Default::FS_PATROL(float DeltaTime)
 
 		m_PathList = m_NaviMesh->GetPathList();
 
+		if (m_PathList.size() == 0)
+			return;
+
 		m_MovePos = m_PathList.front();
 	}
 
 	Vector3 Dir = m_MovePos - m_CenterDownCenter;
 	Dir.Normalize();
 
+	m_pTransform->LookAtY(m_MovePos);
 	m_pTransform->Move(Dir, 10.0f, DeltaTime);
 
-	if (m_PathList.empty())
-		m_PathFind = false;
-	else
+	float fDist = m_MovePos.Distance(m_pTransform->GetWorldPos());
+
+	if (fDist < 0.5f)
 	{
-		if (((m_CenterDownCenter.x <= m_MovePos.x + 1.0f) && (m_CenterDownCenter.x >= m_MovePos.x - 1.0f)) && (m_CenterDownCenter.z <= m_MovePos.z + 1.0f && m_CenterDownCenter.z >= m_MovePos.z - 1.0f))
+		if (m_PathList.empty())
+			m_PathFind = false;
+		else
 		{
-			m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
-			m_MovePos = m_PathList.front();
-			m_PathList.pop_front();
+			if (((m_CenterDownCenter.x <= m_MovePos.x + 1.0f) && (m_CenterDownCenter.x >= m_MovePos.x - 1.0f)) && (m_CenterDownCenter.z <= m_MovePos.z + 1.0f && m_CenterDownCenter.z >= m_MovePos.z - 1.0f))
+			{
+				m_pTransform->SetWorldRotY(GetYAngle(m_MovePos, m_CenterDownCenter));
+				m_MovePos = m_PathList.front();
+				m_PathList.pop_front();
+			}
 		}
 	}
-	
+
 	if (m_CenterDownCenter.Distance(PatrolPos) < 5.0f)
 	{
 		m_RanSelect = rand() % (int)m_vecPatrolPos.size();
@@ -439,7 +451,7 @@ void ST_Default::FS_USER_TRACE(float DeltaTime)
 
 		m_PathList = m_NaviMesh->GetPathList();
 
-		if(m_PathList.empty() == false)
+		if (m_PathList.empty() == false)
 			m_MovePos = m_PathList.front();
 	}
 
@@ -491,7 +503,7 @@ void ST_Default::FS_USER_TRACE(float DeltaTime)
 void ST_Default::FS_HOOK(float DeltaTime)
 {
 	Vector3 TargetPos = m_TargetTransform->GetWorldPos();
-	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter) );
+	m_pTransform->SetWorldRotY(GetYAngle(TargetPos, m_CenterDownCenter));
 
 	if (m_Animation->GetCurFrame() == 8)
 	{
@@ -708,8 +720,4 @@ void ST_Default::AttackScream(float DeltaTime)
 
 	if (isPlay == false)
 		m_3DSound->Play(SoundKey);
-}
-
-void ST_Default::Hit(float DeltaTime)
-{
 }

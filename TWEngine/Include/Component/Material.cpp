@@ -706,16 +706,22 @@ void CMaterial::SetShader(int iContainer, int iSubset)
 
 	if (pMaterial->pDiffuse)
 	{
-		pMaterial->pDiffuse->pTex->SetShader(pMaterial->pDiffuse->iRegister);
-		pMaterial->pDiffuse->pSampler->SetShader(pMaterial->pDiffuse->iSamplerRegister);
-	}
+		if (pMaterial->pDiffuse->pTex)
+		{
+			pMaterial->pDiffuse->pTex->SetShader(pMaterial->pDiffuse->iRegister);
+			pMaterial->pDiffuse->pSampler->SetShader(pMaterial->pDiffuse->iSamplerRegister);
 
+		}
+	}
 	if (pMaterial->pNormal)
 	{
-		pMaterial->pNormal->pTex->SetShader(pMaterial->pNormal->iRegister);
-		pMaterial->pNormal->pSampler->SetShader(pMaterial->pNormal->iSamplerRegister);
-		pMaterial->tMaterial.vDiffuse.w = 1.f; 
-		// 재질의 Normal이 있을경우 vDiffuse의 w값은 1이 된다.(차후에 변수 변경해야됨)
+		if (pMaterial->pNormal->pTex)
+		{
+			pMaterial->pNormal->pTex->SetShader(pMaterial->pNormal->iRegister);
+			pMaterial->pNormal->pSampler->SetShader(pMaterial->pNormal->iSamplerRegister);
+			pMaterial->tMaterial.vDiffuse.w = 1.f;
+			// 재질의 Normal이 있을경우 vDiffuse의 w값은 1이 된다.(차후에 변수 변경해야됨)
+		}
 	}
 	else // Normal 이 없을경우
 	{
@@ -725,10 +731,13 @@ void CMaterial::SetShader(int iContainer, int iSubset)
 
 	if (pMaterial->pSpecular)
 	{
-		pMaterial->pSpecular->pTex->SetShader(pMaterial->pSpecular->iRegister);
-		pMaterial->pSpecular->pSampler->SetShader(pMaterial->pSpecular->iSamplerRegister);
-		pMaterial->tMaterial.vAmbient.w = 1.f;
-		//재질의 Specular값이 없을경우 vAmbient의 w값은 1이 된다.(차후에 변수 변경해야됨)
+		if (pMaterial->pSpecular->pTex)
+		{
+			pMaterial->pSpecular->pTex->SetShader(pMaterial->pSpecular->iRegister);
+			pMaterial->pSpecular->pSampler->SetShader(pMaterial->pSpecular->iSamplerRegister);
+			pMaterial->tMaterial.vAmbient.w = 1.f;
+			//재질의 Specular값이 없을경우 vAmbient의 w값은 1이 된다.(차후에 변수 변경해야됨)
+		}
 	}
 	else
 	{

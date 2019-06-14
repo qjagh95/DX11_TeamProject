@@ -21,8 +21,6 @@ CHitEffectAnim::CHitEffectAnim(const CHitEffectAnim & effect)	:
 CHitEffectAnim::~CHitEffectAnim()
 {
 	SAFE_RELEASE(m_pAnimation);
-	SAFE_RELEASE(m_pPlayerObj);
-	SAFE_RELEASE(m_pPlayer);
 }
 
 void CHitEffectAnim::ChangeClip(const string & strName)
@@ -115,8 +113,6 @@ bool CHitEffectAnim::Init()
 		"Anim4_Hit", TEXT("Effect/bloodyrect4_new.png"));
 
 	vecClipFrame.clear();
-
-	m_pPlayerObj = CGameObject::FindObject("Player");
 
 	return true;
 }

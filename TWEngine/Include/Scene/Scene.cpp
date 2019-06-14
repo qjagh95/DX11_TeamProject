@@ -600,6 +600,7 @@ void CScene::CreateDefaultGlobalLight()
 			m_vecGlobalLight.push_back(pObjGlobalLight);
 			SAFE_RELEASE(pLight);
 			SAFE_RELEASE(pLightTr);
+			SAFE_RELEASE(pObjGlobalLight);
 		}
 		else
 		{

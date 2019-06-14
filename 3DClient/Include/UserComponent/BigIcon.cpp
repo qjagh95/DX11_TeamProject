@@ -60,9 +60,11 @@ bool CBigIcon::Init()
 
 	SAFE_RELEASE(pMaterial);
 
-	m_pTransform->SetWorldScale(1200.f, 900.f, 1.f);
-	m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 350.f / 1280.f)),
-		_RESOLUTION.iHeight * (1.f - (1 - 80.f / 720.f)), 1.f);
+	//m_pTransform->SetWorldScale(1200.f, 900.f, 1.f);
+	//m_pTransform->SetWorldPos(_RESOLUTION.iWidth * (1.f - (1 - 350.f / 1280.f)),
+	//	_RESOLUTION.iHeight * (1.f - (1 - 80.f / 720.f)), 1.f);
+	m_pTransform->SetWorldScale(800.f, 600.f, 1.f);
+	m_pTransform->SetWorldPos(350.f, 80.f, 0.f);
 
 	m_pAnimation = m_pObject->AddComponent<CAnimation2D>("BigIconAnimation");
 
@@ -77,7 +79,6 @@ bool CBigIcon::Init()
 		"Empty_BigIcon", TEXT("UI/Icon/BigIconEmpty.png"));
 
 	vecClipFrame.clear();
-
 
 	tFrame.vLT = Vector2(0.f, 0.f);
 	tFrame.vRB = Vector2(800.f, 600.f);

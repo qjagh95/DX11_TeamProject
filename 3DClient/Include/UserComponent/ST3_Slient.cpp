@@ -159,7 +159,7 @@ bool ST3_Slient::Init()
 	m_3DSound->LoadSound("Scream2", L"enemies\\Enemies_def_hit2.wav");
 	m_3DSound->LoadSound("Scream3", L"enemies\\Enemies_def_hit3.wav");
 
-	m_3DSound->LoadSound("BashOpen", L"dist_wood_03.wav");
+	//m_3DSound->LoadSound("BashOpen", L"dist_wood_03.wav");
 
 	m_Animation->SetCallback("move_forward_fast", this, 8, &ST3_Slient::Walk1Sound);
 	m_Animation->SetCallback("move_forward_fast", this, 19, &ST3_Slient::Walk2Sound);

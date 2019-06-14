@@ -18,7 +18,6 @@
 #include "Component/Renderer.h"
 #include "Component/Material.h"
 #include "../UserComponent/Door.h"
-#include "../UserComponent/Field.h"
 #include "../UserComponent/Player.h"
 #include "../UserComponent/Minion.h"
 #include "../UserComponent/Ghost.h"

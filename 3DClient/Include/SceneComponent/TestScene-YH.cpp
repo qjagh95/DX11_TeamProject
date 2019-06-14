@@ -16,7 +16,6 @@
 #include <Component/Animation.h>
 #include "Component/Gizmo.h"
 #include "../UserComponent/Door.h"
-#include "../UserComponent/Field.h"
 #include "../UserComponent/Player.h"
 #include "../UserComponent/Minion.h"
 #include "../UserComponent/Ghost.h"

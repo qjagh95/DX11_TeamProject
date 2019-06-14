@@ -19,7 +19,6 @@ private:
 
 public:
 	bool Init();
-	void Update(float fTime, const Matrix& matBone);
 	void Update(float fTime, const Matrix& matBone, class CTransform* motherTr);
 
 	string GetName() const { return m_strName; }

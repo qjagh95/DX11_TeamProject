@@ -101,4 +101,3 @@ public:
 	ST_Default(const ST_Default& CopyData);
 	~ST_Default();
 };
-

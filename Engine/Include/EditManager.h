@@ -46,7 +46,7 @@ private:
 	class CEditTest*	m_pEditTest;
 	class CLandScape*	m_LandScape;
 	CAnimation*			m_pAnimation;
-
+	class CDecal*	    m_pDecal;
 	bool				m_isGizmoClick;
 	bool				m_bNaviEditorMode;
 	bool				m_bSelectNaviMove;
@@ -105,9 +105,9 @@ public:
 	void ChangeObjectInLayer(const string _strLayerTag);
 	void AddComponent(string& _strCompTag);
 	void AddColliderOBB(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ,
-		int iColliderID, const std::string& _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag);
+		int iColliderID, const std::string& _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag , bool _bMeshScale);
 	void AddColliderSphere(float dCenterX, float dCenterY, float dCenterZ, float fRadius,
-		int iColliderID, const std::string& _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag);
+		int iColliderID, const std::string& _strTag, const std::string& _strCollTypeTag, const std::string& _strExceptTypeTag, bool _bMeshScale);
 	void SetLocalScale(double _dX, double _dY, double _dZ);
 	void SetLocalRotate(double _dX, double _dY, double _dZ);
 	void SetLocalPosition(double _dX, double _dY, double _dZ);
@@ -138,6 +138,10 @@ public:
 	void GetMeshNameList(vector<string>* _pVec);
 	void SetMesh(const string& _strMeshTag);
 	void ChangeCameraTarget(bool _bTarget);
+	void SetAlphaEnable(bool _isFlag);
+	bool GetAlphaEnabled();
+	void SetBumpScale(float _fScale);
+	float GetBumpScale();
 	// 애니메이션
 public:
 	void LoadClipFromFullPath(const wstring& _strFullPath);
@@ -175,6 +179,9 @@ public:
 
 	int GetLightType();
 	float GetLightRange();
+	void SetAngle(float _inAngle, float _outAngle);
+	float GetInAngle();
+	float GetOutAngle();
 	vector<Vector4> GetSpecular();
 	void CreateDefaultGlobalLight();
 	vector<string> GetGlobalLightList();
@@ -187,9 +194,23 @@ public:
 	Vector3 GetOBBRelativeCenter();
 	Vector3 GetSphereCenter();
 	int		GetCollType() const;
-	void SetSphereColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float fRadius);
-	void SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ);
+	void SetSphereColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float fRadius , bool _bMeshScale);
+	void SetOBB3DColliderInfo(float dCenterX, float dCenterY, float dCenterZ, float dLengthX, float dLengthY, float dLengthZ, bool _bMeshScale);
+	//////////////////SetStageSection///////////////////////////////////////
+	void SetStageSection(STAGE_SECTION_TYPE _eType);
 
+	/////////////////Decal/////////////////////////////////////////////////
+	void AddDecalComponent();
+	void AddDecalDiffuseTex(const std::string& _strTag , const std::wstring& _strFileName);
+	void AddDecalNormalTex(const std::string& _strTag, const std::wstring& _strFileName);
+	void AddDecalSpecularTex(const std::string& _strTag, const std::wstring& _strFileName);
+	const string& GetDecalDiffuseTag();
+	const string& GetDecalNormalTag();
+	const string& GetDecalSpecularTag();
+	private:
+	std::string m_strDecalDiffuseTag;
+	std::string m_strDecalNormalTag;
+	std::string m_strDecalSpecularTag;
 };
 
 PUN_END

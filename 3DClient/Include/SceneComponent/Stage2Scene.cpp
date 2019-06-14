@@ -7,7 +7,6 @@
 #include "../UserComponent/Door.h"
 #include "../UserComponent/Player.h"
 #include "../UserComponent/Minion.h"
-#include "../UserComponent/Field.h"
 #include "Component/Gizmo.h"
 #include "Component/ParkourTest.h"
 #include <NavigationMesh.h>
@@ -32,6 +31,8 @@ bool CStage2Scene::Init()
 	wstr += L"SC.dat";
 	string filePath = CW2A(wstr.c_str());
 	m_pScene->Load(filePath);
+
+	GET_SINGLE(CRenderManager)->SetHDRValue(0.f, 0.f, false);
 
 	CLayer* pDefaultLayer = m_pScene->FindLayer("Default");
 

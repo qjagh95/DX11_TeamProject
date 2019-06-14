@@ -52,7 +52,7 @@ bool CCenterKey::Init()
 	CTransform*		pTransform = m_pObject->GetTransform();
 
 	pTransform->SetWorldScale(74.f, 94.f, 1.f);
-	pTransform->SetWorldScale(110.f, 141.f, 1.f);
+	//pTransform->SetWorldScale(110.f, 141.f, 1.f);
 
 	SAFE_RELEASE(pTransform);
 
@@ -62,7 +62,8 @@ bool CCenterKey::Init()
 	pBody->SetCollisionCallback(CCT_LEAVE, this, &CCenterKey::MouseOut);
 
 	pBody->SetCollisionGroup("UI");
-	pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(150.f, 150.f, 0.f));
+	//pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(150.f, 150.f, 0.f));
+	pBody->SetInfo(Vector3(0.f, 0.f, 0.f), Vector3(100.f, 100.f, 0.f));
 
 	SAFE_RELEASE(pBody);
 

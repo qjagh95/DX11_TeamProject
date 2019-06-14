@@ -190,6 +190,7 @@ public:
 	Vector3	GetMin()	const;
 	Vector3 GetMax()	const;
 	Vector3 GetOffset()	const;
+	Vector3 GetSectionSize() const;
 	list<Vector3> GetPathList()	const;
 
 public:
@@ -221,8 +222,11 @@ private:
 	void AddOpenList(PNavigationCell pCell, PNavigationCell pEnd,
 		const Vector3& vStart, const Vector3& vEnd);
 	PNavigationCell FindCell(const Vector3& vPos);
-	int GetCellIndex(const Vector3& vPos);
+	
 public:
+	int GetCellIndex(const Vector3& vPos);
+	const PNavigationCell GetNavigationCell(const Vector3& vPos);
+	Vector3 GetCellSize() const;
 	bool RayIntersectTriangle(Vector3 rayOrigin, Vector3 rayDir,
 		Vector3 v0, Vector3 v1, Vector3 v2,
 		float& t, Vector3& vIntersect);

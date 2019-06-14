@@ -175,10 +175,16 @@ void CScene4::AfterInit()
 	CLayer* pLayer = m_pScene->FindLayer("Default");
 	CGameObject* pObjCorpse1 = CGameObject::CreateObject("Suprise", pLayer);
 	CTransform* pCropse1Tr = pObjCorpse1->GetTransform();
-	//ST3_Suprise* Suprise = SupriseObject->AddComponent<ST3_Suprise>("Suprise");
+	ST3_Suprise* Suprise = pObjCorpse1->AddComponent<ST3_Suprise>("Suprise");
 
+	CGameObject*	pPObj = CGameObject::FindObject("Player");
+
+	Suprise->SetTarget(pPObj);
+
+	SAFE_RELEASE(pPObj);
 
 	SAFE_RELEASE(pCropse1Tr);
+	SAFE_RELEASE(Suprise);
 	SAFE_RELEASE(pObjCorpse1);
 	SAFE_RELEASE(pLayer);
 

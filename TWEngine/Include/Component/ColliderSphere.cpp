@@ -59,9 +59,18 @@ int CColliderSphere::Update(float fTime)
 
 int CColliderSphere::LateUpdate(float fTime)
 {
-	Vector3	vPos = m_pTransform->GetWorldPos() - m_pTransform->GetPivot() *
-		m_pTransform->GetWorldScale();
-
+	Vector3	vPos = Vector3::Zero;
+	if (m_pObject->GetisChild() == true)
+	{
+		Matrix matDelta = m_pTransform->GetPosDelta();
+		Vector3 vWorldPos = Vector3(matDelta._41, matDelta._42, matDelta._43);
+		vPos = vWorldPos - m_pTransform->GetPivot() * m_pTransform->GetWorldScale();
+	}
+	else
+	{
+		vPos = m_pTransform->GetWorldPos() - m_pTransform->GetPivot() * 
+			m_pTransform->GetWorldScale();
+	}
 	m_tInfo.vCenter = vPos + m_tRelativeInfo.vCenter;
 
 	// 이 정보 자체가 사각형의 영역을 판단할 데이터로 사용된다.

@@ -379,6 +379,7 @@ public:
 	//디버그용 클립 넘기기 함수
 	void SkipToNextClip();
 
+	int GetCurFrame() const;
 	//부분 애니매이션 추가
 
 

@@ -24,7 +24,7 @@ public:
 		if (FindIter == m_DataMap.end())
 			return NULLPTR;
 
-		return (T*)*FindIter->second;
+		return (T*)FindIter->second;
 	}
 
 	void* FindData(const string& VarName)

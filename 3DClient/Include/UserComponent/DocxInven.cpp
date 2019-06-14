@@ -128,11 +128,13 @@ void CDocxInven::AddItem(CGameObject * pItem)
 	CTransform*	pItemTr = m_vecItem[m_iIndex]->GetTransform();
 
 	Vector3	vDocxPos = m_pTransform->GetWorldPos();
-	pItemTr->SetWorldPos(vDocxPos.x + _RESOLUTION.iWidth * (1.f - (1 - 445.f / 1280.f)),
-		_RESOLUTION.iHeight * (1.f - (1 - 562.f / 720.f)) - m_fItemY, 0.f);
+	//pItemTr->SetWorldPos(vDocxPos.x + _RESOLUTION.iWidth * (1.f - (1 - 445.f / 1280.f)),
+	//	_RESOLUTION.iHeight * (1.f - (1 - 562.f / 720.f)) - m_fItemY, 0.f);
+	pItemTr->SetWorldPos(vDocxPos.x + 445.f, vDocxPos.y + 562.f - m_fItemY, 0.f);
 	pItemTr->SetWorldPivot(0.5f, 0.5f, 0.f);
 
-	m_fItemY += 85.f;
+	//m_fItemY += 85.f;
+	m_fItemY += 60.f;
 
 	if (m_pObject->GetEnable() == false)
 	{

@@ -6,6 +6,7 @@
 #include "SceneComponent/TestScene-YH.h"
 #include "SceneComponent/Stage2Scene.h"
 #include "SceneComponent/LogoScene.h"
+#include "SceneComponent/Scene4_DG.h"
 #include "CameraEff.h"
 #include "CommonSoundLoader.h"
 #include <Rendering/ShaderManager.h>
@@ -14,24 +15,23 @@
 
 PUN_USING
 
+#define _FLAG 0
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
-	srand((unsigned int)time(0));
-	
+	srand((unsigned int)time(0));	
 
-
-	if (!CCore::GetInst()->Init(hInstance, 1920, 1020,
+	if (!CCore::GetInst()->Init(hInstance, 1280, 720,
 		TEXT("OutLast - 1"), TEXT("OutLast - 1"), IDI_ICON1, IDI_ICON1,
 		true))
 	{
 		CCore::DestroyInst();
 		DESTROY_SINGLE(CGameManager);
 		return 0;
-	}	
-
+	}
 
 	//자동전체화면
 	//keybd_event(VK_LMENU, 0, KEYEVENTF_EXTENDEDKEY, 0);
@@ -41,11 +41,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	GET_SINGLE(CGameManager)->PostInit();
 
-	//GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("Start", "Start");
-	//GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("TutorialScene", "Tutorial");
-	//GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
-	//GET_SINGLE(CSceneManager)->AddScene<CStage2Scene>("Stage2", "Stage2");
-	GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("wwre", "Sterewage2");
+	GET_SINGLE(CSceneManager)->AddScene<CLogoScene>("Start", "Start");
+	GET_SINGLE(CSceneManager)->AddScene<CTutorialScene>("TutorialScene", "Tutorial");
+	GET_SINGLE(CSceneManager)->AddScene<CStage1Scene>("Stage1", "Stage1");
+	GET_SINGLE(CSceneManager)->AddScene<CStage2Scene>("Stage2", "Stage2");
+	GET_SINGLE(CSceneManager)->AddScene<JBH_Stage3>("Stage3", "Stage3");
+	GET_SINGLE(CSceneManager)->AddScene<CScene4>("Stage4", "Stage4");
+	//GET_SINGLE(CSceneManager)->AddScene<CTestSceneYH>("wwre", "Sterewage2");
 
 	GET_SINGLE(CGameManager)->Init();
 
