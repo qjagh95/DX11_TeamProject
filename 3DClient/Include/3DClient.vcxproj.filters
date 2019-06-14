@@ -175,6 +175,12 @@
     <Filter Include="02. UserComponent\08. Etc">
       <UniqueIdentifier>{ddb06c9f-401f-47e5-80a7-048bba281b59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. UserComponent\08. Etc\Elevator">
+      <UniqueIdentifier>{c71f34f6-63c8-480b-8621-f516d1ee107c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. UserComponent\07. Interact\04. Control">
+      <UniqueIdentifier>{f6d55539-96d9-4fab-9261-584468932487}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -442,7 +448,19 @@
       <Filter>02. UserComponent\08. Etc</Filter>
     </ClInclude>
     <ClInclude Include="UserComponent\Elevator.h">
-      <Filter>02. UserComponent\08. Etc</Filter>
+      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ElevatorController.h">
+      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
+    </ClInclude>
+    <ClInclude Include="ElevatorGate.h">
+      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneComponent\Stage5Scene.h">
+      <Filter>01. SceneComponent\Stage5_CJH</Filter>
+    </ClInclude>
+    <ClInclude Include="UserComponent\ControlBase.h">
+      <Filter>02. UserComponent\07. Interact\04. Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -696,7 +714,19 @@
       <Filter>02. UserComponent\08. Etc</Filter>
     </ClCompile>
     <ClCompile Include="UserComponent\Elevator.cpp">
-      <Filter>02. UserComponent\08. Etc</Filter>
+      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ElevatorController.cpp">
+      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
+    </ClCompile>
+    <ClCompile Include="ElevatorGate.cpp">
+      <Filter>02. UserComponent\08. Etc\Elevator</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneComponent\Stage5Scene.cpp">
+      <Filter>01. SceneComponent\Stage5_CJH</Filter>
+    </ClCompile>
+    <ClCompile Include="UserComponent\ControlBase.cpp">
+      <Filter>02. UserComponent\07. Interact\04. Control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

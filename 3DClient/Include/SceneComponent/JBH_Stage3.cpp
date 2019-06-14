@@ -13,6 +13,7 @@
 #include "../UserComponent/ST3_Slient.h"
 #include "../UserComponent/Door.h"
 #include "../CameraEff.h"
+#include "../UserComponent/ControlBase.h"
 
 bool JBH_Stage3::m_isCanDrop = false;
 bool JBH_Stage3::m_SlientMode = false;
@@ -95,9 +96,15 @@ void JBH_Stage3::AfterInit()
 
 		if (strstr(strName, "FAKE"))
 			StartIter->second->Lock(true, "");
+		else if (strstr(strName, "ELECTRICAL"))
+		{
+			CControlBase* pCon = pObj->FindComponentFromType<CControlBase>((COMPONENT_TYPE)UT_CONTROL);
+
+			pCon->SetKeyName("Lever");
+
+			SAFE_RELEASE(pCon);
+		}
 	}
-
-
 }
 
 int JBH_Stage3::Update(float DeltaTime)
@@ -129,6 +136,19 @@ int JBH_Stage3::Update(float DeltaTime)
 			m_isChangeBGM = false;
 		}
 	}
+
+	if (GET_SINGLE(CSceneManager)->GetChange())
+	{
+		static bool bAdd = true;
+
+		if (bAdd)
+		{
+			bAdd = false;
+			GET_SINGLE(CGameManager)->AddUILayer();
+			GET_SINGLE(CGameManager)->SetPlayerNaviY(true);
+		}
+	}
+
 
 	return 0;
 }

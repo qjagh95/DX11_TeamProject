@@ -26,9 +26,22 @@
 #include "UserComponent/Bed.h"
 #include "UserComponent/Locker.h"
 #include "UserComponent/Parkour.h"
-
+#include "UserComponent/Elevator.h"
+#include "UserComponent/ElevatorController.h"
+#include "UserComponent/ControlBase.h"
+#include "Component/ColliderSphere.h"
 
 DEFINITION_SINGLE(CGameManager)
+
+void CGameManager::SetElevatorDown(bool _bEnable)
+{
+	m_pElevator->SetDown(_bEnable);
+}
+
+void CGameManager::SetElevatorUp(bool _bEnable)
+{
+	m_pElevator->SetUp(_bEnable);
+}
 
 // String Convert...
 const string CGameManager::TCHARToString(const TCHAR* _ptsz)
@@ -62,6 +75,7 @@ CGameManager::CGameManager()
 	m_pPlayer = NULLPTR;
 	m_pPlayerTr = NULLPTR;
 	m_pPlayerObj = NULLPTR;
+	m_pElevator = nullptr;
 	m_mapKey.clear();
 }
 
@@ -72,6 +86,7 @@ CGameManager::~CGameManager()
 	SAFE_RELEASE(m_pPlayer);
 	SAFE_RELEASE(m_pPlayerTr);
 	SAFE_RELEASE(m_pPlayerObj);
+	SAFE_RELEASE(m_pElevator);
 
 	unordered_map<CScene*, unordered_map<string, CDoor*>*>::iterator iterDoor;
 	unordered_map<CScene*, unordered_map<string, CDoor*>*>::iterator iterDoorEnd = m_mapDoor.end();
@@ -172,6 +187,7 @@ bool CGameManager::Init()
 	m_pPlayer = m_pPlayerObj->AddComponent<CHuman_Player>("Player");
 
 	m_pPlayerTr = m_pPlayerObj->GetTransform();
+	m_pPlayerTr->SetWorldRot(Vector3::Zero);
 	//m_pPlayerTr->SetLocalRot(0.f, 180.f, 0.f);
 	//m_pPlayerTr->SetWorldScale(0.0375f, 0.0375f, 0.0375f);
 	////m_pPlayer->PlayerRot(Vector3(0.f, 180.f, 0.f));
@@ -275,7 +291,7 @@ void CGameManager::AddItemObject(CGameObject* pObj, char* strName)
 		AddItemObject(pScene, pObj->GetTag(), pObj);
 		SAFE_RELEASE(pKey);
 	}
-	else if (strstr(strName, "GENERATOR") != nullptr)
+	else if (strstr(strName, "PAPER_GENERATOR") != nullptr)
 	{
 		CPaperGenerator* pPG = pObj->AddComponent<CPaperGenerator>("PaperGenerator");
 		AddItemObject(pScene, pObj->GetTag(), pObj);
@@ -392,13 +408,14 @@ void CGameManager::AddToEachContainer()
 	list<CGameObject*>::const_iterator iterObj;
 	list<CGameObject*>::const_iterator iterObjEnd;
 
-	CDoor*			pDoor		= nullptr;
-	CLight*			pLight		= nullptr;
-	CGameObject*	pObj		= nullptr;
-	CBed*			pBed		= nullptr;
-	CLocker*		pLocker		= nullptr;
-	CParkour*		pParkour	= nullptr;
-
+	CDoor*					pDoor		= nullptr;
+	CLight*					pLight		= nullptr;
+	CGameObject*			pObj		= nullptr;
+	CBed*					pBed		= nullptr;
+	CLocker*				pLocker		= nullptr;
+	CParkour*				pParkour	= nullptr;
+	CElevatorController*	pController = nullptr;
+	CColliderSphere*		pSphere		= nullptr;
 	for (iter = mapScene->begin(); iter != iterEnd; ++iter)
 	{
 		//각 씬에서 디폴트 레이어와 라이트 레이어를 받아놓는다.
@@ -458,12 +475,56 @@ void CGameManager::AddToEachContainer()
 				pParkour = (*iterObj)->AddComponent<CParkour>("Parkour");
 				SAFE_RELEASE(pParkour);
 			}
+			else if (strstr(strName, "ELEVATOR") != nullptr)
+			{
+				if (strstr(strName, "CONTROLLER") != nullptr)
+				{
+					pController = (*iterObj)->AddComponent<CElevatorController>("ElevatorControllder");
+					SAFE_RELEASE(pController);
+				}
+				else if (strstr(strName , "GATE") != nullptr)
+				{
+
+				}
+				else
+				{
+					if (m_pElevator)
+						SAFE_RELEASE(m_pElevator);
+
+					m_pElevator = (*iterObj)->AddComponent<CElevator>("Elevator");
+				}
+			}
+			else if (strstr(strName, "LEVER") != nullptr)
+			{
+				pSphere = (*iterObj)->AddComponent<CColliderSphere>("LeverBody");
+				pSphere->SetInfo(Vector3::Zero, 2.0f);
+				pSphere->SetCollisionCallback(CCT_STAY, this, &CGameManager::CallBack);
+
+				SAFE_RELEASE(pSphere);
+			}
+			else if (strstr(strName, "GENERATOR") != nullptr)
+			{
+				CControlBase* pControl = (*iterObj)->AddComponent<CControlBase>("GeneratorControl");
+
+				pControl->SetControlType(CONTROL_LIGHT);
+
+				SAFE_RELEASE(pControl);
+			}
+			else if (strstr(strName, "ELECTRICALBOX") != nullptr)
+			{
+				CControlBase* pControl = (*iterObj)->AddComponent<CControlBase>("ElectricalControl");
+
+				pControl->SetControlType(CONTROL_DOOR);
+				pControl->SetKeyName("Lever");
+				
+				SAFE_RELEASE(pControl);
+			}
 
 			pLight = (*iterObj)->FindComponentFromType<CLight>(CT_LIGHT);
 
 			if (pLight)
 			{
-				if (pLight->GetLightType() == LT_SPOT)
+				if (pLight->GetLightType() != LT_DIR)
 					AddLight(pLight);
 
 				SAFE_RELEASE(pLight);
@@ -479,7 +540,7 @@ void CGameManager::AddToEachContainer()
 
 			if (pLight)
 			{
-				if (pLight->GetLightType() == LT_SPOT)
+				if (pLight->GetLightType() != LT_DIR)
 					AddLight(pLight);
 
 				SAFE_RELEASE(pLight);
@@ -881,39 +942,49 @@ void CGameManager::LoadCheckPoint()
 
 void CGameManager::Update(float fTime)
 {
-	//CalculateShadowLight();
+	CalculateShadowLight();
 }
 
 void CGameManager::CalculateShadowLight()
 {
-	int iSection = m_pPlayerObj->GetStageSection();
+	//int iSection = m_pPlayerObj->GetStageSection();
 
-	if (m_vecLight[iSection].empty())
-	{
-		m_pCamera->NoShadow();
-		return;
-	}
+	//if (m_vecLight[iSection].empty())
+	//{
+	//	m_pCamera->NoShadow();
+	//	return;
+	//}
 
-	CLight* pLight = m_vecLight[iSection][0];
+	CScene* pScene = GET_SINGLE(CSceneManager)->GetSceneNonCount();
+
+	unordered_map<string, CLight*>* map = GetLightMap(pScene);
+
+	unordered_map<string, CLight*>::const_iterator iter = map->begin();
+	unordered_map<string, CLight*>::const_iterator iterEnd = map->end();
+
+	CLight* pLight = iter->second;
+
 	Vector3 vPlayerPos = m_pPlayerTr->GetWorldPos();
 	Vector3 vLightPos = pLight->GetWorldPos();
 	Vector3 vDist = vLightPos - vPlayerPos;
 	float	fMinDist = vDist.Length();
 	float	fDist;
 
-	for (int i = 1; i < m_vecLight[iSection].size(); ++i)
-	{
-		if (!m_vecLight[iSection][i]->IsTurnOn())
-			continue;
+	++iter;
 
-		vLightPos = m_vecLight[iSection][i]->GetWorldPos();
+	for (; iter != iterEnd; ++iter)
+	{
+		//if (!m_vecLight[iSection][i]->IsTurnOn())
+		//	continue;
+
+		vLightPos = iter->second->GetWorldPos();
 		vDist = vLightPos - vPlayerPos;
 		fDist = vDist.Length();
 
 		if (fMinDist > fDist)
 		{
 			fMinDist = fDist;
-			pLight = m_vecLight[iSection][i];
+			pLight = iter->second;
 		}
 	}
 
@@ -1024,6 +1095,22 @@ void CGameManager::AddUILayer()
 	SAFE_RELEASE(pKeyInven);
 	SAFE_RELEASE(pKeyInvenObj);
 }
+
+void CGameManager::CallBack(CCollider* pSrc, CCollider* pDest, float fTime)
+{
+	int iID = pDest->GetColliderID();
+
+	if (iID == UCI_PLAYER_RAY)
+	{
+		GET_SINGLE(CGameManager)->ChangeNoticeClip("Button_F_Pickup");
+		if (KEYDOWN("F"))
+		{
+			pSrc->GetGameObjectNonCount()->SetEnable(false);
+			AddKey(pSrc->GetGameObjectNonCount()->GetTag(), pSrc->GetGameObjectNonCount());
+		}
+	}
+}
+
 
 string CGameManager::GetPlayerCollDoorMapKey(CScene * scene) const
 {

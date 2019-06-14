@@ -181,6 +181,13 @@ void CScene4::AfterInit()
 	SAFE_RELEASE(pCropse1Tr);
 	SAFE_RELEASE(pObjCorpse1);
 	SAFE_RELEASE(pLayer);
+
+	CDoor* pDoor = GET_SINGLE(CGameManager)->FindDoor(m_pScene, "Door_S4_S1");
+
+	pDoor->SetDoorType(DOOR_STAGE);
+	pDoor->SetTargetDoor("Stage1", "Door_S1_S4");
+	pDoor->SetLeftRight(true);
+
 #endif
 }
 
@@ -191,6 +198,20 @@ int CScene4::Input(float _fTime)
 
 int CScene4::Update(float _fTime)
 {
+	if (GET_SINGLE(CSceneManager)->GetChange())
+	{
+		static bool bAdd = true;
+
+		if (bAdd)
+		{
+			bAdd = false;
+			GET_SINGLE(CGameManager)->AddUILayer();
+			GET_SINGLE(CGameManager)->SetPlayerNaviY(true);
+		}
+	}
+
+	GET_SINGLE(CGameManager)->Update(_fTime);
+
 	return 0;
 }
 

@@ -31,7 +31,11 @@ class CGameManager
 	list<CGameObject*>												m_ChangedItemObjList;
 	list<CDoor*>													m_ChangedDoorList;
 	list<CLight*>													m_ChangedLightList;
-
+private:
+	class CElevator* m_pElevator;
+public:
+	void SetElevatorDown(bool _bEnable);
+	void SetElevatorUp(bool _bEnable);
 // String Convert
 public:
 	const string TCHARToString(const TCHAR* _ptsz);
@@ -96,6 +100,8 @@ public:
 	string GetPlayerCollDoorMapKey(CScene* scene) const;
 
 	void AddUILayer();
+
+	void CallBack(CCollider* pSrc, CCollider* pDest, float fTime);
 
 	DECLARE_SINGLE(CGameManager)
 };
